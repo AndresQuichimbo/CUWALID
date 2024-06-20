@@ -1,20 +1,25 @@
 # CUWALID
 Repository containing the models of CUWALID under the Down2Earth project
 
-# TESTING
+## TESTING
 
 You can test if your environment is working correctly with the model by using the 'run_all_test.sh' script in your linux terminal or WSL terminal (THIS TEST CURRENTLY ONLY TESTS THE DRYP MODEL)
 
-##Steps:
+### Steps:
 
 1. Navigate to the current directory (CUWALID)
 2. Activate your environment
->> conda activate cwld
+```
+conda activate cwld
+```
 2. type the command
->> sh run_all_test.sh
-You should see the tests being run, some minor warnings may appear but should be safe to ignore
+```
+sh run_all_test.sh
+```
+You should see the tests being run, some minor warnings may appear but should be safe to ignore,
+
 The end of the output should look like this:
--------------------------------------------------------------------------------------------------
+```
 ************************************************************
 Infiltration approach: Philips
 Run Interception component
@@ -27,7 +32,7 @@ Traceback (most recent call last):
     assert np.allclose(out, ans)
 AssertionError
 Basin delineation: Test runs successfully
--------------------------------------------------------------------------------------------------
+```
 
 
 # Running the model
