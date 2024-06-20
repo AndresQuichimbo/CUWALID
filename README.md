@@ -35,7 +35,7 @@ Basin delineation: Test runs successfully
 ```
 
 
-# Running the model
+## Running the model
 
 Currently only the DRYP model is correctly working, the python file 'run_DRYP.py' should run an example by using the example file 'input_test.dmp' in the DRYP_Input/ folder and uses other test files found in the directory at DRYPv2/example/input/
 
