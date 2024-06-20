@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "DRYP"
+authors = [
+    {name = "Andrés Quichimbo", email = "quichimbomiguitamaea@cardiff.ac.uk"},
+    ]
+
+description = "hydrologicap model DRYP"
+readme = "README.md"
+requires-python = ">=3.10"
+
+dynamic = ["version"]
+
+[project.optional-dependencies]
+docs = [
+"Sphinx>=6.2.1",
+"myst_parser",
+"sphinx-fortran",
+]

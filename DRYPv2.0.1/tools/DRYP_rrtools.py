@@ -1,0 +1,798 @@
+"""DRYP raster pre-processing tools"""
+import os
+import pandas as pd
+import geopandas as gpd
+import numpy as np
+import rasterio
+from rasterio.mask import mask
+from rasterio.crs import CRS
+from rasterio.transform import Affine
+from shapely.geometry import box
+import geopandas as gpd
+from rasterio.features import geometry_mask
+from landlab import RasterModelGrid
+from landlab.components import FlowDirectorD8
+from landlab.core.utils import as_id_array
+
+def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda):
+	"""Calculate soil water content at field capacity and available water content
+	
+	Parameters
+	----------
+	fname_porosity : str
+		raster file name of porosity
+	fname_psi : str
+		raster filename of air entry pressure
+	fname_lambda : str
+		raster file name of soil particle distribution
+
+	Returns
+	-------
+
+	Examples
+	--------
+	
+	"""
+	# read raster files
+	porosity = open_raster(fname_porosity)[0]
+	psi = open_raster(fname_psi)[0]
+	lambdas, profile, transform = open_raster(fname_lambda)
+	
+	# calculate soil water content
+	field_capacity, wilting_point, available_water_content =calculate_soil_paramters(
+		porosity, psi, lambdas, psi_fc=336.506, psi_wp=15295.743)
+
+	# create files names
+	fname_fc = ""
+	fname_wp = ""
+	fname_awc = ""
+
+	# save soil properties as raster files
+	save_raster(fname_fc, field_capacity, profile, transform)
+	save_raster(fname_wp, wilting_point, profile, transform)
+	save_raster(fname_awc, available_water_content, profile, transform)
+
+def create_raster_flowdirection_dryp(fname, fname_out, transform=True):
+	"""Create raster file from a raster D8 flow direction map
+	
+	Parameters
+	----------
+	fname : str
+		filename path of the flow direction map, the raster
+		file has to be in D8 direction format
+	fname_out : stra
+		filename of the output file
+
+	Returns
+	-------
+	raster
+		raster file with firection specified in landlab format
+	"""
+	# read raster dataset
+	flowdird8, profile, transform = open_raster(fname) 
+	
+	if transform is True:
+		## save data tuype
+		#dtype = flowdird8.dtype
+
+		# calculate flow direction
+		flowdir = transform_flowdirection_d8_to_landlab_array(
+			flowdird8, format_data="D8")
+
+		## assign data type
+		#flowdir = np.array(flowdir, dtype=dtype)
+
+		# save soil properties as raster files
+	else:
+			# get array shape
+			shape = np.shape(flowdird8)
+
+			# create grid
+			domain = rasterio.open(fname)
+			# create a raster grid environment, landlab grid
+			grid = RasterModelGrid(
+					(domain.height, domain.width),
+					xy_spacing=domain.transform[0],
+					xy_of_lower_left=(domain.bounds[0], domain.bounds[1]),
+					xy_of_reference=(0.0, 0.0),
+					)
+			
+			grid.add_field("aux_grid",
+				  np.array(np.flip(flowdird8, 0), dtype=float),#.flatten(),
+				  at="node")
+			
+			# calculate flow rirection
+			fd = FlowDirectorD8(grid, 'aux_grid')
+			fd.run_one_step()
+		
+			# 2. Creates drainage networks, flowpaths and id arrays
+			# a value of 1 must be added to change from python to forttran
+			flowdir = as_id_array(grid["node"]["flow__receiver_node"])
+			
+			# reshape array to save as raster
+			flowdir = flowdir.reshape(shape)
+			
+			# flip raster in order to make aggree with landlab
+			flowdir = np.flip(flowdir, 0)
+
+	save_raster(fname_out, flowdir, profile, transform)
+	
+def create_raster_river_network(fname, threshold, fname_out,
+								cell_area=False, fill_value=None):
+	"""Create a raster file from a raster D8 flow direction map. The
+	river network will be created from a flow accumulation map and a 
+	threshold specified for the minimm number of cells or minimum area.
+	
+	Parameters
+	----------
+	fname : str
+		filename path of the flow accumulation map, this file raster
+		file can be created by get_watershed_area() funtion
+	threshold : float
+		number of cells otr area (if cell_area is False)
+	fname_out : stra
+		filename of the output file
+	cell_area : Bool
+		True when area is provided, False when number of cell is
+		provided
+	fill_value : float
+		river lenght [meters]
+
+	Returns
+	-------
+	raster
+		raster file with firection specified in landlab format
+	"""
+	# read raster dataset
+	raster, profile, transform = open_raster(fname) 
+	
+	# get raster properties
+	attributes = rasterio.open(fname)
+	area_cell = np.power(attributes.transform[0], 2)
+
+	# check if area or number of cells is provided
+	if cell_area is False:
+		threshold = threshold*area_cell
+
+	# assign values
+	value = 1
+	if fill_value is not None:
+		value = fill_value
+
+	# select river cells
+	raster[raster < threshold] = -9999
+	raster[raster >= threshold] = value
+	
+	# save soil properties as raster files
+	save_raster(fname_out, raster, profile, transform)
+
+def create_raster_bc_at_point(fname_wte, fname_bc_head,
+										fname_out):
+	"""Create a raster file from values at specified locations
+	of a raster file. Only values at selcted locations are kept in
+	the raster, the remained values are assined -9999
+	(non data values in DRYP).
+	
+	Parameters
+	----------
+	fname_wte : str
+		file path
+	fname_head : str
+		file path of point list
+
+	Returns
+	-------
+	raster file
+
+	"""
+	# read list of xy coordinates as dataframe
+	coordinates = pd.read_csv(fname_bc_head)
+
+	# create a list of tuples
+	coordinates = list(zip(coordinates['East'], coordinates['North']))
+
+	# read raster dataset
+	dataset = rasterio.open(fname_wte)
+
+	# get list of indices
+	indices = find_indices(dataset, coordinates)
+	
+	# get raster properties
+	raster, profile, transform = open_raster(fname_wte)
+
+	# create a copy of raster file
+	head = raster.copy()
+
+	# make non data all values
+	raster[:] = -9999
+
+	# get head values
+	for index in indices:
+		row, column = index
+		raster[row, column] = head[row, column]
+
+	# save soil properties as raster files
+	save_raster(fname_out, raster, profile, transform)
+	
+def create_raster_from_shapefile(fname_shp, fname_raster, fname_out):
+	"""This function takes a shapefile (*.shp) and a raster file
+	to create a new raster containing the shapefile geometry
+	as mask
+	
+	Parameters
+	----------
+	fname_shp : str
+		file path of shapefile
+	fname_raster : str
+		file path of raster file
+
+	Returns
+	-------
+	raster file
+
+
+	Example
+	-------
+
+	>>> shapefile_path = 'test.shp'
+	>>> fname_raster = "test.asc"
+	>>> fname_out = "mask.asc"
+
+	"""
+	# Load the shapefile as a GeoDataFrame
+	gdf = gpd.read_file(fname_shp)
+
+	# Define the raster dimensions and extent
+	data, profile, transform = open_raster(fname_raster)
+	grid_ncols, grid_nrows, grid_cellsize = get_raster_properties(fname_raster)
+
+	# Create a mask for the shapefile using the raster dimensions and extent
+	array = geometry_mask(gdf.geometry,
+		transform=transform,
+		out_shape=(grid_nrows, grid_ncols),
+		invert=True)
+	
+	# Create a new raster with the same dimensions and extent of the input
+	save_raster(fname_out, array, profile, transform)
+
+def create_raster_landlab_idnodes(fname, fname_out):
+	"""Create a raster file of landlab idnodes
+	
+	Parameters
+	----------
+	fname : str
+		path of raster file
+		
+	Returns
+	-------
+	file
+		idnodes raster file with name fname_out
+	"""
+	# get raster properties
+	raster, profile, transform = open_raster(fname)
+
+	# get array shape
+	shape = np.shape(raster)
+
+	# flatten array
+	raster = raster.reshape(-1)
+
+	# create id grid
+	idnodes = np.arange(len(raster), dtype=int).reshape(shape)
+	idnodes = np.flip(idnodes, 0)
+	
+	# save soil properties as raster files
+	save_raster(fname_out, idnodes, profile, transform)
+
+def open_raster(fname):
+	"""read raster file
+	Parameters
+	----------
+	fname : str
+		file name of the raster
+	
+	Returns
+	-------
+	data : numpy array
+		raster values
+	profile : object
+		raster properties
+	transform : object
+		transformation parameters to pass to other functions
+	
+	"""
+	with rasterio.open(fname) as src:
+		# Read the input raster data
+		data = src.read(1)
+		# Get the metadata of the input raster
+		profile = src.profile
+		# Get the affine transformation
+		transform = src.transform
+	return data, profile, transform
+
+def save_raster(fname, data, profile, transform):
+	os.remove(fname) if os.path.exists(fname) else None
+	with rasterio.open(fname, 'w', **profile) as dst:
+		# Write the modified raster data
+		# ensure that data has the same format type
+		dst.write(np.array(data, dtype=profile['dtype']), 1)
+		# Set the affine transformation
+		dst.transform = transform
+
+def get_raster_properties(fname):
+	domain = rasterio.open(fname)
+	grid_ncols = domain.width
+	grid_nrows = domain.height
+	#grid_xllcorner = domain.bounds[1]
+	#grid_yllcorner = domain.bounds[0]
+	grid_cellsize = domain.transform[0]
+	return grid_ncols, grid_nrows, grid_cellsize
+
+def getFeatures(gdf):
+	"""Function to parse features from GeoDataFrame
+	in such a manner that rasterio wants them
+	https://automating-gis-processes.github.io/CSC18/lessons/L6/clipping-raster.html
+	"""
+	# Next we need to get the coordinates of the geometry
+	# in such a format that rasterio wants them. This can
+	# be conducted easily with following function
+	import json
+	return [json.loads(gdf.to_json())['features'][0]['geometry']]
+
+def check_raster_alignaments(fname_base, fname):
+	"""This function check if a rasters dataset has the same
+	number of cells and grid size
+	
+	Parameters
+	----------
+	fname_base : str
+		file name of the reference raster
+	fname : str
+		file name of the raster to check
+	
+	Returns
+	-------
+	bool
+		True if raster has similar size
+		False if raster does not match the original size
+	"""
+	# get shape of raster daataset
+	shape_base = get_raster_properties(fname_base)
+
+	# get shape of raster to check
+	shape_raster = get_raster_properties(fname)
+
+	# compare shape of raster datasets
+	if (shape_raster[1] == shape_base[1]) and (shape_raster[0] == shape_base[0]):
+		return True
+	else:
+		return print("Reference:", shape_base, "Dataset:", shape_raster, fname)
+
+def clip_raster_by_mask(fname, fname_mask, fname_output):
+	"""This function clip a raster file by using a mask raster file. All raster
+	files must have the same size, otherwise and error will raise.
+	The output file will be 
+
+	Parameters
+	----------    
+	fname : str
+		raster file name
+	fname_mask : str
+		file name for the clipped raster dataset
+	fname_out : str
+		file name for the clipped raster dataset
+
+	Returns
+	-------
+	file
+		clipped raster file
+	
+	"""
+
+	# open raster
+	data, profile, transform = open_raster(fname_mask)
+
+	# find bounds
+	min_row, max_row, min_col, max_col = find_region_bounds(data)
+	
+	# get coordinates
+	min_lon, min_lat = get_lat_lon_coordinates(transform, min_col, max_row)
+	lon, lat = get_lat_lon_coordinates(transform, max_col, min_row)
+	
+	# create extent list
+	extent = (min_lon, min_lat, lon, lat)
+
+	# create and save clipped raster
+	clip_raster_by_extent(fname, fname_output, extent)
+
+
+def clip_raster_by_extent(fname, fname_output, extent):
+	"""Function to clip raster files by extent.
+	
+	Parameters
+	----------    
+	fname : str
+		raster file name
+	fname_out : str
+		file name for the clipped raster dataset
+	extent : list of floats
+		list of boundaries to clip, [xmin, ymin, xmax, ymax]
+	
+	Returns
+	-------
+	file
+		clipped raster file
+	
+	"""
+	# Open the raster file
+	src = rasterio.open(fname)
+	
+	# Define the clipping extent using a polygon or bounding box
+	# Option 1: Polygon geometry
+	#polygon = gpd.read_file('path/to/your/polygon/shapefile.shp')
+	#clipping_geometry = polygon.geometry.values[0]
+	
+	# Option 2: Bounding box coordinates (left, bottom, right, top)
+	# clipping_extent = (xmin, ymin, xmax, ymax)
+	# create polygon object
+	shapes = box(extent[0], extent[1], extent[2], extent[3])
+	
+	# Insert the bbox into a GeoDataFrame
+	df = gpd.GeoDataFrame({"id":1,"geometry":[shapes]})
+	
+	# Get the geometry coordinates by using the function.
+	coords = getFeatures(df)
+	
+	# Perform the clipping
+	clipped, out_transform = mask(src, shapes=coords, crop=True)
+	
+	# Get the metadata of the clipped raster
+	out_meta = src.meta.copy()
+	out_meta.update({
+		#"driver": "GTiff",
+		"height": clipped.shape[1],
+		"width": clipped.shape[2],
+		"transform": out_transform
+	})
+
+	# Save the clipped raster to a new file
+	with rasterio.open(fname_output, "w", **out_meta) as dest:
+		dest.write(clipped)
+
+
+def find_region_bounds(array):
+	"""This function finds indices of the extent of the region in
+	a 2D numpy array. Region must be specified with values greater
+	than zero.
+
+	Parameters
+	----------
+	array : numpy array
+		2D numpy array (e.g.: from a raster file)
+	
+	Returns
+	-------
+	list of int
+		min_row, max_row, min_col, max_col
+	"""
+	# Find the indices of non-zero elements of a 2d array
+	nonzero_indices = np.nonzero(array)
+	
+	# Find the bounding indices
+	min_row = np.min(nonzero_indices[0])
+	max_row = np.max(nonzero_indices[0])
+	min_col = np.min(nonzero_indices[1])
+	max_col = np.max(nonzero_indices[1])
+	
+	#print(min_row, max_row, min_col, max_col)
+	
+	# aggregate one row to run on dryp
+	min_row = np.max([min_row-1, 0])
+	max_row = np.min([max_row+1, array.shape[0]])
+	min_col = np.max([min_col-1, 0])
+	max_col = np.min([max_col+1, array.shape[1]])
+	
+	#print(min_row, max_row, min_col, max_col)
+	return min_row, max_row, min_col, max_col
+	
+def get_transform_parameters(fname):
+	"""This function read a raster file and extract the transformation
+	parameters. This paramters allows to get the coordinates
+	(lat/y, lon/x) from indices of a numpy array
+	
+	Parameters
+	----------
+	fname : str
+		raster file name
+
+	Returns
+	-------
+	crs : object
+		coordinates reference system
+	transform : 2D numpy array
+		transformation matrix
+	
+	
+	"""
+	with rasterio.open(fname) as dataset:
+		# Read the metadata
+		crs = dataset.crs
+		transform = dataset.transform
+
+	crs = CRS.from_dict(crs)
+	transform = Affine.from_gdal(*transform)
+	
+	return crs, transform
+
+def get_lat_lon_coordinates(transform, col, row):
+	"""This function gets latitude/North and longitud/East
+	from set of python array index.
+	
+	Parameters
+	----------
+	transform : object
+		object containing raster properties
+	col : int
+		column index
+	row : int
+		row index
+	
+	Returns
+	-------
+	lat, lon : float
+		coordinates x an y of the array indices col and row
+
+	Examples
+	--------
+	>>> from DRYP_rrtools import get_lat_lon_coordinates
+	>>> from DRYP_rrtools import get_transform_parameters
+
+	>>> fname = "raster.asc"
+	>>> crs, transform = get_transform_parameters(fname)
+	>>> col, row = 20, 30
+	>>> lat, lon = get_lat_lon_coordinates(transform, col, row)
+
+	"""
+	lon, lat = transform*(col, row)
+
+	return lon, lat
+
+
+def clapp_horner_retention_curve(ipsi, porosity, psi, lambdas):
+	"""Function to estimate water content at specied matric
+	potentialClap and Horn water retention curve
+	
+	Parameters
+	----------
+	ipsi : float or numpy array
+		matrix potential
+	porosity : numpy array of floats
+		water content at saturated conditions
+	psi : numpy array of float
+		soil ari entry pressure
+	lambdas : numpy array of floats
+		soil particle distribution
+	
+	Returns
+	-------
+	theta : numpy array of floats
+		water content at the 
+	"""
+	
+	return porosity*np.power(ipsi/psi, -lambdas)
+
+def calculate_soil_paramters(porosity, psi, lambdas, psi_fc=336.506, psi_wp=15295.743):
+	"""This function calculate the water content at
+	field capacity and the total availble water of the soli
+	from Clapp and Horner
+	
+	Parameters
+	----------
+	porosity : float or numpy array
+		porosity [-]
+	psi : float or numpy array
+		air entry pressure [cm]
+	lambdas : float or numpy array
+		soil particle distribution paramters
+	phi_fc : float or numpy array
+		suction head at field capacity [cm]
+		default, phi_fc = 336.506 #cm => 33kPa
+	phi_wp : float or numpy array
+		suction head at wilting point [cm],
+		default, phi_wp = 15295.743 # cm => 1500kPa
+
+	Returns
+	-------
+	field_capacity : float or numpy array
+		water content at field capacity [-]
+	wilting_point : float or numpy array
+		Water content at wilting point [-]
+	available_water_content : float or numpy array
+		availble water content,  storage capacity [-]
+	"""
+
+	# calculate water content at field capacity
+	field_capacity = clapp_horner_retention_curve(psi_fc, porosity, psi, lambdas)
+
+	# calculate water content at wilting point
+	wilting_point = clapp_horner_retention_curve(psi_fc, porosity, psi, lambdas)
+	
+	# calculate availble water content
+	available_water_content = field_capacity - wilting_point
+
+	return field_capacity, wilting_point, available_water_content
+
+def calculate_channel_width_from_discharge(discharge):
+	"""This function estimates channel velocity from flow rate
+	using the
+	
+	Parameters
+	----------
+	discharge : numpy array of floats
+		discharge in m3 s-1
+	
+	Returns
+	-------
+	width : numpy array of floats
+		channel width 
+	"""
+	# calculate channel depth [m] ====================
+	depth = 0.349*np.power(discharge, 0.341)
+	# calculate channel width [m]
+	width_bf = 2.71*np.power(discharge, 0.557)
+	return width_bf - 2.2*depth
+		
+	
+def calculate_channel_velocity(discharge, width, slope=0.01, roughness=0.026):
+	"""Calculate channel valocity
+
+	Parameters
+	----------
+	discharge : numpy array of floats
+		discharge in m3 s-1
+	width : numpy array or float
+		channel width in meters
+		
+	Returns
+	-------
+	numpy array
+		channel streamflow velocity in m3 s-1
+	"""
+	# calculate channel depth [m] ====================
+	depth = 0.349*np.power(discharge, 0.341)
+	# calculate hydraulic radious
+	HR = depth*(2.0*depth + width)/(width + 2.0*depth*np.sqrt(5.0))
+	# calculate channel velocity (m/s)
+	return roughness*np.power(HR, 2.0/3.0)*np.power(slope, 0.5)
+	
+def calculate_channel_residence_time(velocity, river_length):
+	"""Calculate decay parameter from streamflow velocity and river length
+	
+	Parameters
+	----------
+	velocity : numpy array of floats
+		river flow velocity in m3 s-1
+	river_length : numpy array of floats
+		river length in meters
+		
+	Returns
+	-------
+	decay : numpy array floats
+		channel decay/residence time parameter
+	"""
+	# calculate river decay parameters: units 1/s
+	return velocity/river_length
+
+def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
+	"""Function to get flow direction in landlab format from a D8
+	direction map.
+	
+	D8 direction format
+		32 64 128
+		16 0  1
+		8  4  2
+	
+	i-digit format 2 -> 8
+		4 3 2
+		5 0 1
+		6 7 8
+
+	Landlab grid
+		6 7 8
+		3 4 5
+		0 1 2
+
+	Parameters
+	----------
+	flowdir : numpy array of int
+		flow direction map in D8 format
+
+	Returns
+	-------
+	drinodes: numpy array of ints
+		flow direction map in landlab format
+
+	Examples
+	--------
+	>>> from DRYP_rrtools import get_landlab_flowdirection_from_d8_format
+	>>> D8_direction = [		
+			[4, 8, 8],
+			[4, 3, 8],
+			[0, 16, 16],
+			]
+
+	>>> landlab_direction = get_landlab_flowdirection_from_d8_format(D8_direction)
+	>>> landlab_direction = [
+				[3, 3, 4],
+				[0, 0, 1],
+				[0, 0, 1],
+				]
+	"""
+	# get array shape
+	shape = np.shape(flowdir)
+
+	# flip raster in order to make aggree with landlab
+	flowdir = np.flip(flowdir, 0)
+
+	# flatten array
+	fdg = flowdir.reshape(-1)
+	
+	# create array of nodes
+	dirnodes=np.zeros(len(fdg))
+
+	# create landlab idnodes
+	ids=np.arange(len(fdg), dtype=int)
+	
+	# find the number of columns
+	ncols=flowdir.shape[1]
+	
+	# create an array of D* direction codes
+	if format_data == "D8":
+		dir_code=[1, 128, 64, 32, 16, 8, 4, 2]
+	else:
+		dir_code=np.arange(1,9)
+	
+	# create list of idnodes for each D8 code
+	loc=[1, ncols+1, ncols, ncols-1, -1, -ncols-1, -ncols, -ncols+1]
+
+	# replace D8 codes with landlab codes
+	for idir_code, iloc in zip(dir_code, loc):
+		dirnodes[np.where(fdg==idir_code)]=ids[np.where(fdg==idir_code)]+iloc
+		
+	# correction of the flow direction due to index outside the grid
+	# make nodes at edges sink points
+	
+	# create id grid
+	nodes = np.arange(len(fdg), dtype=int).reshape(flowdir.shape)
+	
+	idnodes = nodes[0,:] # at the top
+	dirnodes[idnodes] = idnodes 
+	idnodes = nodes[:,0] # at the left
+	dirnodes[idnodes] = idnodes
+	idnodes = nodes[:,-1] # at the right
+	dirnodes[idnodes] = idnodes
+	idnodes = nodes[-1,:] # at the bottom
+	dirnodes[idnodes] = idnodes
+	
+	return np.flip(dirnodes.reshape(shape), 0)
+
+def find_indices(raster, coordinates):
+	"""Finds the indices of the points in the raster given the coordinates.
+
+	Parameters
+	----------
+	dataset: rasterio dataset object
+		Dataset object.
+	coordinates: list
+		A list of tuples containing the (x, y) coordinates of the points.
+	Returns
+	-------
+	  A list of tuples containing the (row, column) indices of the points.
+	"""
+	indices = []
+	for coordinate in coordinates:
+		x, y = coordinate
+		row, column = rasterio.transform.rowcol(raster.transform, x, y)
+		indices.append((int(row), int(column)))
+	return indices
+

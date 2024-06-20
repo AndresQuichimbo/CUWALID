@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DRYP: Dryland Water Partitioning model &mdash; dryptools 2023 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Pre- and post-processing tools" href="processing.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            dryptools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">DRYP: Dryland Water Partitioning model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#model-description-and-structure">Model description and structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#model-hydrological-parameters">Model Hydrological Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#forcing-datasets">Forcing datasets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-outputs">Model outputs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#model-parameters-and-setting-files">Model parameters and setting files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#input-parameter-file">Input parameter file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simulation-settings-file">Simulation settings file</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simulation-parameter-file">Simulation parameter file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simulation-period"><em>Simulation period}</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#simulation-time-step"><em>Simulation time step</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#forcing-data-format"><em>Forcing data format</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#infiltration-method-selection">Infiltration method selection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#groundwater-component-selection">Groundwater component selection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setting-storage-of-model-outputs">Setting storage of model outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#calibration-factors">Calibration factors</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#riparian-zone-parameter-files">Riparian zone parameter files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#groudwater-parameter-file">Groudwater parameter file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#projection-system-file">Projection system file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vegetation-parameters-file">Vegetation parameters file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overland-flow-boundary-condition-file">Overland flow boundary condition file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#store-variables-settings-file">Store variables settings file</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="processing.html">Pre- and post-processing tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">A Short Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">dryptools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">DRYP: Dryland Water Partitioning model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/dryp_model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dryp-dryland-water-partitioning-model">
+<h1>DRYP: Dryland Water Partitioning model<a class="headerlink" href="#dryp-dryland-water-partitioning-model" title="Permalink to this heading"></a></h1>
+<section id="model-description-and-structure">
+<h2>Model description and structure<a class="headerlink" href="#model-description-and-structure" title="Permalink to this heading"></a></h2>
+<p>The parsimounius water partitioning model is a process-based distributed hydrological model.</p>
+<img alt="_images/Model_Structure_conceptual_GMD.png" src="_images/Model_Structure_conceptual_GMD.png" />
+<section id="model-hydrological-parameters">
+<h3>Model Hydrological Parameters<a class="headerlink" href="#model-hydrological-parameters" title="Permalink to this heading"></a></h3>
+<p>The model uses as input parameter files spatially distributed maps in raster format. If parameter file is not provided, the model will use spatially uniform default values.</p>
+<p>A list of parameters required for each component is presented below:</p>
+<p>For the <strong>surface component</strong>:</p>
+<ul class="simple">
+<li><p>Digital elevation model (DEM), required (essential).</p></li>
+<li><p>River network length (in meters) (values greater than zero are specified as rivers), if not available all cells are considered rivers. Default values is the size of model grids.</p></li>
+<li><p>Flow direction in landlab format (ID of receiving node following landlab indexing), if no available, Landlab will automatically find the direction of flow based on the digital elevation model (DEM).</p></li>
+<li><p>Model domain, a raster file that can indicating the basin. Default value is 1.0. If not provided, the entire grid will be assumed as the model domain.</p></li>
+<li><p>Channel witdth (in meters), default value is 10m.</p></li>
+</ul>
+<p>In case of proving a flow direction file, it should follow Landlab conventions. A comprehensive description of landlab flow direction convention can be found in url{<a class="reference external" href="https://landlab.readthedocs.io/en/master/reference/components/flow_director.html">https://landlab.readthedocs.io/en/master/reference/components/flow_director.html</a>}. Noted that Landlab grids are labelled from 0 to n, where n is the number of cells (see url{<a class="reference external" href="https://landlab.readthedocs.io/en/master/user_guide/grid.html">https://landlab.readthedocs.io/en/master/user_guide/grid.html</a>} and example below).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ncols</span>        <span class="mi">5</span>
+<span class="n">nrows</span>        <span class="mi">4</span>
+<span class="n">xllcorner</span>    <span class="mi">574361</span>
+<span class="n">yllcorner</span>    <span class="mi">3502989</span>
+<span class="n">cellsize</span>     <span class="mi">1000</span>
+<span class="n">NODATA_value</span>  <span class="o">-</span><span class="mi">9999</span>
+<span class="mi">15</span> <span class="mi">16</span> <span class="mi">17</span> <span class="mi">18</span> <span class="mi">19</span>
+<span class="mi">10</span> <span class="mi">11</span> <span class="mi">12</span> <span class="mi">13</span> <span class="mi">14</span>
+<span class="mi">5</span> <span class="mi">6</span> <span class="mi">7</span> <span class="mi">8</span> <span class="mi">9</span>
+<span class="mi">0</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<p>Flow direction raster files must have as values the number of the next downstream cell. If a cell value of the flow direction file has the same value of index, it means that it is a sink point.</p>
+<p>For the <strong>subsurface component</strong> the following parameters can be provided, if not availble default values will be used:</p>
+<ul class="simple">
+<li><p>Rooting depth in mm, default value 1000mm</p></li>
+<li><p>Wilting Point (wp), default value 0.1</p></li>
+<li><p>total available water wilting point (AWC), default value 0.10</p></li>
+<li><p>Porosity (n_e), default value 0.40</p></li>
+<li><p>Standard deviation of the saturated hydraulic conductivity, $sigma$</p></li>
+<li><p>Infiltration at saturated conditions, ($K_{sat}$) in mm/h, default value 1.0 mm/h</p></li>
+<li><p>Water content at residual capacity, $theta_r$</p></li>
+<li><p>Exponent of the water retention function (soil particle distribution), $b$ default value 10.5.</p></li>
+<li><p>Suction head, $psi$, default value 300mm</p></li>
+</ul>
+<p>For the <strong>groundwater component</strong></p>
+<ul class="simple">
+<li><p>Aquifer saturated hydraulic conductivity, $Ks_{GW}$, default value 1 [m/h]</p></li>
+<li><p>Aquifer specific yield, $Ks_{GW}$, default value 0.01 [-]</p></li>
+<li><p>Groundwater model domain, optional, in case that groundwater catchment is different than surface catchment.</p></li>
+<li><p>Initial water table, default value is specified at 1 meter below the rooting depth.</p></li>
+<li><p>Head boundary conditions (optional)</p></li>
+<li><p>Flux boundary conditions (optional)</p></li>
+<li><p>Streambed elevation, default value is 5m below the surface elevation.</p></li>
+</ul>
+</section>
+<section id="forcing-datasets">
+<h3>Forcing datasets<a class="headerlink" href="#forcing-datasets" title="Permalink to this heading"></a></h3>
+<p>DRYP requires time series as model forcing datasets. Precipitation and potential evpotranspiration must be provided
+in order to run the model, otherwise it will throw an error. Dataset can be spatially variable data
+as netCDF files, or uniform values over the whole model domain by providing a csv file.</p>
+</section>
+<section id="model-outputs">
+<h3>Model outputs<a class="headerlink" href="#model-outputs" title="Permalink to this heading"></a></h3>
+<p>Output variables for each model component are summarised below, the name of the variable is in brackets.
+Units of time depends on model settings, for example months.</p>
+<p><strong>Surface component</strong>:</p>
+<ul class="simple">
+<li><p>Runoff (run), in mm/month</p></li>
+<li><p>Infiltration rate (inf, in mm/month</p></li>
+<li><p>Transmission losses (tls), m3/month</p></li>
+<li><p>Streamflow (dis), m3/month</p></li>
+<li><p>surface water storage, it includes rivers (ssz), m3/month</p></li>
+</ul>
+<p><strong>Subsurface and riparian component</strong>:</p>
+<ul class="simple">
+<li><p>Soil and riparian Water content (tht), m3/m3</p></li>
+<li><p>Actual evapotranspiration from hillslope and riparian area (aet), mm/month</p></li>
+<li><p>Groundwater diffuse (drh) and focused (fch) recharge, mm/month</p></li>
+</ul>
+<p><strong>Groundwater component</strong>:</p>
+<ul class="simple">
+<li><p>Water table elevation (wte), m.</p></li>
+<li><p>groundwater discharge (gdh), m3/month</p></li>
+<li><p>capillary evapotranspiration (egw), mm/month</p></li>
+<li><p>total water storage deviation (twsc), m/month</p></li>
+</ul>
+</section>
+</section>
+<section id="model-parameters-and-setting-files">
+<h2>Model parameters and setting files<a class="headerlink" href="#model-parameters-and-setting-files" title="Permalink to this heading"></a></h2>
+<p>Model input files are plain text format, which can be created by using any text editor (e.g. notepad).
+These files must follow a strict</p>
+<section id="input-parameter-file">
+<h3>Input parameter file<a class="headerlink" href="#input-parameter-file" title="Permalink to this heading"></a></h3>
+<p>All filename’s parameters must be listed in model parameters file, which is further explained below, However,
+if a parameter filename is not provided, the default values will be used as model parameters.</p>
+<p>The input file must be a plain text file. This file must have as head ‘drylandmodel’ in the first line (see
+example below), omitting the first line will raise an error when running the model.</p>
+<p>Filenames provided in the input file must be written only on specified lines, the example below could be use as
+template. Any change in the order of parameters files will result in inconsistent results or model errors that may
+cause to stop the simulation (e.g. if the file ‘HAD_dem.asc’ is written in line 5, python will raise an exception error).</p>
+<p>The model is under development therefore some components are still not available (e.g. abstractions and
+irrigation are not yet available.</p>
+<p>Meteorological data required as forcing dataset must be provided in lines 66 and 68. Information can be provided in netCDF format
+in order to take into account the spatial variability, or it can be a “.csv” file which in turn will assume a uniform rate
+over the entire model domain (not common). Filenames of the forcing datasets should follow the format specified
+in the paramter setting file (see next section), and it will depend on the numbers of files provided. If there
+is only one file, the name of the file can be written directly on the files, but if there are multiple files it
+will depend on the frequency. Yearly files must have the month and the year specified as numbers
+(e.g. IMERG_2000-02.nc), whereas
+yearly files must have only the year specified in numbers (e.g. IMERG-2000.nc). In the input parameter
+file, the filename field must contain <em>YYYY</em> and/or <em>MM</em> for monthly or yearly datas, as it is shon in the
+the following examples:</p>
+<ul class="simple">
+<li><p><em>forcing/YYYY/MM/IMERG-YYYY-MM.nc</em> for monthly files,</p></li>
+<li><p><em>forcing/IMERG-YYYY_final.nc for</em> yearly files</p></li>
+</ul>
+<p>For the groundwater component, boundary conditions can be specified as head and flux boundary conditions
+on lines 61 and 63, respectively. A raster file of head/flux must be provided if boundary conditions are
+considered in the model. The raster file will consider a boundary condition any value different that -9999.
+If boundary files are not provided, zero flux boundary conditions will be assumed.</p>
+<p>To print results at specified locations a file listing the x and y coordinates of the each point must be
+provided as input file. This file must have at least one point listed and it must be located inside the
+model domain, otherwise an exception error will be raised. More details about the format and specifications
+about output files is provided in section ref{Coutput}</p>
+<p>Result at different locations of each model component can be obtained by providing a file containing a
+list of coordinates. This should be specified in a comma separated format (e.g. .csv) with column heads
+specified as <em>North</em> and <em>East</em> for the y and x, respectively. If a coordinate is not located
+inside the model domain, the simulation will stop.  Note that at least one point coordinate should be
+specified, otherwise, an error will be produced.</p>
+<p>Coordinate files must be specified in the following lines of the main input file:</p>
+<ul class="simple">
+<li><p>line 77: File of coordinates for surface component.</p></li>
+<li><p>line 79: File of coordinates for unsaturated zone.</p></li>
+<li><p>line 81: File of coordinates for saturated zone.</p></li>
+</ul>
+<p>Point result file are named with the model name followed by aletter p and the name of the variable at the end.</p>
+<p>Model variable name’s and codes stored for point result files, for filename see table</p>
+<p>Surface component</p>
+<ul class="simple">
+<li><p>dis,    Discharge</p></li>
+<li><p>tls,      Transmission losses</p></li>
+<li><p>inf,     infiltration excess</p></li>
+</ul>
+<p>Unsaturated zone</p>
+<ul class="simple">
+<li><p>tht,      soil moisture</p></li>
+<li><p>aet,    actual evapotranspiration</p></li>
+<li><p>rch,    recharge, diffuse and foccused recharge</p></li>
+</ul>
+<p>Saturated zone</p>
+<ul class="simple">
+<li><p>wte, water table elevation</p></li>
+</ul>
+<p>Point result files are time series with the first column specified as time with head ‘Date’. The number
+of columns of result files depend on the number of points specified in the coordinate files defined above.
+Columns are label depending on the component and variable (see ref{tab:point_files}) followed by number
+starting by zero (e.g. for discharge, the file model_name_p_dis.csv will contain the following columns,
+Date’ for time and ‘dis_0’, ‘dis_1’, .. etc. for discharge values)</p>
+<p>DRYP automatically save spatially averaged fluxes and water content of model compartments. The name of
+the this result file has the suffix texttt{avg} and the end. Results are saved at time steps specified
+for the surface component.</p>
+<p>Average results are saved in a comma separated file that can be opened in microsoft excel or any text
+editor. The document contains the following information which is specified by codes for each variable
+in the first line:</p>
+<ul class="simple">
+<li><p>pre,     precipitation,</p></li>
+<li><p>pet, potentiial evapotranspiration</p></li>
+<li><p>rch,     recharge,</p></li>
+<li><p>dis,     discharge,</p></li>
+<li><p>aet,     actual evapotranspiration,</p></li>
+<li><p>tht,     soil water content,</p></li>
+<li><p>twsc,     groundwater storage,</p></li>
+<li><p>egw, capillary evaporation</p></li>
+<li><p>bc, flux at boundary condition</p></li>
+<li><p>tls, transmission losses</p></li>
+</ul>
+<p>Discharge stored in the ‘avg’ file corresponds to the first row of the coordinate file. Therefore, in
+order to close the mass balance of the catchment, the first row of the coordinate file must be the
+coordinate of the catchment output.</p>
+<p>Finally, an example of input parameter file is shown bellow, user can copy this template to
+create a nuew model.</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span>drylandmodel
+<span class="linenos">  2</span>Model name --------------------------------------(1):
+<span class="linenos">  3</span>Juba_IM_sim
+<span class="linenos">  4</span>================ TERRAIN COMPONENTS ================= 
+<span class="linenos">  5</span>Topography (DEM)---------------------------------(4):
+<span class="linenos">  6</span>/user/work/km19051/Juba/input/JU_HAD_DEM_utm_mm.asc
+<span class="linenos">  7</span>Cell factor area --------------------------------(6):
+<span class="linenos">  8</span>/user/work/km19051/Juba/input/Juba_IM_sim_ini_avg_Q_ini.asc
+<span class="linenos">  9</span>Flow Direction (fd)------------------------------(8):
+<span class="linenos"> 10</span>/user/work/km19051/Juba/input/JU_HAD_flowdir_land_utm.asc
+<span class="linenos"> 11</span>channel decay parameter ------------------------(10):
+<span class="linenos"> 12</span>/user/work/km19051/Juba/input/JU_HAD_decay_utm_v0.asc
+<span class="linenos"> 13</span>Basin Mask (catchment) -------------------------(12):
+<span class="linenos"> 14</span>/user/work/km19051/Juba/input/HAD_basin_Juba_mask.asc
+<span class="linenos"> 15</span>River length -----------------------------------(14):
+<span class="linenos"> 16</span>/user/work/km19051/Juba/input/JU_HAD_riv_length_utm.asc
+<span class="linenos"> 17</span>River width ------------------------------------(16):
+<span class="linenos"> 18</span>/user/work/km19051/Juba/input/JU_HAD_width_utm_v0.asc
+<span class="linenos"> 19</span>River bottom elevation -------------------------(18):
+<span class="linenos"> 20</span>/user/work/km19051/Juba/input/JU_HAD_riv_elev_utm_mod.asc
+<span class="linenos"> 21</span>================ SURFACE COMPONENTS ================= 
+<span class="linenos"> 22</span>Vegetation type Kc -----------------------------(21):
+<span class="linenos"> 23</span>none
+<span class="linenos"> 24</span>Soil land use ----------------------------------(23):
+<span class="linenos"> 25</span>none
+<span class="linenos"> 26</span>Other ------------------------------------------(25):
+<span class="linenos"> 27</span>none
+<span class="linenos"> 28</span>=========== SOIL AND SUBSURFACE PARAMETERS ========== 
+<span class="linenos"> 29</span>Soil porosity: porosity ------------------------(28):
+<span class="linenos"> 30</span>/user/work/km19051/Juba/input/JU_HAD_theta_sat_utm_m.asc
+<span class="linenos"> 31</span>Theta residual ---------------------------------(30):
+<span class="linenos"> 32</span>none
+<span class="linenos"> 33</span>Available Water content (AWC) ------------------(32):
+<span class="linenos"> 34</span>/user/work/km19051/Juba/input/JU_HAD_theta_awc_utm.asc
+<span class="linenos"> 35</span>Wilting Point (wp) -----------------------------(34):
+<span class="linenos"> 36</span>/user/work/km19051/Juba/input/JU_HAD_theta_wp_utm.asc
+<span class="linenos"> 37</span>Soil Depth (D) ---------------------------------(36):
+<span class="linenos"> 38</span>/user/work/km19051/Juba/input/JU_HAD_rootdepth_utm_m.asc
+<span class="linenos"> 39</span>Soi particle distribution parameter (b) --------(38):
+<span class="linenos"> 40</span>/user/work/km19051/Juba/input/JU_HAD_lambdas_utm_m.asc
+<span class="linenos"> 41</span>Soil suction head ------------------------------(40):
+<span class="linenos"> 42</span>/user/work/km19051/Juba/input/JU_HAD_psi_utm_m.asc
+<span class="linenos"> 43</span>Saturated hydraulic conductivity ---------------(42):
+<span class="linenos"> 44</span>/user/work/km19051/Juba/input/JU_HAD_ksat_utm_m.asc
+<span class="linenos"> 45</span>sigma_Ksat -------------------------------------(44):
+<span class="linenos"> 46</span>none
+<span class="linenos"> 47</span>Initial soil water content ---------------------(46):
+<span class="linenos"> 48</span>/user/work/km19051/Juba/input/Juba_IM_sim_ini_avg_tht_ini.asc
+<span class="linenos"> 49</span>Other ------------------------------------------(48):
+<span class="linenos"> 50</span>/user/work/km19051/Juba/input/JU_HAD_ksat_utm_m.asc
+<span class="linenos"> 51</span>=== GROUNDWATER PARAMETER AND BOUNDARY CONDITIONS ===
+<span class="linenos"> 52</span>Groundwater Boundary condition (domain) --------(51):
+<span class="linenos"> 53</span>none
+<span class="linenos"> 54</span>Aquifer Sat. Hydraulic Conductivity (Ksat_aq) --(53):
+<span class="linenos"> 55</span>/user/work/km19051/Juba/input/JU_HAD_ksat_D2E_ksat_utm_sim_28.asc
+<span class="linenos"> 56</span>Specific Yield----------------------------------(55):
+<span class="linenos"> 57</span>/user/work/km19051/Juba/input/JU_HAD_ksat_D2E_sy_ghlymps_utm.asc
+<span class="linenos"> 58</span>Initial Conditions Water table elevation -------(57):
+<span class="linenos"> 59</span>/user/work/km19051/Juba/input/Juba_IM_sim_ini_avg_wte_ini.asc
+<span class="linenos"> 60</span>Flux Boundary Conditions -----------------------(59):
+<span class="linenos"> 61</span>none
+<span class="linenos"> 62</span>Head Boundary Conditions -----------------------(61):
+<span class="linenos"> 63</span>/user/work/km19051/Juba/input/HAD_basin_Juba_CHB.asc
+<span class="linenos"> 64</span>Aquifer bottom elevation -----------------------(63):
+<span class="linenos"> 65</span>/user/work/km19051/Juba/input/JU_HAD_botb.asc
+<span class="linenos"> 66</span>============== METEOROLOGICAL DATA ==================
+<span class="linenos"> 67</span>Precipitation ----------------------------------(66):
+<span class="linenos"> 68</span>/user/work/km19051/dataset/IMERG/YYYY/IMERG_YYYY-MM.nc
+<span class="linenos"> 69</span>Potential Evapotranspiration -------------------(68):
+<span class="linenos"> 70</span>/user/work/km19051/dataset/ERA/HAD_pet_H_YYYY.nc
+<span class="linenos"> 71</span>Other-------------------------------------------(70):
+<span class="linenos"> 72</span>none
+<span class="linenos"> 73</span>Other ------------------------------------------(72):
+<span class="linenos"> 74</span>none
+<span class="linenos"> 75</span>======== RESULTS AND OUTPUT DIRECTORIES ============= 
+<span class="linenos"> 76</span>Discharge point results ------------------------(75):
+<span class="linenos"> 77</span>/user/work/km19051/Juba/input/HAD_juba_dryp_station_utm.csv
+<span class="linenos"> 78</span>Soil point results output ----------------------(77):
+<span class="linenos"> 79</span>/user/work/km19051/Juba/input/HAD_juba_dryp_station_utm.csv
+<span class="linenos"> 80</span>Groundwater point results ----------------------(79):
+<span class="linenos"> 81</span>/user/work/km19051/Juba/input/HAD_juba_dryp_station_utm.csv
+<span class="linenos"> 82</span>Folder location results ------------------------(81):
+<span class="linenos"> 83</span>/user/work/km19051/Juba_output
+<span class="linenos"> 84</span>Other ------------------------------------------(83):
+<span class="linenos"> 85</span>none
+<span class="linenos"> 86</span>Other ------------------------------------------(85):
+<span class="linenos"> 87</span>none
+<span class="linenos"> 88</span>MODEL PARAMETER SETTINGS FILE ------------------(87):
+<span class="linenos"> 89</span>/user/work/km19051/Juba/HAD_IMERG_Juba_par_setting.dwapm
+<span class="linenos"> 90</span>GROUNDWATER AND the TWO-LAYER MODEL FILES ------(89):
+<span class="linenos"> 91</span>/user/work/km19051/Juba/HAD_GW_parameters.dwapm
+<span class="linenos"> 92</span>INTERCEPTION MODEL -----------------------------(91):
+<span class="linenos"> 93</span>none
+<span class="linenos"> 94</span>RIPARIAN PROPERTIES ----------------------------(93):
+<span class="linenos"> 95</span>/user/work/km19051/Juba/HAD_riparian_inputs.txt
+<span class="linenos"> 96</span>SURFACE BOUNDARY CONDITION PARAMETERS ----------(95):
+<span class="linenos"> 97</span>none
+<span class="linenos"> 98</span>PROJECTION DATASETS ----------------------------(97):
+<span class="linenos"> 99</span>/user/work/km19051/Juba/HAD_projection.dwapm
+<span class="linenos">100</span>STORE VARIABLES SETTINGS -----------------------(99)
+<span class="linenos">101</span>none
+</pre></div>
+</div>
+</section>
+<section id="simulation-settings-file">
+<h3>Simulation settings file<a class="headerlink" href="#simulation-settings-file" title="Permalink to this heading"></a></h3>
+<section id="simulation-parameter-file">
+<h4>Simulation parameter file<a class="headerlink" href="#simulation-parameter-file" title="Permalink to this heading"></a></h4>
+<p>Information about simulation parameters such as period or time step must be provided in a plain text file.
+This file contains parameters that control the simulations such as simulation period, format of input
+files as well as the activation of model components such as groundwater flow.</p>
+<p>The simulation settings file has to include in the first line the following text <em>DWAPM_SET</em>,
+as shown in the example below, omitting the first line will stop the simulation. Lines with numerical values
+are allowed to change. The change of position of lines will also result in inconsitent results or even stopping the model.</p>
+</section>
+<section id="simulation-period">
+<h4><em>Simulation period}</em><a class="headerlink" href="#simulation-period" title="Permalink to this heading"></a></h4>
+<p>Information related to simulation period should be specified as the initial and final date of the simulation
+and must be specified in lines 4 and 6. Date must be specified as integers separated by spaces (e.g. 2001 1 9),
+zeros on the left side are not allowed (e.g 2001 01 19, will raise an error).</p>
+</section>
+<section id="simulation-time-step">
+<h4><em>Simulation time step</em><a class="headerlink" href="#simulation-time-step" title="Permalink to this heading"></a></h4>
+<p>Simulation time step for each component must be specified at lines 8, 10, and 12, for the surface, subsurface,
+and groundwater component, respectively. Time has to be specified in
+minutes, with a maximum time step of one day (1440 min). Time step must be an integer, and values must be
+rational fraction of the hour (e.g 20 min is allowed but 25 will stop the simulation) when sub-hourly time
+step is set. In case of hourly time steps, it must be a rational fraction of the day (e.g. 180 min (3h) is
+allowed but 300 min (5h) will result in errors). The time step of the groundwater components can not be less
+than the surface component.</p>
+</section>
+<section id="forcing-data-format">
+<h4><em>Forcing data format</em><a class="headerlink" href="#forcing-data-format" title="Permalink to this heading"></a></h4>
+<p>The format of precipitation, evapotranspiration, vegetation, boundary conditions, and water abstraction files
+must be specified in lines 15. The following options are available:</p>
+<ol class="arabic simple" start="0">
+<li><p>csv file (only one file, that will be applied to the whole model domain)</p></li>
+<li><p>netCDF file, only when one file is provided for the entire simulation period.</p></li>
+<li><p>netCDF files, when yearly files are provided</p></li>
+<li><p>netCDF fiels, when monthly fiels are provided</p></li>
+</ol>
+<p>The time frequency of the of model input files should be specified on line 17, and it should be
+in minutes as time units. Note that it is not the time step of the model, it is only of the forcing
+dataset.</p>
+<p>The model also accept datasets that are not in the model grid projection, or do not
+have the same grid size. For those cases, we can specified if each dataset requires
+a reprojection and/or interpolation. These options can be activated by changing the
+value from 0 to 1 on each of the corresponding dataset values on line 19 and 21 for
+reprojection and interpolation, respectively. The order of the reading iptions parameters
+is not allowed to change, it will result in errors or even stop the simulation.</p>
+<p>The order must allways follow: Precipitation, potential evapotranspiration,
+abstractions, crop factor (Kc), vegetation paramters (SAVI), overald flux boundary
+conditions. The following is an example of the configuration of reading parameters
+options.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">READING</span> <span class="n">OPTIONS</span><span class="p">:</span> <span class="n">PRE</span><span class="o">-</span><span class="n">PET</span><span class="o">-</span><span class="n">ABS</span><span class="o">-</span><span class="n">Kc</span><span class="o">-</span><span class="n">SAVI</span><span class="o">-</span><span class="n">FLUX</span> <span class="o">==========</span>
+<span class="n">Read</span> <span class="n">datasets</span><span class="p">:</span> <span class="mi">0</span><span class="o">-</span><span class="n">csv</span> <span class="mi">1</span><span class="o">-</span><span class="n">One</span><span class="o">-</span><span class="n">netCDF</span> <span class="mi">2</span><span class="o">-</span><span class="n">Multi</span><span class="o">-</span><span class="n">netCDF</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>
+<span class="mi">3</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="n">Dataset</span> <span class="n">time</span> <span class="n">step</span> <span class="p">(</span><span class="n">minutes</span><span class="p">)</span><span class="o">.....................</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+<span class="mi">30</span> <span class="mi">60</span> <span class="mi">60</span> <span class="mi">60</span> <span class="mi">60</span> <span class="mi">60</span> <span class="mi">60</span> <span class="mi">60</span> <span class="mi">60</span> <span class="mi">60</span>
+<span class="n">Reproject</span> <span class="n">datasets</span><span class="p">:</span> <span class="mi">0</span><span class="o">-</span> <span class="n">disable</span> <span class="mi">1</span><span class="o">-</span> <span class="n">disable</span> <span class="o">......</span><span class="p">(</span><span class="mi">17</span><span class="p">)</span>
+<span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="n">Interpolate</span> <span class="n">datasets</span><span class="p">:</span> <span class="mi">0</span><span class="o">-</span> <span class="n">disable</span> <span class="mi">1</span><span class="o">-</span> <span class="n">disable</span> <span class="o">....</span><span class="p">(</span><span class="mi">19</span><span class="p">)</span>
+<span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+<section id="infiltration-method-selection">
+<h4>Infiltration method selection<a class="headerlink" href="#infiltration-method-selection" title="Permalink to this heading"></a></h4>
+<p>DRYP has four types of infiltration methods implemented which can be selected by a specific code on
+line 22. The following codes can be chosen depending on the infiltration approach adopted:</p>
+<ol class="arabic simple" start="0">
+<li><p>Schaake model,</p></li>
+<li><p>Philip’s equation,</p></li>
+<li><p>Upscaled Green and Ampt,</p></li>
+<li><p>Modified Green and Ampt method.</p></li>
+</ol>
+</section>
+<section id="groundwater-component-selection">
+<h4>Groundwater component selection<a class="headerlink" href="#groundwater-component-selection" title="Permalink to this heading"></a></h4>
+<p>For the groundwater component, three different approaches for groundwater flow conditions are available:</p>
+<ol class="arabic simple" start="0">
+<li><p>Constant transmissivity,</p></li>
+<li><p>Variable transmissivity with depth, fully unconfined conditions,</p></li>
+<li><p>Transmissivity function,</p></li>
+<li><p>Multi-aquifer settingd, it will enable the use of multiple aquifer types domains (a file must be provided).</p></li>
+</ol>
+<p>The groundwater components can be activated or disabled in line 26, a value of 1 enable the groundwater
+component whereas a value of 0 disables it. A value of 2 will activate a two layer groundwater component
+(this component is still being tested).</p>
+<p>The groundwater approach is specified along with the activation code of the groundwater component as
+shown in the example below (not required for the two-layer model):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Run</span> <span class="n">Groundwater</span> <span class="o">-</span> <span class="n">Type</span><span class="p">:</span> <span class="mi">0</span><span class="o">-</span><span class="n">Cons</span> <span class="mi">1</span><span class="o">-</span><span class="n">Unc</span> <span class="mi">2</span><span class="o">-</span><span class="n">func</span> <span class="mi">3</span><span class="o">-</span><span class="n">Multi</span>
+<span class="mi">1</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>In case that the approach is not specified, the “variable transmissivity”, option 0, is used as default
+approach.</p>
+<p>Line 27 is currently disabled.</p>
+</section>
+<section id="setting-storage-of-model-outputs">
+<h4>Setting storage of model outputs<a class="headerlink" href="#setting-storage-of-model-outputs" title="Permalink to this heading"></a></h4>
+<p>To save model results as netCDF files, lines 33 and 35 of the setting  parameters file need to be modified.
+A value of 1 in line 33 will activate the option save, whereas line 35 is used to specify the aggregation
+frequency. Frequency should be specified as integer and a string character. Accepted character are D for
+days, M for months and Y for years, an example is specified below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Save</span> <span class="n">state</span> <span class="n">results</span> <span class="ow">in</span> <span class="n">netcf</span> <span class="n">files</span><span class="o">...............</span><span class="p">(</span><span class="mi">33</span><span class="p">)</span>
+<span class="mi">1</span>
+<span class="n">Temporal</span> <span class="n">aggregation</span> <span class="n">results</span> <span class="p">(</span><span class="n">eg</span><span class="o">.</span> <span class="mi">3</span><span class="n">M</span> <span class="n">Y</span> <span class="n">H</span><span class="p">)</span><span class="s1">&#39;&#39;</span><span class="o">.....</span><span class="p">(</span><span class="mi">35</span><span class="p">)</span>
+<span class="mi">1</span><span class="n">M</span>
+</pre></div>
+</div>
+<p>Line 37 is currently disabled.</p>
+</section>
+<section id="calibration-factors">
+<h4>Calibration factors<a class="headerlink" href="#calibration-factors" title="Permalink to this heading"></a></h4>
+<p>A set of parameters that globally modify the model parameters are also specified in the simulation settings
+file. Values are scale factors of the following parameters, this values are unitless:</p>
+<ul class="simple">
+<li><p>line 48: kdt, for water partitioning of the Shaake infiltration approach,</p></li>
+<li><p>line 50: kDroot, for rooting depth,</p></li>
+<li><p>line 52: kAWC, for available water content,</p></li>
+<li><p>line 54: kKsat for the saturated hydraulic conductivity of the soil,</p></li>
+<li><p>line 56: kSigma, for the standard deviation of the saturated hydraulic conductivity of the Modified Green and Ampt approach,</p></li>
+<li><p>line 58: kKch, for infiltration rates in the channel,</p></li>
+<li><p>line 60: kT for decay parameter of discharge,</p></li>
+<li><p>line 62: kKaq for aquifer saturated hydraulic conductivity,</p></li>
+<li><p>line 64: kSy for aquifer specific yield factor,</p></li>
+</ul>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>DWAPM_SET
+<span class="linenos"> 2</span>======== SIMULATION PERIOD AND TIME STEP =========
+<span class="linenos"> 3</span>Initial date for simulation (YYYY MM DD) ........(2)
+<span class="linenos"> 4</span>2000 7 1
+<span class="linenos"> 5</span>Initial date for simulation (YYYY MM DD) ........(4)
+<span class="linenos"> 6</span>2006 1 1
+<span class="linenos"> 7</span>OF Time step - dt_Pre (min) - (1440 for daily)...(6)
+<span class="linenos"> 8</span>60
+<span class="linenos"> 9</span>UZ Time step - dt_Pre (min) - (1440 for daily)...(8)
+<span class="linenos">10</span>60
+<span class="linenos">11</span>GW Time step -----------------------------------(10)
+<span class="linenos">12</span>60
+<span class="linenos">13</span>READING OPTIONS: PRE-PET-ABS-Kc-SAVI-FLUX ==========
+<span class="linenos">14</span>Read datasets: 0-csv 1-One-netCDF 2-Multi-netCDF(13)
+<span class="linenos">15</span>3 2 0 0 0 0 0 0
+<span class="linenos">16</span>Dataset time step (minutes).....................(15)
+<span class="linenos">17</span>30 60 60 60 60 60 60 60 60 60
+<span class="linenos">18</span>Reproject datasets: 0- disable 1- disable ......(17)
+<span class="linenos">19</span>1 1 0 0 0 0 0 0
+<span class="linenos">20</span>Interpolate datasets: 0- disable 1- disable ....(19)
+<span class="linenos">21</span>1 1 0 0 0 0 0 0
+<span class="linenos">22</span>============== MODEL COMPONENTS ====================
+<span class="linenos">23</span>Inf.- 0: Scheeke 1: Philips 2: Up_GA 3: Mod_GA..(22)
+<span class="linenos">24</span>1
+<span class="linenos">25</span>Run Groundwater - Type: 0-Cons 1-Unc 2-func 3-Mu(24)
+<span class="linenos">26</span>1 2
+<span class="linenos">27</span>not used .......................................(26)
+<span class="linenos">28</span>none
+<span class="linenos">29</span>not used .......................................(28)
+<span class="linenos">30</span>none
+<span class="linenos">31</span>=============== OUTPUT OPTIONS ====================
+<span class="linenos">32</span>not used ................................... ...(31)
+<span class="linenos">33</span>0
+<span class="linenos">34</span>Save state results in netcf files...............(33)
+<span class="linenos">35</span>1
+<span class="linenos">36</span>Temporal aggregation results (eg. 3M Y H)&#39;&#39;.....(35)
+<span class="linenos">37</span>1M
+<span class="linenos">38</span>not used .......................................(37)
+<span class="linenos">39</span>0
+<span class="linenos">40</span>not used .......................................(39)
+<span class="linenos">41</span>1
+<span class="linenos">42</span>not used .......................................(41)
+<span class="linenos">43</span>0
+<span class="linenos">44</span>not used .......................................(43)
+<span class="linenos">45</span>1
+<span class="linenos">46</span>============= MODEL PARAMETERS FACTORS ============  
+<span class="linenos">47</span>Runoff partition parameter (kdt-Sheeke).........(46)
+<span class="linenos">48</span>1.0
+<span class="linenos">49</span>Soil Depth factor - kDroot (mm) ................(48)
+<span class="linenos">50</span>1.05
+<span class="linenos">51</span>Not used (available for other parameter)........(50)
+<span class="linenos">52</span>1.0
+<span class="linenos">53</span>Infiltration rate factor - kKsat ...............(52)
+<span class="linenos">54</span>0.25
+<span class="linenos">55</span>Heterogeneity factor - k_sigma - (Upscaled GA)..(54)
+<span class="linenos">56</span>1.0
+<span class="linenos">57</span>Transmission losses factor - kKch ..............(56)
+<span class="linenos">58</span>0.40
+<span class="linenos">59</span>Decay discharge factor - kT  ...................(58)
+<span class="linenos">60</span>21
+<span class="linenos">61</span>Channel width parameter (pe-not activated)......(60)
+<span class="linenos">62</span>1
+<span class="linenos">63</span>Aquifer saturated hydraulic conductivity........(62)
+<span class="linenos">64</span>0.20
+<span class="linenos">65</span>Aquifer specific yield factor...................(64)
+<span class="linenos">66</span>0.08
+</pre></div>
+</div>
+</section>
+</section>
+<section id="riparian-zone-parameter-files">
+<h3>Riparian zone parameter files<a class="headerlink" href="#riparian-zone-parameter-files" title="Permalink to this heading"></a></h3>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>RIPARIAN
+<span class="linenos"> 2</span>Soil porosity: porosity ------------------------(1):
+<span class="linenos"> 3</span>/user/work/km19051/Juba/input/JU_HAD_theta_sat_utm_m.asc
+<span class="linenos"> 4</span>Theta residual ---------------------------------(3):
+<span class="linenos"> 5</span>none
+<span class="linenos"> 6</span>Available Water content (AWC) ------------------(5):
+<span class="linenos"> 7</span>/user/work/km19051/Juba/input/JU_HAD_theta_awc_utm.asc
+<span class="linenos"> 8</span>Wilting Point (wp) -----------------------------(7):
+<span class="linenos"> 9</span>/user/work/km19051/Juba/input/JU_HAD_theta_wp_utm.asc
+<span class="linenos">10</span>Soil Depth (D) ---------------------------------(9):
+<span class="linenos">11</span>/user/work/km19051/Juba/input/JU_HAD_rootdepth_utm_m.asc
+<span class="linenos">12</span>Soi particle distribution parameter (b) --------(11):
+<span class="linenos">13</span>/user/work/km19051/Juba/input/JU_HAD_lambdas_utm_m.asc
+<span class="linenos">14</span>Soil suction head ------------------------------(13):
+<span class="linenos">15</span>/user/work/km19051/Juba/input/JU_HAD_psi_utm_m.asc
+<span class="linenos">16</span>Saturated hydraulic conductivity ---------------(15):
+<span class="linenos">17</span>/user/work/km19051/Juba/input/JU_HAD_ksat_utm_m.asc
+<span class="linenos">18</span>sigma_Ksat -------------------------------------(17):
+<span class="linenos">19</span>none
+<span class="linenos">20</span>Initial soil water content ---------------------(19):
+<span class="linenos">21</span>/user/work/km19051/Juba/input/Juba_IM_sim_ini_avg_tht_rp_ini.asc
+<span class="linenos">22</span>Other ------------------------------------------(21):
+<span class="linenos">23</span>none
+<span class="linenos">24</span>
+</pre></div>
+</div>
+</section>
+<section id="groudwater-parameter-file">
+<h3>Groudwater parameter file<a class="headerlink" href="#groudwater-parameter-file" title="Permalink to this heading"></a></h3>
+<p>The groundwater parameter file should be specified when the model uses
+multi-aquifer and a transmisivity function. If lakes is considered in
+the model, a file, indicating the bathymetry should be provided. An example
+of groundwater paramter file is provided below:</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>GROUNDWATER
+<span class="linenos"> 2</span>Additional parameter a for Aquifer--------------(1):
+<span class="linenos"> 3</span>/user/work/km19051/Juba/input/JU_HAD_BDdepth_utm_m.asc
+<span class="linenos"> 4</span>Additional parameter b for Aquifer--------------(3):
+<span class="linenos"> 5</span>/user/work/km19051/Juba/input/JU_HAD_slopefactor_zero_utm_m.asc
+<span class="linenos"> 6</span>SECOND LAYER PARAMETERS ============================
+<span class="linenos"> 7</span>Bottom elevation second layer ------------------(6):
+<span class="linenos"> 8</span>none
+<span class="linenos"> 9</span>Hydraulic conductivity second layer ------------(8):
+<span class="linenos">10</span>none
+<span class="linenos">11</span>Specific yield second layer -------------------(10):
+<span class="linenos">12</span>none
+<span class="linenos">13</span>Specific storage second layer -----------------(12):
+<span class="linenos">14</span>none
+<span class="linenos">15</span>Inital head conditions second layer------------(14):
+<span class="linenos">16</span>none
+<span class="linenos">17</span>raster aquifer type for GW set 3 --------------(16):
+<span class="linenos">18</span>/user/work/km19051/Juba/input/JU_HAD_aquifer_type_utm_m.asc
+<span class="linenos">19</span>Lake maximum water elevation ------------------(18):
+<span class="linenos">20</span>/user/work/km19051/Juba/input/JU_HAD_lakes_globhaty_utm.asc
+</pre></div>
+</div>
+</section>
+<section id="projection-system-file">
+<h3>Projection system file<a class="headerlink" href="#projection-system-file" title="Permalink to this heading"></a></h3>
+<p>When datasets are not in the same projection system thatn the model domain (UTM),
+a projection settings file should ne provided. It should contain the projection
+system of model, and the projection system of each dataset. An example is presented below:</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>PROJECTION
+<span class="linenos">2</span>Model
+<span class="linenos">3</span>+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs
+<span class="linenos">4</span>Datasets:
+<span class="linenos">5</span>List projection on the order of settings file:
+<span class="linenos">6</span>EPSG:4326
+<span class="linenos">7</span>EPSG:4326
+<span class="linenos">8</span>EPSG:4326
+</pre></div>
+</div>
+</section>
+<section id="vegetation-parameters-file">
+<h3>Vegetation parameters file<a class="headerlink" href="#vegetation-parameters-file" title="Permalink to this heading"></a></h3>
+<p>This component is still under development</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>INTERCEPTION
+<span class="linenos"> 2</span>fraction of vegetation cover ------------------(1):
+<span class="linenos"> 3</span>../DynaVeg/input/DV_frac_cov.asc
+<span class="linenos"> 4</span>Soil-Adjusted Vegetation Index - SAVI----------(3):
+<span class="linenos"> 5</span>../DynaVeg/input/DV_SAVI_all_art_60min.nc
+<span class="linenos"> 6</span>Coeficient of exponential function ------------(5):
+<span class="linenos"> 7</span>../DynaVeg/input/DV_veg_a.asc
+<span class="linenos"> 8</span>Power value for exponential function ----------(7):
+<span class="linenos"> 9</span>../DynaVeg/input/DV_veg_b.asc
+<span class="linenos">10</span>Min Soil-Adjusted Vegetation Index ------------(9):
+<span class="linenos">11</span>../DynaVeg/input/DV_SAVI_min_art_60min.nc
+<span class="linenos">12</span>Max Soil-Adjusted Vegetation Index ------------(11):
+<span class="linenos">13</span>../DynaVeg/input/DV_SAVI_max_art_60min.nc
+<span class="linenos">14</span>Leaf area index -------------------------------(13)
+<span class="linenos">15</span>none
+<span class="linenos">16</span>Soil-Adjusted Vegetation Index - SAVI----------(15):
+<span class="linenos">17</span>../DynaVeg/input/DV_SAVI_all.nc
+<span class="linenos">18</span>Coeficient of exponential function ------------(17):
+<span class="linenos">19</span>../DynaVeg/input/DV_veg_a.asc
+<span class="linenos">20</span>Power value for exponential function ----------(19):
+<span class="linenos">21</span>../DynaVeg/input/DV_veg_b.asc
+<span class="linenos">22</span>Min Soil-Adjusted Vegetation Index ------------(21):
+<span class="linenos">23</span>../DynaVeg/input/DV_SAVI_min_art_60min.nc
+<span class="linenos">24</span>Max Soil-Adjusted Vegetation Index ------------(23):
+<span class="linenos">25</span>../DynaVeg/input/DV_SAVI_max_art_60min.nc
+<span class="linenos">26</span>Leaf area index -------------------------------(25)
+<span class="linenos">27</span>none
+<span class="linenos">28</span>Tap water depth -------------------------------(27)
+<span class="linenos">29</span>../DynaVeg/input/DV_tap_depth.asc
+<span class="linenos">30</span>Final water depth -----------------------------(29)
+<span class="linenos">31</span>../DynaVeg/input/DV_final_depth.asc
+<span class="linenos">32</span>biome-dependent factor ------------------------(31)
+<span class="linenos">33</span>../DynaVeg/input/DV_fcw.asc
+<span class="linenos">34</span>Initial canopy water storage ------------------(33)
+<span class="linenos">35</span>../DynaVeg/input/DV_Sca0.asc
+</pre></div>
+</div>
+</section>
+<section id="overland-flow-boundary-condition-file">
+<h3>Overland flow boundary condition file<a class="headerlink" href="#overland-flow-boundary-condition-file" title="Permalink to this heading"></a></h3>
+<p>This component is still under development:</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>OFBC
+<span class="linenos">2</span>Flux data for time variable boundary conditions ----(1)
+<span class="linenos">3</span>../DynaVeg/input/DV_OF_flux.csv
+<span class="linenos">4</span>List points or raster map if netCDF not provided ---(3):
+<span class="linenos">5</span>../DynaVeg/input/DV_flux_points.csv
+<span class="linenos">6</span>other ----------------------------------------------(5):
+<span class="linenos">7</span>none
+<span class="linenos">8</span>other ----------------------------------------------(7):
+</pre></div>
+</div>
+</section>
+<section id="store-variables-settings-file">
+<h3>Store variables settings file<a class="headerlink" href="#store-variables-settings-file" title="Permalink to this heading"></a></h3>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>{&quot;store_var_grid&quot;:{
+&#39;pre&#39;: True,
+&#39;pet&#39;: True,
+&#39;run&#39;: True,
+&#39;aet&#39;: True,
+&#39;inf&#39;: True,
+&#39;tht&#39;: True,
+&#39;rch&#39;: True,
+&#39;egw&#39;: True,
+&#39;wte&#39;: True,
+&#39;gdh&#39;: True,
+&#39;twsc&#39;: True,
+&#39;chb&#39;: True,
+&#39;tls&#39;: True,
+},
+&quot;store_var_point&quot;:{
+&#39;aet&#39;: True,
+&#39;inf&#39;: True,
+&#39;dis&#39;: True,
+&#39;tht&#39;: True,
+&#39;rch&#39;: True,
+&#39;wte&#39;: True,
+&#39;gdh&#39;: True,
+&#39;ssz&#39;: True,
+},
+&quot;store_var_avg&quot;: {
+&#39;pre&#39;: True,
+&#39;pet&#39;: True,
+&#39;run&#39;: True,
+&#39;aet&#39;: True,
+&#39;inf&#39;: True,
+&#39;tht&#39;: True,
+&#39;rch&#39;: True,
+&#39;egw&#39;: True,
+&#39;wte&#39;: True,
+&#39;gdh&#39;: True,
+&#39;twsc&#39;: True,
+&#39;chb&#39;: True,
+&#39;tls&#39;: True,
+},
+&quot;store_ver_grid_rp&quot;: {
+&#39;aet&#39;: True,
+&#39;fch&#39;: True,
+&#39;tls&#39;: True,
+&#39;tht&#39;: True,
+&#39;ssz&#39;: True,
+}
+}
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="introduction.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="processing.html" class="btn btn-neutral float-right" title="Pre- and post-processing tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Andres Quichimbo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

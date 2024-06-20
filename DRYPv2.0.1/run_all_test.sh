@@ -1,0 +1,17 @@
+cd tests
+python test_precipitation.py
+python test_precipitation_csv.py
+python test_infiltration.py
+python test_soil_layer.py
+python test_flow_accum_fortran.py
+python test_gw_sw_interaction.py
+python test_groundwater_multyaq_ss.py
+python test_groundwater_multyaq.py
+python test_groundwater_ss_slopefactor.py
+python test_groundwater.py
+python test_save_necdf.py
+python test_save_csv.py
+python test_dryp_model.py
+python test_dryp_tilted_V.py
+python test_dryp.py
+python test_basin_delineation.py

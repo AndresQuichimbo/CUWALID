@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hydrological model: DRYP &mdash; dryptools 2023 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="dryp.components package" href="dryp.components.html" />
+    <link rel="prev" title="API reference" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            dryptools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dryp_model.html">DRYP: Dryland Water Partitioning model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="processing.html">Pre- and post-processing tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">A Short Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Hydrological model: DRYP</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html">dryp.components package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dryp-main-dryp-module">dryp.main_DRYP module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dryp-main-dryp23-module">dryp.main_DRYP23 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dryp-main-dryp-ss-module">dryp.main_DRYP_SS module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dryp-main-drypv2-ss-module">dryp.main_DRYPv2_SS module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dryp-run-model-module">dryp.run_model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dryp-run-model-ss-module">dryp.run_model_SS module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dryp-run-model-input-module">dryp.run_model_input module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-dryp">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="DRYP_pptools.html">DRYP post processing tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DRYP_rrtools.html">DRYP raster processing tools</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">dryptools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">API reference</a></li>
+      <li class="breadcrumb-item active">Hydrological model: DRYP</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/dryp.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hydrological-model-dryp">
+<h1>Hydrological model: DRYP<a class="headerlink" href="#hydrological-model-dryp" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dryp.components.html">dryp.components package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_ABM_connector">dryp.components.DRYP_ABM_connector module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_ABM_connector.ABM"><code class="docutils literal notranslate"><span class="pre">ABM()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_ABM_connector.ABMconnector"><code class="docutils literal notranslate"><span class="pre">ABMconnector</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_ABM_connector.ABMconnector.run_ABM_one_step"><code class="docutils literal notranslate"><span class="pre">ABMconnector.run_ABM_one_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_ABM_connector.ABMconnector.work_out_stable_timestep"><code class="docutils literal notranslate"><span class="pre">ABMconnector.work_out_stable_timestep()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_GW_SW_conector">dryp.components.DRYP_GW_SW_conector module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_GW_SW_conector.update_2layer_soil"><code class="docutils literal notranslate"><span class="pre">update_2layer_soil()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_GW_SW_conector.update_soil"><code class="docutils literal notranslate"><span class="pre">update_soil()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_store_functions">dryp.components.DRYP_Gen_Func module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_functions.GlobalGridVar"><code class="docutils literal notranslate"><span class="pre">GlobalGridVar</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_functions.GlobalGridVar.save_csv_var"><code class="docutils literal notranslate"><span class="pre">GlobalGridVar.save_csv_var()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_functions.GlobalGridVar.save_netCDF_var"><code class="docutils literal notranslate"><span class="pre">GlobalGridVar.save_netCDF_var()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_functions.GlobalGridVar.store_variables"><code class="docutils literal notranslate"><span class="pre">GlobalGridVar.store_variables()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_functions.addtime"><code class="docutils literal notranslate"><span class="pre">addtime()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_functions.del_all"><code class="docutils literal notranslate"><span class="pre">del_all()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_functions.drop_false_keys"><code class="docutils literal notranslate"><span class="pre">drop_false_keys()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_functions.get_list_of_length_field_dict"><code class="docutils literal notranslate"><span class="pre">get_list_of_length_field_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_functions.remove_variables_from_dict"><code class="docutils literal notranslate"><span class="pre">remove_variables_from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_functions.save_map_to_rastergrid"><code class="docutils literal notranslate"><span class="pre">save_map_to_rastergrid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_functions.save_map_to_rastergrid2"><code class="docutils literal notranslate"><span class="pre">save_map_to_rastergrid2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_functions.str2timedelta"><code class="docutils literal notranslate"><span class="pre">str2timedelta()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_abstractions">dryp.components.DRYP_abstractions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_abstractions.abstractions"><code class="docutils literal notranslate"><span class="pre">abstractions</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_abstractions.abstractions.run_abstractions_one_step"><code class="docutils literal notranslate"><span class="pre">abstractions.run_abstractions_one_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_abstractions.abstractions.work_out_stable_timestep"><code class="docutils literal notranslate"><span class="pre">abstractions.work_out_stable_timestep()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_change_input_files">dryp.components.DRYP_change_input_files module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_change_input_files.write_sim_file"><code class="docutils literal notranslate"><span class="pre">write_sim_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_flow_accum">dryp.components.DRYP_flow_accum module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_flow_accum.Create_parameter_WV"><code class="docutils literal notranslate"><span class="pre">Create_parameter_WV()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_flow_accum.TransLossWV"><code class="docutils literal notranslate"><span class="pre">TransLossWV()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_flow_accum.exp_decay_loss_wp"><code class="docutils literal notranslate"><span class="pre">exp_decay_loss_wp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_flow_accum.exp_decay_wp"><code class="docutils literal notranslate"><span class="pre">exp_decay_wp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_flow_accum.find_discharge_and_losses"><code class="docutils literal notranslate"><span class="pre">find_discharge_and_losses()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_flow_accum.find_drainage_area"><code class="docutils literal notranslate"><span class="pre">find_drainage_area()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_flow_accum.find_watersheds"><code class="docutils literal notranslate"><span class="pre">find_watersheds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_flow_accum.runoff_routing"><code class="docutils literal notranslate"><span class="pre">runoff_routing</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_flow_accum.runoff_routing.run_runoff_one_step"><code class="docutils literal notranslate"><span class="pre">runoff_routing.run_runoff_one_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_flow_accum.watershed"><code class="docutils literal notranslate"><span class="pre">watershed</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_flow_accum.watershed.get_watersheds"><code class="docutils literal notranslate"><span class="pre">watershed.get_watersheds()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#dryp-components-dryp-flow-accumf90-module">dryp.components.DRYP_flow_accumf90 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#dryp-components-dryp-groundwater-efd-module">dryp.components.DRYP_groundwater_EFD module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_groundwater_EFD_SS">dryp.components.DRYP_groundwater_EFD_SS module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_groundwater_EFD_SS.exponential"><code class="docutils literal notranslate"><span class="pre">exponential()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_groundwater_EFD_SS.exponential_T"><code class="docutils literal notranslate"><span class="pre">exponential_T()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_groundwater_EFD_SS.gwflow_EFD"><code class="docutils literal notranslate"><span class="pre">gwflow_EFD</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_groundwater_EFD_SS.gwflow_EFD.run_one_step_gw_SS"><code class="docutils literal notranslate"><span class="pre">gwflow_EFD.run_one_step_gw_SS()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_groundwater_EFD_SS.regularization"><code class="docutils literal notranslate"><span class="pre">regularization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_groundwater_EFD_SS.regularization_T"><code class="docutils literal notranslate"><span class="pre">regularization_T()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_infiltration">dryp.components.DRYP_infiltration module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_infiltration.Gauss2p"><code class="docutils literal notranslate"><span class="pre">Gauss2p()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_infiltration.Mod_GA"><code class="docutils literal notranslate"><span class="pre">Mod_GA()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_infiltration.Newthon_Rap_Mod_GA"><code class="docutils literal notranslate"><span class="pre">Newthon_Rap_Mod_GA()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_infiltration.Philip"><code class="docutils literal notranslate"><span class="pre">Philip()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_infiltration.SCHAAKE"><code class="docutils literal notranslate"><span class="pre">SCHAAKE()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_infiltration.Upscaled_GA"><code class="docutils literal notranslate"><span class="pre">Upscaled_GA()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_infiltration.dF_GA"><code class="docutils literal notranslate"><span class="pre">dF_GA()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_infiltration.epsilon_fks"><code class="docutils literal notranslate"><span class="pre">epsilon_fks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_infiltration.f_GA"><code class="docutils literal notranslate"><span class="pre">f_GA()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_infiltration.getX"><code class="docutils literal notranslate"><span class="pre">getX()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_infiltration.infiltration"><code class="docutils literal notranslate"><span class="pre">infiltration</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_infiltration.infiltration.run_infiltration_one_step"><code class="docutils literal notranslate"><span class="pre">infiltration.run_infiltration_one_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_infiltration.infiltration_model"><code class="docutils literal notranslate"><span class="pre">infiltration_model()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_interception">dryp.components.DRYP_interception module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_interception.get_LAI_from_SAVI"><code class="docutils literal notranslate"><span class="pre">get_LAI_from_SAVI()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_interception.get_Scmax_from_LAI"><code class="docutils literal notranslate"><span class="pre">get_Scmax_from_LAI()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_interception.get_Scmax_from_LAI_and_fcw"><code class="docutils literal notranslate"><span class="pre">get_Scmax_from_LAI_and_fcw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_interception.get_vegetation_factor"><code class="docutils literal notranslate"><span class="pre">get_vegetation_factor()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_interception.interception"><code class="docutils literal notranslate"><span class="pre">interception</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_interception.interception.run_interception_one_step"><code class="docutils literal notranslate"><span class="pre">interception.run_interception_one_step()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_io">dryp.components.DRYP_io module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io.create_coordinate_array"><code class="docutils literal notranslate"><span class="pre">create_coordinate_array()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io.extract_id_from_coords"><code class="docutils literal notranslate"><span class="pre">extract_id_from_coords()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io.extract_id_from_raster"><code class="docutils literal notranslate"><span class="pre">extract_id_from_raster()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io.grid_environment"><code class="docutils literal notranslate"><span class="pre">grid_environment</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io.grid_environment.create_grid"><code class="docutils literal notranslate"><span class="pre">grid_environment.create_grid()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io.groundwater_parameters"><code class="docutils literal notranslate"><span class="pre">groundwater_parameters</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io.interception_parameters"><code class="docutils literal notranslate"><span class="pre">interception_parameters</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io.model_environment_status"><code class="docutils literal notranslate"><span class="pre">model_environment_status</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io.set_initial_conditions"><code class="docutils literal notranslate"><span class="pre">set_initial_conditions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io.soil_parameters"><code class="docutils literal notranslate"><span class="pre">soil_parameters</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io.surface_parameters"><code class="docutils literal notranslate"><span class="pre">surface_parameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io.surface_parameters.points_output"><code class="docutils literal notranslate"><span class="pre">surface_parameters.points_output()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_io_files">dryp.components.DRYP_io_files module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io_files.get_list_of_groundwater_files"><code class="docutils literal notranslate"><span class="pre">get_list_of_groundwater_files</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io_files.get_list_of_interception_hillslope_files"><code class="docutils literal notranslate"><span class="pre">get_list_of_interception_hillslope_files</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io_files.get_list_of_interception_riparian_files"><code class="docutils literal notranslate"><span class="pre">get_list_of_interception_riparian_files</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io_files.get_list_of_riparian_soil_files"><code class="docutils literal notranslate"><span class="pre">get_list_of_riparian_soil_files</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io_files.get_list_of_soil_files"><code class="docutils literal notranslate"><span class="pre">get_list_of_soil_files</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io_files.get_list_of_surface_files"><code class="docutils literal notranslate"><span class="pre">get_list_of_surface_files</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_io_files.get_model_settings"><code class="docutils literal notranslate"><span class="pre">get_model_settings</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#dryp-components-dryp-plot-module">dryp.components.DRYP_plot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_plot_fun">dryp.components.DRYP_plot_fun module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_plot_fun.DRYP_plot"><code class="docutils literal notranslate"><span class="pre">DRYP_plot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_plot_fun.DRYP_plot.plot_avg_var"><code class="docutils literal notranslate"><span class="pre">DRYP_plot.plot_avg_var()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_plot_fun.DRYP_plot.plot_point_var"><code class="docutils literal notranslate"><span class="pre">DRYP_plot.plot_point_var()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_projection">dryp.components.DRYP_projection module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_projection.reproject_dataset"><code class="docutils literal notranslate"><span class="pre">reproject_dataset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_projection.reproject_dataset_old"><code class="docutils literal notranslate"><span class="pre">reproject_dataset_old()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_read_dataset">dryp.components.DRYP_read_dataset module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_read_dataset.read_dataset"><code class="docutils literal notranslate"><span class="pre">read_dataset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_read_dataset.read_dataset.get_one_step_dataset"><code class="docutils literal notranslate"><span class="pre">read_dataset.get_one_step_dataset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_read_dataset.read_dataset_interp"><code class="docutils literal notranslate"><span class="pre">read_dataset_interp</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_read_dataset.read_dataset_interp.get_one_step_dataset"><code class="docutils literal notranslate"><span class="pre">read_dataset_interp.get_one_step_dataset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_read_dataset.read_temporal_dataset"><code class="docutils literal notranslate"><span class="pre">read_temporal_dataset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_read_dataset.read_temporal_dataset.get_dataset_one_step"><code class="docutils literal notranslate"><span class="pre">read_temporal_dataset.get_dataset_one_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_read_dataset.read_temporal_dataset.get_point_dataset_one_step"><code class="docutils literal notranslate"><span class="pre">read_temporal_dataset.get_point_dataset_one_step()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#dryp-components-dryp-read-meteo-module">dryp.components.DRYP_read_meteo module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_routing">dryp.components.DRYP_routing module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.Create_parameter_ManningTL"><code class="docutils literal notranslate"><span class="pre">Create_parameter_ManningTL()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.Create_parameter_WV"><code class="docutils literal notranslate"><span class="pre">Create_parameter_WV()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.Maning"><code class="docutils literal notranslate"><span class="pre">Maning()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.Manning_Newthon_Rapshon"><code class="docutils literal notranslate"><span class="pre">Manning_Newthon_Rapshon()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.Manning_wide_ch"><code class="docutils literal notranslate"><span class="pre">Manning_wide_ch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.Newthon_R_Manning"><code class="docutils literal notranslate"><span class="pre">Newthon_R_Manning()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.Storage"><code class="docutils literal notranslate"><span class="pre">Storage()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.TransLoss"><code class="docutils literal notranslate"><span class="pre">TransLoss()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.TransLossWV"><code class="docutils literal notranslate"><span class="pre">TransLossWV()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.TransLossWV1"><code class="docutils literal notranslate"><span class="pre">TransLossWV1()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.TransLoss_power"><code class="docutils literal notranslate"><span class="pre">TransLoss_power()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.TranslossManning"><code class="docutils literal notranslate"><span class="pre">TranslossManning()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.dfdyManning"><code class="docutils literal notranslate"><span class="pre">dfdyManning()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.dfmanning"><code class="docutils literal notranslate"><span class="pre">dfmanning()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.exp_decay_loss_wp"><code class="docutils literal notranslate"><span class="pre">exp_decay_loss_wp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.exp_decay_power"><code class="docutils literal notranslate"><span class="pre">exp_decay_power()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.exp_decay_wp"><code class="docutils literal notranslate"><span class="pre">exp_decay_wp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.flow"><code class="docutils literal notranslate"><span class="pre">flow()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.fmaning"><code class="docutils literal notranslate"><span class="pre">fmaning()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.h_radio"><code class="docutils literal notranslate"><span class="pre">h_radio()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.runoff_routing"><code class="docutils literal notranslate"><span class="pre">runoff_routing</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.runoff_routing.base_flow_streams"><code class="docutils literal notranslate"><span class="pre">runoff_routing.base_flow_streams()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.runoff_routing.run_runoff_one_step"><code class="docutils literal notranslate"><span class="pre">runoff_routing.run_runoff_one_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.t_zero"><code class="docutils literal notranslate"><span class="pre">t_zero()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_routing.velocity"><code class="docutils literal notranslate"><span class="pre">velocity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_soil_layer">dryp.components.DRYP_soil_layer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.FAO2L"><code class="docutils literal notranslate"><span class="pre">FAO2L()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.RK4Ph"><code class="docutils literal notranslate"><span class="pre">RK4Ph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.RK4Sh"><code class="docutils literal notranslate"><span class="pre">RK4Sh()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.SWBM"><code class="docutils literal notranslate"><span class="pre">SWBM()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.SWBM1L"><code class="docutils literal notranslate"><span class="pre">SWBM1L()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.SWBM2L"><code class="docutils literal notranslate"><span class="pre">SWBM2L()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.SWBMh"><code class="docutils literal notranslate"><span class="pre">SWBMh()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.SWBPh"><code class="docutils literal notranslate"><span class="pre">SWBPh()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.SWBSh"><code class="docutils literal notranslate"><span class="pre">SWBSh()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.swbm"><code class="docutils literal notranslate"><span class="pre">swbm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.swbm.run_soil_aquifer_one_step"><code class="docutils literal notranslate"><span class="pre">swbm.run_soil_aquifer_one_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.swbm.run_swbm_one_step"><code class="docutils literal notranslate"><span class="pre">swbm.run_swbm_one_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.swbm.water_deficit"><code class="docutils literal notranslate"><span class="pre">swbm.water_deficit()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_soil_layer.variable_soil_depth"><code class="docutils literal notranslate"><span class="pre">variable_soil_depth()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_solvers">dryp.components.DRYP_solvers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_solvers.gauss_seidel_iteration"><code class="docutils literal notranslate"><span class="pre">gauss_seidel_iteration()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components.DRYP_store_parameters">dryp.components.DRYP_store_parameters module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_parameters.get_store_parameters"><code class="docutils literal notranslate"><span class="pre">get_store_parameters</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="dryp.components.html#dryp.components.DRYP_store_parameters.reading"><code class="docutils literal notranslate"><span class="pre">reading()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#dryp-components-transloss-module">dryp.components.TransLoss module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#dryp-components-transloss-old-module">dryp.components.TransLoss_old module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#dryp-components-faccumf90-module">dryp.components.faccumf90 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#dryp-components-gaussf90-module">dryp.components.gaussf90 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#dryp-components-lakesf90-module">dryp.components.lakesf90 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#dryp-components-setup-module">dryp.components.setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dryp.components.html#module-dryp.components">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="dryp-main-dryp-module">
+<h2>dryp.main_DRYP module<a class="headerlink" href="#dryp-main-dryp-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="dryp-main-dryp23-module">
+<h2>dryp.main_DRYP23 module<a class="headerlink" href="#dryp-main-dryp23-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="dryp-main-dryp-ss-module">
+<h2>dryp.main_DRYP_SS module<a class="headerlink" href="#dryp-main-dryp-ss-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="dryp-main-drypv2-ss-module">
+<h2>dryp.main_DRYPv2_SS module<a class="headerlink" href="#dryp-main-drypv2-ss-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="dryp-run-model-module">
+<h2>dryp.run_model module<a class="headerlink" href="#dryp-run-model-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="dryp-run-model-ss-module">
+<h2>dryp.run_model_SS module<a class="headerlink" href="#dryp-run-model-ss-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="dryp-run-model-input-module">
+<h2>dryp.run_model_input module<a class="headerlink" href="#dryp-run-model-input-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-dryp">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dryp" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="API reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dryp.components.html" class="btn btn-neutral float-right" title="dryp.components package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Andres Quichimbo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

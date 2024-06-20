@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dryp.components.DRYP_io_files &mdash; dryptools 2023 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            dryptools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_model.html">DRYP: Dryland Water Partitioning model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Pre- and post-processing tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">A Short Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">dryptools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dryp.components.DRYP_io_files</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dryp.components.DRYP_io_files</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">dryp.components.DRYP_store_parameters</span> <span class="kn">import</span> <span class="n">get_store_parameters</span>
+
+<div class="viewcode-block" id="get_model_settings"><a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_io_files.get_model_settings">[docs]</a><span class="k">class</span> <span class="nc">get_model_settings</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename_inputs</span><span class="p">,</span> <span class="n">first_read</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Model paramter settings and input file namens and location</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">first_read</span> <span class="o">=</span> <span class="n">first_read</span>
+		<span class="c1"># =================================================================</span>
+		<span class="n">filename</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename_inputs</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Mname</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+				
+		<span class="c1">#==================================================================		</span>
+		<span class="c1"># MODEL PARAMETERS SETTINGS		</span>
+		<span class="n">filename_simpar</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">87</span><span class="p">]</span>
+		<span class="n">fsimpar</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename_simpar</span><span class="p">)</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">ini_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;%Y %m </span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;%Y %m </span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dtOF</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dtUZ</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dtSZ</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">10</span><span class="p">])</span>
+		
+		<span class="n">netcdf_opt</span> <span class="o">=</span> <span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+		<span class="n">time_step</span> <span class="o">=</span> <span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+		<span class="n">reproj_opt</span> <span class="o">=</span> <span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+		<span class="n">interp_opt</span> <span class="o">=</span> <span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+				
+		<span class="c1"># Datasets format</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">netcf_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">netcdf_opt</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">netcf_ETo</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">netcdf_opt</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">netcf_ABC</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">netcdf_opt</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">netcf_kc</span> <span class="o">=</span>  <span class="nb">int</span><span class="p">(</span><span class="n">netcdf_opt</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">netcf_Flux</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">netcdf_opt</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">netcf_savi</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">netcdf_opt</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">netcf_savi_min</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">netcdf_opt</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">netcf_savi_max</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">netcdf_opt</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>
+		
+		<span class="c1"># Dataset time step</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_step</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt_ETo</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_step</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt_ABC</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_step</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt_kc</span> <span class="o">=</span>  <span class="nb">int</span><span class="p">(</span><span class="n">time_step</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt_Flux</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">time_step</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt_savi</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">time_step</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt_savi_min</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_step</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt_savi_max</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_step</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>
+		
+		<span class="c1"># Datasets reprojection</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">reproject_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">reproj_opt</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">reproject_ETo</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">reproj_opt</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">reproject_ABC</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">reproj_opt</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">reproject_kc</span> <span class="o">=</span>  <span class="nb">int</span><span class="p">(</span><span class="n">reproj_opt</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">reproject_Flux</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">reproj_opt</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">reproject_savi</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">reproj_opt</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">reproject_savi_min</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">reproj_opt</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">reproject_savi_max</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">reproj_opt</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>
+		
+		<span class="c1"># Datasets interpolate</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">interpolate_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">interp_opt</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">interpolate_ETo</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">interp_opt</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">interpolate_ABC</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">interp_opt</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">interpolate_kc</span> <span class="o">=</span>  <span class="nb">int</span><span class="p">(</span><span class="n">interp_opt</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">interpolate_Flux</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">interp_opt</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>	
+		<span class="bp">self</span><span class="o">.</span><span class="n">interpolate_savi</span> <span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">interp_opt</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">interpolate_savi_min</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">interp_opt</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">interpolate_savi_max</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">interp_opt</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>
+					
+						
+		<span class="bp">self</span><span class="o">.</span><span class="n">inf_method</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">22</span><span class="p">])</span>
+		
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inf_method</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">inf_method</span> <span class="o">=</span> <span class="mi">0</span>
+		
+		<span class="c1"># read groundwater model activation</span>
+		<span class="n">aux_run_GW</span> <span class="o">=</span> <span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">24</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>	
+		<span class="bp">self</span><span class="o">.</span><span class="n">run_GW</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">aux_run_GW</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="c1"># groundwater aquifer funtions</span>
+		<span class="c1"># 0:	Unconfined</span>
+		<span class="c1"># 1:	Constant</span>
+		<span class="c1"># 2:	exponential</span>
+		<span class="c1"># 3:	multiple functions</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">aux_run_GW</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">gw_func</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">aux_run_GW</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">gw_func</span> <span class="o">=</span> <span class="mi">0</span>
+		
+		<span class="c1"># save netcdf files of model results</span>
+		<span class="c1">#self.save_csv = int(fsimpar.DWAPM_SET[31])</span>
+
+		<span class="c1"># save netcdf files of model results</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">save_netcdf</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">33</span><span class="p">])</span>
+		
+		<span class="c1"># save netcdf files of model results</span>
+		<span class="c1">#self.save_results = int(fsimpar.DWAPM_SET[33])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">save_results</span> <span class="o">=</span> <span class="kc">True</span>
+		
+		<span class="c1"># activate lakes</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lakes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">43</span><span class="p">])</span>
+		
+		<span class="c1"># temporal agregation of model outputs</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt_results</span> <span class="o">=</span> <span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">35</span><span class="p">]</span>
+		<span class="c1"># save discharge units</span>
+		<span class="c1"># 0: volumetric</span>
+		<span class="c1"># 1: depth</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">save_dis_depth</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">39</span><span class="p">])</span>
+		
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">)</span> <span class="o">==</span> <span class="mi">66</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">kFlux</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">66</span><span class="p">])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">kFlux</span> <span class="o">=</span> <span class="mi">1</span>
+			
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">)</span> <span class="o">==</span> <span class="mi">68</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">GW_Cond_factor</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">68</span><span class="p">])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">GW_Cond_factor</span> <span class="o">=</span> <span class="mi">50</span>
+		
+		<span class="c1">#</span>
+		<span class="c1"># Unsaturated zone factors =========================================</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kdt_r</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">46</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kDroot</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">48</span><span class="p">])</span>	<span class="c1"># k for soil depth</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kAWC</span> <span class="o">=</span> <span class="mf">1.</span><span class="c1">#float(fsimpar.DWAPM_SET[50])	# k for AWC</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kKsat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">52</span><span class="p">])</span>		<span class="c1"># k for soil infiltration</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">k_sigma_ks</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">54</span><span class="p">])</span>
+		
+		<span class="c1"># River routing factors ============================================</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kKch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">56</span><span class="p">])</span>	<span class="c1"># infiltration on channel</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kTch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">58</span><span class="p">])</span>	<span class="c1"># Runoff decay flow factor</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kpe</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">60</span><span class="p">])</span>
+		
+		<span class="c1"># Saturated zone factors ===========================================</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kKsat_gw</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">62</span><span class="p">])</span>	<span class="c1"># Ksat factor</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kSy_gw</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">64</span><span class="p">])</span>		<span class="c1"># Sy factor</span>
+		
+		<span class="c1"># Read model time step conditions</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">dtOF</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtUZ</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtSZ</span><span class="p">])</span>
+		
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">&gt;</span> <span class="mi">60</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">dt_sub_hourly</span> <span class="o">=</span> <span class="mi">1</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">dt_hourly</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1440</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">unit_sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="mi">1440</span>		<span class="c1">#change mm/d -&gt; mm/dt</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">unit_sim_k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">*</span><span class="mi">24</span><span class="o">/</span><span class="mi">1440</span>	<span class="c1">#change mm/h -&gt; mm/dt</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">kT_units</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="mi">60</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">dt_sub_hourly</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">60</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">dt_hourly</span> <span class="o">=</span> <span class="mi">24</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">unit_sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="mi">60</span>			<span class="c1">#change mm/d -&gt; mm/dt</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">unit_sim_k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="mi">60</span>		<span class="c1">#change mm/h -&gt; mm/dt</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">kT_units</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="mi">60</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">unit_change_manning</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">*</span><span class="mi">60</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mi">5</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Agg_method</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;T&#39;</span>
+		<span class="c1">#self.kpkKch = 1.0							# initial kKch increase for TL</span>
+		<span class="c1">#self.T_str_channel = 0.0					# duration of initial kKch increase for TL</span>
+		<span class="c1">#self.kKch = self.kKch*self.unit_sim_k</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">river_banks</span> <span class="o">=</span> <span class="mf">100.0</span> 					<span class="c1"># Riparian zone with [m]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">run_FAc</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt_OF</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ndays</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end_date</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ini_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
+		
+		<span class="c1"># ipdate final parameters</span>
+		<span class="c1"># read factore</span>
+		<span class="c1">#self.kTch = float(fsimpar.DWAPM_SET[58])</span>
+		<span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">52</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kKsat</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">unit_sim_k</span>
+		<span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">56</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kKch</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">unit_sim_k</span>
+		<span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">58</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kT_units</span><span class="o">*</span><span class="mf">3600.0</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">kTch</span>
+		<span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">62</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kKsat_gw</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">unit_sim_k</span>
+		<span class="c1">#print(type(fsimpar))</span>
+		<span class="c1"># get list of files required to parametererisa the model</span>
+		<span class="c1"># this files can be saved in any python object as long as they</span>
+		<span class="c1"># keep the same name, this allows the use of DRYP_io component</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_surface</span> <span class="o">=</span> <span class="n">get_list_of_surface_files</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">fsimpar</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_soil</span> <span class="o">=</span> <span class="n">get_list_of_soil_files</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">fsimpar</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_riparian</span> <span class="o">=</span> <span class="n">get_list_of_riparian_soil_files</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">fsimpar</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_aquifer</span> <span class="o">=</span> <span class="n">get_list_of_groundwater_files</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">fsimpar</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_interception_hillslope</span> <span class="o">=</span> <span class="n">get_list_of_interception_hillslope_files</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">fsimpar</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_interception_riparian</span> <span class="o">=</span> <span class="n">get_list_of_interception_riparian_files</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">fsimpar</span><span class="p">)</span>
+		
+		<span class="c1">#==================================================================</span>
+		<span class="c1"># Meterological data ==============================================</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_TSPre</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">66</span><span class="p">]</span>	<span class="c1"># Precipitation file</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_TSMeteo</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">68</span><span class="p">]</span>	<span class="c1"># Evapotranspiration file</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_TSABC</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">70</span><span class="p">]</span>	<span class="c1"># Abstraction file: AOF, AUZ, ASZ</span>
+		<span class="c1">#self.fname_savi = filename.drylandmodel[70]</span>
+		<span class="c1">#self.fname_kc = filename.drylandmodel[72]</span>
+		
+		<span class="c1"># READ DATASETS PROJECTION ==========================================		</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_proj</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">proj_model</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">proj_data</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="c1"># check if information of projection is availble</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">==</span> <span class="mi">98</span><span class="p">:</span> <span class="c1"># this component needs to be well integrates!!</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_proj</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">97</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fname_proj</span><span class="p">):</span>
+				<span class="n">dfproj</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fname_proj</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">proj_model</span> <span class="o">=</span> <span class="n">dfproj</span><span class="o">.</span><span class="n">PROJECTION</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">proj_data</span> <span class="o">=</span> <span class="n">dfproj</span><span class="o">.</span><span class="n">PROJECTION</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_store</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">:</span> <span class="c1"># this component needs to be well integrates!!</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_store</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">99</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">store</span> <span class="o">=</span> <span class="n">get_store_parameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fname_store</span><span class="p">)</span>
+			<span class="c1">#if os.path.exists(self.fname_store):</span>
+				<span class="c1">#dfproj = pd.read_csv(self.fname_proj)</span>
+				<span class="c1">#self.proj_model = dfproj.PROJECTION[1]</span>
+				<span class="c1">#self.proj_data = dfproj.PROJECTION[4]</span>
+			<span class="c1">#else:</span>
+			<span class="c1">#	get_store_paramters(self.fname_store)</span>
+
+		<span class="c1"># Vegetation parameters ==========================================</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_TSKc</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span>	<span class="c1"># Vegetation parameter Kc</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_Rip_width</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">23</span><span class="p">]</span><span class="c1">#Available</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_Rip_init</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">25</span><span class="p">]</span> <span class="c1">#Available</span>
+		<span class="c1"># Output files maps ===================================== Print = </span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">DirOutput</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">81</span><span class="p">]</span>		<span class="c1"># Output directory</span>
+		<span class="c1">#reading output points</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_DISpoints</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">75</span><span class="p">]</span>	<span class="c1"># Discharge points</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_SMDpoints</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">77</span><span class="p">]</span>	<span class="c1"># Soil moisture points</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_GWpoints</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">79</span><span class="p">]</span>	<span class="c1"># Groundwater observation points</span>
+		
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model Name: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Mname</span><span class="p">)</span>
+
+		<span class="c1"># Create directories for saving results</span>
+		<span class="c1"># Directory *DirOutput* Created</span>
+		<span class="c1"># Directory *outputcirnetcdf* already exists</span>
+		<span class="c1">#print(&#39;************************************************************&#39;)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;********************* Output Directory **********************&#39;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DirOutput</span><span class="p">):</span>
+			<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DirOutput</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Directory &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DirOutput</span><span class="p">,</span> <span class="s2">&quot; Created &quot;</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Directory &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DirOutput</span><span class="p">,</span> <span class="s2">&quot; already exists&quot;</span><span class="p">)</span>
+				
+		<span class="c1"># Output filenames</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fnameTS_grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DirOutput</span><span class="o">+</span><span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Mname</span> <span class="o">+</span> <span class="s1">&#39;_grid&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fnameTS_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DirOutput</span><span class="o">+</span><span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Mname</span> <span class="o">+</span> <span class="s1">&#39;_p_&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fnameTS_UZ</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DirOutput</span><span class="o">+</span><span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Mname</span> <span class="o">+</span> <span class="s1">&#39;_UZ_&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fnameTS_RZ</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DirOutput</span><span class="o">+</span><span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Mname</span> <span class="o">+</span> <span class="s1">&#39;_RZ_&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fnameTS_RZ_avg</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DirOutput</span><span class="o">+</span><span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Mname</span> <span class="o">+</span> <span class="s1">&#39;_RZ_avg&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fnameTS_avg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DirOutput</span><span class="o">+</span><span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Mname</span> <span class="o">+</span> <span class="s1">&#39;_avg&#39;</span></div>
+				
+
+<div class="viewcode-block" id="get_list_of_interception_hillslope_files"><a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_io_files.get_list_of_interception_hillslope_files">[docs]</a><span class="k">class</span> <span class="nc">get_list_of_interception_hillslope_files</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;get list of file names for reading parameters</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">factors</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Model paramter settings and input file namens and location</span>
+<span class="sd">		&quot;&quot;&quot;</span>	
+		<span class="c1">#==================================================================</span>
+		<span class="c1"># READING MODEL PARAMETER FILES ===================================</span>
+		<span class="c1"># INTERCEPTION COMPONENT</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_interception</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">91</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fname_interception</span><span class="p">):</span>
+			<span class="n">fcp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fname_interception</span><span class="p">)</span>
+			<span class="c1"># Soil component</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_av</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_savi</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_laia</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_laib</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_savi_min</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_savi_max</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_lai</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_tap_depth</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_extintion_depth</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">29</span><span class="p">]</span>			
+			<span class="c1"># filename of initial conditions</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_fcw_canopy</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">31</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_Sc0_canopy</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">33</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1">#Soil component</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_savi</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_av</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_laia</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_laib</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_savi_max</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_savi_min</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_lai</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_tap_depth</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_extintion_depth</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_fcw_canopy</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_Sc0_canopy</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_SoilDepth</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">36</span><span class="p">]</span> <span class="c1"># root zone (D)</span>
+
+		<span class="c1"># Unsaturated zone factors =========================================</span>
+		<span class="c1">#self.kdt_r = float(factors.DWAPM_SET[46])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kDroot</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">48</span><span class="p">])</span>	<span class="c1"># k for soil depth</span></div>
+
+<div class="viewcode-block" id="get_list_of_interception_riparian_files"><a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_io_files.get_list_of_interception_riparian_files">[docs]</a><span class="k">class</span> <span class="nc">get_list_of_interception_riparian_files</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;get list of file names for reading parameters</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">factors</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Model paramter settings and input file namens and location</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_interception</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">91</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fname_interception</span><span class="p">):</span>
+			<span class="n">fcp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fname_interception</span><span class="p">)</span>
+			<span class="c1">#Riparian component</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_av</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_savi</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span>
+			<span class="c1">#self.fname_kc = fcp.INTERCEPTION[3]</span>
+			<span class="c1">#self.fname_avc = fcp.INTERCEPTION[5]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_laia</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_laib</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_savi_min</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_savi_max</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">23</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_lai</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">25</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_tap_depth</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_extintion_depth</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">29</span><span class="p">]</span>
+			<span class="c1"># filename of initial conditions</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_fcw_canopy</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">31</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_Sc0_canopy</span> <span class="o">=</span> <span class="n">fcp</span><span class="o">.</span><span class="n">INTERCEPTION</span><span class="p">[</span><span class="mi">33</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1">#Soil component</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_savi</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_av</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_laia</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_laib</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_savi_max</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_savi_min</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_lai</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_tap_depth</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_extintion_depth</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_fcw_canopy</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_Sc0_canopy</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_SoilDepth</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">36</span><span class="p">]</span> <span class="c1"># root zone (D)</span>
+		<span class="c1"># Unsaturated zone factors =========================================</span>
+		<span class="c1">#self.kdt_r = float(factors.DWAPM_SET[46])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kDroot</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">48</span><span class="p">])</span>	<span class="c1"># k for soil depth</span></div>
+
+<div class="viewcode-block" id="get_list_of_surface_files"><a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_io_files.get_list_of_surface_files">[docs]</a><span class="k">class</span> <span class="nc">get_list_of_surface_files</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;get list of file names for reading parameters</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">factors</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Model paramter settings and input file namens and location</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="c1"># SURFACE COMPONENT ======================================== SZ = </span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_DEM</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+		<span class="c1">#self.fname_Area = filename.drylandmodel[6]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_Qo</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_FlowDir</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_kTchannel</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_Mask</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_River</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_RiverWidth</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_RiverElev</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_Ksat</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">48</span><span class="p">]</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fname_Ksat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_Ksat</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">42</span><span class="p">]</span>
+		<span class="c1"># filename of initial conditions</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_Q_ini</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">48</span><span class="p">]</span>
+
+		<span class="c1"># Boundary conditions ======================================== rz =</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">==</span> <span class="mi">96</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_bc</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">95</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_bc</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_TSOF</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">filename_OF_points</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fname_bc</span><span class="p">):</span>
+			<span class="n">fbc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fname_bc</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_TSOF</span> <span class="o">=</span> <span class="n">fbc</span><span class="o">.</span><span class="n">OFBC</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">filename_OF_points</span> <span class="o">=</span> <span class="n">fbc</span><span class="o">.</span><span class="n">OFBC</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_bathymetry</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span><span class="c1">#filename.drylandmodel[4]</span>
+
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">89</span><span class="p">]):</span>
+			<span class="n">fgw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">89</span><span class="p">])</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_bathymetry</span> <span class="o">=</span> <span class="n">fgw</span><span class="o">.</span><span class="n">GROUNDWATER</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span> <span class="c1"># Constant flux boundary</span>
+
+		<span class="c1"># riparian width</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">==</span> <span class="mi">94</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_riparian_zone</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">93</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_riparian_zone</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_ripwidth</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fname_riparian_zone</span><span class="p">):</span>
+			<span class="n">frz</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fname_riparian_zone</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_ripwidth</span> <span class="o">=</span> <span class="n">frz</span><span class="o">.</span><span class="n">RIPARIAN</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span>	<span class="c1"># riparian width [-]</span>
+
+		<span class="c1"># River routing factors ============================================</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kKch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">56</span><span class="p">])</span>	<span class="c1"># infiltration on channel</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kTch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">58</span><span class="p">])</span>	<span class="c1"># Runoff decay flow factor</span>
+		<span class="c1">#self.kpe = float(fsimpar.DWAPM_SET[60])</span>
+		
+		<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="get_list_of_soil_files"><a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_io_files.get_list_of_soil_files">[docs]</a><span class="k">class</span> <span class="nc">get_list_of_soil_files</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;get list of file names for reading parameters</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">factors</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Model paramter settings and input file namens and location</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="c1"># UNSATURATED COMPONENT ===================================== UZ = </span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_n</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">28</span><span class="p">]</span>		<span class="c1"># porosity (n)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_theta_r</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">30</span><span class="p">]</span>	<span class="c1"># Saturated infiltration rate (a-Ks)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_theta_AWC</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">32</span><span class="p">]</span>		<span class="c1"># Available water content (AWC)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_theta_wp</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">34</span><span class="p">]</span>		<span class="c1"># wilting point (wp)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_SoilDepth</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">36</span><span class="p">]</span> <span class="c1"># root zone (D)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_b_SOIL</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">38</span><span class="p">]</span>	<span class="c1"># Soil parameter alpha (b)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_PSI</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">40</span><span class="p">]</span>		<span class="c1"># Soil parameter alpha (alpha)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_Ksat</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">42</span><span class="p">]</span> <span class="c1"># Saturated infiltration rate (a-Ks)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_sigma_ks</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">44</span><span class="p">]</span>
+		
+		<span class="c1"># filename of inital conditions</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_theta</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">46</span><span class="p">]</span>	<span class="c1"># Initial water content [-]</span>
+		
+		<span class="c1"># Unsaturated zone factors =========================================</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kdt_r</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">46</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kDroot</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">48</span><span class="p">])</span>	<span class="c1"># k for soil depth</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kAWC</span> <span class="o">=</span> <span class="mf">1.</span><span class="c1">#float(factors.DWAPM_SET[50])	# k for AWC</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kKsat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">52</span><span class="p">])</span>	<span class="c1"># k for soil infiltration</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">k_sigma_ks</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">54</span><span class="p">])</span>
+		
+		<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="get_list_of_riparian_soil_files"><a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_io_files.get_list_of_riparian_soil_files">[docs]</a><span class="k">class</span> <span class="nc">get_list_of_riparian_soil_files</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;get list of file names for reading parameters</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">factors</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Model paramter settings and input file namens and location</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="c1"># RIPARIAN COMPONENT ======================================== rz =</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">==</span> <span class="mi">94</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_riparian_zone</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">93</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_riparian_zone</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+			
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fname_riparian_zone</span><span class="p">):</span>
+			<span class="n">frz</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fname_riparian_zone</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_n</span> <span class="o">=</span> <span class="n">frz</span><span class="o">.</span><span class="n">RIPARIAN</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>		<span class="c1"># porosity (n)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_theta_r</span> <span class="o">=</span> <span class="n">frz</span><span class="o">.</span><span class="n">RIPARIAN</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>	<span class="c1"># residual water content</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_theta_AWC</span> <span class="o">=</span> <span class="n">frz</span><span class="o">.</span><span class="n">RIPARIAN</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>		<span class="c1"># Available water content (AWC)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_theta_wp</span> <span class="o">=</span> <span class="n">frz</span><span class="o">.</span><span class="n">RIPARIAN</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>		<span class="c1"># wilting point (wp)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_SoilDepth</span> <span class="o">=</span> <span class="n">frz</span><span class="o">.</span><span class="n">RIPARIAN</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="c1"># riparian root zone depth (D)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_b_SOIL</span> <span class="o">=</span> <span class="n">frz</span><span class="o">.</span><span class="n">RIPARIAN</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>	<span class="c1"># Soil particle distribution (lambda)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_PSI</span> <span class="o">=</span> <span class="n">frz</span><span class="o">.</span><span class="n">RIPARIAN</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span>		<span class="c1"># Air-entry pressure/suction head (psi)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_Ksat</span> <span class="o">=</span> <span class="n">frz</span><span class="o">.</span><span class="n">RIPARIAN</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span>  <span class="c1"># Channel Sat. hydraulic conductivity (Ksat)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_sigma_ks</span> <span class="o">=</span> <span class="n">frz</span><span class="o">.</span><span class="n">RIPARIAN</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span> <span class="c1"># riparian sigma Ksat</span>
+			<span class="c1"># filename of initial conditions</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_theta</span> <span class="o">=</span> <span class="n">frz</span><span class="o">.</span><span class="n">RIPARIAN</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span>	<span class="c1"># Initial water content [-]</span>
+			<span class="c1"># filename riparian channel width</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_ripwidth</span> <span class="o">=</span> <span class="n">frz</span><span class="o">.</span><span class="n">RIPARIAN</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span>	<span class="c1"># Initial water content [-]</span>
+		<span class="k">else</span><span class="p">:</span>	
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_n</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">28</span><span class="p">]</span>		<span class="c1"># riparian porosity (n)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_theta_r</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">30</span><span class="p">]</span>	<span class="c1"># riparian Saturated infiltration rate (a-Ks)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_theta_AWC</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">32</span><span class="p">]</span>		<span class="c1"># riparian Available water content (AWC)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_theta_wp</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">34</span><span class="p">]</span>		<span class="c1"># riparian wilting point (wp)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_SoilDepth</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">36</span><span class="p">]</span><span class="c1"># riparian root zone (D)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_b_SOIL</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">38</span><span class="p">]</span>	<span class="c1"># riparian Soil parameter alpha (b)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_PSI</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">40</span><span class="p">]</span>		<span class="c1"># riparian Soil parameter alpha (alpha)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_sigma_ks</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">44</span><span class="p">]</span> <span class="c1"># riparian sigma Ksat</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_theta</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">46</span><span class="p">]</span>	<span class="c1"># riparian Initial water content [-]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_Ksat</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">48</span><span class="p">]</span>  <span class="c1"># riparian Channel Saturated hydraulic conductivity (Ks)</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fname_Ksat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fname_Ksat</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">42</span><span class="p">]</span>
+			<span class="c1"># filename of inital conditions</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_theta</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">46</span><span class="p">]</span>	<span class="c1"># Initial water content [-]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_ripwidth</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+		
+		<span class="c1"># Unsaturated zone factors =========================================</span>
+		<span class="c1">#self.kdt_r = float(factors.DWAPM_SET[46])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kDroot</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">48</span><span class="p">])</span>	<span class="c1"># k for soil depth</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kAWC</span> <span class="o">=</span> <span class="mf">1.</span><span class="c1">#float(fsimpar.DWAPM_SET[50])	# k for AWC</span>
+		<span class="c1">#self.kKsat = float(factors.DWAPM_SET[52])	# k for soil infiltration</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">k_sigma_ks</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">54</span><span class="p">])</span>
+		
+		<span class="c1"># River routing factors ============================================</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kKsat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">56</span><span class="p">])</span>	<span class="c1"># infiltration on channel</span></div>
+		<span class="c1">#self.kTch = float(factors.DWAPM_SET[58])	# Runoff decay flow factor</span>
+		
+				
+<div class="viewcode-block" id="get_list_of_groundwater_files"><a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_io_files.get_list_of_groundwater_files">[docs]</a><span class="k">class</span> <span class="nc">get_list_of_groundwater_files</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;get list of file names for reading parameters</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">factors</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Model paramter settings and input file namens and location</span>
+<span class="sd">		&quot;&quot;&quot;</span>	
+		
+		<span class="c1"># read groundwater model activation</span>
+		<span class="n">aux_run_GW</span> <span class="o">=</span> <span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">24</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>	
+		<span class="bp">self</span><span class="o">.</span><span class="n">run_GW</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">aux_run_GW</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		
+		<span class="c1"># Groundwater components ==================================== GW = </span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_GWdomain</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">51</span><span class="p">]</span><span class="c1"># GW Boundary conditions</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_SZ_Ksat</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">53</span><span class="p">]</span> <span class="c1"># Saturated hydraulic conductivity (Ks)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_SZ_Sy</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">55</span><span class="p">]</span> 	<span class="c1"># Specific yield</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_FHB</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">59</span><span class="p">]</span>		<span class="c1"># flux head boundary</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_CHB</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">61</span><span class="p">]</span>		<span class="c1"># Constant flux boundary</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_SZ_bot</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">63</span><span class="p">]</span>	<span class="c1"># Aquifer bottom elevation</span>
+		
+		<span class="c1"># additional parameters</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_thickness</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_b_aq</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_aquifertype</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_bathymetry</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">89</span><span class="p">]):</span>
+			<span class="n">fgw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">89</span><span class="p">])</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_thickness</span> <span class="o">=</span> <span class="n">fgw</span><span class="o">.</span><span class="n">GROUNDWATER</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_b_aq</span> <span class="o">=</span> <span class="n">fgw</span><span class="o">.</span><span class="n">GROUNDWATER</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_aquifertype</span> <span class="o">=</span> <span class="n">fgw</span><span class="o">.</span><span class="n">GROUNDWATER</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span> <span class="c1"># Constant flux boundary</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fname_bathymetry</span> <span class="o">=</span> <span class="n">fgw</span><span class="o">.</span><span class="n">GROUNDWATER</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span> <span class="c1"># Constant flux boundary</span>
+		
+		<span class="c1"># groundwater second layer ========================================</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_SZ_botb</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_SZ_Ksatb</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_SZ_Syb</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_SZ_Ssb</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_GWinib</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		<span class="c1">#self.fname_FHBb = &#39;None&#39;</span>
+		<span class="c1">#self.fname_CHBb = &#39;None&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_mask_of</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+		
+		
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_GW</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">89</span><span class="p">]):</span>
+				<span class="n">fgw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">89</span><span class="p">])</span>
+				<span class="c1">#print(fgw.GROUNDWATER)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fname_SZ_botb</span> <span class="o">=</span> <span class="n">fgw</span><span class="o">.</span><span class="n">GROUNDWATER</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>	<span class="c1"># Aquifer bottom elevation</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fname_SZ_Ksatb</span> <span class="o">=</span> <span class="n">fgw</span><span class="o">.</span><span class="n">GROUNDWATER</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="c1"># Saturated hydraulic conductivity (Ks)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fname_SZ_Syb</span> <span class="o">=</span> <span class="n">fgw</span><span class="o">.</span><span class="n">GROUNDWATER</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> 	<span class="c1"># Specific yield</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fname_SZ_Ssb</span> <span class="o">=</span> <span class="n">fgw</span><span class="o">.</span><span class="n">GROUNDWATER</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span> 	<span class="c1"># Specific yield</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fname_GWinib</span> <span class="o">=</span> <span class="n">fgw</span><span class="o">.</span><span class="n">GROUNDWATER</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span> 	<span class="c1"># Initial water table</span>
+				<span class="c1">#self.fname_FHBb = fgw.GROUNDWATER[59]		# flux head boundary</span>
+				<span class="c1">#self.fname_CHBb = fgw.GROUNDWATER[61]		# Constant flux boundary</span>
+				<span class="c1"># only for Manny&#39;s model</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fname_mask_of</span> <span class="o">=</span> <span class="n">fgw</span><span class="o">.</span><span class="n">GROUNDWATER</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span>	<span class="c1"># Constant flux boundary</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fname_lakes_elevation</span> <span class="o">=</span> <span class="n">fgw</span><span class="o">.</span><span class="n">GROUNDWATER</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span>
+		<span class="c1">#print(self.fname_lakes_elevation)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_GWini</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">57</span><span class="p">]</span> 	<span class="c1"># Initial water table</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fname_DEM</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+		<span class="c1"># Saturated zone factors ===========================================</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kKsat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">62</span><span class="p">])</span>	<span class="c1"># Ksat factor</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kSy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">factors</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">64</span><span class="p">])</span>		<span class="c1"># Sy factor</span>
+
+<span class="c1">#def get_store_variables(fname):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function read a file of boolean values indicating the variables to be</span>
+<span class="sd">	save as grid and csv file</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	fname: filename of the paramter setting file</span>
+<span class="sd">	Returns</span>
+<span class="sd">	store_var: python object containing dictionaries to with boolean values</span>
+<span class="sd">	&quot;&quot;&quot;</span></div>
+
+	
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Andres Quichimbo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

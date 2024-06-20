@@ -1,0 +1,23 @@
+version: '3'
+
+networks:
+    default:
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.0.36.0/24
+
+services:
+  dryp2:
+    container_name: dryp-model
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    restart: always
+    security_opt:
+        - no-new-privileges:true
+    volumes:
+      - ../:/srv/projects/dryp
+      - ./:/srv/projects/dryp/docker
+    ipc: host
+    command: [ '/bin/sh', '/srv/projects/dryp/docker/entrypoint.sh' ]

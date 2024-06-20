@@ -1,0 +1,35 @@
+INTERCEPTION
+fraction of vegetation cover ------------------(1):
+../DynaVeg/input/DV_frac_cov.asc
+Soil-Adjusted Vegetation Index - SAVI----------(3):
+../DynaVeg/input/DV_SAVI_all_art_60min.nc
+Coeficient of exponential function ------------(5):
+../DynaVeg/input/DV_veg_a.asc
+Power value for exponential function ----------(7):
+../DynaVeg/input/DV_veg_b.asc
+Min Soil-Adjusted Vegetation Index ------------(9):
+../DynaVeg/input/DV_SAVI_min_art_60min.nc
+Max Soil-Adjusted Vegetation Index ------------(11):
+../DynaVeg/input/DV_SAVI_max_art_60min.nc
+Leaf area index -------------------------------(13)
+none
+Soil-Adjusted Vegetation Index - SAVI----------(15):
+../DynaVeg/input/DV_SAVI_all.nc
+Coeficient of exponential function ------------(17):
+../DynaVeg/input/DV_veg_a.asc
+Power value for exponential function ----------(19):
+../DynaVeg/input/DV_veg_b.asc
+Min Soil-Adjusted Vegetation Index ------------(21):
+../DynaVeg/input/DV_SAVI_min_art_60min.nc
+Max Soil-Adjusted Vegetation Index ------------(23):
+../DynaVeg/input/DV_SAVI_max_art_60min.nc
+Leaf area index -------------------------------(25)
+none
+Tap water depth -------------------------------(27)
+../DynaVeg/input/DV_tap_depth.asc
+Final water depth -----------------------------(29)
+../DynaVeg/input/DV_final_depth.asc
+biome-dependent factor ------------------------(31)
+../DynaVeg/input/DV_fcw.asc
+Initial canopy water storage ------------------(33)
+../DynaVeg/input/DV_Sca0.asc

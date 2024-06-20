@@ -1,0 +1,793 @@
+"""DRYP: post-processing tools."""
+import os
+import xarray as xr
+import numpy as np
+import pandas as pd
+import calendar
+import rasterio
+
+class grid_pptools(object):
+	"""
+	Function to post-processing DRYP model outputs.
+	This function save proccessed variables as netCDF files. 
+
+	Examples
+	--------
+	>>> import DRYP_pptools as pptools
+	>>> gridpp = pptools.grid_pptools(file_model_input)
+	>>> gridpp.get_mean() # save mean values
+	>>> gridpp.get_wrsi() # save wsri
+	>>> gridpp.get_twsa() # save total water storage anomaly
+
+	"""
+	def __init__(self, inputfile):
+		"""Fuction to generate names of model results. This names are
+		then passed to other functions to calculate and save  model
+		results
+		
+		Parameters
+		----------
+		inputfile : str
+			filename including path of the model "input_file"
+		
+		Returns
+		-------
+		object containing strings as filenames
+		"""
+		# Output filenames
+		filename = pd.read_csv(inputfile)
+		self.Mname = filename.drylandmodel[1]
+		# get directories
+		self.DirOutput = filename.drylandmodel[81]
+		self.Dirpostpp = filename.drylandmodel[83]
+		if self.Dirpostpp == "none":
+			self.DirOutput = filename.drylandmodel[81]
+		
+		# get filenames of all outputs
+		self.fname_grid = self.DirOutput+'/' + self.Mname + '_grid.nc'
+		self.fname_point = self.DirOutput+'/' + self.Mname + '_p_'
+		self.fname_UZ = self.DirOutput+'/' + self.Mname + '_UZ_'
+		self.fname_RZ = self.DirOutput+'/' + self.Mname + '_RZ_'
+		self.fname_RZ_avg  = self.DirOutput+'/' + self.Mname + '_RZ_avg'
+		self.fname_avg = self.DirOutput+'/' + self.Mname + '_avg'
+
+		# get filenames post-postproccess outputs
+		self.fname_gridpp = self.Dirpostpp + '/' + self.Mname + '_grid.nc'
+		# model variables list
+		self.var_name = ['pre', 'pet', 'dis', 'aet', 'inf', 'run', 'tht', 
+		   'rch', 'egw', 'wte', 'gdh', 'twsc']
+
+	def get_mean(self, deltat='Y', start_time=None, end_time=None):
+		"""Thids function get mean values of all variables of a netcdf file"""
+		calculate_mean_from_netCDF(self.fname_grid,
+			     fname_out=self.fname_gridpp, 
+				 field=self.var_name,
+				 deltat='Y', start_time=start_time, end_time=end_time)
+
+	def get_wrsi(self, deltat='Y', start_time=None, end_time=None):
+		"""This function gets wrsi index from model outputs"""
+		calculate_WRSI_from_netCDF(self.fname_grid,
+			     fname_out=self.fname_gridpp,
+				 deltat='Y', start_time=start_time, end_time=end_time)
+
+	def get_twsa(self, var_name=None, mean=True, deltat='Y',
+	      start_time=None, end_time=None):
+		"""Get total water storage anomaly from model outputs"""
+		calculate_twsa_from_netCDF(self.fname_grid,
+			     fname_out=self.fname_gridpp,
+				 var_name="twsc", start_time=start_time, end_time=end_time)
+		
+	def get_seasonal_average(self,var_name=None):
+		"""Get seasonal average values"""
+
+	def get_anomalies(self, var_name=None):
+		"""Get anomalies"""
+
+	def get_aridity_index(self, var_name=None):
+		"""Get anomalies"""
+	
+
+		
+def get_output_filenames(fname):
+	"""Function to get all names of model outputs"""
+
+def calculate_anomalies_from_netCDF(fname, field='pre', fname_out=None,
+			       deltat='Y', start_time=None, end_time=None):
+	"""Get anomalies from netcdf filed
+	
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	field :	str
+		model variables to process
+	deltat : str
+		time interval for temporal aggregation.
+	start_time : str
+		starting date for the analysis, "DD-MM-YYYY".
+	end_time : str
+		final date for the analysis, "DD-MM-YYYY".
+
+	Returns
+	-------
+
+	"""
+
+	# pre process Actual evapotranspiration (AET)
+	dataset = preprocesses_netCDF(fname, field,
+				       mean=True, deltat=deltat,
+					   start_time=start_time, end_time=end_time
+					   )
+	# calculate anomaly
+	anomaly = calculate_anomaly(dataset, dataset_mean=None, dim="time")
+
+	# save files
+	if fname_out is None:
+		fname_out = fname
+		fname_out = fname.split('.')[0]+'_wrsi.nc'
+	save_xarray_dataset_as_netcdf(fname_out, anomaly, [field])
+
+	
+def calculate_mean_from_netCDF(fname, field, fname_out=None,
+			       deltat='Y', start_time=None, end_time=None):
+	"""Get mean average values from dataset. The output filename
+	 will be added "mean" at the end of the name.
+
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	field :	list
+		list of model variables to process
+	deltat : str
+		time interval for temporal aggregation.
+	start_time : str
+		starting date for the analysis, "DD-MM-YYYY".
+	end_time : str
+		final date for the analysis, "DD-MM-YYYY".
+
+	Returns
+	-------
+	netCDF file containing all calculated values
+	"""
+
+	# iterate through all fields
+	first_read = True
+	
+	for ifield in field:
+		# read dataset
+		mean = False
+		if (ifield == 'tht') or (ifield == 'wte') or (ifield == "ssz"):
+			mean = True
+		
+		# check if is the riparian area
+		if (ifield == 'fch'):
+			ifname = fname.split('.')[0]+'rp.nc'
+		else:
+			ifname = fname
+		
+		if check_if_field_available_in_netCDF(ifname, ifield) is True:
+			# preporcess netcdf file
+			data = preprocesses_netCDF(ifname, ifield,
+					       mean=mean, deltat=deltat,
+						   start_time=start_time, end_time=end_time
+						   )
+
+			# get mean average values
+			data = data.mean('time')
+
+			# save in only one file all variables
+			if first_read == True:
+				dataset = data.copy()
+				first_read = False
+			else:
+				dataset = xr.merge([dataset, data])
+	
+	# save files
+	if fname_out is None:
+		fname_out = fname
+		fname_out = fname_out.split('.')[0]+'_mean.nc'
+	save_xarray_dataset_as_netcdf(fname_out, dataset, field)
+
+def calculate_WRSI_from_netCDF(fname, fname_out=None, deltat='Y',
+			       start_time=None, end_time=None):
+	"""Get mean average values from dataset.
+
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	field :	list
+		list of model variables to process
+	deltat : str
+		time interval for temporal aggregation.
+	start_time : str
+		starting date for the analysis, "DD-MM-YYYY".
+	end_time : str
+		final date for the analysis, "DD-MM-YYYY".
+
+	Returns
+	-------
+	netCDF file containing all calculated values
+	"""
+	# pre process Actual evapotranspiration (AET)
+	dataset_aet = preprocesses_netCDF(fname, "aet",
+				       mean=True, deltat=deltat,
+					   start_time=start_time, end_time=end_time
+					   )	
+	
+	# pre process Potential evapotranspiration (PET)
+	dataset_pet = preprocesses_netCDF(fname, "pet",
+				       mean=True, deltat=deltat,
+					   start_time=start_time, end_time=end_time
+					   )
+	
+	# save in only one file all variables
+	dataset = calculate_WRSI(dataset_aet, dataset_pet)
+	
+	# assign variable name to the new dataset
+	dataset.name = "wsri"
+	
+	# save files
+	if fname_out is None:
+		fname_out = fname
+		fname_out = fname.split('.')[0]+'_wrsi.nc'
+	save_xarray_dataset_as_netcdf(fname_out, dataset, ["wsri"])
+
+def calculate_twsa_from_netCDF(fname, fname_out=None, var_name="twsc",
+			       start_time=None, end_time=None):
+	"""This funtion calculate the total water storage anomaly
+	 from the dryp model outputs
+	 
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	var_name :	str
+		model variables to process
+	mean : boolean
+		True calulate the mean, False acculumate over time
+	deltat : str
+		time interval for temporal aggregation.
+	start_time : str
+		starting date for the analysis, "DD-MM-YYYY".
+	end_time : str
+		final date for the analysis, "DD-MM-YYYY".
+
+	Returns
+	-------
+	xarray :
+		2D time series mean or sum of tne dataset
+
+	 """
+	data = preprocesses_netCDF(fname, var_name, mean=False, deltat='M',
+			    start_time=start_time, end_time=end_time)
+	data = data.cumsum(dim='time')
+
+	# surface water needs to be added
+	
+	# change variable name to the new dataset
+	data = data.rename("twsa")
+
+	# save files
+	if fname_out is None:
+		fname_out = fname
+		fname_out = fname_out.split('.')[0]+'_twsa.nc'
+	save_xarray_dataset_as_netcdf(fname_out, data, ["twsa"])
+
+
+def calculate_AI_from_netCDF(fname_pre, fname_pet, fname_out=None,
+			     deltat='Y', start_time=None, end_time=None, average=True):
+	"""Get mean average values from dataset.
+
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	field :	list
+		list of model variables to process
+	deltat : str
+		time interval for temporal aggregation.
+	start_time : str
+		starting date for the analysis, "DD-MM-YYYY".
+	end_time : str
+		final date for the analysis, "DD-MM-YYYY".
+	average : bool
+		if True, the long therm average is caluated otherwise it will
+		return a time series dataarray
+
+	Returns
+	-------
+	netCDF file containing all calculated values
+	"""
+	# pre process Actual evapotranspiration (AET)
+	dataset_pre = preprocesses_netCDF(fname_pre, "pre",
+				       mean=True, deltat=deltat,
+					   start_time=start_time, end_time=end_time
+					   )	
+	
+	# pre process Potential evapotranspiration (PET)
+	dataset_pet = preprocesses_netCDF(fname_pet, "pet",
+				       mean=True, deltat=deltat,
+					   start_time=start_time, end_time=end_time
+					   )
+	
+	# save in only one file all variables
+	dataset = calculate_aridity_index(dataset_pre, dataset_pet)
+	
+	# assign variable name to the new dataset
+	dataset.name = "ai"
+	
+	# get mean value or time series
+	if average is True:
+		dataset = dataset.mean(dim='time')
+	
+	# save files
+	if fname_out is None:
+		fname_out = fname_pre
+		fname_out = fname_pre.split('.')[0]+'_ai.nc'
+	save_xarray_dataset_as_netcdf(fname_out, dataset, ["ai"])
+
+
+def calculate_seasonal_average_from_netCDF(fname, var_name='pre', season="OND",
+			       fname_out=None, mean=False,
+				   start_time=None, end_time=None):
+	"""This function calculates the seasonal average from netCDF file
+	
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	var_name :	str
+		model variables to process
+	mean : boolean
+		True calulate the mean, False acculumate over time
+	deltat : str
+		time interval for temporal aggregation.
+	start_time : str
+		starting date for the analysis, "DD-MM-YYYY".
+	end_time : str
+		final date for the analysis, "DD-MM-YYYY".
+
+	Returns
+	-------
+	xarray :
+		2D time series mean or sum of tne dataset
+
+	"""
+
+	# read dataset
+	data = preprocesses_netCDF(fname, var_name=var_name, mean=mean, deltat='M',
+			    start_time=start_time, end_time=end_time)
+
+	# get seasson
+	data = data.where(data.time.dt.month.isin(season_name_to_number(season)))
+	
+	# get average from season
+	data = resample_dataset(data, mean=True, deltat='Y')
+	
+	# save season as netcdf file
+	# save files
+	if fname_out is None:
+		fname_out = fname
+		fname_out = fname_out.split('.')[0]+'_'+season+'.nc'
+	save_xarray_dataset_as_netcdf(fname_out, data, [var_name])
+
+def calculate_aridity_index(dataset_pre, dataset_pet):
+	"""Calculate the aridity index based on the UNEP:
+	UNEP. World atlas of desertification - Second Edition. vol. SECOND 
+	EDITION (United Nations Environment Program, 1997)
+	
+	Parameters
+	----------
+	dataset_pre : Dataxarray
+		precipitation dataset
+	dataset_pre : Dataxarray
+		potential evapotranspiration dataset
+
+	Returns
+	-------
+	DataArray
+		Aridity index
+	"""
+	return dataset_pre/dataset_pet
+
+def preprocesses_netCDF(fname, var_name, mean=True, deltat='Y',
+			start_time=None, end_time=None):
+	"""This function read, slice, and resample netCDF files.
+
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	var_name :	str
+		model variables to process
+	mean : boolean
+		True calulate the mean, False acculumate over time
+	deltat : str
+		time interval for temporal aggregation.
+	start_time : str
+		starting date for the analysis, "DD-MM-YYYY".
+	end_time : str
+		final date for the analysis, "DD-MM-YYYY".
+
+	Returns
+	-------
+	xarray :
+		2D time series mean or sum of tne dataset
+
+	"""
+	dataset = read_dataset(fname, var_name=var_name)
+	
+	# slice dataset
+	dataset = slice_dataset_time(dataset,
+			start_time=start_time,
+			end_time=end_time
+			)	
+	# resample dataset
+	return resample_dataset(dataset, deltat=deltat, mean=mean)
+	
+def calculate_WRSI(dataset_aet, dataset_pet):
+	"""Calculate Water Requirement Satisfaction Index"""
+	return dataset_aet/dataset_pet
+
+def calculate_anomaly(dataset, dataset_mean=None, dim="time"):
+	"""Calculate anomaly
+	anomaly = value - mean
+	
+	Parameters
+	----------
+	dataset : DataArray
+		dataset to calculate the anomaly
+	dataset_mean : DataArray
+		mean value
+	dim : str
+		name of the axis to calculate mean (defail is "time")
+
+	Returns
+	-------
+	DataArray
+		amomalies
+
+	"""
+	if dataset_mean is None:
+		dataset_mean = dataset.mean(dim=dim)
+	
+	return dataset-dataset_mean
+
+def calculate_percentage_anomaly(dataset, dataset_mean=None, offset=None, dim="time"):
+	"""Calculate anomaly
+	anomaly = value - mean
+	If mean value not availble it will calculate the mean values
+	
+	Parameters
+	----------
+	dataset : DataArray
+		dataset to calculate the anomaly
+	dataset_mean : DataArray
+		mean value (optional)
+	offset : DataArray
+		offset value to shift mean (optional) 
+	dim : str
+		name of the axis to calculate mean (defail is "time")
+		
+	Returns
+	-------
+	DataArray
+		amomalies
+
+	"""
+	# calculate mean value if not provided'
+	if dataset_mean is None:
+		dataset_mean = dataset.mean(dim=dim)
+	
+	# check if scale is provided
+	if offset is not None:
+		dataset_mean = dataset_mean - offset
+	
+	# calculate anomalies
+	anomaly = dataset-dataset_mean
+	
+	return anomaly*100.0/dataset_mean
+
+def calculate_weighted_stats_dataset(dataset, weight=None, dim='sim'):
+	"""This function calculate the weighted mean and standard deviation
+	of dataset
+
+	Parameters
+	----------
+	dataset : DataArray
+		dataset to calculate the anomaly
+	dataset_mean : DataArray
+		mean value (optional)
+	offset : DataArray
+		offset value to shift mean (optional) 
+	dim : str
+		name of the axis to calculate mean (defail is "time")
+		
+	Returns
+	-------
+	DataArray
+		amomalies
+	"""
+
+	# Calculate the weighted mean
+	if weight is None:
+		weight = np.ones(len(dataset))
+
+	weights = xr.DataArray(weight,
+					dims=[dim],
+					coords=[np.arange(len(weight))])
+			
+	weighted_mean = (dataset * weights).sum(dim=dim) / weight.sum()
+		
+	# Calculate the squared deviations
+	squared_deviations = (dataset - weighted_mean) ** 2
+		
+	# Calculate the weighted sum of squared deviations
+	weighted_sum_squared_deviations = (squared_deviations * weights).sum(dim=dim)
+		
+	# Calculate the weighted standard deviation
+	weighted_std = np.sqrt(weighted_sum_squared_deviations / weights.sum())
+
+	return weighted_mean, weighted_std
+
+def create_ensamble_simulations(fname_list, var_name='tht'):
+	"""This function create an ensamble of simulations. This function
+	aggregate the datasets to the specified time step and calculate
+	the mean values
+	
+	Parameters
+	----------
+	fname_list : list
+		list of paths of model output files
+	var_name : str
+		variable to process
+		
+	Returns
+	-------
+	DataArray
+		ensable of multiple simulations
+	
+	"""
+	first_read = True
+
+	# read all files from list
+	for ifname in fname_list:
+		idataset = preprocesses_netCDF(ifname, var_name, mean=True, deltat='Y',
+			start_time=None, end_time=None).mean(dim="time")
+		
+		# concatenate all datasets
+		if first_read is True:
+			dataset = idataset.copy()
+			first_read = False
+		else:
+			dataset = xr.concat([dataset, idataset], 'sim')
+
+	return dataset
+
+def save_xarray_dataset_as_netcdf(fname, data, var_name):
+	# data has to be in the same dimentions
+	# Create a xarray DataArray
+	# Set the compression format
+	encoding = {}
+	for ivar in var_name:
+		encoding.update({ivar: {'zlib': True, 'complevel': 9}})
+
+	# Save the dataset to a netcdf file
+	data.to_netcdf(fname, encoding=encoding)
+	
+	#return
+def slice_dataset_time(dataset, start_time=None, end_time=None):
+	# Slice the dataset between two dates
+	if start_time is None:
+		dataset = dataset.sel(time=slice(start_time, end_time))	    
+	return dataset
+
+def read_dataset(fname, var_name='tht'):
+	# Open the first netCDF file
+	# Returns dataset
+	data = xr.open_dataset(fname)
+	data = data[var_name]
+	return data
+
+def resample_dataset(data, mean=True, deltat='Y'):
+	# calculate climatological mean
+	if mean is True:
+		data = data.resample(time=deltat).mean()
+	else:
+		data = data.resample(time=deltat).sum()	
+	return data
+	
+def merge_xarray_dataset(dataset1, dataset2):
+	return xr.merge([dataset1, dataset2])
+
+def check_if_field_available_in_netCDF(fname, var_name):
+	"""This function check it a variable is stored in the netCDF file"""
+	var_available = False
+	if var_name in list(xr.open_dataset(fname).variables):
+		var_available = True
+	return var_available
+
+def season_name_to_number(season):
+	"""This function read a string representing seasons and return a
+	list of numbers indicating months
+	
+	Parameters
+	----------
+	season : str
+		season represented by three capital letters (e.g. "OND")
+
+	Returns
+	-------
+	list
+		list of months
+	"""
+
+	if season == "MAM":
+		season = [3,4,5]
+	elif season == "OND":
+		season = [10,11,12]
+
+	return season
+
+def get_month_first_letter(month_number):
+    if 1 <= month_number <= 12:
+        return calendar.month_name[month_number][0]
+    else:
+        return "Invalid month number"
+
+def get_season_name(season):
+	name = ""
+	for imonth in season:
+		name += get_month_first_letter(imonth)
+	return name
+
+def get_zone_from_dataset(dataset, mask):
+	"""Get time series of a zone from a netCDF
+	
+	Parameters
+	----------
+	dataset : dataset
+		dataset from which the mean will be extracted
+	mask : boolean array
+		masked array
+
+	Returns
+	-------
+	numpy array
+
+	"""
+	zone_data = dataset.where(mask)
+	zone_data = zone_data.mean(dim=('lat', 'lon'), skipna=True).squeeze()
+	return zone_data.values
+
+def get_dataframe_zone_from_netcdf(fname, fname_mask, field=['twsc'], regionid=None):
+	"""Caclulate the mean values of zone from a netcdf and store it as
+	dataframe
+	
+	Parameters
+	-----------
+	fname : str
+		path of netcdf file
+	mask : bo
+
+	Returns
+	-------
+	dataframe
+	
+	"""
+	# read raster dataset containg the region
+	regions = np.array(np.flip(rasterio.open(fname_mask).read(1), 0), dtype=int)
+	
+	# create a boolean mask
+	mask = np.zeros_like(regions, dtype=bool)
+	
+	# select region to extract
+	if regionid is not None:
+		# Set specific locations to True
+		idr = np.where(regions == regionid)
+		
+	else:
+		# specified all values greater than zeros
+		idr = np.where(regions > 0)
+
+	mask[idr] = True
+
+	# create dataframe
+	df = pd.DataFrame()
+	df['Date'] = read_dataset(fname)['time']
+	
+	# hillslope
+	for ifield in field:		
+		df[ifield] = get_zone_from_dataset(
+			read_dataset(fname, var_name=ifield),
+			mask
+			)
+	return df
+
+def get_point_from_dataset(dataset, x_coord, y_coord, field):
+	# read model dataset
+	data = dataset[field]
+	time = dataset['time']
+	# create dataframe
+	df = pd.DataFrame()
+	df['Date'] = time
+
+	for i, ix_point in enumerate(x_coord):		
+		# Select the grid point closest to the specified location
+		ds_point = data.sel(lon=x_coord[i], lat=y_coord[i], method='nearest')
+		df[field +"_"+str(i)] = ds_point.values
+
+	return df
+
+def get_dataframe_point_from_netcdf(fname, fname_csv, field='dis',
+									xlabel='East', ylabel='North'):
+	"""get point values along the time axis of a specified netcdf file at
+	coordinets specifed in a csv file.
+	
+	Parameters
+	-----------
+	fname : str
+		path of netcdf file
+	fname_csv : str
+		path of csv file containing point
+	field : str
+		name of the field to get values (default: dis)
+	xlabel : str
+		name of the head of the x coordinates, default is East
+	ylabel : str
+		name of the head of the y coordinates, default is North
+		
+	Returns
+	-------
+	dataframe
+	
+	"""
+	# read model dataset
+	dataset = xr.open_dataset(fname)
+
+	# read filename of poitns
+	points = pd.read_csv(fname_csv)
+
+	# create array of coordinates
+	x_coord = points[xlabel].values
+	y_coord = points[ylabel].values
+
+	# get points value from netcdf
+	return get_point_from_dataset(dataset, x_coord, y_coord, field)
+
+def get_ensamble_from_netcdf_list(fname_list, var_name, mean=True, save=True,
+								  fname_output=None):
+	"""This function read a list of netcdf paths and return a dataset
+	or netCDF file containing all netCDFs"""
+
+	first_read = True
+	for ifname in fname_list:
+		# Check if input file exist
+		if os.path.exists(ifname):
+			# read dataset and calculate the correlation
+			idata = read_dataset(ifname, var_name=var_name)
+			idata = slice_dataset_time(idata)
+			
+			if mean is True:
+				idata = idata.mean(dim='time')
+			else:
+				idata = idata.cumsum(dim='time')
+	
+		else:
+			idata = idata*np.nan
+		
+		if first_read is True:
+			dataset = idata.copy()
+			first_read = False
+		else:
+			dataset = xr.concat([dataset, idata], 'sim')
+
+	# save dataset or return dataset
+	if fname_output is not None:
+		save_xarray_dataset_as_netcdf(fname_output, dataset, [var_name])
+		return None
+	else:
+		return dataset
+

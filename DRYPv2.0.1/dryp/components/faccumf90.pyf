@@ -1,0 +1,57 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module faccumf90 ! in 
+    interface  ! in :faccumf90
+        module ftransloss ! in :faccumf90:TransLoss.f90
+            subroutine find_discharge_and_losses(s,r,criv,kt,riv,q_aoft,riv_std,p3,p4,discharge,qtl,q_ini,q_aof) ! in :faccumf90:TransLoss.f90:ftransloss
+                integer dimension(:),intent(in) :: s
+                integer dimension(:),intent(in) :: r
+                real dimension(:),intent(in) :: criv
+                real dimension(:),intent(in) :: kt
+                integer dimension(:),intent(in) :: riv
+                real dimension(:),intent(in) :: q_aoft
+                real dimension(:),intent(in) :: riv_std
+                real dimension(:),intent(in) :: p3
+                real dimension(:),intent(in) :: p4
+                real dimension(:),intent(inout) :: discharge
+                real dimension(:),intent(inout) :: qtl
+                real dimension(:),intent(inout) :: q_ini
+                real dimension(:),intent(inout) :: q_aof
+            end subroutine find_discharge_and_losses
+            subroutine transloss(criv,kt,riv,qaoft,riv_std,p3,p4,qout,qtl,q_ini,qaof) ! in :faccumf90:TransLoss.f90:ftransloss
+                real intent(in) :: criv
+                real intent(in) :: kt
+                integer intent(in) :: riv
+                real intent(in) :: qaoft
+                real intent(in) :: riv_std
+                real intent(in) :: p3
+                real intent(in) :: p4
+                real intent(inout) :: qout
+                real intent(inout) :: qtl
+                real intent(inout) :: q_ini
+                real intent(inout) :: qaof
+            end subroutine transloss
+            subroutine exp_decay_loss(tl,qin,k,p3,p4,qout,qtl,qo) ! in :faccumf90:TransLoss.f90:ftransloss
+                real intent(in) :: tl
+                real intent(in) :: qin
+                real intent(in) :: k
+                real intent(in) :: p3
+                real intent(in) :: p4
+                real intent(out) :: qout
+                real intent(out) :: qtl
+                real intent(out) :: qo
+            end subroutine exp_decay_loss
+            subroutine exp_decay(qin,k,qout,qo) ! in :faccumf90:TransLoss.f90:ftransloss
+                real intent(in) :: qin
+                real intent(in) :: k
+                real intent(out) :: qout
+                real intent(out) :: qo
+            end subroutine exp_decay
+        end module ftransloss
+    end interface 
+end python module faccumf90
+
+! This file was auto-generated with f2py (version:1.25.1).
+! See:
+! https://web.archive.org/web/20140822061353/http://cens.ioc.ee/projects/f2py2e
