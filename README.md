@@ -1,7 +1,7 @@
 # CUWALID
 Repository containing the models of CUWALID under the Down2Earth project
 
-# TESTING
+## Testing
 
 You can test if your environment is working correctly with the model by using the 'run_all_test.sh' script in your linux terminal or WSL terminal (THIS TEST CURRENTLY ONLY TESTS THE DRYP MODEL)
 
