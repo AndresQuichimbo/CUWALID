@@ -1,7 +1,7 @@
 from context import dryp
 import numpy as np
 import pandas as pd
-from DRYPv2.dryp.main_DRYP import run_DRYP
+from CUWALID.models.DRYP.dryp.main_DRYP import run_DRYP
 
 def test_dryp():
 	"""run a test model file

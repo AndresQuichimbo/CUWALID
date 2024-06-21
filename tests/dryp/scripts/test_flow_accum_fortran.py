@@ -7,7 +7,7 @@ from context import dryp
 import numpy as np
 from landlab import RasterModelGrid
 #from components.DRYP_flow_accum import runoff_routing
-from DRYPv2.dryp.components.DRYP_flow_accumf90 import runoff_routing
+from CUWALID.models.DRYP.dryp.components.DRYP_flow_accumf90 import runoff_routing
 
 def test_runoff():
 	# create a raster grid landlab object

@@ -7,12 +7,16 @@ You can test if your environment is working correctly with the model by using th
 
 ### Steps:
 
-1. Navigate to the current directory (CUWALID)
+1. Navigate to the current directory (CUWALID) in terminal
 2. Activate your environment
 ```
 conda activate cwld
 ```
-2. type the command
+2. enter tests/dryp directory
+```
+cd tests/dryp/
+```
+3. run the tests script
 ```
 sh run_all_test.sh
 ```
@@ -38,6 +42,25 @@ Basin delineation: Test runs successfully
 ## Running the model
 
 Currently only the DRYP model is correctly working, the python file 'run_DRYP.py' should run an example by using the example file 'input_test.dmp' in the DRYP_Input/ folder and uses other test files found in the directory at DRYPv2/example/input/
+
+### Steps:
+
+1. Access your linux based terminal (WSL if on Windows)
+2. Naviate to the project where this README.md file is found
+3. Activate your environment by running:
+```
+conda activate cwld
+```
+4. Then enter the CUWALID folder by typing:
+```
+cd CUWALID
+```
+5. Finally run the file by typing:
+```
+python run_DRYP.py
+```
+
+The end of the output should look similar to the output of the testing output above, with a final line specifiying the time it took to run.
 
 
 # TO DO LIST

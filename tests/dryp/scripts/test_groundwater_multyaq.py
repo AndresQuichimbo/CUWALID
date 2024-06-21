@@ -7,7 +7,7 @@ Test fuction of the groundwater component
 from context import dryp
 import numpy as np
 from landlab import RasterModelGrid
-from DRYPv2.dryp.components.DRYP_groundwater_EFD import gwflow_EFD
+from CUWALID.models.DRYP.dryp.components.DRYP_groundwater_EFD import gwflow_EFD
 
 
 def test_groundwater_multiaq():

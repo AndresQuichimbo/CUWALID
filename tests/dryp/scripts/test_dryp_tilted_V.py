@@ -4,7 +4,7 @@ The model is published in the original paper
 of the model release.
 """
 from context import dryp
-from DRYPv2.dryp.main_DRYP import run_DRYP
+from CUWALID.models.DRYP.dryp.main_DRYP import run_DRYP
 import numpy as np
 import pandas as pd
 

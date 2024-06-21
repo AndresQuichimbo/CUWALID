@@ -12,7 +12,7 @@ import xarray as xr
 import rioxarray  # activate the rio accessor
 from netCDF4 import Dataset, num2date, date2num
 from datetime import datetime, timedelta
-from models.DRYP.dryp.components.DRYP_projection import reproject_dataset
+from CUWALID.models.DRYP.dryp.components.DRYP_projection import reproject_dataset
 
 #@profile
 class read_temporal_dataset():

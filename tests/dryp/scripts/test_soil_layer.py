@@ -2,7 +2,7 @@
 """
 from context import dryp
 import numpy as np
-from DRYPv2.dryp.components.DRYP_soil_layer import swbm
+from CUWALID.models.DRYP.dryp.components.DRYP_soil_layer import swbm
 
 def test_soil_layer():
 			

@@ -18,9 +18,9 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 from datetime import datetime, timedelta
-from DRYPv2.dryp.components.DRYP_io import grid_environment
-from DRYPv2.dryp.components.DRYP_read_dataset import (read_dataset_interp)
-from DRYPv2.dryp.components.DRYP_io import create_coordinate_array
+from CUWALID.models.DRYP.dryp.components.DRYP_io import grid_environment
+from CUWALID.models.DRYP.dryp.components.DRYP_read_dataset import (read_dataset_interp)
+from CUWALID.models.DRYP.dryp.components.DRYP_io import create_coordinate_array
 
 def create_test_dataset(fname):
 	"""Create dataset for resting the precipitation component"""

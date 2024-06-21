@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 import numpy as np
 import pandas as pd
-from models.DRYP.dryp.components.DRYP_store_parameters import get_store_parameters
+from CUWALID.models.DRYP.dryp.components.DRYP_store_parameters import get_store_parameters
 
 class get_model_settings(object):
 	"""

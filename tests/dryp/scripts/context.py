@@ -1,5 +1,8 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Add the root of the CUWALID package to sys.path
+package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../'))
+sys.path.insert(0, package_root)
 
-import DRYPv2.dryp as dryp
+
+from CUWALID.models.DRYP import dryp

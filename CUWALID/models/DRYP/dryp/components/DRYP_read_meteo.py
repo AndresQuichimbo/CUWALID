@@ -4,7 +4,7 @@ import pandas as pd
 import xarray as xr
 from netCDF4 import Dataset, num2date, date2num
 from datetime import datetime, timedelta
-from models.DRYP.dryp.components.DRYP_projection import reproject_dataset
+from CUWALID.models.DRYP.dryp.components.DRYP_projection import reproject_dataset
 import sys
 
 class rainfall(object):
