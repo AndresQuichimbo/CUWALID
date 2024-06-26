@@ -38,6 +38,33 @@ AssertionError
 Basin delineation: Test runs successfully
 ```
 
+## Setting up the environments
+
+Within the main directory there is a directory called installers, this contains some scripts to easily set up the environments you need to run the model
+
+### Steps:
+1. Enter your linux terminal or command prompt
+2. Navigate to the main directory
+3. cd into the installers directory
+```
+cd installers
+```
+4. Enter on of the commands below to install conda and create the environment
+- If on Linux use this command:
+```
+sh cwld_linux.sh
+```
+- If using the windows command prompt use:
+```
+cwld_wos.bat
+```
+5. You should now see the instilation begin, please wait until complete,
+
+After instilation you should be able to access the main environment by running the command:
+```
+conda activate cwld
+```
+
 
 ## Running the model
 
@@ -66,7 +93,6 @@ The end of the output should look similar to the output of the testing output ab
 # TO DO LIST
 
 - Create a streamlined input for using the DRYP model where someone using the project can quickly get up and running
-- Add the script to help make the environments and import all the neccesary libraries and dependencies
 - Possibly create a package out of each model to easily access its funtionality
 - Create clear documentation on using this project
 - Create a file to run the STORM model with a users input files
