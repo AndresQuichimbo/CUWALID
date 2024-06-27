@@ -17,9 +17,15 @@ conda activate cwld
 cd tests/dryp/
 ```
 3. run the tests script
+- If running on Linux or WSL use this command:
 ```
 sh run_all_test.sh
 ```
+- If using the windows command prompt run this command:
+```
+run_all_test.bat
+```
+
 You should see the tests being run, some minor warnings may appear but should be safe to ignore,
 
 The end of the output should look like this:
