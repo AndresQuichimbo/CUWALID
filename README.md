@@ -1,6 +1,33 @@
 # CUWALID
 Repository containing the models of CUWALID under the Down2Earth project
 
+## Setting up the environments
+
+Within the main directory there is a directory called installers, this contains some scripts to easily set up the environments you need to run the model
+
+### Steps:
+1. Enter your linux terminal or command prompt
+2. Navigate to the main directory
+3. cd into the installers directory
+```
+cd installers
+```
+4. Enter on of the commands below to install conda and create the environment
+- If on Linux use this command:
+```
+sh cwld_linux.sh
+```
+- If using the windows command prompt use:
+```
+cwld_wos.bat
+```
+5. You should now see the instilation begin, please wait until complete,
+
+After instilation you should be able to access the main environment by running the command:
+```
+conda activate cwld
+```
+
 ## TESTING
 
 You can test if your environment is working correctly with the model by using the 'run_all_test.sh' script in your linux terminal or on windows you can use the command prompt or WSL (THIS TEST CURRENTLY ONLY TESTS THE DRYP MODEL)
@@ -43,34 +70,6 @@ Traceback (most recent call last):
 AssertionError
 Basin delineation: Test runs successfully
 ```
-
-## Setting up the environments
-
-Within the main directory there is a directory called installers, this contains some scripts to easily set up the environments you need to run the model
-
-### Steps:
-1. Enter your linux terminal or command prompt
-2. Navigate to the main directory
-3. cd into the installers directory
-```
-cd installers
-```
-4. Enter on of the commands below to install conda and create the environment
-- If on Linux use this command:
-```
-sh cwld_linux.sh
-```
-- If using the windows command prompt use:
-```
-cwld_wos.bat
-```
-5. You should now see the instilation begin, please wait until complete,
-
-After instilation you should be able to access the main environment by running the command:
-```
-conda activate cwld
-```
-
 
 ## Running the model
 
