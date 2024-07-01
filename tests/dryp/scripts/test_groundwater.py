@@ -7,7 +7,7 @@ Created on Mon Feb 13 11:14:04 2023
 from context import dryp
 import numpy as np
 from landlab import RasterModelGrid
-from CUWALID.models.DRYP.dryp.components.DRYP_groundwater_EFD import gwflow_EFD
+from models.DRYP.dryp.components.DRYP_groundwater_EFD import gwflow_EFD
 
 
 def test_groundwater():

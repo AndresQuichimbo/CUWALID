@@ -5,14 +5,14 @@ DRYP: Dryland WAter Partitioning Model
 from context import dryp
 import numpy as np
 import pandas as pd
-from CUWALID.models.DRYP.dryp.components.DRYP_io import (grid_environment)
-from CUWALID.models.DRYP.dryp.components.DRYP_infiltration import infiltration
-from CUWALID.models.DRYP.dryp.components.DRYP_interception import interception
-from CUWALID.models.DRYP.dryp.components.DRYP_soil_layer import swbm
-from CUWALID.models.DRYP.dryp.components.DRYP_ABM_connector import ABMconnector
-#from CUWALID.models.DRYP.dryp.components.DRYP_flow_accum import runoff_routing
-from CUWALID.models.DRYP.dryp.components.DRYP_flow_accumf90 import runoff_routing
-from CUWALID.models.DRYP.dryp.components.DRYP_groundwater_EFD import (
+from models.DRYP.dryp.components.DRYP_io import (grid_environment)
+from models.DRYP.dryp.components.DRYP_infiltration import infiltration
+from models.DRYP.dryp.components.DRYP_interception import interception
+from models.DRYP.dryp.components.DRYP_soil_layer import swbm
+from models.DRYP.dryp.components.DRYP_ABM_connector import ABMconnector
+#from models.DRYP.dryp.components.DRYP_flow_accum import runoff_routing
+from models.DRYP.dryp.components.DRYP_flow_accumf90 import runoff_routing
+from models.DRYP.dryp.components.DRYP_groundwater_EFD import (
 	gwflow_EFD,	storage_uz_sz)
 #from components.DRYP_store_functions import (
 #	GlobalTimeVarPts, GlobalTimeVarAvg, GlobalGridVar,

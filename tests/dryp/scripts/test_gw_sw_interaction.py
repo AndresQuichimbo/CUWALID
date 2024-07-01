@@ -6,7 +6,7 @@ compiled during the model installation"""
 
 from context import dryp
 import numpy as np
-import CUWALID.models.DRYP.dryp.components.lakesf90 as lakes
+import models.DRYP.dryp.components.lakesf90 as lakes
 
 def test_gw_sw_interaction():
     # specify grid size
