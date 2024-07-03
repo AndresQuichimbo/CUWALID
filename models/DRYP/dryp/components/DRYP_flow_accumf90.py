@@ -14,7 +14,7 @@ from landlab.components import FlowDirectorD8
 
 class runoff_routing(object):
 	"""Function to discharge and transmission losses discharge.
-	Running run_one_step() results in the following to occur:
+		Running run_one_step() results in the following to occur:
 		1. Flow directions are updated (unless update_flow_director is set
 		as False).
 		2. Intermediate steps that analyse the drainage network topology

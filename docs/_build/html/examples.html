@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Short Tutorial &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API reference" href="modules.html" />
+    <link rel="prev" title="Pre- and post-processing tools" href="processing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running.html">Running the model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="processing.html">Pre- and post-processing tools</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">A Short Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#runing-the-tilted-v-catchment-model-test">Runing the Tilted-V catchment model test</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#model-parameters-and-simulation-settings">Model parameters and simulation settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-simulation">Running the simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-outputs">Model outputs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#running-a-regional-model">Running a regional model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pre-processing-dataset">Pre-processing dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-hydrological-model-from-regional-datasets">Creating a hydrological model from regional datasets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prepraring-dryp-code">Prepraring DRYP code</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing-datasets">Preprocessing datasets</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#runing-dryp">Runing DRYP</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#postprocessing-podel-outputs">Postprocessing podel outputs</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#quick-mass-balance-calculation">Quick mass balance calculation</a><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">A Short Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="a-short-tutorial">
+<h1>A Short Tutorial<a class="headerlink" href="#a-short-tutorial" title="Link to this heading"></a></h1>
+<section id="runing-the-tilted-v-catchment-model-test">
+<h2>Runing the Tilted-V catchment model test<a class="headerlink" href="#runing-the-tilted-v-catchment-model-test" title="Link to this heading"></a></h2>
+<p>This folder contains files to run the tilted-V catchment model.</p>
+<img alt="_images/DRYP_GW_model_test.png" src="_images/DRYP_GW_model_test.png" />
+<section id="model-parameters-and-simulation-settings">
+<h3>Model parameters and simulation settings<a class="headerlink" href="#model-parameters-and-simulation-settings" title="Link to this heading"></a></h3>
+<p>The model requires a series of files that correspond to the parameter of the model. The parameters files have to be specified in the model input file:
+input_test.dmp</p>
+<p>The model also requires a setting file where all the model simulation parameters are specified:
+setting_test.dmp</p>
+</section>
+<section id="running-the-simulation">
+<h3>Running the simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading"></a></h3>
+<p>Once all model and simulation parameters have been specified, the model can be run.</p>
+<p>To run the test model, the test_dryp.py have to be used. This contains the path of the model input file, input_test.dmp.</p>
+<p>If the model output matches the expected results provided in the /output_test/ folder, the test will result in no assertion errors.</p>
+<p>The test can can also be run from the python command line by calling the dryp package:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">dryp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dryp</span><span class="o">.</span><span class="n">run_DRYP</span><span class="p">(</span><span class="n">input_test</span><span class="o">.</span><span class="n">dmp</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="model-outputs">
+<h3>Model outputs<a class="headerlink" href="#model-outputs" title="Link to this heading"></a></h3>
+<p>The model outputs from the test function should be similar to the figure below:</p>
+<p>The figure shows the main hydrological fluxes obtained as a result of the precipitation and potential evapotranspiration used as a forcing dataset.</p>
+<img alt="_images/test_avg.png" src="_images/test_avg.png" />
+<p>Model results show how average fluxes over the catchment vary in relation to the precipitation (first panel, backline). It is expected that precipitation increases the water content of the soil, but due to evapotranspiration losses, the amount of water available in the soil will be reduced at rates proportional to the available water content.</p>
+<p>Rates of actual evapotranspiration vary depending on the availability of water, if there is enough water in the soil, water will be lost at potential rates (first panel blue line). if there is no water available the rate will be zero.</p>
+<p>If the soil storage capacity of the soil is reached, water will percolate to the groundwater reservoir and produce recharge (fourth panel), this will in turn increase the water table elevation (bottom panel).</p>
+</section>
+</section>
+<section id="running-a-regional-model">
+<h2>Running a regional model<a class="headerlink" href="#running-a-regional-model" title="Link to this heading"></a></h2>
+<p>DRYP was designed to perform hydrological simulations at large or hyper resolution hydrological models, so a version a regional scale model
+for the Horn of Africa Dryland region has been developed. This model is still on going further development, however, a first version of this
+model is availble at .</p>
+<p>Running the large scale model may need additional computation resources to speed up the running process. This model has been set up for HPC server, however,
+a short version of the model can be prepared and executed using the DRYP pre-processing tools, assuming that all parameters maps are provided.</p>
+</section>
+<section id="pre-processing-dataset">
+<h2>Pre-processing dataset<a class="headerlink" href="#pre-processing-dataset" title="Link to this heading"></a></h2>
+<p>To calculate the constributed areas (watersheds) at location specified in the outputs point files, the following the following code can be used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">dryp.components.DRYP_watershed</span> <span class="kn">import</span> <span class="n">get_area_watershed</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;test_input.txt&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_area_watershed</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To find the extend of the contributing area for a specific location the following code can be used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">outlet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">dem</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">outlet</span><span class="p">[</span><span class="n">ipoint</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ibasin</span> <span class="o">=</span> <span class="n">watershed</span><span class="p">(</span><span class="n">dem</span><span class="p">,</span> <span class="n">outlet</span><span class="p">,</span> <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">,</span> <span class="n">flowDir</span><span class="o">=</span><span class="n">flowDir</span><span class="p">,</span> <span class="n">cellsize</span><span class="o">=</span><span class="n">cellsize</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ibasin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">ibasin</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">transform</span> <span class="o">=</span> <span class="n">open_raster</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fname_basin</span> <span class="o">=</span> <span class="s2">&quot;basin.asc&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">save_raster</span><span class="p">(</span><span class="n">fname_basin</span><span class="p">,</span> <span class="n">ibasin</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Generate soil parameters files required for DRYP.</p>
+</section>
+<section id="creating-a-hydrological-model-from-regional-datasets">
+<h2>Creating a hydrological model from regional datasets<a class="headerlink" href="#creating-a-hydrological-model-from-regional-datasets" title="Link to this heading"></a></h2>
+<section id="prepraring-dryp-code">
+<h3>Prepraring DRYP code<a class="headerlink" href="#prepraring-dryp-code" title="Link to this heading"></a></h3>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="preprocessing-datasets">
+<h3>Preprocessing datasets<a class="headerlink" href="#preprocessing-datasets" title="Link to this heading"></a></h3>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="runing-dryp">
+<h3>Runing DRYP<a class="headerlink" href="#runing-dryp" title="Link to this heading"></a></h3>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="postprocessing-podel-outputs">
+<h3>Postprocessing podel outputs<a class="headerlink" href="#postprocessing-podel-outputs" title="Link to this heading"></a></h3>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="quick-mass-balance-calculation">
+<h3>Quick mass balance calculation<a class="headerlink" href="#quick-mass-balance-calculation" title="Link to this heading"></a></h3>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="processing.html" class="btn btn-neutral float-left" title="Pre- and post-processing tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="API reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

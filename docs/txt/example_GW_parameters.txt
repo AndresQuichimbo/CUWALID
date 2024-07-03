@@ -1,0 +1,20 @@
+GROUNDWATER
+Additional parameter a for Aquifer--------------(1):
+/user/work/km19051/Juba/input/JU_HAD_BDdepth_utm_m.asc
+Additional parameter b for Aquifer--------------(3):
+/user/work/km19051/Juba/input/JU_HAD_slopefactor_zero_utm_m.asc
+SECOND LAYER PARAMETERS ============================
+Bottom elevation second layer ------------------(6):
+none
+Hydraulic conductivity second layer ------------(8):
+none
+Specific yield second layer -------------------(10):
+none
+Specific storage second layer -----------------(12):
+none
+Inital head conditions second layer------------(14):
+none
+raster aquifer type for GW set 3 --------------(16):
+/user/work/km19051/Juba/input/JU_HAD_aquifer_type_utm_m.asc
+Lake maximum water elevation ------------------(18):
+/user/work/km19051/Juba/input/JU_HAD_lakes_globhaty_utm.asc

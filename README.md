@@ -63,9 +63,9 @@ Run Interception component
 100%|███████████████████████████████████████████████████████████████████████████████| 733/733 [00:21<00:00, 34.04days/s]
 *** SAVING RESULTS ***
 Traceback (most recent call last):
-  File "/home/cornish_leo/CUWALID/CUWALID/CUWALID_Complete/tests/test_dryp.py", line 24, in <module>
+  File "/home/<username>/CUWALID/tests/test_dryp.py", line 24, in <module>
     test_dryp()
-  File "/home/cornish_leo/CUWALID/CUWALID/CUWALID_Complete/tests/test_dryp.py", line 19, in test_dryp
+  File "/home/<username>/CUWALID/tests/test_dryp.py", line 19, in test_dryp
     assert np.allclose(out, ans)
 AssertionError
 Basin delineation: Test runs successfully

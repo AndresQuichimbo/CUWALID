@@ -1,0 +1,8 @@
+OFBC
+Flux data for time variable boundary conditions ----(1)
+../DynaVeg/input/DV_OF_flux.csv
+List points or raster map if netCDF not provided ---(3):
+../DynaVeg/input/DV_flux_points.csv
+other ----------------------------------------------(5):
+none
+other ----------------------------------------------(7):
