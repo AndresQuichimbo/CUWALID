@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
    :maxdepth: 4
+   :titlesonly:
 
    models.DRYP.dryp.components
    models.DRYP.dryp.tools

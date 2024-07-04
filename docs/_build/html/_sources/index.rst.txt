@@ -16,8 +16,7 @@ Welcome to CUWALID's documentation!
    processing
    examples
    modules
-
-
+   
 
 Indices and tables
 ==================

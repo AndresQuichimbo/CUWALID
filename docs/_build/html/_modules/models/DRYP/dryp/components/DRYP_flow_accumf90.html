@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>models.DRYP.dryp.components.DRYP_flow_accumf90 &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../running.html">Running the model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../processing.html">Pre- and post-processing tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../examples.html">A Short Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules.html">API reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">models.DRYP.dryp.components.DRYP_flow_accumf90</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for models.DRYP.dryp.components.DRYP_flow_accumf90</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Flow accumulator DRYP</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;divide by zero*&quot;</span><span class="p">)</span><span class="c1">#\</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;invalid value encountered in divide&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="c1">#from landlab import RasterModelGrid</span>
+<span class="c1">#import faccumf90 as floss</span>
+<span class="kn">import</span> <span class="nn">models.DRYP.dryp.components.faccumf90</span> <span class="k">as</span> <span class="nn">floss</span>
+<span class="kn">from</span> <span class="nn">landlab.components.flow_accum</span> <span class="kn">import</span> <span class="n">flow_accum_bw</span><span class="c1">#, make_ordered_node_array</span>
+<span class="kn">from</span> <span class="nn">landlab.core.utils</span> <span class="kn">import</span> <span class="n">as_id_array</span>
+<span class="kn">from</span> <span class="nn">landlab.components</span> <span class="kn">import</span> <span class="n">FlowDirectorD8</span>
+
+<div class="viewcode-block" id="runoff_routing">
+<a class="viewcode-back" href="../../../../../models.DRYP.dryp.components.html#models.DRYP.dryp.components.DRYP_flow_accumf90.runoff_routing">[docs]</a>
+<span class="k">class</span> <span class="nc">runoff_routing</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Function to discharge and transmission losses discharge.</span>
+<span class="sd">		Running run_one_step() results in the following to occur:</span>
+<span class="sd">		1. Flow directions are updated (unless update_flow_director is set</span>
+<span class="sd">		as False).</span>
+<span class="sd">		2. Intermediate steps that analyse the drainage network topology</span>
+<span class="sd">		and create datastructures for efficient drainage area and discharge</span>
+<span class="sd">		calculations.</span>
+<span class="sd">		3. Calculation of discharge and transmission losses.</span>
+
+<span class="sd">	Attributes</span>
+<span class="sd">	----------</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">FlowDirection</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">,</span>
+	    	<span class="n">decay</span><span class="p">,</span> <span class="n">riv_width</span><span class="p">,</span> <span class="n">riv_length</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;initialization of flow routing component</span>
+<span class="sd">		</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		grid:	landlab grid</span>
+<span class="sd">			model grid environment</span>
+<span class="sd">		grid_size:	int</span>
+<span class="sd">			grid size, leng of grid arrays</span>
+<span class="sd">		conductivity: numpy array</span>
+<span class="sd">			channel hydraulic conductivity (m2/dt) [L2 T-1]</span>
+<span class="sd">		Q_ini: numpy array</span>
+<span class="sd">			inital volume of water available at the channel [m3] [L3]</span>
+<span class="sd">		cth_area:	numpy array</span>
+<span class="sd">			Cell factor area, it reduces or increases the area</span>
+<span class="sd">		decay: numpy array</span>
+<span class="sd">			river decay parameter (1/dt)</span>
+<span class="sd">		river_cell:	array of ints</span>
+<span class="sd">			river cells, 0 indicate not river in the cell</span>
+<span class="sd">		area_cells:		cell area?</span>
+<span class="sd">		AOF_threshold:	Maximum volume of water available for abstraction</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># Creates numpy arrays for passing model variables</span>
+		<span class="c1">#env_state.grid.add_zeros(&#39;node&#39;, &quot;surface_water__discharge&quot;)#, dtype=float32)</span>
+		<span class="n">Create_parameter_WV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">riv_width</span><span class="p">,</span> <span class="n">riv_length</span><span class="p">)</span>
+		<span class="c1">#Create_parameter_WV(env_state.grid)#, data_in.Kloss)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">discharge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">SSZ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">trans_losses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">)</span>
+		<span class="c1">#self.flow_tls_dt = np.zeros(grid_size)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">carea</span> <span class="o">=</span> <span class="kc">None</span>
+		
+		<span class="c1"># 1. Check if flow director is needed</span>
+		<span class="k">if</span> <span class="n">FlowDirection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">if</span> <span class="s1">&#39;aux_grid&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">at_node</span><span class="p">:</span>
+				<span class="n">grid</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="s2">&quot;aux_grid&quot;</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">at</span><span class="o">=</span><span class="s2">&quot;node&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">grid</span><span class="o">.</span><span class="n">at_node</span><span class="p">[</span><span class="s1">&#39;aux_grid&#39;</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">FlowDirection</span>
+
+			<span class="n">fd</span> <span class="o">=</span> <span class="n">FlowDirectorD8</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="s1">&#39;aux_grid&#39;</span><span class="p">)</span>
+			<span class="n">fd</span><span class="o">.</span><span class="n">run_one_step</span><span class="p">()</span>
+		
+			<span class="c1"># 2. Creates drainage networks, flowpaths and id arrays</span>
+			<span class="c1"># a value of 1 must be added to change from python to forttran</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">as_id_array</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">][</span><span class="s2">&quot;flow__receiver_node&quot;</span><span class="p">])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1">#self.r = as_id_array(range(grid_size))</span>
+			<span class="c1">#self.r[grid.core_nodes] = FlowDirection[grid.core_nodes]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">as_id_array</span><span class="p">(</span><span class="n">FlowDirection</span><span class="p">)</span>
+			
+		<span class="c1">#nd = as_id_array(flow_accum_bw._make_number_of_donors_array(self.r))</span>
+		<span class="c1">#delta = as_id_array(flow_accum_bw._make_delta_array(nd))</span>
+		<span class="c1">#D = as_id_array(flow_accum_bw._make_array_of_donors(self.r, delta))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">as_id_array</span><span class="p">(</span><span class="n">flow_accum_bw</span><span class="o">.</span><span class="n">make_ordered_node_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">))</span>
+		<span class="c1">#self.carea = find_drainage_area(self.s, self.r,</span>
+		<span class="c1">#			env_state.area_cells,</span>
+		<span class="c1">#			env_state.grid.boundary_nodes)		</span>
+
+	<span class="c1">#@profile</span>
+<div class="viewcode-block" id="runoff_routing.run_runoff_one_step">
+<a class="viewcode-back" href="../../../../../models.DRYP.dryp.components.html#models.DRYP.dryp.components.DRYP_flow_accumf90.runoff_routing.run_runoff_one_step">[docs]</a>
+	<span class="k">def</span> <span class="nf">run_runoff_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runoff</span><span class="p">,</span> <span class="n">AOF</span><span class="p">,</span> <span class="n">AOF_threshold</span><span class="p">,</span> <span class="n">conductivity</span><span class="p">,</span>
+			 <span class="n">decay</span><span class="p">,</span> <span class="n">river_cell</span><span class="p">,</span> <span class="n">area_cells</span><span class="p">,</span> <span class="n">area_river</span><span class="p">,</span> <span class="n">river_sat_deficit</span><span class="p">,</span>
+			 <span class="n">boundary_nodes</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Function to make FlowAccumulator calculate drainage area and</span>
+<span class="sd">		discharge.</span>
+<span class="sd">		Running run_one_step() results in the following to occur:</span>
+<span class="sd">			1. Flow directions are updated (unless update_flow_director is set</span>
+<span class="sd">			as False).</span>
+<span class="sd">			2. Intermediate steps that analyse the drainage network topology</span>
+<span class="sd">			and create datastructures for efficient drainage area and discharge</span>
+<span class="sd">			calculations.</span>
+<span class="sd">			3. Calculation of drainage area and discharge.</span>
+<span class="sd">			4. Depression finding and mapping, which updates drainage area and</span>
+<span class="sd">			discharge.</span>
+<span class="sd">		</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		runoff : numpy array</span>
+<span class="sd">			runoff at each model cell, including base flow at channel</span>
+<span class="sd">			cells (m/dt) [L T-1]</span>
+<span class="sd">		conductivity : numpy array</span>
+<span class="sd">			channel hydraulic conductivity (m2/dt) [L2 T-1]</span>
+<span class="sd">		SSZ: numpy array</span>
+<span class="sd">			inital volume of water available at the channel [m3] [L3]</span>
+<span class="sd">		cth_area :	numpy array</span>
+<span class="sd">			Cell factor area, it reduces or increases the area</span>
+<span class="sd">		decay : mumpy array</span>
+<span class="sd">			river decay parameter (1/dt)</span>
+<span class="sd">		river_cell : numpy array</span>
+<span class="sd">			river cells, 0 indicate not river in the cell</span>
+<span class="sd">		area_cells : numpy array</span>
+<span class="sd">			cell area</span>
+<span class="sd">		AOF_threshold : numpy array</span>
+<span class="sd">			Maximum volume of water available for abstraction</span>
+<span class="sd">		river_sat_deficit : numpy array</span>
+<span class="sd">			maximum volume of water allowed in in the riparian zone</span>
+<span class="sd">			and below the riparian zone (m3)</span>
+<span class="sd">		</span>
+<span class="sd">		Attributes</span>
+<span class="sd">		----------</span>
+<span class="sd">		discharge : numpy array</span>
+<span class="sd">			volumetric flow at each cell (m3) [L3]</span>
+<span class="sd">		Q_ini : numpy array</span>
+<span class="sd">			inital volume of water available at the channel [m3] [L3]</span>
+<span class="sd">		Trans_losses : numpy array</span>
+<span class="sd">			Transmission lossses at river cells [m3] [L3]</span>
+<span class="sd">		aof : numpy array</span>
+<span class="sd">			River flow abstraction [mm] [L]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># if there is no flow skip flow accumulator</span>
+		<span class="n">check_dry_condition</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">runoff</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SSZ</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+		<span class="k">if</span> <span class="n">check_dry_condition</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="c1"># all valye format type should be float32 to pass to Fortran</span>
+			<span class="c1"># run this section for any runoff</span>
+			<span class="c1"># this function return: discharge, QTL, Q_ini, Q_aof</span>
+			<span class="c1"># calculate volume at each cell</span>
+			<span class="n">runoff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">runoff</span><span class="o">*</span><span class="n">area_cells</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+			<span class="n">trans_losses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">runoff</span><span class="p">)</span>
+			<span class="n">Q_ini</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SSZ</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1">#Q_ini</span>
+			<span class="n">Qaof</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">AOF</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1">#Qaof</span>
+			
+			<span class="c1"># Call FORTRAN function for flow routing</span>
+			<span class="n">floss</span><span class="o">.</span><span class="n">ftransloss</span><span class="o">.</span><span class="n">find_discharge_and_losses</span><span class="p">(</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">conductivity</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="c1">#Criv</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">decay</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="c1">#Kt</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">river_cell</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="c1">#riv</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">AOF_threshold</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="c1">#Qaoft</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">river_sat_deficit</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="c1">#riv_std</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">par_3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="c1">#P3</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">par_4</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="c1">#P4</span>
+				<span class="n">runoff</span><span class="p">,</span> <span class="n">trans_losses</span><span class="p">,</span> <span class="n">Q_ini</span><span class="p">,</span> <span class="n">Qaof</span><span class="p">)</span>
+			
+			<span class="c1"># update overland flow attributes</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">discharge</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">runoff</span><span class="p">[:]</span>		
+			<span class="bp">self</span><span class="o">.</span><span class="n">discharge</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">discharge</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">trans_losses</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">trans_losses</span><span class="p">[:]</span>
+
+			<span class="c1"># save initial conditions for next iteration</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">SSZ</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">Q_ini</span>
+			
+			
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1"># no runoff over the entire cells</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">trans_losses</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.0</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">discharge</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>				
+			<span class="n">noflow</span> <span class="o">=</span> <span class="mi">0</span>
+		
+		<span class="c1"># Update overland flow attributes</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="p">[</span><span class="n">area_river</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">discharge</span><span class="p">[</span><span class="n">area_river</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+				<span class="o">/</span><span class="n">area_river</span><span class="p">[</span><span class="n">area_river</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">*</span><span class="n">river_cell</span></div>
+</div>
+
+		
+
+<div class="viewcode-block" id="Create_parameter_WV">
+<a class="viewcode-back" href="../../../../../models.DRYP.dryp.components.html#models.DRYP.dryp.components.DRYP_flow_accumf90.Create_parameter_WV">[docs]</a>
+<span class="k">def</span> <span class="nf">Create_parameter_WV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">riv_width</span><span class="p">,</span> <span class="n">riv_length</span><span class="p">):</span><span class="c1">#, kKloss):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;additional parameters to save computational time</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	Ksat_ch: numpy array</span>
+<span class="sd">		saturated hydraulic conductivity [m/dt]</span>
+<span class="sd">	decay_flow : numpy array</span>
+<span class="sd">		exponential factor -&gt; residence time</span>
+<span class="sd">	SS_loss : numpy array</span>
+<span class="sd">		transmission losses at steady state</span>
+<span class="sd">	river_width : numpy array</span>
+<span class="sd">		channel width [m]</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	par_3 :	numpy array</span>
+<span class="sd">		grid variable tp estimate time</span>
+<span class="sd">	par_4 :	numpy array</span>
+<span class="sd">		grid variable to estimate transmission losses</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Calculate parameter p4 for transmission losses estimation</span>
+	<span class="bp">self</span><span class="o">.</span><span class="n">par_4</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">Ksat</span><span class="o">/</span><span class="p">(</span><span class="n">decay</span><span class="o">*</span><span class="n">riv_width</span><span class="p">)</span>
+	
+	<span class="c1"># Calculate parameter p3 for estimating time to get dry</span>
+	<span class="c1"># conditions in the channel</span>
+	<span class="bp">self</span><span class="o">.</span><span class="n">par_3</span> <span class="o">=</span> <span class="n">Ksat</span><span class="o">*</span><span class="n">riv_width</span><span class="o">*</span><span class="n">riv_length</span><span class="o">/</span><span class="p">(</span><span class="n">riv_width</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">Ksat</span><span class="p">)</span>
+	
+	<span class="k">return</span>		</div>
+
+		
+
+
+<div class="viewcode-block" id="find_drainage_area">
+<a class="viewcode-back" href="../../../../../models.DRYP.dryp.components.html#models.DRYP.dryp.components.DRYP_flow_accumf90.find_drainage_area">[docs]</a>
+<span class="k">def</span> <span class="nf">find_drainage_area</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">node_cell_area</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">boundary_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;THIS COMPONENT IS A MODIFIED VERSION OF FLOW ACCUMULATOR OF LANDLAB</span>
+<span class="sd">	</span>
+<span class="sd">	Calculate the drainage area and water discharge at each node, permitting</span>
+<span class="sd">	discharge to fall (or gain) as it moves downstream according to some</span>
+<span class="sd">	function. Note that only transmission creates loss, so water sourced</span>
+<span class="sd">	locally within a cell is always retained. The loss on each link is recorded</span>
+<span class="sd">	in the &#39;surface_water__discharge_loss&#39; link field on the grid; ensure this</span>
+<span class="sd">	exists before running the function.</span>
+
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	s : ndarray of int</span>
+<span class="sd">		Ordered (downstream to upstream) array of node IDs</span>
+<span class="sd">	r : ndarray of int</span>
+<span class="sd">		Receiver node IDs for each node</span>
+<span class="sd">	boundary_nodes: list, optional</span>
+<span class="sd">		Array of boundary nodes to have discharge and drainage area set to zero.</span>
+<span class="sd">		Default value is None.</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	tuple of ndarray</span>
+<span class="sd">		drainage area and discharge</span>
+<span class="sd">	Notes</span>
+<span class="sd">	-----</span>
+<span class="sd">	-  If node_cell_area not given, the output drainage area is equivalent</span>
+<span class="sd">	to the number of nodes/cells draining through each point, including</span>
+<span class="sd">	the local node itself.</span>
+<span class="sd">	-  Give node_cell_area as a scalar when using a regular raster grid.</span>
+<span class="sd">	-  If runoff is not given, the discharge returned will be the same as</span>
+<span class="sd">	drainage area (i.e., drainage area times unit runoff rate).</span>
+<span class="sd">	-  If using an unstructured Landlab grid, make sure that the input</span>
+<span class="sd">	argument for node_cell_area is the cell area at each NODE rather than</span>
+<span class="sd">	just at each CELL. This means you need to include entries for the</span>
+<span class="sd">	perimeter nodes too. They can be zeros.</span>
+<span class="sd">	</span>
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; import numpy as np</span>
+<span class="sd">	&gt;&gt;&gt; from landlab import RasterModelGrid</span>
+<span class="sd">	&gt;&gt;&gt; from landlab.components.flow_accum import (</span>
+<span class="sd">	...     find_drainage_area_and_discharge)</span>
+<span class="sd">	&gt;&gt;&gt; r = np.array([2, 5, 2, 7, 5, 5, 6, 5, 7, 8])-1</span>
+<span class="sd">	&gt;&gt;&gt; s = np.array([4, 1, 0, 2, 5, 6, 3, 8, 7, 9])</span>
+<span class="sd">	&gt;&gt;&gt; l = np.ones(10, dtype=int)  # dummy</span>
+<span class="sd">	&gt;&gt;&gt; nodes_wo_outlet = np.array([0, 1, 2, 3, 5, 6, 7, 8, 9])</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Number of points</span>
+	<span class="n">npoint</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+	
+	<span class="c1"># Initialize the drainage_area and discharge arrays. Drainage area starts</span>
+	<span class="c1"># out as the area of the cell in question, then (unless the cell has no</span>
+	<span class="c1"># donors) grows from there. Discharge starts out as the cell&#39;s local runoff</span>
+	<span class="c1"># rate times the cell&#39;s surface area.</span>
+	<span class="n">drainage_area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">npoint</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="o">+</span> <span class="n">node_cell_area</span>
+	<span class="c1">#discharge = np.zeros(npoint, dtype=int) + node_cell_area</span>
+	<span class="c1"># note no loss occurs at a node until the water actually moves along a link</span>
+	
+	<span class="c1"># Optionally zero out drainage area and discharge at boundary nodes</span>
+	<span class="k">if</span> <span class="n">boundary_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">drainage_area</span><span class="p">[</span><span class="n">boundary_nodes</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+	
+	<span class="c1"># Iterate backward through the list, which means we work from upstream to</span>
+	<span class="c1"># downstream.</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">npoint</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+		<span class="n">donor</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+		<span class="n">recvr</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="n">donor</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">donor</span> <span class="o">!=</span> <span class="n">recvr</span><span class="p">:</span>
+			<span class="n">drainage_area</span><span class="p">[</span><span class="n">recvr</span><span class="p">]</span> <span class="o">+=</span> <span class="n">drainage_area</span><span class="p">[</span><span class="n">donor</span><span class="p">]</span>
+			
+	<span class="k">return</span> <span class="n">drainage_area</span>		</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
