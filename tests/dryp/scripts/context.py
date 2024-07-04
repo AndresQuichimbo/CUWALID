@@ -5,4 +5,4 @@ package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..
 sys.path.insert(0, package_root)
 
 
-from models.DRYP import dryp
+from models import dryp

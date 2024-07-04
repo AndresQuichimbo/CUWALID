@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 from datetime import datetime
-from models.DRYP.dryp.components.DRYP_store_functions import (
+from models.dryp.components.DRYP_store_functions import (
 	GlobalGridVar)
 
 def test_save_variables():

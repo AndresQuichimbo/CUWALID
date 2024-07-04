@@ -2,7 +2,7 @@ import os
 import numpy as np
 from landlab.components import LossyFlowAccumulator
 #import pyximport; pyximport.install()
-#from models.DRYP.dryp.components.TransLoss import TransLossWVc # for windows
+#from models.dryp.components.TransLoss import TransLossWVc # for windows
 #from TransLoss import TransLossWVc # for linux
 
 river = None

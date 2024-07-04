@@ -7,7 +7,7 @@ warnings.filterwarnings('ignore', message="invalid value encountered in divide")
 import numpy as np
 #from landlab import RasterModelGrid
 #import faccumf90 as floss
-import models.DRYP.dryp.components.faccumf90 as floss
+import models.dryp.components.faccumf90 as floss
 from landlab.components.flow_accum import flow_accum_bw#, make_ordered_node_array
 from landlab.core.utils import as_id_array
 from landlab.components import FlowDirectorD8

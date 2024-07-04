@@ -7,15 +7,15 @@ import sys
 import numpy as np
 import pandas as pd
 #from landlab import RasterModelGrid
-#from models.DRYP.dryp.components.DRYP_io_files import get_model_settings
-from models.DRYP.dryp.components.DRYP_io import (
+#from models.dryp.components.DRYP_io_files import get_model_settings
+from models.dryp.components.DRYP_io import (
 	grid_environment,
 	extract_id_from_coords)
-from models.DRYP.dryp.components.DRYP_flow_accum import runoff_routing
-from models.DRYP.dryp.components.DRYP_store_functions import (
+from models.dryp.components.DRYP_flow_accum import runoff_routing
+from models.dryp.components.DRYP_store_functions import (
 	save_map_to_rastergrid)
 import rasterio
-from models.DRYP.dryp.components.DRYP_flow_accum import watershed
+from models.dryp.components.DRYP_flow_accum import watershed
 
 def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 						fname_flowDir=None, fname_mask=None):
@@ -47,7 +47,7 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 	Examples
 	--------
 
-	>>> from models.DRYP.dryp.components.DRYP_watershed import get_watershed_map
+	>>> from models.dryp.components.DRYP_watershed import get_watershed_map
 	>>> fname_surface = "surface.asc"
 	>>> fname_flowdir = "flowdir.asc"
 	>>> fname_outlet = "point.csv"
@@ -151,7 +151,7 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 
 	Examples
 	--------
-	>>> from models.DRYP.dryp.components.DRYP_watershed import get_watershed_map
+	>>> from models.dryp.components.DRYP_watershed import get_watershed_map
 	>>> fname_surface = "surface.asc"
 	>>> fname_flowdir = "flowdir.asc"
 	>>> fname_outlet = "point.csv"
