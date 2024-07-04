@@ -47,7 +47,7 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 	Examples
 	--------
 
-	>>> from dryp.models.DRYP.dryp.components.DRYP_watershed import get_watershed_map
+	>>> from models.DRYP.dryp.components.DRYP_watershed import get_watershed_map
 	>>> fname_surface = "surface.asc"
 	>>> fname_flowdir = "flowdir.asc"
 	>>> fname_outlet = "point.csv"
@@ -151,7 +151,7 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 
 	Examples
 	--------
-	>>> from dryp.components.DRYP_watershed import get_watershed_map
+	>>> from models.DRYP.dryp.components.DRYP_watershed import get_watershed_map
 	>>> fname_surface = "surface.asc"
 	>>> fname_flowdir = "flowdir.asc"
 	>>> fname_outlet = "point.csv"

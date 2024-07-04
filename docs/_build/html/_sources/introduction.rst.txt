@@ -5,7 +5,7 @@ Introduction
 
 The project contains 3 models:
 
-1. DRYP - quantifies water partitioning and flowpaths in dryland regions
+1. :ref:`DRYP <dryp_model>` - quantifies water partitioning and flowpaths in dryland regions
 2. STORM - generates realistic rainstorms
 3. stoPET - generates patterns of evaporative demand
 

@@ -74,7 +74,7 @@ Follow the steps below to get the model:
         AssertionError
         Basin delineation: Test runs successfully
 
-4. Learn how to run the model :ref:`here <running>`.
+4. Learn how to run the model :ref:`here <tutorial>`.
 
 
 
@@ -156,5 +156,5 @@ Linux
         AssertionError
         Basin delineation: Test runs successfully
 
-6. Learn how to run the model :ref:`here <running>`.
+6. Learn how to run the model :ref:`here <tutorial>`.
 

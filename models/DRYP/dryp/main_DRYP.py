@@ -3,33 +3,32 @@
 DRYP - Dryland WAter Partitioning Model
 __date__ = '20230801'
 __version__ = '2.0.1'
-__author__ =
-        'Andres Quichimbo (andresquichimbo@gmail.com',
-        
+__author__ = 'Andres Quichimbo (andresquichimbo@gmail.com)'
 __library__ = 'dryp'
 
 General command line:
     python run_drp_input.py filename_input
         
-Parameters
+Parameters:
     -input_file : string
         model name and model parameter filenames in plain txt format
     -settings_parameters : string
         model parameter settings in plain txt format
-	-riparian_additional_parameters : string
+    -riparian_additional_parameters : string
         model parameter settings in plain txt format
-	-groundwater_additional_parameters : string
+    -groundwater_additional_parameters : string
         model parameter settings in plain txt format
-	-projection_additional_parameters : string
+    -projection_additional_parameters : string
         model parameter settings in plain txt format
-	-inerception_additional_parameters : string
+    -inception_additional_parameters : string
         model parameter settings in plain txt format
-	-overlandflow_additional_parameters : string
+    -overlandflow_additional_parameters : string
         model parameter settings in plain txt format
     
 Version(s):
 20181130 (1.0.0) --> Development of application for version 3.1.5 of HMC models
 """
+
 
 import numpy as np
 #import pandas as pd

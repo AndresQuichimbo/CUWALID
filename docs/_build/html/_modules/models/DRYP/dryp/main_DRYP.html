@@ -17,6 +17,7 @@
         <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
         <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -45,9 +46,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../running.html">Running the model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Pre- and post-processing tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">A Short Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API reference</a></li>
 </ul>
 
@@ -81,33 +82,32 @@
 <span class="sd">DRYP - Dryland WAter Partitioning Model</span>
 <span class="sd">__date__ = &#39;20230801&#39;</span>
 <span class="sd">__version__ = &#39;2.0.1&#39;</span>
-<span class="sd">__author__ =</span>
-<span class="sd">        &#39;Andres Quichimbo (andresquichimbo@gmail.com&#39;,</span>
-<span class="sd">        </span>
+<span class="sd">__author__ = &#39;Andres Quichimbo (andresquichimbo@gmail.com)&#39;</span>
 <span class="sd">__library__ = &#39;dryp&#39;</span>
 
 <span class="sd">General command line:</span>
 <span class="sd">    python run_drp_input.py filename_input</span>
 <span class="sd">        </span>
-<span class="sd">Parameters</span>
+<span class="sd">Parameters:</span>
 <span class="sd">    -input_file : string</span>
 <span class="sd">        model name and model parameter filenames in plain txt format</span>
 <span class="sd">    -settings_parameters : string</span>
 <span class="sd">        model parameter settings in plain txt format</span>
-<span class="sd">	-riparian_additional_parameters : string</span>
+<span class="sd">    -riparian_additional_parameters : string</span>
 <span class="sd">        model parameter settings in plain txt format</span>
-<span class="sd">	-groundwater_additional_parameters : string</span>
+<span class="sd">    -groundwater_additional_parameters : string</span>
 <span class="sd">        model parameter settings in plain txt format</span>
-<span class="sd">	-projection_additional_parameters : string</span>
+<span class="sd">    -projection_additional_parameters : string</span>
 <span class="sd">        model parameter settings in plain txt format</span>
-<span class="sd">	-inerception_additional_parameters : string</span>
+<span class="sd">    -inception_additional_parameters : string</span>
 <span class="sd">        model parameter settings in plain txt format</span>
-<span class="sd">	-overlandflow_additional_parameters : string</span>
+<span class="sd">    -overlandflow_additional_parameters : string</span>
 <span class="sd">        model parameter settings in plain txt format</span>
 <span class="sd">    </span>
 <span class="sd">Version(s):</span>
 <span class="sd">20181130 (1.0.0) --&gt; Development of application for version 3.1.5 of HMC models</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="c1">#import pandas as pd</span>

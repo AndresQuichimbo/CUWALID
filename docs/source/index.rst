@@ -12,9 +12,9 @@ Welcome to CUWALID's documentation!
 
    introduction
    installation
-   running
+   models_info
+   tutorial
    processing
-   examples
    modules
    
 

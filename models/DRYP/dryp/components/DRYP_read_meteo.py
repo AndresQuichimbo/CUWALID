@@ -425,11 +425,22 @@ class input_datasets_bigfiles_new(object):
 	def run_dataset_one_step(self, j, env_state, inputfile):
 		"""
 		Call this to execute a step in the model.
+
 		Parameters
-			j:	Counter for time
+		----------
+		j : int
+			Counter for time
+		env_state : type
+			Description of env_state
+		inputfile : type
+			Description of inputfile
+
 		Returns
-			rain:	precipitation for the actual time step
-			pet:	potential evapotranspiration for current timestep
+		-------
+		rain : float
+			Precipitation for the actual time step
+		pet : float
+			Potential evapotranspiration for current timestep
 		"""
 		date = self.date_sim_dt[j]
 
@@ -599,10 +610,8 @@ class input_datasets_bigfiles(object):
 	def __init__(self, inputfile, env_state):
 		#dt = np.min([inputfile.dtOF, inputfile.dtUZ, inputfile.dtSZ])
 		if inputfile.first_read == 1:
-			t_end = inputfile.ndays#Sim_period.days
-			self.date_sim_dt = pd.date_range(inputfile.ini_date,
-				periods = t_end*inputfile.dt_hourly*inputfile.dt_sub_hourly,
-				freq = str(np.int(inputfile.dt))+'min')
+			t_end = inputfile.ndays # Sim_period.days
+			self.date_sim_dt = pd.date_range(inputfile.ini_date, periods = t_end*inputfile.dt_hourly*inputfile.dt_sub_hourly, freq = str(np.int(inputfile.dt))+'min')
 			if t_end <= 0:
 				sys.exit("End of the simulation period should be later than initial date")
 		self.t_end = t_end

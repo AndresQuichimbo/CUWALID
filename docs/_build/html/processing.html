@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pre- and post-processing tools &mdash; CUWALID 0.0.1 documentation</title>
+  <title>Processing &mdash; CUWALID 0.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -18,11 +18,12 @@
         <script src="_static/documentation_options.js?v=d45e8c67"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="A Short Tutorial" href="examples.html" />
-    <link rel="prev" title="Running the model" href="running.html" /> 
+    <link rel="next" title="DRYP Pre- and post-processing tools" href="dryp_processing.html" />
+    <link rel="prev" title="Simple Water balance calculation" href="notebooks/DRYP_water_balance.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -48,13 +49,12 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="running.html">Running the model</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Pre- and post-processing tools</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#preprocessing-tools">Preprocessing tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#postprocessing-tools">Postprocessing tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dryp_processing.html">DRYP Pre- and post-processing tools</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">A Short Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API reference</a></li>
 </ul>
 
@@ -72,7 +72,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Pre- and post-processing tools</li>
+      <li class="breadcrumb-item active">Processing</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/processing.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -82,31 +82,26 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="pre-and-post-processing-tools">
-<h1>Pre- and post-processing tools<a class="headerlink" href="#pre-and-post-processing-tools" title="Link to this heading"></a></h1>
-<section id="preprocessing-tools">
-<h2>Preprocessing tools<a class="headerlink" href="#preprocessing-tools" title="Link to this heading"></a></h2>
-<p>Preprocessing tools is a python library that contains a series of functions developed to prepare
-raster dataset that are required for running DRYP.
-These functions are limited to especific and simple raster (matrix) operations,
-so complex operation will require the use of specialised GIS software (Geographical Information
-System), e.g: QGIS &lt;<a class="reference external" href="https://qgis.org/en/site/">https://qgis.org/en/site/</a>&gt;, ArcGIS &lt;<a class="reference external" href="https://www.arcgis.com/index.html">https://www.arcgis.com/index.html</a>&gt; or any
-python library available for raster processing (e.g rasterio &lt;<a class="reference external" href="https://rasterio.readthedocs.io/en/stable/">https://rasterio.readthedocs.io/en/stable/</a>&gt;,
-geopandas &lt;<a class="reference external" href="https://geopandas.org/en/stable/index.html">https://geopandas.org/en/stable/index.html</a>&gt;, gdal &lt;<a class="reference external" href="https://gdal.org/api/python_bindings.html">https://gdal.org/api/python_bindings.html</a>&gt;).
-A list of function s available can be found at :doc: ‘DRYP_pptools:DRYP-pptools’.</p>
-</section>
-<section id="postprocessing-tools">
-<h2>Postprocessing tools<a class="headerlink" href="#postprocessing-tools" title="Link to this heading"></a></h2>
-<p>Post processing tools are functions to create additionl varaibles from DRYP model outputs.</p>
-</section>
+  <section id="processing">
+<h1>Processing<a class="headerlink" href="#processing" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dryp_processing.html">DRYP Pre- and post-processing tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dryp_processing.html#preprocessing-tools">Preprocessing tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dryp_processing.html#postprocessing-tools">Postprocessing tools</a></li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="running.html" class="btn btn-neutral float-left" title="Running the model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="examples.html" class="btn btn-neutral float-right" title="A Short Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="notebooks/DRYP_water_balance.html" class="btn btn-neutral float-left" title="Simple Water balance calculation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dryp_processing.html" class="btn btn-neutral float-right" title="DRYP Pre- and post-processing tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

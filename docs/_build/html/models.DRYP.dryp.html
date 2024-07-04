@@ -7,6 +7,7 @@
   <title>models.DRYP.dryp package &mdash; CUWALID 0.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
 
   
   <!--[if lt IE 9]>
@@ -18,6 +19,7 @@
         <script src="_static/documentation_options.js?v=d45e8c67"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -48,11 +50,10 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="running.html">Running the model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="processing.html">Pre- and post-processing tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">A Short Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">API reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="models.html">models package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="models.html">Models Package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="models.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="models.DRYP.html">models.DRYP package</a></li>
 </ul>
@@ -79,7 +80,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="modules.html">API reference</a></li>
-          <li class="breadcrumb-item"><a href="models.html">models package</a></li>
+          <li class="breadcrumb-item"><a href="models.html">Models Package</a></li>
           <li class="breadcrumb-item"><a href="models.DRYP.html">models.DRYP package</a></li>
       <li class="breadcrumb-item active">models.DRYP.dryp package</li>
       <li class="wy-breadcrumbs-aside">
@@ -110,30 +111,40 @@
 <p>DRYP - Dryland WAter Partitioning Model
 __date__ = ‘20230801’
 __version__ = ‘2.0.1’
-__author__ =</p>
-<blockquote>
-<div><p>‘Andres Quichimbo (<a class="reference external" href="mailto:andresquichimbo&#37;&#52;&#48;gmail&#46;com">andresquichimbo<span>&#64;</span>gmail<span>&#46;</span>com</a>’,</p>
-</div></blockquote>
-<p>__library__ = ‘dryp’</p>
+__author__ = ‘Andres Quichimbo (<a class="reference external" href="mailto:andresquichimbo&#37;&#52;&#48;gmail&#46;com">andresquichimbo<span>&#64;</span>gmail<span>&#46;</span>com</a>)’
+__library__ = ‘dryp’</p>
 <dl class="simple">
 <dt>General command line:</dt><dd><p>python run_drp_input.py filename_input</p>
 </dd>
-<dt>Parameters</dt><dd><dl class="simple">
-<dt>-input_file<span class="classifier">string</span></dt><dd><p>model name and model parameter filenames in plain txt format</p>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">param -input_file<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string
+model name and model parameter filenames in plain txt format</p>
 </dd>
-<dt>-settings_parameters<span class="classifier">string</span></dt><dd><p>model parameter settings in plain txt format
--riparian_additional_parameters : string
-model parameter settings in plain txt format
--groundwater_additional_parameters : string
-model parameter settings in plain txt format
--projection_additional_parameters : string
-model parameter settings in plain txt format
--inerception_additional_parameters : string
-model parameter settings in plain txt format
--overlandflow_additional_parameters : string
+<dt class="field-even">param -settings_parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p>string
 model parameter settings in plain txt format</p>
 </dd>
-</dl>
+<dt class="field-odd">param -riparian_additional_parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string
+model parameter settings in plain txt format</p>
+</dd>
+<dt class="field-even">param -groundwater_additional_parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p>string
+model parameter settings in plain txt format</p>
+</dd>
+<dt class="field-odd">param -projection_additional_parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string
+model parameter settings in plain txt format</p>
+</dd>
+<dt class="field-even">param -inception_additional_parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p>string
+model parameter settings in plain txt format</p>
+</dd>
+<dt class="field-odd">param -overlandflow_additional_parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string
+model parameter settings in plain txt format</p>
 </dd>
 </dl>
 <p>Version(s):
