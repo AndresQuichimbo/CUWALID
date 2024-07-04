@@ -129,7 +129,7 @@ setting_test.dmp</p>
 <p>To run the test model, the test_dryp.py have to be used. This contains the path of the model input file, input_test.dmp.</p>
 <p>If the model output matches the expected results provided in the /output_test/ folder, the test will result in no assertion errors.</p>
 <p>The test can can also be run from the python command line or a python file with the following code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">models.DRYP.dryp.main_DRYP</span> <span class="kn">import</span> <span class="n">run_DRYP</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">models.dryp.main_DRYP</span> <span class="kn">import</span> <span class="n">run_DRYP</span>
 
 <span class="n">run_DRYP</span><span class="p">(</span><span class="s2">&quot;test_input/input_test.dmp&quot;</span><span class="p">)</span>
 </pre></div>
@@ -157,7 +157,7 @@ a short version of the model can be prepared and executed using the DRYP pre-pro
 <section id="pre-processing-dataset">
 <h2>Pre-processing dataset<a class="headerlink" href="#pre-processing-dataset" title="Link to this heading"></a></h2>
 <p>To calculate the constributed areas (watersheds) at location specified in the outputs point files, the following the following code can be used:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">models.DRYP.dryp.components.DRYP_watershed</span> <span class="kn">import</span> <span class="n">get_area_watershed</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">models.dryp.components.DRYP_watershed</span> <span class="kn">import</span> <span class="n">get_area_watershed</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;test_input.txt&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">get_area_watershed</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 </pre></div>

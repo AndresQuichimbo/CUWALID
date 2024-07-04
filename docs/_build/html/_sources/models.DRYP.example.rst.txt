@@ -1,21 +1,21 @@
-models.DRYP.example package
+models.dryp.example package
 ===========================
 
 Submodules
 ----------
 
-models.DRYP.example.plot\_test\_summary module
+models.dryp.example.plot\_test\_summary module
 ----------------------------------------------
 
-.. automodule:: models.DRYP.example.plot_test_summary
+.. automodule:: models.dryp.example.plot_test_summary
    :members:
    :undoc-members:
    :show-inheritance:
 
-models.DRYP.example.run\_watershed\_delineation module
+models.dryp.example.run\_watershed\_delineation module
 ------------------------------------------------------
 
-.. automodule:: models.DRYP.example.run_watershed_delineation
+.. automodule:: models.dryp.example.run_watershed_delineation
    :members:
    :undoc-members:
    :show-inheritance:
@@ -23,7 +23,7 @@ models.DRYP.example.run\_watershed\_delineation module
 Module contents
 ---------------
 
-.. automodule:: models.DRYP.example
+.. automodule:: models.dryp.example
    :members:
    :undoc-members:
    :show-inheritance:

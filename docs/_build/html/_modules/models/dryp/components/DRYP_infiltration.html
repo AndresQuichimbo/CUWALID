@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>models.dryp.components.DRYP_infiltration &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">models.dryp.components.DRYP_infiltration</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for models.dryp.components.DRYP_infiltration</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;invalid value encountered in true_divide&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.special</span> <span class="k">as</span> <span class="nn">spy</span>
+
+<span class="c1">#from landlab import RasterModelGrid</span>
+<span class="c1">#from landlab.io import read_esri_ascii</span>
+
+
+<div class="viewcode-block" id="infiltration">
+<a class="viewcode-back" href="../../../../models.dryp.components.html#models.dryp.components.DRYP_infiltration.infiltration">[docs]</a>
+<span class="k">class</span> <span class="nc">infiltration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>	
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Initializa the infiltration component.</span>
+<span class="sd">		An infiltration aproach has to bu provided, defauil approach is Philips</span>
+<span class="sd">		</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		method : str</span>
+<span class="sd">			0- Shaake</span>
+<span class="sd">			1- Philips</span>
+<span class="sd">			2- Upscaled Green ampt method</span>
+<span class="sd">			3- Modify Green Ampt method</span>
+
+<span class="sd">		Attributes</span>
+<span class="sd">		----------</span>
+<span class="sd">		method : int</span>
+<span class="sd">			flag indicating infiltration method</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>	
+		<span class="c1"># create all initial states and model funtion variables</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;************************************************************&#39;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Infiltration approach: Philips&#39;</span><span class="p">)</span>			
+		<span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Infiltration approach: Upscaled GA&#39;</span><span class="p">)</span>			
+		<span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Infiltration approach: Modified GA&#39;</span><span class="p">)</span>			
+		<span class="k">else</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Infiltration approach: Schaake Method&#39;</span><span class="p">)</span>			
+		
+		<span class="c1"># pass method option to the run option</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+				
+	
+<div class="viewcode-block" id="infiltration.run_infiltration_one_step">
+<a class="viewcode-back" href="../../../../models.dryp.components.html#models.dryp.components.DRYP_infiltration.infiltration.run_infiltration_one_step">[docs]</a>
+	<span class="k">def</span> <span class="nf">run_infiltration_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">,</span> <span class="n">theta_sat</span><span class="p">,</span> <span class="n">PSI</span><span class="p">,</span>
+			    <span class="n">Droot</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">rain</span><span class="p">,</span> <span class="n">Ft0</span><span class="p">,</span> <span class="n">SORP0</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">rain_day_before</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">		</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		rainfall : numpy array </span>
+<span class="sd">			Rainfall</span>
+<span class="sd">		act_nodes : list int</span>
+<span class="sd">			Active nodes</span>
+<span class="sd">		inf_method	: int</span>
+<span class="sd">			0 - Shaake</span>
+<span class="sd">			1 - Philips</span>
+<span class="sd">			2 - Up-scaled GA</span>
+<span class="sd">			3 - Modified GA</span>
+<span class="sd">		PSI_f : numpy array</span>
+<span class="sd">			Maximum potentiometric head (cm)</span>
+<span class="sd">		Droot : numpy array</span>
+<span class="sd">			Soil depth (mm)</span>
+<span class="sd">		SORP0 : numpy array</span>
+<span class="sd">			Initail sorptivity</span>
+<span class="sd">		L_0	: numpy array</span>
+<span class="sd">			Initial water content t = 0</span>
+<span class="sd">		L : Water content at time t</span>
+<span class="sd">		ds			: Soil depth</span>
+
+<span class="sd">		t_i	: numpy array</span>
+<span class="sd">			time from the start of the precipitation event</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		t_0	: numpy array</span>
+<span class="sd">			initial t for accumulation	</span>
+
+<span class="sd">		Ft : numpy array</span>
+<span class="sd">			Cummulative infiltration rate [mm]</span>
+
+<span class="sd">		SORP : numpy array</span>
+<span class="sd">			Sorptivity</span>
+
+<span class="sd">		inf_dt : numpy array</span>
+<span class="sd">			infiltration [mm]</span>
+
+<span class="sd">		excess_dt : numpy array</span>
+<span class="sd">			infiltration excess [mm]</span>
+
+<span class="sd">		rain_day_before : numpy array int</span>
+<span class="sd">			flag to indicate if precipitation event have occurred before</span>
+<span class="sd">		</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		
+		
+		<span class="c1"># L_0:	Initial soil water content [mm]</span>
+		<span class="c1"># Lsat:	Saturated water content [mm]</span>
+		<span class="c1"># Ft0:	Cummulative infiltration [mm]</span>
+		<span class="c1"># t_0:	Initial time for infiltration rate [h]</span>
+		<span class="c1"># SORP0:Sorptivity at the begining of the time step</span>
+		<span class="k">if</span> <span class="n">t_0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">t_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">Ksat</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">Ft0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">Ft0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">Ksat</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">SORP0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">SORP0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">Ksat</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">rain_day_before</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">rain_day_before</span> <span class="o">=</span> <span class="mi">0</span>
+		
+		<span class="n">Lsat</span> <span class="o">=</span> <span class="n">theta_sat</span><span class="o">*</span><span class="n">Droot</span>
+		<span class="n">L_0</span> <span class="o">=</span> <span class="n">theta</span><span class="o">*</span><span class="n">Droot</span>
+
+		<span class="c1"># run infiltration		</span>
+		<span class="n">Ft</span><span class="p">,</span> <span class="n">SORP</span><span class="p">,</span> <span class="n">infiltration</span><span class="p">,</span> <span class="n">excess</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">rain_day_before</span> <span class="o">=</span> <span class="n">infiltration_model</span><span class="p">(</span>
+				<span class="n">rain</span><span class="p">,</span>
+				<span class="n">Ksat</span><span class="p">,</span>
+				<span class="n">PSI</span><span class="p">,</span>
+				<span class="n">Droot</span><span class="p">,</span>
+				<span class="n">SORP0</span><span class="p">,</span>
+				<span class="n">L_0</span><span class="p">,</span>
+				<span class="n">Lsat</span><span class="p">,</span>
+				<span class="n">t_0</span><span class="p">[:],</span>
+				<span class="n">Ft0</span><span class="p">,</span>
+				<span class="n">rain_day_before</span><span class="p">,</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">,</span>
+				<span class="n">args</span><span class="p">,</span><span class="c1">#self.args</span>
+				<span class="p">)</span>
+		
+		<span class="c1"># test water balance of the model</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">MB</span> <span class="o">=</span> <span class="n">rain</span> <span class="o">-</span> <span class="n">infiltration</span> <span class="o">-</span> <span class="n">excess</span>
+			<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">MB</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Infiltration Water balance Error: &#39;</span>
+		   		<span class="s1">&#39;Please check units and non-data values&#39;</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">infiltration</span><span class="p">,</span> <span class="n">excess</span><span class="p">,</span> <span class="n">Ft</span><span class="p">,</span> <span class="n">SORP</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">rain_day_before</span></div>
+</div>
+
+
+<div class="viewcode-block" id="infiltration_model">
+<a class="viewcode-back" href="../../../../models.dryp.components.html#models.dryp.components.DRYP_infiltration.infiltration_model">[docs]</a>
+<span class="k">def</span> <span class="nf">infiltration_model</span><span class="p">(</span><span class="n">rainfall</span><span class="p">,</span> <span class="n">K_sat</span><span class="p">,</span> <span class="n">PSI_f</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span> <span class="n">SORP0</span><span class="p">,</span> <span class="n">L_0</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">Ft0</span><span class="p">,</span> <span class="n">rain_day_before</span><span class="p">,</span> <span class="n">inf_method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Incorporate the variable saturated conditions make zero precipitation for cell with saturated</span>
+<span class="sd">	and zero depth of UZ zone	</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	rainfall : numpy array </span>
+<span class="sd">		Rainfall</span>
+<span class="sd">	act_nodes : list int</span>
+<span class="sd">		Active nodes</span>
+<span class="sd">	inf_method	: int</span>
+<span class="sd">		0 - Shaake</span>
+<span class="sd">		1 - Philips</span>
+<span class="sd">		2 - Up-scaled GA</span>
+<span class="sd">		3 - Modified GA</span>
+<span class="sd">	PSI_f : numpy array</span>
+<span class="sd">		Maximum potentiometric head (cm)</span>
+<span class="sd">	Droot : numpy array</span>
+<span class="sd">		Soil depth (mm)</span>
+<span class="sd">	SORP0 : numpy array</span>
+<span class="sd">		Initail sorptivity</span>
+<span class="sd">	L_0	: numpy array</span>
+<span class="sd">		Initial water content t = 0</span>
+<span class="sd">	L : Water content at time t</span>
+<span class="sd">	ds			: Soil depth</span>
+<span class="sd">	</span>
+<span class="sd">	t_i	: numpy array</span>
+<span class="sd">		time from the start of the precipitation event</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	</span>
+<span class="sd">	t_0	: numpy array</span>
+<span class="sd">		initial t for accumulation	</span>
+<span class="sd">	</span>
+<span class="sd">	Ft : numpy array</span>
+<span class="sd">		Cummulative infiltration rate [mm]</span>
+<span class="sd">	</span>
+<span class="sd">	SORP : numpy array</span>
+<span class="sd">		Sorptivity</span>
+<span class="sd">			</span>
+<span class="sd">	inf_dt : numpy array</span>
+<span class="sd">		infiltration [mm]</span>
+<span class="sd">	</span>
+<span class="sd">	excess_dt : numpy array</span>
+<span class="sd">		infiltration excess [mm]</span>
+
+<span class="sd">	rain_day_before : numpy array int</span>
+<span class="sd">		flag to indicate if precipitation event have occurred before</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">sat_excess_dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">Lsat</span><span class="o">-</span><span class="n">L_0</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rainfall</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+	<span class="n">rainfall</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">Lsat</span><span class="o">-</span><span class="n">L_0</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rainfall</span><span class="p">)</span>
+	<span class="n">sat_excess_dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Droot</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rainfall</span><span class="p">,</span> <span class="n">sat_excess_dt</span><span class="p">)</span>
+	<span class="n">rainfall</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Droot</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rainfall</span><span class="p">)</span>
+	<span class="n">inode_inf_aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rainfall</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inode_inf_aux</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">t_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">inf_method</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># SCHAAKE METHOD</span>
+			<span class="n">ga_kdt</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">SORP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)</span>
+			<span class="n">Ft</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)</span>
+			
+			<span class="c1"># Call SCHAAKE function</span>
+			<span class="n">inf_dt</span><span class="p">,</span> <span class="n">excess_dt</span> <span class="o">=</span> <span class="n">SCHAAKE</span><span class="p">(</span><span class="n">rainfall</span><span class="p">,</span> <span class="n">ga_kdt</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">L_0</span><span class="p">)</span>
+			
+		<span class="k">elif</span> <span class="n">inf_method</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># PHILIPS EQUATION</span>
+			<span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)</span>
+			
+			<span class="c1"># calulate sorptivity</span>
+			<span class="n">SORP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Droot</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+					<span class="mi">2</span><span class="o">*</span><span class="n">K_sat</span><span class="o">*</span><span class="n">PSI_f</span><span class="o">*</span><span class="p">((</span><span class="n">Lsat</span><span class="o">-</span><span class="n">L_0</span><span class="p">)</span><span class="o">/</span><span class="n">Droot</span><span class="p">)</span>
+					<span class="p">)</span>
+			
+			<span class="c1">#if len(np.argwhere(np.isnan(SORP))) &gt; 0:</span>
+			<span class="c1">#	raise(print(&#39;stop&#39;))</span>
+			<span class="n">SORP</span><span class="p">[</span><span class="n">SORP</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">SORP</span><span class="p">[</span><span class="n">SORP</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+			
+			<span class="k">if</span> <span class="n">rain_day_before</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">SORP</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span> <span class="o">=</span> <span class="n">SORP0</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span>
+				<span class="n">t_i</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_0</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span>
+				<span class="n">F</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ft0</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span>
+			
+			<span class="c1"># call Philips function</span>
+			<span class="n">Ft</span><span class="p">,</span> <span class="n">inf_dt</span><span class="p">,</span> <span class="n">excess_dt</span> <span class="o">=</span> <span class="n">Philip</span><span class="p">(</span><span class="n">rainfall</span><span class="p">,</span> 
+										<span class="mf">0.5</span><span class="o">*</span><span class="n">K_sat</span><span class="p">,</span>
+										<span class="n">SORP</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span>
+										<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_i</span><span class="p">))</span>
+										
+		<span class="k">elif</span> <span class="n">inf_method</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># UPSACALED GREEN &amp; AMPT METHOD</span>
+			<span class="n">Ft</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)</span>
+			<span class="n">mu_logks</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">sigma_ks</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">SORP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Droot</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">PSI_f</span><span class="o">*</span><span class="p">((</span><span class="n">Lsat</span><span class="o">-</span><span class="n">L_0</span><span class="p">)</span><span class="o">/</span><span class="n">Droot</span><span class="p">))</span>
+			<span class="k">if</span> <span class="n">rain_day_before</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">SORP</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span> <span class="o">=</span> <span class="n">SORP0</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span>
+				<span class="n">t_i</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_0</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span>
+			
+			<span class="c1"># call upscaled GA function</span>
+			<span class="n">inf_dt</span><span class="p">,</span> <span class="n">excess_dt</span> <span class="o">=</span> <span class="n">Upscaled_GA</span><span class="p">(</span><span class="n">rainfall</span><span class="p">,</span><span class="n">K_sat</span><span class="p">,</span><span class="n">SORP</span><span class="p">,</span>
+											<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_i</span><span class="o">+</span><span class="mf">1.0</span><span class="p">),</span>
+											<span class="n">mu_logks</span><span class="p">,</span>
+											<span class="n">sigma_ks</span><span class="p">)</span>
+											
+		<span class="k">elif</span> <span class="n">inf_method</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># MODIFIED GREEN AND AMPT EQUATION</span>
+			<span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)</span>
+			<span class="n">SORP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Droot</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">K_sat</span><span class="o">*</span><span class="n">PSI_f</span><span class="o">*</span><span class="p">((</span><span class="n">Lsat</span><span class="o">-</span><span class="n">L_0</span><span class="p">)</span><span class="o">/</span><span class="n">Droot</span><span class="p">)))</span>
+				
+			<span class="k">if</span> <span class="n">rain_day_before</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">SORP</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span> <span class="o">=</span> <span class="n">SORP0</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span>
+				<span class="n">t_i</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_0</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span>
+				<span class="n">F</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ft0</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span>
+			
+			<span class="c1"># Call Mod_GA function</span>
+			<span class="n">Ft</span><span class="p">,</span> <span class="n">inf_dt</span><span class="p">,</span> <span class="n">excess_dt</span> <span class="o">=</span> <span class="n">Mod_GA</span><span class="p">(</span><span class="n">rainfall</span><span class="p">,</span>
+										<span class="n">K_sat</span><span class="p">,</span>
+										<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">SORP</span><span class="p">),</span>
+										<span class="n">F</span><span class="p">,</span>
+										<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_i</span><span class="p">),</span> <span class="mf">1.</span><span class="p">)</span>
+		
+		<span class="k">if</span> <span class="n">inf_method</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="n">inf_dt</span><span class="p">[</span><span class="n">SORP</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="n">excess_dt</span><span class="p">[</span><span class="n">SORP</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rainfall</span><span class="p">[</span><span class="n">SORP</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+		
+		<span class="n">t_0</span><span class="p">[</span><span class="n">inode_inf_aux</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="n">rain_day_before</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">t_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rainfall</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">rain_day_before</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">inf_dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rainfall</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">Ft</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rainfall</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">SORP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rainfall</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+		<span class="n">excess_dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rainfall</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+	<span class="n">excess_dt</span> <span class="o">+=</span> <span class="n">sat_excess_dt</span>
+	<span class="k">return</span> <span class="n">Ft</span><span class="p">,</span> <span class="n">SORP</span><span class="p">,</span> <span class="n">inf_dt</span><span class="p">,</span> <span class="n">excess_dt</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">rain_day_before</span></div>
+
+
+ 
+<div class="viewcode-block" id="SCHAAKE">
+<a class="viewcode-back" href="../../../../models.dryp.components.html#models.dryp.components.DRYP_infiltration.SCHAAKE">[docs]</a>
+<span class="k">def</span> <span class="nf">SCHAAKE</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">ga_kdt</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">L</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Schaake infiltration approach, Schaake et. al. (1996)</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	-----------</span>
+<span class="sd">	P:	Precipitation</span>
+<span class="sd">	ks:	Sat. Hydraulic Conductivity</span>
+<span class="sd">	Sp:	Sorptivity (keep the same sorptivity for one event)</span>
+<span class="sd">	F:	Cummulative infiltration</span>
+<span class="sd">	t:	Cummulative event time</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	--------</span>
+<span class="sd">	I:		Infiltration over the time step</span>
+<span class="sd">	RO:		Runoff</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># calculate water deficit</span>
+	<span class="n">D</span> <span class="o">=</span> <span class="n">Lsat</span><span class="o">-</span><span class="n">L</span>
+	<span class="n">I_aux</span> <span class="o">=</span> <span class="n">D</span><span class="o">*</span><span class="n">ga_kdt</span>
+	<span class="n">I</span> <span class="o">=</span> <span class="n">P</span><span class="o">*</span><span class="n">I_aux</span><span class="o">/</span><span class="p">(</span><span class="n">P</span><span class="o">+</span><span class="n">I_aux</span><span class="p">)</span>
+	<span class="n">I</span><span class="p">[</span><span class="n">P</span><span class="o">+</span><span class="n">I_aux</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">#np.where(P+I_aux == 0.0,0.0,I)</span>
+	<span class="n">RO</span> <span class="o">=</span> <span class="n">P</span><span class="o">-</span><span class="n">I</span>
+	<span class="k">return</span> <span class="n">I</span><span class="p">,</span> <span class="n">RO</span></div>
+
+
+<div class="viewcode-block" id="Philip">
+<a class="viewcode-back" href="../../../../models.dryp.components.html#models.dryp.components.DRYP_infiltration.Philip">[docs]</a>
+<span class="k">def</span> <span class="nf">Philip</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Philips Infiltration function</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	-----------</span>
+<span class="sd">	P: numpy array</span>
+<span class="sd">		Precipitation</span>
+<span class="sd">	ks:	numpy array</span>
+<span class="sd">		Sat. Hydraulic Conductivity</span>
+<span class="sd">	Sp:	numpy array</span>
+<span class="sd">		Sorptivity (keep the same sorptivity for one event)</span>
+<span class="sd">	F: numpy array</span>
+<span class="sd">		Cummulative infiltration</span>
+<span class="sd">	t: numpy array</span>
+<span class="sd">		Cummulative event time</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	--------</span>
+<span class="sd">	Ft: numpy array</span>
+<span class="sd">		Total Cumulative infiltration</span>
+<span class="sd">	I: numpy array</span>
+<span class="sd">		Infiltration over the time step</span>
+<span class="sd">	RO:	numpy array</span>
+<span class="sd">		Runoff</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span>
+		
+	<span class="n">Fp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">Sp</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">P</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">ks</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="n">P</span><span class="o">-</span><span class="n">ks</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)),</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="n">Fp_aux</span> <span class="o">=</span> <span class="n">Fp</span><span class="o">-</span><span class="n">F</span>
+	<span class="c1">#print(Fp, P, ks, Sp)	</span>
+	<span class="n">dtp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">Fp_aux</span><span class="o">/</span><span class="n">P</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+	
+	<span class="n">ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dtp</span> <span class="o">&gt;</span> <span class="n">dt</span><span class="p">,</span> <span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">,</span> <span class="n">t</span><span class="o">+</span><span class="n">dtp</span><span class="p">)</span>
+	<span class="n">ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dtp</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ts</span><span class="p">)</span>
+	
+	<span class="n">Faux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dtp</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">Fp</span><span class="p">)</span>
+	
+	<span class="n">sp_aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Sp</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mi">4</span><span class="o">*</span><span class="n">ks</span><span class="o">*</span><span class="n">Faux</span><span class="p">)</span> <span class="o">-</span> <span class="n">Sp</span>
+	
+	<span class="n">to_p</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">sp_aux</span><span class="o">/</span><span class="n">ks</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+	<span class="n">to</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dtp</span> <span class="o">&lt;</span> <span class="n">dt</span><span class="p">,</span> <span class="n">ts</span><span class="o">-</span><span class="n">to_p</span><span class="p">,</span> <span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="o">-</span><span class="n">ts</span><span class="p">)</span>
+	
+	<span class="n">dtc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">P</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="o">-</span><span class="n">to</span><span class="p">)</span>
+	
+	<span class="n">Ft_aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dtc</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Sp</span><span class="o">*</span><span class="n">dtc</span><span class="o">**</span><span class="mf">0.5</span><span class="o">+</span><span class="n">ks</span><span class="o">*</span><span class="n">dtc</span><span class="p">)</span>
+	<span class="n">Ft</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">F</span><span class="o">+</span><span class="n">P</span> <span class="o">&lt;</span> <span class="n">Ft_aux</span><span class="p">,</span> <span class="n">F</span><span class="o">+</span><span class="n">P</span><span class="p">,</span> <span class="n">Ft_aux</span><span class="p">)</span>
+	<span class="n">I</span> <span class="o">=</span> <span class="n">Ft</span> <span class="o">-</span> <span class="n">F</span>
+	<span class="n">RO</span> <span class="o">=</span> <span class="n">P</span> <span class="o">-</span> <span class="n">I</span>
+	<span class="k">return</span> <span class="n">Ft</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">RO</span></div>
+
+
+<div class="viewcode-block" id="Upscaled_GA">
+<a class="viewcode-back" href="../../../../models.dryp.components.html#models.dryp.components.DRYP_infiltration.Upscaled_GA">[docs]</a>
+<span class="k">def</span> <span class="nf">Upscaled_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">mu_Y</span><span class="p">,</span> <span class="n">sigma_Y</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Upscaled Green &amp; Ampt infiltration approach - Craig et. al. 2010</span>
+<span class="sd">	Required Gauss2p, epsilon, and getX</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	-----------</span>
+<span class="sd">	P: numpy array</span>
+<span class="sd">		Precipitation</span>
+<span class="sd">	ks:	numpy array</span>
+<span class="sd">		Sat. Hydraulic Conductivity</span>
+<span class="sd">	Sp:	numpy array</span>
+<span class="sd">		Sorptivity (keep the same sorptivity for one event)</span>
+<span class="sd">	F:	numpy array</span>
+<span class="sd">		Cummulative infiltration</span>
+<span class="sd">	t:	numpy array</span>
+<span class="sd">		Cummulative event time</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	--------</span>
+<span class="sd">	I: numpy array</span>
+<span class="sd">		Infiltration over the time step</span>
+<span class="sd">	RO: numpy array</span>
+<span class="sd">		Runoff</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">X</span> <span class="o">=</span> <span class="n">getX</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+	<span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">X</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">X</span><span class="p">)</span><span class="o">-</span><span class="n">mu_Y</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">sigma_Y</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)))</span>
+	<span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sigma_Y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e99</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+	<span class="n">Aaux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">mu_Y</span><span class="o">+</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">sigma_Y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+	<span class="n">I</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">X</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">P</span><span class="o">*</span><span class="n">spy</span><span class="o">.</span><span class="n">erfc</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="mf">0.5</span><span class="o">/</span><span class="n">X</span><span class="p">)</span><span class="o">*</span><span class="n">Aaux</span><span class="o">*</span><span class="n">spy</span><span class="o">.</span><span class="n">erfc</span><span class="p">((</span><span class="n">sigma_Y</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">-</span><span class="n">A</span><span class="p">))</span>
+	<span class="n">I</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">X</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="n">Gauss2p</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">mu_Y</span><span class="p">,</span><span class="n">sigma_Y</span><span class="p">,</span><span class="n">ks</span><span class="p">))</span>
+	<span class="n">RO</span> <span class="o">=</span> <span class="n">P</span><span class="o">-</span><span class="n">I</span>
+	<span class="k">return</span> <span class="n">I</span><span class="p">,</span> <span class="n">RO</span></div>
+
+
+<span class="c1"># 2-point Gauss-Legrenge integrator	</span>
+<div class="viewcode-block" id="Gauss2p">
+<a class="viewcode-back" href="../../../../models.dryp.components.html#models.dryp.components.DRYP_infiltration.Gauss2p">[docs]</a>
+<span class="k">def</span> <span class="nf">Gauss2p</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">mu_Y</span><span class="p">,</span> <span class="n">sigma_Y</span><span class="p">,</span> <span class="n">ks</span><span class="p">):</span>
+	<span class="n">X</span> <span class="o">=</span> <span class="n">getX</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+	<span class="n">dk</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">X</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">mu_Y</span><span class="o">-</span><span class="mf">3.0</span><span class="o">*</span><span class="n">sigma_Y</span><span class="p">))</span>
+	<span class="n">km</span> <span class="o">=</span> <span class="n">P</span><span class="o">*</span><span class="n">X</span><span class="o">-</span><span class="n">dk</span>
+	<span class="n">k1</span> <span class="o">=</span> <span class="n">km</span><span class="o">-</span><span class="mf">0.57735</span><span class="o">*</span><span class="n">dk</span>
+	<span class="n">k2</span> <span class="o">=</span> <span class="n">km</span><span class="o">+</span><span class="mf">0.57735</span><span class="o">*</span><span class="n">dk</span>
+	<span class="k">return</span> <span class="n">dk</span><span class="o">*</span><span class="n">P</span><span class="o">*</span><span class="p">(</span><span class="n">epsilon_fks</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">mu_Y</span><span class="p">,</span><span class="n">sigma_Y</span><span class="p">,</span><span class="n">ks</span><span class="p">)</span><span class="o">+</span><span class="n">epsilon_fks</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">mu_Y</span><span class="p">,</span><span class="n">sigma_Y</span><span class="p">,</span><span class="n">ks</span><span class="p">))</span></div>
+
+
+<span class="c1"># Epsilon funtion for upscaled GA infiltration	</span>
+<div class="viewcode-block" id="epsilon_fks">
+<a class="viewcode-back" href="../../../../models.dryp.components.html#models.dryp.components.DRYP_infiltration.epsilon_fks">[docs]</a>
+<span class="k">def</span> <span class="nf">epsilon_fks</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">mu_Y</span><span class="p">,</span><span class="n">sigma_Y</span><span class="p">,</span><span class="n">ks</span><span class="p">):</span>
+	<span class="n">X</span> <span class="o">=</span> <span class="n">getX</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">P</span><span class="p">)</span>
+	<span class="n">kp</span> <span class="o">=</span> <span class="n">ks</span><span class="o">/</span><span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">X</span><span class="p">)</span>
+	<span class="n">fks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">k</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,(</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">sigma_Y</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">-</span><span class="n">mu_Y</span><span class="p">)</span><span class="o">/</span><span class="n">sigma_Y</span><span class="p">,</span><span class="mi">2</span><span class="p">))))</span>
+	<span class="n">epsilon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">X</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.36315</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">X</span><span class="p">,</span><span class="mf">0.484</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">kp</span><span class="p">,</span><span class="mf">1.74</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">kp</span><span class="p">,</span><span class="mf">0.38</span><span class="p">))</span>
+	<span class="n">epsilon</span><span class="p">[</span><span class="n">kp</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">epsilon</span><span class="p">[</span><span class="n">kp</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">return</span> <span class="n">epsilon</span><span class="o">*</span><span class="n">fks</span></div>
+
+
+<span class="c1"># Dimentionless time parameter	</span>
+<div class="viewcode-block" id="getX">
+<a class="viewcode-back" href="../../../../models.dryp.components.html#models.dryp.components.DRYP_infiltration.getX">[docs]</a>
+<span class="k">def</span> <span class="nf">getX</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+	<span class="n">X_aux</span> <span class="o">=</span> <span class="n">P</span><span class="o">*</span><span class="n">t</span><span class="o">/</span><span class="n">Sp</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">X_aux</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="n">X_aux</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="Mod_GA">
+<a class="viewcode-back" href="../../../../models.dryp.components.html#models.dryp.components.DRYP_infiltration.Mod_GA">[docs]</a>
+<span class="k">def</span> <span class="nf">Mod_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">F</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Modified Green &amp; Ampt infiltration approach</span>
+<span class="sd">	Requires solver (Newthon_Rap_Mod_GA) and F (f_GA) and F&#39; (dF_GA)</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	-----------</span>
+<span class="sd">	P:	Precipitation</span>
+<span class="sd">	ks:	Sat. Hydraulic Conductivity</span>
+<span class="sd">	Sp:	Sorptivity (keep the same sorptivity for one event)</span>
+<span class="sd">	F:	Cummulative infiltration</span>
+<span class="sd">	t:	Cummulative event time</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	--------</span>
+<span class="sd">	Ft:		Total Cumulative infiltration</span>
+<span class="sd">	I:		Infiltration over the time step</span>
+<span class="sd">	RO:		Runoff</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">tp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="o">/</span><span class="p">(</span><span class="n">P</span><span class="o">-</span><span class="n">ks</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span>
+	<span class="n">aux_1</span> <span class="o">=</span> <span class="n">tp</span><span class="o">-</span><span class="n">t</span>
+	<span class="n">aux_2</span> <span class="o">=</span> <span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="n">tp</span>
+	<span class="n">aux</span> <span class="o">=</span> <span class="n">aux_1</span><span class="o">*</span><span class="n">aux_2</span>
+	<span class="n">id_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">aux</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_error</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># ponding during time step</span>
+		<span class="n">to</span> <span class="o">=</span> <span class="n">Newthon_Rap_Mod_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">F</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">tp</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">to</span> <span class="o">=</span> <span class="n">t</span>
+	<span class="n">Faux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">to</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">ks</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="o">-</span><span class="n">to</span><span class="p">)</span><span class="o">+</span><span class="n">Sp</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">)</span><span class="o">/</span><span class="n">to</span><span class="p">))</span>
+
+	<span class="n">F_tf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tp</span> <span class="o">&gt;</span> <span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">F</span><span class="o">+</span><span class="n">P</span><span class="p">,</span><span class="n">Faux</span><span class="p">)</span>
+	<span class="n">F_tf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tp</span> <span class="o">&lt;</span> <span class="n">to</span><span class="p">,</span><span class="n">F_tf</span><span class="o">+</span><span class="n">F</span><span class="p">,</span><span class="n">F_tf</span><span class="p">)</span>
+	<span class="n">F_tf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span><span class="n">P</span><span class="o">+</span><span class="n">F</span><span class="p">,</span><span class="n">F_tf</span><span class="p">)</span>
+
+	<span class="n">I</span> <span class="o">=</span> <span class="n">F_tf</span> <span class="o">-</span> <span class="n">F</span>
+	<span class="n">RO</span> <span class="o">=</span> <span class="n">P</span><span class="o">-</span><span class="n">I</span>
+	<span class="k">return</span> <span class="n">F_tf</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">RO</span></div>
+
+	
+<div class="viewcode-block" id="Newthon_Rap_Mod_GA">
+<a class="viewcode-back" href="../../../../models.dryp.components.html#models.dryp.components.DRYP_infiltration.Newthon_Rap_Mod_GA">[docs]</a>
+<span class="k">def</span> <span class="nf">Newthon_Rap_Mod_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">F</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">tp</span><span class="p">,</span><span class="n">to_0</span><span class="p">):</span>
+	<span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+	<span class="n">aux_1</span> <span class="o">=</span> <span class="n">tp</span><span class="o">-</span><span class="n">t</span>
+	<span class="n">aux_2</span> <span class="o">=</span> <span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="n">tp</span>
+	<span class="n">aux</span> <span class="o">=</span> <span class="n">aux_1</span><span class="o">*</span><span class="n">aux_2</span>
+	<span class="n">id_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">aux</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">len_error</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_error</span><span class="p">)</span>
+	<span class="n">error</span><span class="p">[</span><span class="n">id_error</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="n">to</span> <span class="o">=</span> <span class="n">t</span>
+	
+	<span class="k">while</span> <span class="n">len_error</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">to</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">error</span> <span class="o">&lt;</span> <span class="mf">0.001</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">to_0</span><span class="o">-</span><span class="n">f_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">F</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">tp</span><span class="p">,</span><span class="n">to_0</span><span class="p">)</span><span class="o">/</span><span class="n">dF_GA</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">to_0</span><span class="p">))</span>
+		<span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">error</span> <span class="o">&lt;=</span> <span class="mf">0.001</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">to</span><span class="o">-</span><span class="n">to_0</span><span class="p">)</span><span class="o">/</span><span class="n">to</span><span class="p">)</span>
+		<span class="n">len_error</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">error</span> <span class="o">&gt;=</span> <span class="mf">0.001</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="n">to_0</span> <span class="o">=</span> <span class="n">to</span>	
+	<span class="k">return</span> <span class="n">to</span></div>
+
+	
+<span class="c1"># Implicit solution of Green and Ampt equation	</span>
+<div class="viewcode-block" id="f_GA">
+<a class="viewcode-back" href="../../../../models.dryp.components.html#models.dryp.components.DRYP_infiltration.f_GA">[docs]</a>
+<span class="k">def</span> <span class="nf">f_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">F</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">tp</span><span class="p">,</span><span class="n">to</span><span class="p">):</span>	
+	<span class="k">return</span> <span class="n">ks</span><span class="o">*</span><span class="p">(</span><span class="n">tp</span><span class="o">-</span><span class="n">to</span><span class="p">)</span><span class="o">+</span><span class="n">Sp</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tp</span><span class="o">/</span><span class="n">to</span><span class="p">)</span><span class="o">-</span><span class="n">F</span><span class="o">-</span><span class="n">P</span><span class="o">*</span><span class="p">(</span><span class="n">tp</span><span class="o">-</span><span class="n">t</span><span class="p">)</span></div>
+
+
+<span class="c1"># Derivative of the implicit GA equation</span>
+<div class="viewcode-block" id="dF_GA">
+<a class="viewcode-back" href="../../../../models.dryp.components.html#models.dryp.components.DRYP_infiltration.dF_GA">[docs]</a>
+<span class="k">def</span> <span class="nf">dF_GA</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">to</span><span class="p">):</span>
+	<span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">ks</span><span class="o">+</span><span class="n">Sp</span><span class="o">/</span><span class="n">to</span><span class="p">)</span></div>
+
+	
+<span class="c1">## Modified Green &amp; Ampt infiltration approach</span>
+<span class="c1">#def Mod_GA_Sim(P,ks,Sp,t,dt):</span>
+<span class="c1">#	# Approximation of Green and Ampt equation for small time steps</span>
+<span class="c1">#	tp = np.where(P &gt; ks,Sp/(P-ks),0)</span>
+<span class="c1">#	tf = np.where(tp &gt; t+dt,t+dt,tp)</span>
+<span class="c1">#	I  = np.where(t == 0,0,ks*(t+dt-tp)+Sp*np.log((t+dt)/tp)-P*(t-tp))</span>
+<span class="c1">#	RO = P-I</span>
+<span class="c1">#	return F, I, RO</span>
+<span class="c1">#	</span>
+<span class="c1">#def to_modGA(P,ks,Sp,t,tp,to_0):</span>
+<span class="c1">#	# Next step for &#39;to&#39;, it is done to avoid iteration for each cell</span>
+<span class="c1">#	F = ks*(tp-to)+Sp*np.log(tp/to_0)-P*(t-tp)</span>
+<span class="c1">#	dF = -ks-B/to_0</span>
+<span class="c1">#	to = to_0-F/dF</span>
+<span class="c1">#	return to</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -42,7 +42,7 @@ The test can can also be run from the python command line or a python file with 
 
 .. code-block:: python
 
-    from models.DRYP.dryp.main_DRYP import run_DRYP
+    from models.dryp.main_DRYP import run_DRYP
 
     run_DRYP("test_input/input_test.dmp")
 
@@ -82,7 +82,7 @@ To calculate the constributed areas (watersheds) at location specified in the ou
 
 .. parsed-literal::
 
-	>>> from models.DRYP.dryp.components.DRYP_watershed import get_area_watershed
+	>>> from models.dryp.components.DRYP_watershed import get_area_watershed
 	>>> filename = "test_input.txt"
 	>>> get_area_watershed(filename)
 

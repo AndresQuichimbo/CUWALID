@@ -8,7 +8,7 @@ Subpackages
    :maxdepth: 4
    :titlesonly:
 
-   models.DRYP
+   models.dryp
 
 Module contents
 ---------------
