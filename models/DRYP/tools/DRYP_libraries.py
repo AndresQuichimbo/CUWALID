@@ -3,7 +3,7 @@ from modulefinder import ModuleFinder
 import pandas as pd
 f = ModuleFinder()
 # Run the main script
-f.run_script('run_DRYP.py')
+f.run_script('run_dryp.py')
 # Get names of all the imported modules
 names = list(f.modules.keys())
 # Get a sorted list of the root modules imported

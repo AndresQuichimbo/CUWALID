@@ -222,7 +222,7 @@ Finally, an example of input parameter file is shown bellow, user can copy this 
 create a nuew model.
 
 .. literalinclude:: ../txt/example_input.txt
-	:language: plain
+	:language: none
 	:linenos:
 
 Simulation settings file
@@ -368,14 +368,14 @@ file. Values are scale factors of the following parameters, this values are unit
 
 
 .. literalinclude:: ../txt/example_par_setting.txt
-	:language: plain
+	:language: none
 	:linenos:
 
 Riparian zone parameter files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../txt/example_riparian_inputs.txt
-	:language: plain
+	:language: none
 	:linenos:
 
 Groudwater parameter file
@@ -388,7 +388,7 @@ of groundwater paramter file is provided below:
 
 
 .. literalinclude:: ../txt/example_GW_parameters.txt
-	:language: plain
+	:language: none
 	:linenos:
 
 Projection system file
@@ -400,7 +400,7 @@ system of model, and the projection system of each dataset. An example is presen
 
 
 .. literalinclude:: ../txt/example_projection.txt
-	:language: plain
+	:language: none
 	:linenos:
 
 Vegetation parameters file
@@ -409,7 +409,7 @@ Vegetation parameters file
 This component is still under development
 
 .. literalinclude:: ../txt/example_vegetation_input.txt
-	:language: plain
+	:language: none
 	:linenos:
 
 Overland flow boundary condition file
@@ -418,7 +418,7 @@ Overland flow boundary condition file
 This component is still under development:
 
 .. literalinclude:: ../txt/example_boundary_conditions.txt
-	:language: plain
+	:language: none
 	:linenos:
 
 Store variables settings file
@@ -427,4 +427,4 @@ Store variables settings file
 
 
 .. literalinclude:: ../txt/example_store_variables.txt
-	:language: plain
+	:language: none

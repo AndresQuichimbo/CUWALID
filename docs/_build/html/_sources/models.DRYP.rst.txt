@@ -1,8 +1,8 @@
 models.dryp package
 ===================
 
-Subpackages
------------
+DRYP Subpackages
+^^^^^^^^^^^^^^^^
 
 .. toctree::
    :maxdepth: 4
@@ -11,8 +11,8 @@ Subpackages
    models.dryp.example
    models.dryp.tools
 
-Submodules
-----------
+DRYP Submodules
+---------------
 
 models.dryp.main\_DRYP module
 -----------------------------
@@ -46,8 +46,8 @@ models.dryp.main\_DRYPv2\_SS module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+DRYP Module contents
+--------------------
 
 .. automodule:: models.dryp
    :members:

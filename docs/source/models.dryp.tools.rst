@@ -1,8 +1,8 @@
 models.dryp.tools package
 =========================
 
-Submodules
-----------
+Tools Submodules
+^^^^^^^^^^^^^^^^
 
 models.dryp.tools.DRYP\_libraries module
 ----------------------------------------
@@ -28,8 +28,8 @@ models.dryp.tools.DRYP\_rrtools module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+Tools Module contents
+---------------------
 
 .. automodule:: models.dryp.tools
    :members:

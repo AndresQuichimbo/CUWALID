@@ -1,8 +1,8 @@
 import sys
 import os
 import numpy as np
-from dryp.components.DRYP_flow_accum import watershed
-from dryp.components.DRYP_watershed import get_area_watershed
+from models.dryp.components.DRYP_flow_accum import watershed
+from models.dryp.components.DRYP_watershed import get_watershed_area
 from landlab import RasterModelGrid
 import rasterio
 

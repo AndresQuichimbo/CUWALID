@@ -215,7 +215,7 @@ def create_raster_bc_at_point(fname_wte, fname_bc_head,
 	save_raster(fname_out, raster, profile, transform)
 	
 def create_raster_from_shapefile(fname_shp, fname_raster, fname_out):
-	"""This function takes a shapefile (*.shp) and a raster file
+	"""This function takes a shapefile (\*.shp) and a raster file
 	to create a new raster containing the shapefile geometry
 	as mask
 	

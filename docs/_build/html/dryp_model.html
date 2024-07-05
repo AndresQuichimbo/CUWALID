@@ -273,7 +273,7 @@ order to close the mass balance of the catchment, the first row of the coordinat
 coordinate of the catchment output.</p>
 <p>Finally, an example of input parameter file is shown bellow, user can copy this template to
 create a nuew model.</p>
-<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span>drylandmodel
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span>drylandmodel
 <span class="linenos">  2</span>Model name --------------------------------------(1):
 <span class="linenos">  3</span>Juba_IM_sim
 <span class="linenos">  4</span>================ TERRAIN COMPONENTS ================= 
@@ -501,7 +501,7 @@ file. Values are scale factors of the following parameters, this values are unit
 <li><p>line 62: kKaq for aquifer saturated hydraulic conductivity,</p></li>
 <li><p>line 64: kSy for aquifer specific yield factor,</p></li>
 </ul>
-<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>DWAPM_SET
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>DWAPM_SET
 <span class="linenos"> 2</span>======== SIMULATION PERIOD AND TIME STEP =========
 <span class="linenos"> 3</span>Initial date for simulation (YYYY MM DD) ........(2)
 <span class="linenos"> 4</span>2000 7 1
@@ -573,7 +573,7 @@ file. Values are scale factors of the following parameters, this values are unit
 </section>
 <section id="riparian-zone-parameter-files">
 <h3>Riparian zone parameter files<a class="headerlink" href="#riparian-zone-parameter-files" title="Link to this heading"></a></h3>
-<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>RIPARIAN
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>RIPARIAN
 <span class="linenos"> 2</span>Soil porosity: porosity ------------------------(1):
 <span class="linenos"> 3</span>/user/work/km19051/Juba/input/JU_HAD_theta_sat_utm_m.asc
 <span class="linenos"> 4</span>Theta residual ---------------------------------(3):
@@ -606,7 +606,7 @@ file. Values are scale factors of the following parameters, this values are unit
 multi-aquifer and a transmisivity function. If lakes is considered in
 the model, a file, indicating the bathymetry should be provided. An example
 of groundwater paramter file is provided below:</p>
-<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>GROUNDWATER
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>GROUNDWATER
 <span class="linenos"> 2</span>Additional parameter a for Aquifer--------------(1):
 <span class="linenos"> 3</span>/user/work/km19051/Juba/input/JU_HAD_BDdepth_utm_m.asc
 <span class="linenos"> 4</span>Additional parameter b for Aquifer--------------(3):
@@ -634,7 +634,7 @@ of groundwater paramter file is provided below:</p>
 <p>When datasets are not in the same projection system thatn the model domain (UTM),
 a projection settings file should ne provided. It should contain the projection
 system of model, and the projection system of each dataset. An example is presented below:</p>
-<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>PROJECTION
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>PROJECTION
 <span class="linenos">2</span>Model
 <span class="linenos">3</span>+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs
 <span class="linenos">4</span>Datasets:
@@ -648,7 +648,7 @@ system of model, and the projection system of each dataset. An example is presen
 <section id="vegetation-parameters-file">
 <h3>Vegetation parameters file<a class="headerlink" href="#vegetation-parameters-file" title="Link to this heading"></a></h3>
 <p>This component is still under development</p>
-<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>INTERCEPTION
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>INTERCEPTION
 <span class="linenos"> 2</span>fraction of vegetation cover ------------------(1):
 <span class="linenos"> 3</span>../DynaVeg/input/DV_frac_cov.asc
 <span class="linenos"> 4</span>Soil-Adjusted Vegetation Index - SAVI----------(3):
@@ -689,7 +689,7 @@ system of model, and the projection system of each dataset. An example is presen
 <section id="overland-flow-boundary-condition-file">
 <h3>Overland flow boundary condition file<a class="headerlink" href="#overland-flow-boundary-condition-file" title="Link to this heading"></a></h3>
 <p>This component is still under development:</p>
-<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>OFBC
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>OFBC
 <span class="linenos">2</span>Flux data for time variable boundary conditions ----(1)
 <span class="linenos">3</span>../DynaVeg/input/DV_OF_flux.csv
 <span class="linenos">4</span>List points or raster map if netCDF not provided ---(3):
@@ -702,7 +702,7 @@ system of model, and the projection system of each dataset. An example is presen
 </section>
 <section id="store-variables-settings-file">
 <h3>Store variables settings file<a class="headerlink" href="#store-variables-settings-file" title="Link to this heading"></a></h3>
-<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>{&quot;store_var_grid&quot;:{
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{&quot;store_var_grid&quot;:{
 &#39;pre&#39;: True,
 &#39;pet&#39;: True,
 &#39;run&#39;: True,

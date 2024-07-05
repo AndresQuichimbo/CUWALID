@@ -1,8 +1,8 @@
 models.dryp.example package
 ===========================
 
-Submodules
-----------
+Example Submodules
+^^^^^^^^^^^^^^^^^^
 
 models.dryp.example.plot\_test\_summary module
 ----------------------------------------------
@@ -20,8 +20,8 @@ models.dryp.example.run\_watershed\_delineation module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+Example Module contents
+-----------------------
 
 .. automodule:: models.dryp.example
    :members:

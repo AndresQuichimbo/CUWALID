@@ -4,8 +4,8 @@ DRYP: Dryland WAter Partitioning Model
 """
 import numpy as np
 #import pandas as pd
-from dryp.components.DRYP_io_files import get_model_settings
-from dryp.components.DRYP_io import (
+from models.dryp.components.DRYP_io_files import get_model_settings
+from models.dryp.components.DRYP_io import (
 	grid_environment,
 	surface_parameters,
 	model_environment_status,
@@ -14,19 +14,19 @@ from dryp.components.DRYP_io import (
 	interception_parameters,
 	set_initial_conditions,
 	extract_id_from_coords)
-from dryp.components.DRYP_infiltration import infiltration
-from dryp.components.DRYP_interception import interception
-from dryp.components.DRYP_read_dataset import (
+from models.dryp.components.DRYP_infiltration import infiltration
+from models.dryp.components.DRYP_interception import interception
+from models.dryp.components.DRYP_read_dataset import (
 	read_temporal_dataset, read_dataset, read_dataset_interp)
-from dryp.components.DRYP_soil_layer import swbm
-from dryp.components.DRYP_ABM_connector import ABMconnector
+from models.dryp.components.DRYP_soil_layer import swbm
+from models.dryp.components.DRYP_ABM_connector import ABMconnector
 #from components.DRYP_routing import runoff_routing
 #from components.DRYP_flow_accum import runoff_routing
-from dryp.components.DRYP_flow_accumf90 import runoff_routing
-from dryp.components.DRYP_groundwater_EFD import (
+from models.dryp.components.DRYP_flow_accumf90 import runoff_routing
+from models.dryp.components.DRYP_groundwater_EFD import (
 	gwflow_EFD,	storage_uz_sz,
 	recharge_routing)
-from dryp.components.DRYP_store_functions import (
+from models.dryp.components.DRYP_store_functions import (
 	GlobalGridVar,
 	save_map_to_rastergrid)
 

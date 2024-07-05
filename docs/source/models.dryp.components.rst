@@ -1,8 +1,8 @@
 models.dryp.components package
 ==============================
 
-Submodules
-----------
+Component Submodules
+^^^^^^^^^^^^^^^^^^^^
 
 models.dryp.components.DRYP\_ABM\_connector module
 --------------------------------------------------
@@ -236,8 +236,8 @@ models.dryp.components.setup module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+Component Module contents
+-------------------------
 
 .. automodule:: models.dryp.components
    :members:

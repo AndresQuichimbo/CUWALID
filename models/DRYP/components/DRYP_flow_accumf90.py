@@ -105,7 +105,7 @@ class runoff_routing(object):
 			3. Calculation of drainage area and discharge.
 			4. Depression finding and mapping, which updates drainage area and
 			discharge.
-		
+
 		Parameters
 		----------
 		runoff : numpy array

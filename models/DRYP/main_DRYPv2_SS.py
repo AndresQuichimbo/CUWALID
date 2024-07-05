@@ -4,24 +4,24 @@ DRYP: Dryland WAter Partitioning Model
 """
 import os
 import numpy as np
-from dryp.components.DRYP_io_files import get_model_settings
-from dryp.components.DRYP_io import (
+from models.dryp.components.DRYP_io_files import get_model_settings
+from models.dryp.components.DRYP_io import (
 	grid_environment,
 	surface_parameters,
 	soil_parameters,
 	groundwater_parameters)
-from dryp.components.DRYP_read_dataset import (
+from models.dryp.components.DRYP_read_dataset import (
 	read_dataset_interp)
-from dryp.components.DRYP_groundwater_EFD_SS import (
+from models.dryp.components.DRYP_groundwater_EFD_SS import (
 	gwflow_EFD)
-from dryp.components.DRYP_store_functions import (
+from models.dryp.components.DRYP_store_functions import (
 	save_map_to_rastergrid)
 #run_fortran = False
 run_fortran = True
 if run_fortran is True:
-	import dryp.components.gaussf90 as gauss
+	import models.dryp.components.gaussf90 as gauss
 else:
-	from dryp.components.DRYP_solvers import gauss_seidel_iteration
+	from models.dryp.components.DRYP_solvers import gauss_seidel_iteration
 
 # Structure and model components ---------------------------------------
 # data_in:	Input variables 
