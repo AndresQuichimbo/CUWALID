@@ -19,9 +19,27 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    install_requires=[
-        # List your package dependencies here
-        # e.g., 'numpy', 'pandas'
-    ],
+    install_requires = [
+        'geopandas',
+        'rioxarray',
+        'dask',
+        'landlab',
+        'pointpats',
+        'scikit-image',
+        'pip-tools',
+        'chardet',
+        'tqdm',
+        'cartopy',
+        'metpy',
+        'numba',
+        'cmaps',      
+        'cmcrameri',    
+        'seaborn',
+        'nb_conda_kernels',  
+        'spyder-kernels',  
+        'ipykernel',       
+        'basemap',         
+        'bottleneck'
+        ],
     include_package_data=True,
 )
