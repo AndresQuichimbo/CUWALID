@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.dryp.components.DRYP_read_meteo &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">cuwalid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.dryp.components.DRYP_read_meteo</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.dryp.components.DRYP_read_meteo</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">num2date</span><span class="p">,</span> <span class="n">date2num</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">cuwalid.dryp.components.DRYP_projection</span> <span class="kn">import</span> <span class="n">reproject_dataset</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<div class="viewcode-block" id="rainfall">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.rainfall">[docs]</a>
+<span class="k">class</span> <span class="nc">rainfall</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Read all input dataset</span>
+<span class="sd">	rain:	Rainfall</span>
+<span class="sd">	ETo:	Potential evapotranspiration</span>
+<span class="sd">	SAVI:	Soil-Adjusted Vegetation Index</span>
+<span class="sd">	Kc:		Crop coeficient factor	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">,</span> <span class="n">env_state</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Setting variables and time steps for reading inputs</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">first_read</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="n">t_end</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">ndays</span><span class="c1">#Sim_period.days</span>
+			
+			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span> <span class="o">!=</span> <span class="mi">60</span><span class="p">:</span>
+				<span class="n">date_sim_m</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
+					<span class="n">periods</span><span class="o">=</span><span class="n">t_end</span><span class="o">*</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_hourly</span><span class="o">*</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_sub_hourly</span><span class="p">,</span>
+					<span class="n">freq</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;min&#39;</span><span class="p">)</span>
+			<span class="n">freq_dt</span> <span class="o">=</span> <span class="s1">&#39;H&#39;</span>
+			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span> <span class="o">&gt;</span> <span class="mi">60</span><span class="p">:</span>
+				<span class="n">freq_dt</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="mi">60</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;H&#39;</span>
+			
+			<span class="c1"># generate time series of houtly dates</span>
+			<span class="n">date_sim_h</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
+										<span class="n">periods</span><span class="o">=</span><span class="n">t_end</span><span class="o">*</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_hourly</span><span class="p">,</span>
+										<span class="n">freq</span><span class="o">=</span><span class="n">freq_dt</span><span class="p">)</span>
+			
+			<span class="c1"># generate time series of daily dates</span>
+			<span class="n">date_sim_d</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="n">t_end</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">t_end</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;End of the simulation period should be later than initial date&quot;</span><span class="p">)</span>
+			
+		<span class="c1"># To be completed</span>
+		<span class="c1"># this will allow to read just one netCDF files for the simulation</span>
+		<span class="c1"># to read multiples files, take a look at input_datasets_bigfiles</span>
+		<span class="c1">#inputfile.netcf_savi = 0</span>
+		<span class="c1">#inputfile.netcf_kc = 0</span>
+		
+		
+		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">first_read</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>			
+			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">netcf_pre</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> 
+				<span class="c1"># Read netCDF fiels</span>
+				<span class="n">fpre</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_TSPre</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+				
+				<span class="c1"># Change number to datetime</span>
+				<span class="n">time_pre_aux</span> <span class="o">=</span> <span class="n">num2date</span><span class="p">(</span><span class="n">fpre</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+								<span class="n">units</span><span class="o">=</span><span class="n">fpre</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">units</span><span class="p">,</span>
+								<span class="n">calendar</span><span class="o">=</span><span class="n">fpre</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">calendar</span><span class="p">)</span>
+				
+				<span class="c1"># change time nstimedate to datetime</span>
+				<span class="n">time_pre</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="k">for</span> <span class="n">iidate</span> <span class="ow">in</span> <span class="n">time_pre_aux</span><span class="p">:</span>
+					<span class="k">if</span> <span class="ow">not</span> <span class="n">iidate</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+						<span class="n">time_pre</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datetime</span><span class="p">(</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span>
+							<span class="p">)</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">time_pre</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+				<span class="n">time_pre</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">time_pre</span><span class="p">)</span>
+			
+			<span class="k">else</span><span class="p">:</span>
+				<span class="c1"># Read time series of precipitation	csv</span>
+				<span class="n">fpre</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_TSPre</span><span class="p">)</span>
+				
+				<span class="c1"># change to txt to datetime</span>
+				<span class="n">fpre</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">fpre</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">])</span><span class="c1">#,format = &#39;%d/%m/%Y %H:%M&#39;)</span>
+				
+				<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span> <span class="o">&gt;</span> <span class="mi">60</span><span class="p">:</span>
+					<span class="c1"># aggregate data to the model time step</span>
+					<span class="n">fpre</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">fpre</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">])</span>
+					<span class="n">fpre</span> <span class="o">=</span> <span class="p">(</span><span class="n">fpre</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">Agg_method</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+				<span class="n">time_pre</span> <span class="o">=</span> <span class="n">fpre</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span>
+			
+			<span class="c1"># Read time series of evapotranspiration</span>
+			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">netcf_ETo</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="c1">#inputfile.netcf_savi = 1</span>
+				<span class="c1">#inputfile.netcf_kc = 1</span>
+				
+				<span class="c1"># Read netCDF files</span>
+				<span class="n">dataETo</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_TSMeteo</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+				
+				<span class="c1"># Change number to datetime</span>
+				<span class="n">time_ETo_aux</span> <span class="o">=</span> <span class="n">num2date</span><span class="p">(</span><span class="n">dataETo</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+								<span class="n">units</span><span class="o">=</span><span class="n">dataETo</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">units</span><span class="p">,</span>
+								<span class="n">calendar</span><span class="o">=</span><span class="n">dataETo</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">calendar</span>
+								<span class="p">)</span>
+				
+				<span class="c1"># change time nstimedate to datetime</span>
+				<span class="n">time_ETo</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="k">for</span> <span class="n">iidate</span> <span class="ow">in</span> <span class="n">time_ETo_aux</span><span class="p">:</span>
+					<span class="k">if</span> <span class="ow">not</span> <span class="n">iidate</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+						<span class="n">time_ETo</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datetime</span><span class="p">(</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span>
+							<span class="p">)</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">time_ETo</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+				<span class="n">time_ETo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">time_ETo</span><span class="p">)</span>
+				
+			<span class="k">else</span><span class="p">:</span>
+				<span class="c1"># Read time series of precipitation	csv</span>
+				<span class="n">dataETo</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_TSMeteo</span><span class="p">)</span>
+				
+				<span class="c1"># change to txt to datetime</span>
+				<span class="n">dataETo</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">dataETo</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">])</span>				
+				
+				<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span> <span class="o">&gt;</span> <span class="mi">60</span><span class="p">:</span>
+					<span class="c1"># aggregate data to the model time step</span>
+					<span class="n">dataETo</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">dataETo</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">])</span>
+					<span class="n">dataETo</span> <span class="o">=</span> <span class="p">(</span><span class="n">dataETo</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">Agg_method</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+				<span class="n">time_ETo</span> <span class="o">=</span> <span class="n">dataETo</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span>
+				
+			<span class="c1"># Time periods-----------------------------------------------------------------------</span>
+			<span class="c1"># Find id of the precipitation array for the the simulation period </span>
+			<span class="n">idate_aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">time_pre</span> <span class="o">&lt;</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">end_date</span><span class="p">)</span>
+								<span class="o">&amp;</span> <span class="p">(</span><span class="n">time_pre</span> <span class="o">&gt;=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+								
+			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span> <span class="o">!=</span> <span class="mi">60</span><span class="p">:</span>
+				<span class="n">idatepre</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">date_sim_m</span><span class="p">))</span>
+				<span class="n">idate_pre</span> <span class="o">=</span> <span class="n">date_sim_m</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">time_pre</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">idatepre</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">date_sim_h</span><span class="p">))</span>
+				<span class="n">idate_pre</span> <span class="o">=</span> <span class="n">date_sim_h</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">time_pre</span><span class="p">)</span>
+			<span class="n">idatepre</span><span class="p">[</span><span class="n">idate_pre</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span> <span class="o">=</span> <span class="n">idate_aux</span>
+			<span class="n">idatepre</span><span class="p">[</span><span class="n">idate_pre</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+			
+			<span class="c1"># Find id of the potential ET array for the the simulation period </span>
+			<span class="n">idateETo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">time_ETo</span> <span class="o">&lt;</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">end_date</span><span class="p">)</span>
+								<span class="o">&amp;</span> <span class="p">(</span><span class="n">time_ETo</span> <span class="o">&gt;=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+			
+			<span class="c1"># check if time periods match both time series</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idateETo</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">t_end</span><span class="o">*</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_hourly</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">netcf_pre</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+					<span class="n">t_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">time_ETo</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">t_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">time_ETo</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
+				<span class="n">date_sim_h</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="n">t_end</span><span class="o">*</span><span class="mi">24</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">)</span>
+				<span class="n">date_sim_d</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="n">t_end</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>	
+			
+			<span class="c1"># time periods for optional variables</span>
+			<span class="c1"># match the period between dataset to avoid errors</span>
+			
+		<span class="bp">self</span><span class="o">.</span><span class="n">date_sim_d</span> <span class="o">=</span> <span class="n">date_sim_d</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">date_sim_h</span> <span class="o">=</span> <span class="n">date_sim_h</span>
+		
+		<span class="c1"># create time series of dates at model time step frequency</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">date_sim_dt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span>
+			<span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
+			<span class="n">periods</span> <span class="o">=</span><span class="n">t_end</span><span class="o">*</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_hourly</span><span class="o">*</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_sub_hourly</span><span class="p">,</span>
+			<span class="n">freq</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">Agg_method</span><span class="p">))</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">fpre</span> <span class="o">=</span> <span class="n">fpre</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dataETo</span> <span class="o">=</span> <span class="n">dataETo</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">idateETo</span> <span class="o">=</span> <span class="n">idateETo</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">idatepre</span> <span class="o">=</span> <span class="n">idatepre</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">PET</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
+		<span class="c1">#self.PETr = np.zeros(env_state.grid_size)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t_end</span> <span class="o">=</span> <span class="n">t_end</span>		
+
+	<span class="c1"># find precipitation and PET for an specific time step</span>
+<div class="viewcode-block" id="rainfall.run_rainfall_one_step">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.rainfall.run_rainfall_one_step">[docs]</a>
+	<span class="k">def</span> <span class="nf">run_rainfall_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">j_tp</span><span class="p">,</span> <span class="n">j_te</span><span class="p">,</span> <span class="n">j_tsavi</span><span class="p">,</span> <span class="n">j_tkc</span><span class="p">,</span> <span class="n">env_state</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Call this to execute a step in the model.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">rain_day_before</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">rain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
+		
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idatepre</span><span class="p">[</span><span class="n">j_tp</span><span class="p">]):</span>
+			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">netcf_pre</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">rain</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpre</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">idatepre</span><span class="p">[</span><span class="n">j_tp</span><span class="p">]][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+			<span class="k">else</span><span class="p">:</span> <span class="c1"># Uniform precipitation over the whole catchement</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">rain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">fpre</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">idatepre</span><span class="p">[</span><span class="n">j_tp</span><span class="p">]]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">rain_day_before</span> <span class="o">=</span> <span class="mi">1</span>
+			
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idateETo</span><span class="p">[</span><span class="n">j_te</span><span class="p">]):</span>
+			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">netcf_ETo</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">PET</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataETo</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">idateETo</span><span class="p">[</span><span class="n">j_te</span><span class="p">]][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">*</span><span class="n">inputfile</span><span class="o">.</span><span class="n">unit_sim</span>
+				<span class="c1">#self.PETr += self.dataETo.variables[&#39;pet&#39;][self.idateETo[j_te]][:].flatten()*inputfile.unit_sim</span>
+			<span class="k">else</span><span class="p">:</span> <span class="c1"># Uniform precipitation over the whole catchement</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">PET</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataETo</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">idateETo</span><span class="p">[</span><span class="n">j_te</span><span class="p">]]</span><span class="o">*</span><span class="n">inputfile</span><span class="o">.</span><span class="n">unit_sim</span></div>
+</div>
+
+				<span class="c1">#Cummulative value of ETp for daily stimation of AET in river cells</span>
+				<span class="c1">#self.PETr += self.dataETo[&#39;ETo&#39;][self.idateETo[j_te]]*inputfile.unit_sim</span>
+		
+<div class="viewcode-block" id="read_temporal_dataset">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.read_temporal_dataset">[docs]</a>
+<span class="k">class</span> <span class="nc">read_temporal_dataset</span><span class="p">():</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Read all input dataset</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	------</span>
+<span class="sd">	file_type:	0 for csv and 1 for netCDF</span>
+<span class="sd">	</span>
+<span class="sd">	dataset:</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">file_type</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">ini_date</span><span class="p">):</span><span class="c1">#, str_dt):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot; Setting variables and time steps for reading inputs</span>
+<span class="sd">		Call this to execute a step in the model.</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		------</span>
+<span class="sd">		filename: 	file name of dataset</span>
+<span class="sd">		file_type:	file format 0 for csv files and 1 to netCDF fiels</span>
+<span class="sd">		end_date:	end date of simulation</span>
+<span class="sd">		ini_date:	initial date</span>
+<span class="sd">		dt:			model time step)</span>
+<span class="sd">		</span>
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		
+		<span class="n">freq_dt</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">dt</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;min&#39;</span>
+		
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+		
+			<span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> 
+				<span class="c1"># Read netCDF fiels</span>
+				<span class="n">data_set</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+				
+				<span class="c1"># slicing, aggregation, and interpolation.</span>
+				
+				<span class="c1"># Change number to datetime</span>
+				<span class="n">time_aux</span> <span class="o">=</span> <span class="n">num2date</span><span class="p">(</span><span class="n">data_set</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+								<span class="n">units</span><span class="o">=</span><span class="n">data_set</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">units</span><span class="p">,</span>
+								<span class="n">calendar</span><span class="o">=</span><span class="n">data_set</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">calendar</span><span class="p">)</span>
+				
+				<span class="bp">self</span><span class="o">.</span><span class="n">data_set</span> <span class="o">=</span> <span class="n">data_set</span>
+				
+				<span class="c1"># change time nstimedate to datetime</span>
+				<span class="n">time</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="k">for</span> <span class="n">iidate</span> <span class="ow">in</span> <span class="n">time_aux</span><span class="p">:</span>
+					<span class="k">if</span> <span class="ow">not</span> <span class="n">iidate</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+						<span class="n">time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datetime</span><span class="p">(</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span>
+							<span class="n">iidate</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span>
+							<span class="p">)</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+				<span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+			
+			<span class="k">else</span><span class="p">:</span>
+				
+				<span class="c1"># Read time series of precipitation	csv</span>
+				<span class="n">data_set</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+				
+				<span class="c1"># change to txt to datetime</span>
+				<span class="n">data_set</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">data_set</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="nb">format</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">/%m/%Y %H:%M&#39;</span><span class="p">)</span>
+							
+				<span class="c1"># aggregate data to the model time step</span>
+				<span class="n">data_set</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">data_set</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">])</span>
+				
+				<span class="bp">self</span><span class="o">.</span><span class="n">data_set</span> <span class="o">=</span> <span class="p">(</span><span class="n">data_set</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">freq_dt</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+				
+				<span class="n">time</span> <span class="o">=</span> <span class="n">data_set</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span>
+				
+				<span class="c1"># Find id of the precipitation array for the the simulation period </span>
+				<span class="n">idate_aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">time</span> <span class="o">&lt;</span> <span class="n">end_date</span><span class="p">)</span>
+									<span class="o">&amp;</span> <span class="p">(</span><span class="n">time</span> <span class="o">&gt;=</span> <span class="n">ini_date</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+				
+				<span class="bp">self</span><span class="o">.</span><span class="n">data_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_set</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idate_aux</span><span class="p">]</span>
+				<span class="c1">#print(self.data_set)</span>
+				<span class="c1">#import matplotlib.pyplot as plt</span>
+				<span class="c1">#plt.plot(self.data_set[&#39;flux_0&#39;])</span>
+				<span class="c1">#plt.show()</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">idate_aux</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+					<span class="nb">print</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+					<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Dataset do not match the simulation period&quot;</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			
+			<span class="bp">self</span><span class="o">.</span><span class="n">data_set</span> <span class="o">=</span> <span class="kc">None</span>
+			<span class="nb">print</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;not provided&#39;</span><span class="p">)</span>
+			
+			
+		<span class="c1">#self.time</span>
+		<span class="c1">#self.da = #return	</span>
+
+		
+		<span class="c1"># To be completed</span>
+		<span class="c1"># this will allow to read just one netCDF files for the simulation</span>
+		<span class="c1"># to read multiples files, take a look at input_datasets_bigfiles</span>
+		<span class="c1">#inputfile.netcf_savi = 0</span>
+		<span class="c1">#inputfile.netcf_kc = 0</span>
+		<span class="c1">#self.fpre = fpre</span>
+		<span class="c1">#self.dataETo = dataETo</span>
+		<span class="c1">#self.idateETo = idateETo</span>
+		<span class="c1">#self.idatepre = idatepre</span>
+		<span class="c1">#self.PET = np.zeros(env_state.grid_size)</span>
+		<span class="c1">##self.PETr = np.zeros(env_state.grid_size)</span>
+		<span class="c1">#self.t_end = t_end		</span>
+		
+		<span class="c1"># find precipitation and PET for an specific time step</span>
+<div class="viewcode-block" id="read_temporal_dataset.get_dataset_one_step">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.read_temporal_dataset.get_dataset_one_step">[docs]</a>
+	<span class="k">def</span> <span class="nf">get_dataset_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">env_state</span><span class="p">,</span> <span class="n">file_type</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span><span class="c1">#, filename):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Call this to execute a step in the model.</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		------</span>
+<span class="sd">		t: 			time step index</span>
+<span class="sd">		env_state:	grid</span>
+<span class="sd">		file_type:	file format 0 for csv files and 1 to netCDF fiels</span>
+<span class="sd">		field:		variable name</span>
+<span class="sd">		</span>
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		dataset_at_t:	list of values</span>
+<span class="sd">		</span>
+<span class="sd">		&quot;&quot;&quot;</span>		
+		<span class="n">dataset_at_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
+		
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="n">t</span><span class="p">]):</span>
+			
+			<span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">dataset_at_t</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_set</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">field</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="n">t</span><span class="p">]][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+			
+			<span class="k">else</span><span class="p">:</span> <span class="c1"># Uniform precipitation over the whole catchement</span>
+				<span class="c1"># add interpo;ation here for future versions**</span>
+				<span class="n">dataset_at_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">data_set</span><span class="p">[</span><span class="n">field</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="n">t</span><span class="p">]]</span>
+		
+		<span class="k">return</span> <span class="n">dataset_at_t</span></div>
+
+		
+<div class="viewcode-block" id="read_temporal_dataset.get_point_dataset_one_step">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.read_temporal_dataset.get_point_dataset_one_step">[docs]</a>
+	<span class="k">def</span> <span class="nf">get_point_dataset_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Call this to read forcing data at time step t</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		------</span>
+<span class="sd">		t: 			time step index</span>
+<span class="sd">		env_state:	grid</span>
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		dataset_at_t:	list of values</span>
+<span class="sd">		</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">head</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_set</span><span class="p">)</span>
+		
+		<span class="n">head</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+		<span class="c1">#print(type(head), t)</span>
+		<span class="n">dataset_at_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_set</span><span class="p">[</span><span class="n">head</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+	
+		<span class="k">return</span> <span class="n">dataset_at_t</span></div>
+</div>
+
+
+<div class="viewcode-block" id="input_datasets_bigfiles_new">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.input_datasets_bigfiles_new">[docs]</a>
+<span class="k">class</span> <span class="nc">input_datasets_bigfiles_new</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Read input datasets from different sequential files</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	Returns</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">,</span> <span class="n">env_state</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;set model grid time series and model files</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		-----</span>
+<span class="sd">		inputfile:	</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		------</span>
+<span class="sd">		</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+				
+		<span class="c1"># Define the time step for temporal aggregation</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">freq_dt</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;min&#39;</span>
+		
+		<span class="c1"># Define dataset x and y intervals for spatial interpolation</span>
+		<span class="c1">#self.lon = env_state.lon</span>
+		<span class="c1">#self.lat = env_state.lat</span>
+		
+		<span class="c1"># Check if the simulation period is rigth</span>
+		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">first_read</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="n">t_end</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">Sim_period</span><span class="o">.</span><span class="n">days</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">date_sim_dt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
+				<span class="n">periods</span> <span class="o">=</span> <span class="n">t_end</span><span class="o">*</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_hourly</span><span class="o">*</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_sub_hourly</span><span class="p">,</span>
+				<span class="n">freq</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;min&#39;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">t_end</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;End of the simulation period should be later than initial date&quot;</span><span class="p">)</span>
+		
+		<span class="c1"># Save number of time steps</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t_end</span> <span class="o">=</span> <span class="n">t_end</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">read_before_pre</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">read_before_pet</span> <span class="o">=</span> <span class="mi">1</span>
+		
+		<span class="c1"># to be deleted in new versions</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">year_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">year_pet</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+		
+		<span class="c1"># rainfall component time step</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span>
+		
+		<span class="c1"># to be deleted in subsequent versions</span>
+		<span class="c1"># number of time steps per model time step</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_pre</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_pet</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_pet</span><span class="p">)</span>
+		
+		<span class="c1"># check if temporal interpolation is required for precipitation</span>
+		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">dt_pre</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1440</span><span class="o">/</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1440</span><span class="o">/</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_pre</span><span class="p">)</span>
+		
+		<span class="c1"># check if temporal interpolation is required for evapotrasnpiration</span>
+		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">dt_pet</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_pet</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1440</span><span class="o">/</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_pet</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1440</span><span class="o">/</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_pet</span><span class="p">)</span>
+		
+		<span class="c1"># to be deleted in subsequent versions</span>
+		<span class="c1"># number of time steps per hour model time step</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_hour_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_pre</span><span class="o">/</span><span class="mi">60</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_hour_pet</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_pet</span><span class="o">/</span><span class="mi">60</span><span class="p">)</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">idatesavi</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">idatekc</span> <span class="o">=</span> <span class="kc">None</span>
+		
+<div class="viewcode-block" id="input_datasets_bigfiles_new.run_dataset_one_step">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.input_datasets_bigfiles_new.run_dataset_one_step">[docs]</a>
+	<span class="k">def</span> <span class="nf">run_dataset_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">env_state</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Call this to execute a step in the model.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		j : int</span>
+<span class="sd">			Counter for time</span>
+<span class="sd">		env_state : type</span>
+<span class="sd">			Description of env_state</span>
+<span class="sd">		inputfile : type</span>
+<span class="sd">			Description of inputfile</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		rain : float</span>
+<span class="sd">			Precipitation for the actual time step</span>
+<span class="sd">		pet : float</span>
+<span class="sd">			Potential evapotranspiration for current timestep</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_sim_dt</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+		<span class="c1"># PRECIPITATION</span>
+		<span class="n">idate_pre</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_sim_dt</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="c1"># - timedelta(hours=(self.nsteps_pre-1))</span>
+		
+		<span class="c1"># create zero array for precipitation</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">rain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
+		
+		<span class="c1"># find the location of the date in the dataset</span>
+		<span class="c1"># lacation depending on the hour</span>
+		<span class="n">hour_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_pre</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H&#39;</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_hour_pre</span><span class="p">)</span>
+		
+		<span class="c1"># location depending on the day</span>
+		<span class="n">j_tp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_pre</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_pre</span> <span class="o">+</span> <span class="n">hour_pre</span>
+		
+		<span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+		
+		<span class="c1"># Read data at the begining of the simulation or if a new dataset starts</span>
+		<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_pre</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">j_tp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+			<span class="c1"># Filename of the current year</span>
+			<span class="n">fname_pre</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_TSPre</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idate_pre</span><span class="o">.</span><span class="n">year</span><span class="p">)</span><span class="c1"># + &#39;.nc&#39;			</span>
+			
+			<span class="c1"># read dataset</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fpre</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">fname_pre</span><span class="p">)</span>
+			
+			<span class="c1"># reproject dataset</span>
+			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">reproject_pre</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fpre</span> <span class="o">=</span> <span class="n">reproject_dataset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpre</span><span class="p">,</span> <span class="n">keys</span><span class="p">)</span>
+			
+			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">dt_pre</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">:</span>
+				<span class="c1"># temporal resampling</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fpre</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpre</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">freq_dt</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+							
+			<span class="c1"># flag to no read every time the whole dataset</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">read_before_pre</span> <span class="o">=</span> <span class="mi">0</span>
+					
+		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">interpolate_pre</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="c1"># Spatial interpolation</span>
+			<span class="n">fpre</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpre</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">j_tp</span><span class="p">])</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">lat</span><span class="p">),</span> <span class="n">lon</span><span class="o">=</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">lon</span><span class="p">))</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">fpre</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpre</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">j_tp</span><span class="p">])</span>
+		<span class="c1">#print(np.mean(fpre.mean(&#39;time&#39;)))		</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">rain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fpre</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+		
+		<span class="c1"># EVAPOTRANSPIRATION</span>
+		<span class="n">idate_pet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_sim_dt</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="c1"># - timedelta(hours=(self.nsteps_pet-1))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">PET</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
+		
+		<span class="c1"># find the location of the date in the dataset</span>
+		<span class="c1"># lacation depending on the hour</span>
+		<span class="n">hour_pet</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_pet</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H&#39;</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_hour_pet</span><span class="p">)</span>
+		<span class="n">j_te</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_pet</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_pet</span> <span class="o">+</span> <span class="n">hour_pet</span>				
+		
+		<span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">]</span>
+		
+		<span class="c1"># Read data at the begining of the simulation</span>
+		<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_pet</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">j_te</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+			<span class="n">fname_pet</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_TSMeteo</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idate_pet</span><span class="o">.</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.nc&#39;</span>
+			
+			<span class="c1"># read dataset</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">fpet</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">fname_pet</span><span class="p">)</span>
+			
+			<span class="c1"># fill empty values</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fpet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpet</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpet</span> <span class="o">&lt;</span> <span class="mf">1e10</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fpet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpet</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fpet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpet</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="n">keys</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fpet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpet</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fpet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpet</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="n">keys</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+						
+			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">dt_pet</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">:</span>
+				<span class="c1"># temporal resampling</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fpet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpet</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">freq_dt</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+			
+			<span class="c1"># reproject dataset</span>
+			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">reproject_pet</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">fpet</span> <span class="o">=</span> <span class="n">fpet</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_crs</span><span class="p">(</span><span class="n">oldPP</span><span class="p">)</span> <span class="c1"># write crs</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fpet</span> <span class="o">=</span> <span class="n">fpet</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">reproject</span><span class="p">(</span><span class="n">newPP</span><span class="p">)</span> <span class="c1">#reproject the file</span>
+						
+			<span class="c1"># flag to no read every time the whole dataset</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">read_before_pet</span> <span class="o">=</span> <span class="mi">0</span>
+		
+		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">interpolate_pet</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="c1"># Spatial interpolation</span>
+			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">reproject_pet</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">fpet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpet</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">j_te</span><span class="p">])</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
+					<span class="n">y</span><span class="o">=</span><span class="n">env_state</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+					<span class="n">x</span><span class="o">=</span><span class="n">env_state</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
+					<span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span>
+					<span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">fpet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpet</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">j_te</span><span class="p">])</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
+					<span class="n">latitude</span><span class="o">=</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">lat</span><span class="p">),</span>
+					<span class="n">longitude</span><span class="o">=</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">lon</span><span class="p">),</span>
+					<span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span>
+					<span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">fpet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpet</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">j_te</span><span class="p">])</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">PET</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fpet</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">PET</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PET</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+		
+		<span class="c1"># SOIL-ADJUSTED VEGETATION INDEX</span>
+		<span class="c1"># optional dataset</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">LAI</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="c1"># Soil-Adjusted Vegetation Index</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">idatesavi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">idate_savi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_sim_dt</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="c1"># - timedelta(hours=(self.nsteps_savi-1))</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">SAVI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
+		
+			<span class="n">hour_savi</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_savi</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H&#39;</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_hour_savi</span><span class="p">)</span>
+			<span class="n">j_te</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_savi</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_savi</span> <span class="o">+</span> <span class="n">hour_savi</span>
+			
+			<span class="c1"># Read data at the begining of the simulation</span>
+			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_savi</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">j_te</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+				<span class="n">fname_savi</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_TSMeteo</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idate_savi</span><span class="o">.</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.nc&#39;</span>
+				
+				<span class="c1"># read dataset</span>
+				<span class="n">fsavi</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">fname_savi</span><span class="p">)</span>
+				<span class="c1"># temporal resampling</span>
+				<span class="n">fsavi</span> <span class="o">=</span> <span class="n">fsavi</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">freq_dt</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+				<span class="c1"># Spatial interpolation</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fsavi</span> <span class="o">=</span> <span class="n">fsavi</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">),</span> <span class="n">lon</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">))</span>
+				
+				<span class="c1"># flag to no read every time the whole dataset</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">read_before_savi</span> <span class="o">=</span> <span class="mi">0</span>
+					
+			<span class="bp">self</span><span class="o">.</span><span class="n">SAVI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fsavi</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">][</span><span class="n">j_te</span><span class="p">][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+		
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">SAVI</span> <span class="o">=</span> <span class="mi">1</span>
+		
+		<span class="c1"># CROP COEFICIENT FACTOR</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">idatekc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">idate_kc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_sim_dt</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="c1"># - timedelta(hours=(self.nsteps_kc-1))</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Kc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
+			
+			<span class="n">hour_kc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_kc</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H&#39;</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_hour_kc</span><span class="p">)</span>
+			<span class="n">j_te</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_kc</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_kc</span> <span class="o">+</span> <span class="n">hour_kc</span>
+			
+			<span class="c1"># Read data at the begining of the simulation</span>
+			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_kc</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">j_te</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>				
+				<span class="n">fname_kc</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_TSMeteo</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idate_kc</span><span class="o">.</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.nc&#39;</span>
+				
+				<span class="c1"># read dataset</span>
+				<span class="n">fkc</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">fname_kc</span><span class="p">)</span>
+				<span class="c1"># temporal resampling</span>
+				<span class="n">fkc</span> <span class="o">=</span> <span class="n">fkc</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">freq_dt</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+				<span class="c1"># Spatial interpolation</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fkc</span> <span class="o">=</span> <span class="n">fkc</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">),</span> <span class="n">lon</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">))</span>
+				
+				<span class="c1"># flag to no read every time the whole dataset</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">read_before_kc</span> <span class="o">=</span> <span class="mi">0</span>
+						
+			<span class="bp">self</span><span class="o">.</span><span class="n">Kc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fkc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;kc&#39;</span><span class="p">][</span><span class="n">j_te</span><span class="p">][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>				
+
+		<span class="k">else</span><span class="p">:</span>	
+			<span class="bp">self</span><span class="o">.</span><span class="n">Kc</span> <span class="o">=</span> <span class="mi">1</span></div>
+</div>
+
+
+<div class="viewcode-block" id="input_datasets_bigfiles">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.input_datasets_bigfiles">[docs]</a>
+<span class="k">class</span> <span class="nc">input_datasets_bigfiles</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Read input datasets from different sequential files</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	Returns</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">,</span> <span class="n">env_state</span><span class="p">):</span>
+		<span class="c1">#dt = np.min([inputfile.dtOF, inputfile.dtUZ, inputfile.dtSZ])</span>
+		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">first_read</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="n">t_end</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">ndays</span> <span class="c1"># Sim_period.days</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">date_sim_dt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">periods</span> <span class="o">=</span> <span class="n">t_end</span><span class="o">*</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_hourly</span><span class="o">*</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_sub_hourly</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;min&#39;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">t_end</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;End of the simulation period should be later than initial date&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t_end</span> <span class="o">=</span> <span class="n">t_end</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">read_before_pre</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">read_before_pet</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">year_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">year_pet</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">ini_date</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_pre</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_pet</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_ETo</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1440</span><span class="o">/</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_pre</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_pet</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1440</span><span class="o">/</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_ETo</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_hour_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_pre</span><span class="o">/</span><span class="mi">60</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_hour_pet</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">dt_ETo</span><span class="o">/</span><span class="mi">60</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">idatesavi</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">idatekc</span> <span class="o">=</span> <span class="kc">None</span>
+	
+	<span class="c1"># find precipitation and PET for an specific time step</span>
+<div class="viewcode-block" id="input_datasets_bigfiles.run_dataset_one_step">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.input_datasets_bigfiles.run_dataset_one_step">[docs]</a>
+	<span class="k">def</span> <span class="nf">run_dataset_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">env_state</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Call this to execute a step in the model.</span>
+<span class="sd">		Parameters</span>
+<span class="sd">			j:	Counter for time</span>
+<span class="sd">		Returns</span>
+<span class="sd">			rain:	precipitation for the actual time step</span>
+<span class="sd">			pet:	potential evapotranspiration for current timestep</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1">#date = self.date_sim_dt[j]</span>
+		<span class="c1"># Precipitation</span>
+		<span class="n">idate_pre</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_sim_dt</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_pre</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+		<span class="c1">#print(type(idate_pre), idate_pre)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">rain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_pre</span><span class="p">):</span>			
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">year_pre</span> <span class="o">==</span> <span class="n">idate_pre</span><span class="o">.</span><span class="n">year</span><span class="p">:</span>
+				<span class="n">hour_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_pre</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H&#39;</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_hour_pre</span><span class="p">)</span>
+				<span class="n">j_tp</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_pre</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_pre</span> <span class="o">+</span> <span class="n">hour_pre</span>
+				
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_before_pre</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+					<span class="n">fname_pre</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_TSPre</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idate_pre</span><span class="o">.</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.nc&#39;</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">fpre</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">fname_pre</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+					<span class="n">rain</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpre</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">][</span><span class="n">j_tp</span><span class="p">][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">read_before_pre</span> <span class="o">=</span> <span class="mi">0</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">rain</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpre</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">][</span><span class="n">j_tp</span><span class="p">][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">read_before_pre</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">hour_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_pre</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H&#39;</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_hour_pre</span><span class="p">)</span> 
+				<span class="n">j_tp</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_pre</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_pre</span> <span class="o">+</span> <span class="n">hour_pre</span>
+				
+				<span class="n">fname_pre</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_TSPre</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idate_pre</span><span class="o">.</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.nc&#39;</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fpre</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">fname_pre</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+				<span class="n">rain</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpre</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">][</span><span class="n">j_tp</span><span class="p">][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">read_before_pre</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">rain</span> <span class="o">+=</span> <span class="n">rain</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">year_pre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">idate_pre</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+			<span class="n">idate_pre</span> <span class="o">+=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+		
+		<span class="c1"># Evapotranspiration</span>
+		<span class="n">idate_pet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_sim_dt</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_pet</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">PET</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_pet</span><span class="p">):</span>			
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">year_pet</span> <span class="o">==</span> <span class="n">idate_pet</span><span class="o">.</span><span class="n">year</span><span class="p">:</span>				
+				<span class="n">hour_pet</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_pet</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H&#39;</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_hour_pet</span><span class="p">)</span>
+				<span class="n">j_te</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_pet</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_pet</span> <span class="o">+</span> <span class="n">hour_pet</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_before_pet</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+					<span class="n">fname_pet</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_TSMeteo</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idate_pet</span><span class="o">.</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.nc&#39;</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">fpet</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">fname_pet</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+					<span class="n">PET</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpet</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">][</span><span class="n">j_te</span><span class="p">][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">read_before_pet</span> <span class="o">=</span> <span class="mi">0</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">PET</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpet</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">][</span><span class="n">j_te</span><span class="p">][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">read_before_pet</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">hour_pet</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_pet</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H&#39;</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_hour_pet</span><span class="p">)</span>
+				<span class="n">j_te</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idate_pet</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_day_pet</span> <span class="o">+</span> <span class="n">hour_pet</span> 
+				<span class="n">fname_pet</span> <span class="o">=</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_TSMeteo</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">idate_pet</span><span class="o">.</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.nc&#39;</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">fpet</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">fname_pet</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+				<span class="n">PET</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpet</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">][</span><span class="n">j_te</span><span class="p">][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>				
+				<span class="bp">self</span><span class="o">.</span><span class="n">read_before_pet</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="n">PET</span><span class="p">[</span><span class="n">PET</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">PET</span> <span class="o">+=</span> <span class="n">PET</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">year_pet</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">idate_pet</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+			<span class="n">idate_pet</span> <span class="o">+=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

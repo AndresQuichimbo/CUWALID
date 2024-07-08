@@ -1,7 +1,7 @@
 .vscode
 __pycache__
-dryp\__pycache__
-tests\__pycache__
-tests\dryp\scripts\__pycache__
+cuwalid/dryp/__pycache__
+tests/__pycache__
+tests/dryp/scripts/__pycache__
 test_output
 tests/dryp/tilted_v/output/

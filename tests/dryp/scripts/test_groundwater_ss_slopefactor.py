@@ -6,15 +6,15 @@ Funtion to test steady-state conditions for the groundwater component
 """
 from context import dryp
 import numpy as np
-from dryp.components.DRYP_io import (grid_environment)
-from dryp.components.DRYP_groundwater_EFD_SS import (gwflow_EFD)
+from cuwalid.dryp.components.DRYP_io import (grid_environment)
+from cuwalid.dryp.components.DRYP_groundwater_EFD_SS import (gwflow_EFD)
 
 run_fortran = False
 #run_fortran = True
 if run_fortran is True:
-	import dryp.components.gaussf90 as gauss
+	import cuwalid.dryp.components.gaussf90 as gauss
 else:
-	from dryp.components.DRYP_solvers import gauss_seidel_iteration
+	from cuwalid.dryp.components.DRYP_solvers import gauss_seidel_iteration
 
 #@profile
 def run_DRYP_SS():

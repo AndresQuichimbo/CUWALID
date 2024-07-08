@@ -1,7 +1,7 @@
-API reference
-=============
+API Documentation
+=================
 
 .. toctree::
    :maxdepth: 4
 
-   dryp
+   cuwalid

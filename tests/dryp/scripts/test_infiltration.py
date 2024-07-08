@@ -2,7 +2,7 @@
 """
 from context import dryp
 import numpy as np
-from dryp.components.DRYP_infiltration import infiltration
+from cuwalid.dryp.components.DRYP_infiltration import infiltration
 
 def test_infiltration():
 	# define grid size

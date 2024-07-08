@@ -6,7 +6,7 @@ Created on Mon Feb 13 11:14:04 2023
 from context import dryp
 import numpy as np
 from landlab import RasterModelGrid
-from dryp.components.DRYP_flow_accum import watershed
+from cuwalid.dryp.components.DRYP_flow_accum import watershed
 
 
 def test_basin_delineation():
