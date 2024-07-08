@@ -7,7 +7,7 @@ setup(
     name="CUWALID",
     version="0.0.1", 
     author="Andrés Quichimbo, Manuel Rios Gaona, Dagmawi Teklu Asfaw",
-    author_email="your.email@example.com",
+    author_email="cootelf@cardiff.ac.uk",
     description="CUWALID (Climate into Useful Water And Land Information in Drylands)",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -18,7 +18,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires='3.11>=3.9',
     install_requires = [
         'geopandas',
         'rioxarray',

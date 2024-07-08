@@ -9,7 +9,6 @@ Subpackages
 
    cuwalid.dryp.components
    cuwalid.dryp.example
-   cuwalid.dryp.tools
 
 Submodules
 ----------
