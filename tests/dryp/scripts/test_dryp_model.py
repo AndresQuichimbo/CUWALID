@@ -5,14 +5,14 @@ DRYP: Dryland WAter Partitioning Model
 from context import dryp
 import numpy as np
 import pandas as pd
-from models.dryp.components.DRYP_io import (grid_environment)
-from models.dryp.components.DRYP_infiltration import infiltration
-from models.dryp.components.DRYP_interception import interception
-from models.dryp.components.DRYP_soil_layer import swbm
-from models.dryp.components.DRYP_ABM_connector import ABMconnector
-#from models.dryp.components.DRYP_flow_accum import runoff_routing
-from models.dryp.components.DRYP_flow_accumf90 import runoff_routing
-from models.dryp.components.DRYP_groundwater_EFD import (
+from dryp.components.DRYP_io import (grid_environment)
+from dryp.components.DRYP_infiltration import infiltration
+from dryp.components.DRYP_interception import interception
+from dryp.components.DRYP_soil_layer import swbm
+from dryp.components.DRYP_ABM_connector import ABMconnector
+#from dryp.components.DRYP_flow_accum import runoff_routing
+from dryp.components.DRYP_flow_accumf90 import runoff_routing
+from dryp.components.DRYP_groundwater_EFD import (
 	gwflow_EFD,	storage_uz_sz)
 #from components.DRYP_store_functions import (
 #	GlobalTimeVarPts, GlobalTimeVarAvg, GlobalGridVar,

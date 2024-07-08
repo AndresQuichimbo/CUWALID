@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dryp.components.DRYP_store_functions &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dryp.components.DRYP_store_functions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dryp.components.DRYP_store_functions</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">calendar</span> <span class="kn">import</span> <span class="n">monthrange</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">num2date</span><span class="p">,</span> <span class="n">date2num</span>
+<span class="kn">from</span> <span class="nn">landlab.io</span> <span class="kn">import</span> <span class="n">write_esri_ascii</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">compress</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+
+<span class="c1"># global settings</span>
+<span class="n">agg_balance_global</span> <span class="o">=</span> <span class="s1">&#39;D&#39;</span>
+<span class="n">agg_balance_local</span> <span class="o">=</span> <span class="s1">&#39;D&#39;</span>
+<span class="n">point_aggre</span> <span class="o">=</span> <span class="s1">&#39;D&#39;</span>
+
+<span class="c1"># save varoiables</span>
+<span class="n">save_all</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># print variables</span>
+<span class="n">print_precipitation</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">print_infiltration</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">print_excess</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">print_watertable</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">print_actualetp</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">print_chstorage</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">print_percolation</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">print_soilmoisture</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">print_translosses</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">print_discharge</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">print_cropKc</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">print_Eca</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">print_Pth</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># print maps</span>
+<span class="n">print_maps_end</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">print_watertable_map</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">print_soilmoisture_map</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># NETCDF4 model outputs</span>
+<span class="n">apply_scale_offset</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">long_name</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pre&#39;</span><span class="p">:</span><span class="s1">&#39;precipitation&#39;</span><span class="p">,</span> <span class="s1">&#39;aet&#39;</span><span class="p">:</span><span class="s1">&#39;actual evapotranspiration&#39;</span><span class="p">,</span> <span class="s1">&#39;pet&#39;</span><span class="p">:</span><span class="s1">&#39;potential evapotranspiration&#39;</span><span class="p">,</span>
+			 <span class="s1">&#39;inf&#39;</span><span class="p">:</span><span class="s1">&#39;infiltration&#39;</span><span class="p">,</span> <span class="s1">&#39;tls&#39;</span><span class="p">:</span><span class="s1">&#39;transmission losses&#39;</span><span class="p">,</span> <span class="s1">&#39;fch&#39;</span><span class="p">:</span><span class="s1">&#39;focused recharge&#39;</span><span class="p">,</span>
+			 <span class="s1">&#39;ssz&#39;</span><span class="p">:</span><span class="s1">&#39;surface storage&#39;</span><span class="p">,</span> <span class="s1">&#39;rch&#39;</span><span class="p">:</span><span class="s1">&#39;total groundwater recharge&#39;</span><span class="p">,</span>
+			<span class="s1">&#39;wte&#39;</span><span class="p">:</span><span class="s1">&#39;water table elevation&#39;</span><span class="p">,</span> <span class="s1">&#39;egw&#39;</span><span class="p">:</span><span class="s1">&#39;groundwater evaporation&#39;</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">:</span><span class="s1">&#39;runoff&#39;</span><span class="p">,</span>
+			<span class="s1">&#39;gdh&#39;</span><span class="p">:</span><span class="s1">&#39;groundwater discharge&#39;</span><span class="p">,</span>
+			<span class="s1">&#39;tht&#39;</span><span class="p">:</span><span class="s1">&#39;soil moisture&#39;</span><span class="p">,</span> <span class="s1">&#39;twsc&#39;</span><span class="p">:</span><span class="s1">&#39;water storage change&#39;</span><span class="p">,</span> <span class="s1">&#39;dis&#39;</span><span class="p">:</span><span class="s1">&#39;discharge&#39;</span>
+			<span class="p">}</span>
+
+<span class="n">units_var</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pre&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;aet&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;pet&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;inf&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;tls&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;fch&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;ssz&#39;</span><span class="p">:</span><span class="s1">&#39;m3/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;rch&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;wte&#39;</span><span class="p">:</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;egw&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;gdh&#39;</span><span class="p">:</span><span class="s1">&#39;m3/dt&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;tht&#39;</span><span class="p">:</span><span class="s1">&#39;m3/m3&#39;</span><span class="p">,</span> <span class="s1">&#39;twsc&#39;</span><span class="p">:</span><span class="s1">&#39;mm&#39;</span><span class="p">,</span> <span class="s1">&#39;dis&#39;</span><span class="p">:</span><span class="s1">&#39;m3/dt&#39;</span><span class="p">}</span>
+
+<div class="viewcode-block" id="GlobalGridVar">
+<a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_store_functions.GlobalGridVar">[docs]</a>
+<span class="k">class</span> <span class="nc">GlobalGridVar</span><span class="p">:</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Setting variables and arrays for saving model grid variables</span>
+<span class="sd">	Returns</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ini_date</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">save_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">store_var</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Create a set of 2D arrays to store spatio-temporal datasets.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		------</span>
+<span class="sd">		store_var:	dictionary</span>
+<span class="sd">			with key containing model name variables and boolean as values</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">save_results</span> <span class="o">=</span> <span class="n">save_results</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">cumm_variable</span> <span class="o">=</span> <span class="p">[]</span>
+
+		<span class="c1"># Calculate time delta</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">delta</span> <span class="o">=</span> <span class="n">str2timedelta</span><span class="p">(</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+			
+		<span class="c1"># Calculate next time step			</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">idate</span> <span class="o">=</span> <span class="n">addtime</span><span class="p">(</span><span class="n">ini_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pdate</span> <span class="o">=</span> <span class="n">ini_date</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">time_grid</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_vector</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dt_time</span> <span class="o">=</span> <span class="n">dt</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">update_keys</span> <span class="o">=</span> <span class="kc">True</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">drop_var</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="k">if</span> <span class="n">store_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="c1"># select variables that are not stored</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">drop_var</span> <span class="o">=</span> <span class="n">drop_false_keys</span><span class="p">(</span><span class="n">store_var</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">drop_var</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">drop_var</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="c1">#self.store_var = None</span>
+		<span class="c1">#self.update_keys = True</span>
+		<span class="k">pass</span>
+
+<div class="viewcode-block" id="GlobalGridVar.store_variables">
+<a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_store_functions.GlobalGridVar.store_variables">[docs]</a>
+	<span class="k">def</span> <span class="nf">store_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_sim_dt</span><span class="p">,</span> <span class="n">t_date</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;stack variables in an 1d-array so store</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		date_sim_dt : datetime array</span>
+<span class="sd">			array of dates at results time steps</span>
+<span class="sd">		t_date :int</span>
+<span class="sd">			array index</span>
+<span class="sd">		variables :	dict</span>
+<span class="sd">			dictionary containig variables to store</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		numpy array</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_results</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="c1"># remove variables that are not being stored</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">variables</span> <span class="o">=</span> <span class="n">remove_variables_from_dict</span><span class="p">(</span>
+					<span class="n">variables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_var</span><span class="p">)</span>
+			
+			<span class="c1"># get keys from dictionary, if not already stored</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_keys</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">store_var_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">variables</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">store_var_length</span> <span class="o">=</span> <span class="n">get_list_of_length_field_dict</span><span class="p">(</span>
+					<span class="n">variables</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">update_keys</span> <span class="o">=</span> <span class="kc">False</span>
+			
+			<span class="c1"># change dictionary to list</span>
+			<span class="n">variables</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">variables</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>			
+
+			<span class="c1">## check if the last date is read</span>
+			<span class="n">date</span> <span class="o">=</span> <span class="n">date_sim_dt</span><span class="p">[</span><span class="n">t_date</span><span class="p">]</span>
+			
+			<span class="c1"># accumulate variables/create array of variables</span>
+			<span class="n">variables</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+			
+			<span class="k">if</span> <span class="n">date</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">idate</span><span class="p">:</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="c1"># create variables</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="c1"># accumulate</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="o">+=</span> <span class="n">variables</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span> <span class="o">+=</span> <span class="mf">1.0</span>
+				
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+					<span class="c1"># create variables</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+					
+				<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_vector</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">cumm_variable</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">time_grid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pdate</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">pdate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idate</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">idate</span> <span class="o">=</span> <span class="n">addtime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span> <span class="o">=</span> <span class="mf">1.0</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="o">=</span> <span class="kc">None</span>
+			
+			<span class="c1"># check if variable has been accumulated, otherwise</span>
+			<span class="c1"># store the available dataset, skip if it has already</span>
+			<span class="c1"># been added</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">t_date</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">date_sim_dt</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_vector</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span><span class="p">)</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">cumm_variable</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span><span class="p">)</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">time_grid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pdate</span><span class="p">)</span>
+				
+		<span class="k">pass</span></div>
+
+	
+<div class="viewcode-block" id="GlobalGridVar.save_csv_var">
+<a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_store_functions.GlobalGridVar.save_csv_var">[docs]</a>
+	<span class="k">def</span> <span class="nf">save_csv_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">multi_files</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;This function save multiple arrays in a csv file</span>
+<span class="sd">		</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		fname : str</span>
+<span class="sd">			filename of csv files to store</span>
+<span class="sd">		multi_files : bool</span>
+<span class="sd">			flag to save variables in one file or in multiple files</span>
+<span class="sd">			True - save in multiple files</span>
+<span class="sd">			False - save variables in one file</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		csv files</span>
+<span class="sd">			output files in csv format</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># additional variables</span>
+		<span class="c1"># var_name:	name of the variable to store</span>
+		<span class="c1"># length_var:	number of points to store</span>
+		
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_results</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="c1"># number of variables</span>
+			<span class="n">nvar</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">store_var_names</span><span class="p">)</span>
+			<span class="c1"># change list to numpy array</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">cumm_variable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cumm_variable</span><span class="p">)</span>
+			<span class="c1"># grid size</span>
+			<span class="k">if</span> <span class="n">multi_files</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+				<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+				<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_grid</span><span class="p">[:]</span>
+			<span class="n">isize</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">iname</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">store_var_names</span><span class="p">):</span>
+				<span class="c1">#npre = dataset.createVariable(&#39;pre&#39;, np.float32, (&#39;time&#39;, &#39;lat&#39;, &#39;lon&#39;), zlib=True)</span>
+				<span class="k">if</span> <span class="n">save_all</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+					<span class="c1"># slice dataset to assign variable vame</span>
+					<span class="n">var_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">store_var_length</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+					<span class="n">inodes</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">isize</span><span class="p">,</span> <span class="n">isize</span><span class="o">+</span><span class="n">var_size</span><span class="p">)</span>
+					<span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumm_variable</span><span class="p">[:,</span><span class="n">inodes</span><span class="p">]</span>
+					<span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span>
+					<span class="c1"># calulate the average for especif variables</span>
+					<span class="k">if</span> <span class="p">(</span><span class="n">iname</span> <span class="o">==</span> <span class="s1">&#39;tht&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">iname</span> <span class="o">==</span> <span class="s2">&quot;wte&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">iname</span> <span class="o">==</span> <span class="s2">&quot;ssz&quot;</span><span class="p">):</span>
+						<span class="c1">#print(self.nsteps_vector)</span>
+						<span class="n">factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_vector</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+						<span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">factor</span>
+						<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">T</span>
+						<span class="n">data</span> <span class="o">=</span> <span class="n">factor</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,:]</span>
+						<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+						<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">T</span>
+						
+					<span class="c1"># create list of comuns name</span>
+					<span class="n">columname</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">store_var_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">var_size</span><span class="p">)]</span>
+					
+					
+					<span class="k">if</span> <span class="n">multi_files</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+						<span class="c1"># save variables in only one file</span>
+						<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">icolumname</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">columname</span><span class="p">):</span>
+							<span class="n">df</span><span class="p">[</span><span class="n">icolumname</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">k</span><span class="p">]</span>
+						
+					<span class="k">else</span><span class="p">:</span>
+						<span class="c1"># save variables in a multiple files</span>
+						<span class="c1"># create pandas dataframe</span>
+						<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columname</span><span class="p">)</span>
+						<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_grid</span><span class="p">[:]</span>
+
+						<span class="c1"># save to csv</span>
+						<span class="n">fname_csv</span> <span class="o">=</span> <span class="n">fname</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">store_var_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span>
+						<span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">fname_csv</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+					
+				<span class="n">isize</span> <span class="o">+=</span> <span class="n">var_size</span>
+			<span class="k">if</span> <span class="n">multi_files</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+				<span class="n">fname_csv</span> <span class="o">=</span> <span class="n">fname</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span>
+				<span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">fname_csv</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+			
+
+<div class="viewcode-block" id="GlobalGridVar.save_netCDF_var">
+<a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_store_functions.GlobalGridVar.save_netCDF_var">[docs]</a>
+	<span class="k">def</span> <span class="nf">save_netCDF_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">,</span> <span class="n">nodes</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;This function save multiple arrays in a netcdf file</span>
+<span class="sd">		</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		fname : str</span>
+<span class="sd">			filename of csv files to store</span>
+<span class="sd">		latitude : numpy array</span>
+<span class="sd">			x-coordinates of gridded dataset (lat-dimension)</span>
+<span class="sd">		longitude : numpy array</span>
+<span class="sd">			y-coordinates of gridded dataset (lon-dimension)</span>
+<span class="sd">		multi_files : bool</span>
+<span class="sd">			flag to save variables in one file or in multiple files</span>
+<span class="sd">			True - save in multiple files</span>
+<span class="sd">			False - save variables in one file</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		netcdf</span>
+<span class="sd">			output files in netcdf format</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_results</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="c1"># number of variables</span>
+			<span class="n">var_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+			<span class="c1"># change list to numpy array</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">cumm_variable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cumm_variable</span><span class="p">)</span>
+			<span class="c1"># grid size</span>
+			<span class="n">nrow</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span>
+			<span class="n">ncol</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span>
+
+			<span class="c1"># create a mask to save space </span>
+			<span class="n">grid_size</span> <span class="o">=</span> <span class="n">nrow</span><span class="o">*</span><span class="n">ncol</span>
+			<span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="o">-</span><span class="mf">9999.</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+			
+			<span class="c1"># create netcdf file</span>
+			<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;NETCDF4_CLASSIC&#39;</span><span class="p">)</span>
+			<span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>		
+			<span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="n">ncol</span><span class="p">)</span>		
+			<span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="n">nrow</span><span class="p">)</span>		
+			<span class="n">dataset</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_time</span><span class="o">+</span><span class="s2">&quot;: Units of time depends on time step&quot;</span>
+			<span class="n">dataset</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="s2">&quot;Variable generated using: DRYPv2.0&quot;</span>
+
+			<span class="c1"># Create coordinate variables for 4-dimensions		</span>
+			<span class="n">lat</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;lat&#39;</span><span class="p">,))</span>		
+			<span class="n">lon</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;lon&#39;</span><span class="p">,))</span>		
+			<span class="n">time</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,))</span>
+			<span class="n">time</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;hours since 1980-01-01 00:00:00&#39;</span>		
+			<span class="n">time</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="s1">&#39;gregorian&#39;</span>
+			<span class="n">lon</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;meters&#39;</span>
+			<span class="n">lat</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;meters&#39;</span>
+
+			<span class="c1"># create dictionary of units</span>
+			<span class="n">units_var</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pre&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;aet&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;pet&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;inf&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;tls&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;fch&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;ssz&#39;</span><span class="p">:</span><span class="s1">&#39;m3/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;rch&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;wte&#39;</span><span class="p">:</span><span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;egw&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;gdh&#39;</span><span class="p">:</span><span class="s1">&#39;m3/dt&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;tht&#39;</span><span class="p">:</span><span class="s1">&#39;m3/m3&#39;</span><span class="p">,</span> <span class="s1">&#39;twsc&#39;</span><span class="p">:</span><span class="s1">&#39;mm&#39;</span><span class="p">,</span> <span class="s1">&#39;dis&#39;</span><span class="p">:</span><span class="s1">&#39;m3/dt&#39;</span>
+						<span class="p">}</span>
+
+			<span class="c1"># create variable</span>
+			<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">store_var_names</span><span class="p">:</span>
+				<span class="n">dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">ivar</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=-</span><span class="mf">9999.</span><span class="p">,</span> <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+				<span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">ivar</span><span class="p">]</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units_var</span><span class="p">[</span><span class="n">ivar</span><span class="p">]</span>
+				<span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">ivar</span><span class="p">]</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="n">long_name</span><span class="p">[</span><span class="n">ivar</span><span class="p">]</span>
+						
+			<span class="c1"># save variables</span>
+			<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">idate</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_grid</span><span class="p">):</span>
+				<span class="n">time</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">date2num</span><span class="p">(</span><span class="n">idate</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">units</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">calendar</span><span class="p">)</span>
+				<span class="n">isize</span> <span class="o">=</span> <span class="mi">0</span>
+				<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">iname</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">store_var_names</span><span class="p">):</span>
+					<span class="k">if</span> <span class="n">save_all</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+						<span class="c1"># precipitation</span>
+						<span class="n">factor</span> <span class="o">=</span> <span class="mf">1.0</span>
+						<span class="k">if</span> <span class="p">(</span><span class="n">iname</span> <span class="o">==</span> <span class="s1">&#39;tht&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">iname</span> <span class="o">==</span> <span class="s2">&quot;wte&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">iname</span> <span class="o">==</span> <span class="s2">&quot;ssz&quot;</span><span class="p">):</span>
+							<span class="n">factor</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps_vector</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+						
+						<span class="c1"># selec nodes of the whole variable array </span>
+						<span class="n">inodes</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">isize</span><span class="p">,</span> <span class="n">isize</span><span class="o">+</span><span class="n">var_size</span><span class="p">)</span>
+						
+						<span class="c1"># save values in active grid nodes</span>
+						<span class="n">grid</span><span class="p">[</span><span class="n">nodes</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumm_variable</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">inodes</span><span class="p">]</span><span class="o">*</span><span class="n">factor</span>
+						<span class="c1"># convert 1D array into 2D grid array</span>
+						<span class="n">grid2D</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span><span class="p">)</span>
+						<span class="c1"># store data in the variable name</span>
+						<span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">iname</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid2D</span><span class="p">[:,:]</span>
+						
+					<span class="n">isize</span> <span class="o">+=</span> <span class="n">var_size</span>
+			<span class="n">lat</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">latitude</span>
+			<span class="n">lon</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">longitude</span>
+			
+			<span class="n">dataset</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</div>
+
+
+<div class="viewcode-block" id="str2timedelta">
+<a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_store_functions.str2timedelta">[docs]</a>
+<span class="k">def</span> <span class="nf">str2timedelta</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Generate an array of delta time step, indicating units</span>
+<span class="sd">	It will assume a year time step if only one number is provided</span>
+<span class="sd">	format Y M D H</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	delta: string indicating time step units, e.g (1Y, 1M)</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	dt:	array of time step units.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1">#print(delta)</span>
+	<span class="n">dt</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">dt_t</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">delta</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">dt_delta</span> <span class="o">=</span> <span class="n">delta</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="c1">#print(delta, type(dt_t), dt_delta)</span>
+		<span class="k">if</span> <span class="n">dt_delta</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
+			<span class="n">dt</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt_t</span>
+		<span class="k">elif</span> <span class="n">dt_delta</span> <span class="o">==</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span>
+			<span class="n">dt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt_t</span>
+		<span class="k">elif</span> <span class="n">dt_delta</span> <span class="o">==</span> <span class="s1">&#39;M&#39;</span><span class="p">:</span>
+			<span class="n">dt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt_t</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">dt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt_t</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">delta</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
+			<span class="n">dt</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="k">elif</span> <span class="n">delta</span> <span class="o">==</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span>
+			<span class="n">dt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="k">elif</span> <span class="n">delta</span> <span class="o">==</span> <span class="s1">&#39;M&#39;</span><span class="p">:</span>
+			<span class="n">dt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">dt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="k">return</span> <span class="n">dt</span></div>
+
+
+<div class="viewcode-block" id="addtime">
+<a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_store_functions.addtime">[docs]</a>
+<span class="k">def</span> <span class="nf">addtime</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Get a delta time step</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	date:	staring date</span>
+<span class="sd">	dt:		array of delta time, obtained with str2timedelts fuc</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	------</span>
+<span class="sd">	data:	date added dt</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1"># add time step in years</span>
+	<span class="k">if</span> <span class="n">dt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">year</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="c1"># add time steps in months</span>
+	<span class="k">if</span> <span class="n">dt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">date</span><span class="o">.</span><span class="n">month</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+			<span class="c1">#date.month = 1</span>
+			<span class="c1">#date.year += 1</span>
+			<span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">year</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1">#date.month += dt[1]</span>
+			<span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">date</span><span class="o">.</span><span class="n">month</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	
+	<span class="c1"># add time steps in days</span>
+	<span class="k">if</span> <span class="n">dt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="c1">#print(type(date))</span>
+		<span class="n">date</span> <span class="o">=</span> <span class="n">date</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">dt</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="c1">#, hours=dt[3])</span>
+	<span class="k">if</span> <span class="n">dt</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">date</span> <span class="o">=</span> <span class="n">date</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">dt</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+	<span class="c1">#print(date)</span>
+	<span class="k">return</span> <span class="n">date</span></div>
+
+
+<div class="viewcode-block" id="save_map_to_rastergrid2">
+<a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_store_functions.save_map_to_rastergrid2">[docs]</a>
+<span class="k">def</span> <span class="nf">save_map_to_rastergrid2</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+	<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+	<span class="k">if</span> <span class="n">print_maps_end</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+		<span class="n">files</span> <span class="o">=</span> <span class="n">write_esri_ascii</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="save_map_to_rastergrid">
+<a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_store_functions.save_map_to_rastergrid">[docs]</a>
+<span class="k">def</span> <span class="nf">save_map_to_rastergrid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+	<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+	<span class="n">field</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">field</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
+	<span class="n">grid</span><span class="o">.</span><span class="n">at_node</span><span class="p">[</span><span class="s1">&#39;aux_grid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">[:]</span>
+	<span class="k">if</span> <span class="n">print_maps_end</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+		<span class="n">files</span> <span class="o">=</span> <span class="n">write_esri_ascii</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="s1">&#39;aux_grid&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="remove_variables_from_dict">
+<a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_store_functions.remove_variables_from_dict">[docs]</a>
+<span class="k">def</span> <span class="nf">remove_variables_from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; remove keys of a dictionary</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	data:	dictionary</span>
+<span class="sd">	variable:	key to remove from dictionary</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	data:	dictionary without keys -variables</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+		<span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="drop_false_keys">
+<a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_store_functions.drop_false_keys">[docs]</a>
+<span class="k">def</span> <span class="nf">drop_false_keys</span><span class="p">(</span><span class="n">store_keys</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Function to select variables that have false values in</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	keys:	list of kyes available at the dictionary</span>
+<span class="sd">	store_keys:	dictionary with boolean values to store variables</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	drop_keys:	list of variables to drop from dict</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">var_value</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">not_</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">store_keys</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+	<span class="n">drop_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">compress</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">store_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">var_value</span><span class="p">))</span>
+
+	<span class="k">return</span> <span class="n">drop_keys</span></div>
+
+
+<div class="viewcode-block" id="get_list_of_length_field_dict">
+<a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_store_functions.get_list_of_length_field_dict">[docs]</a>
+<span class="k">def</span> <span class="nf">get_list_of_length_field_dict</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Get length of values of each element from a dictionary&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">var</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="del_all">
+<a class="viewcode-back" href="../../../dryp.components.html#dryp.components.DRYP_store_functions.del_all">[docs]</a>
+<span class="k">def</span> <span class="nf">del_all</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">var_to_remove</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Remove list of elements from mapping.</span>
+<span class="sd">	check wich optionis faster&quot;&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">var_to_remove</span><span class="p">:</span>
+		<span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">data</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

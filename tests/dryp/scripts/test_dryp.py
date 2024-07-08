@@ -1,7 +1,7 @@
 from context import dryp
 import numpy as np
 import pandas as pd
-from models.dryp.main_DRYP import run_DRYP
+from dryp.main_DRYP import run_DRYP
 
 def test_dryp():
 	"""run a test model file
