@@ -5,3 +5,6 @@ tests/__pycache__
 tests/dryp/scripts/__pycache__
 test_output
 tests/dryp/tilted_v/output/
+CUWALID.egg-info
+dist
+build
