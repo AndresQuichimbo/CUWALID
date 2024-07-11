@@ -29,3 +29,4 @@ include cuwalid/dryp/components/TransLoss_old.pyx
 include cuwalid/dryp/components/uz_sz_interaction.mod
 include cuwalid/dryp/components/__init__.py
 include cuwalid/dryp/components/__init__.pyc
+recursive-include cuwalid/tests/dryp/tilted_v *

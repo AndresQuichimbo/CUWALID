@@ -1,5 +1,5 @@
-cuwalid package
-===============
+cuwalid.tests package
+=====================
 
 Subpackages
 -----------
@@ -7,14 +7,12 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   cuwalid.dryp
-   cuwalid.tests
-   cuwalid.tools
+   cuwalid.tests.dryp
 
 Module contents
 ---------------
 
-.. automodule:: cuwalid
+.. automodule:: cuwalid.tests
    :members:
    :undoc-members:
    :show-inheritance:

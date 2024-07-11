@@ -50,15 +50,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="installation.html">Installation</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="installation_pypi.html">Installation with PyPi</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation with GitHub</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#installing-on-windows">Installing on windows</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#installing-on-linux-or-wsl">Installing on Linux or WSL</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#wsl-windows-subsystem-for-linux">WSL (Windows Subsystem for Linux)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#linux">Linux</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation with GitHub</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="models_info.html">Models Information</a></li>
@@ -94,10 +86,9 @@
              
   <section id="installation-with-github">
 <h1>Installation with GitHub<a class="headerlink" href="#installation-with-github" title="Link to this heading"></a></h1>
-<section id="installing-on-windows">
-<h2>Installing on windows<a class="headerlink" href="#installing-on-windows" title="Link to this heading"></a></h2>
-<p>On windows there are two approaches to installing, the first is using the standard WOS (Windows Operating System) or with WSL (Windows Subsystem for Linux)</p>
-<p>Currently the best way to install the CUWALID project is through cloning the GitHub repository.</p>
+<p>This package has been tested on Windows, WSL on Windows and Linux</p>
+<p>Cloning the GitHub repository to use CUWALID allows greater control with the code, this installation installs python and all dependencies with conda.</p>
+<p>Using the <a class="reference internal" href="installation_pypi.html#pypi-installation"><span class="std std-ref">PyPi package installation</span></a> may be more simple if you just plan to run the model as it is.</p>
 <p>Follow the steps below to get the model:</p>
 <ol class="arabic">
 <li><p>Clone the GitHub repository and navigate to the main directory (CUWALID) in the terminal:</p>
@@ -110,72 +101,10 @@
 <blockquote>
 <div><p>Enter into the installers directory and run the cwld_wos.bat file:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>installers
+<span class="c1"># For windows</span>
 cwld_wos.bat
-</pre></div>
-</div>
-<p>Wait for the installation to complete and then activate your environment using:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>cwld
-</pre></div>
-</div>
-<p>Exit the installers directory back into the main directory:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>..
-</pre></div>
-</div>
-</div></blockquote>
-</li>
-<li><p>Test everything has installed properly (Currently only for DRYP model)</p>
-<blockquote>
-<div><p>First ensure you have your environment activated with the command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>cwld
-</pre></div>
-</div>
-<p>Then enter the test directory and run the tests using these commands:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>tests/dryp/
-run_all_test.bat
-</pre></div>
-</div>
-<p>Once all the tests have completed, the last bit of output should look similair to this:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>************************************************************
-Infiltration<span class="w"> </span>approach:<span class="w"> </span>Philips
-Run<span class="w"> </span>Interception<span class="w"> </span>component
-<span class="m">100</span>%<span class="p">|</span>███████████████████████████████████████████████████████████████████████████████<span class="p">|</span><span class="w"> </span><span class="m">733</span>/733<span class="w"> </span><span class="o">[</span><span class="m">00</span>:21&lt;<span class="m">00</span>:00,<span class="w"> </span><span class="m">34</span>.04days/s<span class="o">]</span>
-***<span class="w"> </span>SAVING<span class="w"> </span>RESULTS<span class="w"> </span>***
-Traceback<span class="w"> </span><span class="o">(</span>most<span class="w"> </span>recent<span class="w"> </span>call<span class="w"> </span>last<span class="o">)</span>:
-File<span class="w"> </span><span class="s2">&quot;/home/&lt;username&gt;/CUWALID/tests/test_dryp.py&quot;</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">24</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>&lt;module&gt;
-<span class="w">    </span>test_dryp<span class="o">()</span>
-File<span class="w"> </span><span class="s2">&quot;/home/&lt;username&gt;/CUWALID/tests/test_dryp.py&quot;</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">19</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>test_dryp
-<span class="w">    </span>assert<span class="w"> </span>np.allclose<span class="o">(</span>out,<span class="w"> </span>ans<span class="o">)</span>
-AssertionError
-Basin<span class="w"> </span>delineation:<span class="w"> </span>Test<span class="w"> </span>runs<span class="w"> </span>successfully
-</pre></div>
-</div>
-</div></blockquote>
-</li>
-<li><p>Learn how to run the model <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">here</span></a>.</p></li>
-</ol>
-</section>
-<section id="installing-on-linux-or-wsl">
-<h2>Installing on Linux or WSL<a class="headerlink" href="#installing-on-linux-or-wsl" title="Link to this heading"></a></h2>
-<section id="wsl-windows-subsystem-for-linux">
-<h3>WSL (Windows Subsystem for Linux)<a class="headerlink" href="#wsl-windows-subsystem-for-linux" title="Link to this heading"></a></h3>
-<p>Windows WSL (Windows Subsystem for Linux) is a way you can create a linux like environment on your windows machine.</p>
-<p>Follow the instructions <a class="reference external" href="https://docs.microsoft.com/en-us/windows/wsl/install">here</a> to download WSL and get it setup if you do not already have it installed.</p>
-<p>After it has been installed you should be able to run a Linux like terminal by accessing the WSL app on your windows device (it should appear if you type ‘WSL’ in your search bar below)</p>
-<p>Keep in mind that the WSL environment runs seperately from your regular machine and has different locations for files.</p>
-</section>
-<section id="linux">
-<h3>Linux<a class="headerlink" href="#linux" title="Link to this heading"></a></h3>
-<ol class="arabic">
-<li><p>Clone the GitHub repository and navigate to the main directory (CUWALID) in the terminal:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/CornishLeo/CUWALID.git
-<span class="nb">cd</span><span class="w"> </span>CUWALID
-</pre></div>
-</div>
-</li>
-<li><p>Set up the conda environment:</p>
-<blockquote>
-<div><p>Enter into the installers directory and run the cwld_wos.bat file:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>installers
+
+<span class="c1"># For Linux and WSL</span>
 sh<span class="w"> </span>cwld_linux.sh
 </pre></div>
 </div>
@@ -197,7 +126,7 @@ sh<span class="w"> </span>cwld_linux.sh
 </div>
 <p>Then enter the test directory and run the tests using these commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>tests/dryp/
-sh<span class="w"> </span>run_all_test.sh
+python<span class="w"> </span>run_tests.py
 </pre></div>
 </div>
 <p>Once all the tests have completed, the last bit of output should look similair to this:</p>
@@ -217,12 +146,8 @@ Basin<span class="w"> </span>delineation:<span class="w"> </span>Test<span class
 </div>
 </div></blockquote>
 </li>
-</ol>
-<ol class="arabic simple" start="6">
 <li><p>Learn how to run the model <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">here</span></a>.</p></li>
 </ol>
-</section>
-</section>
 </section>
 
 

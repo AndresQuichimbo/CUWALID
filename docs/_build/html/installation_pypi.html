@@ -49,10 +49,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="installation.html">Installation</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation with PyPi</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#installing-on-windows">Installing on windows</a></li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installation with PyPi</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation_github.html">Installation with GitHub</a></li>
 </ul>
 </li>
@@ -88,17 +85,12 @@
            <div itemprop="articleBody">
              
   <section id="installation-with-pypi">
-<h1>Installation with PyPi<a class="headerlink" href="#installation-with-pypi" title="Link to this heading"></a></h1>
-<section id="installing-on-windows">
-<h2>Installing on windows<a class="headerlink" href="#installing-on-windows" title="Link to this heading"></a></h2>
-<p>These steps assume you are starting from the very beggining and need to install python. If you already have a compatable python version installed (3.9-3.11 are tested) then you can skip ahead.</p>
+<span id="pypi-installation"></span><h1>Installation with PyPi<a class="headerlink" href="#installation-with-pypi" title="Link to this heading"></a></h1>
+<p>These steps assume you already have python installed, we recommended python a version between 3.9-3.11.</p>
+<p>If you don’t have python yet then you can find the install <a class="reference external" href="https://www.python.org/downloads/release/python-3119/">here</a>, just make sure to tick the box to “Add to path” during your installation to make things easier.</p>
+<p>These steps should work correctly even if installing through PyPi within a conda environment, however please note there is a higher change of conflicting dependencies with this method.</p>
 <ol class="arabic">
-<li><p>Install python (recommended to use python 3.11) from the link here: <a class="reference external" href="https://www.python.org/downloads/release/python-3119/">https://www.python.org/downloads/release/python-3119/</a></p>
-<blockquote>
-<div><p>Whilst going through the installation steps, please ensure you tick the box saying “Add Python to system path”</p>
-</div></blockquote>
-</li>
-<li><p>Open the directory you want to work in and ensure that python is working there by typing the following in you terminal</p>
+<li><p>Open the directory you want to work in and ensure that python is working there by typing the following in you terminal.</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>--version
 </pre></div>
@@ -112,26 +104,35 @@
 <p>Now your environment is created and is activated</p>
 </div></blockquote>
 </li>
-<li><p>Now you will need to install the package, during this step it will ask for an API token which i have left at the bottom of this step to copy and paste into the terminal.</p>
+<li><p>Now you can install the package with the command as follows. This should download the latest version of the package.</p>
 <blockquote>
 <div><p>Run the command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://test.pypi.org/simple/<span class="w"> </span>--extra-index-url<span class="w"> </span>https://pypi.org/simple<span class="w"> </span>CUWALID
 </pre></div>
 </div>
-<p>Hopefully this will run without any errors and all other necessary packages will be installed.</p>
+<p>This will install all other dependencies along with the CUWALID package.</p>
 </div></blockquote>
 </li>
-<li><p>In this GitHub repository is an example of the code you will need to run a simple model with DRYP, it includes a ‘run.py’ file that can be used to run the DRYP model, and a ‘input’ folder which contains the input for the model.</p>
+<li><p>You can now choose to run some tests first or go on to the next step and just try running the model, to run the test scripts you can use this command:</p>
 <blockquote>
-<div><p>So it should be as simple as running the command (Ensure your environment is activated):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>run.py
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>cuwalid.tests.dryp.run_tests
 </pre></div>
 </div>
-<p>The output should be placed in a new folder callout ‘test_output’.</p>
 </div></blockquote>
 </li>
 </ol>
-</section>
+<ol class="arabic" start="3">
+<li><p>Now you can run the model, here is a simple example of what your python file might look like to run the DRYP model.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cuwalid.dryp.main_DRYP</span> <span class="kn">import</span> <span class="n">run_DRYP</span>
+
+<span class="n">run_DRYP</span><span class="p">(</span><span class="s2">&quot;input/input_test.dmp&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will use the input files specified at the file path given. Look <a class="reference internal" href="dryp_model.html#dryp-parameters"><span class="std std-ref">here</span></a> to learn more about the input files.</p>
+</div></blockquote>
+</li>
+</ol>
 </section>
 
 

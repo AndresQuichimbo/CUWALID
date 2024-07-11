@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    cuwalid.dryp
+   cuwalid.tests
    cuwalid.tools
 
 Module contents

@@ -1,20 +1,16 @@
+.. _pypi_installation:
+
 ==========================
 Installation with PyPi
 ==========================
 
----------------------
-Installing on windows
----------------------
+These steps assume you already have python installed, we recommended python a version between 3.9-3.11. 
 
-These steps assume you are starting from the very beggining and need to install python. If you already have a compatable python version installed (3.9-3.11 are tested) then you can skip ahead.
+If you don't have python yet then you can find the install `here <https://www.python.org/downloads/release/python-3119/>`_, just make sure to tick the box to "Add to path" during your installation to make things easier.
 
+These steps should work correctly even if installing through PyPi within a conda environment, however please note there is a higher change of conflicting dependencies with this method.
 
-
-1. Install python (recommended to use python 3.11) from the link here: https://www.python.org/downloads/release/python-3119/
-
-    Whilst going through the installation steps, please ensure you tick the box saying "Add Python to system path"
-
-2. Open the directory you want to work in and ensure that python is working there by typing the following in you terminal
+1. Open the directory you want to work in and ensure that python is working there by typing the following in you terminal.
 
     .. code-block:: bash
        
@@ -31,7 +27,7 @@ These steps assume you are starting from the very beggining and need to install 
 
     Now your environment is created and is activated
 
-3. Now you will need to install the package, during this step it will ask for an API token which i have left at the bottom of this step to copy and paste into the terminal.
+2. Now you can install the package with the command as follows. This should download the latest version of the package.
 
     Run the command:
 
@@ -39,15 +35,20 @@ These steps assume you are starting from the very beggining and need to install 
         
         pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple CUWALID    
 
-    Hopefully this will run without any errors and all other necessary packages will be installed.
+    This will install all other dependencies along with the CUWALID package.
 
-4. In this GitHub repository is an example of the code you will need to run a simple model with DRYP, it includes a 'run.py' file that can be used to run the DRYP model, and a 'input' folder which contains the input for the model.
-
-    So it should be as simple as running the command (Ensure your environment is activated):
+3. You can now choose to run some tests first or go on to the next step and just try running the model, to run the test scripts you can use this command:
 
     .. code-block:: bash
+        
+        python -m cuwalid.tests.dryp.run_tests
 
-        python run.py
+3. Now you can run the model, here is a simple example of what your python file might look like to run the DRYP model.
 
+    .. code-block:: python
 
-    The output should be placed in a new folder callout 'test_output'.
+        from cuwalid.dryp.main_DRYP import run_DRYP
+
+        run_DRYP("input/input_test.dmp")
+
+    This will use the input files specified at the file path given. Look :ref:`here <dryp_parameters>` to learn more about the input files.
