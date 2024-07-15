@@ -1,10 +1,10 @@
 import subprocess
-import platform
 import os
 
 # Get the directory of the current script
 current_dir = os.path.dirname(os.path.abspath(__file__))
 scripts_dir = os.path.join(current_dir, 'scripts')
+dryp_dir = os.path.join(current_dir)
 
 # Define the list of shell commands with absolute paths
 commands = [
@@ -26,17 +26,34 @@ commands = [
     f"python {os.path.join(scripts_dir, 'test_basin_delineation.py')}"
 ]
 
-# Function to run commands based on platform
+# Function to run commands
 def run_commands(commands):
+    env = os.environ.copy()
+    # Add the cuwalid/tests/dryp/tilted_v directory to the PYTHONPATH
+    env['PYTHONPATH'] = dryp_dir + os.pathsep + env.get('PYTHONPATH', '')
+    print(f"******PYTHONPATH: {env['PYTHONPATH']}")
+
     for cmd in commands:
         print(f"Running command: {cmd}")
         try:
-            result = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            result = subprocess.run(
+                cmd,
+                shell=True,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                env=env,
+                cwd=dryp_dir
+            )
+
             print(result.stdout)
+            if result.stderr:
+                print(f"Error: {result.stderr}")
+
         except subprocess.CalledProcessError as e:
-            print(f"Error occurred while running command: {cmd}")
+            print(f"Command failed: {cmd}")
             print(f"Return code: {e.returncode}")
-            print(f"Output: {e.output}")
             print(f"Error output: {e.stderr}")
 
 run_commands(commands)

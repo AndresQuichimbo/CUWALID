@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="CUWALID",
-    version="0.2.6", 
+    version="0.4.2", 
     author="Andrés Quichimbo, Manuel Rios Gaona, Dagmawi Teklu Asfaw",
     author_email="cootelf@cardiff.ac.uk",
     description="CUWALID (Climate into Useful Water And Land Information in Drylands)",
@@ -18,7 +18,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.9',
     install_requires = [
         'geopandas',
         'rioxarray',

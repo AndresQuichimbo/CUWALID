@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CUWALID MODEL TRAINING &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="CUWALID MODEL TRAINING" href="04_DRYP_post_processing.html" />
+    <link rel="prev" title="CUWALID MODEL TRAINING" href="02_DRYP_pre_processing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../training.html">Training Notebooks</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../dryp_training.html">DRYP Training Notebooks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../dryp_training.html#dryp-intro">01_DRYP_intro</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dryp_training.html#dryp-pre-processing">02_DRYP_pre_processing</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../dryp_training.html#dryp-model-running">03_DRYP_model_running</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">CUWALID MODEL TRAINING</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../dryp_training.html#dryp-post-processing">04_DRYP_post_processing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../stopet_training.html">stoPET Training Notebooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../storm_training.html">STORM Training Notebooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../forecasting_training.html">Forecast Training Notebooks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../training.html">Training Notebooks</a></li>
+          <li class="breadcrumb-item"><a href="../../dryp_training.html">DRYP Training Notebooks</a></li>
+      <li class="breadcrumb-item active">CUWALID MODEL TRAINING</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/notebooks/DRYP/03_DRYP_model_running.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="CUWALID-MODEL-TRAINING">
+<h1>CUWALID MODEL TRAINING<a class="headerlink" href="#CUWALID-MODEL-TRAINING" title="Link to this heading"></a></h1>
+<section id="Hydrological-model-DRYP">
+<h2>Hydrological model DRYP<a class="headerlink" href="#Hydrological-model-DRYP" title="Link to this heading"></a></h2>
+<p>The following course cover the following content:</p>
+<ul class="simple">
+<li><p>Installation</p></li>
+<li><p>Preparing model input parameters and dataset</p></li>
+<li><p><strong>Preparing DRYP simulations</strong></p></li>
+<li><p>Post processing model outputs</p></li>
+</ul>
+<section id="3.-Preparing-DRYP-model-simulations">
+<h3>3. Preparing DRYP model simulations<a class="headerlink" href="#3.-Preparing-DRYP-model-simulations" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Preparing model parameter and setting files</p></li>
+</ol>
+<ul class="simple">
+<li><p>Running DRYP</p></li>
+<li><p>Preparing multiple simulation</p></li>
+<li><p>Runing pipeline DRYP</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Local_directory</span><span class="se">\n</span><span class="s2">|__training</span><span class="se">\n</span><span class="s2">      |__basin</span><span class="se">\n</span><span class="s2">      |   |__datasets</span><span class="se">\n</span><span class="s2">      |   |    |__csv</span><span class="se">\n</span><span class="s2">      |   |    |__shp</span><span class="se">\n</span><span class="s2">      |   |__model</span><span class="se">\n</span><span class="s2">      |   |    |__inputs</span><span class="se">\n</span><span class="s2">      |   |__outputs</span><span class="se">\n</span><span class="s2">      |__regional&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Specifiy the location of training files, once the training files are downloaded change the paths below to access them through this traning material.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">training_general_path</span> <span class="o">=</span> <span class="s2">&quot;D:/HAD/training/&quot;</span>
+<span class="n">regional_path</span> <span class="o">=</span> <span class="s2">&quot;D:/HAD/training/regional/&quot;</span>
+<span class="n">basin_path</span> <span class="o">=</span> <span class="s2">&quot;D:/HAD/training/basin/&quot;</span>
+<br/></pre></div>
+</div>
+</div>
+<section id="3.1.-Preparing-model-parameter-and-setting-files">
+<h4>3.1. Preparing model parameter and setting files<a class="headerlink" href="#3.1.-Preparing-model-parameter-and-setting-files" title="Link to this heading"></a></h4>
+<p>DRYP requires at leas two files for running, this is the input-paramter-file and the setting-paramter file. Additional files may be required depending on the model settings and dataset properties.</p>
+<p>The folowing are the list of DRYP model files:</p>
+<ul class="simple">
+<li><p>input parameter file (essential)</p></li>
+<li><p>setting-paramter file (essential)</p></li>
+<li><p>GW parameter file (optional)</p></li>
+<li><p>riparian input paramter file (optional)</p></li>
+<li><p>data projection setting file (optional)</p></li>
+</ul>
+<p>Model input and settins files are simple plain text format files, so they can be easily updated using any text editor.</p>
+<p>For conveniency we use here the library pandas to edit these files.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Input parameter file</p></li>
+</ul>
+<p>The <em>input-parameter-file</em> is used for specifying path names of all names model files, including input parameters, forcings, and setting files, as well as model outputs. You can also specified the model name as well as any additional model file.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">finput</span> <span class="o">=</span> <span class="n">training_general_path</span> <span class="o">+</span> <span class="s2">&quot;/regional/model/HAD_IMERG_Tana_input_sim.dmp&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dryp_input</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">finput</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dryp_input</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dryp_input</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Surface parameters</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#dryp_input.iloc[3:19]</span>
+</pre></div>
+</div>
+</div>
+<p>Soil parameters</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#dryp_input.iloc[26:49]</span>
+</pre></div>
+</div>
+</div>
+<p>Groundwater parameters</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#dryp_input.iloc[50:64]</span>
+</pre></div>
+</div>
+</div>
+<p>Forcing datasets, meteorological data</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dryp_input</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">64</span><span class="p">:</span><span class="mi">69</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Main model setting file</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#dryp_input.tail(12)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fsettings</span> <span class="o">=</span> <span class="n">training_general_path</span> <span class="o">+</span> <span class="s2">&quot;/regional/model/HAD_IMERG_Tana_par_setting.dwapm&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dryp_settings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fsettings</span><span class="p">)</span>
+<span class="n">dryp_settings</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Model setting file: Reference and projection system</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fprojection</span> <span class="o">=</span> <span class="n">training_general_path</span> <span class="o">+</span> <span class="s2">&quot;/regional/model/HAD_projection.dwapm&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dryp_projection</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fprojection</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Riparian input setting files</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">friparian</span> <span class="o">=</span> <span class="n">basin_path</span> <span class="o">+</span> <span class="s2">&quot;/model/HAD_riparian_inputs.txt&quot;</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dryp_riparian</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">friparian</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Groundwater parameter file</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fGWparameters</span> <span class="o">=</span> <span class="n">training_general_path</span> <span class="o">+</span> <span class="s2">&quot;/regional/model/HAD_GW_parameters.dwapm&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dryp_GWparamters</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fGWparameters</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Changing model input paths</p></li>
+</ul>
+<p>Creating a new model requires to specify the new paths of the model parameter files, it is a task that takes time and can be prone to errors. To avoid any mistake when changing paths, we can use the replace text option availble in python.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">shutil</span> <span class="kn">import</span> <span class="n">copyfile</span>
+<span class="kn">import</span> <span class="nn">fileinput</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">replaceAll</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">searchExp</span><span class="p">,</span> <span class="n">replaceExp</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fileinput</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">searchExp</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">searchExp</span><span class="p">,</span><span class="n">replaceExp</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fname_file</span> <span class="o">=</span> <span class="n">regional_path</span> <span class="o">+</span> <span class="s2">&quot;/model/HAD_IMERG_input_sim_40.dmp&quot;</span>
+<span class="n">fname_file_update</span> <span class="o">=</span> <span class="n">regional_path</span> <span class="o">+</span> <span class="s2">&quot;/model/HAD_IMERG_input_sim_cuwalid.dmp&quot;</span>
+</pre></div>
+</div>
+</div>
+<p>Create a copy avoid the lost of information</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">copyfile</span><span class="p">(</span><span class="n">fname_file</span><span class="p">,</span> <span class="n">fname_file_update</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#pd.read_csv(fname_file_update)</span>
+</pre></div>
+</div>
+</div>
+<p>Specify the which text you want to change and the new text</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">searchExpresion</span> <span class="o">=</span> <span class="s2">&quot;/home/c1755103/HAD/input/&quot;</span>
+<span class="n">replaceExpresion</span> <span class="o">=</span> <span class="s2">&quot;/home/cuwalid/HAD/input/&quot;</span>
+<span class="n">replaceAll</span><span class="p">(</span><span class="n">fname_file_update</span><span class="p">,</span> <span class="n">searchExpresion</span><span class="p">,</span> <span class="n">replaceExpresion</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">searchExpresion</span> <span class="o">=</span> <span class="s2">&quot;/home/c1755103/HAD/HAD_&quot;</span>
+<span class="n">replaceExpresion</span> <span class="o">=</span> <span class="s2">&quot;/home/cuwalid/HAD/HAD_&quot;</span>
+<span class="n">replaceAll</span><span class="p">(</span><span class="n">fname_file_update</span><span class="p">,</span> <span class="n">searchExpresion</span><span class="p">,</span> <span class="n">replaceExpresion</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#pd.read_csv(fname_file_update)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="3.2.-Runing-DRYP">
+<h4>3.2. Runing DRYP<a class="headerlink" href="#3.2.-Runing-DRYP" title="Link to this heading"></a></h4>
+<p><strong>WARNING</strong>: If you are using Windows you have to use the docker for running DRYP</p>
+<p>There are two main ways of runing DRYP, you can even add more option that are more convenient for yor analysis:</p>
+<ol class="loweralpha simple">
+<li><p>Running DRYP from the command line</p></li>
+</ol>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># python run_model_input.py &lt;finput&gt;</span>
+</pre></div>
+</div>
+</div>
+<ol class="loweralpha simple" start="2">
+<li><p>Running dryp within the python environment</p></li>
+</ol>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;C:/Users/Edisson/Documents/GitHub/DRYPv2.0.1&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">dryp.main_DRYP</span> <span class="kn">import</span> <span class="n">run_DRYP</span>
+<span class="c1">#run_DRYP(inputfile)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="3.3.-Preparing-and-running-multiple-DRYP-simulations">
+<h4>3.3. Preparing and running multiple DRYP simulations<a class="headerlink" href="#3.3.-Preparing-and-running-multiple-DRYP-simulations" title="Link to this heading"></a></h4>
+<p>This is useful for performing a Monte Carlo analysis or stochastic forecasting.</p>
+<p>We can create a script to modify the model files that changes specific fiels of each of the all model files, below ther is an example of the script to genereate multiple simulation files for a calibration pourposes.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="k">def</span> <span class="nf">write_sim_file</span><span class="p">(</span><span class="n">fname_input</span><span class="p">,</span> <span class="n">newfname_input</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; modify the parematers of the model input file and</span>
+<span class="sd">            model setting file.</span>
+<span class="sd">            WARNING: it will reeplace the original file, so</span>
+<span class="sd">            make a copy of the original files</span>
+<span class="sd">    parameters:</span>
+<span class="sd">            filename_input: model inputfile, including path</span>
+<span class="sd">            parameter:              1D array of model paramters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Check if input file exist</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname_input</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File not availble&quot;</span><span class="p">)</span>
+
+    <span class="c1"># simulation number</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">parameter</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="c1"># Read model input file</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname_input</span><span class="p">)</span>
+
+    <span class="c1"># Change model name by adding the simulation number</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">sim</span>
+
+    <span class="c1"># change parameters of the of the setting parameter file</span>
+    <span class="n">fname_settings</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">87</span><span class="p">]</span>
+    <span class="c1"># create a copy of the file with the new name</span>
+    <span class="n">fname_root</span> <span class="o">=</span> <span class="n">fname_settings</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">fname_ext</span> <span class="o">=</span> <span class="n">fname_settings</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># new input file name</span>
+    <span class="n">newfname_settings</span> <span class="o">=</span> <span class="n">fname_root</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">sim</span><span class="o">+</span><span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">fname_ext</span>
+    <span class="c1">#copyfile(fname_settings, newfname_settings)</span>
+    <span class="c1"># replace new setting file</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">87</span><span class="p">]</span> <span class="o">=</span> <span class="n">newfname_settings</span>
+    <span class="c1"># Open setting parameter file</span>
+    <span class="n">fsimpar</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname_settings</span><span class="p">)</span>
+    <span class="c1"># ADD CODE HERE TO NODIFY FORCING DATSET NAMES</span>
+    <span class="c1">#f.drylandmodel[66] = newfname_settings</span>
+    <span class="c1">#f.drylandmodel[68] = newfname_settings</span>
+    <span class="c1"># Change setting parameter file with new values</span>
+    <span class="n">fsimpar</span><span class="p">[</span><span class="s1">&#39;DWAPM_SET&#39;</span><span class="p">][</span><span class="mi">46</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%.5f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># kdt</span>
+    <span class="n">fsimpar</span><span class="p">[</span><span class="s1">&#39;DWAPM_SET&#39;</span><span class="p">][</span><span class="mi">48</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%.5f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="c1"># kDroot</span>
+    <span class="n">fsimpar</span><span class="p">[</span><span class="s1">&#39;DWAPM_SET&#39;</span><span class="p">][</span><span class="mi">50</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="c1"># kAWC</span>
+    <span class="n">fsimpar</span><span class="p">[</span><span class="s1">&#39;DWAPM_SET&#39;</span><span class="p">][</span><span class="mi">52</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%.5f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="c1"># kKsat</span>
+    <span class="n">fsimpar</span><span class="p">[</span><span class="s1">&#39;DWAPM_SET&#39;</span><span class="p">][</span><span class="mi">54</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%.5f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span> <span class="c1"># kSigma</span>
+    <span class="n">fsimpar</span><span class="p">[</span><span class="s1">&#39;DWAPM_SET&#39;</span><span class="p">][</span><span class="mi">56</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%.5f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="c1"># kKch</span>
+    <span class="n">fsimpar</span><span class="p">[</span><span class="s1">&#39;DWAPM_SET&#39;</span><span class="p">][</span><span class="mi">58</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%.5f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span> <span class="c1"># T</span>
+    <span class="n">fsimpar</span><span class="p">[</span><span class="s1">&#39;DWAPM_SET&#39;</span><span class="p">][</span><span class="mi">60</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%.5f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span> <span class="c1"># kW</span>
+    <span class="n">fsimpar</span><span class="p">[</span><span class="s1">&#39;DWAPM_SET&#39;</span><span class="p">][</span><span class="mi">62</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%.5f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span> <span class="c1"># kKaq</span>
+    <span class="n">fsimpar</span><span class="p">[</span><span class="s1">&#39;DWAPM_SET&#39;</span><span class="p">][</span><span class="mi">64</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%.5f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">[</span><span class="mi">10</span><span class="p">])</span><span class="c1"># kSy</span>
+
+    <span class="c1"># Reeplace model input and parameters file</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">newfname_input</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">newfname_input</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">newfname_settings</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">newfname_settings</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="c1"># Write model parameter and input file</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">newfname_input</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">fsimpar</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">newfname_settings</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">gen_array_input_files</span><span class="p">(</span><span class="n">fname_input</span><span class="p">,</span> <span class="n">fname_parameter_sets</span><span class="p">):</span>
+    <span class="c1"># read parameter sets</span>
+    <span class="n">parameter</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname_parameter_sets</span><span class="p">)</span>
+
+    <span class="c1">#Create a copy of inputfile</span>
+    <span class="n">fname_root</span> <span class="o">=</span> <span class="n">fname_input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">fname_ext</span> <span class="o">=</span> <span class="n">fname_input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">npar</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
+            <span class="c1"># new input file name</span>
+            <span class="n">newfname_input</span> <span class="o">=</span> <span class="n">fname_root</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">npar</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">fname_ext</span>
+            <span class="c1"># replace all new values in dataset</span>
+            <span class="n">write_sim_file</span><span class="p">(</span><span class="n">fname_input</span><span class="p">,</span> <span class="n">newfname_input</span><span class="p">,</span> <span class="n">parameter</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">npar</span><span class="p">])</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ========================================================</span>
+<span class="c1"># LOOP FOR CREATING MULTIPLE IMPORT FILES FOR RUNNING IN HPC</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="p">[</span>
+<span class="n">basin_path</span> <span class="o">+</span><span class="s1">&#39;model/HAD_IMERG_Tana_input_sim.dmp&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">fname_parameter_sets</span> <span class="o">=</span> <span class="n">training_general_path</span> <span class="o">+</span> <span class="s2">&quot;/basin/dataset/csv/test_parameter_set.csv&quot;</span>
+<span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname</span><span class="p">:</span>
+    <span class="n">gen_array_input_files</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="n">fname_parameter_sets</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>For running the script above you need to create a parameter set file, an example is shown below:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fname_parameter_sets</span> <span class="o">=</span> <span class="n">training_general_path</span> <span class="o">+</span> <span class="s2">&quot;/regional/datasets/csv/test_parameter_set.csv&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname_parameter_sets</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p><strong>TASK</strong>: modify the script to create model files for running multiples simulation with different forcing datasets (e.g. stochastic forecasting).</p>
+<p><strong>HINT</strong>: lines 66 and 68 needs to be modified in the input model parameters file, add lines in script to modify this lines</p>
+</section>
+<section id="3.4.-Runing-pipeline-DRYP-simulations">
+<h4>3.4. Runing pipeline DRYP simulations<a class="headerlink" href="#3.4.-Runing-pipeline-DRYP-simulations" title="Link to this heading"></a></h4>
+<p>For large simulations output files can become very large which may result in consuming cosiderable amount of memory that can even stop the model. This problem is very challenging to address in python, requiring significan changes in the code or even considering parallelisation. Here, we simply split a continuos simulation (in time, not in space) to store model output files in specified simulation periods (e.g. years).</p>
+<p>For this, we can create a series of model files that read and save inital conditions for the previous and subsequente simulations. An example of a python script to generate pipeline simulaiton is presented below:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="k">def</span> <span class="nf">write_sim_file_pipeline</span><span class="p">(</span><span class="n">fname_input</span><span class="p">,</span> <span class="n">newfname_input</span><span class="p">,</span>
+    <span class="n">sim_ini</span><span class="o">=</span><span class="s1">&#39;1999&#39;</span><span class="p">,</span> <span class="n">sim_end</span><span class="o">=</span><span class="s1">&#39;2000&#39;</span><span class="p">,</span>
+    <span class="n">date_ini</span><span class="o">=</span><span class="s1">&#39;2000 1 1&#39;</span><span class="p">,</span> <span class="n">date_end</span><span class="o">=</span><span class="s1">&#39;2001 1 1&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; modify the parematers of the model input file and</span>
+<span class="sd">            model setting file.</span>
+<span class="sd">            WARNING: it will reeplace the original file, so</span>
+<span class="sd">            make a copy of the original files</span>
+<span class="sd">    parameters:</span>
+<span class="sd">            filename_input: model inputfile, including path</span>
+<span class="sd">            parameter:              1D array of model paramters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Check if input file exist</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname_input</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File not availble&quot;</span><span class="p">)</span>
+
+    <span class="c1">#date_ini =</span>
+    <span class="c1">#date_end = str</span>
+
+    <span class="c1"># simulation number</span>
+    <span class="c1">#sim = str(int(parameter[0]))</span>
+
+    <span class="c1"># Read model input file</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname_input</span><span class="p">)</span>
+
+    <span class="c1"># copy input file</span>
+    <span class="n">fnew</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="c1"># INPUT FILES ====================================</span>
+    <span class="c1"># Change model name by adding the simulation number</span>
+    <span class="n">fnew</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="n">sim_end</span>
+
+    <span class="c1"># name and directory of previous time steps</span>
+    <span class="n">mname</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="n">sim_ini</span>
+    <span class="n">DirOutput</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">81</span><span class="p">]</span><span class="c1"># + &#39;_&#39; + sim_ini</span>
+
+    <span class="c1"># new name</span>
+    <span class="n">fnew</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">sim_ini</span>
+
+    <span class="c1"># change initial conditions Qo</span>
+    <span class="n">fnew</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">DirOutput</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">mname</span><span class="o">+</span><span class="s1">&#39;_avg_Q_ini.asc&#39;</span>
+    <span class="c1"># change initial conditions soil moisture</span>
+    <span class="n">fnew</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">46</span><span class="p">]</span> <span class="o">=</span> <span class="n">DirOutput</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">mname</span><span class="o">+</span><span class="s1">&#39;_avg_tht_ini.asc&#39;</span>
+    <span class="c1"># change initial condition water table</span>
+    <span class="n">fnew</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">57</span><span class="p">]</span> <span class="o">=</span> <span class="n">DirOutput</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">mname</span><span class="o">+</span><span class="s1">&#39;_avg_wte_ini.asc&#39;</span>
+
+    <span class="c1"># RIPARIAN FILES ==================================</span>
+    <span class="c1"># change files of the riparian file</span>
+    <span class="n">fname_riparian</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">93</span><span class="p">]</span>
+    <span class="c1"># create a copy of the file with the new name</span>
+    <span class="n">fname_rootrp</span> <span class="o">=</span> <span class="n">fname_riparian</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">fname_extrp</span> <span class="o">=</span> <span class="n">fname_riparian</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># new input file name</span>
+    <span class="n">newfname_riparian</span> <span class="o">=</span> <span class="n">fname_rootrp</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">sim_end</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">fname_extrp</span>
+    <span class="c1"># change initial condition riparian area</span>
+    <span class="c1"># change initial conditions riparian water content</span>
+    <span class="n">fsimrip</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname_riparian</span><span class="p">)</span>
+    <span class="n">fsimrip</span><span class="o">.</span><span class="n">RIPARIAN</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span> <span class="o">=</span> <span class="n">DirOutput</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">mname</span><span class="o">+</span><span class="s1">&#39;_avg_tht_rp_ini.asc&#39;</span>
+
+    <span class="c1"># write name of riparian file in the input file</span>
+    <span class="n">fnew</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">93</span><span class="p">]</span> <span class="o">=</span> <span class="n">newfname_riparian</span>
+
+    <span class="c1"># SETTING FILES ===================================</span>
+    <span class="c1"># change parameters of the of the setting parameter file</span>
+    <span class="n">fname_settings</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">87</span><span class="p">]</span>
+    <span class="c1"># create a copy of the file with the new name</span>
+    <span class="n">fname_root</span> <span class="o">=</span> <span class="n">fname_settings</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">fname_ext</span> <span class="o">=</span> <span class="n">fname_settings</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># new input file name</span>
+    <span class="n">newfname_settings</span> <span class="o">=</span> <span class="n">fname_root</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">sim_end</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">fname_ext</span>
+    <span class="c1">#copyfile(fname_settings, newfname_settings)</span>
+    <span class="c1"># replace new setting file</span>
+    <span class="n">fnew</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">87</span><span class="p">]</span> <span class="o">=</span> <span class="n">newfname_settings</span>
+
+
+    <span class="c1"># Open setting parameter file</span>
+    <span class="n">fsimpar</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname_settings</span><span class="p">)</span>
+
+    <span class="c1"># Change starting point of the simulation</span>
+    <span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_ini</span>
+
+    <span class="c1"># change final date of the simulaition</span>
+    <span class="n">fsimpar</span><span class="o">.</span><span class="n">DWAPM_SET</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_end</span>
+
+    <span class="c1"># Reeplace model input and parameters file</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">newfname_input</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">newfname_input</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">newfname_riparian</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">newfname_riparian</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">newfname_settings</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">newfname_settings</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="c1"># Write model parameter and input file</span>
+    <span class="n">fnew</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">newfname_input</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">fsimrip</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">newfname_riparian</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">fsimpar</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">newfname_settings</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">change_sim_file_name</span><span class="p">(</span><span class="n">fname_input</span><span class="p">,</span> <span class="n">newfname_input</span><span class="p">,</span> <span class="n">sim</span><span class="o">=</span><span class="mi">2000</span><span class="p">):</span>
+    <span class="c1"># Check if input file exist</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname_input</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File not availble&quot;</span><span class="p">)</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname_input</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">drylandmodel</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+    <span class="c1"># Reeplace model input and parameters file</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">newfname_input</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">newfname_input</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="c1"># Write model parameter and input file</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">newfname_input</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">gen_inital_end_simulation_dates</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">dtyear</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtmonth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtday</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function gets the initial and end date of a specified period</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">date_ini</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="o">+</span><span class="n">dtyear</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">month</span><span class="o">+</span><span class="n">dtmonth</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">day</span><span class="o">+</span><span class="n">dtday</span><span class="p">)</span>
+    <span class="n">date_end</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="o">+</span><span class="n">dtyear</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">month</span><span class="o">+</span><span class="n">dtmonth</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">day</span><span class="o">+</span><span class="n">dtday</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+    <span class="n">name_end</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="o">+</span><span class="n">dtyear</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">date_ini</span><span class="p">,</span> <span class="n">date_end</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">name_end</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ========================================================</span>
+<span class="c1"># LOOP FOR CREATING MULTIPLE IMPORT FILES FOR RUNNING IN HPC</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="p">[</span>
+<span class="n">training_general_path</span> <span class="o">+</span> <span class="s2">&quot;model/HAD_IMERG_Tana_input_sim.dmp&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># WARNINGS</span>
+<span class="c1"># The initial file should specify the initial conditions at the begining of</span>
+<span class="c1"># the simulation of the entire period, therefore, the name of inital model</span>
+<span class="c1"># must be according to the name required to the next simulation</span>
+<span class="c1"># subsequent period must conside</span>
+<span class="k">for</span> <span class="n">ifname_input</span> <span class="ow">in</span> <span class="n">fname</span><span class="p">:</span>
+    <span class="n">newfname_input</span> <span class="o">=</span> <span class="n">ifname_input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_2000.&#39;</span><span class="o">+</span><span class="n">ifname_input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">change_sim_file_name</span><span class="p">(</span><span class="n">ifname_input</span><span class="p">,</span> <span class="n">newfname_input</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">iyear</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">2023</span><span class="p">):</span>
+            <span class="n">date_ini</span><span class="p">,</span> <span class="n">date_end</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">name_end</span> <span class="o">=</span> <span class="n">gen_inital_end_simulation_dates</span><span class="p">(</span><span class="n">iyear</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">newfname_input</span> <span class="o">=</span> <span class="n">ifname_input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">name_end</span><span class="o">+</span><span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">ifname_input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">write_sim_file_pipeline</span><span class="p">(</span><span class="n">ifname_input</span><span class="p">,</span> <span class="n">newfname_input</span><span class="p">,</span> <span class="n">sim_ini</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">sim_end</span><span class="o">=</span><span class="n">name_end</span><span class="p">,</span>
+                    <span class="n">date_ini</span><span class="o">=</span><span class="n">date_ini</span><span class="p">,</span> <span class="n">date_end</span><span class="o">=</span><span class="n">date_end</span>
+                    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span>
+<span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">regional_path</span> <span class="o">+</span> <span class="s2">&quot;inputs/*.asc&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_path</span> <span class="o">=</span> <span class="s2">&quot;D:/&quot;</span>
+<span class="n">fnames</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">ifile</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+    <span class="n">fnames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ifile</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">new_name</span> <span class="o">=</span> <span class="n">new_path</span> <span class="o">+</span> <span class="n">ifile</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">new_name</span><span class="p">)</span>
+    <span class="c1">#new_name = new_path + fnames[0]</span>
+    <span class="c1">#process clip raster</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#fnames</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#new_path = &quot;D:/&quot;</span>
+<span class="c1">#new_name = new_path + fnames[0]</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02_DRYP_pre_processing.html" class="btn btn-neutral float-left" title="CUWALID MODEL TRAINING" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="04_DRYP_post_processing.html" class="btn btn-neutral float-right" title="CUWALID MODEL TRAINING" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,195 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "<table>\n",
+    "    <tr>\n",
+    "        <td> \n",
+    "            <img src=\"Slide1.png\"align=\"center\" width=\"250\"/> \n",
+    "        </td> \n",
+    "        <td>\n",
+    "            <img src=\"Slide2.png\"align=\"center\"width=\"250\"/>\n",
+    "        </td>\n",
+    "        <td>\n",
+    "            <img src=\"Slide3.png\"align=\"center\"width=\"250\"/>\n",
+    "        </td>\n",
+    "     </tr>\n",
+    "</table>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Learning objective:\n",
+    "* prepare bash files for batch job submission to HPC\n",
+    "* submit multiple jobs to HPC\n",
+    "\n",
+    "est. time 1 hour"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 1. Batch job submission \n",
+    "In order to run the CUWALID model, we use the High Performance Computers (HPC) provided by institutes. These HPC's are better for running multiple jobs at the same time. This will save time and allow us to run models that use large data.\n",
+    "\n",
+    "Here, we discuss on how you can submit multiple jobs to HPC. ***Please notice that this is not the only way to do the work but just to share one way of doing it***.\n",
+    "\n",
+    "### 1.1 creating directories to hold necessary files\n",
+    "The first step we need to do is create three important directories in our home directory. These are:\n",
+    "\n",
+    "* bSub_runME\n",
+    "* bSub_logME\n",
+    "* bSub_doneME\n",
+    "\n",
+    "You can create these directories by runing the mkdir command in the terminal. Here is the command\n",
+    "* `mkdir bSub_runME`\n",
+    "* `mkdir bSub_logME`\n",
+    "* `mkdir bSub_doneME`\n",
+    "\n",
+    "Once you create these directories you can use them anytime for any job submission (i.e No need to make these directories everytime).\n",
+    "\n",
+    "#### How do we use these three directories?\n",
+    "The **bSub_runME** directory is used to save our bash files (e.g ***myjob.bash***) that contain all the necessary submission commands and the job to be run.\n",
+    "\n",
+    "The **bSub_logME** directory is used to save error files and output files from the job we are running. If there isan error and the job is cancelled you can go tho this directory and read the error message in the ***jobid.error*** file. If there are any print statments in your job or any other print that would have been printed on the terminal will be saved in the ***jonid.out*** file.\n",
+    "\n",
+    "The **bSub_doneME** directory is used to save our bash files (e.g ***myjob.bash***) after the job is submitted. Hence, if there is an error and you have to run the job again you can easily move the bash files from this directory to the bSub_runME directory without creating them again.\n",
+    "\n",
+    "### 1.2 Creating the bash files\n",
+    "In order to submit multiple jobs to HPC, we need to follow certain commands that are set by the institute. Hence, we can prepare a python script to write these bash files so that we save time to write each file mannually. The following python script **write_bash_files.py** is provided to prepare the bash files used in the job sumbission. Below, we will discuss how it works using one example function in the script.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# This script prepare the .bash file\n",
+    "# containing the arguments for downloading data\n",
+    "import numpy as np\n",
+    "def write_bsub(year):\n",
+    "    # file name to be saved in the bSub_runME directory\n",
+    "    run_file = 'bSub_runMe/imerg_download_' + str(year) + '.bash'  \n",
+    "    # create empty array to hold the lines\n",
+    "    lines = []                \n",
+    "    # this is internal command indicateing it ia a bash file\n",
+    "    lines.append('#!/bin/bash'+'\\n')      \n",
+    "    # job name\n",
+    "    lines.append('#SBATCH --job-name=i' + str(year) +'\\n') \n",
+    "    # time required to run job \n",
+    "    lines.append('#SBATCH --time=0:15:00'+'\\n') \n",
+    "    # number of nodes requested for the job\n",
+    "    lines.append('#SBATCH --nodes=1'+'\\n')  \n",
+    "    # number of task allocated for each node\n",
+    "    lines.append('#SBATCH --ntasks-per-node=1'+'\\n') \n",
+    "    # RAM space requested for the job \n",
+    "    lines.append('#SBATCH --mem=20gb'+'\\n')     \n",
+    "    #  account name \n",
+    "    lines.append('#SBATCH --account=geog014522'+'\\n') \n",
+    "    # this is internal command for SLURM\n",
+    "    lines.append('#cd $SLURM_SUBMIT_DIR'+'\\n') \n",
+    "    # your home directory wher you run the job from\n",
+    "    lines.append('cd /user/home/fp20123/'+' '+'\\n')  \n",
+    "    # which ever python you want to use\n",
+    "    lines.append('module add lang/python/anaconda/3.7-2019.10'+' '+'\\n') \n",
+    "    # this is if you using your own python environment\n",
+    "    lines.append('source /user/home/fp20123/my_uavproject/bin/activate'+' '+'\\n') \n",
+    "    # the python script you want to run\n",
+    "    lines.append('python /user/home/fp20123/my_python_code.py ' + str(year) +'\\n') \n",
+    "    # writing file\n",
+    "    f = open(run_file, 'w')   \n",
+    "    for line in lines:\n",
+    "        f.write(line)\n",
+    "    #  close file\n",
+    "    f.close()                \n",
+    "    return 'done'"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The above function helps us write the bash files with the necessary commands for the HPC job submission.\n",
+    "As you can see, most of the lines are common and similar required by the HPC, hence, we can use this function to write any bash file we need with little modification. An example of the bash file produced using this function is shown below.\n",
+    "\n",
+    "<table>\n",
+    "    <tr>\n",
+    "        <td> \n",
+    "            <img src=\"bashfile.png\"align=\"center\" width=\"800\"/> \n",
+    "        </td> \n",
+    "    </tr>\n",
+    "</table>\n",
+    "\n",
+    "This will be what is written in the imerg_download_2012.bash according to the example. \n",
+    "\n",
+    "If there are multiple jobs that use similar python scripts, then what you have to do is run above function to write the bash files with same ***suffix*** and a differetiating ***prefix*** so that we can submit it at the same time. In the above example we can see the file name is **imerg_download_year.bash** here the imerg_download is the prefix while the year is suffix. Now we can write any number of years we want to download (e.g imerg_download_2018.bash, imerg_download_2019.bash, ...).  Once we prepare these files, then we are ready to submit multiple jobs to the HPC.\n",
+    "\n",
+    "### 1.3 Submitting multiple jobs\n",
+    "Once we prepare the bash files containing the jobs we want to run on HPC next is to use a little shell script to submit the jobs. The shell script is given as **runBashFiles.sh**. The file contains a few lines of code that allows to read all the bash files we prepare and sumbit it to the HPC. Here is an example file looks like\n",
+    "\n",
+    "\n",
+    "<table>\n",
+    "    <tr>\n",
+    "        <td> \n",
+    "            <img src=\"shellfile.png\"align=\"center\" width=\"800\"/> \n",
+    "        </td> \n",
+    "    </tr>\n",
+    "</table>\n",
+    "\n",
+    "In the above image as you can see from line 5, all the files that start with **imerg_download_** will be submited to the HPC and the files will be moved to the **bSub_doneME** directory we create earlier (Line 7).\n",
+    "\n",
+    "Line 6 is where you see the ***.error*** and ***.out*** files that we discussed above to put any error message and output message from the job will be printed and svaed in the **bSub_logME** directory. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "## <span style='background :red' > EXERCISE  </span>\n",
+    "Based on the above example please try to do the following\n",
+    "\n",
+    "    1. Write a python script that calculates area of a circle with radius as an input argument. \n",
+    "    2. Print the area of the circle as an output.\n",
+    "    3. Write 5 bash  files with diffrent radius values.\n",
+    "    4. Submit the job to the HPC.\n",
+    "    5. Check the results in the output file.\n",
+    "---   "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.16"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

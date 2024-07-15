@@ -14,8 +14,10 @@ Welcome to CUWALID's documentation!
    installation
    models_info
    tutorial
+   training
    processing
    modules
+   maintenance
    
 
 Indices and tables

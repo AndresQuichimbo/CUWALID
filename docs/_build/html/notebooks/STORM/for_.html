@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REGIONALIZING A REALIZATION &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="INGESTING PDFs (Probability Density Functions)" href="one_.html" />
+    <link rel="prev" title="GENERATING NETCDF OUTPUTS" href="fiv_.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../training.html">Training Notebooks</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../dryp_training.html">DRYP Training Notebooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../stopet_training.html">stoPET Training Notebooks</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../storm_training.html">STORM Training Notebooks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../storm_training.html#sampling">10_sampling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../storm_training.html#five-notebook">Five Notebook</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../storm_training.html#for-notebook">For Notebook</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">For Notebook</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../storm_training.html#one-notebook">One Notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../storm_training.html#six-notebook">Six Notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../storm_training.html#tre-notebook">Tre Notebook</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../storm_training.html#two-notebook">Two Notebook</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../forecasting_training.html">Forecast Training Notebooks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../training.html">Training Notebooks</a></li>
+          <li class="breadcrumb-item"><a href="../../storm_training.html">STORM Training Notebooks</a></li>
+      <li class="breadcrumb-item active"><strong>REGIONALIZING A REALIZATION</strong></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/notebooks/STORM/for_.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="REGIONALIZING-A-REALIZATION">
+<h1><strong>REGIONALIZING A REALIZATION</strong><a class="headerlink" href="#REGIONALIZING-A-REALIZATION" title="Link to this heading"></a></h1>
+<section id="Objectives:">
+<h2>Objectives:<a class="headerlink" href="#Objectives:" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Manipulating and visualizing spatial data</p></li>
+<li><p>Recipes for awesome spatial plotting (via <a class="reference external" href="https://docs.xarray.dev/en/stable/">Xarray</a> and <a class="reference external" href="https://numpy.org/doc/stable/">Numpy</a>)</p></li>
+</ul>
+<hr class="docutils" />
+<p>Caveat: Most likely, future developments on STORM won’t demand reading a rainfall field as a seed for regionalization. Nevertheless, the exercise presented herewill still be applicable to some eventual parameterization procedure.</p>
+<hr class="docutils" />
+<p>Reading and regionalizing the realization is done by STORM through the functions: EMPTY_MAP, READ_REALIZATION, KREGIONS, MORPHOPEN, and REGIONALISATION of the <a class="reference external" href="../realization.py">realization.py</a> module.</p>
+<hr class="docutils" />
+<section id="STORM-PARAMETERS">
+<h3>STORM PARAMETERS<a class="headerlink" href="#STORM-PARAMETERS" title="Link to this heading"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RAIN_MAP</span> <span class="o">=</span> <span class="s2">&quot;../realisation_MAM_crs-OK.nc&quot;</span>  <span class="c1"># with interpretable CRS</span>
+<span class="n">SUBGROUP</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">CLUSTERS</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># number of regions to split the whole.region into</span>
+
+<span class="c1"># OGC-WKT for HAD [taken from https://epsg.io/42106]</span>
+<span class="n">WKT_OGC</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;PROJCS[&quot;WGS84_/_Lambert_Azim_Mozambique&quot;,&#39;</span>
+    <span class="s1">&#39;GEOGCS[&quot;unknown&quot;,&#39;</span>
+    <span class="s1">&#39;DATUM[&quot;unknown&quot;,&#39;</span>
+    <span class="s1">&#39;SPHEROID[&quot;Normal Sphere (r=6370997)&quot;,6370997,0]],&#39;</span>
+    <span class="s1">&#39;PRIMEM[&quot;Greenwich&quot;,0,&#39;</span>
+    <span class="s1">&#39;AUTHORITY[&quot;EPSG&quot;,&quot;8901&quot;]],&#39;</span>
+    <span class="s1">&#39;UNIT[&quot;degree&quot;,0.0174532925199433,&#39;</span>
+    <span class="s1">&#39;AUTHORITY[&quot;EPSG&quot;,&quot;9122&quot;]]],&#39;</span>
+    <span class="s1">&#39;PROJECTION[&quot;Lambert_Azimuthal_Equal_Area&quot;],&#39;</span>
+    <span class="s1">&#39;PARAMETER[&quot;latitude_of_center&quot;,5],&#39;</span>
+    <span class="s1">&#39;PARAMETER[&quot;longitude_of_center&quot;,20],&#39;</span>
+    <span class="s1">&#39;PARAMETER[&quot;false_easting&quot;,0],&#39;</span>
+    <span class="s1">&#39;PARAMETER[&quot;false_northing&quot;,0],&#39;</span>
+    <span class="s1">&#39;UNIT[&quot;metre&quot;,1,&#39;</span>
+    <span class="s1">&#39;AUTHORITY[&quot;EPSG&quot;,&quot;9001&quot;]],&#39;</span>
+    <span class="s1">&#39;AXIS[&quot;Easting&quot;,EAST],&#39;</span>
+    <span class="s1">&#39;AXIS[&quot;Northing&quot;,NORTH],&#39;</span>
+    <span class="s1">&#39;AUTHORITY[&quot;EPSG&quot;,&quot;42106&quot;]]&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="READING-SPATIAL-DATA">
+<h4>READING SPATIAL DATA<a class="headerlink" href="#READING-SPATIAL-DATA" title="Link to this heading"></a></h4>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># loading libraries</span>
+<span class="kn">import</span> <span class="nn">cmaps</span>  <span class="c1"># -&gt; nice color-palettes</span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">rioxarray</span> <span class="k">as</span> <span class="nn">rio</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">from</span> <span class="nn">cmcrameri</span> <span class="kn">import</span> <span class="n">cm</span> <span class="k">as</span> <span class="n">cmc</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">RangeIndex</span>
+<span class="kn">from</span> <span class="nn">rasterio.enums</span> <span class="kn">import</span> <span class="n">Resampling</span>
+<span class="kn">from</span> <span class="nn">rasterio.features</span> <span class="kn">import</span> <span class="n">shapes</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">morphology</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+</pre></div>
+</div>
+</div>
+<p>STORM must create a void <a class="reference external" href="https://docs.xarray.dev/en/stable/">Xarray</a>, and append the local CRS (via <a class="reference external" href="https://corteva.github.io/rioxarray/stable/">rioxarray</a>). But first, here we define firs some local coordinates.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># this fast-tracks the generation (for this notebook) of coordinates</span>
+<span class="n">yyss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1167500.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1177500.0</span><span class="p">,</span> <span class="mi">470</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">xxss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1342500.0</span><span class="p">,</span> <span class="mf">3377500.0</span><span class="p">,</span> <span class="mi">408</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># check out the numpy.shapes</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">yyss</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">xxss</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(470,)
+(408,)
+</pre></div></div>
+</div>
+<p>Now the “void” is created…</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create an empty numpy</span>
+<span class="n">void</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">yyss</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">xxss</span><span class="p">)))</span>
+<span class="n">void</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+<span class="c1"># create an empty xarray</span>
+<span class="n">void</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">void</span><span class="p">,</span>
+    <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">],</span>
+    <span class="c1"># name=&quot;void&quot;,</span>
+    <span class="n">coords</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">y</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">yyss</span><span class="p">),</span>
+        <span class="n">x</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">xxss</span><span class="p">),</span>
+    <span class="p">),</span>
+    <span class="n">attrs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">_FillValue</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="n">units</span><span class="o">=</span><span class="s2">&quot;mm&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1"># append the CRS</span>
+<span class="n">void</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_crs</span><span class="p">(</span><span class="n">rio</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">CRS</span><span class="p">(</span><span class="n">WKT_OGC</span><span class="p">),</span> <span class="n">grid_mapping_name</span><span class="o">=</span><span class="s2">&quot;spatial_ref&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># how does it look like?</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">void</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;xarray.DataArray (y: 470, x: 408)&gt;
+array([[nan, nan, nan, ..., nan, nan, nan],
+       [nan, nan, nan, ..., nan, nan, nan],
+       [nan, nan, nan, ..., nan, nan, nan],
+       ...,
+       [nan, nan, nan, ..., nan, nan, nan],
+       [nan, nan, nan, ..., nan, nan, nan],
+       [nan, nan, nan, ..., nan, nan, nan]])
+Coordinates:
+  * y            (y) float64 1.168e+06 1.162e+06 ... -1.172e+06 -1.178e+06
+  * x            (x) float64 1.342e+06 1.348e+06 ... 3.372e+06 3.378e+06
+    spatial_ref  int32 0
+Attributes:
+    _FillValue:  nan
+    units:       mm
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># check the CRS out</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">void</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+PROJCS[&#34;WGS84_/_Lambert_Azim_Mozambique&#34;,GEOGCS[&#34;unknown&#34;,DATUM[&#34;unknown&#34;,SPHEROID[&#34;Normal Sphere (r=6370997)&#34;,6370997,0]],PRIMEM[&#34;Greenwich&#34;,0],UNIT[&#34;degree&#34;,0.0174532925199433]],PROJECTION[&#34;Lambert_Azimuthal_Equal_Area&#34;],PARAMETER[&#34;latitude_of_center&#34;,5],PARAMETER[&#34;longitude_of_center&#34;,20],PARAMETER[&#34;false_easting&#34;,0],PARAMETER[&#34;false_northing&#34;,0],UNIT[&#34;metre&#34;,1],AXIS[&#34;Easting&#34;,EAST],AXIS[&#34;Northing&#34;,NORTH],AUTHORITY[&#34;EPSG&#34;,&#34;42106&#34;]]
+</pre></div></div>
+</div>
+<p>Read the realization (previously computed, and stored as NetCDF).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># read the netcdf file (via rioxarray)</span>
+<span class="n">xile</span> <span class="o">=</span> <span class="n">rio</span><span class="o">.</span><span class="n">open_rasterio</span><span class="p">(</span><span class="n">RAIN_MAP</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">SUBGROUP</span><span class="p">)</span>
+
+<span class="c1"># REMOVING the annoying BAND dimension (assuming we only have ONE band!)</span>
+<span class="k">if</span> <span class="s2">&quot;band&quot;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">xile</span><span class="o">.</span><span class="n">dims</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">xile</span><span class="o">.</span><span class="n">data_vars</span><span class="p">):</span>
+        <span class="c1"># https://stackoverflow.com/a/41836191/5885810</span>
+        <span class="n">xile</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">xile</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">band</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">xile</span> <span class="o">=</span> <span class="n">xile</span><span class="o">.</span><span class="n">drop_dims</span><span class="p">(</span><span class="n">drop_dims</span><span class="o">=</span><span class="s2">&quot;band&quot;</span><span class="p">)</span>
+
+<span class="c1"># look up for the CRS?</span>
+<span class="n">xvar</span> <span class="o">=</span> <span class="n">xile</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">grid_mapping</span>
+<span class="c1"># actual crs</span>
+<span class="n">xcrs</span> <span class="o">=</span> <span class="n">xile</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">crs</span>
+<span class="c1"># # trasform4fun</span>
+<span class="c1"># xtra = xile.rio.transform()</span>
+<span class="n">xile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># how does the realization look like?</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">xile</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;xarray.Dataset&gt;
+Dimensions:   (x: 480, y: 450)
+Coordinates:
+  * x         (x) float64 28.02 28.07 28.12 28.17 ... 51.82 51.87 51.92 51.97
+  * y         (y) float64 15.48 15.43 15.38 15.33 ... -6.875 -6.925 -6.975
+    xomethin  int32 0
+Data variables:
+    rain      (y, x) float32 ...
+    mask      (y, x) uint8 ...
+</pre></div></div>
+</div>
+<div class="line-block">
+<div class="line">Usually, rainfall fields/data comes in the WGS84 GCS. So, before we proceed, we must find out whether we need to re-project (or not) the ingested realization. To find this out, we compare the CRS of our (model) void-xarray to the CRS that comes with the realization (if any at all!).</div>
+<div class="line">“True” implies that we indeed must carry out with the re-projection.</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">void</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span> <span class="o">!=</span> <span class="n">xcrs</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+True
+</pre></div></div>
+</div>
+<p>First, some dimension-compatibility must be set up.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># xcrs.is_geographic</span>
+<span class="c1"># renaming coordinates for &#39;easy&#39; reprojection?</span>
+<span class="c1"># https://www.geeksforgeeks.org/python-get-dictionary-keys-as-a-list/</span>
+<span class="n">c_xoid</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">void</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">dims</span><span class="p">)</span>
+<span class="c1"># [&#39;y&#39;, &#39;x&#39;]</span>
+<span class="c1"># [&#39;lat&#39;, &#39;lon&#39;]</span>
+<span class="n">c_xile</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xile</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">dims</span><span class="p">)</span>
+<span class="c1"># [&#39;lat&#39;, &#39;lon&#39;]</span>
+<span class="c1"># [&#39;band&#39;, &#39;x&#39;, &#39;y&#39;]</span>
+
+<span class="c1"># https://stackoverflow.com/a/176921/5885810</span>
+<span class="n">c_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">c_xile</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">c_xoid</span><span class="p">))</span>
+
+<span class="c1"># assuming LAT goes first</span>
+<span class="c1"># https://www.geeksforgeeks.org/python-convert-two-lists-into-a-dictionary/</span>
+<span class="c1"># https://stackoverflow.com/a/56163051/5885810  -&gt; rename coordinates</span>
+<span class="c1"># https://stackoverflow.com/a/51988240/5885810 -&gt; slicing lists</span>
+<span class="n">xile</span> <span class="o">=</span> <span class="n">xile</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span>
+    <span class="n">indexes</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">c_xile</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">,</span> <span class="n">c_ids</span><span class="p">)),</span> <span class="n">c_xoid</span><span class="p">)),</span>
+<span class="p">)</span>
+<span class="c1"># # the line below gives WARNING</span>
+<span class="c1"># xile = xile.rename(</span>
+<span class="c1">#     dict(map(lambda i, j: (i, j), list(map(c_xile.__getitem__, c_ids)), c_xoid))</span>
+<span class="c1"># )</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">xile</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;xarray.Dataset&gt;
+Dimensions:   (x: 480, y: 450)
+Coordinates:
+  * x         (x) float64 28.02 28.07 28.12 28.17 ... 51.82 51.87 51.92 51.97
+  * y         (y) float64 15.48 15.43 15.38 15.33 ... -6.875 -6.925 -6.975
+    xomethin  int32 0
+Data variables:
+    rain      (y, x) float32 ...
+    mask      (y, x) uint8 ...
+</pre></div></div>
+</div>
+<p>Then, the re-projection can be done.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># reprojection happens here</span>
+<span class="n">pile</span> <span class="o">=</span> <span class="n">xile</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">reproject_match</span><span class="p">(</span><span class="n">void</span><span class="p">,</span> <span class="n">resampling</span><span class="o">=</span><span class="n">Resampling</span><span class="o">.</span><span class="n">nearest</span><span class="p">)</span>
+
+<span class="c1"># how does it look like?</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pile</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;xarray.Dataset&gt;
+Dimensions:   (x: 408, y: 470)
+Coordinates:
+  * x         (x) float64 1.342e+06 1.348e+06 1.352e+06 ... 3.372e+06 3.378e+06
+  * y         (y) float64 1.168e+06 1.162e+06 ... -1.172e+06 -1.178e+06
+    xomethin  int32 0
+Data variables:
+    rain      (y, x) float32 8.853 12.19 12.01 14.22 ... 527.5 527.5 526.5 526.5
+    mask      (y, x) uint8 1 1 1 1 1 1 1 1 1 1 1 1 1 ... 0 0 0 0 0 0 0 0 0 0 0 0
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># check the CRS-mapping</span>
+<span class="n">pile</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">grid_mapping</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;xomethin&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...and the actual crs</span>
+<span class="n">pile</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">crs</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CRS.from_wkt(&#39;PROJCS[&#34;WGS84_/_Lambert_Azim_Mozambique&#34;,GEOGCS[&#34;unknown&#34;,DATUM[&#34;unknown&#34;,SPHEROID[&#34;Normal Sphere (r=6370997)&#34;,6370997,0]],PRIMEM[&#34;Greenwich&#34;,0],UNIT[&#34;degree&#34;,0.0174532925199433]],PROJECTION[&#34;Lambert_Azimuthal_Equal_Area&#34;],PARAMETER[&#34;latitude_of_center&#34;,5],PARAMETER[&#34;longitude_of_center&#34;,20],PARAMETER[&#34;false_easting&#34;,0],PARAMETER[&#34;false_northing&#34;,0],UNIT[&#34;metre&#34;,1],AXIS[&#34;Easting&#34;,EAST],AXIS[&#34;Northing&#34;,NORTH],AUTHORITY[&#34;EPSG&#34;,&#34;42106&#34;]]&#39;)
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="DATA-EXPORTING:-THE-WRONG-WAY!">
+<h3>DATA-EXPORTING: THE <strong>WRONG</strong> WAY!<a class="headerlink" href="#DATA-EXPORTING:-THE-WRONG-WAY!" title="Link to this heading"></a></h3>
+<p>Please, do yourself a favor, and avoid exporting/storing outputs in this way; especially, if saving space is what you’re after.</p>
+<p>Note: Check notebook <a class="reference internal" href="fiv_.html"><span class="doc">fiv_</span></a> for a better and very optimal way of storing data into NetCDF format.</p>
+<p>Do run the following block!. (ouputs will serve later as comparison cases)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># please don&#39;t do this:</span>
+<span class="n">pile</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="s2">&quot;for_wrong-1.nc&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+<span class="c1"># or this:</span>
+<span class="n">pile</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span>
+    <span class="s2">&quot;for_wrong-2.nc&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;rain&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;f4&quot;</span><span class="p">,</span> <span class="s2">&quot;zlib&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;complevel&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">},</span>
+        <span class="s2">&quot;mask&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;u1&quot;</span><span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="VISUALIZATION">
+<h3>VISUALIZATION<a class="headerlink" href="#VISUALIZATION" title="Link to this heading"></a></h3>
+<p>Haven’t you checked out <a class="reference external" href="https://github.com/hhuangwx/cmaps/blob/master/examples/colormaps.png">this awesome link</a> yet?</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># importing cool (but maybe color-blindly wrong) color-palettes</span>
+<span class="n">cmaps</span><span class="o">.</span><span class="n">precip2_17lev</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div style="vertical-align: middle;"><strong>precip2_17lev</strong> </div><div class="cmap"><img alt="precip2_17lev colormap" title="precip2_17lev" style="border: 1px solid #555;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAABACAYAAABsv8+/AAAAHHRFWHRUaXRsZQBwcmVjaXAyXzE3bGV2IGNvbG9ybWFwKzD+0QAAACJ0RVh0RGVzY3JpcHRpb24AcHJlY2lwMl8xN2xldiBjb2xvcm1hcLZgEJQAAAAwdEVYdEF1dGhvcgBNYXRwbG90bGliIHYzLjcuMiwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZx9CTh4AAAAydEVYdFNvZnR3YXJlAE1hdHBsb3RsaWIgdjMuNy4yLCBodHRwczovL21hdHBsb3RsaWIub3JnMeTROQAAAZ1JREFUeJzt1rFNFQAYReEfCzagxc5QkdhTswVzWDKJpY1zOIRUNgRDIDHEREL1KNzhf8X5vgVud3NODofDYZY9v+7uPT3v7s3M/Pq9u3f3uLv3cr+7NzPz98/b6t7L0+rczMx8vfy0und1/nF178vZ59W9mZnTi9296/m2Ozgz8/3f6tzDze6J/1xd++/H8t7t8t7MzIcjbAIARyYAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAS9A/sNG3+zvLpYAAAAAElFTkSuQmCC"></div><div style="vertical-align: middle; max-width: 514px; display: flex; justify-content: space-between;"><div style="float: left;"><div title="#ffffffff" style="display: inline-block; width: 1em; height: 1em; margin: 0; vertical-align: middle; border: 1px solid #555; background-color: #ffffffff;"></div> under</div><div style="margin: 0 auto; display: inline-block;">bad <div title="#00000000" style="display: inline-block; width: 1em; height: 1em; margin: 0; vertical-align: middle; border: 1px solid #555; background-color: #00000000;"></div></div><div style="float: right;">over <div title="#000000ff" style="display: inline-block; width: 1em; height: 1em; margin: 0; vertical-align: middle; border: 1px solid #555; background-color: #000000ff;"></div></div></div>
+</div>
+<p>Assuming that <strong>rain</strong> is the variable we want to plot… [Both plots are done via xarray]</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># realization in WGS84</span>
+<span class="n">xile</span><span class="o">.</span><span class="n">rain</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;precip2_17lev&quot;</span><span class="p">,</span>
+    <span class="n">levels</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">vmin</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">vmax</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">add_colorbar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># robust=True,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.collections.QuadMesh at 0x21140db4370&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_STORM_for__27_1.png" src="../../_images/notebooks_STORM_for__27_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># realization in local CRS</span>
+<span class="n">pile</span><span class="o">.</span><span class="n">rain</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;precip2_17lev&quot;</span><span class="p">,</span>
+    <span class="n">levels</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">vmin</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">vmax</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">add_colorbar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># robust=True,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.collections.QuadMesh at 0x21140ff3370&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_STORM_for__28_1.png" src="../../_images/notebooks_STORM_for__28_1.png" />
+</div>
+</div>
+<section id="REGIONALIZATION">
+<h4>REGIONALIZATION<a class="headerlink" href="#REGIONALIZATION" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line">The catchment/region is needed here as/in Numpy format/type.</div>
+<div class="line">Check last section of notebook <a class="reference internal" href="tre_.html"><span class="doc">tre_</span></a>.</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># reading the previously xported.numpy</span>
+<span class="n">CATCHMENT_MASK</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;tre_catchment-mask.npy&quot;</span><span class="p">)</span>
+
+<span class="c1"># how does it look like?</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+    <span class="n">CATCHMENT_MASK</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;cividis_r&quot;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;none&quot;</span>
+<span class="p">)</span>  <span class="c1"># .resampled(3))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.image.AxesImage at 0x21140f1fb80&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_STORM_for__30_1.png" src="../../_images/notebooks_STORM_for__30_1.png" />
+</div>
+</div>
+<p>Let’s mask the pixels not representing the catchment/region out.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># # FOR A MASK IN THE WHOLE [RECTANGULAR] DOMAIN USE:</span>
+<span class="c1"># mask_regn = np.ma.MaskedArray( pile.rain.data.copy(), False )</span>
+
+<span class="c1"># FOR A MASK COMING FROM AN IRREGULAR DOMAIN/SHP USE:</span>
+<span class="n">mask_regn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">(</span><span class="n">pile</span><span class="o">.</span><span class="n">rain</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="o">~</span><span class="n">CATCHMENT_MASK</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;bool&quot;</span><span class="p">))</span>
+<span class="c1"># # ... in the line below (previous cases) BAND was removed!</span>
+<span class="c1"># mask_regn = np.ma.MaskedArray(</span>
+<span class="c1">#     real.rain[&quot;band&quot; == 1, :].data.copy(), ~CATCHMENT_MASK.astype(&quot;bool&quot;)</span>
+<span class="c1"># )</span>
+
+<span class="c1"># let&#39;s have a look</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mask_regn</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[[-- -- -- ... -- -- --]
+ [-- -- -- ... -- -- --]
+ [-- -- -- ... -- -- --]
+ ...
+ [-- -- -- ... -- -- --]
+ [-- -- -- ... -- -- --]
+ [-- -- -- ... -- -- --]]
+</pre></div></div>
+</div>
+<p>The masking seems to be OK.</p>
+</section>
+</section>
+<section id="(MORE)-STORM-PARAMETERS">
+<h3>(MORE) STORM PARAMETERS<a class="headerlink" href="#(MORE)-STORM-PARAMETERS" title="Link to this heading"></a></h3>
+<p>Having this CLUSTERS parameter here is very handy (for some toying later) .</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># number of regions to split the whole.region into</span>
+<span class="n">CLUSTERS</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="c1"># make a copy of the MASK and CLUSTERS</span>
+<span class="n">REG</span> <span class="o">=</span> <span class="n">mask_regn</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">N_C</span> <span class="o">=</span> <span class="n">CLUSTERS</span>
+</pre></div>
+</div>
+</div>
+<p>Here we use some Machine Learning technique (i.e., <a class="reference external" href="https://scikit-learn.org/stable/modules/clustering.html#k-means">K-means</a>) from the <a class="reference external" href="https://scikit-learn.org/stable/">scikit-learn</a> library… to divide our realization into more “uniform” regions/zones.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># nans outside mask</span>
+<span class="n">REG</span><span class="p">[</span><span class="n">REG</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="c1"># ravel and indexing</span>
+<span class="n">ravl</span> <span class="o">=</span> <span class="n">REG</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">idrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ravl</span><span class="p">))[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ravl</span><span class="p">)]</span>
+<span class="c1"># transform the non-void (RGB?) field into 1D.numpy</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">ravl</span><span class="p">[</span><span class="n">idrs</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># clustering happens here</span>
+<span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">N_C</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="c1"># expand the result into a void-array</span>
+<span class="n">ravl</span><span class="p">[</span><span class="n">idrs</span><span class="p">]</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">labels_</span>
+<span class="n">LAB</span> <span class="o">=</span> <span class="n">ravl</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">REG</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+
+<span class="c1"># region labels</span>
+<span class="n">KAT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">kmeans</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;U&quot;</span><span class="p">),</span> <span class="s2">&quot;kmeans&quot;</span><span class="p">)</span>
+<span class="c1"># https://stackoverflow.com/a/25715954/5885810  -&gt; np.object to np.string</span>
+<span class="c1"># https://www.w3resource.com/numpy/string-operations/strip.php  -&gt; strip np.string.arrays</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># can we see the regionalization in the numpy array?</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">LAB</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">KAT</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[[nan nan nan ... nan nan nan]
+ [nan nan nan ... nan nan nan]
+ [nan nan nan ... nan nan nan]
+ ...
+ [nan nan nan ... nan nan nan]
+ [nan nan nan ... nan nan nan]
+ [nan nan nan ... nan nan nan]]
+[&#39;0&#39; &#39;1&#39; &#39;2&#39; &#39;3&#39;]
+</pre></div></div>
+</div>
+</section>
+<section id="id1">
+<h3>VISUALIZATION<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p>We can definitely see the regionalization by plotting the <strong>LAB</strong> numpy.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">LAB</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;turbo&quot;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>  <span class="c1"># .resampled(3))</span>
+
+<span class="c1"># # use these for exporting and cleaning</span>
+<span class="c1"># plt.savefig(</span>
+<span class="c1">#     &quot;for_.pdf&quot;, bbox_inches=&quot;tight&quot;, pad_inches=0.02, facecolor=fig.get_facecolor()</span>
+<span class="c1"># )</span>
+<span class="c1"># plt.close()</span>
+<span class="c1"># plt.clf()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.image.AxesImage at 0x21140ed5bb0&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_STORM_for__40_1.png" src="../../_images/notebooks_STORM_for__40_1.png" />
+</div>
+</div>
+<p>What are the actual means of the regions/classes?</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cdic</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">KAT</span><span class="p">,</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">))</span>
+<span class="n">cdic</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;0&#39;: array([120.833336], dtype=float32),
+ &#39;1&#39;: array([367.94604], dtype=float32),
+ &#39;2&#39;: array([230.80005], dtype=float32),
+ &#39;3&#39;: array([575.4106], dtype=float32)}
+</pre></div></div>
+</div>
+<p>Plot the realization (xarray <strong>pile</strong>) in local CRS, but this time only for the catchment/region mask.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># masked realization in local CRS</span>
+<span class="n">pile</span><span class="o">.</span><span class="n">rain</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">REG</span><span class="o">.</span><span class="n">data</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;precip2_17lev&quot;</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">add_colorbar</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.collections.QuadMesh at 0x211439578b0&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_STORM_for__44_1.png" src="../../_images/notebooks_STORM_for__44_1.png" />
+</div>
+</div>
+</section>
+<section id="MORPHOLOGICAL-FILTERING">
+<h3>MORPHOLOGICAL FILTERING<a class="headerlink" href="#MORPHOLOGICAL-FILTERING" title="Link to this heading"></a></h3>
+<p>Maybe there is not need to have a detailed delimitation among the region/zones. Such a detail might translate in slowing STORM computations by having SHPs with too many points. Hence, decreasing the resolution of the boundaries will speed STORM’s performance (by having SHPs with much less vertices/points).</p>
+<p>Note: Following this approach implies that the actual means won’t precisely correspond to the newly delimited regions.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># &quot;decreasing resolution&quot;</span>
+<span class="n">new</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">opening</span><span class="p">(</span><span class="n">LAB</span><span class="p">,</span> <span class="n">morphology</span><span class="o">.</span><span class="n">ellipse</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+<span class="c1"># plots and comparison</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">LAB</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;turbo&quot;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;turbo&quot;</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.image.AxesImage at 0x21143a107c0&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_STORM_for__46_1.png" src="../../_images/notebooks_STORM_for__46_1.png" />
+</div>
+</div>
+</section>
+<section id="REGIONALIZATION-MASKS-TO-NUMPYs">
+<h3>REGIONALIZATION MASKS TO NUMPYs<a class="headerlink" href="#REGIONALIZATION-MASKS-TO-NUMPYs" title="Link to this heading"></a></h3>
+<p>Such a conversion is necessary for STORM to simulate storms within such regions/masks.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># copy the masks</span>
+<span class="n">mopen</span> <span class="o">=</span> <span class="n">new</span>
+<span class="c1"># mopen = LAB</span>
+
+<span class="c1"># NUMPY to SHAPE</span>
+<span class="c1"># .rio.transform() IS QUITE OF THE ESSENCE HERE!</span>
+<span class="n">lopen</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+    <span class="n">shapes</span><span class="p">(</span><span class="n">mopen</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">CATCHMENT_MASK</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">pile</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">transform</span><span class="p">())</span>
+<span class="p">)</span>
+
+<span class="c1"># we didn&#39;t read &quot;BUFFRX_MASK&quot; though!</span>
+<span class="c1"># lopen = list( shapes(mopen, mask=BUFFRX_MASK, connectivity=4, transform=real.rio.transform()) )</span>
+
+<span class="c1"># remove NAN.regions??</span>
+<span class="c1"># https://stackoverflow.com/a/25050572/5885810</span>
+<span class="c1"># https://stackoverflow.com/a/3179137/5885810</span>
+<span class="n">lopen</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">lopen</span><span class="p">,</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">lopen</span><span class="p">))[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="k">if</span> <span class="n">y</span><span class="p">]</span>
+<span class="n">lopen</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+    <span class="nb">map</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">geometry</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">properties</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;region</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">),</span>
+        <span class="n">lopen</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># into GEOPANDAS</span>
+<span class="n">feats</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">from_features</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;FeatureCollection&quot;</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">lopen</span><span class="p">})</span>
+<span class="c1"># # the line below is an alternative... BUT you mig have troubles grouping it</span>
+<span class="c1"># feats = gpd.GeoDataFrame.from_dict(</span>
+<span class="c1">#     list(</span>
+<span class="c1">#         shapes(mopen, mask=BUFFRX_MASK, connectivity=4, transform=real.rio.transform())</span>
+<span class="c1">#     ),</span>
+<span class="c1"># )</span>
+
+<span class="c1"># grouping to retrieve just the CLUSTER.masks (the output is a Series)</span>
+<span class="n">nasks</span> <span class="o">=</span> <span class="n">feats</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">unary_union</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Visualizing the different masks/regions…</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nasks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_STORM_for__50_0.svg" src="../../_images/notebooks_STORM_for__50_0.svg" /></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nasks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_STORM_for__51_0.svg" src="../../_images/notebooks_STORM_for__51_0.svg" /></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># do we obtain HAD if merging all masks?</span>
+<span class="n">feats</span><span class="o">.</span><span class="n">unary_union</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_STORM_for__52_0.svg" src="../../_images/notebooks_STORM_for__52_0.svg" /></div>
+</div>
+<p>If you want to have them grouped into a <a class="reference external" href="https://geopandas.org/en/stable/">GeoPandas</a>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># turn them back into GeoPandas</span>
+<span class="n">masks</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">nasks</span><span class="p">)</span>
+<span class="c1"># masks.geometry.iloc[0]</span>
+<span class="c1"># masks.geometry.loc[&#39;region0&#39;]</span>
+<span class="c1"># masks.loc[&#39;region0&#39;].geometry</span>
+<span class="c1"># masks.geometry.xs(&#39;region0&#39;)</span>
+
+<span class="n">masks</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>geometry</th>
+    </tr>
+    <tr>
+      <th>label</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>region0</th>
+      <td>MULTIPOLYGON (((1930000.000 -830000.000, 19300...</td>
+    </tr>
+    <tr>
+      <th>region1</th>
+      <td>MULTIPOLYGON (((1950000.000 -1070000.000, 1955...</td>
+    </tr>
+    <tr>
+      <th>region2</th>
+      <td>MULTIPOLYGON (((1935000.000 -985000.000, 19300...</td>
+    </tr>
+    <tr>
+      <th>region3</th>
+      <td>MULTIPOLYGON (((1880000.000 -915000.000, 18750...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>I’d would ask then… what would the above exercise look like if CLUSTERS is equal to 1… or 3… or 7??</p>
+</section>
+</section>
+<section id="A-PEEK-INTO-WHAT-IT'S-PASSED-TO-STORM">
+<h2><em>A PEEK INTO WHAT IT’S PASSED TO STORM</em><a class="headerlink" href="#A-PEEK-INTO-WHAT-IT'S-PASSED-TO-STORM" title="Link to this heading"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">real</span> <span class="o">=</span> <span class="n">pile</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># https://realpython.com/iterate-through-dictionary-python/</span>
+<span class="k">for</span> <span class="n">keys</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="nb">zip</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;catchm&quot;</span><span class="p">,</span> <span class="s2">&quot;cacth&quot;</span><span class="p">,</span> <span class="s2">&quot;kmeans&quot;</span><span class="p">,</span> <span class="s2">&quot;region&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">CATCHMENT_MASK</span><span class="p">,</span> <span class="n">CATCHMENT_MASK</span><span class="p">,</span> <span class="n">LAB</span><span class="p">,</span> <span class="n">mopen</span><span class="p">],</span>
+    <span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">real</span><span class="p">[</span><span class="n">keys</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">void</span><span class="o">.</span><span class="n">coords</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="n">void</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">dims</span><span class="p">)</span>
+    <span class="c1"># real[keys] = xr.DataArray(values, coords=real.coords, dims=real.coords.dims)</span>
+
+<span class="c1"># trims &quot;real[&#39;region&#39;]&quot;</span>
+<span class="c1"># trimming around the CATCHMENT_MASK is what we want; as we compute PTOT within &quot;catchm&quot;</span>
+<span class="n">real</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">real</span><span class="o">.</span><span class="n">catchm</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">real</span><span class="o">.</span><span class="n">region</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># # -trims around the BUFFER -&gt; (this we want NOT!)</span>
+<span class="c1"># real[&quot;region&quot;] = xr.where(real.buffer == 1, real.region, -1)</span>
+
+<span class="c1"># -THESE 3 vars ARE IN THE ORDER OF cdic.keys()</span>
+<span class="c1"># new means (regions inside the HAD)</span>
+<span class="c1"># old_ks = list(</span>
+<span class="c1">#     map(lambda x: real.rain.where(real.kmeans == int(x)).mean().data, cdic.keys())</span>
+<span class="c1"># )</span>
+<span class="n">new_ks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+    <span class="nb">map</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">real</span><span class="o">.</span><span class="n">rain</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">real</span><span class="o">.</span><span class="n">catchm</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">real</span><span class="o">.</span><span class="n">kmeans</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">data</span><span class="p">,</span>
+        <span class="n">cdic</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># numpy masks</span>
+<span class="c1"># ... 1st transform K-mean into 1s (because of the 0 K-mean); and the assign 0 everywhere else</span>
+<span class="n">reg_np</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+    <span class="nb">map</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">real</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">real</span><span class="o">.</span><span class="n">region</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">real</span><span class="o">.</span><span class="n">region</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;u1&quot;</span><span class="p">),</span>
+        <span class="n">cdic</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># shapes</span>
+<span class="c1"># # the line below are &quot;pandas.core.series.Series&quot;</span>
+<span class="c1"># zhapez = list(map(lambda x: masks.loc[f&quot;region{int(x)}&quot;], cdic.keys()))</span>
+<span class="c1"># ...in case &quot;pandas.core.series.Series&quot; try converting them into &quot;geopandas.geodataframe.GeoDataFrame&quot;</span>
+<span class="n">zhapez</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+    <span class="nb">map</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span>
+            <span class="n">geometry</span><span class="o">=</span><span class="n">masks</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;region</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span> <span class="n">crs</span><span class="o">=</span><span class="n">void</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">crs</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">RangeIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+        <span class="n">cdic</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="c1"># zhapez = list(</span>
+<span class="c1">#     map(</span>
+<span class="c1">#         lambda x: gpd.GeoDataFrame(geometry=masks.loc[f&quot;region{int(x)}&quot;]).set_index(</span>
+<span class="c1">#             RangeIndex(0, 1, 1)</span>
+<span class="c1">#         ),</span>
+<span class="c1">#         cdic.keys(),</span>
+<span class="c1">#     )</span>
+<span class="c1"># )</span>
+
+<span class="c1"># grouping the output into a dict</span>
+<span class="n">output</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">((</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="s2">&quot;npma&quot;</span><span class="p">,</span> <span class="s2">&quot;rain&quot;</span><span class="p">),</span> <span class="p">(</span><span class="n">zhapez</span><span class="p">,</span> <span class="n">reg_np</span><span class="p">,</span> <span class="n">new_ks</span><span class="p">)))</span>
+<span class="n">output</span><span class="p">[</span><span class="s2">&quot;kmeans&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">real</span><span class="o">.</span><span class="n">catchm</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">real</span><span class="o">.</span><span class="n">kmeans</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;i1&quot;</span><span class="p">)</span>
+
+<span class="n">output</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;mask&#39;: [                                            geometry
+  0  MULTIPOLYGON (((1930000.000 -830000.000, 19300...,
+                                              geometry
+  0  MULTIPOLYGON (((1950000.000 -1070000.000, 1955...,
+                                              geometry
+  0  MULTIPOLYGON (((1935000.000 -985000.000, 19300...,
+                                              geometry
+  0  MULTIPOLYGON (((1880000.000 -915000.000, 18750...],
+ &#39;npma&#39;: [array([[0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0],
+         ...,
+         [0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0]], dtype=uint8),
+  array([[0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0],
+         ...,
+         [0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0]], dtype=uint8),
+  array([[0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0],
+         ...,
+         [0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0]], dtype=uint8),
+  array([[0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0],
+         ...,
+         [0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0],
+         [0, 0, 0, ..., 0, 0, 0]], dtype=uint8)],
+ &#39;rain&#39;: [array(120.87397, dtype=float32),
+  array(368.46494, dtype=float32),
+  array(231.04538, dtype=float32),
+  array(575.66113, dtype=float32)],
+ &#39;kmeans&#39;: array([[-1, -1, -1, ..., -1, -1, -1],
+        [-1, -1, -1, ..., -1, -1, -1],
+        [-1, -1, -1, ..., -1, -1, -1],
+        ...,
+        [-1, -1, -1, ..., -1, -1, -1],
+        [-1, -1, -1, ..., -1, -1, -1],
+        [-1, -1, -1, ..., -1, -1, -1]], dtype=int8)}
+</pre></div></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fiv_.html" class="btn btn-neutral float-left" title="GENERATING NETCDF OUTPUTS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="one_.html" class="btn btn-neutral float-right" title="INGESTING PDFs (Probability Density Functions)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

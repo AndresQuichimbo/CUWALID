@@ -1,0 +1,270 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "<table>\n",
+    "    <tr>\n",
+    "        <td> \n",
+    "            <img src=\"Slide1.png\"align=\"center\" width=\"250\"/> \n",
+    "        </td> \n",
+    "        <td>\n",
+    "            <img src=\"Slide2.png\"align=\"center\"width=\"250\"/>\n",
+    "        </td>\n",
+    "        <td>\n",
+    "            <img src=\"Slide3.png\"align=\"center\"width=\"250\"/>\n",
+    "        </td>\n",
+    "     </tr>\n",
+    "</table>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Learning objective:\n",
+    "* generating regional PET data\n",
+    "* understand the output format from the model\n",
+    "* learn data visualization from stoPET output\n",
+    "\n",
+    "est. time 2 hour"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "###  Generating regional data\n",
+    "Here we will generate the data for **Kenya** and use some plotting functions to visualize the data. Notice regional data takes more space so make sure there is enough storage for the data.\n",
+    "\n",
+    "To generate the regional data please adjust the input values in the **run_stoPET()** function and generate 5 years data for Kenya using Method 2 as temperature adjustment with a 1.5 degree increase.\n",
+    "\n",
+    "### <span style='background :yellow' > Example  </span>\n",
+    "Now lets do a simple exercise based on a 5 year data for Kenya.\n",
+    "\n",
+    "    * latval_min = -5.5\n",
+    "    * latval_max = 5.5\n",
+    "    * lonval_min = 33.0\n",
+    "    * lonval_max = 42.0\n",
+    "    * start year = 2000\n",
+    "    * end year = 2005\n",
+    "    * two ensembles\n",
+    "    * using Method 2 for temperature adjustment\n",
+    "    * temperature increase of 1.5 degrees"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# This is for showing plots \n",
+    "# interactively in Jupiter notebook\n",
+    "%matplotlib inline\n",
+    "import matplotlib.pyplot as plt\n",
+    "from mpl_toolkits.basemap import Basemap"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import sys\n",
+    "import numpy as np\n",
+    "from stoPET_v1 import *"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def run_stoPET():\n",
+    "    ## ----- CHANGE THE INPUT VARIABLES HERE -----##\n",
+    "    datapath = 'stopet_parameter_files/'\n",
+    "    outputpath = 'results/'\n",
+    "    runtype =  'regional' #'single' \n",
+    "    startyear = 2000\n",
+    "    endyear = 2005\n",
+    "\n",
+    "    # Single point stoPET run\n",
+    "    latval = 1.73\n",
+    "    lonval = 40.09\n",
+    "\n",
+    "    # Regional stoPET run\n",
+    "    latval_min = -5.5\n",
+    "    latval_max = 5.5\n",
+    "    lonval_min = 33.0\n",
+    "    lonval_max = 42.0\n",
+    "    locname = 'Kenya'\n",
+    "\n",
+    "    number_ensm = 2\n",
+    "    tempAdj = 2\n",
+    "    deltat = 1.5\n",
+    "    udpi_pet = 5\n",
+    "\n",
+    "    ## ------ NO CHANGES BELLOW THIS -------------##\n",
+    "    if runtype == 'single':\n",
+    "            for ens_num in np.arange(0,number_ensm):\n",
+    "                    stoPET_wrapper_singlepoint(startyear, endyear, \n",
+    "                                               latval, lonval, locname,\n",
+    "                                               ens_num,datapath, \n",
+    "                                               outputpath, tempAdj, \n",
+    "                                               deltat, udpi_pet)\n",
+    "    elif runtype == 'regional':\n",
+    "            for ens_num in np.arange(0,number_ensm):\n",
+    "                    stoPET_wrapper_regional(startyear, endyear, \n",
+    "                                            latval_min, latval_max, \n",
+    "                                            lonval_min, lonval_max,\n",
+    "                                            locname, ens_num, datapath, \n",
+    "                                            outputpath, \n",
+    "                                            tempAdj, deltat, udpi_pet)\n",
+    "    else:\n",
+    "            raise ValueError('runtype only takes single and regional ... please check!')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Now run the function run_stoPET()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "run_stoPET()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Lets read first year data and aggregate to annual PET. Each year’s file will have a **four dimensional array (days, hours, latitude, longitude)**. The variable name for the stochastically generated PET is **pet** within the netCDF files.\n",
+    "\n",
+    "The file name of the outputs are given as **year_method_stoPET.nc** and **year_method_AdjstoPET.nc** (e.g. 2002_2_stoPET.nc, 2002_2_AdjstoPET.nc)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nc = Dataset('results/Kenya_E0_StoPET/2000_2_stoPET.nc')\n",
+    "lats = nc.variables['latitude'][:]\n",
+    "lons = nc.variables['longitude'][:]\n",
+    "pet = nc.variables['pet'][:,:,:,:] \n",
+    "# check array shape\n",
+    "print(pet.shape)\n",
+    "# make the annual sum PET\n",
+    "annual_pet = np.sum(pet, axis=(0,1))\n",
+    "# check array shape\n",
+    "print(annual_pet.shape)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# <font color='red'>plot_spatial function doesn't exist</font>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# let us plot the annual PET\n",
+    "data = annual_pet\n",
+    "cmap = plt.cm.YlOrBr\n",
+    "title = 'Annual PET'\n",
+    "cbar_label = '$\\mathbf{mm\\,year^{-1}}$'\n",
+    "climin = 1000.0 \n",
+    "climax = 2500.0 \n",
+    "plotpath = './plots/' \n",
+    "figfname = 'Kenya_annual+PET_2000.png'\n",
+    "plot_spatial(data, lats, lons, cmap , title, cbar_label, \n",
+    "             climin, climax, plotpath, figfname)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "fig = plt.figure()\n",
+    "m = Basemap(projection='cyl', llcrnrlat=min(lats), \n",
+    "            urcrnrlat=max(lats), llcrnrlon=min(lons),\n",
+    "            urcrnrlon=max(lons), resolution='l')\n",
+    "\n",
+    "cs4 = plt.imshow(data, interpolation='nearest', cmap=cmap,\n",
+    "                     extent=[min(lons), max(lons), \n",
+    "                             min(lats), max(lats)]) \n",
+    "m.drawcoastlines(linewidth=1.0)\n",
+    "m.drawcountries(linewidth=0.75)\n",
+    "parallels=np.arange(-90.,90.,10.0)\n",
+    "meridians=np.arange(0.,360.,10.0)\n",
+    "\n",
+    "m.drawlsmask(land_color=(0,0,0,0), ocean_color='white', lakes=False) \n",
+    "plt.title(title, fontweight='bold', loc='center')\n",
+    "cb4 = plt.colorbar(cs4, label=cbar_label, shrink=0.4, \n",
+    "                   pad=0.02, extend='both', orientation='horizontal')\n",
+    "cb4.mappable.set_clim(climin, climax)\n",
+    "plt.tight_layout()  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "## <span style='background :red' > EXERCISE  </span>\n",
+    "Based on the above example on generating regional PET data please do the folowing.\n",
+    "\n",
+    "    1. Generate a 5 year dataset for Uganda.\n",
+    "    2. Use Method 1 for temperature adjustment.\n",
+    "    3. Generate comparison plots side-by-side (write your own visualization code using python subplots) for the average  annual PET values of the non-adjusted PET and adjusted PET.\n",
+    "---   "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.16"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Developer Maintenance &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="cuwalid.tools package" href="cuwalid.tools.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Developer Maintenance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#maintaining-the-documentation">Maintaining the documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#maintaining-the-package-on-pypi">Maintaining the package on PyPi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#useful-tips">Useful Tips</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#releasing-a-new-version">Releasing a new version</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-issues-with-fortran-files">Creating/Issues with fortran files</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Developer Maintenance</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/maintenance.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="developer-maintenance">
+<h1>Developer Maintenance<a class="headerlink" href="#developer-maintenance" title="Link to this heading"></a></h1>
+<p>This documentation is <strong>purely for the use of the CUWALID Team</strong> to maintain this project and should be <strong>ignored</strong> by users.</p>
+<section id="maintaining-the-documentation">
+<h2>Maintaining the documentation<a class="headerlink" href="#maintaining-the-documentation" title="Link to this heading"></a></h2>
+<p>If you have added code to the documentation you will first need to delete any of the .rst files found in docs/source that are related to the code you changed.</p>
+<p>For example if there is a new module in the cuwalid.dryp.components module, you should delete the cuwalid.dryp.components.rst file, or just change the file to include the new module.</p>
+<p>If this is not done, you may not see your new changed appear in the documentation, after deleting the necessary files you can run this command from the docs directory in your terminal:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sphinx-apidoc<span class="w"> </span>-o<span class="w"> </span>source/<span class="w"> </span>../cuwalid
+</pre></div>
+</div>
+<p>Now you can clean and rebuild the html. From the same docs directory, you can now run these 2 commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>clean
+make<span class="w"> </span>html
+</pre></div>
+</div>
+<p>You may see some errors that you should check to make sure they aren’t related to the changes you made, but some of the errors won’t have much affect on the documentation.</p>
+<p>The easiest way to check you changes is to open the newly created html files in a browser (e.g. chrome). The html files are found in docs/_build/html</p>
+</section>
+<section id="maintaining-the-package-on-pypi">
+<h2>Maintaining the package on PyPi<a class="headerlink" href="#maintaining-the-package-on-pypi" title="Link to this heading"></a></h2>
+<section id="useful-tips">
+<h3>Useful Tips<a class="headerlink" href="#useful-tips" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>The setup.py file is for building the package, it contains information like the name of the package, authors, minimum python version, package dependencies and more.</p></li>
+<li><p>The MANIFEST.in file contains files that PyPi might skip over when packaging if you don’t specificy to keep it. For example it contains the compiled fortran code for the DRYP model and also data needed to run tests.</p></li>
+<li><p>As you likely know, the README.md is standard for using in github repostitories. But the setup.py file will also use it to display the README.md on the PyPi page for the package.</p></li>
+</ol>
+</section>
+<section id="releasing-a-new-version">
+<h3>Releasing a new version<a class="headerlink" href="#releasing-a-new-version" title="Link to this heading"></a></h3>
+<p>To publish a new version to PyPi you should first check it works on all systems and the documentation on how to instal/use the package is all up to date.</p>
+<ol class="arabic">
+<li><p>First ensure there are no distrubution files already in your root folder. The directories you want to delete are called ‘build’, ‘CUWALID.egg-info’ and ‘dist’. If this is the first time publishing a new version these files might not exist anyway.</p></li>
+<li><p>Make sure you update the version number in the setup.py file. It will not let you publish to the name version number twice.</p></li>
+<li><p>Now enter the root directory of the project in a terminal (where the README.md and setup.py files are) and activate your environment. You will then want to run these files in order:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># These command are just precautionary to make sure nothing cached in memory will mess with the changed</span>
+python<span class="w"> </span>setup.py<span class="w"> </span>clean
+pip<span class="w"> </span>cache<span class="w"> </span>purge
+<span class="c1"># This command packages the files up ready for sending to PyPi</span>
+python<span class="w"> </span>setup.py<span class="w"> </span>sdist<span class="w"> </span>bdist_wheel
+<span class="c1"># This command is used to publish to the test PyPi servers and should be changed when the package is released to the main servers.</span>
+twine<span class="w"> </span>upload<span class="w"> </span>--repository-url<span class="w"> </span>https://test.pypi.org/legacy/<span class="w"> </span>dist/*
+</pre></div>
+</div>
+<p>You will be asked to enter your API token for PyPi, if you have not created one yet you will need to login to PyPi’s website and create one. This Token should be kept private and shared with no one.</p>
+</div></blockquote>
+</li>
+<li><p>Now you should see it uploading the files and then you can check it has all worked correctly by installing the new version in one of your environments with the command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Upgrade an existing cuwalid package in the environment</span>
+pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>cuwalid
+<span class="c1"># Install the package from scratch</span>
+pip<span class="w"> </span>install<span class="w"> </span>cuwalid
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+</section>
+<section id="creating-issues-with-fortran-files">
+<h2>Creating/Issues with fortran files<a class="headerlink" href="#creating-issues-with-fortran-files" title="Link to this heading"></a></h2>
+<p>I often ran into issues with fortran files when testing the package, it seems they need to be compiled for each python version. To do this you can follow these steps.</p>
+<ol class="arabic">
+<li><p>First activate an environment with the python version you want to use or are having trouble with, you can create an environment with conda with a specific python version with this command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># This example shows creating a conda environment with Python version 3.9 but you can choose any version.</span>
+conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>py39<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9
+<span class="c1"># And activate the environment after</span>
+conda<span class="w"> </span>activate<span class="w"> </span>py39
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Now you need to navigate to the folder where the fortran files are found, for DRYP you can go to this path:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>cuwald/dryp/components
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Now you need to run these 3 commands, this is where it gets tricky because you will need a fortran compiler both installed on your device and found in your systems path. The one i personally got to work on a windows machine was MinGW-w64 version of gfortran. But it might be different on Linux.</p>
+<blockquote>
+<div><p>if you now have a fortran compiler, check you have f2py working by using the command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Just check this doesn&#39;t give an error that f2py wasnt found</span>
+f2py
+</pre></div>
+</div>
+<p>Now we can compile the fortran code using these commands. This example shows the fortran code found in DRYP.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>f2py<span class="w"> </span>-c<span class="w"> </span>DRYP_uz_sz_interaction.f90<span class="w"> </span>-m<span class="w"> </span>lakesf90
+f2py<span class="w"> </span>-c<span class="w"> </span>TransLoss.f90<span class="w"> </span>-m<span class="w"> </span>faccumf90
+f2py<span class="w"> </span>-c<span class="w"> </span>DRYP_solver.f90<span class="w"> </span>-m<span class="w"> </span>gaussf90
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>This has compiled the code into new folders found in the components directories called lakesf90 etc. You will need to pull out the files found inside these folders into the main components directory for them to be found in the code.</p></li>
+</ol>
+<p>Now your fortran code should be working for whatever python version you compiled it for.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cuwalid.tools.html" class="btn btn-neutral float-left" title="cuwalid.tools package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

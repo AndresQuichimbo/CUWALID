@@ -8,3 +8,6 @@ tests/dryp/tilted_v/output/
 CUWALID.egg-info
 dist
 build
+stopet_result
+cuwalid/stopet/stopet_parameter_files/monthly_cont_percentage.nc
+cuwalid/stopet/stopet_parameter_files/stopet_parameters.nc

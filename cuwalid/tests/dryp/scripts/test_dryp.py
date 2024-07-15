@@ -5,11 +5,6 @@ from cuwalid.dryp.main_DRYP import run_DRYP
 
 def test_dryp():
     
-    print("###########################")
-    print(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tilted_v', 'input_test.dmp')))
-    print("###########################")
-    
-    
     """Run a test model file"""
     # Construct path to input file relative to package
     input_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tilted_v', 'input_test.dmp'))
