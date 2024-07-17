@@ -1,6 +1,8 @@
 # CUWALID
 Repository containing the models of CUWALID under the Down2Earth project
 
+These instructions are not currently up to date whilst testing the package, for the most up to date installation instructions, please use the html webpages found in docs/_build/html/index.html.
+
 ## Setting up the environments
 
 Within the main directory there is a directory called installers, this contains some scripts to easily set up the environments you need to run the model
