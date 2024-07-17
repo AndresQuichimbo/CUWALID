@@ -13,7 +13,7 @@ def stoPET_wrapper_singlepoint(startyear, endyear, latval, lonval, locname,ens_n
                                datapath, outputpath, tempAdj, deltat, udpi_pet):
     print('stoPET running ...')
 
-    data=Dataset(datapath+'stopet_parameters.nc') 
+    data=Dataset(os.path.join(datapath,'stopet_parameters.nc'))
     ##print(data_uob.variables)
     lats=data.variables['latitude'][:]
     lons=data.variables['longitude'][:]
@@ -35,27 +35,27 @@ def stoPET_wrapper_singlepoint(startyear, endyear, latval, lonval, locname,ens_n
         # to the same dimentinon as the rest of the input data
         slope_vals=np.ones((ampl.shape[1],ampl.shape[2])) * udpi_pet
 
-        dpetbydt=Dataset(datapath+'dpetdt.nc')
+        dpetbydt=Dataset(os.path.join(datapath,'dpetdt.nc'))
         dpetdt = dpetbydt.variables['dpetdt'][:,:]
         
     elif tempAdj == 2: # method 2: user defined temperature increase (the hPET data dpetdt.nc)
-        deltat_slope=Dataset(datapath+'hpet_slope.nc') 
+        deltat_slope=Dataset(os.path.join(datapath,'hpet_slope.nc') )
         slope_vals = deltat_slope.variables['slope'][:,:]
 
-        dpetbydt=Dataset(datapath+'dpetdt.nc')
+        dpetbydt=Dataset(os.path.join(datapath,'dpetdt.nc'))
         dpetdt = dpetbydt.variables['dpetdt'][:,:]
 
     elif tempAdj == 3: # method 3: progressive change based on hPET trend 
-        deltat_slope=Dataset(datapath+'hpet_slope.nc') 
+        deltat_slope=Dataset(os.path.join(datapath,'hpet_slope.nc'))
         slope_vals = deltat_slope.variables['slope'][:,:]
 
-        dpetbydt=Dataset(datapath+'dpetdt.nc')
+        dpetbydt=Dataset(os.path.join(datapath,'dpetdt.nc'))
         dpetdt = dpetbydt.variables['dpetdt'][:,:]
    
     else:
         raise ValueError('tempAdj only takes values 1,2,3 ... please check!')
     # monthly contribution percentage
-    mpercent=Dataset(datapath+'monthly_cont_percentage.nc') 
+    mpercent=Dataset(os.path.join(datapath,'monthly_cont_percentage.nc'))
     mcont_vals = mpercent.variables['mcontper'][:,:,:]
 
     # Run the stoPET generation
@@ -73,9 +73,8 @@ def future_pet_ts_generate_singlepoint(startyear, endyear, latval, lonval, lats,
                                        ampl, omega, phase, shift, sr, ss, skew, loc, scale,
                                        slope_vals, mcont_vals,ens_num, datapath, outputpath,
                                        tempAdj,deltat, dpetdt):
-    # create a folder to save the data
-    if not os.path.isdir(outputpath+locname+'_E'+str(ens_num)+'_StoPET/'):
-        os.mkdir(outputpath+locname+'_E'+str(ens_num)+'_StoPET/')
+
+    os.makedirs(os.path.join(outputpath,locname,'_E',str(ens_num),'_StoPET/'), exist_ok=True)
 
     # generate the hourly time series period
     years = np.arange(startyear,endyear+1)
@@ -133,7 +132,7 @@ def future_pet_ts_generate_singlepoint(startyear, endyear, latval, lonval, lats,
                 annual_pet = np.append(annual_pet, spet) # append stopet for later adjustment
 
         # save each year generated pet timeseries in a text file
-        filename1 = outputpath+locname+'_E'+str(ens_num)+'_StoPET/'+str(yr)+'_'+str(latval)+'_'+str(lonval)+'_'+str(tempAdj)+'_stoPET.txt'
+        filename1 = os.path.join(outputpath, locname, '_E', str(ens_num), '_StoPET/', str(yr), '_', str(latval), '_', str(lonval), '_', str(tempAdj), '_stoPET.txt')
         np.savetxt(filename1, stoch_pet, fmt='%0.5f')
         
         # here make the adjustment for change in temperature
@@ -148,7 +147,7 @@ def future_pet_ts_generate_singlepoint(startyear, endyear, latval, lonval, lats,
         adj_stopet = increase_temp_singlepoint(slope, mcont, annual_pet, tempAdj, deltat, yr, 
                                                startyear, endyear,dpetdt_val)
         # save the adjusted pet timeseries in a text file
-        filename2 = outputpath+locname+'_E'+str(ens_num)+'_StoPET/'+str(yr)+'_'+str(latval)+'_'+str(lonval)+'_'+str(tempAdj)+'_AdjstoPET.txt'
+        filename2 = os.path.join(outputpath, locname, '_E', str(ens_num), '_StoPET/', str(yr), '_', str(latval), '_', str(lonval), '_', str(tempAdj), '_AdjstoPET.txt')
         np.savetxt(filename2, adj_stopet, fmt='%0.5f')
 
         print(yr)
@@ -257,8 +256,7 @@ def stoPET_wrapper_regional(startyear, endyear, latval_min, latval_max, lonval_m
                             locname, ens_num, datapath, outputpath, tempAdj, deltat, udpi_pet):
     print('stoPET running ...')
 
-    data=Dataset(datapath+'stopet_parameters.nc') #'month_1_params.nc'
-    ##print(data_uob.variables)
+    data=Dataset(os.path.join(datapath,'stopet_parameters.nc')) #'month_1_params.nc'
     lats=data.variables['latitude'][:]
     lons=data.variables['longitude'][:]
    
@@ -279,27 +277,27 @@ def stoPET_wrapper_regional(startyear, endyear, latval_min, latval_max, lonval_m
         # to the same dimentinon as the rest of the input data
         slope_vals=np.ones((ampl.shape[1],ampl.shape[2])) * udpi_pet
 
-        dpetbydt=Dataset(datapath+'dpetdt.nc')
+        dpetbydt=Dataset(os.path.join(datapath,'dpetdt.nc'))
         dpetdt = dpetbydt.variables['dpetdt'][:,:]
         
     elif tempAdj == 2: # method 3: user defined temperature increase 
-        deltat_slope=Dataset(datapath+'hpet_slope.nc') 
+        deltat_slope=Dataset(os.path.join(datapath,'hpet_slope.nc') )
         slope_vals = deltat_slope.variables['slope'][:,:]
 
-        dpetbydt=Dataset(datapath+'dpetdt.nc')
+        dpetbydt=Dataset(os.path.join(datapath,'dpetdt.nc'))
         dpetdt = dpetbydt.variables['dpetdt'][:,:]
 
     elif tempAdj == 3: # progressive change based on hPET trend 
-        deltat_slope=Dataset(datapath+'hpet_slope.nc') 
+        deltat_slope=Dataset(os.path.join(datapath,'hpet_slope.nc') )
         slope_vals = deltat_slope.variables['slope'][:,:]
 
-        dpetbydt=Dataset(datapath+'dpetdt.nc')
+        dpetbydt=Dataset(os.path.join(datapath,'dpetdt.nc'))
         dpetdt = dpetbydt.variables['dpetdt'][:,:]
         
     else:
         raise ValueError('tempAdj only takes values 1,2,3 please check!')
     # monthly contribution percentage
-    mpercent=Dataset(datapath+'monthly_cont_percentage.nc') 
+    mpercent=Dataset(os.path.join(datapath,'monthly_cont_percentage.nc') )
     mcont_vals = mpercent.variables['mcontper'][:,:,:]
 
 
@@ -318,8 +316,8 @@ def future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, l
                                     slope_vals, mcont_vals,ens_num,datapath, outputpath, tempAdj,deltat, dpetdt):
 
     # create a folder to save the data
-    if not os.path.isdir(outputpath+locname+'_E'+str(ens_num)+'_StoPET/'):
-        os.mkdir(outputpath+locname+'_E'+str(ens_num)+'_StoPET/')
+    os.makedirs(os.path.join(outputpath, locname + '_E' + str(ens_num) + '_StoPET'), exist_ok=True)
+
 
     # generate the hourly time series period
     years = np.arange(startyear,endyear+1)
@@ -407,8 +405,9 @@ def future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, l
         stoch_pet_adj=np.where(stoch_pet_adj>1e5,-99.0,stoch_pet_adj)
 
         # save each year value separately (.nc)
-        filename1 = outputpath+locname+'_E'+str(ens_num)+'_StoPET/'+str(yr)+'_'+str(tempAdj)+'_stoPET.nc'
-        filename2 = outputpath+locname+'_E'+str(ens_num)+'_StoPET/'+str(yr)+'_'+str(tempAdj)+'_AdjstoPET.nc'
+        filename1 = os.path.join(outputpath, locname + '_E' + str(ens_num) + '_StoPET', str(yr) + '_' + str(tempAdj) + '_stoPET.nc')
+        filename2 = os.path.join(outputpath, locname + '_E' + str(ens_num) + '_StoPET', str(yr) + '_' + str(tempAdj) + '_AdjstoPET.nc')
+
         tunits = 'days since '+str(yr)+'-01-01'       
         nc_write(stoch_pet, latlen, lonlen, 'pet', tunits, filename1)
         nc_write(stoch_pet_adj, latlen, lonlen, 'pet', tunits, filename2)

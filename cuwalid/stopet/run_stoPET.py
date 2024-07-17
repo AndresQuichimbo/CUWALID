@@ -1,11 +1,14 @@
 import sys
 import numpy as np
-from stoPET_v1 import *
+import time
+from cuwalid.stopet.stoPET_v1 import *
 
 def run_stoPET():
     ## ----- CHANGE THE INPUT VARIABLES HERE -----##
-    datapath = './stopet_parameter_files/'
-    outputpath = '../../stopet_result/'
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    data_path = os.path.join(script_dir, 'stopet_parameters')
+    output_path = os.path.join('stopet_output')
+    os.makedirs(output_path, exist_ok=True)
     runtype =   'regional' # 'single' 
     startyear = 1994
     endyear = 1996
@@ -30,22 +33,22 @@ def run_stoPET():
     if runtype == 'single':
             for ens_num in np.arange(0,number_ensm):
                     stoPET_wrapper_singlepoint(startyear, endyear, latval, lonval, locname,
-                            ens_num,datapath, outputpath, tempAdj, deltat, udpi_pet)
+                            ens_num,data_path, output_path, tempAdj, deltat, udpi_pet)
     elif runtype == 'regional':
             for ens_num in np.arange(0,number_ensm):
                     stoPET_wrapper_regional(startyear, endyear, latval_min, latval_max, lonval_min, lonval_max,
-                            locname, ens_num, datapath, outputpath, tempAdj, deltat, udpi_pet)
+                            locname, ens_num, data_path, output_path, tempAdj, deltat, udpi_pet)
     else:
             raise ValueError('runtype only takes single and regional ... please check!')
 
 
 ##-----------------------------------------------------------------------##
 if __name__ == '__main__':
-    start = dt.datetime.now()
+    start = time.time()
 
     run_stoPET()
     
-    end=dt.datetime.now()
+    end = time.time()
     print('Time of run: %s'%(end - start))
 
 

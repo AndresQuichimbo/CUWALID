@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="CUWALID",
-    version="0.4.2", 
+    version="0.6.9", 
     author="Andrés Quichimbo, Manuel Rios Gaona, Dagmawi Teklu Asfaw",
     author_email="cootelf@cardiff.ac.uk",
     description="CUWALID (Climate into Useful Water And Land Information in Drylands)",
@@ -20,6 +20,7 @@ setup(
     ],
     python_requires='>=3.9',
     install_requires = [
+        'requests',
         'geopandas',
         'rioxarray',
         'dask',
