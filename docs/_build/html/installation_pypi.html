@@ -90,6 +90,7 @@
 <span id="pypi-installation"></span><h1>Installation with PyPi<a class="headerlink" href="#installation-with-pypi" title="Link to this heading"></a></h1>
 <p>These steps assume you already have python installed, we recommended python a version between 3.9-3.11.</p>
 <p>If you don’t have python yet then you can find the install <a class="reference external" href="https://www.python.org/downloads/release/python-3119/">here</a>, just make sure to tick the box to “Add to path” during your installation to make things easier.</p>
+<p>Or using Anaconda to create an environment with a specific python version also works.</p>
 <p>These steps should work correctly even if installing through PyPi within a conda environment, however please note there is a higher change of conflicting dependencies with this method.</p>
 <ol class="arabic">
 <li><p>Open the directory you want to work in and ensure that python is working there by typing the following in you terminal.</p>
@@ -113,6 +114,10 @@
 </pre></div>
 </div>
 <p>This will install all other dependencies along with the CUWALID package.</p>
+<p>Some of the parameter files for the StoPET model are too large to be installed with the package, so use the command below after installing the package if you want to use the StoPET model:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>cuwalid.tools.download_data
+</pre></div>
+</div>
 </div></blockquote>
 </li>
 <li><p>You can now choose to run some tests first or go on to the next step and just try running the model, to run the test scripts you can use this command:</p>
@@ -124,13 +129,9 @@
 </li>
 </ol>
 <ol class="arabic" start="3">
-<li><p>Now you can run the model, here is a simple example of what your python file might look like to run the DRYP model.</p>
+<li><p>Now you can run the model, here is a link to a github repository with an example of using the CUWALID models for you to use:</p>
 <blockquote>
-<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cuwalid.dryp.main_DRYP</span> <span class="kn">import</span> <span class="n">run_DRYP</span>
-
-<span class="n">run_DRYP</span><span class="p">(</span><span class="s2">&quot;input/input_test.dmp&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
+<div><p><a class="reference external" href="https://github.com/CornishLeo/CUWALID-Example">CUWALID Example</a></p>
 <p>This will use the input files specified at the file path given. Look <a class="reference internal" href="dryp_model.html#dryp-parameters"><span class="std std-ref">here</span></a> to learn more about the input files.</p>
 </div></blockquote>
 </li>

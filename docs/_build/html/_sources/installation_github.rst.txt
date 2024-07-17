@@ -42,13 +42,17 @@ Follow the steps below to get the model:
 
         cd ..
 
-3. Test everything has installed properly (Currently only for DRYP model)
-   
-    First ensure you have your environment activated with the command:
+3. Now you need to run a command to downlaod some of the files that are too large to be stored on github, follow the stops below from the root of the project:
 
     .. code-block:: bash
 
-        conda activate cwld 
+        cd cuwalid/tools/
+        python download_data.py
+
+
+4. Test everything has installed properly (Currently only for DRYP model)
+   
+    First ensure you have your environment activated with the command:
 
     Then enter the test directory and run the tests using these commands:
 
@@ -74,5 +78,5 @@ Follow the steps below to get the model:
         AssertionError
         Basin delineation: Test runs successfully
 
-4. Learn how to run the model :ref:`here <tutorial>`.
+5. Learn how to run the model with an example at `this CUWALID Example <https://github.com/CornishLeo/CUWALID-Example>`_ github repository, or here :ref:`here <tutorial>`.
 

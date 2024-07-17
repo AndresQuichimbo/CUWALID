@@ -56,4 +56,6 @@ def run_commands(commands):
             print(f"Return code: {e.returncode}")
             print(f"Error output: {e.stderr}")
 
-run_commands(commands)
+
+if __name__ == "__main__":
+    run_commands(commands)
