@@ -50,6 +50,7 @@ These steps should work correctly even if installing through PyPi within a conda
     .. code-block:: bash
         
         python -m cuwalid.tests.dryp.run_tests
+        python -m cuwalid.tests.stopet.run_tests
 
 3. Now you can run the model, here is a link to a github repository with an example of using the CUWALID models for you to use:
 
