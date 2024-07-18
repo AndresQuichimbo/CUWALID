@@ -12,7 +12,6 @@ value of ndays*pre*(number_of_hours_day = 24) = 696 mm
 
 Information related to projection is arbitrary
 """
-from context import dryp
 import os
 import numpy as np
 import pandas as pd

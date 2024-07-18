@@ -4,7 +4,6 @@ Created on Mon Feb 13 11:14:04 2023
 Funtion to test steady-state conditions for the groundwater component
 @author: Edisson Quichimbo
 """
-from context import dryp
 import numpy as np
 from cuwalid.dryp.components.DRYP_io import (grid_environment)
 from cuwalid.dryp.components.DRYP_groundwater_EFD_SS import (gwflow_EFD)

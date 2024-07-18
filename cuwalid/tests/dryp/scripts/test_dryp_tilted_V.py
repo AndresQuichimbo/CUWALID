@@ -3,7 +3,7 @@
 The model is published in the original paper
 of the model release.
 """
-from context import dryp
+import os
 from cuwalid.dryp.main_DRYP import run_DRYP
 import numpy as np
 import pandas as pd
@@ -22,8 +22,11 @@ def aggregate_slice_csv(fname, agg_step='M', mean=True,
 	return df
 
 def test_dryp():
+
+	input_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tilted_v', 'input_test.dmp'))
+
 	# run model test input file
-	run_DRYP('tilted_v/input_test.dmp')
+	run_DRYP(input_file)
 	
 	# compare model results
 	ans = aggregate_slice_csv('tilted_v/output/test_p_dis.csv',

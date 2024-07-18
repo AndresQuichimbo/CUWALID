@@ -15,6 +15,18 @@ def run_stoPET(input_file):
     output_path = os.path.join('stopet_output')
     os.makedirs(output_path, exist_ok=True)
 
+    # Check for the presence of required data files
+    required_files = ['stopet_parameters.nc', 'monthly_cont_percentage.nc']
+    missing_files = [file for file in required_files if not os.path.exists(os.path.join(data_path, file))]
+
+    if missing_files:
+        print("Error: The following required data files are missing:")
+        for file in missing_files:
+            print(f" - {file}")
+        print("Please run the following command to download the necessary files:")
+        print("    python -m cuwalid.tools.download_data")
+        return
+
     runtype = config['runtype']
     startyear = config['startyear']
     endyear = config['endyear']
@@ -41,6 +53,7 @@ def run_stoPET(input_file):
                                     locname, ens_num, data_path, output_path, tempAdj, deltat, udpi_pet)
     else:
         raise ValueError('runtype only takes "single" and "regional" ... please check!')
+
 
 
 ##-----------------------------------------------------------------------##

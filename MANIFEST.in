@@ -1,4 +1,5 @@
 recursive-include cuwalid/tests/dryp/tilted_v *
 recursive-include cuwalid/dryp/components *
 recursive-include cuwalid/stopet/stopet_parameters *.nc
+include cuwalid/tests/stopet/test_input.json
 

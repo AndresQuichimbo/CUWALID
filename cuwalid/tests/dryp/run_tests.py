@@ -1,61 +1,63 @@
-import subprocess
 import os
+import sys
+import traceback
+from cuwalid.tests.dryp.scripts import (
+    test_precipitation,
+    test_precipitation_csv,
+    test_infiltration,
+    test_soil_layer,
+    test_flow_accum_fortran,
+    test_gw_sw_interaction,
+    test_groundwater_multyaq_ss,
+    test_groundwater_multyaq,
+    test_groundwater_ss_slopefactor,
+    test_groundwater,
+    test_save_necdf,
+    test_save_csv,
+    test_dryp_model,
+    test_dryp_tilted_V,
+    test_dryp,
+    test_basin_delineation
+)
 
 # Get the directory of the current script
 current_dir = os.path.dirname(os.path.abspath(__file__))
-scripts_dir = os.path.join(current_dir, 'scripts')
 dryp_dir = os.path.join(current_dir)
+os.chdir(current_dir) 
 
-# Define the list of shell commands with absolute paths
-commands = [
-    f"python {os.path.join(scripts_dir, 'test_precipitation.py')}",
-    f"python {os.path.join(scripts_dir, 'test_precipitation_csv.py')}",
-    f"python {os.path.join(scripts_dir, 'test_infiltration.py')}",
-    f"python {os.path.join(scripts_dir, 'test_soil_layer.py')}",
-    f"python {os.path.join(scripts_dir, 'test_flow_accum_fortran.py')}",
-    f"python {os.path.join(scripts_dir, 'test_gw_sw_interaction.py')}",
-    f"python {os.path.join(scripts_dir, 'test_groundwater_multyaq_ss.py')}",
-    f"python {os.path.join(scripts_dir, 'test_groundwater_multyaq.py')}",
-    f"python {os.path.join(scripts_dir, 'test_groundwater_ss_slopefactor.py')}",
-    f"python {os.path.join(scripts_dir, 'test_groundwater.py')}",
-    f"python {os.path.join(scripts_dir, 'test_save_necdf.py')}",
-    f"python {os.path.join(scripts_dir, 'test_save_csv.py')}",
-    f"python {os.path.join(scripts_dir, 'test_dryp_model.py')}",
-    f"python {os.path.join(scripts_dir, 'test_dryp_tilted_V.py')}",
-    f"python {os.path.join(scripts_dir, 'test_dryp.py')}",
-    f"python {os.path.join(scripts_dir, 'test_basin_delineation.py')}"
+test_functions = [
+    test_precipitation.test_precipitation,
+    test_precipitation_csv.test_precipitation,
+    test_infiltration.test_infiltration,
+    test_soil_layer.test_soil_layer,
+    test_flow_accum_fortran.test_runoff,
+    test_gw_sw_interaction.test_gw_sw_interaction,
+    test_groundwater_multyaq_ss.run_DRYP_SS,
+    test_groundwater_multyaq.test_groundwater_multiaq,
+    test_groundwater_ss_slopefactor.run_DRYP_SS,
+    test_groundwater.test_groundwater,
+    test_save_necdf.test_save_variables,
+    test_save_csv.test_save_variables,
+    test_dryp_model.test_dryp,
+    test_dryp_tilted_V.test_dryp,
+    test_dryp.test_dryp,
+    test_basin_delineation.test_basin_delineation,
 ]
 
-# Function to run commands
-def run_commands(commands):
-    env = os.environ.copy()
-    # Add the cuwalid/tests/dryp/tilted_v directory to the PYTHONPATH
-    env['PYTHONPATH'] = dryp_dir + os.pathsep + env.get('PYTHONPATH', '')
-    print(f"******PYTHONPATH: {env['PYTHONPATH']}")
-
-    for cmd in commands:
-        print(f"Running command: {cmd}")
+# Function to run tests
+def run_tests():
+    tests_run_successfully = True
+    for test in test_functions:
         try:
-            result = subprocess.run(
-                cmd,
-                shell=True,
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                env=env,
-                cwd=dryp_dir
-            )
-
-            print(result.stdout)
-            if result.stderr:
-                print(f"Error: {result.stderr}")
-
-        except subprocess.CalledProcessError as e:
-            print(f"Command failed: {cmd}")
-            print(f"Return code: {e.returncode}")
-            print(f"Error output: {e.stderr}")
+            test()
+        except Exception as e:
+            tests_run_successfully = False
+            print(f"Error running test from file: {test.__module__} - {str(e)}")
+            traceback.print_exc()
+    
+    if tests_run_successfully:
+        print("All tests completed successfully!")
 
 
 if __name__ == "__main__":
-    run_commands(commands)
+    run_tests()

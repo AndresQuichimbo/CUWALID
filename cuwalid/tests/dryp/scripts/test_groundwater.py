@@ -4,7 +4,6 @@ Created on Mon Feb 13 11:14:04 2023
 
 @author: Edisson
 """
-from context import dryp
 import numpy as np
 from landlab import RasterModelGrid
 from cuwalid.dryp.components.DRYP_groundwater_EFD import gwflow_EFD

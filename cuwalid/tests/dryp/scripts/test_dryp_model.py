@@ -2,7 +2,6 @@
 """
 DRYP: Dryland WAter Partitioning Model
 """
-from context import dryp
 import numpy as np
 import pandas as pd
 from cuwalid.dryp.components.DRYP_io import (grid_environment)

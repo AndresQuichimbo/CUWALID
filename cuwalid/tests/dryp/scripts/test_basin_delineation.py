@@ -3,7 +3,6 @@
 Created on Mon Feb 13 11:14:04 2023
 @author: Edisson Quichimbo
 """
-from context import dryp
 import numpy as np
 from landlab import RasterModelGrid
 from cuwalid.dryp.components.DRYP_flow_accum import watershed

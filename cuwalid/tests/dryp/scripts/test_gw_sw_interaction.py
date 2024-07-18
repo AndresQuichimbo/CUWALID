@@ -4,7 +4,6 @@ components. This component uses the function lakes
 which is written in Fortran and needs to be
 compiled during the model installation"""
 
-from context import dryp
 import numpy as np
 import cuwalid.dryp.components.lakesf90 as lakes
 

@@ -1,6 +1,5 @@
 """Test Infiltration model
 """
-from context import dryp
 import numpy as np
 from cuwalid.dryp.components.DRYP_infiltration import infiltration
 

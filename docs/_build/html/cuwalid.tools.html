@@ -119,6 +119,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-cuwalid.tools.download_data">cuwalid.tools.download_data module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.download_data.DownloadProgressBar"><code class="docutils literal notranslate"><span class="pre">DownloadProgressBar</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.download_data.download_file"><code class="docutils literal notranslate"><span class="pre">download_file()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.download_data.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
@@ -1111,10 +1112,21 @@ direction map.</p>
 </section>
 <section id="module-cuwalid.tools.download_data">
 <span id="cuwalid-tools-download-data-module"></span><h2>cuwalid.tools.download_data module<a class="headerlink" href="#module-cuwalid.tools.download_data" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.tools.download_data.DownloadProgressBar">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.tools.download_data.</span></span><span class="sig-name descname"><span class="pre">DownloadProgressBar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">__</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/download_data.html#DownloadProgressBar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.download_data.DownloadProgressBar" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tqdm</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.tools.download_data.DownloadProgressBar.update_to">
+<span class="sig-name descname"><span class="pre">update_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blocks_transferred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/download_data.html#DownloadProgressBar.update_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.download_data.DownloadProgressBar.update_to" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.tools.download_data.download_file">
 <span class="sig-prename descclassname"><span class="pre">cuwalid.tools.download_data.</span></span><span class="sig-name descname"><span class="pre">download_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/download_data.html#download_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.download_data.download_file" title="Link to this definition"></a></dt>
-<dd><p>Downloads a file from a URL and saves it to the target path.</p>
+<dd><p>Downloads a file from a URL and saves it to the target path with a progress bar.</p>
 </dd></dl>
 
 <dl class="py function">
