@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CUWALID MODEL TRAINING &mdash; CUWALID 0.0.1 documentation</title>
+  <title>Contents &mdash; CUWALID 0.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
@@ -25,7 +25,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="CUWALID MODEL TRAINING" href="02_Hydrological_Forecasting.html" />
+    <link rel="next" title="Contents" href="02_Hydrological_Forecasting.html" />
     <link rel="prev" title="Forecast Training Notebooks" href="../../forecasting_training.html" /> 
 </head>
 
@@ -60,11 +60,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../../storm_training.html">STORM Training Notebooks</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../../forecasting_training.html">Forecast Training Notebooks</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../../forecasting_training.html#climate-forecasting">01_Climate_Forecasting</a><ul class="current">
-<li class="toctree-l4 current"><a class="current reference internal" href="#">CUWALID MODEL TRAINING</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#How-does-it-work?">How does it work?</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#How-to-do-it?">How to do it?</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#How-to-edit-the-Config-file">How to edit the Config file</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Generating-PET-forecast">Generating PET forecast</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#4.1.-Create-an-ensamble-of-precipitation-for-the-Tana-basin">4.1. Create an ensamble of precipitation for the Tana basin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#4.2.-Create-ensamble-of-potential-evapotranspiration-for-the-Tana-basin">4.2. Create ensamble of potential evapotranspiration for the Tana basin</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../forecasting_training.html#hydrological-forecasting">02_Hydrological_Forecasting</a></li>
@@ -74,7 +72,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
 </ul>
 
@@ -94,7 +92,7 @@
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../training.html">Training Notebooks</a></li>
           <li class="breadcrumb-item"><a href="../../forecasting_training.html">Forecast Training Notebooks</a></li>
-      <li class="breadcrumb-item active">CUWALID MODEL TRAINING</li>
+      <li class="breadcrumb-item active">Contents</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/notebooks/Forecasting/01_Climate_Forecasting.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -104,19 +102,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="CUWALID-MODEL-TRAINING">
-<h1>CUWALID MODEL TRAINING<a class="headerlink" href="#CUWALID-MODEL-TRAINING" title="Link to this heading"></a></h1>
-<section id="Simulating-Hydrology-from-a-Seasonal-Forecast">
-<h2>Simulating Hydrology from a Seasonal Forecast<a class="headerlink" href="#Simulating-Hydrology-from-a-Seasonal-Forecast" title="Link to this heading"></a></h2>
-<section id="Contents">
-<h3>Contents<a class="headerlink" href="#Contents" title="Link to this heading"></a></h3>
+  <section id="Contents">
+<h1>Contents<a class="headerlink" href="#Contents" title="Link to this heading"></a></h1>
 <p>The following course cover the following content:</p>
 <ul class="simple">
 <li><p><strong>Convert climate seasonal forecasting into model forcing datasets</strong></p></li>
 <li><p>Translate climate forecasting into hydrological forecasting</p></li>
 </ul>
 <section id="4.-Convert-climate-seasonal-forecasting-into-model-forcing-datasets">
-<h4>4. Convert climate seasonal forecasting into model forcing datasets<a class="headerlink" href="#4.-Convert-climate-seasonal-forecasting-into-model-forcing-datasets" title="Link to this heading"></a></h4>
+<h2>4. Convert climate seasonal forecasting into model forcing datasets<a class="headerlink" href="#4.-Convert-climate-seasonal-forecasting-into-model-forcing-datasets" title="Link to this heading"></a></h2>
 <ol class="arabic simple">
 <li><p>Create an ensamble of precipitation for the Tana basin</p></li>
 </ol>
@@ -126,23 +120,18 @@
 </section>
 </section>
 <section id="4.1.-Create-an-ensamble-of-precipitation-for-the-Tana-basin">
-<h3>4.1. Create an ensamble of precipitation for the Tana basin<a class="headerlink" href="#4.1.-Create-an-ensamble-of-precipitation-for-the-Tana-basin" title="Link to this heading"></a></h3>
+<h1>4.1. Create an ensamble of precipitation for the Tana basin<a class="headerlink" href="#4.1.-Create-an-ensamble-of-precipitation-for-the-Tana-basin" title="Link to this heading"></a></h1>
 <ul class="simple">
 <li><p>Create stochastic realizations of precipitation for the MAM season using STORM</p></li>
 </ul>
 </section>
 <section id="4.2.-Create-ensamble-of-potential-evapotranspiration-for-the-Tana-basin">
-<h3>4.2. Create ensamble of potential evapotranspiration for the Tana basin<a class="headerlink" href="#4.2.-Create-ensamble-of-potential-evapotranspiration-for-the-Tana-basin" title="Link to this heading"></a></h3>
+<h1>4.2. Create ensamble of potential evapotranspiration for the Tana basin<a class="headerlink" href="#4.2.-Create-ensamble-of-potential-evapotranspiration-for-the-Tana-basin" title="Link to this heading"></a></h1>
 <ul class="simple">
 <li><p>Create stochastic realizations of potential evapotranspiration for the MAM season using stoPET. Forecasting the seasonal Potential Evapotranspiration (PET) values uses the stoPET model and the ICPAC seasonal temperature forecast (ICPAC seasonal forecast).</p></li>
 </ul>
 <p>Details of the model description can be found in the following paper stoPET paper and you can download the model from this link.</p>
 <p>Here, we are assuming that PET is related to temperature. In areas where the seasonal temperature is expected to be high, we also expect higher PET and vice versa.</p>
-</section>
-</section>
-</section>
-<section id="How-does-it-work?">
-<h1>How does it work?<a class="headerlink" href="#How-does-it-work?" title="Link to this heading"></a></h1>
 <p>The seasonal PET forecast works based on the PET that will be generated using the stochastic PET generator model (stoPET). This model allows PET to be generated based on increasing or decreasing temperature.</p>
 <p>Since the ICPAC seasonal temperature forecasts are provided in tercile probabilistic terms, we need to follow a similar approach in producing the PET that reflects the seasonal probabilistic temperature forecast.</p>
 <p>We need to generate an ensemble of PET values to represent all possibilities of the future seasonal PET based on the temperature forecast. Hence, choosing a minimum of 30 ensembles is preferable.</p>
@@ -169,9 +158,6 @@
     6 ensembles are below average.
 </pre></div>
 </div>
-</section>
-<section id="How-to-do-it?">
-<h1>How to do it?<a class="headerlink" href="#How-to-do-it?" title="Link to this heading"></a></h1>
 <p>To perform all the above steps and generate a seasonal PET forecast, we need the stoPET model (which will be used for step 1) and the forecast generation model (which will be used in step 2).</p>
 <p>Four Python scripts, four parameter NetCDF files, and one NetCDF file containing the ICPAC seasonal temperature forecast are required.</p>
 <p>Python scripts:</p>
@@ -194,9 +180,6 @@ d. stopet_parameters.nc
 </div>
 <p>Put all the Python scripts in one folder and the parameter files separately in another folder. Then open the <strong>config_stoPET.py</strong> script and provide all the adjustments you want to make in that script. This script is where you provide 20 variables required to run the stoPET model and forecast generation.</p>
 <p>The <strong>config_stoPET.py</strong> looks like the following. Basically, all 20 parameters are self-explanatory. You can make any change you want based on each variable.</p>
-</section>
-<section id="How-to-edit-the-Config-file">
-<h1>How to edit the Config file<a class="headerlink" href="#How-to-edit-the-Config-file" title="Link to this heading"></a></h1>
 <p>This config file (config_stoPET.py) is used to provide all the required data and parameters to run the stoPET model and generate the required seasonal forecasts accounting for the ICPAC temperature forecast given as a seasonal probability.</p>
 <p>This will be used in running the <strong>run_stoPET.py</strong> to generate multiple files of forecast pools with above-average, normal and below-average forecasts. Finally, these generated PET values will be used in the <strong>forecast_generation.py</strong> to produce the final PET forecasts for the season accounting ICPAC temperature forecast.</p>
 <p><strong>CHANGE THE INPUT VARIABLES HERE</strong></p>
@@ -264,13 +247,10 @@ d. stopet_parameters.nc
 <li><p>This is the file containing masks required for plotting and filling gaps</p></li>
 </ol>
 <p><strong>tercile_forecast_file = ‘/user/home/fp20123/new_stopet/TanaBasin_mask.nc’</strong></p>
-</section>
-<section id="Generating-PET-forecast">
-<h1>Generating PET forecast<a class="headerlink" href="#Generating-PET-forecast" title="Link to this heading"></a></h1>
 <p>Once you make all the required changes to the <strong>config_stoPET.py</strong> file, you can run the <strong>run_stoPET_4dryp.py</strong> script, which will generate the PET ensembles to be used as a pool. Here, you have to repeat the process by changing the <strong>deltat</strong> variable to 1.5 for Above, 0.0 for Normal, and -1.5 for Below categories.</p>
 <p>This means you modify the <strong>config_stoPET.py</strong> file and run <strong>run_stoPET_4dryp.py</strong>, and when one is finished, you repeat the process by modifying the <strong>deltat</strong> accordingly.</p>
-<section id="NB">
-<h2>NB<a class="headerlink" href="#NB" title="Link to this heading"></a></h2>
+<section id="Please-restart-the-Kernel-before-running-the-code,-as-it-saves-all-the-variables-from-the-previous-run.">
+<h2>Please restart the Kernel before running the code, as it saves all the variables from the previous run.<a class="headerlink" href="#Please-restart-the-Kernel-before-running-the-code,-as-it-saves-all-the-variables-from-the-previous-run." title="Link to this heading"></a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -335,9 +315,8 @@ d. stopet_parameters.nc
 </pre></div>
 </div>
 </div>
-</section>
 <section id="Visualization-(Plotting-PET-output)">
-<h2>Visualization (Plotting PET output)<a class="headerlink" href="#Visualization-(Plotting-PET-output)" title="Link to this heading"></a></h2>
+<h3>Visualization (Plotting PET output)<a class="headerlink" href="#Visualization-(Plotting-PET-output)" title="Link to this heading"></a></h3>
 <p>Let’s plot the values of the PET for visualization.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -600,13 +579,14 @@ d. stopet_parameters.nc
 </div>
 </section>
 </section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../../forecasting_training.html" class="btn btn-neutral float-left" title="Forecast Training Notebooks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="02_Hydrological_Forecasting.html" class="btn btn-neutral float-right" title="CUWALID MODEL TRAINING" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="02_Hydrological_Forecasting.html" class="btn btn-neutral float-right" title="Contents" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

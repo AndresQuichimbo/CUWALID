@@ -1,11 +1,11 @@
-cuwalid.dryp package
+DRYP Package
 ====================
 
 Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
    cuwalid.dryp.components
    cuwalid.dryp.example
@@ -45,10 +45,3 @@ cuwalid.dryp.main\_DRYPv2\_SS module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: cuwalid.dryp
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cuwalid.tools package &mdash; CUWALID 0.0.1 documentation</title>
+  <title>Tools Package &mdash; CUWALID 0.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -53,15 +53,76 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API documentation</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="cuwalid.html">cuwalid package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="cuwalid.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="cuwalid.dryp.html">cuwalid.dryp package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="cuwalid.tests.html">cuwalid.tests package</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">cuwalid.tools package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.dryp.html">DRYP Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.stopet.html">StoPET Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.tests.html">Tests Package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tools Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cuwalid-tools-dryp-libraries-module">cuwalid.tools.DRYP_libraries module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cuwalid.tools.DRYP_pptools">cuwalid.tools.DRYP_pptools module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.calculate_AI_from_netCDF"><code class="docutils literal notranslate"><span class="pre">calculate_AI_from_netCDF()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.calculate_WRSI"><code class="docutils literal notranslate"><span class="pre">calculate_WRSI()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.calculate_WRSI_from_netCDF"><code class="docutils literal notranslate"><span class="pre">calculate_WRSI_from_netCDF()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.calculate_anomalies_from_netCDF"><code class="docutils literal notranslate"><span class="pre">calculate_anomalies_from_netCDF()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.calculate_anomaly"><code class="docutils literal notranslate"><span class="pre">calculate_anomaly()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.calculate_aridity_index"><code class="docutils literal notranslate"><span class="pre">calculate_aridity_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.calculate_mean_from_netCDF"><code class="docutils literal notranslate"><span class="pre">calculate_mean_from_netCDF()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.calculate_percentage_anomaly"><code class="docutils literal notranslate"><span class="pre">calculate_percentage_anomaly()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.calculate_seasonal_average_from_netCDF"><code class="docutils literal notranslate"><span class="pre">calculate_seasonal_average_from_netCDF()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.calculate_twsa_from_netCDF"><code class="docutils literal notranslate"><span class="pre">calculate_twsa_from_netCDF()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.calculate_weighted_stats_dataset"><code class="docutils literal notranslate"><span class="pre">calculate_weighted_stats_dataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.check_if_field_available_in_netCDF"><code class="docutils literal notranslate"><span class="pre">check_if_field_available_in_netCDF()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.create_ensamble_simulations"><code class="docutils literal notranslate"><span class="pre">create_ensamble_simulations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.get_dataframe_point_from_netcdf"><code class="docutils literal notranslate"><span class="pre">get_dataframe_point_from_netcdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.get_dataframe_zone_from_netcdf"><code class="docutils literal notranslate"><span class="pre">get_dataframe_zone_from_netcdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.get_ensamble_from_netcdf_list"><code class="docutils literal notranslate"><span class="pre">get_ensamble_from_netcdf_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.get_month_first_letter"><code class="docutils literal notranslate"><span class="pre">get_month_first_letter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.get_output_filenames"><code class="docutils literal notranslate"><span class="pre">get_output_filenames()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.get_point_from_dataset"><code class="docutils literal notranslate"><span class="pre">get_point_from_dataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.get_season_name"><code class="docutils literal notranslate"><span class="pre">get_season_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.get_zone_from_dataset"><code class="docutils literal notranslate"><span class="pre">get_zone_from_dataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.grid_pptools"><code class="docutils literal notranslate"><span class="pre">grid_pptools</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.merge_xarray_dataset"><code class="docutils literal notranslate"><span class="pre">merge_xarray_dataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.preprocesses_netCDF"><code class="docutils literal notranslate"><span class="pre">preprocesses_netCDF()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.read_dataset"><code class="docutils literal notranslate"><span class="pre">read_dataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.resample_dataset"><code class="docutils literal notranslate"><span class="pre">resample_dataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.save_xarray_dataset_as_netcdf"><code class="docutils literal notranslate"><span class="pre">save_xarray_dataset_as_netcdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.season_name_to_number"><code class="docutils literal notranslate"><span class="pre">season_name_to_number()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_pptools.slice_dataset_time"><code class="docutils literal notranslate"><span class="pre">slice_dataset_time()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#module-cuwalid">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cuwalid.tools.DRYP_rrtools">cuwalid.tools.DRYP_rrtools module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.calculate_channel_residence_time"><code class="docutils literal notranslate"><span class="pre">calculate_channel_residence_time()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.calculate_channel_velocity"><code class="docutils literal notranslate"><span class="pre">calculate_channel_velocity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.calculate_channel_width_from_discharge"><code class="docutils literal notranslate"><span class="pre">calculate_channel_width_from_discharge()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.calculate_soil_paramters"><code class="docutils literal notranslate"><span class="pre">calculate_soil_paramters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.check_raster_alignaments"><code class="docutils literal notranslate"><span class="pre">check_raster_alignaments()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.clapp_horner_retention_curve"><code class="docutils literal notranslate"><span class="pre">clapp_horner_retention_curve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.clip_raster_by_extent"><code class="docutils literal notranslate"><span class="pre">clip_raster_by_extent()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.clip_raster_by_mask"><code class="docutils literal notranslate"><span class="pre">clip_raster_by_mask()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.create_raster_bc_at_point"><code class="docutils literal notranslate"><span class="pre">create_raster_bc_at_point()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.create_raster_flowdirection_dryp"><code class="docutils literal notranslate"><span class="pre">create_raster_flowdirection_dryp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.create_raster_from_shapefile"><code class="docutils literal notranslate"><span class="pre">create_raster_from_shapefile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.create_raster_landlab_idnodes"><code class="docutils literal notranslate"><span class="pre">create_raster_landlab_idnodes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.create_raster_river_network"><code class="docutils literal notranslate"><span class="pre">create_raster_river_network()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.create_raster_soil_parameters"><code class="docutils literal notranslate"><span class="pre">create_raster_soil_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.find_indices"><code class="docutils literal notranslate"><span class="pre">find_indices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.find_region_bounds"><code class="docutils literal notranslate"><span class="pre">find_region_bounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.getFeatures"><code class="docutils literal notranslate"><span class="pre">getFeatures()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.get_lat_lon_coordinates"><code class="docutils literal notranslate"><span class="pre">get_lat_lon_coordinates()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.get_raster_properties"><code class="docutils literal notranslate"><span class="pre">get_raster_properties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.get_transform_parameters"><code class="docutils literal notranslate"><span class="pre">get_transform_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.open_raster"><code class="docutils literal notranslate"><span class="pre">open_raster()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.save_raster"><code class="docutils literal notranslate"><span class="pre">save_raster()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.DRYP_rrtools.transform_flowdirection_d8_to_landlab_array"><code class="docutils literal notranslate"><span class="pre">transform_flowdirection_d8_to_landlab_array()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cuwalid.tools.download_data">cuwalid.tools.download_data module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.download_data.download_file"><code class="docutils literal notranslate"><span class="pre">download_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.download_data.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -83,9 +144,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">API documentation</a></li>
-          <li class="breadcrumb-item"><a href="cuwalid.html">cuwalid package</a></li>
-      <li class="breadcrumb-item active">cuwalid.tools package</li>
+          <li class="breadcrumb-item"><a href="modules.html">API Documentation</a></li>
+          <li class="breadcrumb-item"><a href="cuwalid.html">&lt;no title&gt;</a></li>
+      <li class="breadcrumb-item active">Tools Package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/cuwalid.tools.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -95,8 +156,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="cuwalid-tools-package">
-<h1>cuwalid.tools package<a class="headerlink" href="#cuwalid-tools-package" title="Link to this heading"></a></h1>
+  <section id="tools-package">
+<h1>Tools Package<a class="headerlink" href="#tools-package" title="Link to this heading"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
@@ -1048,8 +1109,20 @@ direction map.</p>
 </dd></dl>
 
 </section>
-<section id="module-cuwalid.tools">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cuwalid.tools" title="Link to this heading"></a></h2>
+<section id="module-cuwalid.tools.download_data">
+<span id="cuwalid-tools-download-data-module"></span><h2>cuwalid.tools.download_data module<a class="headerlink" href="#module-cuwalid.tools.download_data" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.tools.download_data.download_file">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.tools.download_data.</span></span><span class="sig-name descname"><span class="pre">download_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/download_data.html#download_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.download_data.download_file" title="Link to this definition"></a></dt>
+<dd><p>Downloads a file from a URL and saves it to the target path.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.tools.download_data.main">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.tools.download_data.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/download_data.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.download_data.main" title="Link to this definition"></a></dt>
+<dd><p>Main function to be executed when the script is run from the command line.</p>
+</dd></dl>
+
 </section>
 </section>
 

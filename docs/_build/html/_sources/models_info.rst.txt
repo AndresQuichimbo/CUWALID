@@ -10,10 +10,3 @@ Subpackages
 
    dryp_model
 
-Module contents
----------------
-
-.. automodule:: models
-   :members:
-   :undoc-members:
-   :show-inheritance:

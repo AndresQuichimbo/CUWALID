@@ -6,54 +6,48 @@ STORM Training Notebooks
 --------------
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    10 Sampling <notebooks/STORM/10_sampling>
 
-Five Notebook
-----------------------
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-   Five Notebook <notebooks/STORM/fiv_>
-
-For Notebook
-----------------------
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-   For Notebook <notebooks/STORM/for_>
-
-One Notebook
+Notebook 1
 -----------------------
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-   One Notebook <notebooks/STORM/one_>
+   Notebook 1 <notebooks/STORM/one_>
 
-Six Notebook
+Notebook 2
+-----------------------
+.. toctree::
+   :maxdepth: 2
+
+   Notebook 2 <notebooks/STORM/two_>
+
+Notebook 3
+-----------------------
+.. toctree::
+   :maxdepth: 2
+
+   Notebook 3 <notebooks/STORM/tre_>
+
+Notebook 4
 ----------------------
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-   Six Notebook <notebooks/STORM/six_>
+   Notebook 4 <notebooks/STORM/for_>
 
-Tre Notebook
------------------------
+Notebook 5
+----------------------
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-   Tre Notebook <notebooks/STORM/tre_>
+   Notebook 5 <notebooks/STORM/fiv_>
 
-Two Notebook
------------------------
+Notebook 6
+----------------------
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-   Two Notebook <notebooks/STORM/two_>
+   Notebook 6 <notebooks/STORM/six_>
+

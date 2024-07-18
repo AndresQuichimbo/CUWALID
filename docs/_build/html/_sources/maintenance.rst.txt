@@ -74,9 +74,9 @@ To publish a new version to PyPi you should first check it works on all systems 
         # Install the package from scratch
         pip install cuwalid
 
--------------------------
+----------------------------------
 Creating/Issues with fortran files
--------------------------
+----------------------------------
 
 I often ran into issues with fortran files when testing the package, it seems they need to be compiled for each python version. To do this you can follow these steps.
 
@@ -115,3 +115,66 @@ I often ran into issues with fortran files when testing the package, it seems th
 4. This has compiled the code into new folders found in the components directories called lakesf90 etc. You will need to pull out the files found inside these folders into the main components directory for them to be found in the code.
 
 Now your fortran code should be working for whatever python version you compiled it for.
+
+-----------------
+Package Structure
+-----------------
+
+The package structure looks similair to the diagram below:
+
+.. code-block:: bash
+
+    cuwalid/
+    ├── dryp/
+    │   ├── main_dryp.py
+    │   │   └── def run_dryp(input_file):
+    │   │       └── ...
+    │   └── components/
+    │       └── ... 
+    ├── storm/
+    │   ├── main_storm.py
+    │   │   └── def run_storm(input_file):
+    │   │       └── ...
+    │   └── components/
+    │       └── ... 
+    ├── stopet/
+    │   ├── main_stopet.py
+    │   │   └── def run_stopet(input_file):
+    │   │       └── ...
+    │   └── components/
+    │       └── ...
+    ├── tools/
+    │   └── ... 
+    │
+    ├── tests/
+    │   ├── dryp
+    │   │   └── run_tests.py:
+    │   ├── storm
+    │   │   └── run_tests.py:
+    │   └── stopet
+    │       └── run_tests.py:
+    │
+    └── forecasting/
+        └── ...
+
+Below is a brief explanation of the structure and how you should go about adding new modules.
+
+* cuwalid:
+
+    The Cuwalid directory is the root of the package, so anything you want users to be able to get from the package should be in there.
+
+* dryp, storm and stopet:
+
+    These directories are for the three main models of the Cuwalid project. They each have a 'main_<name>.py' module which holds a 'run_<name>(input_file)' which will run the model. The components directory holds any other python files necessary for using the model.
+
+* tools:
+  
+    This directory holds useful python files and functions that are useful for more than one model, or related to the package as a whole.
+
+* tests:
+
+    This directory holds a directory for each model to test it. It can hold test example data as long as its specified in the MANIFEST.in file so it gets included in the package.
+
+* forecasting:
+
+    This directory is one that will hold python files to aid in using the outputs of the models to forecast useful information.

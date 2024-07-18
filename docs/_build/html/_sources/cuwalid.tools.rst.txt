@@ -1,4 +1,4 @@
-cuwalid.tools package
+Tools Package
 =====================
 
 Submodules
@@ -28,10 +28,10 @@ cuwalid.tools.DRYP\_rrtools module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+cuwalid.tools.download\_data module
+-----------------------------------
 
-.. automodule:: cuwalid.tools
+.. automodule:: cuwalid.tools.download_data
    :members:
    :undoc-members:
    :show-inheritance:

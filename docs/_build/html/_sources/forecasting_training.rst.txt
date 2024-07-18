@@ -6,7 +6,6 @@ Forecast Training Notebooks
 ----------------------
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    notebooks/Forecasting/01_Climate_Forecasting
 
@@ -14,7 +13,6 @@ Forecast Training Notebooks
 ---------------------------
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    notebooks/Forecasting/02_Hydrological_Forecasting
 
@@ -22,6 +20,5 @@ Forecast Training Notebooks
 -----------------------
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    notebooks/Forecasting/03_Forecasting_Analysis

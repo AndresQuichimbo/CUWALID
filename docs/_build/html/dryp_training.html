@@ -24,7 +24,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="CUWALID MODEL TRAINING" href="notebooks/DRYP/01_DRYP_intro.html" />
+    <link rel="next" title="Content:" href="notebooks/DRYP/DRYP_pre_processing.html" />
     <link rel="prev" title="Training Notebooks" href="training.html" /> 
 </head>
 
@@ -55,20 +55,19 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="training.html">Training Notebooks</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">DRYP Training Notebooks</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#dryp-intro">01_DRYP_intro</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/01_DRYP_intro.html">CUWALID MODEL TRAINING</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dryp-pre-processing">DRYP_pre_processing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html">Content:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#Preprocessing-datasets">Preprocessing datasets</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#dryp-pre-processing">02_DRYP_pre_processing</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/02_DRYP_pre_processing.html">CUWALID MODEL TRAINING</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dryp-model-running">DRYP_model_running</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html">Content:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html#Preparing-DRYP-model-simulations">Preparing DRYP model simulations</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#dryp-model-running">03_DRYP_model_running</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/03_DRYP_model_running.html">CUWALID MODEL TRAINING</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#dryp-post-processing">04_DRYP_post_processing</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/04_DRYP_post_processing.html">CUWALID MODEL TRAINING</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dryp-post-processing">DRYP_post_processing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html">Content:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html#Post-processing-datasets">Post-processing datasets</a></li>
 </ul>
 </li>
 </ul>
@@ -79,7 +78,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
 </ul>
 
@@ -110,49 +109,47 @@
              
   <section id="dryp-training-notebooks">
 <h1>DRYP Training Notebooks<a class="headerlink" href="#dryp-training-notebooks" title="Link to this heading"></a></h1>
-<section id="dryp-intro">
-<h2>01_DRYP_intro<a class="headerlink" href="#dryp-intro" title="Link to this heading"></a></h2>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/01_DRYP_intro.html">CUWALID MODEL TRAINING</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/01_DRYP_intro.html#Hydrological-model-DRYP">Hydrological model DRYP</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
 <section id="dryp-pre-processing">
-<h2>02_DRYP_pre_processing<a class="headerlink" href="#dryp-pre-processing" title="Link to this heading"></a></h2>
+<h2>DRYP_pre_processing<a class="headerlink" href="#dryp-pre-processing" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/02_DRYP_pre_processing.html">CUWALID MODEL TRAINING</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/02_DRYP_pre_processing.html#Hydrological-model-DRYP">Hydrological model DRYP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html">Content:</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#Preprocessing-datasets">Preprocessing datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#1.-Delineate-a-watershed-(getting-a-basin-mask)">1. Delineate a watershed (getting a basin mask)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#2.-Clip-basin-extent-by-mask">2. Clip basin extent by mask</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#3.-Create-a-flow-direction-map">3. Create a flow direction map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#4.-Creating-river-network">4. Creating river network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#5.-Create-constant-head-boundary-condition">5. Create constant head boundary condition</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </section>
 <section id="dryp-model-running">
-<h2>03_DRYP_model_running<a class="headerlink" href="#dryp-model-running" title="Link to this heading"></a></h2>
+<h2>DRYP_model_running<a class="headerlink" href="#dryp-model-running" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/03_DRYP_model_running.html">CUWALID MODEL TRAINING</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/03_DRYP_model_running.html#Hydrological-model-DRYP">Hydrological model DRYP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html">Content:</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html#Preparing-DRYP-model-simulations">Preparing DRYP model simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html#3.1.-Preparing-model-parameter-and-setting-files">3.1. Preparing model parameter and setting files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html#3.2.-Runing-DRYP">3.2. Runing DRYP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html#3.3.-Preparing-and-running-multiple-DRYP-simulations">3.3. Preparing and running multiple DRYP simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html#3.4.-Runing-pipeline-DRYP-simulations">3.4. Runing pipeline DRYP simulations</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </section>
 <section id="dryp-post-processing">
-<h2>04_DRYP_post_processing<a class="headerlink" href="#dryp-post-processing" title="Link to this heading"></a></h2>
+<h2>DRYP_post_processing<a class="headerlink" href="#dryp-post-processing" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/04_DRYP_post_processing.html">CUWALID MODEL TRAINING</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/04_DRYP_post_processing.html#Hydrological-model-DRYP">Hydrological model DRYP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html">Content:</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html#Post-processing-datasets">Post-processing datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html#4.1.-Understanding-model-outputs">4.1. Understanding model outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html#4.2.-Post-processing-model-outputs">4.2. Post-processing model outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html#4.3.-Sampling-model-outputs">4.3. Sampling model outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html#Visualising-spatial-variables">Visualising spatial variables</a></li>
 </ul>
 </li>
 </ul>
@@ -165,7 +162,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="training.html" class="btn btn-neutral float-left" title="Training Notebooks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="notebooks/DRYP/01_DRYP_intro.html" class="btn btn-neutral float-right" title="CUWALID MODEL TRAINING" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="notebooks/DRYP/DRYP_pre_processing.html" class="btn btn-neutral float-right" title="Content:" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

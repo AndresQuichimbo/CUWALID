@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CUWALID MODEL TRAINING &mdash; CUWALID 0.0.1 documentation</title>
+  <title>Contents &mdash; CUWALID 0.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
@@ -26,7 +26,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Processing" href="../../processing.html" />
-    <link rel="prev" title="CUWALID MODEL TRAINING" href="02_Hydrological_Forecasting.html" /> 
+    <link rel="prev" title="Contents" href="02_Hydrological_Forecasting.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -62,7 +62,9 @@
 <li class="toctree-l3"><a class="reference internal" href="../../forecasting_training.html#climate-forecasting">01_Climate_Forecasting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../forecasting_training.html#hydrological-forecasting">02_Hydrological_Forecasting</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="../../forecasting_training.html#forecasting-analysis">03_Forecasting_Analysis</a><ul class="current">
-<li class="toctree-l4 current"><a class="current reference internal" href="#">CUWALID MODEL TRAINING</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Working-with-historical-grided-datasets">Working with historical grided datasets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Visualizing-anomalies">Visualizing anomalies</a></li>
 </ul>
 </li>
 </ul>
@@ -70,7 +72,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
 </ul>
 
@@ -90,7 +92,7 @@
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../training.html">Training Notebooks</a></li>
           <li class="breadcrumb-item"><a href="../../forecasting_training.html">Forecast Training Notebooks</a></li>
-      <li class="breadcrumb-item active">CUWALID MODEL TRAINING</li>
+      <li class="breadcrumb-item active">Contents</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/notebooks/Forecasting/03_Forecasting_Analysis.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -100,19 +102,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="CUWALID-MODEL-TRAINING">
-<h1>CUWALID MODEL TRAINING<a class="headerlink" href="#CUWALID-MODEL-TRAINING" title="Link to this heading"></a></h1>
-<section id="Simulating-Hydrology-from-a-Seasonal-Forecast">
-<h2>Simulating Hydrology from a Seasonal Forecast<a class="headerlink" href="#Simulating-Hydrology-from-a-Seasonal-Forecast" title="Link to this heading"></a></h2>
-<section id="Contents">
-<h3>Contents<a class="headerlink" href="#Contents" title="Link to this heading"></a></h3>
+  <section id="Contents">
+<h1>Contents<a class="headerlink" href="#Contents" title="Link to this heading"></a></h1>
 <p>The following course cover the following content:</p>
 <ul class="simple">
 <li><p>Convert climate seasonal forecasting into model forcing datasets</p></li>
 <li><p><strong>Translate climate forecasting into hydrological forecasting</strong></p></li>
 </ul>
 <section id="3.-Translate-climate-forecasting-into-hydrological-forecasting">
-<h4>3. Translate climate forecasting into hydrological forecasting<a class="headerlink" href="#3.-Translate-climate-forecasting-into-hydrological-forecasting" title="Link to this heading"></a></h4>
+<h2>3. Translate climate forecasting into hydrological forecasting<a class="headerlink" href="#3.-Translate-climate-forecasting-into-hydrological-forecasting" title="Link to this heading"></a></h2>
 <ol class="arabic simple">
 <li><p>Preparing tercile forecasting</p></li>
 </ol>
@@ -162,7 +160,7 @@ Local_directory
 </div>
 </section>
 <section id="3.1-Forcast:-Preparation">
-<h4>3.1 Forcast: Preparation<a class="headerlink" href="#3.1-Forcast:-Preparation" title="Link to this heading"></a></h4>
+<h2>3.1 Forcast: Preparation<a class="headerlink" href="#3.1-Forcast:-Preparation" title="Link to this heading"></a></h2>
 <p>The first stage of the forecasting analysis consist of preprocesing the historical simulations (“hindcast”). It includes preprocessing, temporal aggregation, and estimation of historical thresholds for all analysed variables.</p>
 <p>All model simulations for both historical and forecasting outputs are located in the corresponding directories.</p>
 <p>In order to quickly access all model files during the entire historical analysis, a “config_hindcast.py” file has been created. This file contain all paths required to store variables as well as additional parameters used in the analysis. A similar file was created for the forecasting, “config_forecasting.py”, which will be used for all files and directories during the forecasting analysis.</p>
@@ -203,7 +201,7 @@ config_forecasting.py
 "10a_cuwalid_HAD_get_probabilistic_tercile_forecast_ensamble.py"
 "10b_cuwalid_HAD_get_deterministic_forecast_ensamble.py"</section>
 <section id="Prepare-Historical-simulation">
-<h4>Prepare Historical simulation<a class="headerlink" href="#Prepare-Historical-simulation" title="Link to this heading"></a></h4>
+<h2>Prepare Historical simulation<a class="headerlink" href="#Prepare-Historical-simulation" title="Link to this heading"></a></h2>
 <p>Preprocessing historical values</p>
 <p>Understanding and modifying config hindcast file</p>
 <div class="nbinput nblast docutils container">
@@ -266,7 +264,7 @@ config_forecasting.py
 </div>
 </section>
 <section id="Forecast-analysis">
-<h4>Forecast analysis<a class="headerlink" href="#Forecast-analysis" title="Link to this heading"></a></h4>
+<h2>Forecast analysis<a class="headerlink" href="#Forecast-analysis" title="Link to this heading"></a></h2>
 <p>Understanding and modifying the config forecasting file</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[57]:
@@ -326,7 +324,7 @@ config_forecasting.py
 </div>
 </section>
 <section id="3.2-Understanding-seasonal-hydrological-forecast">
-<h4>3.2 Understanding seasonal hydrological forecast<a class="headerlink" href="#3.2-Understanding-seasonal-hydrological-forecast" title="Link to this heading"></a></h4>
+<h2>3.2 Understanding seasonal hydrological forecast<a class="headerlink" href="#3.2-Understanding-seasonal-hydrological-forecast" title="Link to this heading"></a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -346,7 +344,7 @@ config_forecasting.py
 </div>
 </section>
 <section id="Working-with-historical-total-averages">
-<h4>Working with historical total averages<a class="headerlink" href="#Working-with-historical-total-averages" title="Link to this heading"></a></h4>
+<h2>Working with historical total averages<a class="headerlink" href="#Working-with-historical-total-averages" title="Link to this heading"></a></h2>
 <p><strong>WARNING</strong>! This section needs to donwload files from the server, so before move to the following section, download all csv files from the forecastin outputs</p>
 <ul class="simple">
 <li><p>Assesing the temporal variability of water balance components</p></li>
@@ -493,7 +491,7 @@ Text(0.5, 1.0, &#39;precipitation anomalies&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_53_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_53_1.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_51_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_51_1.png" />
 </div>
 </div>
 <ul class="simple">
@@ -562,7 +560,7 @@ Text(0.5, 1.0, &#39;MAM precipitation anomalies&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_58_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_58_1.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_56_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_56_1.png" />
 </div>
 </div>
 <p>Plot actual evapotranspiration historical anomalies</p>
@@ -593,7 +591,7 @@ Text(0, 0.5, &#39;Actual Evapotranspiration\n[mm/year]&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_60_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_60_1.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_58_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_58_1.png" />
 </div>
 </div>
 <p><strong>TASK</strong>: Plot anomalies for soil moisture and groundwater recharge</p>
@@ -625,7 +623,7 @@ Text(0, 0.5, &#39;Actual Evapotranspiration\n[mm/year]&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_63_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_63_1.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_61_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_61_1.png" />
 </div>
 </div>
 <p>Plot recharge historical anomalies</p>
@@ -656,13 +654,13 @@ Text(0, 0.5, &#39;Actual Evapotranspiration\n[mm/year]&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_65_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_65_1.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_63_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_63_1.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="Working-with-historical-grided-datasets">
-<h3>Working with historical grided datasets<a class="headerlink" href="#Working-with-historical-grided-datasets" title="Link to this heading"></a></h3>
+<h1>Working with historical grided datasets<a class="headerlink" href="#Working-with-historical-grided-datasets" title="Link to this heading"></a></h1>
 <p>Plot mean of historical values</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
@@ -694,7 +692,7 @@ Text(0, 0.5, &#39;Actual Evapotranspiration\n[mm/year]&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_69_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_69_1.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_67_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_67_1.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -719,7 +717,7 @@ Text(0, 0.5, &#39;Actual Evapotranspiration\n[mm/year]&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_70_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_70_1.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_68_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_68_1.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -744,7 +742,7 @@ Text(0, 0.5, &#39;Actual Evapotranspiration\n[mm/year]&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_71_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_71_1.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_69_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_69_1.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -787,7 +785,7 @@ Text(0, 0.5, &#39;Actual Evapotranspiration\n[mm/year]&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_75_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_75_1.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_73_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_73_1.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1188,7 +1186,7 @@ Dimensions without coordinates: time</pre><div class='xr-wrap' style='display:no
 </div>
 </section>
 <section id="Visualizing-anomalies">
-<h3>Visualizing anomalies<a class="headerlink" href="#Visualizing-anomalies" title="Link to this heading"></a></h3>
+<h1>Visualizing anomalies<a class="headerlink" href="#Visualizing-anomalies" title="Link to this heading"></a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
@@ -1219,7 +1217,7 @@ Dimensions without coordinates: time</pre><div class='xr-wrap' style='display:no
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_79_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_79_1.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_77_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_77_1.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -1252,7 +1250,7 @@ Dimensions without coordinates: time</pre><div class='xr-wrap' style='display:no
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_81_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_81_1.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_79_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_79_1.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -1285,7 +1283,7 @@ Dimensions without coordinates: time</pre><div class='xr-wrap' style='display:no
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_83_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_83_1.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_81_1.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_81_1.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1305,10 +1303,6 @@ Dimensions without coordinates: time</pre><div class='xr-wrap' style='display:no
 &lt;Figure size 640x480 with 0 Axes&gt;
 </pre></div></div>
 </div>
-</section>
-</section>
-<section id="4.-Forecasting-Analysis">
-<h2>4. Forecasting Analysis<a class="headerlink" href="#4.-Forecasting-Analysis" title="Link to this heading"></a></h2>
 <p>Calculate long term seasonal average for the selected variables of the historical simulation</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
@@ -1715,7 +1709,7 @@ Index([3, 4, 5], dtype=&#39;int32&#39;, name=&#39;Date&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_99_0.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_99_0.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_97_0.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_97_0.png" />
 </div>
 </div>
 <p><strong>TASK</strong>: Plot uncertanties for soil moisture (“tht_0”), actual evapotranspiration (“aet_0”), and groundwater recharge (“rch_0”)</p>
@@ -1840,7 +1834,7 @@ Index([3, 4, 5], dtype=&#39;int32&#39;, name=&#39;Date&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_104_0.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_104_0.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_102_0.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_102_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1958,9 +1952,11 @@ Index([3, 4, 5], dtype=&#39;int32&#39;, name=&#39;Date&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_107_0.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_107_0.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_105_0.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_105_0.png" />
 </div>
 </div>
+<section id="Visualizing-deterministic-and-probabilistic-forecast">
+<h2>Visualizing deterministic and probabilistic forecast<a class="headerlink" href="#Visualizing-deterministic-and-probabilistic-forecast" title="Link to this heading"></a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
@@ -2034,7 +2030,7 @@ Index([3, 4, 5], dtype=&#39;int32&#39;, name=&#39;Date&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_114_0.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_114_0.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_112_0.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_112_0.png" />
 </div>
 </div>
 <p><strong>TASK</strong>: Plot probabilistic forecasting of soil moisture (“tht_0”), actual evapotranspiration (“aet_0”), and groundwater recharge (“rch_0”)</p>
@@ -2076,7 +2072,7 @@ Index([3, 4, 5], dtype=&#39;int32&#39;, name=&#39;Date&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_118_0.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_118_0.png" />
+<img alt="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_116_0.png" src="../../_images/notebooks_Forecasting_03_Forecasting_Analysis_116_0.png" />
 </div>
 </div>
 <p><strong>TASK</strong>: Plot probabilistic forecasting of soil moisture (“tht_0”), actual evapotranspiration (“aet_0”), and groundwater recharge (“rch_0”)</p>
@@ -2124,7 +2120,7 @@ Index([3, 4, 5], dtype=&#39;int32&#39;, name=&#39;Date&#39;)
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="02_Hydrological_Forecasting.html" class="btn btn-neutral float-left" title="CUWALID MODEL TRAINING" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="02_Hydrological_Forecasting.html" class="btn btn-neutral float-left" title="Contents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="../../processing.html" class="btn btn-neutral float-right" title="Processing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

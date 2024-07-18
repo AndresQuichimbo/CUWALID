@@ -24,8 +24,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="CUWALID MODEL TRAINING" href="notebooks/Forecasting/01_Climate_Forecasting.html" />
-    <link rel="prev" title="SAMPLING STORM CENTERS" href="notebooks/STORM/two_.html" /> 
+    <link rel="next" title="Contents" href="notebooks/Forecasting/01_Climate_Forecasting.html" />
+    <link rel="prev" title="EVALUATING STORM’S PERFORMANCE" href="notebooks/STORM/six_.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -59,19 +59,20 @@
 <li class="toctree-l2"><a class="reference internal" href="storm_training.html">STORM Training Notebooks</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Forecast Training Notebooks</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#climate-forecasting">01_Climate_Forecasting</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html">CUWALID MODEL TRAINING</a></li>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#How-does-it-work?">How does it work?</a></li>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#How-to-do-it?">How to do it?</a></li>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#How-to-edit-the-Config-file">How to edit the Config file</a></li>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#Generating-PET-forecast">Generating PET forecast</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html">Contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#4.1.-Create-an-ensamble-of-precipitation-for-the-Tana-basin">4.1. Create an ensamble of precipitation for the Tana basin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#4.2.-Create-ensamble-of-potential-evapotranspiration-for-the-Tana-basin">4.2. Create ensamble of potential evapotranspiration for the Tana basin</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#hydrological-forecasting">02_Hydrological_Forecasting</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/02_Hydrological_Forecasting.html">CUWALID MODEL TRAINING</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/02_Hydrological_Forecasting.html">Contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/02_Hydrological_Forecasting.html#Please,-download-one-simulation-from-the-ICPAC-server-for-the-following-examples">Please, download one simulation from the ICPAC server for the following examples</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#forecasting-analysis">03_Forecasting_Analysis</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html">CUWALID MODEL TRAINING</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html">Contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html#Working-with-historical-grided-datasets">Working with historical grided datasets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html#Visualizing-anomalies">Visualizing anomalies</a></li>
 </ul>
 </li>
 </ul>
@@ -79,7 +80,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
 </ul>
 
@@ -113,18 +114,14 @@
 <section id="climate-forecasting">
 <h2>01_Climate_Forecasting<a class="headerlink" href="#climate-forecasting" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html">CUWALID MODEL TRAINING</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#Simulating-Hydrology-from-a-Seasonal-Forecast">Simulating Hydrology from a Seasonal Forecast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html">Contents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#4.-Convert-climate-seasonal-forecasting-into-model-forcing-datasets">4. Convert climate seasonal forecasting into model forcing datasets</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#How-does-it-work?">How does it work?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#How-to-do-it?">How to do it?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#How-to-edit-the-Config-file">How to edit the Config file</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#Generating-PET-forecast">Generating PET forecast</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#NB">NB</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#Visualization-(Plotting-PET-output)">Visualization (Plotting PET output)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#4.1.-Create-an-ensamble-of-precipitation-for-the-Tana-basin">4.1. Create an ensamble of precipitation for the Tana basin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#4.2.-Create-ensamble-of-potential-evapotranspiration-for-the-Tana-basin">4.2. Create ensamble of potential evapotranspiration for the Tana basin</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/01_Climate_Forecasting.html#Please-restart-the-Kernel-before-running-the-code,-as-it-saves-all-the-variables-from-the-previous-run.">Please restart the Kernel before running the code, as it saves all the variables from the previous run.</a></li>
 </ul>
 </li>
 </ul>
@@ -133,23 +130,34 @@
 <section id="hydrological-forecasting">
 <h2>02_Hydrological_Forecasting<a class="headerlink" href="#hydrological-forecasting" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/02_Hydrological_Forecasting.html">CUWALID MODEL TRAINING</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/02_Hydrological_Forecasting.html#Simulating-Hydrology-from-a-Seasonal-Forecast">Simulating Hydrology from a Seasonal Forecast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/02_Hydrological_Forecasting.html">Contents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/02_Hydrological_Forecasting.html#4.-Translate-climate-forecasting-into-hydrological-forecasting">4. Translate climate forecasting into hydrological forecasting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/02_Hydrological_Forecasting.html#4.1.-Create-an-ensamble-of-model-simulation-files">4.1. Create an ensamble of model simulation files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/02_Hydrological_Forecasting.html#4.2.-Prepare-multiple-simulation-on-HPC">4.2. Prepare multiple simulation on HPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/02_Hydrological_Forecasting.html#4.3.-Understanding-hydrological-outputs">4.3. Understanding hydrological outputs</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/02_Hydrological_Forecasting.html#Please,-download-one-simulation-from-the-ICPAC-server-for-the-following-examples">Please, download one simulation from the ICPAC server for the following examples</a></li>
 </ul>
 </div>
 </section>
 <section id="forecasting-analysis">
 <h2>03_Forecasting_Analysis<a class="headerlink" href="#forecasting-analysis" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html">CUWALID MODEL TRAINING</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html#Simulating-Hydrology-from-a-Seasonal-Forecast">Simulating Hydrology from a Seasonal Forecast</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html#4.-Forecasting-Analysis">4. Forecasting Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html">Contents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html#3.-Translate-climate-forecasting-into-hydrological-forecasting">3. Translate climate forecasting into hydrological forecasting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html#3.1-Forcast:-Preparation">3.1 Forcast: Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html#Prepare-Historical-simulation">Prepare Historical simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html#Forecast-analysis">Forecast analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html#3.2-Understanding-seasonal-hydrological-forecast">3.2 Understanding seasonal hydrological forecast</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html#Working-with-historical-total-averages">Working with historical total averages</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html#Working-with-historical-grided-datasets">Working with historical grided datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html#Visualizing-anomalies">Visualizing anomalies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Forecasting/03_Forecasting_Analysis.html#Visualizing-deterministic-and-probabilistic-forecast">Visualizing deterministic and probabilistic forecast</a></li>
 </ul>
 </li>
 </ul>
@@ -161,8 +169,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="notebooks/STORM/two_.html" class="btn btn-neutral float-left" title="SAMPLING STORM CENTERS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="notebooks/Forecasting/01_Climate_Forecasting.html" class="btn btn-neutral float-right" title="CUWALID MODEL TRAINING" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="notebooks/STORM/six_.html" class="btn btn-neutral float-left" title="EVALUATING STORM’S PERFORMANCE" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="notebooks/Forecasting/01_Climate_Forecasting.html" class="btn btn-neutral float-right" title="Contents" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

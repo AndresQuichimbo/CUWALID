@@ -4,20 +4,6 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# CUWALID MODEL TRAINING"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## Simulating Hydrology from a Seasonal Forecast"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
     "#### Contents"
    ]
   },

@@ -22,7 +22,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="cuwalid.tools package" href="cuwalid.tools.html" /> 
+    <link rel="prev" title="Tools Package" href="cuwalid.tools.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -52,7 +52,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Developer Maintenance</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#maintaining-the-documentation">Maintaining the documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#maintaining-the-package-on-pypi">Maintaining the package on PyPi</a><ul>
@@ -61,6 +61,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#creating-issues-with-fortran-files">Creating/Issues with fortran files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#package-structure">Package Structure</a></li>
 </ul>
 </li>
 </ul>
@@ -191,13 +192,79 @@ f2py<span class="w"> </span>-c<span class="w"> </span>DRYP_solver.f90<span class
 </ol>
 <p>Now your fortran code should be working for whatever python version you compiled it for.</p>
 </section>
+<section id="package-structure">
+<h2>Package Structure<a class="headerlink" href="#package-structure" title="Link to this heading"></a></h2>
+<p>The package structure looks similair to the diagram below:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cuwalid/
+├──<span class="w"> </span>dryp/
+│<span class="w">   </span>├──<span class="w"> </span>main_dryp.py
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>def<span class="w"> </span>run_dryp<span class="o">(</span>input_file<span class="o">)</span>:
+│<span class="w">   </span>│<span class="w">       </span>└──<span class="w"> </span>...
+│<span class="w">   </span>└──<span class="w"> </span>components/
+│<span class="w">       </span>└──<span class="w"> </span>...
+├──<span class="w"> </span>storm/
+│<span class="w">   </span>├──<span class="w"> </span>main_storm.py
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>def<span class="w"> </span>run_storm<span class="o">(</span>input_file<span class="o">)</span>:
+│<span class="w">   </span>│<span class="w">       </span>└──<span class="w"> </span>...
+│<span class="w">   </span>└──<span class="w"> </span>components/
+│<span class="w">       </span>└──<span class="w"> </span>...
+├──<span class="w"> </span>stopet/
+│<span class="w">   </span>├──<span class="w"> </span>main_stopet.py
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>def<span class="w"> </span>run_stopet<span class="o">(</span>input_file<span class="o">)</span>:
+│<span class="w">   </span>│<span class="w">       </span>└──<span class="w"> </span>...
+│<span class="w">   </span>└──<span class="w"> </span>components/
+│<span class="w">       </span>└──<span class="w"> </span>...
+├──<span class="w"> </span>tools/
+│<span class="w">   </span>└──<span class="w"> </span>...
+│
+├──<span class="w"> </span>tests/
+│<span class="w">   </span>├──<span class="w"> </span>dryp
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>run_tests.py:
+│<span class="w">   </span>├──<span class="w"> </span>storm
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>run_tests.py:
+│<span class="w">   </span>└──<span class="w"> </span>stopet
+│<span class="w">       </span>└──<span class="w"> </span>run_tests.py:
+│
+└──<span class="w"> </span>forecasting/
+<span class="w">    </span>└──<span class="w"> </span>...
+</pre></div>
+</div>
+<p>Below is a brief explanation of the structure and how you should go about adding new modules.</p>
+<ul>
+<li><p>cuwalid:</p>
+<blockquote>
+<div><p>The Cuwalid directory is the root of the package, so anything you want users to be able to get from the package should be in there.</p>
+</div></blockquote>
+</li>
+<li><p>dryp, storm and stopet:</p>
+<blockquote>
+<div><p>These directories are for the three main models of the Cuwalid project. They each have a ‘main_&lt;name&gt;.py’ module which holds a ‘run_&lt;name&gt;(input_file)’ which will run the model. The components directory holds any other python files necessary for using the model.</p>
+</div></blockquote>
+</li>
+<li><p>tools:</p>
+<blockquote>
+<div><p>This directory holds useful python files and functions that are useful for more than one model, or related to the package as a whole.</p>
+</div></blockquote>
+</li>
+<li><p>tests:</p>
+<blockquote>
+<div><p>This directory holds a directory for each model to test it. It can hold test example data as long as its specified in the MANIFEST.in file so it gets included in the package.</p>
+</div></blockquote>
+</li>
+<li><p>forecasting:</p>
+<blockquote>
+<div><p>This directory is one that will hold python files to aid in using the outputs of the models to forecast useful information.</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cuwalid.tools.html" class="btn btn-neutral float-left" title="cuwalid.tools package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuwalid.tools.html" class="btn btn-neutral float-left" title="Tools Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
