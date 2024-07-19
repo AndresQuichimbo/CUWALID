@@ -7,7 +7,7 @@
   <title>1. stoPET &mdash; CUWALID 0.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
 
   
   <!--[if lt IE 9]>
@@ -102,9 +102,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <table><tr><td><p><img alt="ce27a3d7b38f4378b604e9ce7d9ca11d" class="no-scaled-link" src="../../_images/CardiffUniversity.PNG" style="width: 250px;" /></p>
-</td><td><p><img alt="95dac49cbf27411ba402efcf8cf0543f" class="no-scaled-link" src="../../_images/Down2Earth.PNG" style="width: 250px;" /></p>
-</td><td><p><img alt="aed3a9df3deb402190fd5bf44154f9e4" class="no-scaled-link" src="../../_images/UniversityOfBristol.PNG" style="width: 250px;" /></p>
+  <table><tr><td><p><img alt="910ea31017f84ba29463ac2a89b5f871" class="no-scaled-link" src="../../_images/CardiffUniversity.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="380119eba921421b941f021d35d5d264" class="no-scaled-link" src="../../_images/Down2Earth.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="6af737bab8c9456dbfaf699c2a816b61" class="no-scaled-link" src="../../_images/UniversityOfBristol.PNG" style="width: 250px;" /></p>
 </td></tr></table><p>CUWALID is an integrated model used to obtain actionable forecasts for hydrological components in drylands. It consists of a main hydrological model (DRYP) which allows to estimate the partioning of the water balance. This hydrological model is driven by two major climate inputs <strong>precipitation</strong> and <strong>potential evapotranspiration (PET)</strong>. The driving climate variables are obtained based on stochastic models integrated in the system. <strong>STORM</strong> is the precipitation model and <strong>stoPET</strong> is the PET
 model that generates the required driving climate variables. Here, we disscuss the stoPET model and how it works in the CUWALID system.</p>
 <section id="1.-stoPET">
@@ -1054,6 +1054,7 @@ adjusted PET.</p></td>
 </ul>
 <p>You can create these directories by runing the mkdir command in the terminal. Here is the command * <code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">bSub_runME</span></code> * <code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">bSub_logME</span></code> * <code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">bSub_doneME</span></code></p>
 <p>Once you create these directories you can use them anytime for any job submission (i.e No need to make these directories everytime).</p>
+<p><strong>How do we use these three directories?</strong></p>
 <p>The <strong>bSub_runME</strong> directory is used to save our bash files (e.g <strong>myjob.bash</strong>) that contain all the necessary submission commands and the job to be run.</p>
 <p>The <strong>bSub_logME</strong> directory is used to save error files and output files from the job we are running. If there isan error and the job is cancelled you can go tho this directory and read the error message in the <strong>jobid.error</strong> file. If there are any print statments in your job or any other print that would have been printed on the terminal will be saved in the <strong>jonid.out</strong> file.</p>
 <p>The <strong>bSub_doneME</strong> directory is used to save our bash files (e.g <strong>myjob.bash</strong>) after the job is submitted. Hence, if there is an error and you have to run the job again you can easily move the bash files from this directory to the bSub_runME directory without creating them again.</p>
@@ -1108,7 +1109,7 @@ adjusted PET.</p></td>
 </div>
 </div>
 <p>The above function helps us write the bash files with the necessary commands for the HPC job submission. As you can see, most of the lines are common and similar required by the HPC, hence, we can use this function to write any bash file we need with little modification. An example of the bash file produced using this function is shown below.</p>
-<table><tr><td><p><img alt="31b80c4b26944cb1ac0356e638112ba5" class="no-scaled-link" src="notebooks/stoPET/bashfile.png" style="width: 800px;" /></p>
+<table><tr><td><p><img alt="375b4c27de674467a2fc7fa5a469429f" class="no-scaled-link" src="../../_images/bashfile.png" style="width: 800px;" /></p>
 </td></tr></table><p>This will be what is written in the imerg_download_2012.bash according to the example.</p>
 <p>If there are multiple jobs that use similar python scripts, then what you have to do is run above function to write the bash files with same <strong>suffix</strong> and a differetiating <strong>prefix</strong> so that we can submit it at the same time. In the above example we can see the file name is <strong>imerg_download_year.bash</strong> here the imerg_download is the prefix while the year is suffix. Now we can write any number of years we want to download (e.g imerg_download_2018.bash, imerg_download_2019.bash, …). Once we
 prepare these files, then we are ready to submit multiple jobs to the HPC.</p>
@@ -1116,7 +1117,7 @@ prepare these files, then we are ready to submit multiple jobs to the HPC.</p>
 <section id="1.3-Submitting-multiple-jobs">
 <h2>1.3 Submitting multiple jobs<a class="headerlink" href="#1.3-Submitting-multiple-jobs" title="Link to this heading"></a></h2>
 <p>Once we prepare the bash files containing the jobs we want to run on HPC next is to use a little shell script to submit the jobs. The shell script is given as <strong>runBashFiles.sh</strong>. The file contains a few lines of code that allows to read all the bash files we prepare and sumbit it to the HPC. Here is an example file looks like</p>
-<table><tr><td><p><img alt="3de0321546de414d8851f1e0e68a7f6c" class="no-scaled-link" src="notebooks/stoPET/shellfile.png" style="width: 800px;" /></p>
+<table><tr><td><p><img alt="f0cfc12e47a24cb98ae013b5b02879bb" class="no-scaled-link" src="../../_images/shellfile.png" style="width: 800px;" /></p>
 </td></tr></table><p>In the above image as you can see from line 5, all the files that start with <strong>imerg_download_</strong> will be submited to the HPC and the files will be moved to the <strong>bSub_doneME</strong> directory we create earlier (Line 7).</p>
 <p>Line 6 is where you see the <strong>.error</strong> and <strong>.out</strong> files that we discussed above to put any error message and output message from the job will be printed and svaed in the <strong>bSub_logME</strong> directory.</p>
 <table class="docutils align-default">
