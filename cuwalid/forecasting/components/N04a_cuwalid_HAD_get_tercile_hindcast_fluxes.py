@@ -1,7 +1,7 @@
 import cuwalid.tools.CUWALID_forecast_tools as cuwalid
 
 
-def get_tercile_hindcast_fluxes(model_path, model_name, variables,postpp_path):
+def get_tercile_hindcast_fluxes(model_path, model_name, season, variables,postpp_path):
 	"""This function calculates the probabilistic forecasting using the tercile approach
 	"""
 	iyear = 2022
@@ -13,11 +13,11 @@ def get_tercile_hindcast_fluxes(model_path, model_name, variables,postpp_path):
 	field = cuwalid.drop_false_keys(variables)
 
 	#season = ["MAM", "OND"]
-	season = ["MAM"]
+
 
 	fname_var = model_path+model_name+"_YYYY_grid_VVV.nc"
 	fname_threshold = postpp_path+"netcdf/" + model_name + "_SSS_quantiles.nc"
-	fname_threshold = postpp_path+"netcdf/" + model_name + "_SSS_extremes_quantiles.nc"
+	#fname_threshold = postpp_path+"netcdf/" + model_name + "_SSS_extremes_quantiles.nc"
 	#fname_var = "/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_YYYY_grid_VVV.nc"
 	#fname_var = "/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_YYYY_grid.nc"
 	#fname_threshold = "/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_SSS_quantiles.nc"
@@ -27,7 +27,7 @@ def get_tercile_hindcast_fluxes(model_path, model_name, variables,postpp_path):
 
 	for iseason in season:
 		#for ivar in ["dis", "twsc", "tht", "wrsi"]:
-		for ivar in ["wrsi"]:
+		for ivar in field:
 			# choose path depending on variable
 			if (ivar == "twsc") or (ivar == "wrsi"):
 				ifname = fname_var.replace("VVV", ivar)

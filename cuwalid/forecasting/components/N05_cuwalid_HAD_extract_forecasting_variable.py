@@ -5,7 +5,7 @@ import geopandas as gpd
 #import rioxarray
 import cuwalid.tools.CUWALID_forecast_tools as cuwalid
 
-def extract_forecasting_variable(model_name, model_path, season, postpp_path):
+def extract_forecasting_variable(model_name, model_path, season, variables, postpp_path):
 
 	# PLOT TYPE
 	plot_scale = "Country"
@@ -40,7 +40,8 @@ def extract_forecasting_variable(model_name, model_path, season, postpp_path):
 		"Country": "NAME",	
 		}
 
-	var = ["dis", "twsc", "tht", "wrsi", "flow"]
+	#var = ["dis", "twsc", "tht", "wrsi", "flow"]
+	field = cuwalid.drop_false_keys(variables)
 		
 	iname_field_shp = name_field_shp[plot_scale]
 
@@ -57,7 +58,7 @@ def extract_forecasting_variable(model_name, model_path, season, postpp_path):
 	netcdf_path = "/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_VVV_SSS_2022_probabilistic_tercile_forecast.nc"
 	for iseason in season:
 		for iplace_name in place_name:
-			for ivar in var:
+			for ivar in field:
 				# read shapefile and select area/region
 				if plot_scale == "County":
 					region = gpd.read_file(shapefile_county)

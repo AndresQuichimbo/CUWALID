@@ -1,6 +1,8 @@
 import numpy as np
 import xarray as xr
 import pandas as pd
+import cuwalid.tools.CUWALID_forecast_tools as cuwalid
+
 
 def read_dataset(fname, var_name='tht'):
 	# Open the first netCDF file
@@ -10,7 +12,7 @@ def read_dataset(fname, var_name='tht'):
 	return data
 
 
-def get_areas_terciles(model_path, model_name, season, postpp_path):
+def get_areas_terciles(model_path, model_name, season, variables, postpp_path):
 		
 	# ==================================================
 
@@ -27,7 +29,8 @@ def get_areas_terciles(model_path, model_name, season, postpp_path):
 		}
 
 	# create list of names
-	var = ["dis", "twsc", "tht", "wrsi", "flow"]
+	#var = ["dis", "twsc", "tht", "wrsi", "flow"]
+	field = cuwalid.drop_false_keys(variables)
 
 	# name list
 	fname = []
@@ -41,7 +44,7 @@ def get_areas_terciles(model_path, model_name, season, postpp_path):
 	# create list of names and places
 	for iseason in season:
 		for iplace_name in place_name:
-			for ivar in var:
+			for ivar in field:
 				# create name
 				fname.append(postpp_path + "netcdf/" +
 						model_name + "_" +

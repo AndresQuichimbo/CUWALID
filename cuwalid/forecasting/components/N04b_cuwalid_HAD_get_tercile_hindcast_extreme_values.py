@@ -1,6 +1,6 @@
 import cuwalid.tools.CUWALID_forecast_tools as cuwalid
 
-def get_tercile_hindcast_extreme_values(model_path, model_name, season, postpp_path):
+def get_tercile_hindcast_extreme_values(model_path, model_name, season, variables, postpp_path):
 	"""This function calculates the probabilistic forecasting using the tercile approach
 	"""
 	iyear = 2022
@@ -12,7 +12,8 @@ def get_tercile_hindcast_extreme_values(model_path, model_name, season, postpp_p
 	#field = cuwalid.drop_false_keys(variables)
 
 	fname_var = model_path+model_name+"_YYYY_grid_VVV.nc"
-	fname_threshold = postpp_path+"netcdf/" + model_name + "_SSS_extremes_quantiles.nc"
+	#fname_threshold = postpp_path+"netcdf/" + model_name + "_SSS_extremes_quantiles.nc"
+	fname_threshold = postpp_path+"netcdf/" + model_name + "_SSS_quantiles.nc"
 
 	#fname_var = "/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_YYYY_grid_VVV.nc"
 	#fname_var = "/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_YYYY_grid.nc"
@@ -22,10 +23,11 @@ def get_tercile_hindcast_extreme_values(model_path, model_name, season, postpp_p
 	fname_var = fname_var.replace("YYYY", str(iyear))
 
 	#var = ["dis", "twsc", "tht"]
-	var = ["dis"]#, "twsc", "tht"]
+	#var = ["dis"]#, "twsc", "tht"]
+	field = cuwalid.drop_false_keys(variables)
 
 	for iseason in season:
-		for ivar in var:
+		for ivar in field:
 			# choose path depending on variable
 			if ivar == "twsc":
 				ifname = fname_var.replace("VVV", ivar)
