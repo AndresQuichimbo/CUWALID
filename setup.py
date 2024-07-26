@@ -5,8 +5,8 @@ with open("README.md", "r") as fh:
 
 setup(
     name="CUWALID",
-    version="1.0.06", 
-    author="Andrés Quichimbo, Manuel Rios Gaona, Dagmawi Teklu Asfaw",
+    version="1.0.10", 
+    author="Andrés Quichimbo, Manuel Rios Gaona, Dagmawi Teklu Asfaw, Leo Coote",
     author_email="cootelf@cardiff.ac.uk",
     description="CUWALID (Climate into Useful Water And Land Information in Drylands)",
     long_description=long_description,

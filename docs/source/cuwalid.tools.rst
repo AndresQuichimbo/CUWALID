@@ -1,8 +1,24 @@
 Tools Package
-=====================
+=============
 
 Submodules
 ----------
+
+cuwalid.tools.CUWALID\_forecast\_tools module
+---------------------------------------------
+
+.. automodule:: cuwalid.tools.CUWALID_forecast_tools
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cuwalid.tools.CUWALID\_view\_tool module
+----------------------------------------
+
+.. automodule:: cuwalid.tools.CUWALID_view_tool
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 cuwalid.tools.DRYP\_libraries module
 ------------------------------------
@@ -32,6 +48,14 @@ cuwalid.tools.download\_data module
 -----------------------------------
 
 .. automodule:: cuwalid.tools.download_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: cuwalid.tools
    :members:
    :undoc-members:
    :show-inheritance:

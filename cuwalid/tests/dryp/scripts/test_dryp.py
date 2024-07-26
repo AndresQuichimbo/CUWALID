@@ -7,7 +7,7 @@ def test_dryp():
     
     """Run a test model file"""
     # Construct path to input file relative to package
-    input_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tilted_v', 'input_test.dmp'))
+    input_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tilted_v', 'input_test.json'))
     run_DRYP(input_file)
     
     # Construct paths to output files relative to package

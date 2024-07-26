@@ -3,6 +3,7 @@
 
    cuwalid.dryp
    cuwalid.stopet
+   cuwalid.forecasting
    cuwalid.tests
    cuwalid.tools
 

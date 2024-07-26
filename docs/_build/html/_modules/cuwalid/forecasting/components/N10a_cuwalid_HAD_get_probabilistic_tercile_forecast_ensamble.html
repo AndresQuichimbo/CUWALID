@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.forecasting.components.N10a_cuwalid_HAD_get_probabilistic_tercile_forecast_ensamble &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.forecasting.components.N10a_cuwalid_HAD_get_probabilistic_tercile_forecast_ensamble</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.forecasting.components.N10a_cuwalid_HAD_get_probabilistic_tercile_forecast_ensamble</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">cuwalid.tools.CUWALID_forecast_tools</span> <span class="k">as</span> <span class="nn">cuwalid</span>
+
+<div class="viewcode-block" id="get_probabilistic_tercile_forecast_ensamble">
+<a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.N10a_cuwalid_HAD_get_probabilistic_tercile_forecast_ensamble.get_probabilistic_tercile_forecast_ensamble">[docs]</a>
+<span class="k">def</span> <span class="nf">get_probabilistic_tercile_forecast_ensamble</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function calculates the probabilistic forecasting using the tercile approach</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1">#model_name = &quot;MAM_2022_realization&quot;</span>
+
+	<span class="n">iyear</span> <span class="o">=</span> <span class="mi">2022</span>
+	<span class="c1">#ivar = &quot;dis&quot;</span>
+	<span class="c1">#iseason = &quot;MAM&quot;</span>
+	<span class="c1">#iseason = &quot;OND&quot;</span>
+
+	<span class="c1"># specified fields</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">drop_false_keys</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+	<span class="c1">#season = [&quot;MAM&quot;, &quot;OND&quot;]</span>
+	<span class="c1">#season = [&quot;MAM&quot;]</span>
+
+	<span class="c1">#model_path = &quot;/home/cuwalid/training/forecast/regional/outputs/&quot;#_13_grid.nc</span>
+
+	<span class="c1">#postpp_path = &quot;/home/cuwalid/training/forecast/regional/postpp/&quot;</span>
+
+	<span class="n">fname_ensamble</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_SSS_VVV_ensamble.nc&quot;</span>
+
+	<span class="c1"># filename path of threshold</span>
+	<span class="n">threshold_path</span> <span class="o">=</span> <span class="s2">&quot;/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGba_sim0_MAM_extremes_quantiles.nc&quot;</span>
+
+
+	<span class="c1">#fname_var = fname_var.replace(&quot;YYYY&quot;, str(iyear))</span>
+	<span class="k">for</span> <span class="n">iseason</span> <span class="ow">in</span> <span class="n">season</span><span class="p">:</span>
+		<span class="c1">#for ivar in [&quot;dis&quot;, &quot;twsc&quot;, &quot;tht&quot;, &quot;wrsi&quot;]:</span>
+		<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+			<span class="c1">## choose path depending on variable</span>
+			<span class="c1">#if (ivar == &quot;twsc&quot;) or (ivar == &quot;wrsi&quot;):</span>
+			<span class="c1">#	ifname = fname_ensamble.replace(&quot;VVV&quot;, ivar)</span>
+			<span class="c1">#else:</span>
+			<span class="c1">#	ifname = fname_ensamble.replace(&quot;_VVV&quot;, &quot;&quot;)</span>
+			
+			<span class="c1"># chose path depending on the season</span>
+			<span class="c1">#fname_threshold = threshold_path.copy()</span>
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">ifname_threshold</span> <span class="o">=</span> <span class="n">threshold_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_SSS&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">fname_ensamble</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_VVV&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">ifname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_SSS&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">ifname_threshold</span> <span class="o">=</span> <span class="n">threshold_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;SSS&quot;</span><span class="p">,</span> <span class="n">iseason</span><span class="p">)</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">fname_ensamble</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;VVV&quot;</span><span class="p">,</span> <span class="n">ivar</span><span class="p">)</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">ifname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;SSS&quot;</span><span class="p">,</span> <span class="n">iseason</span><span class="p">)</span>
+						
+			<span class="c1"># specify path for dataset</span>
+			<span class="c1">#netcdf_path = &quot;D:/HAD/output/HAD_IMERGb_sim_&quot;+ str(iyear)+&quot;_grid.nc&quot;</span>
+			
+			<span class="c1"># specify paht for threshold dataset</span>
+			<span class="c1">#nc_path_threshold = &quot;D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_&quot; + iseason + &quot;_quantiles.nc&quot;</span>
+			
+			<span class="c1"># get tercile forecasting</span>
+			<span class="n">tercile</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">get_tercile_probabilities_from_ensamble_netcdf</span><span class="p">(</span>
+					<span class="n">ifname</span><span class="p">,</span> <span class="n">ifname_threshold</span><span class="p">,</span>
+					<span class="n">var</span><span class="o">=</span><span class="n">ivar</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="n">iseason</span><span class="p">)</span>
+			
+			<span class="c1"># save as NETCDF files</span>
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span><span class="n">ivar</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_probabilistic_tercile_forecast.nc&quot;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="c1">#fname_out = &quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_&quot;+ivar+&quot;_&quot;+iseason+&quot;_&quot;+str(iyear)+&quot;_probabilistic_tercile_forecast.nc&quot;</span>
+				<span class="c1">#fname = &quot;D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_&quot; + iseason + &quot;_probabilistic_tercile_forecast.nc&quot;</span>
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span><span class="n">ivar</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="n">iseason</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_probabilistic_tercile_forecast.nc&quot;</span>
+			
+			<span class="c1"># save probabilistic forecast as netcdf</span>
+			<span class="n">tercile</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

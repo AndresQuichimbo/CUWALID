@@ -1,0 +1,42 @@
+{
+  "SIMULATION PERIOD AND TIME STEP": {
+    "Initial date for simulation 1 (YYYY MM DD)": "2000 1 1",
+    "Initial date for simulation 2 (YYYY MM DD)": "2002 1 3",
+    "OF Time step - dt_Pre (min)": 60,
+    "GW Time step": 60
+  },
+  "READING OPTIONS: PRE-PET-ABS-Kc-SAVI-FLUX": {
+    "Read datasets: 0-csv 1-One-netCDF 2-Multi-netCDF": "0 0 0 0 0 0 0 0",
+    "Dataset time step (minutes)": "60 60 60 60 60 60 60 60 60 60",
+    "Reproject datasets: 0- disable 1- enable": "0 0 0 0 0 0 0 0",
+    "Interpolate datasets: 0- disable 1- enable": "0 0 0 0 0 0 0 0"
+  },
+  "MODEL COMPONENTS": {
+    "Inf.": 1,
+    "Run Groundwater-Enable Type: 0-Unc 1-func 2-Con": "1 0",
+    "not used 1": "none",
+    "not used 2": "none"
+  },
+  "OUTPUT OPTIONS": {
+    "Save state results in csv files": false,
+    "Save state results in netcf files": false,
+    "Temporal aggregation results (eg. 3M Y H)": "1H",
+    "not used 1": false,
+    "Save discharge in volumetric rate units": true,
+    "not used 2": false,
+    "not used 3": false
+  },
+  "MODEL PARAMETERS FACTORS": {
+    "Runoff partition parameter (kdt-Sheeke)": 1.00000,
+    "Soil Depth factor - kDroot (mm)": 1.0,
+    "Available Water Content factor - kAWC": 1.00,
+    "Infiltration rate factor - kKsat": 0.29024,
+    "Heterogeneity factor - k_sigma - (Upscaled GA)": 1.0,
+    "Transmission losses - Kch (m/h)": 10.52967,
+    "Decay discharge - T - (hours)": 0.1512967,
+    "Channel width parameter (pe-not activated)": 1.0,
+    "Aquifer saturated hydraulic conductivity": 1.0,
+    "Aquifer specific yield factor": 1.00,
+    "Flux boundary condition factor": 1.0
+  }
+}

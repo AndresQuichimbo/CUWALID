@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.tools.CUWALID_forecast_tools &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.tools.CUWALID_forecast_tools</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.tools.CUWALID_forecast_tools</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">rioxarray</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">compress</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+
+<div class="viewcode-block" id="read_dataset">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.read_dataset">[docs]</a>
+<span class="k">def</span> <span class="nf">read_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;tht&#39;</span><span class="p">):</span>
+	<span class="c1"># Open the first netCDF file</span>
+	<span class="c1"># output dataset</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+	<span class="c1">#print(data)</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">data</span></div>
+
+	
+<div class="viewcode-block" id="resample_dataset">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.resample_dataset">[docs]</a>
+<span class="k">def</span> <span class="nf">resample_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">extremes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="c1"># calculate climatological mean</span>
+	<span class="c1"># output an array</span>
+	<span class="k">if</span> <span class="n">extremes</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">mean</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">delt</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">delt</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">extremes</span> <span class="o">==</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">delt</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="n">extremes</span> <span class="o">==</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">delt</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;extremes must be False, max, or min&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="season_name_to_number">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.season_name_to_number">[docs]</a>
+<span class="k">def</span> <span class="nf">season_name_to_number</span><span class="p">(</span><span class="n">season</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function read a string representing seasons and return a</span>
+<span class="sd">	list of numbers indicating months</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	season : str</span>
+<span class="sd">		season represented by three capital letters (e.g. &quot;OND&quot;)</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	list</span>
+<span class="sd">		list of months</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">if</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;MAM&quot;</span><span class="p">:</span>
+		<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+	<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;OND&quot;</span><span class="p">:</span>
+		<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">]</span>
+
+	<span class="k">return</span> <span class="n">season</span></div>
+
+
+<div class="viewcode-block" id="concatenate_netCDF">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.concatenate_netCDF">[docs]</a>
+<span class="k">def</span> <span class="nf">concatenate_netCDF</span><span class="p">(</span><span class="n">fname_list</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Get a xarray from a list of netcdf files</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	fnames : list of paths</span>
+<span class="sd">		list of file names of netcdf file</span>
+<span class="sd">	var : str</span>
+<span class="sd">		variable name</span>
+<span class="sd">	agg : str</span>
+<span class="sd">		temporal resampling (default monthly)</span>
+<span class="sd">	season : str</span>
+<span class="sd">		name of the season, e.g MAM</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	dataconcatenat : xarray</span>
+<span class="sd">		xarray with all values </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="n">concat_first_read</span> <span class="o">=</span> <span class="kc">True</span>
+	<span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname_list</span><span class="p">:</span>
+		
+		<span class="c1"># read dataset</span>
+		<span class="n">mean</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">var</span> <span class="o">==</span> <span class="s1">&#39;tht&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">var</span> <span class="o">==</span> <span class="s1">&#39;wte&#39;</span><span class="p">):</span>
+			<span class="n">mean</span> <span class="o">=</span> <span class="kc">True</span>
+		
+		<span class="c1"># check if is the riparian area</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">var</span> <span class="o">==</span> <span class="s1">&#39;fch&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">var</span> <span class="o">==</span> <span class="s1">&#39;tls&#39;</span><span class="p">):</span>
+			<span class="n">ifname</span> <span class="o">=</span> <span class="n">ifname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;rp.nc&#39;</span>
+		
+		<span class="c1"># read dataset</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">var</span><span class="p">)</span>
+		
+		<span class="c1"># select season</span>
+		<span class="k">if</span> <span class="n">season</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">get_season_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">season</span><span class="p">)</span>
+		<span class="c1"># sclice dataset</span>
+		<span class="c1">#data = slice_dataset_time(data)</span>
+		
+		<span class="c1"># resample dataset</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">resample_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="n">agg</span><span class="p">)</span>
+		
+		<span class="c1"># accummulate dataset, just in case of TWSA</span>
+		<span class="c1">#if var == &#39;twsc&#39;:</span>
+		<span class="c1">#	data = data.cumsum(dim=dim)</span>
+		
+		<span class="c1"># concatenate all datasets</span>
+		<span class="k">if</span> <span class="n">concat_first_read</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">dataconcatenat</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+			<span class="n">concat_first_read</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">dataconcatenat</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">dataconcatenat</span><span class="p">,</span> <span class="n">data</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
+	
+	<span class="k">return</span> <span class="n">dataconcatenat</span></div>
+
+
+<div class="viewcode-block" id="get_season_dataset">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.get_season_dataset">[docs]</a>
+<span class="k">def</span> <span class="nf">get_season_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">season</span><span class="p">):</span>
+	<span class="c1"># get seasson</span>
+	<span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">season_name_to_number</span><span class="p">(</span><span class="n">season</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="create_binary_dataarray">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.create_binary_dataarray">[docs]</a>
+<span class="k">def</span> <span class="nf">create_binary_dataarray</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Create a binary dataset by changing positive values</span>
+<span class="sd">	to 1 and negative values to 0</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	dataset : dataarray</span>
+<span class="sd">	</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	dataset : dataarray</span>
+<span class="sd">		binary dataset</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dataset</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dataset</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">dataset</span></div>
+
+	
+<div class="viewcode-block" id="get_tercile_probabilities">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.get_tercile_probabilities">[docs]</a>
+<span class="k">def</span> <span class="nf">get_tercile_probabilities</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Get tercile probabilities from an ensamble dataarray</span>
+<span class="sd">	this function count the number of values above/within/below</span>
+<span class="sd">	the thresholds and return the probabilities.</span>
+<span class="sd">	WARNING: threshold values need to be of lengh 2 </span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	dataset : dataarray</span>
+<span class="sd">		ensamble of values to evaluate</span>
+<span class="sd">	thresholds : numpy array</span>
+<span class="sd">		threshold balues to bin dataset, it must have a same</span>
+<span class="sd">		grid size of the dataset</span>
+<span class="sd">	dim: str</span>
+<span class="sd">		axis at which it will be evalueated (default time)</span>
+<span class="sd">		</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	terciles: dataarray</span>
+<span class="sd">		tercile dataset, binned dataset</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># get lenght of ensamble</span>
+	<span class="n">nsim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+	
+	<span class="c1"># terciles below normal values</span>
+	<span class="n">BN</span> <span class="o">=</span> <span class="n">create_binary_dataarray</span><span class="p">(</span>
+			<span class="n">thresholds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">dataset</span>
+			<span class="p">)</span>
+	
+	<span class="c1"># tercile between normal values</span>
+	<span class="n">NN</span> <span class="o">=</span> <span class="p">(</span><span class="n">create_binary_dataarray</span><span class="p">(</span>
+			<span class="n">thresholds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">dataset</span><span class="p">)</span><span class="o">*</span>
+		<span class="n">create_binary_dataarray</span><span class="p">(</span>
+			<span class="n">dataset</span> <span class="o">-</span> <span class="n">thresholds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+			<span class="p">)</span>
+	<span class="c1">#print(NN)</span>
+	
+	<span class="c1"># tercile above normal values</span>
+	<span class="n">AN</span> <span class="o">=</span> <span class="n">create_binary_dataarray</span><span class="p">(</span>
+			<span class="n">dataset</span> <span class="o">-</span> <span class="n">thresholds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+			<span class="p">)</span>
+	
+	<span class="c1"># Define the dimensions and coordinates</span>
+	<span class="n">dims</span> <span class="o">=</span> <span class="n">AN</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">dims</span>
+	<span class="n">coords</span> <span class="o">=</span> <span class="n">AN</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">coords</span>	
+	
+	<span class="c1"># Step 3: Create the xarray dataset</span>
+	<span class="n">terciles</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">({</span>
+		<span class="s1">&#39;AN&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">dims</span><span class="p">,</span> <span class="n">AN</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
+		<span class="s1">&#39;NN&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">dims</span><span class="p">,</span> <span class="n">NN</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
+		<span class="s1">&#39;BN&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">dims</span><span class="p">,</span> <span class="n">BN</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
+		<span class="p">},</span>
+		<span class="n">coords</span><span class="o">=</span><span class="n">coords</span>
+		<span class="p">)</span>
+	
+	<span class="k">return</span> <span class="n">terciles</span><span class="o">*</span><span class="mi">1</span><span class="o">/</span><span class="n">nsim</span></div>
+
+
+<div class="viewcode-block" id="get_percentile_probabilities">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.get_percentile_probabilities">[docs]</a>
+<span class="k">def</span> <span class="nf">get_percentile_probabilities</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Get tercile probabilities from an ensamble dataarray</span>
+<span class="sd">	this function count the number of values above/within/below</span>
+<span class="sd">	the thresholds and return the probabilities.</span>
+<span class="sd">	WARNING: threshold values need to be of lengh 2 </span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	dataset : dataarray</span>
+<span class="sd">		ensamble of values to evaluate</span>
+<span class="sd">	thresholds : numpy array</span>
+<span class="sd">		threshold balues to bin dataset, it must have a same</span>
+<span class="sd">		grid size of the dataset</span>
+<span class="sd">	dim: str</span>
+<span class="sd">		axis at which it will be evalueated (default time)</span>
+<span class="sd">		</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	terciles: dataarray</span>
+<span class="sd">		tercile dataset, binned dataset</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># get lenght of ensamble</span>
+	<span class="n">nsim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+	
+	<span class="c1"># terciles below normal values</span>
+	<span class="n">BN</span> <span class="o">=</span> <span class="n">create_binary_dataarray</span><span class="p">(</span>
+			<span class="n">thresholds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">dataset</span>
+			<span class="p">)</span>
+		
+	<span class="c1"># tercile above normal values</span>
+	<span class="n">AN</span> <span class="o">=</span> <span class="n">create_binary_dataarray</span><span class="p">(</span>
+			<span class="n">dataset</span> <span class="o">-</span> <span class="n">thresholds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="p">)</span>
+	
+	<span class="c1"># Define the dimensions and coordinates</span>
+	<span class="n">dims</span> <span class="o">=</span> <span class="n">AN</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">dims</span>
+	<span class="n">coords</span> <span class="o">=</span> <span class="n">AN</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">coords</span>	
+	
+	<span class="c1"># Step 3: Create the xarray dataset</span>
+	<span class="n">percentiles</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">({</span>
+		<span class="s1">&#39;AN&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">dims</span><span class="p">,</span> <span class="n">AN</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
+		<span class="c1">#&#39;BN&#39;: (dims, nsim - BN.sum(dim=dim).values),</span>
+		<span class="s1">&#39;BN&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">dims</span><span class="p">,</span> <span class="n">BN</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
+		<span class="p">},</span>
+		<span class="n">coords</span><span class="o">=</span><span class="n">coords</span>
+		<span class="p">)</span>
+	
+	<span class="k">return</span> <span class="n">percentiles</span><span class="o">*</span><span class="mi">1</span><span class="o">/</span><span class="n">nsim</span></div>
+
+
+<div class="viewcode-block" id="get_tercile_probabilities_from_netcdf">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.get_tercile_probabilities_from_netcdf">[docs]</a>
+<span class="k">def</span> <span class="nf">get_tercile_probabilities_from_netcdf</span><span class="p">(</span><span class="n">path_data</span><span class="p">,</span> <span class="n">path_threshold</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="s2">&quot;dis&quot;</span><span class="p">,</span>
+			<span class="n">season</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extremes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">idtercile</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function read a netcdf file of historical values and calculates</span>
+<span class="sd">	the probabilities from historical simulations, it selects the seasons if</span>
+<span class="sd">	season is not False, and also select the maximum or minimum values</span>
+<span class="sd">	if extremes is activated</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	</span>
+<span class="sd">	path_data : str</span>
+<span class="sd">		path of the histrical values</span>
+<span class="sd">	path_threshold: str</span>
+<span class="sd">		path of thresholds/terciles</span>
+<span class="sd">	var : str</span>
+<span class="sd">		variable selected from the netcdf file to process</span>
+<span class="sd">	season : str or None</span>
+<span class="sd">		select only the months that are specified on season (e.g. OND)</span>
+<span class="sd">	extremes : str or None</span>
+<span class="sd">		if selected, min or max values will be extracted before tercile apply</span>
+<span class="sd">	idterciles : list</span>
+<span class="sd">		id of the lower and upper tercile, respectively</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	tercile : Dataarray</span>
+<span class="sd">		dataset of tercile probabilities</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># read dataset (choose year and variable)</span>
+	<span class="n">ds</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">path_data</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">var</span><span class="p">)</span>
+	
+	<span class="c1"># aggregate data to yearly values, if season is provided, select season first</span>
+	<span class="k">if</span> <span class="n">season</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">ds</span> <span class="o">=</span> <span class="n">resample_dataset</span><span class="p">(</span>
+				<span class="n">get_season_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">season</span><span class="p">),</span>
+				<span class="n">extremes</span><span class="o">=</span><span class="n">extremes</span><span class="p">,</span>
+				<span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">ds</span> <span class="o">=</span> <span class="n">resample_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">extremes</span><span class="o">=</span><span class="n">extremes</span><span class="p">)</span>
+		
+	<span class="c1"># read tercile thresholds for the selected variable and year</span>
+	<span class="n">ds_thrshold</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">path_threshold</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">var</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+	<span class="n">threshold</span> <span class="o">=</span> <span class="p">[</span><span class="n">ds_thrshold</span><span class="p">[</span><span class="n">idtercile</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">ds_thrshold</span><span class="p">[</span><span class="n">idtercile</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span>
+	
+	<span class="c1"># calculate probability forecast</span>
+	<span class="n">tercile</span> <span class="o">=</span> <span class="n">get_tercile_probabilities</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">tercile</span></div>
+
+
+<div class="viewcode-block" id="get_tercile_probabilities_from_ensamble_netcdf">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.get_tercile_probabilities_from_ensamble_netcdf">[docs]</a>
+<span class="k">def</span> <span class="nf">get_tercile_probabilities_from_ensamble_netcdf</span><span class="p">(</span><span class="n">path_data</span><span class="p">,</span> <span class="n">path_threshold</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="s2">&quot;dis&quot;</span><span class="p">,</span>
+			<span class="n">season</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;sim&quot;</span><span class="p">,</span> <span class="n">idtercile</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function read a netcdf file of ensambles and calculate the probabilities</span>
+<span class="sd">	of </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># read dataset (choose year and variable)</span>
+	<span class="n">ds</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">path_data</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">var</span><span class="p">)</span>
+		
+	<span class="c1"># read tercile thresholds for the selected variable and year</span>
+	<span class="n">ds_thrshold</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">path_threshold</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">var</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+	<span class="n">threshold</span> <span class="o">=</span> <span class="p">[</span><span class="n">ds_thrshold</span><span class="p">[</span><span class="n">idtercile</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">ds_thrshold</span><span class="p">[</span><span class="n">idtercile</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span>
+	
+	<span class="c1"># calculate probability forecast</span>
+	<span class="n">tercile</span> <span class="o">=</span> <span class="n">get_tercile_probabilities</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">tercile</span></div>
+
+
+<div class="viewcode-block" id="get_percentiles_probabilities_from_netcdf">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.get_percentiles_probabilities_from_netcdf">[docs]</a>
+<span class="k">def</span> <span class="nf">get_percentiles_probabilities_from_netcdf</span><span class="p">(</span><span class="n">path_data</span><span class="p">,</span> <span class="n">path_threshold</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="s2">&quot;dis&quot;</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="c1"># read dataset (choose year and variable)</span>
+	<span class="n">ds</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">path_data</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">var</span><span class="p">)</span>
+	
+	<span class="c1"># aggregate data to yearly values, if season is provided, select season first</span>
+	<span class="k">if</span> <span class="n">season</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">ds</span> <span class="o">=</span> <span class="n">resample_dataset</span><span class="p">(</span>
+				<span class="n">get_season_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">season</span><span class="p">),</span>
+				<span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">ds</span> <span class="o">=</span> <span class="n">resample_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+		
+	<span class="c1"># read tercile thresholds for the selected variable and year</span>
+	<span class="n">ds_thrshold</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">path_threshold</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">var</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+	<span class="n">threshold</span> <span class="o">=</span> <span class="p">[</span><span class="n">ds_thrshold</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+	
+	<span class="c1"># calculate probability forecast</span>
+	<span class="n">percentile</span> <span class="o">=</span> <span class="n">get_percentile_probabilities</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+	
+	<span class="k">return</span> <span class="n">percentile</span></div>
+
+	
+<div class="viewcode-block" id="reproject_dataset">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.reproject_dataset">[docs]</a>
+<span class="k">def</span> <span class="nf">reproject_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">oldPP</span><span class="p">,</span> <span class="n">newPP</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Transform projection system</span>
+<span class="sd">	oldPP and newPP have to be defined first</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	Data:	Dataset</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	Data:	Dataset</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># check if projection is in ERSG format</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">newPP</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">11</span><span class="p">:</span>
+		<span class="n">newPP</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">CRS</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">newPP</span><span class="p">)</span>
+	
+	<span class="c1"># reprojec dataset</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="s1">&#39;y&#39;</span><span class="p">})</span>  <span class="c1"># new method</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_crs</span><span class="p">(</span><span class="n">oldPP</span><span class="p">)</span> <span class="c1"># write crs</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">reproject</span><span class="p">(</span><span class="n">newPP</span><span class="p">)</span> <span class="c1"># reproject the file</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="s1">&#39;lat&#39;</span><span class="p">})</span>  <span class="c1"># new method</span>
+	
+	<span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="clip_dataset_by_region">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.clip_dataset_by_region">[docs]</a>
+<span class="k">def</span> <span class="nf">clip_dataset_by_region</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">region</span><span class="p">):</span>
+	<span class="c1"># Clip the data model</span>
+	<span class="n">ds_clipped</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">region</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">region</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">ds_clipped</span></div>
+
+	
+<div class="viewcode-block" id="extract_dataset">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.extract_dataset">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_dataset</span><span class="p">(</span><span class="n">netcdf_path</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">clip_region</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+	<span class="n">dataPP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">maskPP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;AN&quot;</span><span class="p">,</span> <span class="s2">&quot;NN&quot;</span><span class="p">,</span> <span class="s2">&quot;BN&quot;</span><span class="p">]):</span>
+	<span class="c1"># =========================================================</span>
+	<span class="c1"># DO NOT CHANGE FROM THIS LINE</span>
+	<span class="c1"># =========================================================</span>
+	<span class="c1"># SPECIFY projection</span>
+	<span class="c1"># define new projection (output) #!with.PYPROJ.library</span>
+	<span class="n">newPP</span><span class="p">,</span> <span class="n">oldPP</span> <span class="o">=</span> <span class="n">maskPP</span><span class="p">,</span> <span class="n">dataPP</span>
+	<span class="k">if</span> <span class="n">dataPP</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">oldPP</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">CRS</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+		<span class="s2">&quot;+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs&quot;</span>
+		<span class="p">)</span>
+	<span class="k">if</span> <span class="n">maskPP</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="c1"># define current projection (input)</span>
+		<span class="n">newPP</span> <span class="o">=</span> <span class="s1">&#39;EPSG:4326&#39;</span>
+		
+	<span class="c1"># get bounding boxfrom shapefile</span>
+	<span class="n">bbox</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">total_bounds</span>
+	
+	<span class="c1"># create new dataset by extracting the specified area/extend</span>
+	<span class="n">first_read</span> <span class="o">=</span> <span class="kc">True</span>
+	<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">:</span>
+		<span class="c1"># Open dataset of model outputs</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">netcdf_path</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">ivar</span><span class="p">)</span>
+		
+		<span class="c1"># reproject estimated probabilistic forecasting</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">reproject_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">oldPP</span><span class="p">,</span> <span class="n">newPP</span><span class="p">)</span>
+		
+		<span class="c1"># clip area</span>
+		<span class="k">if</span> <span class="n">clip_region</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">region_ds</span> <span class="o">=</span> <span class="n">clip_dataset_by_region</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">region</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">region_ds</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
+				<span class="n">lat</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+				<span class="n">lon</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+				<span class="p">)</span>
+		
+		<span class="k">if</span> <span class="n">first_read</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">dataset</span> <span class="o">=</span> <span class="n">region_ds</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+			<span class="n">first_read</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">dataset</span><span class="p">,</span> <span class="n">region_ds</span><span class="p">])</span>
+	
+	<span class="k">return</span> <span class="n">dataset</span></div>
+
+	
+<div class="viewcode-block" id="get_ensamble_from_netcdf_list">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.get_ensamble_from_netcdf_list">[docs]</a>
+<span class="k">def</span> <span class="nf">get_ensamble_from_netcdf_list</span><span class="p">(</span><span class="n">fname_list</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+								<span class="n">delta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+								<span class="n">fname_output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function read a list of netcdf paths and return a dataset</span>
+<span class="sd">	or netCDF file containing all concatenated netCDFs</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	fname_list : list</span>
+<span class="sd">		list of paths</span>
+<span class="sd">	var_name : str</span>
+<span class="sd">		name of variable to process</span>
+<span class="sd">	mean : bool</span>
+<span class="sd">	</span>
+<span class="sd">	delta : str</span>
+<span class="sd">		time step for aggregation, default None</span>
+<span class="sd">	fname_output : str</span>
+<span class="sd">		file path of output file, default is None so no file is stored</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	dataset : xarray dataset</span>
+<span class="sd">		concatenated datasets</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">first_read</span> <span class="o">=</span> <span class="kc">True</span>
+	<span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname_list</span><span class="p">:</span>
+		<span class="c1"># Check if input file exist</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ifname</span><span class="p">):</span>
+			<span class="c1"># read dataset and calculate the correlation</span>
+			<span class="n">idata</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">var_name</span><span class="p">)</span>
+			<span class="c1">#idata = slice_dataset_time(idata)</span>
+			
+			<span class="c1"># if seasonal average, select months</span>
+			<span class="k">if</span> <span class="n">season</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">idata</span> <span class="o">=</span> <span class="n">idata</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">idata</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+						<span class="n">season_name_to_number</span><span class="p">(</span><span class="n">season</span><span class="p">))</span>
+						<span class="p">)</span>
+			
+			<span class="k">if</span> <span class="n">delta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="c1"># calculate annual average to reduce the use of memory</span>
+				<span class="n">idata</span> <span class="o">=</span> <span class="n">resample_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
+			
+			<span class="k">if</span> <span class="n">mean</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+				<span class="n">idata</span> <span class="o">=</span> <span class="n">idata</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">idata</span> <span class="o">=</span> <span class="n">idata</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+	
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">idata</span> <span class="o">=</span> <span class="n">idata</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+		
+		<span class="k">if</span> <span class="n">first_read</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">dataset</span> <span class="o">=</span> <span class="n">idata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+			<span class="n">first_read</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">dataset</span><span class="p">,</span> <span class="n">idata</span><span class="p">],</span> <span class="s1">&#39;sim&#39;</span><span class="p">)</span>
+
+	<span class="c1"># save dataset or return dataset</span>
+	<span class="k">if</span> <span class="n">fname_output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname_output</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="p">[</span><span class="n">var_name</span><span class="p">])</span>
+		<span class="k">return</span> <span class="kc">None</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">dataset</span></div>
+
+		
+
+<div class="viewcode-block" id="save_xarray_dataset_as_netcdf">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.save_xarray_dataset_as_netcdf">[docs]</a>
+<span class="k">def</span> <span class="nf">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">var_name</span><span class="p">):</span>
+	<span class="c1"># data has to be in the same dimentions</span>
+	<span class="c1"># Create a xarray DataArray</span>
+	<span class="c1">#ds = xr.DataArray(data, coords={&quot;time&quot;: time}, dims=[&quot;time&quot;, &quot;lon&quot;])</span>
+
+	<span class="c1"># Set the compression format</span>
+	<span class="n">encoding</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="n">var_name</span><span class="p">:</span>
+		<span class="n">encoding</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">ivar</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;zlib&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;complevel&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">}})</span>
+
+	<span class="c1"># Save the dataset to a netcdf file</span>
+	<span class="n">data</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">)</span></div>
+
+	
+	<span class="c1">#return</span>
+<div class="viewcode-block" id="slice_dataset_time">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.slice_dataset_time">[docs]</a>
+<span class="k">def</span> <span class="nf">slice_dataset_time</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="s2">&quot;2000-01-01&quot;</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="s2">&quot;2023-01-01&quot;</span><span class="p">):</span>
+	<span class="c1"># Slice the dataset between two dates</span>
+	<span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">))</span>
+	<span class="k">return</span> <span class="n">dataset</span></div>
+
+
+<div class="viewcode-block" id="merge_xarray_dataset">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.merge_xarray_dataset">[docs]</a>
+<span class="k">def</span> <span class="nf">merge_xarray_dataset</span><span class="p">(</span><span class="n">dataset1</span><span class="p">,</span> <span class="n">dataset2</span><span class="p">):</span>
+	<span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">dataset1</span><span class="p">,</span> <span class="n">dataset2</span><span class="p">])</span></div>
+
+	
+
+<div class="viewcode-block" id="get_average_from_list">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.get_average_from_list">[docs]</a>
+<span class="k">def</span> <span class="nf">get_average_from_list</span><span class="p">(</span><span class="n">fname_list</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="s2">&quot;pre&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+				<span class="n">accum</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Get average values from a list of modet simulation files,</span>
+<span class="sd">	only valid for yearly netcdf files.</span>
+<span class="sd">	When seasonal average is set, the calucation will aggregate annually</span>
+<span class="sd">	before the average is calculated.</span>
+<span class="sd">	When accumulation is active, the temporal aggregation is done at the</span>
+<span class="sd">	end othe concatenation.</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	fname_list :	list</span>
+<span class="sd">		list of file name of the netcdf (from model outputs)</span>
+<span class="sd">	field :	str</span>
+<span class="sd">		variable name</span>
+<span class="sd">	mean : bool</span>
+<span class="sd">		time interval for temporal aggregation.</span>
+<span class="sd">	season : str</span>
+<span class="sd">		list of months to ger average, default None</span>
+<span class="sd">	accum : bool</span>
+<span class="sd">		True accumulate values, False is default</span>
+<span class="sd">	delta : str</span>
+<span class="sd">		Time step for temporal aggregation, default None</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	data : xarray dataset</span>
+<span class="sd">		containing all calculated values</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># loop over all continues simulation files</span>
+	<span class="n">concat_first_read</span> <span class="o">=</span> <span class="kc">True</span>
+	<span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname_list</span><span class="p">:</span>
+		
+		<span class="c1"># read datasets</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">var</span><span class="p">)</span>
+		
+		<span class="c1"># if seasonal average, select months</span>
+		<span class="k">if</span> <span class="n">season</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+				<span class="n">season_name_to_number</span><span class="p">(</span><span class="n">season</span><span class="p">)))</span>
+			<span class="c1"># calculate annual average to reduce the use of memory</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">resample_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+			
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1"># if aggregation is provided, reduce the size of array</span>
+			<span class="c1"># by aggregating to the annual rates</span>
+			<span class="c1">#if delta is not None:</span>
+				<span class="c1"># aggregate only when accumulation is not active</span>
+			<span class="k">if</span> <span class="n">accum</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+				<span class="n">data</span> <span class="o">=</span> <span class="n">resample_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+			
+		<span class="k">if</span> <span class="n">concat_first_read</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">dataconcatenat</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+			<span class="n">concat_first_read</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">dataconcatenat</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">dataconcatenat</span><span class="p">,</span> <span class="n">data</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+	
+	<span class="c1"># accummulate dataset, just in case of TWSA</span>
+	<span class="k">if</span> <span class="n">season</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">accum</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">dataconcatenat</span> <span class="o">=</span> <span class="n">dataconcatenat</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+			<span class="c1"># aggregate dataset when accumulation is calculated</span>
+			<span class="k">if</span> <span class="n">delta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">dataconcatenat</span> <span class="o">=</span> <span class="n">resample_dataset</span><span class="p">(</span><span class="n">dataconcatenat</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
+		
+		
+	<span class="c1"># get mean values</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">dataconcatenat</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+		
+	<span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="get_average_all_variables_from_list">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.get_average_all_variables_from_list">[docs]</a>
+<span class="k">def</span> <span class="nf">get_average_all_variables_from_list</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">season</span><span class="p">):</span>
+
+	<span class="c1"># loop over all specified variables</span>
+	<span class="n">first_read</span> <span class="o">=</span> <span class="kc">True</span>
+	
+	<span class="k">for</span> <span class="n">ifield</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+		
+		<span class="n">fname_list</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+		<span class="c1"># check if is the riparian area</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;fch&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;tls&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;ssz&#39;</span><span class="p">):</span>
+			<span class="n">fname_list</span> <span class="o">=</span> <span class="p">[</span>
+				<span class="n">ifname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;rp.nc&#39;</span> <span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname_list</span>
+				<span class="p">]</span>
+		
+		<span class="c1"># NOT activated when calculating the average, activate it when</span>
+		<span class="c1"># using anomalies</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s2">&quot;twsc&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s2">&quot;wrsi&quot;</span><span class="p">):</span>
+			<span class="n">fname_list</span> <span class="o">=</span> <span class="p">[</span>
+				<span class="n">ifname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">ifield</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span> <span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname</span>
+				<span class="p">]</span>
+		
+		<span class="c1"># read dataset</span>
+		<span class="n">mean</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;tht&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;wte&#39;</span><span class="p">):</span>
+			<span class="n">mean</span> <span class="o">=</span> <span class="kc">True</span>
+		
+		<span class="n">accum</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">if</span> <span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;twsc&#39;</span><span class="p">:</span>
+			<span class="n">accum</span> <span class="o">=</span> <span class="kc">True</span>
+		
+		<span class="n">delta</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="k">if</span> <span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;twsc&#39;</span><span class="p">:</span>
+			<span class="n">accum</span> <span class="o">=</span> <span class="s2">&quot;Y&quot;</span>
+			
+		<span class="c1"># loop over all continues simulation files</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">get_average_from_list</span><span class="p">(</span><span class="n">fname_list</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">ifield</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+				<span class="n">season</span><span class="o">=</span><span class="n">season</span><span class="p">,</span> <span class="n">accum</span><span class="o">=</span><span class="n">accum</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
+		
+		<span class="c1"># concatenate all datasets into one netcdf file</span>
+		<span class="k">if</span> <span class="n">first_read</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">dataset</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+			<span class="n">first_read</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">dataset</span><span class="p">,</span> <span class="n">data</span><span class="p">])</span>
+	
+	<span class="k">return</span> <span class="n">dataset</span></div>
+
+	
+	
+<div class="viewcode-block" id="drop_false_keys">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.drop_false_keys">[docs]</a>
+<span class="k">def</span> <span class="nf">drop_false_keys</span><span class="p">(</span><span class="n">store_keys</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Function to select variables that have false values in</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	keys:	dict</span>
+<span class="sd">		list of keys available at the dictionary</span>
+<span class="sd">	store_keys:	dictionary with boolean values to store variables</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	drop_keys:	list of variables to drop from dict</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">var_value</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truth</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">store_keys</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+	<span class="n">drop_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">compress</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">store_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">var_value</span><span class="p">))</span>
+
+	<span class="k">return</span> <span class="n">drop_keys</span></div>
+
+	
+<div class="viewcode-block" id="update_TWSA">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.update_TWSA">[docs]</a>
+<span class="k">def</span> <span class="nf">update_TWSA</span><span class="p">(</span><span class="n">data_current</span><span class="p">,</span> <span class="n">data_previous</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This fuction updates the TWSA using a TWSA file</span>
+<span class="sd">	from the previous period. DRYP outputs TWSC, thus</span>
+<span class="sd">	in order to preprocess TWSC into TWSA, values of</span>
+<span class="sd">	TWSC need to be accumulated over time.</span>
+<span class="sd">	When values are updated, TWSC is fo the current</span>
+<span class="sd">	file is accumulated and then the last step of the</span>
+<span class="sd">	previous simulution is added.</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	data_current : dataarray</span>
+<span class="sd">	data_previous : dataarray</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">data_current</span> <span class="o">=</span> <span class="n">data_current</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+	
+	<span class="n">data_current</span> <span class="o">=</span> <span class="n">data_current</span> <span class="o">+</span> <span class="n">data_previous</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	
+	<span class="k">return</span> <span class="n">data_current</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

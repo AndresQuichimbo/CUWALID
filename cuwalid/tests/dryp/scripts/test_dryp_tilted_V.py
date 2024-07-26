@@ -23,7 +23,7 @@ def aggregate_slice_csv(fname, agg_step='M', mean=True,
 
 def test_dryp():
 
-	input_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tilted_v', 'input_test.dmp'))
+	input_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tilted_v', 'input_test.json'))
 
 	# run model test input file
 	run_DRYP(input_file)

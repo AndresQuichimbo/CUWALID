@@ -33,7 +33,7 @@ Version(s):
 import numpy as np
 #import pandas as pd
 from tqdm import tqdm
-from cuwalid.dryp.components.DRYP_io_files import get_model_settings
+from cuwalid.dryp.components.DRYP_json_reader import get_model_settings
 from cuwalid.dryp.components.DRYP_io import (
 	grid_environment,
 	surface_parameters,
