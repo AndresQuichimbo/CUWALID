@@ -27,7 +27,7 @@ For the **surface component**:
 * Model domain, a raster file that can indicating the basin. Default value is 1.0. If not provided, the entire grid will be assumed as the model domain.
 * Channel witdth (in meters), default value is 10m.
 
-In case of proving a flow direction file, it should follow Landlab conventions. A comprehensive description of landlab flow direction convention can be found in \url{https://landlab.readthedocs.io/en/master/reference/components/flow_director.html}. Noted that Landlab grids are labelled from 0 to n, where n is the number of cells (see \url{https://landlab.readthedocs.io/en/master/user_guide/grid.html} and example below).
+In case of proving a flow direction file, it should follow Landlab conventions. A comprehensive description of landlab flow direction convention can be found `here <https://landlab.readthedocs.io/en/master/reference/components/flow_director.html>`_. Noted that Landlab grids are labelled from 0 to n, where n is the number of cells (see `here <https://landlab.readthedocs.io/en/master/user_guide/grid.html>`_ and example below).
 
 .. parsed-literal::
     ncols        5
@@ -106,8 +106,7 @@ Units of time depends on model settings, for example months.
 Model parameters and setting files
 -----------------------------------
 
-Model input files are plain text format, which can be created by using any text editor (e.g. notepad).
-These files must follow a strict 
+Model input files are json, which can be created by using a text editor like notepad or code editor like Visual Studio Code.
 
 
 
@@ -117,18 +116,10 @@ Input parameter file
 All filename's parameters must be listed in model parameters file, which is further explained below, However,
 if a parameter filename is not provided, the default values will be used as model parameters.
 
-The input file must be a plain text file. This file must have as head 'drylandmodel' in the first line (see
-example below), omitting the first line will raise an error when running the model.
-
-Filenames provided in the input file must be written only on specified lines, the example below could be use as
-template. Any change in the order of parameters files will result in inconsistent results or model errors that may
-cause to stop the simulation (e.g. if the file 'HAD_dem.asc' is written in line 5, python will raise an exception error).
-
-
 The model is under development therefore some components are still not available (e.g. abstractions and 
-irrigation are not yet available.
+irrigation are not yet available).
 
-Meteorological data required as forcing dataset must be provided in lines 66 and 68. Information can be provided in netCDF format
+Meteorological data required as forcing dataset must be provided. Information can be provided in netCDF format
 in order to take into account the spatial variability, or it can be a ".csv" file which in turn will assume a uniform rate
 over the entire model domain (not common). Filenames of the forcing datasets should follow the format specified
 in the paramter setting file (see next section), and it will depend on the numbers of files provided. If there
@@ -144,8 +135,8 @@ the following examples:
 
 
 
-For the groundwater component, boundary conditions can be specified as head and flux boundary conditions
-on lines 61 and 63, respectively. A raster file of head/flux must be provided if boundary conditions are
+For the groundwater component, boundary conditions can be specified as head and flux boundary conditions. 
+A raster file of head/flux must be provided if boundary conditions are
 considered in the model. The raster file will consider a boundary condition any value different that -9999.
 If boundary files are not provided, zero flux boundary conditions will be assumed.
 
@@ -160,12 +151,7 @@ specified as *North* and *East* for the y and x, respectively. If a coordinate i
 inside the model domain, the simulation will stop.  Note that at least one point coordinate should be
 specified, otherwise, an error will be produced.
 
-Coordinate files must be specified in the following lines of the main input file:
-
-* line 77: File of coordinates for surface component.
-* line 79: File of coordinates for unsaturated zone.
-* line 81: File of coordinates for saturated zone.
-
+Coordinate files can be specified under the 'RESULTS AND OUTPUT DIRECTORIES' in the main configuration file:
 
 Point result file are named with the model name followed by aletter p and the name of the variable at the end.
 
@@ -221,8 +207,8 @@ coordinate of the catchment output.
 Finally, an example of input parameter file is shown bellow, user can copy this template to
 create a nuew model.
 
-.. literalinclude:: ../txt/example_input.txt
-	:language: none
+.. literalinclude:: ../txt/example_input.json
+	:language: json
 	:linenos:
 
 Simulation settings file
@@ -231,80 +217,72 @@ Simulation settings file
 Simulation parameter file
 """"""""""""""""""""""""""
 
-Information about simulation parameters such as period or time step must be provided in a plain text file.
+Information about simulation parameters such as period or time step must be provided in a json.
 This file contains parameters that control the simulations such as simulation period, format of input
 files as well as the activation of model components such as groundwater flow.
 
-The simulation settings file has to include in the first line the following text *DWAPM_SET*,
-as shown in the example below, omitting the first line will stop the simulation. Lines with numerical values
-are allowed to change. The change of position of lines will also result in inconsitent results or even stopping the model.
-
-*Simulation period}*
+*Simulation period*
 """"""""""""""""""""
 
-Information related to simulation period should be specified as the initial and final date of the simulation
-and must be specified in lines 4 and 6. Date must be specified as integers separated by spaces (e.g. 2001 1 9),
+Information related to simulation period should be specified as the initial and final date of the simulation. 
+Date must be specified as integers separated by spaces (e.g. 2001 1 9),
 zeros on the left side are not allowed (e.g 2001 01 19, will raise an error).
 
 *Simulation time step*
 """"""""""""""""""""""
 
-Simulation time step for each component must be specified at lines 8, 10, and 12, for the surface, subsurface,
-and groundwater component, respectively. Time has to be specified in
-minutes, with a maximum time step of one day (1440 min). Time step must be an integer, and values must be
-rational fraction of the hour (e.g 20 min is allowed but 25 will stop the simulation) when sub-hourly time
-step is set. In case of hourly time steps, it must be a rational fraction of the day (e.g. 180 min (3h) is
+Time has to be specified in minutes, with a maximum time step of one day (1440 min). 
+Time step must be an integer, and values must be rational fraction of the hour 
+(e.g 20 min is allowed but 25 will stop the simulation) when sub-hourly time step is set. 
+In case of hourly time steps, it must be a rational fraction of the day (e.g. 180 min (3h) is
 allowed but 300 min (5h) will result in errors). The time step of the groundwater components can not be less
 than the surface component.
 
 *Forcing data format*
 """"""""""""""""""""""
 
-The format of precipitation, evapotranspiration, vegetation, boundary conditions, and water abstraction files
-must be specified in lines 15. The following options are available:
+The format of precipitation, evapotranspiration, vegetation, boundary conditions are shown below respectively:
 
-0. csv file (only one file, that will be applied to the whole model domain)
-1. netCDF file, only when one file is provided for the entire simulation period.
-2. netCDF files, when yearly files are provided
-3. netCDF fiels, when monthly fiels are provided
+1. csv file (only one file, that will be applied to the whole model domain)
+2. netCDF file, only when one file is provided for the entire simulation period.
+3. netCDF files, when yearly files are provided
+4. netCDF fiels, when monthly fiels are provided
 
-The time frequency of the of model input files should be specified on line 17, and it should be
-in minutes as time units. Note that it is not the time step of the model, it is only of the forcing
-dataset.
+The time frequency of the of model should be in minutes as time units. 
+Note that it is not the time step of the model, it is only of the forcing dataset.
 
 The model also accept datasets that are not in the model grid projection, or do not
 have the same grid size. For those cases, we can specified if each dataset requires
 a reprojection and/or interpolation. These options can be activated by changing the
-value from 0 to 1 on each of the corresponding dataset values on line 19 and 21 for
+value from 0 to 1 on each of the corresponding dataset values for
 reprojection and interpolation, respectively. The order of the reading iptions parameters
 is not allowed to change, it will result in errors or even stop the simulation.
 
-The order must allways follow: Precipitation, potential evapotranspiration,
-abstractions, crop factor (Kc), vegetation paramters (SAVI), overald flux boundary
-conditions. The following is an example of the configuration of reading parameters
+
+The following is an example of the configuration of reading parameters
 options.
 
 .. parsed-literal::
-    READING OPTIONS: PRE-PET-ABS-Kc-SAVI-FLUX ==========
-    Read datasets: 0-csv 1-One-netCDF 2-Multi-netCDF(13)
-    3 2 0 0 0 0 0 0
-    Dataset time step (minutes).....................(15)
-    30 60 60 60 60 60 60 60 60 60
-    Reproject datasets: 0- disable 1- disable ......(17)
-    1 1 0 0 0 0 0 0
-    Interpolate datasets: 0- disable 1- disable ....(19)
-    1 1 0 0 0 0 0 0
+
+    {
+        "READING OPTIONS: PRE-PET-ABS-Kc-SAVI-FLUX": {
+            "Read datasets: 0-csv 1-One-netCDF 2-Multi-netCDF": "0 0 0 0 0 0 0 0",
+            "Dataset time step (minutes)": "60 60 60 60 60 60 60 60",
+            "Reproject datasets: 0- disable 1- enable": "0 0 0 0 0 0 0 0",
+            "Interpolate datasets: 0- disable 1- enable": "0 0 0 0 0 0 0 0"
+        }
+    }
 
 
 Infiltration method selection
 """"""""""""""""""""""""""""""""
-DRYP has four types of infiltration methods implemented which can be selected by a specific code on
-line 22. The following codes can be chosen depending on the infiltration approach adopted:
+DRYP has four types of infiltration methods implemented. 
+The following codes can be chosen depending on the infiltration approach adopted:
 
-0. Schaake model,
-1. Philip's equation,
-2. Upscaled Green and Ampt,
-3. Modified Green and Ampt method.
+1. Schaake model,
+2. Philip's equation,
+3. Upscaled Green and Ampt,
+4. Modified Green and Ampt method.
 
 Groundwater component selection
 """""""""""""""""""""""""""""""""
@@ -317,7 +295,7 @@ For the groundwater component, three different approaches for groundwater flow c
 3. Multi-aquifer settingd, it will enable the use of multiple aquifer types domains (a file must be provided).
 
 
-The groundwater components can be activated or disabled in line 26, a value of 1 enable the groundwater
+The groundwater components can be activated or disabled, a value of 1 enable the groundwater
 component whereas a value of 0 disables it. A value of 2 will activate a two layer groundwater component
 (this component is still being tested).
 
@@ -331,23 +309,18 @@ shown in the example below (not required for the two-layer model):
 In case that the approach is not specified, the "variable transmissivity", option 0, is used as default
 approach.
 
-Line 27 is currently disabled.
-
 Setting storage of model outputs
 """"""""""""""""""""""""""""""""
 
-To save model results as netCDF files, lines 33 and 35 of the setting  parameters file need to be modified.
-A value of 1 in line 33 will activate the option save, whereas line 35 is used to specify the aggregation
+To save model results as netCDF files change the boolean (true/false) under 'OUTPUT OPTIONS'.
+Line "Temporal aggregation results (eg. 3M Y H)" is used to specify the aggregation
 frequency. Frequency should be specified as integer and a string character. Accepted character are D for
 days, M for months and Y for years, an example is specified below:
 
 .. parsed-literal::
-    Save state results in netcf files...............(33)
-    1
-    Temporal aggregation results (eg. 3M Y H)''.....(35)
-    1M
+    "Save state results in netcf files": true,
+    "Temporal aggregation results (eg. 3M Y H)": "1H",
 
-Line 37 is currently disabled.
 
 Calibration factors
 """"""""""""""""""""
@@ -356,19 +329,19 @@ A set of parameters that globally modify the model parameters are also specified
 file. Values are scale factors of the following parameters, this values are unitless:
 
 
-* line 48: kdt, for water partitioning of the Shaake infiltration approach,
-* line 50: kDroot, for rooting depth,
-* line 52: kAWC, for available water content,
-* line 54: kKsat for the saturated hydraulic conductivity of the soil,
-* line 56: kSigma, for the standard deviation of the saturated hydraulic conductivity of the Modified Green and Ampt approach,
-* line 58: kKch, for infiltration rates in the channel,
-* line 60: kT for decay parameter of discharge,
-* line 62: kKaq for aquifer saturated hydraulic conductivity,
-* line 64: kSy for aquifer specific yield factor,
+* kdt, for water partitioning of the Shaake infiltration approach,
+* kDroot, for rooting depth,
+* kAWC, for available water content,
+* kKsat for the saturated hydraulic conductivity of the soil,
+* kSigma, for the standard deviation of the saturated hydraulic conductivity of the Modified Green and Ampt approach,
+* kKch, for infiltration rates in the channel,
+* kT for decay parameter of discharge,
+* kKaq for aquifer saturated hydraulic conductivity,
+* kSy for aquifer specific yield factor,
 
 
-.. literalinclude:: ../txt/example_par_setting.txt
-	:language: none
+.. literalinclude:: ../txt/example_par_setting.json
+	:language: json
 	:linenos:
 
 Riparian zone parameter files

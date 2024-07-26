@@ -1,0 +1,61 @@
+{
+    "drylandmodel":{
+        "Model name": "test"
+    },
+    "TERRAIN COMPONENTS": {
+        "Topography (DEM)": "input/example-inputs/test_dem_m.asc",
+        "Cell factor area": "none",
+        "Flow Direction (fd)": "input/example-inputs/test_flowdir_m.asc",
+        "River decay parameters": "none",
+        "Basin Mask (catchment)": "input/example-inputs/test_mask_m.asc",
+        "River length": "input/example-inputs/test_riv_m.asc",
+        "River width": "none",
+        "River bottom elevation": "none"
+    },
+    "SURFACE COMPONENTS": {
+        "Vegetation type Kc": "none",
+        "Soil land use": "none",
+        "Other": "none"
+    },
+    "SOIL AND SUBSURFACE PARAMETERS": {
+        "Soil porosity: porosity": "input/example-inputs/test_rawls_ne.txt",
+        "Theta residual": "input/example-inputs/test_rawls_theta_r.txt",
+        "Available Water content (AWC)": "input/example-inputs/test_rawls_awc.txt",
+        "Wilting Point (wp)": "input/example-inputs/test_rawls_wp.txt",
+        "Soil Depth (D)": "input/example-inputs/test_depth_m.asc",
+        "Soil particle distribution parameter (b)": "input/example-inputs/test_rawls_n.txt",
+        "Soil suction head": "input/example-inputs/test_rawls_phi.txt",
+        "Saturated hydraulic conductivity": "input/example-inputs/test_rawls_ks.txt",
+        "sigma_Ksat": "input/example-inputs/test_rawls_sigma_ks.txt",
+        "Initial soil water content": "none",
+        "Channel saturated hydraulic conductivity": "none"
+    },
+    "GROUNDWATER PARAMETER AND BOUNDARY CONDITIONS": {
+        "Groundwater Boundary condition (domain)": "input/example-inputs/test_mask_m.asc",
+        "Aquifer Sat. Hydraulic Conductivity (Ksat_aq)": "input/example-inputs/test_rawls_ks1.txt",
+        "Specific Yield": "none",
+        "Initial Conditions Water table elevation": "input/example-inputs/test_wte_ini.asc",
+        "Flux Boundary Conditions": "none",
+        "Head Boundary Conditions": "input/example-inputs/test_CHB1.asc",
+        "Aquifer bottom elevation": "none"
+    },
+    "METEOROLOGICAL DATA": {
+        "Precipitation": "input/example-inputs/Pre_60m_00_05_sin.csv",
+        "Potential Evapotranspiration": "input/example-inputs/Pre_60m_00_05_sin.csv",
+        "Water abstractions file": "none",
+        "Other": "none"
+    },
+    "RESULTS AND OUTPUT DIRECTORIES": {
+        "Discharge point results": "input/example-inputs/test_Flumes_points.csv",
+        "Soil point results output": "input/example-inputs/test_SM_points.csv",
+        "Groundwater point results": "input/example-inputs/test_well_point_m.csv",
+        "Folder location results": "dryp_output/",
+        "Other": "none",
+        "MODEL PARAMETER SETTINGS FILE": "input/dryp_settings.json",
+        "GROUNDWATER ADITIONAL PARAMETER FILES": "none",
+        "INTERCEPTION MODEL": "none",
+        "RIPARIAN PROPERTIES": "none",
+        "BOUNDARY CONDITIONS OF": "none",
+        "DATASET PROJECTIONS AND COORDINANTES": "none"
+    }
+}
