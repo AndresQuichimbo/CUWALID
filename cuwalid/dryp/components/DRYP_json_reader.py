@@ -482,25 +482,16 @@ def get_variable(json, var_1, var_2=None):
 		if var_1 in json:
 			if var_2 in json[var_1]:
 				variable = json[var_1][var_2]
-				if var_2 == "start_date":
-					print("TEST 1")
 			elif var_2 in default_variables:
-				if var_2 == "start_date":
-					print("TEST 2")
 				variable = default_variables[var_2]
 				if variable == 'required':
 					print(f"ERROR: {var_1}:{var_2} is required but not found in configuration json. Program will terminate.")
 					sys.exit(1)
 				print(f"WARNING: {var_1}:{var_2} not found in configuration json. Using default of {variable}")
 			else:
-				if var_2 == "start_date":
-					print("TEST 3")
 				variable = 'None'
 		else:
 			print(f"WARNING: {var_1}:{var_2} not found in configuration json. Using default of None")
-
-	if var_2 == "start_date":
-		print(f"TEST FINAL: {variable}")
 
 	return variable
 
