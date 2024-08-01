@@ -38,7 +38,7 @@ class runoff_routing(object):
 		# dis_dt:	Discharge [mm]
 		# exs_dt:	Infiltration excess [mm]
 		# tls_dt	Transmission losses [mm]
-		# cth_area:	Cell factor area, it reduces or increases the area
+		# cth_area:	path_Qo, it reduces or increases the area
 		# Q_ini:	Initial available water in the channel				
 		dhriv = (env_state.SZgrid.at_node['water_table__elevation']
 			- env_state.grid.at_node['river_topo__elevation'])
@@ -49,7 +49,7 @@ class runoff_routing(object):
 		# dis_dt:	Discharge [mm]
 		# exs_dt:	Infiltration excess [mm]
 		# tls_dt	Transmission losses [mm]
-		# cth_area:	Cell factor area, it reduces or increases the area
+		# cth_area:	path_Qo, it reduces or increases the area
 		# Q_ini:	Initial available water in the channel
 		# aof:		River flow abstraction [mm]
 		env_state.grid.at_node['AOF'][:] = aof

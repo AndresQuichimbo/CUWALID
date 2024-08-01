@@ -575,7 +575,7 @@ discharge.</p>
 <li><p><strong>runoff</strong> (<em>runoff at each model cell</em><em>, </em><em>including base flow</em>) – at channel cells (m/dt) [L T-1]</p></li>
 <li><p><strong>conductivity</strong> (<em>channel hydraulic conductivity</em><em> (</em><em>m2/dt</em><em>) </em><em>[</em><em>L2 T-1</em><em>]</em>)</p></li>
 <li><p><strong>Q_ini</strong> (<em>inital volume</em><em> of </em><em>water available at the channel</em><em> [</em><em>m3</em><em>] </em><em>[</em><em>L3</em><em>]</em>)</p></li>
-<li><p><strong>cth_area</strong> (<em>Cell factor area</em><em>, </em><em>it reduces</em><em> or </em><em>increases the area</em>)</p></li>
+<li><p><strong>cth_area</strong> (<em>path_Qo</em><em>, </em><em>it reduces</em><em> or </em><em>increases the area</em>)</p></li>
 <li><p><strong>decay</strong> (<em>river decay parameter</em><em> (</em><em>1/dt</em><em>)</em>)</p></li>
 <li><p><strong>river_cell</strong> (<em>river cells</em><em>, </em><em>0 indicate not river in the cell</em>)</p></li>
 <li><p><strong>area_cells</strong> (<em>cell area?</em>)</p></li>
@@ -744,7 +744,7 @@ discharge.</p>
 cells (m/dt) [L T-1]</p></li>
 <li><p><strong>conductivity</strong> (<em>numpy array</em>) – channel hydraulic conductivity (m2/dt) [L2 T-1]</p></li>
 <li><p><strong>SSZ</strong> (<em>numpy array</em>) – inital volume of water available at the channel [m3] [L3]</p></li>
-<li><p><strong>cth_area</strong> (<em>numpy array</em>) – Cell factor area, it reduces or increases the area</p></li>
+<li><p><strong>cth_area</strong> (<em>numpy array</em>) – path_Qo, it reduces or increases the area</p></li>
 <li><p><strong>decay</strong> (<em>mumpy array</em>) – river decay parameter (1/dt)</p></li>
 <li><p><strong>river_cell</strong> (<em>numpy array</em>) – river cells, 0 indicate not river in the cell</p></li>
 <li><p><strong>area_cells</strong> (<em>numpy array</em>) – cell area</p></li>

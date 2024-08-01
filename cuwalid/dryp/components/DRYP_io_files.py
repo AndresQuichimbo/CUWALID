@@ -184,7 +184,7 @@ class get_model_settings(object):
 		
 		#==================================================================
 		# Meterological data ==============================================
-		self.fname_TSPre = filename.drylandmodel[66]	# Precipitation file
+		self.fname_TSPre = filename.drylandmodel[66]	# path_pre file
 		self.fname_TSMeteo = filename.drylandmodel[68]	# Evapotranspiration file
 		self.fname_TSABC = filename.drylandmodel[70]	# Abstraction file: AOF, AUZ, ASZ
 		#self.fname_savi = filename.drylandmodel[70]
@@ -504,11 +504,11 @@ class get_list_of_groundwater_files(object):
 		
 		# Groundwater components ==================================== GW = 
 		self.fname_GWdomain = filename.drylandmodel[51]# GW Boundary conditions
-		self.fname_SZ_Ksat = filename.drylandmodel[53] # Saturated hydraulic conductivity (Ks)
+		self.fname_SZ_Ksat = filename.drylandmodel[53] # path_uz_ksat (Ks)
 		self.fname_SZ_Sy = filename.drylandmodel[55] 	# Specific yield
 		self.fname_FHB = filename.drylandmodel[59]		# flux head boundary
 		self.fname_CHB = filename.drylandmodel[61]		# Constant flux boundary
-		self.fname_SZ_bot = filename.drylandmodel[63]	# Aquifer bottom elevation
+		self.fname_SZ_bot = filename.drylandmodel[63]	# path_sz_bottom
 		
 		# additional parameters
 		self.fname_thickness = 'None'
@@ -538,8 +538,8 @@ class get_list_of_groundwater_files(object):
 			if os.path.exists(filename.drylandmodel[89]):
 				fgw = pd.read_csv(filename.drylandmodel[89])
 				#print(fgw.GROUNDWATER)
-				self.fname_SZ_botb = fgw.GROUNDWATER[6]	# Aquifer bottom elevation
-				self.fname_SZ_Ksatb = fgw.GROUNDWATER[8] # Saturated hydraulic conductivity (Ks)
+				self.fname_SZ_botb = fgw.GROUNDWATER[6]	# path_sz_bottom
+				self.fname_SZ_Ksatb = fgw.GROUNDWATER[8] # path_uz_ksat (Ks)
 				self.fname_SZ_Syb = fgw.GROUNDWATER[10] 	# Specific yield
 				self.fname_SZ_Ssb = fgw.GROUNDWATER[12] 	# Specific yield
 				self.fname_GWinib = fgw.GROUNDWATER[14] 	# Initial water table

@@ -1,26 +1,26 @@
 DWAPM_SET
-======== SIMULATION PERIOD AND TIME STEP =========
+======== SETTINGS =========
 Initial date for simulation (YYYY MM DD) ........(2)
 2000 7 1
 Initial date for simulation (YYYY MM DD) ........(4)
 2006 1 1
-OF Time step - dt_Pre (min) - (1440 for daily)...(6)
+dt_of - (1440 for daily)...(6)
 60
 UZ Time step - dt_Pre (min) - (1440 for daily)...(8)
 60
-GW Time step -----------------------------------(10)
+dt_gw -----------------------------------(10)
 60
-READING OPTIONS: PRE-PET-ABS-Kc-SAVI-FLUX ==========
-Read datasets: 0-csv 1-One-netCDF 2-Multi-netCDF(13)
+READING ==========
+data_read(13)
 3 2 0 0 0 0 0 0
-Dataset time step (minutes).....................(15)
+data_step.....................(15)
 30 60 60 60 60 60 60 60 60 60
-Reproject datasets: 0- disable 1- disable ......(17)
+data_reproject: 0- disable 1- disable ......(17)
 1 1 0 0 0 0 0 0
 Interpolate datasets: 0- disable 1- disable ....(19)
 1 1 0 0 0 0 0 0
-============== MODEL COMPONENTS ====================
-Inf.- 0: Scheeke 1: Philips 2: Up_GA 3: Mod_GA..(22)
+============== COMPONENTS ====================
+method_inf- 0: Scheeke 1: Philips 2: Up_GA 3: Mod_GA..(22)
 1
 Run Groundwater - Type: 0-Cons 1-Unc 2-func 3-Mu(24)
 1 2
@@ -28,12 +28,12 @@ not used .......................................(26)
 none
 not used .......................................(28)
 none
-=============== OUTPUT OPTIONS ====================
+=============== OUTPUT ====================
 not used ................................... ...(31)
 0
-Save state results in netcf files...............(33)
+output_grid...............(33)
 1
-Temporal aggregation results (eg. 3M Y H)''.....(35)
+output_dt''.....(35)
 1M
 not used .......................................(37)
 0
@@ -43,24 +43,24 @@ not used .......................................(41)
 0
 not used .......................................(43)
 1
-============= MODEL PARAMETERS FACTORS ============  
-Runoff partition parameter (kdt-Sheeke).........(46)
+============= GLOBAL_FACTORS ============  
+factor_uz_kdt.........(46)
 1.0
-Soil Depth factor - kDroot (mm) ................(48)
+factor_uz_kdroot ................(48)
 1.05
 Not used (available for other parameter)........(50)
 1.0
-Infiltration rate factor - kKsat ...............(52)
+factor_uz_kkast ...............(52)
 0.25
-Heterogeneity factor - k_sigma - (Upscaled GA)..(54)
+factor_uz_ksigma..(54)
 1.0
 Transmission losses factor - kKch ..............(56)
 0.40
 Decay discharge factor - kT  ...................(58)
 21
-Channel width parameter (pe-not activated)......(60)
+factor_riv_kwidth......(60)
 1
-Aquifer saturated hydraulic conductivity........(62)
+factor_sz_kksat........(62)
 0.20
-Aquifer specific yield factor...................(64)
+factor_sz_ksy...................(64)
 0.08

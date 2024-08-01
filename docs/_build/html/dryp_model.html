@@ -139,7 +139,7 @@
 <p>For the <strong>subsurface component</strong> the following parameters can be provided, if not availble default values will be used:</p>
 <ul class="simple">
 <li><p>Rooting depth in mm, default value 1000mm</p></li>
-<li><p>Wilting Point (wp), default value 0.1</p></li>
+<li><p>path_uz_theta_wp, default value 0.1</p></li>
 <li><p>total available water wilting point (AWC), default value 0.10</p></li>
 <li><p>Porosity (n_e), default value 0.40</p></li>
 <li><p>Standard deviation of the saturated hydraulic conductivity, $sigma$</p></li>
@@ -150,7 +150,7 @@
 </ul>
 <p>For the <strong>groundwater component</strong></p>
 <ul class="simple">
-<li><p>Aquifer saturated hydraulic conductivity, $Ks_{GW}$, default value 1 [m/h]</p></li>
+<li><p>factor_sz_kksat, $Ks_{GW}$, default value 1 [m/h]</p></li>
 <li><p>Aquifer specific yield, $Ks_{GW}$, default value 0.01 [-]</p></li>
 <li><p>Groundwater model domain, optional, in case that groundwater catchment is different than surface catchment.</p></li>
 <li><p>Initial water table, default value is specified at 1 meter below the rooting depth.</p></li>
@@ -228,7 +228,7 @@ list of coordinates. This should be specified in a comma separated format (e.g. 
 specified as <em>North</em> and <em>East</em> for the y and x, respectively. If a coordinate is not located
 inside the model domain, the simulation will stop.  Note that at least one point coordinate should be
 specified, otherwise, an error will be produced.</p>
-<p>Coordinate files can be specified under the ‘RESULTS AND OUTPUT DIRECTORIES’ in the main configuration file:</p>
+<p>Coordinate files can be specified under the ‘OUTPUT’ in the main configuration file:</p>
 <p>Point result file are named with the model name followed by aletter p and the name of the variable at the end.</p>
 <p>Model variable name’s and codes stored for point result files, for filename see table</p>
 <p>Surface component</p>
@@ -277,63 +277,63 @@ coordinate of the catchment output.</p>
 create a nuew model.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">{</span>
 <span class="linenos"> 2</span><span class="w">    </span><span class="nt">&quot;drylandmodel&quot;</span><span class="p">:{</span>
-<span class="linenos"> 3</span><span class="w">        </span><span class="nt">&quot;Model name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span>
+<span class="linenos"> 3</span><span class="w">        </span><span class="nt">&quot;model_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span>
 <span class="linenos"> 4</span><span class="w">    </span><span class="p">},</span>
 <span class="linenos"> 5</span><span class="w">    </span><span class="nt">&quot;TERRAIN COMPONENTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 6</span><span class="w">        </span><span class="nt">&quot;Topography (DEM)&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_dem_m.asc&quot;</span><span class="p">,</span>
-<span class="linenos"> 7</span><span class="w">        </span><span class="nt">&quot;Cell factor area&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos"> 8</span><span class="w">        </span><span class="nt">&quot;Flow Direction (fd)&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_flowdir_m.asc&quot;</span><span class="p">,</span>
-<span class="linenos"> 9</span><span class="w">        </span><span class="nt">&quot;River decay parameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">10</span><span class="w">        </span><span class="nt">&quot;Basin Mask (catchment)&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_mask_m.asc&quot;</span><span class="p">,</span>
-<span class="linenos">11</span><span class="w">        </span><span class="nt">&quot;River length&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_riv_m.asc&quot;</span><span class="p">,</span>
-<span class="linenos">12</span><span class="w">        </span><span class="nt">&quot;River width&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">13</span><span class="w">        </span><span class="nt">&quot;River bottom elevation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
+<span class="linenos"> 6</span><span class="w">        </span><span class="nt">&quot;path_dem&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_dem_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos"> 7</span><span class="w">        </span><span class="nt">&quot;path_Qo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos"> 8</span><span class="w">        </span><span class="nt">&quot;path_fdl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_flowdir_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos"> 9</span><span class="w">        </span><span class="nt">&quot;path_riv_decay&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos">10</span><span class="w">        </span><span class="nt">&quot;path_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_mask_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos">11</span><span class="w">        </span><span class="nt">&quot;path_riv_len&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_riv_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos">12</span><span class="w">        </span><span class="nt">&quot;path_riv_width&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos">13</span><span class="w">        </span><span class="nt">&quot;path_riv_elev&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
 <span class="linenos">14</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">15</span><span class="w">    </span><span class="nt">&quot;SURFACE COMPONENTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">16</span><span class="w">        </span><span class="nt">&quot;Vegetation type Kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">17</span><span class="w">        </span><span class="nt">&quot;Soil land use&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">18</span><span class="w">        </span><span class="nt">&quot;Other&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
+<span class="linenos">15</span><span class="w">    </span><span class="nt">&quot;VEGETATION&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">16</span><span class="w">        </span><span class="nt">&quot;path_veg_kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos">17</span><span class="w">        </span><span class="nt">&quot;path_veg_lulc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos">18</span><span class="w">        </span><span class="nt">&quot;path_veg_nn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
 <span class="linenos">19</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">20</span><span class="w">    </span><span class="nt">&quot;SOIL AND SUBSURFACE PARAMETERS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">21</span><span class="w">        </span><span class="nt">&quot;Soil porosity: porosity&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_ne.txt&quot;</span><span class="p">,</span>
-<span class="linenos">22</span><span class="w">        </span><span class="nt">&quot;Theta residual&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_theta_r.txt&quot;</span><span class="p">,</span>
-<span class="linenos">23</span><span class="w">        </span><span class="nt">&quot;Available Water content (AWC)&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_awc.txt&quot;</span><span class="p">,</span>
-<span class="linenos">24</span><span class="w">        </span><span class="nt">&quot;Wilting Point (wp)&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_wp.txt&quot;</span><span class="p">,</span>
-<span class="linenos">25</span><span class="w">        </span><span class="nt">&quot;Soil Depth (D)&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_depth_m.asc&quot;</span><span class="p">,</span>
-<span class="linenos">26</span><span class="w">        </span><span class="nt">&quot;Soil particle distribution parameter (b)&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_n.txt&quot;</span><span class="p">,</span>
-<span class="linenos">27</span><span class="w">        </span><span class="nt">&quot;Soil suction head&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_phi.txt&quot;</span><span class="p">,</span>
+<span class="linenos">20</span><span class="w">    </span><span class="nt">&quot;UNSATURATED&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">21</span><span class="w">        </span><span class="nt">&quot;path_uz_theta_sat: porosity&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_ne.txt&quot;</span><span class="p">,</span>
+<span class="linenos">22</span><span class="w">        </span><span class="nt">&quot;path_uz_theta_res&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_theta_r.txt&quot;</span><span class="p">,</span>
+<span class="linenos">23</span><span class="w">        </span><span class="nt">&quot;path_uz_theta_awc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_awc.txt&quot;</span><span class="p">,</span>
+<span class="linenos">24</span><span class="w">        </span><span class="nt">&quot;path_uz_theta_wp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_wp.txt&quot;</span><span class="p">,</span>
+<span class="linenos">25</span><span class="w">        </span><span class="nt">&quot;path_uz_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_depth_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos">26</span><span class="w">        </span><span class="nt">&quot;path_uz_lambda&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_n.txt&quot;</span><span class="p">,</span>
+<span class="linenos">27</span><span class="w">        </span><span class="nt">&quot;path_uz_psi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_phi.txt&quot;</span><span class="p">,</span>
 <span class="linenos">28</span><span class="w">        </span><span class="nt">&quot;Saturated hydraulic conductivity&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_ks.txt&quot;</span><span class="p">,</span>
-<span class="linenos">29</span><span class="w">        </span><span class="nt">&quot;sigma_Ksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_sigma_ks.txt&quot;</span><span class="p">,</span>
-<span class="linenos">30</span><span class="w">        </span><span class="nt">&quot;Initial soil water content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">31</span><span class="w">        </span><span class="nt">&quot;Channel saturated hydraulic conductivity&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
+<span class="linenos">29</span><span class="w">        </span><span class="nt">&quot;path_uz_sigmaksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_sigma_ks.txt&quot;</span><span class="p">,</span>
+<span class="linenos">30</span><span class="w">        </span><span class="nt">&quot;path_uz_theta&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos">31</span><span class="w">        </span><span class="nt">&quot;path_riv_ksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
 <span class="linenos">32</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">33</span><span class="w">    </span><span class="nt">&quot;GROUNDWATER PARAMETER AND BOUNDARY CONDITIONS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">34</span><span class="w">        </span><span class="nt">&quot;Groundwater Boundary condition (domain)&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_mask_m.asc&quot;</span><span class="p">,</span>
-<span class="linenos">35</span><span class="w">        </span><span class="nt">&quot;Aquifer Sat. Hydraulic Conductivity (Ksat_aq)&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_ks1.txt&quot;</span><span class="p">,</span>
-<span class="linenos">36</span><span class="w">        </span><span class="nt">&quot;Specific Yield&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">37</span><span class="w">        </span><span class="nt">&quot;Initial Conditions Water table elevation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_wte_ini.asc&quot;</span><span class="p">,</span>
-<span class="linenos">38</span><span class="w">        </span><span class="nt">&quot;Flux Boundary Conditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">39</span><span class="w">        </span><span class="nt">&quot;Head Boundary Conditions&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_CHB1.asc&quot;</span><span class="p">,</span>
-<span class="linenos">40</span><span class="w">        </span><span class="nt">&quot;Aquifer bottom elevation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
+<span class="linenos">33</span><span class="w">    </span><span class="nt">&quot;SATURATED&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">34</span><span class="w">        </span><span class="nt">&quot;path_sz_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_mask_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos">35</span><span class="w">        </span><span class="nt">&quot;path_sz_ksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_ks1.txt&quot;</span><span class="p">,</span>
+<span class="linenos">36</span><span class="w">        </span><span class="nt">&quot;path_sz_sy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos">37</span><span class="w">        </span><span class="nt">&quot;path_sz_wte&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_wte_ini.asc&quot;</span><span class="p">,</span>
+<span class="linenos">38</span><span class="w">        </span><span class="nt">&quot;path_sz_bc_flux&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos">39</span><span class="w">        </span><span class="nt">&quot;path_sz_bc_head&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_CHB1.asc&quot;</span><span class="p">,</span>
+<span class="linenos">40</span><span class="w">        </span><span class="nt">&quot;path_sz_bottom&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
 <span class="linenos">41</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">42</span><span class="w">    </span><span class="nt">&quot;METEOROLOGICAL DATA&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">43</span><span class="w">        </span><span class="nt">&quot;Precipitation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/Pre_60m_00_05_sin.csv&quot;</span><span class="p">,</span>
-<span class="linenos">44</span><span class="w">        </span><span class="nt">&quot;Potential Evapotranspiration&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/Pre_60m_00_05_sin.csv&quot;</span><span class="p">,</span>
-<span class="linenos">45</span><span class="w">        </span><span class="nt">&quot;Water abstractions file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">46</span><span class="w">        </span><span class="nt">&quot;Other&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
+<span class="linenos">42</span><span class="w">    </span><span class="nt">&quot;METEO&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">43</span><span class="w">        </span><span class="nt">&quot;path_pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/Pre_60m_00_05_sin.csv&quot;</span><span class="p">,</span>
+<span class="linenos">44</span><span class="w">        </span><span class="nt">&quot;path_pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/Pre_60m_00_05_sin.csv&quot;</span><span class="p">,</span>
+<span class="linenos">45</span><span class="w">        </span><span class="nt">&quot;path_aof&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos">46</span><span class="w">        </span><span class="nt">&quot;path_veg_nn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
 <span class="linenos">47</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">48</span><span class="w">    </span><span class="nt">&quot;RESULTS AND OUTPUT DIRECTORIES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">49</span><span class="w">        </span><span class="nt">&quot;Discharge point results&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_Flumes_points.csv&quot;</span><span class="p">,</span>
-<span class="linenos">50</span><span class="w">        </span><span class="nt">&quot;Soil point results output&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_SM_points.csv&quot;</span><span class="p">,</span>
-<span class="linenos">51</span><span class="w">        </span><span class="nt">&quot;Groundwater point results&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_well_point_m.csv&quot;</span><span class="p">,</span>
-<span class="linenos">52</span><span class="w">        </span><span class="nt">&quot;Folder location results&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dryp_output/&quot;</span><span class="p">,</span>
-<span class="linenos">53</span><span class="w">        </span><span class="nt">&quot;Other&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">54</span><span class="w">        </span><span class="nt">&quot;MODEL PARAMETER SETTINGS FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/dryp_settings.json&quot;</span><span class="p">,</span>
-<span class="linenos">55</span><span class="w">        </span><span class="nt">&quot;GROUNDWATER ADITIONAL PARAMETER FILES&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">56</span><span class="w">        </span><span class="nt">&quot;INTERCEPTION MODEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">57</span><span class="w">        </span><span class="nt">&quot;RIPARIAN PROPERTIES&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">58</span><span class="w">        </span><span class="nt">&quot;BOUNDARY CONDITIONS OF&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">59</span><span class="w">        </span><span class="nt">&quot;DATASET PROJECTIONS AND COORDINANTES&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
+<span class="linenos">48</span><span class="w">    </span><span class="nt">&quot;OUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">49</span><span class="w">        </span><span class="nt">&quot;path_out_sz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_Flumes_points.csv&quot;</span><span class="p">,</span>
+<span class="linenos">50</span><span class="w">        </span><span class="nt">&quot;path_out_uz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_SM_points.csv&quot;</span><span class="p">,</span>
+<span class="linenos">51</span><span class="w">        </span><span class="nt">&quot;path_out_oz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_well_point_m.csv&quot;</span><span class="p">,</span>
+<span class="linenos">52</span><span class="w">        </span><span class="nt">&quot;path_output&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dryp_output/&quot;</span><span class="p">,</span>
+<span class="linenos">53</span><span class="w">        </span><span class="nt">&quot;path_veg_nn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos">54</span><span class="w">        </span><span class="nt">&quot;path_setting&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/dryp_settings.json&quot;</span><span class="p">,</span>
+<span class="linenos">55</span><span class="w">        </span><span class="nt">&quot;path_gw_settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos">56</span><span class="w">        </span><span class="nt">&quot;path_vg_settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos">57</span><span class="w">        </span><span class="nt">&quot;path_rp_settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos">58</span><span class="w">        </span><span class="nt">&quot;path_of_settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="linenos">59</span><span class="w">        </span><span class="nt">&quot;path_projection&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
 <span class="linenos">60</span><span class="w">    </span><span class="p">}</span>
 <span class="linenos">61</span><span class="p">}</span>
 </pre></div>
@@ -382,11 +382,11 @@ is not allowed to change, it will result in errors or even stop the simulation.<
 <p>The following is an example of the configuration of reading parameters
 options.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;READING OPTIONS: PRE-PET-ABS-Kc-SAVI-FLUX&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;Read datasets: 0-csv 1-One-netCDF 2-Multi-netCDF&quot;</span><span class="p">:</span> <span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Dataset time step (minutes)&quot;</span><span class="p">:</span> <span class="s2">&quot;60 60 60 60 60 60 60 60&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Reproject datasets: 0- disable 1- enable&quot;</span><span class="p">:</span> <span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Interpolate datasets: 0- disable 1- enable&quot;</span><span class="p">:</span> <span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span>
+    <span class="s2">&quot;READING&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;data_read&quot;</span><span class="p">:</span> <span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data_step&quot;</span><span class="p">:</span> <span class="s2">&quot;60 60 60 60 60 60 60 60&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data_reproject&quot;</span><span class="p">:</span> <span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;data_interp&quot;</span><span class="p">:</span> <span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -426,12 +426,12 @@ approach.</p>
 </section>
 <section id="setting-storage-of-model-outputs">
 <h4>Setting storage of model outputs<a class="headerlink" href="#setting-storage-of-model-outputs" title="Link to this heading"></a></h4>
-<p>To save model results as netCDF files change the boolean (true/false) under ‘OUTPUT OPTIONS’.
-Line “Temporal aggregation results (eg. 3M Y H)” is used to specify the aggregation
+<p>To save model results as netCDF files change the boolean (true/false) under ‘OUTPUT’.
+Line “output_dt” is used to specify the aggregation
 frequency. Frequency should be specified as integer and a string character. Accepted character are D for
 days, M for months and Y for years, an example is specified below:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;Save state results in netcf files&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
-<span class="s2">&quot;Temporal aggregation results (eg. 3M Y H)&quot;</span><span class="p">:</span> <span class="s2">&quot;1H&quot;</span><span class="p">,</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;output_grid&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+<span class="s2">&quot;output_dt&quot;</span><span class="p">:</span> <span class="s2">&quot;1H&quot;</span><span class="p">,</span>
 </pre></div>
 </div>
 </section>
@@ -451,45 +451,45 @@ file. Values are scale factors of the following parameters, this values are unit
 <li><p>kSy for aquifer specific yield factor,</p></li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">{</span>
-<span class="linenos"> 2</span><span class="w">    </span><span class="nt">&quot;SIMULATION PERIOD AND TIME STEP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 3</span><span class="w">      </span><span class="nt">&quot;Initial date for simulation 1 (YYYY MM DD)&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2000 1 1&quot;</span><span class="p">,</span>
-<span class="linenos"> 4</span><span class="w">      </span><span class="nt">&quot;Initial date for simulation 2 (YYYY MM DD)&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2002 1 3&quot;</span><span class="p">,</span>
-<span class="linenos"> 5</span><span class="w">      </span><span class="nt">&quot;OF Time step - dt_Pre (min)&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
-<span class="linenos"> 6</span><span class="w">      </span><span class="nt">&quot;GW Time step&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span>
+<span class="linenos"> 2</span><span class="w">    </span><span class="nt">&quot;SETTINGS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 3</span><span class="w">      </span><span class="nt">&quot;start_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2000 1 1&quot;</span><span class="p">,</span>
+<span class="linenos"> 4</span><span class="w">      </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2002 1 3&quot;</span><span class="p">,</span>
+<span class="linenos"> 5</span><span class="w">      </span><span class="nt">&quot;dt_of&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="linenos"> 6</span><span class="w">      </span><span class="nt">&quot;dt_gw&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span>
 <span class="linenos"> 7</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos"> 8</span><span class="w">    </span><span class="nt">&quot;READING OPTIONS: PRE-PET-ABS-Kc-SAVI-FLUX&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 9</span><span class="w">      </span><span class="nt">&quot;Read datasets: 0-csv 1-One-netCDF 2-Multi-netCDF&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span><span class="p">,</span>
-<span class="linenos">10</span><span class="w">      </span><span class="nt">&quot;Dataset time step (minutes)&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;60 60 60 60 60 60 60 60 60 60&quot;</span><span class="p">,</span>
-<span class="linenos">11</span><span class="w">      </span><span class="nt">&quot;Reproject datasets: 0- disable 1- enable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span><span class="p">,</span>
-<span class="linenos">12</span><span class="w">      </span><span class="nt">&quot;Interpolate datasets: 0- disable 1- enable&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="nt">&quot;READING&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 9</span><span class="w">      </span><span class="nt">&quot;data_read&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span><span class="p">,</span>
+<span class="linenos">10</span><span class="w">      </span><span class="nt">&quot;data_step&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;60 60 60 60 60 60 60 60 60 60&quot;</span><span class="p">,</span>
+<span class="linenos">11</span><span class="w">      </span><span class="nt">&quot;data_reproject&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span><span class="p">,</span>
+<span class="linenos">12</span><span class="w">      </span><span class="nt">&quot;data_interp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span>
 <span class="linenos">13</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">14</span><span class="w">    </span><span class="nt">&quot;MODEL COMPONENTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">15</span><span class="w">      </span><span class="nt">&quot;Inf.&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="linenos">16</span><span class="w">      </span><span class="nt">&quot;Run Groundwater-Enable Type: 0-Unc 1-func 2-Con&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1 0&quot;</span><span class="p">,</span>
+<span class="linenos">14</span><span class="w">    </span><span class="nt">&quot;COMPONENTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">15</span><span class="w">      </span><span class="nt">&quot;method_inf&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="linenos">16</span><span class="w">      </span><span class="nt">&quot;method_gw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1 0&quot;</span><span class="p">,</span>
 <span class="linenos">17</span><span class="w">      </span><span class="nt">&quot;not used 1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
 <span class="linenos">18</span><span class="w">      </span><span class="nt">&quot;not used 2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
 <span class="linenos">19</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">20</span><span class="w">    </span><span class="nt">&quot;OUTPUT OPTIONS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">21</span><span class="w">      </span><span class="nt">&quot;Save state results in csv files&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="linenos">22</span><span class="w">      </span><span class="nt">&quot;Save state results in netcf files&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="linenos">23</span><span class="w">      </span><span class="nt">&quot;Temporal aggregation results (eg. 3M Y H)&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1H&quot;</span><span class="p">,</span>
+<span class="linenos">20</span><span class="w">    </span><span class="nt">&quot;OUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">21</span><span class="w">      </span><span class="nt">&quot;output_csv&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="linenos">22</span><span class="w">      </span><span class="nt">&quot;output_grid&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="linenos">23</span><span class="w">      </span><span class="nt">&quot;output_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1H&quot;</span><span class="p">,</span>
 <span class="linenos">24</span><span class="w">      </span><span class="nt">&quot;not used 1&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="linenos">25</span><span class="w">      </span><span class="nt">&quot;Save discharge in volumetric rate units&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="linenos">26</span><span class="w">      </span><span class="nt">&quot;not used 2&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="linenos">27</span><span class="w">      </span><span class="nt">&quot;not used 3&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
 <span class="linenos">28</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">29</span><span class="w">    </span><span class="nt">&quot;MODEL PARAMETERS FACTORS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">30</span><span class="w">      </span><span class="nt">&quot;Runoff partition parameter (kdt-Sheeke)&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.00000</span><span class="p">,</span>
-<span class="linenos">31</span><span class="w">      </span><span class="nt">&quot;Soil Depth factor - kDroot (mm)&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
-<span class="linenos">32</span><span class="w">      </span><span class="nt">&quot;Available Water Content factor - kAWC&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.00</span><span class="p">,</span>
-<span class="linenos">33</span><span class="w">      </span><span class="nt">&quot;Infiltration rate factor - kKsat&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.29024</span><span class="p">,</span>
-<span class="linenos">34</span><span class="w">      </span><span class="nt">&quot;Heterogeneity factor - k_sigma - (Upscaled GA)&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
-<span class="linenos">35</span><span class="w">      </span><span class="nt">&quot;Transmission losses - Kch (m/h)&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">10.52967</span><span class="p">,</span>
-<span class="linenos">36</span><span class="w">      </span><span class="nt">&quot;Decay discharge - T - (hours)&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.1512967</span><span class="p">,</span>
-<span class="linenos">37</span><span class="w">      </span><span class="nt">&quot;Channel width parameter (pe-not activated)&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
-<span class="linenos">38</span><span class="w">      </span><span class="nt">&quot;Aquifer saturated hydraulic conductivity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
-<span class="linenos">39</span><span class="w">      </span><span class="nt">&quot;Aquifer specific yield factor&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.00</span><span class="p">,</span>
-<span class="linenos">40</span><span class="w">      </span><span class="nt">&quot;Flux boundary condition factor&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span>
+<span class="linenos">29</span><span class="w">    </span><span class="nt">&quot;GLOBAL_FACTORS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">30</span><span class="w">      </span><span class="nt">&quot;factor_uz_kdt&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.00000</span><span class="p">,</span>
+<span class="linenos">31</span><span class="w">      </span><span class="nt">&quot;factor_uz_kdroot&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">32</span><span class="w">      </span><span class="nt">&quot;factor_uz_kawc&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.00</span><span class="p">,</span>
+<span class="linenos">33</span><span class="w">      </span><span class="nt">&quot;factor_uz_kkast&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.29024</span><span class="p">,</span>
+<span class="linenos">34</span><span class="w">      </span><span class="nt">&quot;factor_uz_ksigma&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">35</span><span class="w">      </span><span class="nt">&quot;factor_riv_kksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">10.52967</span><span class="p">,</span>
+<span class="linenos">36</span><span class="w">      </span><span class="nt">&quot;factor_riv_kdecay&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.1512967</span><span class="p">,</span>
+<span class="linenos">37</span><span class="w">      </span><span class="nt">&quot;factor_riv_kwidth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">38</span><span class="w">      </span><span class="nt">&quot;factor_sz_kksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">39</span><span class="w">      </span><span class="nt">&quot;factor_sz_ksy&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.00</span><span class="p">,</span>
+<span class="linenos">40</span><span class="w">      </span><span class="nt">&quot;factor_of_kflow&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span>
 <span class="linenos">41</span><span class="w">    </span><span class="p">}</span>
 <span class="linenos">42</span><span class="w">  </span><span class="p">}</span>
 <span class="linenos">43</span><span class="w">  </span>
@@ -500,27 +500,27 @@ file. Values are scale factors of the following parameters, this values are unit
 <section id="riparian-zone-parameter-files">
 <h3>Riparian zone parameter files<a class="headerlink" href="#riparian-zone-parameter-files" title="Link to this heading"></a></h3>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>RIPARIAN
-<span class="linenos"> 2</span>Soil porosity: porosity ------------------------(1):
+<span class="linenos"> 2</span>path_uz_theta_sat: porosity ------------------------(1):
 <span class="linenos"> 3</span>/user/work/km19051/Juba/input/JU_HAD_theta_sat_utm_m.asc
-<span class="linenos"> 4</span>Theta residual ---------------------------------(3):
+<span class="linenos"> 4</span>path_uz_theta_res ---------------------------------(3):
 <span class="linenos"> 5</span>none
-<span class="linenos"> 6</span>Available Water content (AWC) ------------------(5):
+<span class="linenos"> 6</span>path_uz_theta_awc ------------------(5):
 <span class="linenos"> 7</span>/user/work/km19051/Juba/input/JU_HAD_theta_awc_utm.asc
-<span class="linenos"> 8</span>Wilting Point (wp) -----------------------------(7):
+<span class="linenos"> 8</span>path_uz_theta_wp -----------------------------(7):
 <span class="linenos"> 9</span>/user/work/km19051/Juba/input/JU_HAD_theta_wp_utm.asc
-<span class="linenos">10</span>Soil Depth (D) ---------------------------------(9):
+<span class="linenos">10</span>path_uz_root ---------------------------------(9):
 <span class="linenos">11</span>/user/work/km19051/Juba/input/JU_HAD_rootdepth_utm_m.asc
 <span class="linenos">12</span>Soi particle distribution parameter (b) --------(11):
 <span class="linenos">13</span>/user/work/km19051/Juba/input/JU_HAD_lambdas_utm_m.asc
-<span class="linenos">14</span>Soil suction head ------------------------------(13):
+<span class="linenos">14</span>path_uz_psi ------------------------------(13):
 <span class="linenos">15</span>/user/work/km19051/Juba/input/JU_HAD_psi_utm_m.asc
 <span class="linenos">16</span>Saturated hydraulic conductivity ---------------(15):
 <span class="linenos">17</span>/user/work/km19051/Juba/input/JU_HAD_ksat_utm_m.asc
-<span class="linenos">18</span>sigma_Ksat -------------------------------------(17):
+<span class="linenos">18</span>path_uz_sigmaksat -------------------------------------(17):
 <span class="linenos">19</span>none
-<span class="linenos">20</span>Initial soil water content ---------------------(19):
+<span class="linenos">20</span>path_uz_theta ---------------------(19):
 <span class="linenos">21</span>/user/work/km19051/Juba/input/Juba_IM_sim_ini_avg_tht_rp_ini.asc
-<span class="linenos">22</span>Other ------------------------------------------(21):
+<span class="linenos">22</span>path_veg_nn ------------------------------------------(21):
 <span class="linenos">23</span>none
 <span class="linenos">24</span>
 </pre></div>

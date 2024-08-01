@@ -1,97 +1,97 @@
 drylandmodel
-Model name --------------------------------------(1):
+model_name --------------------------------------(1):
 Juba_IM_sim
 ================ TERRAIN COMPONENTS ================= 
-Topography (DEM)---------------------------------(4):
+path_dem---------------------------------(4):
 /user/work/km19051/Juba/input/JU_HAD_DEM_utm_mm.asc
-Cell factor area --------------------------------(6):
+path_Qo --------------------------------(6):
 /user/work/km19051/Juba/input/Juba_IM_sim_ini_avg_Q_ini.asc
-Flow Direction (fd)------------------------------(8):
+path_fdl------------------------------(8):
 /user/work/km19051/Juba/input/JU_HAD_flowdir_land_utm.asc
 channel decay parameter ------------------------(10):
 /user/work/km19051/Juba/input/JU_HAD_decay_utm_v0.asc
-Basin Mask (catchment) -------------------------(12):
+path_mask -------------------------(12):
 /user/work/km19051/Juba/input/HAD_basin_Juba_mask.asc
-River length -----------------------------------(14):
+path_riv_len -----------------------------------(14):
 /user/work/km19051/Juba/input/JU_HAD_riv_length_utm.asc
-River width ------------------------------------(16):
+path_riv_width ------------------------------------(16):
 /user/work/km19051/Juba/input/JU_HAD_width_utm_v0.asc
-River bottom elevation -------------------------(18):
+path_riv_elev -------------------------(18):
 /user/work/km19051/Juba/input/JU_HAD_riv_elev_utm_mod.asc
-================ SURFACE COMPONENTS ================= 
-Vegetation type Kc -----------------------------(21):
+================ VEGETATION ================= 
+path_veg_kc -----------------------------(21):
 none
-Soil land use ----------------------------------(23):
+path_veg_lulc ----------------------------------(23):
 none
-Other ------------------------------------------(25):
+path_veg_nn ------------------------------------------(25):
 none
-=========== SOIL AND SUBSURFACE PARAMETERS ========== 
-Soil porosity: porosity ------------------------(28):
+=========== UNSATURATED ========== 
+path_uz_theta_sat: porosity ------------------------(28):
 /user/work/km19051/Juba/input/JU_HAD_theta_sat_utm_m.asc
-Theta residual ---------------------------------(30):
+path_uz_theta_res ---------------------------------(30):
 none
-Available Water content (AWC) ------------------(32):
+path_uz_theta_awc ------------------(32):
 /user/work/km19051/Juba/input/JU_HAD_theta_awc_utm.asc
-Wilting Point (wp) -----------------------------(34):
+path_uz_theta_wp -----------------------------(34):
 /user/work/km19051/Juba/input/JU_HAD_theta_wp_utm.asc
-Soil Depth (D) ---------------------------------(36):
+path_uz_root ---------------------------------(36):
 /user/work/km19051/Juba/input/JU_HAD_rootdepth_utm_m.asc
 Soi particle distribution parameter (b) --------(38):
 /user/work/km19051/Juba/input/JU_HAD_lambdas_utm_m.asc
-Soil suction head ------------------------------(40):
+path_uz_psi ------------------------------(40):
 /user/work/km19051/Juba/input/JU_HAD_psi_utm_m.asc
-Saturated hydraulic conductivity ---------------(42):
+path_uz_ksat ---------------(42):
 /user/work/km19051/Juba/input/JU_HAD_ksat_utm_m.asc
-sigma_Ksat -------------------------------------(44):
+path_uz_sigmaksat -------------------------------------(44):
 none
-Initial soil water content ---------------------(46):
+path_uz_theta ---------------------(46):
 /user/work/km19051/Juba/input/Juba_IM_sim_ini_avg_tht_ini.asc
 Other ------------------------------------------(48):
 /user/work/km19051/Juba/input/JU_HAD_ksat_utm_m.asc
-=== GROUNDWATER PARAMETER AND BOUNDARY CONDITIONS ===
-Groundwater Boundary condition (domain) --------(51):
+=== SATURATED ===
+path_sz_mask --------(51):
 none
-Aquifer Sat. Hydraulic Conductivity (Ksat_aq) --(53):
+path_sz_ksat --(53):
 /user/work/km19051/Juba/input/JU_HAD_ksat_D2E_ksat_utm_sim_28.asc
-Specific Yield----------------------------------(55):
+path_sz_sy----------------------------------(55):
 /user/work/km19051/Juba/input/JU_HAD_ksat_D2E_sy_ghlymps_utm.asc
-Initial Conditions Water table elevation -------(57):
+path_sz_wte -------(57):
 /user/work/km19051/Juba/input/Juba_IM_sim_ini_avg_wte_ini.asc
-Flux Boundary Conditions -----------------------(59):
+path_sz_bc_flux -----------------------(59):
 none
-Head Boundary Conditions -----------------------(61):
+path_sz_bc_head -----------------------(61):
 /user/work/km19051/Juba/input/HAD_basin_Juba_CHB.asc
-Aquifer bottom elevation -----------------------(63):
+path_sz_bottom -----------------------(63):
 /user/work/km19051/Juba/input/JU_HAD_botb.asc
-============== METEOROLOGICAL DATA ==================
-Precipitation ----------------------------------(66):
+============== METEO ==================
+path_pre ----------------------------------(66):
 /user/work/km19051/dataset/IMERG/YYYY/IMERG_YYYY-MM.nc
-Potential Evapotranspiration -------------------(68):
+path_pet -------------------(68):
 /user/work/km19051/dataset/ERA/HAD_pet_H_YYYY.nc
 Other-------------------------------------------(70):
 none
 Other ------------------------------------------(72):
 none
-======== RESULTS AND OUTPUT DIRECTORIES ============= 
-Discharge point results ------------------------(75):
+======== OUTPUT ============= 
+path_out_sz ------------------------(75):
 /user/work/km19051/Juba/input/HAD_juba_dryp_station_utm.csv
-Soil point results output ----------------------(77):
+path_out_uz ----------------------(77):
 /user/work/km19051/Juba/input/HAD_juba_dryp_station_utm.csv
-Groundwater point results ----------------------(79):
+path_out_oz ----------------------(79):
 /user/work/km19051/Juba/input/HAD_juba_dryp_station_utm.csv
-Folder location results ------------------------(81):
+path_output ------------------------(81):
 /user/work/km19051/Juba_output
 Other ------------------------------------------(83):
 none
 Other ------------------------------------------(85):
 none
-MODEL PARAMETER SETTINGS FILE ------------------(87):
+path_setting ------------------(87):
 /user/work/km19051/Juba/HAD_IMERG_Juba_par_setting.dwapm
 GROUNDWATER AND the TWO-LAYER MODEL FILES ------(89):
 /user/work/km19051/Juba/HAD_GW_parameters.dwapm
-INTERCEPTION MODEL -----------------------------(91):
+path_vg_settings -----------------------------(91):
 none
-RIPARIAN PROPERTIES ----------------------------(93):
+path_rp_settings ----------------------------(93):
 /user/work/km19051/Juba/HAD_riparian_inputs.txt
 SURFACE BOUNDARY CONDITION PARAMETERS ----------(95):
 none

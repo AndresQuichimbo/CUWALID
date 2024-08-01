@@ -123,7 +123,7 @@
 		<span class="c1"># dis_dt:	Discharge [mm]</span>
 		<span class="c1"># exs_dt:	Infiltration excess [mm]</span>
 		<span class="c1"># tls_dt	Transmission losses [mm]</span>
-		<span class="c1"># cth_area:	Cell factor area, it reduces or increases the area</span>
+		<span class="c1"># cth_area:	path_Qo, it reduces or increases the area</span>
 		<span class="c1"># Q_ini:	Initial available water in the channel				</span>
 		<span class="n">dhriv</span> <span class="o">=</span> <span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">SZgrid</span><span class="o">.</span><span class="n">at_node</span><span class="p">[</span><span class="s1">&#39;water_table__elevation&#39;</span><span class="p">]</span>
 			<span class="o">-</span> <span class="n">env_state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">at_node</span><span class="p">[</span><span class="s1">&#39;river_topo__elevation&#39;</span><span class="p">])</span>
@@ -137,7 +137,7 @@
 		<span class="c1"># dis_dt:	Discharge [mm]</span>
 		<span class="c1"># exs_dt:	Infiltration excess [mm]</span>
 		<span class="c1"># tls_dt	Transmission losses [mm]</span>
-		<span class="c1"># cth_area:	Cell factor area, it reduces or increases the area</span>
+		<span class="c1"># cth_area:	path_Qo, it reduces or increases the area</span>
 		<span class="c1"># Q_ini:	Initial available water in the channel</span>
 		<span class="c1"># aof:		River flow abstraction [mm]</span>
 		<span class="n">env_state</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">at_node</span><span class="p">[</span><span class="s1">&#39;AOF&#39;</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">aof</span>

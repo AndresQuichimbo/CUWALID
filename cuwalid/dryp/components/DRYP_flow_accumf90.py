@@ -41,7 +41,7 @@ class runoff_routing(object):
 		Q_ini: numpy array
 			inital volume of water available at the channel [m3] [L3]
 		cth_area:	numpy array
-			Cell factor area, it reduces or increases the area
+			path_Qo, it reduces or increases the area
 		decay: numpy array
 			river decay parameter (1/dt)
 		river_cell:	array of ints
@@ -116,7 +116,7 @@ class runoff_routing(object):
 		SSZ: numpy array
 			inital volume of water available at the channel [m3] [L3]
 		cth_area :	numpy array
-			Cell factor area, it reduces or increases the area
+			path_Qo, it reduces or increases the area
 		decay : mumpy array
 			river decay parameter (1/dt)
 		river_cell : numpy array

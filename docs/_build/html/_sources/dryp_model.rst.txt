@@ -46,7 +46,7 @@ Flow direction raster files must have as values the number of the next downstrea
 For the **subsurface component** the following parameters can be provided, if not availble default values will be used:
 
 * Rooting depth in mm, default value 1000mm
-* Wilting Point (wp), default value 0.1
+* path_uz_theta_wp, default value 0.1
 * total available water wilting point (AWC), default value 0.10
 * Porosity (n_e), default value 0.40
 * Standard deviation of the saturated hydraulic conductivity, $\sigma$
@@ -57,7 +57,7 @@ For the **subsurface component** the following parameters can be provided, if no
 
 For the **groundwater component**
 
-* Aquifer saturated hydraulic conductivity, $Ks_{GW}$, default value 1 [m/h]
+* factor_sz_kksat, $Ks_{GW}$, default value 1 [m/h]
 * Aquifer specific yield, $Ks_{GW}$, default value 0.01 [-]
 * Groundwater model domain, optional, in case that groundwater catchment is different than surface catchment.
 * Initial water table, default value is specified at 1 meter below the rooting depth.
@@ -151,7 +151,7 @@ specified as *North* and *East* for the y and x, respectively. If a coordinate i
 inside the model domain, the simulation will stop.  Note that at least one point coordinate should be
 specified, otherwise, an error will be produced.
 
-Coordinate files can be specified under the 'RESULTS AND OUTPUT DIRECTORIES' in the main configuration file:
+Coordinate files can be specified under the 'OUTPUT' in the main configuration file:
 
 Point result file are named with the model name followed by aletter p and the name of the variable at the end.
 
@@ -265,11 +265,11 @@ options.
 .. parsed-literal::
 
     {
-        "READING OPTIONS: PRE-PET-ABS-Kc-SAVI-FLUX": {
-            "Read datasets: 0-csv 1-One-netCDF 2-Multi-netCDF": "0 0 0 0 0 0 0 0",
-            "Dataset time step (minutes)": "60 60 60 60 60 60 60 60",
-            "Reproject datasets: 0- disable 1- enable": "0 0 0 0 0 0 0 0",
-            "Interpolate datasets: 0- disable 1- enable": "0 0 0 0 0 0 0 0"
+        "READING": {
+            "data_read": "0 0 0 0 0 0 0 0",
+            "data_step": "60 60 60 60 60 60 60 60",
+            "data_reproject": "0 0 0 0 0 0 0 0",
+            "data_interp": "0 0 0 0 0 0 0 0"
         }
     }
 
@@ -312,14 +312,14 @@ approach.
 Setting storage of model outputs
 """"""""""""""""""""""""""""""""
 
-To save model results as netCDF files change the boolean (true/false) under 'OUTPUT OPTIONS'.
-Line "Temporal aggregation results (eg. 3M Y H)" is used to specify the aggregation
+To save model results as netCDF files change the boolean (true/false) under 'OUTPUT'.
+Line "output_dt" is used to specify the aggregation
 frequency. Frequency should be specified as integer and a string character. Accepted character are D for
 days, M for months and Y for years, an example is specified below:
 
 .. parsed-literal::
-    "Save state results in netcf files": true,
-    "Temporal aggregation results (eg. 3M Y H)": "1H",
+    "output_grid": true,
+    "output_dt": "1H",
 
 
 Calibration factors
