@@ -26,7 +26,7 @@ Parameters:
         model parameter settings in plain txt format
     
 Version(s):
-20181130 (1.0.0) --> Development of application for version 3.1.5 of HMC models
+20191130 (1.0.0) --> Development of application for version 2.0.0 of Cuwalid models
 """
 
 
@@ -81,7 +81,7 @@ alg_release = '2023-08-01'
 
 #@profile
 def run_DRYP(filename_input):
-	"""This funtion integrates all components of the model, with
+	"""This function integrates all components of the model, with
 	all model parameters and component settings being specified in
 	the -filename_input- file.
 	
