@@ -1,0 +1,77 @@
+"""DRYP_default_settings"""
+
+SIMULATION_PERIOD = {
+"start_date": None,
+"end_date": None,
+}
+
+TIMESTEP_SETTINGS = {
+"dt_of": 60,
+"dt_uz": 60,
+"dt_gw": 60,
+}
+
+data_reading = {
+"pre": 0,
+"pet": 0,
+"abs": 0,
+"kc": 0,
+"savi": 0,
+"flux": 0,
+}
+
+data_step = {
+"pre": 60,
+"pet": 60,
+"abs": 60,
+"kc": 60,
+"savi": 60,
+"flux": 60,
+}
+
+data_reproject = {
+"pre": True,
+"pet": True,
+"abs": True,
+"kc": True,
+"savi": True,
+}
+
+data_interp = {
+"pre": True,
+"pet": True,
+"abs": True,
+"kc": True,
+"savi": True,
+}
+
+COMPONENTS = {
+"method_inf": 1,
+"method_gw": None,
+#"not used 1": None,
+#"not used 2": None
+}
+
+SAVE_OUTPUT = {
+"output_csv": True,
+"output_grid": False,
+"output_dt": "1M",
+#"not used 1": None,
+#"not used 2": None,
+#"not used 3": None
+}
+
+GLOBAL_FACTORS = {
+"uz_kdt": 1.0,
+"uz_kdroot": 1.0,
+"uz_kawc": 1.0,
+"uz_kkast": 1.0,
+"uz_ksigma": 1.0,
+"riv_kksat": 1.0,
+"riv_kdecay": 1.0,
+"riv_kwidth": 1.0,
+"sz_kksat": 1.0,
+"sz_ksy": 1.0,
+"of_kflow": 1.0
+}
+ 

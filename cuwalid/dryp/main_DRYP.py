@@ -26,7 +26,7 @@ Parameters:
         model parameter settings in plain txt format
     
 Version(s):
-20181130 (1.0.0) --> Development of application for version 3.1.5 of HMC models
+20191130 (1.0.0) --> Development of application for version 2.0.0 of Cuwalid models
 """
 
 
@@ -58,6 +58,7 @@ from cuwalid.dryp.components.DRYP_groundwater_EFD import (
 from cuwalid.dryp.components.DRYP_store_functions import (
 	GlobalGridVar,
 	save_map_to_rastergrid)
+from cuwalid.dryp.components.DRYP_ponds import ponds											
 
 # ---------------------------------------------------------------------
 # Version and algorithm information
@@ -81,7 +82,7 @@ alg_release = '2023-08-01'
 
 #@profile
 def run_DRYP(filename_input):
-	"""This funtion integrates all components of the model, with
+	"""This function integrates all components of the model, with
 	all model parameters and component settings being specified in
 	the -filename_input- file.
 	
@@ -114,6 +115,7 @@ def run_DRYP(filename_input):
 	#env_state.set_output_dir(data_in)
 	#env_state.points_output(data_in)
 	
+	# READING FORCING DATASET -------------------------------------------
 	# Read precipitation
 	PRE = read_dataset_interp(data_in.dt, data_in.dt_pre,
 		data_in.ini_date, data_in.end_date,
@@ -127,7 +129,7 @@ def run_DRYP(filename_input):
 		projm=data_in.proj_model,
 		)
 	
-	# Read reference potential evpotranpiration
+	# Read reference potential evapotranspiration
 	ET0 = read_dataset_interp(data_in.dt, data_in.dt_ETo,
 		data_in.ini_date, data_in.end_date,
 		data_in.netcf_ETo,
@@ -177,6 +179,7 @@ def run_DRYP(filename_input):
 	# add variable saturated component
 	Qusz = recharge_routing(topo.grid_size)
 
+	# BUILD GRID DOMAIN -----------------------------------------------------
 	# create a raster grid environment, landlab grid
 	grid = grid_environment().create_grid(
 		topo.grid_ncols,
@@ -190,12 +193,13 @@ def run_DRYP(filename_input):
 	# setting model fluxes and state variables
 	#env_state = model_environment_status(data_in)
 
+	# MODEL COMPONENTS ------------------------------------------------------
 	abc = ABMconnector()
 	inf = infiltration(data_in.inf_method)
 	cnp = interception()
 	
-	swb = swbm(data_in.dt)
-	swb_rip = swbm(data_in.dt)
+	swb = swbm(data_in.dt) # soil layer
+	swb_rip = swbm(data_in.dt) # riparian layer
 	ro = runoff_routing(grid,
 		 	topo.grid_size,
 			topo.surface, 
@@ -211,7 +215,7 @@ def run_DRYP(filename_input):
 			aquifer.CHB,
 			data_in.gw_func)
 	
-	
+	#pnds = ponds() # ponds	
 	# read location of point boundary conditions
 	#if dataFlux.data_set is not None:
 	#	if data_in.netcf_ABC == 0:
@@ -256,6 +260,10 @@ def run_DRYP(filename_input):
 	#print(id_lakes)
 	id_lakes = np.where(id_lakes > 0)[0]
 	#print(id_lakes)
+	
+	# locations ponds
+	#id_ponds = None				 
+	
 	# INITIAL CONDITIONS =========
 	# surface water
 	ro.SSZ = topo.Qo[:]
@@ -281,7 +289,6 @@ def run_DRYP(filename_input):
 				topo.grid_cellsize,
 				data_in.run_GW)
 		)
-	
 	
 	#if riv_nodes.size > 0:
 	#	river_sat_deficit = river_sat_deficit[act_riv_nodes]
@@ -327,7 +334,7 @@ def run_DRYP(filename_input):
 				
 				# get rainfall
 				rain = PRE.get_one_step_dataset(t_pre, data_in.fname_TSPre, 'pre')
-				rain = rain*0.5 # This is specific for IMERG 30 min resolution only
+				#rain = rain*0.5 # This is specific for IMERG 30 min resolution only
 				# for the forcast TRAINING.
 				#rain[rain>300] = 300.
 				
@@ -391,6 +398,14 @@ def run_DRYP(filename_input):
 				#### add irrigation as rain, still under development
 				####Pth = Pth[:] + abc.auz[:]
 				
+				# PONDS: Add ponds here ------------------------------------------
+				# first check that ponds is active
+				#if id_ponds is not None:
+				#	V_pnds, rt_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(
+				# 							Vo, P, pet, aoz, a, Vmax, cell_area)
+					# transfer data to the entire model domain
+					#rain[id_ponds] = P
+				
 				# INFILTRATION: estimate infiltration --------------------
 				#inf.run_infiltration_one_step(Pth, env_state, data_in)
 				INF, EXS, Ft0, SORP0, t_0, dry_day = inf.run_infiltration_one_step(
@@ -433,9 +448,10 @@ def run_DRYP(filename_input):
 				if Kc is not None:
 					PETh = Kc[act_nodes]*PETh#[act_nodes]
 				# potential evapotranspiration for saturated zone
-				PETsz = PETh*ratio_etp
+				#PETsz = PETh*ratio_etp
 				# potential evapotranspiration for unsaturated zone
-				PETuz = PETh - PETsz
+				#PETuz = PETh - PETsz
+				PETuz = PETh.copy()# - PETsz
 				
 				# SOIL WATER BALANCE: Mestimate soil water balance-------
 				# Units for fluxes are in mm, units of soil moisture [--]
@@ -563,6 +579,13 @@ def run_DRYP(filename_input):
 				
 				#### apply dumping to groundwater recharge
 				###rech = Qusz.run_recharge_routing(soil, rech, Dusz)
+				# this is an update for increasing evapranspiration in humid areas
+				PETsz = (PETh - AET)# + rAET))*ratio_etp #this is to increase evapotranspiraiton rates
+				
+				if riv_nodes.size > 0:
+					PETsz[act_riv_nodes] = (PETsz[act_riv_nodes] - rAET)# + rAET))*ratio_etp #this is to increase evapotranspiraiton rates
+				
+				PETsz = PETsz*ratio_etp																						  
 				
 				# temporal aggregation of fluxes for groundwater
 				# this will allow to run the groundwater component
@@ -780,6 +803,15 @@ def run_DRYP(filename_input):
 			#length_var,
 			multi_files=False)
 	
+	#if id_ponds.size > 0: -----------------
+	#	# variables names
+	#	#var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
+	#	
+	#	# save grided model result datasets 
+	#	grid_pndsvar.save_netCDF_var(data_in.fnameTS_grid+'pnd.nc',
+	#		   topo.lat, topo.lon, id_ponds,# var_name
+	#		   )
+		
 	# SAVE RASTER FILES FOR INITIAL CONDITIONS
 	# Save water table for initial conditions
 	save_map_to_rastergrid(grid, head,
