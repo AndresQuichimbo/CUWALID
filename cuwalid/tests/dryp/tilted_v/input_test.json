@@ -4,18 +4,18 @@
     },
     "TERRAIN": {
         "path_dem": "tilted_v/input/test_dem_m.asc",
-        "path_Qo": "none",
+        "path_Qo": null,
         "path_fdl": "tilted_v/input/test_flowdir_m.asc",
-        "path_riv_decay": "none",
+        "path_riv_decay": null,
         "path_mask": "tilted_v/input/test_mask_m.asc",
         "path_riv_len": "tilted_v/input/test_riv_m.asc",
-        "path_riv_width": "none",
-        "path_riv_elev": "none"
+        "path_riv_width": null,
+        "path_riv_elev": null
     },
     "VEGETATION": {
-        "path_veg_kc": "none",
-        "path_veg_lulc": "none",
-        "path_veg_nn": "none"
+        "path_veg_kc": null,
+        "path_veg_lulc": null,
+        "path_veg_nn": null
     },
     "UNSATURATED": {
         "path_uz_theta_sat: porosity": "tilted_v/input/test_rawls_ne.txt",
@@ -27,35 +27,35 @@
         "path_uz_psi": "tilted_v/input/test_rawls_phi.txt",
         "path_uz_ksat": "tilted_v/input/test_rawls_ks.txt",
         "path_uz_sigmaksat": "tilted_v/input/test_rawls_sigma_ks.txt",
-        "path_uz_theta": "none",
-        "path_riv_ksat": "none"
+        "path_uz_theta": null,
+        "path_riv_ksat": null
     },
     "SATURATED": {
         "path_sz_mask": "tilted_v/input/test_mask_m.asc",
         "path_sz_ksat": "tilted_v/input/test_rawls_ks1.txt",
-        "path_sz_sy": "none",
+        "path_sz_sy": null,
         "path_sz_wte": "tilted_v/input/test_wte_ini.asc",
-        "path_sz_bc_flux": "none",
+        "path_sz_bc_flux": null,
         "path_sz_bc_head": "tilted_v/input/test_CHB1.asc",
-        "path_sz_bottom": "none"
+        "path_sz_bottom": null
     },
     "METEO": {
         "path_pre": "tilted_v/input/Pre_60m_00_05_sin.csv",
         "path_pet": "tilted_v/input/Pre_60m_00_05_sin.csv",
-        "path_aof": "none",
-        "Other": "none"
+        "path_aof": null,
+        "Other": null
     },
     "OUTPUT": {
         "path_out_sz": "tilted_v/input/test_Flumes_points.csv",
         "path_out_uz": "tilted_v/input/test_SM_points.csv",
         "path_out_oz": "tilted_v/input/test_well_point_m.csv",
         "path_output": "tilted_v/output",
-        "Other": "none",
+        "Other": null,
         "path_setting": "tilted_v/setting_test.json",
-        "path_gw_settings": "none",
-        "path_vg_settings": "none",
-        "path_rp_settings": "none",
-        "path_of_settings": "none",
-        "path_projection": "none"
+        "path_gw_settings": null,
+        "path_vg_settings": null,
+        "path_rp_settings": null,
+        "path_of_settings": null,
+        "path_projection": null
     }
 }

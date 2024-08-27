@@ -36,7 +36,7 @@ path_uz_theta_wp -----------------------------(34):
 tilted_v/input/test_rawls_wp.txt
 path_uz_root ---------------------------------(36):
 tilted_v/input/test_depth_m.asc
-Soi particle distribution parameter (b) --------(38):
+path_uz_lambda --------(38):
 tilted_v/input/test_rawls_n.txt
 path_uz_psi ------------------------------(40):
 tilted_v/input/test_rawls_phi.txt

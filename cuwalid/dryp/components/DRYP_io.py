@@ -25,7 +25,7 @@ class surface_parameters(object):
 		print('******************* Reading Input Files ********************')
 		
 		# Reading digital elevation model
-		if os.path.exists(inputfile.fname_DEM):
+		if inputfile.fname_DEM != None and os.path.exists(inputfile.fname_DEM):
 			domain = rasterio.open(inputfile.fname_DEM)
 			#print(domain.transform[0])
 			self.grid_ncols = domain.width
@@ -46,7 +46,7 @@ class surface_parameters(object):
 		grid_size = len(self.surface)
 
 		# Reading river banks
-		if os.path.exists(inputfile.fname_ripwidth):
+		if inputfile.fname_ripwidth != None and os.path.exists(inputfile.fname_ripwidth):
 			self.river_banks= np.flip(rasterio.open(inputfile.fname_ripwidth).read(1), 0).flatten()
 		else:
 			self.river_banks = np.full(grid_size, 100.0, dtype=float)
@@ -59,7 +59,7 @@ class surface_parameters(object):
 
 		# Catchment area: raster file of ceros and ones: ones represent the main cathment
 		# The area can be the model domain or any area inside the model domain
-		if not os.path.exists(inputfile.fname_Mask):
+		if inputfile.fname_Mask == None or not os.path.exists(inputfile.fname_Mask):
 			mask = np.flip(rasterio.open(inputfile.fname_DEM).read(1), 0)#.flatten()
 			# make domain edges not active
 			mask[0,0:self.grid_ncols-1] = -9999
@@ -77,7 +77,7 @@ class surface_parameters(object):
 		self.mask[self.mask < 0] = 0
 		#print(self.mask)
 		# Reading the raster file of river network
-		if os.path.exists(inputfile.fname_River):     
+		if inputfile.fname_River != None and os.path.exists(inputfile.fname_River):     
 			self.riv_length= np.flip(rasterio.open(inputfile.fname_River).read(1), 0).flatten()
 		else:
 			self.riv_length = np.full(grid_size, self.grid_cellsize, dtype=float)#
@@ -89,14 +89,14 @@ class surface_parameters(object):
 		self.river_cells[self.mask <= 0] = 0
 		
 		# Reading the raster file of river width		
-		if not os.path.exists(inputfile.fname_RiverWidth):
+		if inputfile.fname_RiverWidth == None or not os.path.exists(inputfile.fname_RiverWidth):
 			self.riv_width = np.full(grid_size, 10.0, dtype=float)
 			print('River width................... not provided as raster. Global default applied of W = 10 m')
 		else:
 			self.riv_width = np.flip(rasterio.open(inputfile.fname_RiverWidth).read(1), 0).flatten()
 			
 		# Reading the raster file of river elevation		
-		if not os.path.exists(inputfile.fname_RiverElev):
+		if inputfile.fname_RiverElev == None or not os.path.exists(inputfile.fname_RiverElev):
 			self.riv_elevation = self.surface[:]
 			print('River bottom.................. not provided as raster')
 			print('River bottom elevation: surface elevation')
@@ -104,7 +104,7 @@ class surface_parameters(object):
 			self.riv_elevation = np.flip(rasterio.open(inputfile.fname_RiverElev).read(1), 0).flatten()
 			
 		# Reading a raster file of flow direction in LandLab format (receiving node ID)
-		if os.path.exists(inputfile.fname_FlowDir):
+		if inputfile.fname_FlowDir != None and os.path.exists(inputfile.fname_FlowDir):
 			self.FlowDir = np.flip(rasterio.open(inputfile.fname_FlowDir).read(1), 0).flatten()
 		else:
 			self.FlowDir = None
@@ -113,7 +113,7 @@ class surface_parameters(object):
 
 		# LAKES COMPONENT ========================================================================
 		# read maximum surface water elevation of lakes
-		if os.path.exists(inputfile.fname_bathymetry):
+		if inputfile.fname_bathymetry != None and os.path.exists(inputfile.fname_bathymetry):
 			z_lakes = np.flip(rasterio.open(inputfile.fname_bathymetry).read(1), 0).flatten()
 			z_lakes[z_lakes<0] = 0
 			self.bathymetry = self.surface - z_lakes
@@ -124,7 +124,7 @@ class surface_parameters(object):
 		# CHANNEL ===============================================================================
 		# Channel hydraulic parameters
 		# Assuming a flow velocity of 1 m/s => 3600 m/h
-		if not os.path.exists(inputfile.fname_kTchannel):			
+		if inputfile.fname_kTchannel == None or not os.path.exists(inputfile.fname_kTchannel):			
 			self.decay = np.full(grid_size, inputfile.kTch/self.grid_cellsize, dtype=float)
 			print('Channel decay parameter.................. not provided')
 			print('Assumed value equivalent to a velocity of 1m/s')
@@ -135,7 +135,7 @@ class surface_parameters(object):
 		#river_banks = 30.0 # It is hard coded for now and will be pass as a raster grid
 		#print(inputfile.kTch)
 		# Read saturated hydraulic conductivity channel
-		if not os.path.exists(inputfile.fname_Ksat):			
+		if inputfile.fname_Ksat == None or not os.path.exists(inputfile.fname_Ksat):			
 			#self.Ksat = np.flip(rasterio.open(inputfile.fname_ksat).read(1), 0).flatten()
 			self.Ksat = np.ones(grid_size, dtype=float)
 			print('Channel Ksat.................. not provided')
@@ -164,7 +164,7 @@ class surface_parameters(object):
 				  self.area_cells, area_bank_cells)
 
 		# read initial conditions of channel flow: in m3/h
-		if not os.path.exists(inputfile.fname_Qo):			
+		if inputfile.fname_Qo == None or not os.path.exists(inputfile.fname_Qo):			
 			self.Qo = np.zeros(grid_size, dtype=float)
 			print('Initial channel storage.................. not provided, assumed 0.0 m3')
 			#print('Assumed value equivalent to a velocity of 1m/s')
@@ -368,7 +368,7 @@ class soil_parameters(object):
 		#print("Reading soil parameter for soil layer")	
 		
 		# Reading Soil saturated hydraulic conductivity
-		if not os.path.exists(inputfile.fname_Ksat):
+		if inputfile.fname_Ksat == None or not os.path.exists(inputfile.fname_Ksat):
 			self.Ksat = np.ones(grid_size, dtype=float)
 			print('Hydraulic conductivity........ not provided as raster. Global default applied of 1.0 mm/h')
 		else:
@@ -379,7 +379,7 @@ class soil_parameters(object):
 		#self.Ksat = (self.Ksat*inputfile.unit_sim_k*inputfile.kKsat)
 				
 		# Reading residual water content
-		#if not os.path.exists(inputfile.fname_theta_r):
+		#if inputfile.fname_theta_r == None or not os.path.exists(inputfile.fname_theta_r):
 		#	self.theta_res = np.zeros(grid_size)
 		#	self.theta_res[:] += 0.025
 		#	print('Residual moisture content..... not provided as raster. Global default applied of 0.025')
@@ -387,21 +387,21 @@ class soil_parameters(object):
 		#	self.theta_res = np.flip(rasterio.open(inputfile.fname_theta_r).read(1), 0).flatten()
 			
 		# Reading Wilting point field
-		if not os.path.exists(inputfile.fname_theta_wp):
+		if inputfile.fname_theta_wp == None or not os.path.exists(inputfile.fname_theta_wp):
 			self.theta_wp = np.full(grid_size, 0.05, dtype=float)
 			print('Wilting point................. not provided as raster. Global default applied of 0.05')
 		else:
 			self.theta_wp = np.flip(rasterio.open(inputfile.fname_theta_wp).read(1), 0).flatten()
 				
 		# Read Saturated water content (porosity)
-		if not os.path.exists(inputfile.fname_n):
+		if inputfile.fname_n == None or not os.path.exists(inputfile.fname_n):
 			self.theta_sat = np.full(grid_size, 0.40, dtype=float)
 			print('Porosity...................... not provided as raster. Global default applied of 0.4')
 		else:
 			self.theta_sat = np.flip(rasterio.open(inputfile.fname_n).read(1), 0).flatten()
 			
 		# Reading available water content: raster file		
-		if not os.path.exists(inputfile.fname_theta_AWC):
+		if inputfile.fname_theta_AWC == None or not os.path.exists(inputfile.fname_theta_AWC):
 			theta_AWC = np.full(grid_size, 0.10, dtype=float)
 			print('Available Water Content....... not provided as raster. Global default applied of 0.10')
 		else:
@@ -411,14 +411,14 @@ class soil_parameters(object):
 
 		# Exponent for soil moisture - matrix potential relation
 		# Rawls (1982), and Clapp and Hornberger (1978)
-		if not os.path.exists(inputfile.fname_b_SOIL):
+		if inputfile.fname_b_SOIL == None or not os.path.exists(inputfile.fname_b_SOIL):
 			self.lambdas = np.full(grid_size, 10.05, dtype=float)
 			print('Soil particle distribution par. not provided as raster. Global default applied of 10.5')
 		else:
 			self.lambdas = np.flip(rasterio.open(inputfile.fname_b_SOIL).read(1), 0).flatten()
 			
 		# air-entry/saturated capillary potential, [mm]
-		if not os.path.exists(inputfile.fname_PSI):
+		if inputfile.fname_PSI == None or not os.path.exists(inputfile.fname_PSI):
 			psi_a = np.full(grid_size, 153.0)
 			print('Suction head.................. not provided as raster. Global default applied of 153 mm')
 		else:
@@ -433,7 +433,7 @@ class soil_parameters(object):
 		self.c_SOIL = 2.0/np.array(self.lambdas) + 3.0
 		
 		# Reading soil depth map: raster file [mm]
-		if not os.path.exists(inputfile.fname_SoilDepth):
+		if inputfile.fname_SoilDepth == None or not os.path.exists(inputfile.fname_SoilDepth):
 			self.Droot = np.full(grid_size, 1000.0, dtype=float)
 			#self.depth_uz *= 1000.0	# default value 1000 mm
 			print('Rooting depth................. not provided as raster. Global default applied of 1000mm')
@@ -445,7 +445,7 @@ class soil_parameters(object):
 		#self.Droot = np.array(self.depth_uz)
 
 		# Reading initial available water content: raster file		
-		if not os.path.exists(inputfile.fname_theta):
+		if inputfile.fname_theta == None or not os.path.exists(inputfile.fname_theta):
 			self.theta = self.theta_wp+0.01*theta_AWC
 			print('Not available initail water content....... dry condition assumed (wiltinf point)')
 		else:
@@ -476,14 +476,14 @@ class groundwater_parameters(object):
 		# 1: exponential model
 		# 2: constant model
 		# 3: linear model
-		if os.path.exists(inputfile.fname_aquifertype):
+		if inputfile.fname_aquifertype != None and os.path.exists(inputfile.fname_aquifertype):
 			self.gwtype = np.flip(rasterio.open(inputfile.fname_aquifertype).read(1), 0).flatten()
 		else:
 			print('No transmissivity model type provided')
 			self.gwtype = np.full(grid_size, 3, dtype=int)
 
 		# Reading specific yield
-		if not os.path.exists(inputfile.fname_SZ_Sy):				
+		if inputfile.fname_SZ_Sy == None or not os.path.exists(inputfile.fname_SZ_Sy):				
 			self.Sy = np.full(grid_size, 0.01, dtype=float)
 			#gw.add_zeros('node', 'SZ_Sy', dtype=float) # Water table elevation
 			#gw.at_node['SZ_Sy'] += 0.01
@@ -497,14 +497,14 @@ class groundwater_parameters(object):
 		self.Sy = self.Sy*inputfile.kSy
 		
 		# Aquifer bottom
-		if not os.path.exists(inputfile.fname_SZ_bot): 
+		if inputfile.fname_SZ_bot == None or not os.path.exists(inputfile.fname_SZ_bot): 
 			self.bottom = np.zeros(grid_size, dtype=float)
 			print('Aquifer bottom elevation...... not provided as raster. Global default applied of 0.0 m')
 		else:
 			self.bottom = np.flip(rasterio.open(inputfile.fname_SZ_bot).read(1), 0).flatten()
 			
 		# Aquifer Saturated hydraulic conductivity
-		if not os.path.exists(inputfile.fname_SZ_Ksat):
+		if inputfile.fname_SZ_Ksat == None or not os.path.exists(inputfile.fname_SZ_Ksat):
 			self.Ksat = np.ones(grid_size, dtype=float)
 			print('Aquifer Ksat.................. not provided as raster. Global default applied of 1.0 m/h')
 		else:
@@ -516,7 +516,7 @@ class groundwater_parameters(object):
 		#gw.at_node['Hydraulic_Conductivity'] *= inputfile.kKsat_gw*inputfile.unit_sim_k
 		#print(gw.at_node['Hydraulic_Conductivity'])				
 		# Check if flux boundary is provided m/h
-		if not os.path.exists(inputfile.fname_FHB):
+		if inputfile.fname_FHB == None or not os.path.exists(inputfile.fname_FHB):
 			self.FHB = np.zeros(grid_size, dtype=float)
 			print('Flux boundary conditions. not provided as raster')
 		else:
@@ -529,7 +529,7 @@ class groundwater_parameters(object):
 		#gw.at_node['SZ_FHB'][:] = gw.at_node['SZ_FHB']*inputfile.kFlux
 		
 		# Check if constant head boundary is provided
-		if not os.path.exists(inputfile.fname_CHB):
+		if inputfile.fname_CHB == None or not os.path.exists(inputfile.fname_CHB):
 			self.CHB = None			
 			print('Constant head boundary conditions not provided as raster')
 		else:
@@ -544,7 +544,7 @@ class groundwater_parameters(object):
 		# Read parameters for calulating  effective thickness
 		# a: numerator, and b: denominator
 		# Read aquifer thickness or paramter a for calculating effective thickness
-		if not os.path.exists(inputfile.fname_thickness):
+		if inputfile.fname_thickness == None or not os.path.exists(inputfile.fname_thickness):
 			self.thickness = np.full(grid_size, 50.0, dtype=float)
 			#gw.at_node['SZ_a_aq'][:] = 50.0
 			print('Not available aquifer effective depth... assumed value of 50m')
@@ -556,7 +556,7 @@ class groundwater_parameters(object):
 		#gw.at_node['SZ_a_aq'][:] += np.array(rg.at_node['Soil_depth']*0.001)
 		
 		# Read aquifer parameter b for calculating effective thickness
-		#if not os.path.exists(inputfile.fname_b_aq):
+		#if inputfile.fname_b_aq == None or not os.path.exists(inputfile.fname_b_aq):
 		#	gw.add_zeros('node', 'SZ_b_aq', dtype=float)
 		#	print('Not available b parameter aquifer, b=0')
 		#else:
@@ -565,7 +565,7 @@ class groundwater_parameters(object):
 					
 		# Initial water table depth
 		print("reading initial water table elevation...")
-		if not os.path.exists(inputfile.fname_GWini):
+		if inputfile.fname_GWini == None or not os.path.exists(inputfile.fname_GWini):
 			self.head = np.flip(rasterio.open(inputfile.fname_DEM).read(1), 0).flatten()
 			#h = gw.add_zeros('node', 'water_table__elevation', dtype=float)
 			#gw.at_node['water_table__elevation'] = z - rg.at_node['Soil_depth']*0.001
@@ -603,21 +603,21 @@ class interception_parameters(object):
 		"""
 		# INTERCEPTION COMPONENT ==================================================
 		#if 
-		#if os.path.exist(inputfile.fname_savi):
+		#if inputfile.fname_savi != None and os.path.exist(inputfile.fname_savi):
 		#	self.av = rasterio.open(fname_in).read(1)
 		#else:
 		#	print('Fraction of vegetation cover..not provided as raster. Global default 1')
 		#	self.av = 1.0
 		
-		#if os.path.exist(inputfile.fname_kc):
+		#if inputfile.fname_kc != None and os.path.exist(inputfile.fname_kc):
 		#	self.av = rasterio.open(fname_in).read(1)
 		#else:
 		#	print('Fraction of vegetation cover..not provided as raster. Global default 1')
 		#	self.av = 1.0
 
 		# read crop vegetation factor: default 1
-		if os.path.exists(inputfile.fname_interception):
-			if os.path.exists(inputfile.fname_av):
+		if inputfile.fname_interception != None and os.path.exists(inputfile.fname_interception):
+			if inputfile.fname_av != None and os.path.exists(inputfile.fname_av):
 				self.av = np.flip(rasterio.open(inputfile.fname_av).read(1), 0).flatten()
 			else:
 				print('Fraction of vegetation cover..not provided as raster. Global default 1')
@@ -625,28 +625,28 @@ class interception_parameters(object):
 		else:
 			self.av = None
 		# read Coeficient of exponential function: default 0
-		if os.path.exists(inputfile.fname_laia):
+		if inputfile.fname_laia != None and os.path.exists(inputfile.fname_laia):
 			self.lai_a = np.flip(rasterio.open(inputfile.fname_laia).read(1), 0).flatten()
 		else:
 			print('Vegetation exponential coeficient..not provided as raster. Global default 1')
 			self.lai_a = 0
 
 		# read Power value for exponential function: default 0
-		if os.path.exists(inputfile.fname_laib):
+		if inputfile.fname_laib != None and os.path.exists(inputfile.fname_laib):
 			self.lai_b = np.flip(rasterio.open(inputfile.fname_laib).read(1), 0).flatten()
 		else:
 			print('Vegetation exponential coeficient..not provided as raster. Global default 1')
 			self.lai_b = 0
 
 		# read Min Soil-Adjusted Vegetation Index: default 0
-		if os.path.exists(inputfile.fname_savi_min):
+		if inputfile.fname_savi_min != None and os.path.exists(inputfile.fname_savi_min):
 			self.savi_min = np.flip(rasterio.open(inputfile.fname_savi_min).read(1), 0).flatten()
 		else:
 			print('Fraction of vegetation cover..not provided as raster. Global default 1')
 			self.savi_min = 0
 
 		# Max Soil-Adjusted Vegetation Index: defgault 1
-		if os.path.exists(inputfile.fname_savi_max):
+		if inputfile.fname_savi_max != None and os.path.exists(inputfile.fname_savi_max):
 			self.savi_max = np.flip(rasterio.open(inputfile.fname_savi_max).read(1), 0).flatten()
 		else:
 			print('Fraction of vegetation cover..not provided as raster. Global default 1')
@@ -654,21 +654,21 @@ class interception_parameters(object):
 		
 		#------Modification for Dyna-Veg---------------------------------------------------
 		# bioma-dependent coefficient
-		if os.path.exists(inputfile.fname_fcw_canopy):
+		if inputfile.fname_fcw_canopy != None and os.path.exists(inputfile.fname_fcw_canopy):
 			self.fcw_cn = np.flip(rasterio.open(inputfile.fname_fcw_canopy).read(1), 0).flatten()
 		else:
 			print('Biome-dependent coefficient, not provided. Global 1 []')
 			self.fcw_cn = np.ones(grid_size, dtype=float)
 		
 		# inital water content of the canopy storage
-		if os.path.exists(inputfile.fname_Sc0_canopy):
+		if inputfile.fname_Sc0_canopy != None and os.path.exists(inputfile.fname_Sc0_canopy):
 			self.Sc0_cn = np.flip(rasterio.open(inputfile.fname_Sc0_canopy).read(1), 0).flatten()
 		else:
 			print('Initial canopy storage, not provided. Global 0 []')
 			self.Sc0_cn = np.zeros(grid_size, dtype=float)
 		
 		# inital water content of the canopy storage, riparian zone
-		if os.path.exists(inputfile.fname_Sc0_canopy):
+		if inputfile.fname_Sc0_canopy != None and os.path.exists(inputfile.fname_Sc0_canopy):
 			self.Sc0_cnrp = np.flip(rasterio.open(inputfile.fname_Sc0_canopy).read(1), 0).flatten()
 		else:
 			print('Initial riparian canopy storage, not provided. Global 0 []')
@@ -676,7 +676,7 @@ class interception_parameters(object):
 		
 		# Tap water threshold for evaporation uptake
 		# tap needs to be equal or higher than the soil depth [mm]
-		if os.path.exists(inputfile.fname_tap_depth):
+		if inputfile.fname_tap_depth != None and os.path.exists(inputfile.fname_tap_depth):
 			self.tap_depth = np.flip(rasterio.open(inputfile.fname_tap_depth).read(1), 0).flatten()
 		else:
 			print('Tap water level, not provided. Global 0 [mm]')
@@ -685,7 +685,7 @@ class interception_parameters(object):
 		#self.ztap = z - self.tap_depth*0.001
 		
 		# read soil depth, it is the same as the hillslope soil
-		if os.path.exists(inputfile.fname_SoilDepth):
+		if inputfile.fname_SoilDepth != None and os.path.exists(inputfile.fname_SoilDepth):
 			Droot = np.flip(rasterio.open(inputfile.fname_SoilDepth).read(1), 0).flatten()
 		else:
 			Droot = np.full(grid_size, 1000.0, dtype=float)
@@ -693,7 +693,7 @@ class interception_parameters(object):
 		Droot = Droot*inputfile.kDroot
 		
 		# Final plant water uptake threshold for evaporation uptake [mm]
-		if os.path.exists(inputfile.fname_extintion_depth):
+		if inputfile.fname_extintion_depth != None and os.path.exists(inputfile.fname_extintion_depth):
 			self.extintion_depth = np.flip(rasterio.open(inputfile.fname_extintion_depth).read(1), 0).flatten()
 		else:
 			print('Final root water uptake level, not provided. Default is rooting depth [mm]')
@@ -727,7 +727,7 @@ def extract_id_from_coords(grid, filename):
 	"""
 	
 	# check if file is available
-	if not os.path.exists(filename):
+	if filename == None or not os.path.exists(filename):
 		print(filename)
 		raise Exception("File do not exis")
 	
@@ -775,7 +775,7 @@ def extract_id_from_raster(grid, filename):
 	numby array with id nodes
 	"""
 	# read Power value for exponential function: default 0
-	if os.path.exists(filename):
+	if filename != None and os.path.exists(filename):
 		location_map = rasterio.open(filename.fname_laibrip).read(1).flatten()
 	else:
 		print(filename)

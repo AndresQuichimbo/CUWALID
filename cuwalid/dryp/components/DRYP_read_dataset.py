@@ -45,7 +45,7 @@ class read_temporal_dataset():
 		
 		freq_dt=str(int(dt))+'min'
 		
-		if os.path.exists(filename):
+		if filename != None and os.path.exists(filename):
 		
 			if file_type == 1: 
 				# Read netCDF fiels

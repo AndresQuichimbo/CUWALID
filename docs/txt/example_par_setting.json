@@ -14,8 +14,8 @@
     "COMPONENTS": {
       "method_inf": 1,
       "method_gw": "1 0",
-      "not used 1": "none",
-      "not used 2": "none"
+      "not used 1": null,
+      "not used 2": null
     },
     "OUTPUT": {
       "output_csv": false,

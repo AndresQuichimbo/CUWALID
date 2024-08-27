@@ -98,7 +98,7 @@ class get_model_settings(object):
 		self.save_results = True
 
 		# activate lakes
-		self.lakes = int(get_variable(settings_config, "OUTPUT", "not used 1"))
+		self.lakes = get_variable(settings_config, "OUTPUT", "not used 1")
 
 		# temporal aggregation of model outputs
 		self.dt_results = get_variable(settings_config, "OUTPUT", "output_dt")
@@ -175,14 +175,14 @@ class get_model_settings(object):
 
 		if len(dryp_config.get("drylandmodel", {})) == 98:
 			self.fname_proj = get_variable(dryp_config, "OUTPUT", "path_projection")
-			if os.path.exists(self.fname_proj):
+			if self.fname_proj != None and os.path.exists(self.fname_proj):
 				dfproj = pd.read_csv(self.fname_proj)
 				self.proj_model = dfproj.PROJECTION[1]
 				self.proj_data = dfproj.PROJECTION[4]
 			else:
 				print("Projection system not provided")
 
-		self.fname_store = 'None'
+		self.fname_store = None
 		if len(dryp_config.get("drylandmodel", {})) == 100:
 			self.fname_store = dryp_config["drylandmodel"][99]
 		self.store = get_store_parameters(self.fname_store)
@@ -222,7 +222,7 @@ class get_list_of_interception_hillslope_files(object):
 	def __init__(self, dryp_config, factors):
 		"""Model parameter settings and input file names and location"""
 		self.fname_interception = get_variable(dryp_config, "OUTPUT", "path_vg_settings")
-		if os.path.exists(self.fname_interception):
+		if self.fname_interception != None and os.path.exists(self.fname_interception):
 			fcp = pd.read_csv(self.fname_interception)
 			# Soil component
 			self.fname_av = fcp.INTERCEPTION[1]
@@ -239,17 +239,17 @@ class get_list_of_interception_hillslope_files(object):
 			self.fname_Sc0_canopy = fcp.INTERCEPTION[33]
 		else:
 			#Soil component
-			self.fname_savi = 'None'
-			self.fname_av = 'None'
-			self.fname_laia = 'None'
-			self.fname_laib = 'None'
-			self.fname_savi_max = 'None'
-			self.fname_savi_min = 'None'
-			self.fname_lai = 'None'
-			self.fname_tap_depth = 'None'
-			self.fname_extintion_depth = 'None'
-			self.fname_fcw_canopy = 'None'
-			self.fname_Sc0_canopy = 'None'
+			self.fname_savi = None
+			self.fname_av = None
+			self.fname_laia = None
+			self.fname_laib = None
+			self.fname_savi_max = None
+			self.fname_savi_min = None
+			self.fname_lai = None
+			self.fname_tap_depth = None
+			self.fname_extintion_depth = None
+			self.fname_fcw_canopy = None
+			self.fname_Sc0_canopy = None
 
 		self.fname_SoilDepth = get_variable(dryp_config, "UNSATURATED", "path_uz_root")
 		self.kDroot = float(get_variable(factors, "GLOBAL_FACTORS", "factor_uz_kdroot"))
@@ -260,7 +260,7 @@ class get_list_of_interception_riparian_files(object):
 	def __init__(self, dryp_config, factors):
 		"""Model parameter settings and input file names and location"""
 		self.fname_interception = get_variable(dryp_config, "OUTPUT", "path_vg_settings")
-		if os.path.exists(self.fname_interception):
+		if self.fname_interception != None and os.path.exists(self.fname_interception):
 			fcp = pd.read_csv(self.fname_interception)
 			#Riparian component
 			self.fname_av = fcp.INTERCEPTION[15]
@@ -279,17 +279,17 @@ class get_list_of_interception_riparian_files(object):
 			self.fname_Sc0_canopy = fcp.INTERCEPTION[33]
 		else:
 			#Soil component
-			self.fname_savi = 'None'
-			self.fname_av = 'None'
-			self.fname_laia = 'None'
-			self.fname_laib = 'None'
-			self.fname_savi_max = 'None'
-			self.fname_savi_min = 'None'
-			self.fname_lai = 'None'
-			self.fname_tap_depth = 'None'
-			self.fname_extintion_depth = 'None'
-			self.fname_fcw_canopy = 'None'
-			self.fname_Sc0_canopy = 'None'
+			self.fname_savi = None
+			self.fname_av = None
+			self.fname_laia = None
+			self.fname_laib = None
+			self.fname_savi_max = None
+			self.fname_savi_min = None
+			self.fname_lai = None
+			self.fname_tap_depth = None
+			self.fname_extintion_depth = None
+			self.fname_fcw_canopy = None
+			self.fname_Sc0_canopy = None
 
 		self.fname_SoilDepth = get_variable(dryp_config, "UNSATURATED", "path_uz_root")
 		self.kDroot = float(get_variable(factors, "GLOBAL_FACTORS", "factor_uz_kdroot"))
@@ -316,18 +316,18 @@ class get_list_of_surface_files(object):
 		if len(get_variable(dryp_config, "drylandmodel")) == 96:
 			self.fname_bc = get_variable(dryp_config, "OUTPUT", "path_of_settings")
 		else:
-			self.fname_bc = 'None'
+			self.fname_bc = None
 
-		self.fname_TSOF = 'None'
-		self.filename_OF_points = 'None'
+		self.fname_TSOF = None
+		self.filename_OF_points = None
 
-		if os.path.exists(self.fname_bc):
+		if self.fname_bc != None and os.path.exists(self.fname_bc):
 			fbc = pd.read_csv(self.fname_bc)
 			self.fname_TSOF = fbc.OFBC[1]
 			self.filename_OF_points = fbc.OFBC[3]
 
-		self.fname_bathymetry = 'None'
-		if os.path.exists(get_variable(dryp_config, "OUTPUT", "path_gw_settings")):
+		self.fname_bathymetry = None
+		if get_variable(dryp_config, "OUTPUT", "path_gw_settings") != None and os.path.exists(get_variable(dryp_config, "OUTPUT", "path_gw_settings")):
 			fgw = pd.read_csv(get_variable(dryp_config, "OUTPUT", "path_gw_settings"))
 			self.fname_bathymetry = fgw.GROUNDWATER[18]  # Constant flux boundary
 
@@ -335,10 +335,10 @@ class get_list_of_surface_files(object):
 		if len(get_variable(dryp_config, "drylandmodel")) == 94:
 			self.fname_riparian_zone = get_variable(dryp_config, "OUTPUT", "path_rp_settings")
 		else:
-			self.fname_riparian_zone = 'none'
+			self.fname_riparian_zone = None
 
-		self.fname_ripwidth = "none"
-		if os.path.exists(self.fname_riparian_zone):
+		self.fname_ripwidth = None
+		if self.fname_riparian_zone != None and os.path.exists(self.fname_riparian_zone):
 			frz = pd.read_csv(self.fname_riparian_zone)
 			self.fname_ripwidth = frz.RIPARIAN[21]  # riparian width [-]
 
@@ -377,9 +377,9 @@ class get_list_of_riparian_soil_files(object):
 		if len(get_variable(dryp_config, "drylandmodel")) == 94:
 			self.fname_riparian_zone = get_variable(dryp_config, "OUTPUT", "path_rp_settings")
 		else:
-			self.fname_riparian_zone = 'None'
+			self.fname_riparian_zone = None
 
-		if os.path.exists(self.fname_riparian_zone):
+		if self.fname_riparian_zone != None and os.path.exists(self.fname_riparian_zone):
 			frz = pd.read_csv(self.fname_riparian_zone)
 			self.fname_n = frz.RIPARIAN[1]        # porosity (n)
 			self.fname_theta_r = frz.RIPARIAN[3]  # residual water content
@@ -407,7 +407,7 @@ class get_list_of_riparian_soil_files(object):
 			self.fname_Ksat = get_variable(dryp_config, "UNSATURATED", "path_riv_ksat")  # riparian Channel Saturated hydraulic conductivity (Ks)
 			if self.fname_Ksat is None:
 				self.fname_Ksat = get_variable(dryp_config, "UNSATURATED", "path_uz_ksat")
-			self.fname_ripwidth = "none"
+			self.fname_ripwidth = None
 
 		self.kDroot = float(get_variable(factors, "GLOBAL_FACTORS", "factor_uz_kdroot"))  # k for soil depth
 		self.kAWC = 1.0  # float(get_variable(factors, "GLOBAL_FACTORS", "factor_uz_kawc"))  # k for AWC
@@ -430,29 +430,29 @@ class get_list_of_groundwater_files(object):
 		self.fname_CHB = get_variable(dryp_config, "SATURATED", "path_sz_bc_head")  # Constant flux boundary
 		self.fname_SZ_bot = get_variable(dryp_config, "SATURATED", "path_sz_bottom")  # path_sz_bottom
 		
-		self.fname_thickness = 'None'
-		self.fname_b_aq = 'None'
-		self.fname_aquifertype = 'None'
-		self.fname_bathymetry = 'None'
+		self.fname_thickness = None
+		self.fname_b_aq = None
+		self.fname_aquifertype = None
+		self.fname_bathymetry = None
 
 		gw_additional_params_path = get_variable(dryp_config, "OUTPUT", "path_gw_settings")
 		
-		if os.path.exists(gw_additional_params_path):
+		if gw_additional_params_path != None and os.path.exists(gw_additional_params_path):
 			fgw = pd.read_csv(gw_additional_params_path)
 			self.fname_thickness = fgw.GROUNDWATER[1]
 			self.fname_b_aq = fgw.GROUNDWATER[3]
 			self.fname_aquifertype = fgw.GROUNDWATER[16]  # Constant flux boundary
 			self.fname_bathymetry = fgw.GROUNDWATER[18]  # Constant flux boundary
 		
-		self.fname_SZ_botb = 'None'
-		self.fname_SZ_Ksatb = 'None'
-		self.fname_SZ_Syb = 'None'
-		self.fname_SZ_Ssb = 'None'
-		self.fname_GWinib = 'None'
-		self.fname_mask_of = 'None'
+		self.fname_SZ_botb = None
+		self.fname_SZ_Ksatb = None
+		self.fname_SZ_Syb = None
+		self.fname_SZ_Ssb = None
+		self.fname_GWinib = None
+		self.fname_mask_of = None
 		
 		if self.run_GW > 0:
-			if os.path.exists(gw_additional_params_path):
+			if gw_additional_params_path != None and os.path.exists(gw_additional_params_path):
 				fgw = pd.read_csv(gw_additional_params_path)
 				self.fname_thickness = fgw.GROUNDWATER[1]
 				self.fname_b_aq = fgw.GROUNDWATER[3]
@@ -466,6 +466,7 @@ class get_list_of_groundwater_files(object):
 		self.kSy = float(get_variable(factors, "GLOBAL_FACTORS", "factor_uz_ksigma"))  # k for specific yield
 
 def get_variable(json, var_1, var_2=None):
+	variable = None
 	if var_2 is None:
 		if var_1 in json:
 			variable = json[var_1]
@@ -476,11 +477,11 @@ def get_variable(json, var_1, var_2=None):
 				sys.exit(1)
 			print(f"WARNING: {var_1} not found in configuration json. Using default of {variable}")
 		else:
-			variable = 'None'
+			variable = None
 			print(f"WARNING: {var_1} not found in configuration json. Using default of {variable}")
 	else:
 		if var_1 in json:
-			if var_2 in json[var_1]:
+			if var_2 in json[var_1] and json[var_1][var_2] != None:
 				variable = json[var_1][var_2]
 			elif var_2 in default_variables:
 				variable = default_variables[var_2]
@@ -489,7 +490,7 @@ def get_variable(json, var_1, var_2=None):
 					sys.exit(1)
 				print(f"WARNING: {var_1}:{var_2} not found in configuration json. Using default of {variable}")
 			else:
-				variable = 'None'
+				variable = None
 		else:
 			print(f"WARNING: {var_1}:{var_2} not found in configuration json. Using default of None")
 
@@ -501,23 +502,10 @@ default_variables = {
 	"end_date": "required",
 	"dt_of": 60,
 	"dt_gw": 60,
-	"read_pre": 0,
-	"read_pet": 0,
-	"read_abs": 0,
-	"read_kc": 0,
-	"read_savi": 0,
-	"read_flux": 0,
-	"dt_pre": 60,
-	"dt_pet": 60,
-	"dt_abs": 60,
-	"dt_kc": 60,
-	"dt_savi": 60,
-	"dt_flux": 60,
-	"rproj_pre": True,
-	"rproj_pet": True,
-	"rproj_abs": True,
-	"rproj_kc": True,
-	"rproj_savi": True,
+	"data_read": "0 0 0 0 0 0 0 0",
+	"data_step": "60 60 60 60 60 60 60 60",
+	"data_reproject": "0 0 0 0 0 0 0 0",
+	"data_interp": "0 0 0 0 0 0 0 0",
 	"activate_gw": True,
 	"method_gw": 1,
 	"output_csv": True,
@@ -534,6 +522,7 @@ default_variables = {
 	"factor_sz_kksat": 1,
 	"factor_sz_ksy": 1,
 	"factor_of_kflow": 1,
+	"not used 1": 1,
 }
 
 """def get_store_variables(fname):

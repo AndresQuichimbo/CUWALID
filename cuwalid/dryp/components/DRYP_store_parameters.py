@@ -6,7 +6,7 @@ class get_store_parameters(object):
     """
     def __init__(self, fname):
         
-        if os.path.exists(fname):
+        if fname != None and os.path.exists(fname):
             # read variables for grided dataset
             self.var_grid = reading(fname)["store_var_grid"]
 

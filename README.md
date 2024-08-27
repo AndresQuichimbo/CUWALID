@@ -1,106 +1,60 @@
 # CUWALID
 Repository containing the models of CUWALID under the Down2Earth project
 
-These instructions are not currently up to date whilst testing the package, for the most up to date installation instructions, please use the html webpages found in docs/_build/html/index.html.
+These instructions are not currently up to date whilst testing the package, for the most up to date installation instructions, please use the html webpages found in `docs/_build/html/index.html`.
 
-## Setting up the environments
+## Installation with PyPi
 
-Within the main directory there is a directory called installers, this contains some scripts to easily set up the environments you need to run the model
+These steps assume you already have Python installed; we recommend a version between 3.9-3.11. 
 
-### Steps:
-1. Enter your linux terminal or command prompt
-2. Navigate to the main directory
-3. cd into the installers directory
-```
-cd installers
-```
-4. Enter on of the commands below to install conda and create the environment
-- If on Linux use this command:
-```
-sh cwld_linux.sh
-```
-- If using the windows command prompt use:
-```
-cwld_wos.bat
-```
-5. You should now see the instilation begin, please wait until complete,
+If you don't have Python yet, you can find the install [here](https://www.python.org/downloads/release/python-3119/), just make sure to tick the box to "Add to path" during your installation to make things easier.
 
-After instilation you should be able to access the main environment by running the command:
-```
-conda activate cwld
-```
+Alternatively, using Anaconda to create an environment with a specific Python version also works.
 
-## TESTING
+These steps should work correctly even if installing through PyPi within a conda environment, however, please note there is a higher chance of conflicting dependencies with this method.
 
-You can test if your environment is working correctly with the model by using the 'run_all_test.sh' script in your linux terminal or on windows you can use the command prompt or WSL (THIS TEST CURRENTLY ONLY TESTS THE DRYP MODEL)
+1. Open the directory you want to work in and ensure that Python is working there by typing the following in your terminal.
 
-### Steps:
+    ```bash
+    python --version
+    ```
 
-1. Navigate to the current directory (CUWALID) in terminal
-2. Activate your environment
-```
-conda activate cwld
-```
-2. enter tests/dryp directory
-```
-cd tests/dryp/
-```
-3. run the tests script
-- If running on Linux or WSL use this command:
-```
-sh run_all_test.sh
-```
-- If using the windows command prompt run this command:
-```
-run_all_test.bat
-```
+    It should print out your Python version if everything is working correctly.
 
-You should see the tests being run, some minor warnings may appear but should be safe to ignore,
+    Now create a virtual environment (This step is recommended but not technically necessary) by running the following command:
 
-The end of the output should look like this:
-```
-************************************************************
-Infiltration approach: Philips
-Run Interception component
-100%|███████████████████████████████████████████████████████████████████████████████| 733/733 [00:21<00:00, 34.04days/s]
-*** SAVING RESULTS ***
-Traceback (most recent call last):
-  File "/home/<username>/CUWALID/tests/test_dryp.py", line 24, in <module>
-    test_dryp()
-  File "/home/<username>/CUWALID/tests/test_dryp.py", line 19, in test_dryp
-    assert np.allclose(out, ans)
-AssertionError
-Basin delineation: Test runs successfully
-```
+    ```bash
+    python -m venv test_env
+    source test_env/bin/activate  # On Windows use `test_env\Scripts\activate`
+    ```
 
-## Running the model
+    Now your environment is created and is activated.
 
-Currently only the DRYP model is correctly working, the python file 'run_DRYP.py' should run an example by using the example file 'input_test.dmp' in the test_input directory in the main directory
+2. Now you can install the package with the command as follows. This should download the latest version of the package.
 
-### Steps:
+    Run the command:
 
-1. Access your linux based terminal (WSL if on Windows)
-2. Naviate to the project where this README.md file is found
-3. Activate your environment by running:
-```
-conda activate cwld
-```
-4. Then enter the CUWALID folder by typing:
-```
-cd CUWALID
-```
-5. Finally run the file by typing:
-```
-python run_DRYP.py
-```
+    ```bash
+    pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple CUWALID    
+    ```
 
-The end of the output should look similar to the output of the testing output above, with a final line specifiying the time it took to run.
+    This will install all other dependencies along with the CUWALID package.
 
+    Some of the parameter files for the StoPET model are too large to be installed with the package, so use the command below after installing the package if you want to use the StoPET model:
 
-# TO DO LIST
+    ```bash
+    python -m cuwalid.tools.download_data
+    ```
 
-- Create a streamlined input for using the DRYP model where someone using the project can quickly get up and running
-- Possibly create a package out of each model to easily access its funtionality
-- Create clear documentation on using this project
-- Create a file to run the STORM model with a users input files
-- Add stoPET model to the project and integrate it in a similair way
+3. You can now choose to run some tests first or go on to the next step and just try running the model. To run the test scripts, you can use this command:
+
+    ```bash
+    python -m cuwalid.tests.dryp.run_tests
+    python -m cuwalid.tests.stopet.run_tests
+    ```
+
+4. Now you can run the model. Here is a link to a GitHub repository with an example of using the CUWALID models for you to use:
+
+    [CUWALID Example](https://github.com/CornishLeo/CUWALID-Example)
+
+    This will use the input files specified at the file path given. Look [here](#dryp_parameters) to learn more about the input files.

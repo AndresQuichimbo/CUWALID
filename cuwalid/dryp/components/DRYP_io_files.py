@@ -204,7 +204,7 @@ class get_model_settings(object):
 			else:
 				print("Projection system not provided")
 		
-		self.fname_store = 'None'
+		self.fname_store = None
 		if len(filename) == 100: # this component needs to be well integrates!!
 			self.fname_store = filename.drylandmodel[99]
 		self.store = get_store_parameters(self.fname_store)
@@ -276,18 +276,18 @@ class get_list_of_interception_hillslope_files(object):
 			self.fname_Sc0_canopy = fcp.INTERCEPTION[33]
 		else:
 			#Soil component
-			self.fname_savi = 'None'
-			self.fname_av = 'None'
-			self.fname_laia = 'None'
-			self.fname_laib = 'None'
-			self.fname_savi_max = 'None'
-			self.fname_savi_min = 'None'
-			self.fname_lai = 'None'
-			self.fname_tap_depth = 'None'
-			self.fname_extintion_depth = 'None'
+			self.fname_savi = None
+			self.fname_av = None
+			self.fname_laia = None
+			self.fname_laib = None
+			self.fname_savi_max = None
+			self.fname_savi_min = None
+			self.fname_lai = None
+			self.fname_tap_depth = None
+			self.fname_extintion_depth = None
 
-			self.fname_fcw_canopy = 'None'
-			self.fname_Sc0_canopy = 'None'
+			self.fname_fcw_canopy = None
+			self.fname_Sc0_canopy = None
 
 		self.fname_SoilDepth = filename.drylandmodel[36] # root zone (D)
 
@@ -322,18 +322,18 @@ class get_list_of_interception_riparian_files(object):
 			self.fname_Sc0_canopy = fcp.INTERCEPTION[33]
 		else:
 			#Soil component
-			self.fname_savi = 'None'
-			self.fname_av = 'None'
-			self.fname_laia = 'None'
-			self.fname_laib = 'None'
-			self.fname_savi_max = 'None'
-			self.fname_savi_min = 'None'
-			self.fname_lai = 'None'
-			self.fname_tap_depth = 'None'
-			self.fname_extintion_depth = 'None'
+			self.fname_savi = None
+			self.fname_av = None
+			self.fname_laia = None
+			self.fname_laib = None
+			self.fname_savi_max = None
+			self.fname_savi_min = None
+			self.fname_lai = None
+			self.fname_tap_depth = None
+			self.fname_extintion_depth = None
 
-			self.fname_fcw_canopy = 'None'
-			self.fname_Sc0_canopy = 'None'
+			self.fname_fcw_canopy = None
+			self.fname_Sc0_canopy = None
 		self.fname_SoilDepth = filename.drylandmodel[36] # root zone (D)
 		# Unsaturated zone factors =========================================
 		#self.kdt_r = float(factors.DWAPM_SET[46])
@@ -367,17 +367,17 @@ class get_list_of_surface_files(object):
 		if len(filename) == 96:
 			self.fname_bc = filename.drylandmodel[95]
 		else:
-			self.fname_bc = 'None'
+			self.fname_bc = None
 		
-		self.fname_TSOF = 'None'
-		self.filename_OF_points = 'None'
+		self.fname_TSOF = None
+		self.filename_OF_points = None
 		
 		if os.path.exists(self.fname_bc):
 			fbc = pd.read_csv(self.fname_bc)
 			self.fname_TSOF = fbc.OFBC[1]
 			self.filename_OF_points = fbc.OFBC[3]
 		
-		self.fname_bathymetry = 'None'#filename.drylandmodel[4]
+		self.fname_bathymetry = None#filename.drylandmodel[4]
 
 		if os.path.exists(filename.drylandmodel[89]):
 			fgw = pd.read_csv(filename.drylandmodel[89])
@@ -387,9 +387,9 @@ class get_list_of_surface_files(object):
 		if len(filename) == 94:
 			self.fname_riparian_zone = filename.drylandmodel[93]
 		else:
-			self.fname_riparian_zone = 'none'
+			self.fname_riparian_zone = None
 		
-		self.fname_ripwidth = "none"
+		self.fname_ripwidth = None
 		if os.path.exists(self.fname_riparian_zone):
 			frz = pd.read_csv(self.fname_riparian_zone)
 			self.fname_ripwidth = frz.RIPARIAN[21]	# riparian width [-]
@@ -444,7 +444,7 @@ class get_list_of_riparian_soil_files(object):
 		if len(filename) == 94:
 			self.fname_riparian_zone = filename.drylandmodel[93]
 		else:
-			self.fname_riparian_zone = 'None'
+			self.fname_riparian_zone = None
 			
 		if os.path.exists(self.fname_riparian_zone):
 			frz = pd.read_csv(self.fname_riparian_zone)
@@ -476,7 +476,7 @@ class get_list_of_riparian_soil_files(object):
 				self.fname_Ksat = filename.drylandmodel[42]
 			# filename of inital conditions
 			self.fname_theta = filename.drylandmodel[46]	# Initial water content [-]
-			self.fname_ripwidth = "none"
+			self.fname_ripwidth = None
 		
 		# Unsaturated zone factors =========================================
 		#self.kdt_r = float(factors.DWAPM_SET[46])
@@ -511,10 +511,10 @@ class get_list_of_groundwater_files(object):
 		self.fname_SZ_bot = filename.drylandmodel[63]	# path_sz_bottom
 		
 		# additional parameters
-		self.fname_thickness = 'None'
-		self.fname_b_aq = 'None'
-		self.fname_aquifertype = 'None'
-		self.fname_bathymetry = 'None'
+		self.fname_thickness = None
+		self.fname_b_aq = None
+		self.fname_aquifertype = None
+		self.fname_bathymetry = None
 
 		if os.path.exists(filename.drylandmodel[89]):
 			fgw = pd.read_csv(filename.drylandmodel[89])
@@ -524,14 +524,14 @@ class get_list_of_groundwater_files(object):
 			self.fname_bathymetry = fgw.GROUNDWATER[18] # Constant flux boundary
 		
 		# groundwater second layer ========================================
-		self.fname_SZ_botb = 'None'
-		self.fname_SZ_Ksatb = 'None'
-		self.fname_SZ_Syb = 'None'
-		self.fname_SZ_Ssb = 'None'
-		self.fname_GWinib = 'None'
-		#self.fname_FHBb = 'None'
-		#self.fname_CHBb = 'None'
-		self.fname_mask_of = 'None'
+		self.fname_SZ_botb = None
+		self.fname_SZ_Ksatb = None
+		self.fname_SZ_Syb = None
+		self.fname_SZ_Ssb = None
+		self.fname_GWinib = None
+		#self.fname_FHBb = None
+		#self.fname_CHBb = None
+		self.fname_mask_of = None
 		
 		
 		if self.run_GW > 0:
