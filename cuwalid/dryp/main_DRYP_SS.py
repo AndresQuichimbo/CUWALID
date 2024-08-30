@@ -51,11 +51,11 @@ def run_DRYP_SS(filename_input):
 				data_in.fname_aquifer)
 	
 	# Read precipitation
-	PRE = read_dataset_interp(data_in.dt, data_in.dt_pre,
+	PRE = read_dataset_interp(data_in.dt, data_in.data_step['pre'],
 		data_in.ini_date, data_in.end_date,
-		data_in.netcf_pre,
-		data_in.reproject_pre,
-		data_in.interpolate_pre,
+		data_in.data_reading['pre'],
+		data_in.data_reproject['pre'],
+		data_in.data_interpolate['pre']['pre'],
 		topo.grid_size,
 		topo.lat,
 		topo.lon

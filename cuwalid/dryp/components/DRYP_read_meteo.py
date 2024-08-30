@@ -46,7 +46,7 @@ class rainfall(object):
 		
 		
 		if inputfile.first_read == 1:			
-			if inputfile.netcf_pre == 1: 
+			if inputfile.data_reading['pre'] == 1: 
 				# Read netCDF fiels
 				fpre = Dataset(inputfile.fname_TSPre, 'r')
 				
@@ -145,7 +145,7 @@ class rainfall(object):
 			
 			# check if time periods match both time series
 			if len(idateETo) < t_end*inputfile.dt_hourly:
-				if inputfile.netcf_pre == 1:
+				if inputfile.data_reading['pre'] == 1:
 					t_end = (time_ETo[-1] - inputfile.ini_date).days
 				else:
 					t_end = (time_ETo.iloc[-1] - inputfile.ini_date).days
@@ -181,7 +181,7 @@ class rainfall(object):
 		self.rain = np.zeros(env_state.grid_size)
 		
 		if not np.isnan(self.idatepre[j_tp]):
-			if inputfile.netcf_pre == 1:
+			if inputfile.data_reading['pre'] == 1:
 				self.rain = (self.fpre.variables['pre'][self.idatepre[j_tp]][:]).flatten()
 			else: # Uniform precipitation over the whole catchement
 				self.rain = np.ones(env_state.grid_size)*self.fpre['pre'][self.idatepre[j_tp]]
@@ -398,14 +398,14 @@ class input_datasets_bigfiles_new(object):
 		
 		# to be deleted in subsequent versions
 		# number of time steps per model time step
-		self.nsteps_pre = int(inputfile.dt/inputfile.dt_pre)
+		self.nsteps_pre = int(inputfile.dt/inputfile.data_step['pre'])
 		self.nsteps_pet = int(inputfile.dt/inputfile.dt_pet)
 		
 		# check if temporal interpolation is required for precipitation
-		if inputfile.dt_pre != self.dt:
+		if inputfile.data_step['pre'] != self.dt:
 			self.nsteps_day_pre = int(1440/inputfile.dt)
 		else:
-			self.nsteps_day_pre = int(1440/inputfile.dt_pre)
+			self.nsteps_day_pre = int(1440/inputfile.data_step['pre'])
 		
 		# check if temporal interpolation is required for evapotrasnpiration
 		if inputfile.dt_pet != self.dt:
@@ -415,7 +415,7 @@ class input_datasets_bigfiles_new(object):
 		
 		# to be deleted in subsequent versions
 		# number of time steps per hour model time step
-		self.nsteps_hour_pre = int(inputfile.dt_pre/60)
+		self.nsteps_hour_pre = int(inputfile.data_step['pre']/60)
 		self.nsteps_hour_pet = int(inputfile.dt_pet/60)
 		
 		self.fill_value = 1
@@ -468,17 +468,17 @@ class input_datasets_bigfiles_new(object):
 			self.fpre = xr.open_mfdataset(fname_pre)
 			
 			# reproject dataset
-			if inputfile.reproject_pre == 1:
+			if inputfile.data_reproject['pre'] == 1:
 				self.fpre = reproject_dataset(self.fpre, keys)
 			
-			if inputfile.dt_pre != self.dt:
+			if inputfile.data_step['pre'] != self.dt:
 				# temporal resampling
 				self.fpre = self.fpre.resample(time=self.freq_dt).sum()
 							
 			# flag to no read every time the whole dataset
 			self.read_before_pre = 0
 					
-		if inputfile.interpolate_pre == 1:
+		if inputfile.data_interpolate['pre']['pre'] == 1:
 			# Spatial interpolation
 			fpre = self.fpre.isel(time=[j_tp]).interp(lat=(env_state.lat), lon=(env_state.lon))
 		else:
@@ -620,12 +620,12 @@ class input_datasets_bigfiles(object):
 		self.year_pre = int(inputfile.ini_date.year)
 		self.year_pet = int(inputfile.ini_date.year)
 		self.dt = inputfile.dt
-		self.nsteps_pre = int(inputfile.dt/inputfile.dt_pre)
-		self.nsteps_pet = int(inputfile.dt/inputfile.dt_ETo)
-		self.nsteps_day_pre = int(1440/inputfile.dt_pre)
-		self.nsteps_day_pet = int(1440/inputfile.dt_ETo)
-		self.nsteps_hour_pre = int(inputfile.dt_pre/60)
-		self.nsteps_hour_pet = int(inputfile.dt_ETo/60)
+		self.nsteps_pre = int(inputfile.dt/inputfile.data_step['pre'])
+		self.nsteps_pet = int(inputfile.dt/inputfile.data_step['pet'])
+		self.nsteps_day_pre = int(1440/inputfile.data_step['pre'])
+		self.nsteps_day_pet = int(1440/inputfile.data_step['pet'])
+		self.nsteps_hour_pre = int(inputfile.data_step['pre']/60)
+		self.nsteps_hour_pet = int(inputfile.data_step['pet']/60)
 		self.idatesavi = None
 		self.idatekc = None
 	

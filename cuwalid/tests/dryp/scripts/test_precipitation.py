@@ -54,7 +54,7 @@ def test_precipitation():
 	dt_pre = 60 # dataset time step
 	ini_date = datetime(2000,1,1,0,0,0)
 	end_date = datetime(2000,1,30,0,0,0)
-	netcf_pre = 1 # read precipitation as netcdf
+	data_reading = 1 # read precipitation as netcdf
 	reproject_pre = 1 # activate reprojection
 	interpolate_pre = 1 # activate interpolation
 	
@@ -88,7 +88,7 @@ def test_precipitation():
 	# Read precipitation
 	PRE = read_dataset_interp(dt, dt_pre,
 		ini_date, end_date,
-		netcf_pre,
+		data_reading,
 		reproject_pre,
 		interpolate_pre,
 		grid_size,

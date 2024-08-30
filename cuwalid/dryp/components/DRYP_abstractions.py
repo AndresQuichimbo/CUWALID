@@ -20,7 +20,7 @@ class abstractions(object):
 				sys.exit("End of the simulation period should be later than initial date")
 				
 		if os.path.exists(inputfile.fname_TSABC):
-			if inputfile.netcf_ABC == 1:
+			if inputfile.data_reading['abs'] == 1:
 				fabc = Dataset(inputfile.fname_TSABC, 'r')
 				time_pre_aux = num2date(fabc['time'][:-1], units = fabc['time'].units, calendar = fabc['time'].calendar)
 				time_pre = []
@@ -45,7 +45,7 @@ class abstractions(object):
 				idate_pre = date_sim_h.isin(time_pre)
 			idateabc[idate_pre == True] = idate_aux
 			idateabc[idate_pre == False] = np.nan
-			if inputfile.netcf_ABC == 1:
+			if inputfile.data_reading['abs'] == 1:
 				t_end = (time_pre[-1] - inputfile.ini_date).days
 			else:
 				t_end = (time_pre.iloc[-1] - inputfile.ini_date).days
@@ -61,7 +61,7 @@ class abstractions(object):
 		else:
 			self.data_provided = 0
 			print('Not available water extractions file')
-		self.netcdf_file = int(inputfile.netcf_ABC)
+		self.netcdf_file = int(inputfile.data_reading['abs'])
 	# find water abstraction for specific time steps
 	def run_abstractions_one_step(self, t_abc, env_state, inputfile):
 		"""

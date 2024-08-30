@@ -117,11 +117,11 @@ def run_DRYP(filename_input):
 	
 	# READING FORCING DATASET -------------------------------------------
 	# Read precipitation
-	PRE = read_dataset_interp(data_in.dt, data_in.dt_pre,
+	PRE = read_dataset_interp(data_in.dt, data_in.data_step['pre'],
 		data_in.ini_date, data_in.end_date,
-		data_in.netcf_pre,
-		data_in.reproject_pre,
-		data_in.interpolate_pre,
+		data_in.data_reading['pre'],
+		data_in.data_reproject['pre'],
+		data_in.data_interpolate['pre'],
 		topo.grid_size,
 		topo.lat,
 		topo.lon,
@@ -130,11 +130,11 @@ def run_DRYP(filename_input):
 		)
 	
 	# Read reference potential evapotranspiration
-	ET0 = read_dataset_interp(data_in.dt, data_in.dt_ETo,
+	ET0 = read_dataset_interp(data_in.dt, data_in.data_step['pet'],
 		data_in.ini_date, data_in.end_date,
-		data_in.netcf_ETo,
-		data_in.reproject_ETo,
-		data_in.interpolate_ETo,
+		data_in.data_reading['pet'],
+		data_in.data_reproject['pet'],
+		data_in.data_interpolate['pet'],
 		topo.grid_size,
 		topo.lat,
 		topo.lon,
@@ -143,34 +143,34 @@ def run_DRYP(filename_input):
 		)
 	
 	# Read SAVI
-	SAVI = read_dataset(data_in.dt, data_in.dt_savi,
+	SAVI = read_dataset(data_in.dt, data_in.data_step['savi'],
 		data_in.ini_date, data_in.end_date,
-		data_in.netcf_savi,
-		data_in.reproject_savi,
-		data_in.interpolate_savi,
+		data_in.data_reading['savi'],
+		data_in.data_reproject['savi'],
+		data_in.data_interpolate['savi'],
 		topo.grid_size)
 		
 	# Read SAVI minimum value
-	SAVImin = read_dataset(data_in.dt, data_in.dt_savi_min,
+	SAVImin = read_dataset(data_in.dt, data_in.data_step['savi_min'],
 		data_in.ini_date, data_in.end_date,
-		data_in.netcf_savi_min,
-		data_in.reproject_savi_min,
-		data_in.interpolate_savi_min,
+		data_in.data_reading['savi_min'],
+		data_in.data_reproject['savi_min'],
+		data_in.data_interpolate['savi_min'],
 		topo.grid_size)
 	
 	# Read SAVI maximum value
-	SAVImax = read_dataset(data_in.dt, data_in.dt_savi_max,
+	SAVImax = read_dataset(data_in.dt, data_in.data_step['savi_max'],
 		data_in.ini_date, data_in.end_date,
-		data_in.netcf_savi_max,
-		data_in.reproject_savi_max,
-		data_in.interpolate_savi_max,
+		data_in.data_reading['savi_max'],
+		data_in.data_reproject['savi_max'],
+		data_in.data_interpolate['savi_max'],
 		topo.grid_size)
 	
 	
 	# read overland flow boundary condition
 	dataFlux = read_temporal_dataset(
 			data_in.fname_surface.fname_TSOF,
-			data_in.netcf_Flux,
+			data_in.data_reading['flux'],
 			data_in.dt,
 			data_in.end_date,
 			data_in.ini_date,
@@ -218,13 +218,13 @@ def run_DRYP(filename_input):
 	#pnds = ponds() # ponds	
 	# read location of point boundary conditions
 	#if dataFlux.data_set is not None:
-	#	if data_in.netcf_ABC == 0:
+	#	if data_in.data_reading['abs'] == 0:
 	#		idFluxOF = extract_id_from_coords(
 	#			env_state.grid,
 	#			data_in.filename_OF_points
 	#			)
 	#	
-	#	elif data_in.netcf_ABC == 2:
+	#	elif data_in.data_reading['abs'] == 2:
 	#		idFluxOF = extract_id_from_raster(
 	#			env_state.grid,
 	#			data_in.filename_OF_points

@@ -616,13 +616,11 @@ class interception_parameters(object):
 		#	self.av = 1.0
 
 		# read crop vegetation factor: default 1
-		if inputfile.fname_interception != None and os.path.exists(inputfile.fname_interception):
-			if inputfile.fname_av != None and os.path.exists(inputfile.fname_av):
-				self.av = np.flip(rasterio.open(inputfile.fname_av).read(1), 0).flatten()
-			else:
-				print('Fraction of vegetation cover..not provided as raster. Global default 1')
-				self.av = None
+
+		if inputfile.fname_av != None and os.path.exists(inputfile.fname_av):
+			self.av = np.flip(rasterio.open(inputfile.fname_av).read(1), 0).flatten()
 		else:
+			print('Fraction of vegetation cover..not provided as raster. Global default 1')
 			self.av = None
 		# read Coeficient of exponential function: default 0
 		if inputfile.fname_laia != None and os.path.exists(inputfile.fname_laia):
