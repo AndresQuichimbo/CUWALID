@@ -29,7 +29,7 @@ class ABMconnector(object):
 		#else:
 		#	self.data_provided = 0
 		#	print('Not available water extractions file')
-		#self.netcdf_file = int(inputfile.netcf_ABC)
+		#self.netcdf_file = int(inputfile.data_reading['abs'])
 		self.data_provided = 0
 	
 	# find water abstraction for specific time steps

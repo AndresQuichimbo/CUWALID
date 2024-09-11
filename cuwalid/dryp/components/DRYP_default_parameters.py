@@ -1,101 +1,118 @@
 """DRYP_default_parameters"""
 
-model_name = "DRYP_model_sim"
-path_input = None
 
-TERRAIN = {
-"path_dem": None, # topography (required)
-"path_fdl": None, # flow direction
-"path_mask": None, # Model domain
-}
+default_input = {
 
-RIVER = {
-"path_riv_decay": None, # river velocity
-"path_riv_len": None, # river length
-"path_riv_width": None,# river width
-"path_riv_elev": None, # river streambed elevation
-"path_riv_Qini": None, # river initial volume
-"path_riv_ksat": None, # river hydraulic conductivity
-}
+   "model_name": "DRYP_model_sim",
+   "path_input": "",
 
-WATER_BODIES = {
-"path_lake_depth": None, # Lake depth (bathymetry)
-"path_pnds_Hmax": None, # pond maximum depth
-"path_pnds_Amax": None, # pond maximum area
-"path_pnds_Vini": None, # pond initial condition
-}
+   "TERRAIN": {
+      "path_dem": "required",
+      "path_Qo": None,
+      "path_fdl": None,
+      "path_riv_decay": None,
+      "path_mask": None,
+      "path_riv_len": None,
+      "path_riv_width": None,
+      "path_riv_elev": None
+   },
 
-VEGETATION = {
-   "path_veg_kc": None,
-   "path_veg_lulc": None,
-#   "path_veg_nn": None
-}
+   "VEGETATION": {
+      "path_veg_kc": None,
+      "path_veg_lulc": None,
+      #"path_veg_nn": None
+   },
 
-INTERCEPTION = {
-"path_veg_rp_tap_depth": None, # plant tap groundwater depth
-"path_veg_rp_final_depth": None, # plant extinsion depth
-}
+   "UNSATURATED": {
+      "path_uz_theta_sat": None,
+      "path_uz_theta_res": None,
+      "path_uz_theta_awc": None,
+      "path_uz_theta_wp": None,
+      "path_uz_root": None,
+      "path_uz_lambda": None,
+      "path_uz_psi": None,
+      "path_uz_ksat": None,
+      "path_uz_sigmaksat": None,
+      "path_uz_theta": None,
+      "path_riv_ksat": None,
+      "path_uz_bottomksat": None
+   },
 
-RIPARIAN = {
-"path_uz_theta_sat": None,
-"path_uz_theta_res": None,
-"path_uz_theta_awc": None,
-"path_uz_theta_wp": None,
-"path_uz_root": None,
-"path_uz_lambda": None,
-"path_uz_psi": None,
-"path_uz_ksat": None,
-"path_uz_sigmaksat": None,
-"path_uz_theta": None,
-"path_rp_width": None # riparian corridor width
-}
+   "SATURATED": {
+      "path_sz_mask": None,
+      "path_sz_ksat": None,
+      "path_sz_sy": None,
+      "path_sz_wte": None,
+      "path_sz_bc_flux": None,
+      "path_sz_bc_head": None,
+      "path_sz_bottom": None
+   },
 
-UNSATURATED = {
-   "path_uz_theta_sat": None,
-   "path_uz_theta_res": None,
-   "path_uz_theta_awc": None,
-   "path_uz_theta_wp": None,
-   "path_uz_root": None,
-   "path_uz_lambda": None,
-   "path_uz_psi": None,
-   "path_uz_ksat": None,
-   "path_uz_sigmaksat": None,
-   "path_uz_theta": None,
-}
+   "METEO": {
+      "path_pre": None,
+      "path_pet": None,
+      "path_aof": None,
+      #"other": None
+   },
 
+   "OUTPUT": {
+      "path_out_sz": None,
+      "path_out_uz": None,
+      "path_out_oz": None,
+      "path_output": None,
+      "Other": None,
+      "path_setting": None,
+      "path_gw_settings": None,
+      "path_vg_settings": None,
+      "path_rp_settings": None,
+      "path_of_settings": None,
+      "path_projection": None
+   },
 
-SATURATED = {
-   "path_sz_mask": None,
-   "path_sz_ksat": None,
-   "path_sz_sy": None,
-   "path_sz_wte": None,
-   "path_sz_bc_flux": None,
-   "path_sz_bc_head": None,
-   "path_sz_bottom": None,
-   "path_gw_type": None,
-   "path_gw_depth": None,
-   "path_gw_bdd": None,
-}
+   "RIPARIAN": {
+      "path_rp_theta_sat": None,
+      "path_rp_theta_res": None,
+      "path_rp_theta_awc": None,
+      "path_rp_theta_wp": None,
+      "path_rp_rootdepth": None,
+      "path_rp_lambdas": None,
+      "path_rp_psi": None,
+      "path_rp_ksat": None,
+      "path_rp_sigmaksat": None,
+      "path_rp_theta": None,
+      "path_rp_width": None
+   },
 
-METEO = {
-   "path_pre": None,
-   "path_pet": None,
-   "path_aof": None,
-#   "Other": None
-}
+   "INTERCEPTION": {
+      "path_veg_lulc_frac": None,
+      "path_veg_hs_savi": None,
+      "path_veg_hs_par_a": None,
+      "path_veg_hs_par_b": None,
+      "path_veg_hs_savi_min": None,
+      "path_veg_hs_savi_max": None,
+      "path_veg_hs_lai": None,
+      "path_veg_rp_par_a": None,
+      "path_veg_rp_par_b": None,
+      "path_veg_rp_savi_min": None,
+      "path_veg_rp_savi_max": None,
+      "path_veg_rp_lai": None,
+      "path_veg_rp_tap_depth": None,
+      "path_veg_rp_final_depth": None,
+      "path_veg_rp_fcw": None,
+      "path_veg_rp_sca": None
+   },
 
-OUTPUT = {
-   "path_out_sz": None,
-   "path_out_uz": None,
-   "path_out_oz": None,
-   "path_output": None,
-}
-
-SETTINGS_FILES = {
-"path_setting": None,
-"path_gw_settings": None,
-"path_vg_settings": None,
-"path_rp_settings": None,
-"path_of_settings": None,
-"path_projection": None
+   "GROUNDWATER": {
+      "path_gw_depth": None,
+      "path_gw_bdd": None,
+      "path_gw_2l_bottom": None,
+      "path_gw_2l_ksat": None,
+      "path_gw_2l_sy": None,
+      "path_gw_2l_ss": None,
+      "path_gw_2l_wte": None,
+      "path_gw_type": None,
+      "path_gw_lake_elev": None,
+      "path_pnds_vmax": None,
+      "path_pnds_shape_par": None
+   }
 }

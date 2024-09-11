@@ -27,7 +27,7 @@ class runoff_routing(object):
 
 	"""
 	def __init__(self, grid, grid_size, surface, FlowDirection, Ksat,
-	    	decay, riv_width, riv_length):
+			decay, riv_width, riv_length):
 		"""initialization of flow routing component
 		
 		Parameters
@@ -94,8 +94,8 @@ class runoff_routing(object):
 	def run_runoff_one_step(self, runoff, AOF, AOF_threshold, conductivity,
 			 decay, river_cell, area_cells, area_river, river_sat_deficit,
 			 boundary_nodes):
-		"""Function to make FlowAccumulator calculate drainage area and
-		discharge.
+		"""Function to make FlowAccumulator calculate drainage area and discharge.
+		
 		Running run_one_step() results in the following to occur:
 			1. Flow directions are updated (unless update_flow_director is set
 			as False).

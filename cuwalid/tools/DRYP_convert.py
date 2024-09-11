@@ -99,6 +99,19 @@ def convert_text_to_json(input_file, output_file=None):
             "path_aof": None,
             "Other": None
         },
+        "GROUNDWATER": {
+            "path_gw_depth": None,
+            "path_gw_bdd": None,
+            "path_gw_2l_bottom": None,
+            "path_gw_2l_ksat": None,
+            "path_gw_2l_sy": None,
+            "path_gw_2l_ss": None,
+            "path_gw_2l_wte": None,
+            "path_gw_type": None,
+            "path_gw_lake_elev": None,
+            "path_pnds_vmax": None,
+            "path_pnds_shape_par": None
+        },
         "OUTPUT": {
             "path_out_sz": None,
             "path_out_uz": None,
@@ -106,7 +119,6 @@ def convert_text_to_json(input_file, output_file=None):
             "path_output": None,
             "Other": None,
             "path_setting": None,
-            "path_gw_settings": None,
             "path_vg_settings": None,
             "path_rp_settings": None,
             "path_of_settings": None,
