@@ -17,6 +17,129 @@ from cuwalid.dryp.components.DRYP_store_functions import (
 import rasterio
 from cuwalid.dryp.components.DRYP_flow_accum import watershed
 
+def get_flow_path(fname_surface, fname_outlet, fname_out=None,
+						fname_flowDir=None, fname_mask=None,
+						accum=True):
+	"""This function read the input dataset file and
+	calculate the area and indices (in landlab format). It also
+	provides a map of contributing areas (flow accumulation).
+
+	This function store all files in the same directory of the
+	output files if post processing directory is not provided.
+	
+	Parameters
+	----------
+	fname_surface: str
+		file name of the elevation raster map
+	fname_outlet : str
+		file name of the outflow raster map
+	fname_floedir : str
+		(optional) filename of the flow direction raster map
+	fname_out : str
+		(optional) filename of the output raster file
+
+	Returns
+	-------
+	file
+		csv file containing a list areas and node index
+		asc flow accumalation map as raster file
+
+		
+	Examples
+	--------
+
+	>>> from cuwalid.dryp.components.DRYP_watershed import get_watershed_map
+	>>> fname_surface = "surface.asc"
+	>>> fname_flowdir = "flowdir.asc"
+	>>> fname_outlet = "point.csv"
+
+	>>> get_watershed_area(fname_surface, fname_outlet, fname_flowdir)
+	"""
+
+	# read datasets: surface, flow direction, and list of points
+	surface = read_raster(fname_surface)
+	
+	# read flow direction
+	flowDir = None
+	if fname_flowDir is not None:
+		flowDir = read_raster(fname_flowDir)
+	
+	## get raster shape and cellsize
+	domain = rasterio.open(fname_surface)
+	#grid_shape = (domain.height, domain.width)
+	grid_size = (domain.height*domain.width)
+	#grid_size = int(domain.nrows*domain.ncols)
+	area_cell = np.power(domain.transform[0], 2)
+
+	# read mask
+	mask = None
+	if fname_mask is not None:
+		mask = read_raster(fname_mask)
+
+	# create a raster grid environment, landlab grid
+	grid = grid_environment().create_grid(
+		domain.width,
+		domain.height,
+		domain.bounds[1],
+		domain.bounds[0],
+		domain.transform[0], # cell size
+		mask)
+	
+	ro = runoff_routing(grid,
+		 	grid_size,
+			surface, 
+			flowDir,
+			np.zeros_like(surface),
+			np.zeros_like(surface),
+			np.zeros_like(surface),
+			np.zeros_like(surface),
+			)
+
+	# get basin outlets
+	# Output variables and location
+	idnodes = extract_id_from_coords(grid, fname_outlet)[0]
+
+	# create a raster dataset
+	unit_area = np.zeros_like(surface)
+	
+	# create a new raster with the lozation to track
+	unit_area[idnodes] = 1.0
+
+	# run runoff component
+	ro.run_runoff_one_step(
+						unit_area,# unit area
+						np.zeros_like(surface),#AOF
+						np.zeros_like(surface),#AOF_threshold,
+						np.zeros_like(surface), #conductivity,
+						np.ones_like(surface),
+						np.zeros_like(surface),# no rivers
+						np.full(grid_size, area_cell),
+						np.zeros_like(surface),
+						np.ones_like(surface)*1e5,
+						None)
+	
+	if accum is True:
+		# run runoff component
+		ro.run_runoff_one_step(
+						ro.discharge,# unit area
+						np.zeros_like(surface),#AOF
+						np.zeros_like(surface),#AOF_threshold,
+						np.zeros_like(surface), #conductivity,
+						np.ones_like(surface),
+						np.zeros_like(surface),# no rivers
+						np.full(grid_size, area_cell),
+						np.zeros_like(surface),
+						np.ones_like(surface)*1e5,
+						None)
+	# save files
+	if fname_out is None:
+		fname_out = fname_surface.split('.')[0]
+
+	# Save contributing area as raster file
+	save_map_to_rastergrid(grid, ro.discharge,
+			fname_out + '_flowpath.asc')
+
+
 def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 						fname_flowDir=None, fname_mask=None):
 	"""This function read the input dataset file and
