@@ -107,7 +107,7 @@
 <span class="sd">        model parameter settings in plain txt format</span>
 <span class="sd">    </span>
 <span class="sd">Version(s):</span>
-<span class="sd">20181130 (1.0.0) --&gt; Development of application for version 3.1.5 of HMC models</span>
+<span class="sd">20191130 (1.0.0) --&gt; Development of application for version 2.0.0 of Cuwalid models</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 
@@ -139,6 +139,7 @@
 <span class="kn">from</span> <span class="nn">cuwalid.dryp.components.DRYP_store_functions</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">GlobalGridVar</span><span class="p">,</span>
 	<span class="n">save_map_to_rastergrid</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cuwalid.dryp.components.DRYP_ponds</span> <span class="kn">import</span> <span class="n">ponds</span>											
 
 <span class="c1"># ---------------------------------------------------------------------</span>
 <span class="c1"># Version and algorithm information</span>
@@ -164,7 +165,7 @@
 <div class="viewcode-block" id="run_DRYP">
 <a class="viewcode-back" href="../../../cuwalid.dryp.html#cuwalid.dryp.main_DRYP.run_DRYP">[docs]</a>
 <span class="k">def</span> <span class="nf">run_DRYP</span><span class="p">(</span><span class="n">filename_input</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;This funtion integrates all components of the model, with</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function integrates all components of the model, with</span>
 <span class="sd">	all model parameters and component settings being specified in</span>
 <span class="sd">	the -filename_input- file.</span>
 <span class="sd">	</span>
@@ -197,12 +198,13 @@
 	<span class="c1">#env_state.set_output_dir(data_in)</span>
 	<span class="c1">#env_state.points_output(data_in)</span>
 	
+	<span class="c1"># READING FORCING DATASET -------------------------------------------</span>
 	<span class="c1"># Read precipitation</span>
-	<span class="n">PRE</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">dt_pre</span><span class="p">,</span>
+	<span class="n">PRE</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">netcf_pre</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">reproject_pre</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">interpolate_pre</span><span class="p">,</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
@@ -210,12 +212,12 @@
 		<span class="n">projm</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">proj_model</span><span class="p">,</span>
 		<span class="p">)</span>
 	
-	<span class="c1"># Read reference potential evpotranpiration</span>
-	<span class="n">ET0</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">dt_ETo</span><span class="p">,</span>
+	<span class="c1"># Read reference potential evapotranspiration</span>
+	<span class="n">ET0</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">netcf_ETo</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">reproject_ETo</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">interpolate_ETo</span><span class="p">,</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">],</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
@@ -224,34 +226,34 @@
 		<span class="p">)</span>
 	
 	<span class="c1"># Read SAVI</span>
-	<span class="n">SAVI</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">dt_savi</span><span class="p">,</span>
+	<span class="n">SAVI</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">netcf_savi</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">reproject_savi</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">interpolate_savi</span><span class="p">,</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
 		
 	<span class="c1"># Read SAVI minimum value</span>
-	<span class="n">SAVImin</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">dt_savi_min</span><span class="p">,</span>
+	<span class="n">SAVImin</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;savi_min&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">netcf_savi_min</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">reproject_savi_min</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">interpolate_savi_min</span><span class="p">,</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;savi_min&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;savi_min&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;savi_min&#39;</span><span class="p">],</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
 	
 	<span class="c1"># Read SAVI maximum value</span>
-	<span class="n">SAVImax</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">dt_savi_max</span><span class="p">,</span>
+	<span class="n">SAVImax</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;savi_max&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">netcf_savi_max</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">reproject_savi_max</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">interpolate_savi_max</span><span class="p">,</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;savi_max&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;savi_max&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;savi_max&#39;</span><span class="p">],</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
 	
 	
 	<span class="c1"># read overland flow boundary condition</span>
 	<span class="n">dataFlux</span> <span class="o">=</span> <span class="n">read_temporal_dataset</span><span class="p">(</span>
 			<span class="n">data_in</span><span class="o">.</span><span class="n">fname_surface</span><span class="o">.</span><span class="n">fname_TSOF</span><span class="p">,</span>
-			<span class="n">data_in</span><span class="o">.</span><span class="n">netcf_Flux</span><span class="p">,</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">],</span>
 			<span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span>
 			<span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
 			<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
@@ -260,6 +262,7 @@
 	<span class="c1"># add variable saturated component</span>
 	<span class="n">Qusz</span> <span class="o">=</span> <span class="n">recharge_routing</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
 
+	<span class="c1"># BUILD GRID DOMAIN -----------------------------------------------------</span>
 	<span class="c1"># create a raster grid environment, landlab grid</span>
 	<span class="n">grid</span> <span class="o">=</span> <span class="n">grid_environment</span><span class="p">()</span><span class="o">.</span><span class="n">create_grid</span><span class="p">(</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_ncols</span><span class="p">,</span>
@@ -273,12 +276,13 @@
 	<span class="c1"># setting model fluxes and state variables</span>
 	<span class="c1">#env_state = model_environment_status(data_in)</span>
 
+	<span class="c1"># MODEL COMPONENTS ------------------------------------------------------</span>
 	<span class="n">abc</span> <span class="o">=</span> <span class="n">ABMconnector</span><span class="p">()</span>
 	<span class="n">inf</span> <span class="o">=</span> <span class="n">infiltration</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">inf_method</span><span class="p">)</span>
 	<span class="n">cnp</span> <span class="o">=</span> <span class="n">interception</span><span class="p">()</span>
 	
-	<span class="n">swb</span> <span class="o">=</span> <span class="n">swbm</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
-	<span class="n">swb_rip</span> <span class="o">=</span> <span class="n">swbm</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+	<span class="n">swb</span> <span class="o">=</span> <span class="n">swbm</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span> <span class="c1"># soil layer</span>
+	<span class="n">swb_rip</span> <span class="o">=</span> <span class="n">swbm</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span> <span class="c1"># riparian layer</span>
 	<span class="n">ro</span> <span class="o">=</span> <span class="n">runoff_routing</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span>
 		 	<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 			<span class="n">topo</span><span class="o">.</span><span class="n">surface</span><span class="p">,</span> 
@@ -294,16 +298,16 @@
 			<span class="n">aquifer</span><span class="o">.</span><span class="n">CHB</span><span class="p">,</span>
 			<span class="n">data_in</span><span class="o">.</span><span class="n">gw_func</span><span class="p">)</span>
 	
-	
+	<span class="c1">#pnds = ponds() # ponds	</span>
 	<span class="c1"># read location of point boundary conditions</span>
 	<span class="c1">#if dataFlux.data_set is not None:</span>
-	<span class="c1">#	if data_in.netcf_ABC == 0:</span>
+	<span class="c1">#	if data_in.data_reading[&#39;abs&#39;] == 0:</span>
 	<span class="c1">#		idFluxOF = extract_id_from_coords(</span>
 	<span class="c1">#			env_state.grid,</span>
 	<span class="c1">#			data_in.filename_OF_points</span>
 	<span class="c1">#			)</span>
 	<span class="c1">#	</span>
-	<span class="c1">#	elif data_in.netcf_ABC == 2:</span>
+	<span class="c1">#	elif data_in.data_reading[&#39;abs&#39;] == 2:</span>
 	<span class="c1">#		idFluxOF = extract_id_from_raster(</span>
 	<span class="c1">#			env_state.grid,</span>
 	<span class="c1">#			data_in.filename_OF_points</span>
@@ -339,6 +343,10 @@
 	<span class="c1">#print(id_lakes)</span>
 	<span class="n">id_lakes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">id_lakes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 	<span class="c1">#print(id_lakes)</span>
+	
+	<span class="c1"># locations ponds</span>
+	<span class="c1">#id_ponds = None				 </span>
+	
 	<span class="c1"># INITIAL CONDITIONS =========</span>
 	<span class="c1"># surface water</span>
 	<span class="n">ro</span><span class="o">.</span><span class="n">SSZ</span> <span class="o">=</span> <span class="n">topo</span><span class="o">.</span><span class="n">Qo</span><span class="p">[:]</span>
@@ -364,7 +372,6 @@
 				<span class="n">topo</span><span class="o">.</span><span class="n">grid_cellsize</span><span class="p">,</span>
 				<span class="n">data_in</span><span class="o">.</span><span class="n">run_GW</span><span class="p">)</span>
 		<span class="p">)</span>
-	
 	
 	<span class="c1">#if riv_nodes.size &gt; 0:</span>
 	<span class="c1">#	river_sat_deficit = river_sat_deficit[act_riv_nodes]</span>
@@ -410,7 +417,7 @@
 				
 				<span class="c1"># get rainfall</span>
 				<span class="n">rain</span> <span class="o">=</span> <span class="n">PRE</span><span class="o">.</span><span class="n">get_one_step_dataset</span><span class="p">(</span><span class="n">t_pre</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_TSPre</span><span class="p">,</span> <span class="s1">&#39;pre&#39;</span><span class="p">)</span>
-				<span class="n">rain</span> <span class="o">=</span> <span class="n">rain</span><span class="o">*</span><span class="mf">0.5</span> <span class="c1"># This is specific for IMERG 30 min resolution only</span>
+				<span class="c1">#rain = rain*0.5 # This is specific for IMERG 30 min resolution only</span>
 				<span class="c1"># for the forcast TRAINING.</span>
 				<span class="c1">#rain[rain&gt;300] = 300.</span>
 				
@@ -474,6 +481,14 @@
 				<span class="c1">#### add irrigation as rain, still under development</span>
 				<span class="c1">####Pth = Pth[:] + abc.auz[:]</span>
 				
+				<span class="c1"># PONDS: Add ponds here ------------------------------------------</span>
+				<span class="c1"># first check that ponds is active</span>
+				<span class="c1">#if id_ponds is not None:</span>
+				<span class="c1">#	V_pnds, rt_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(</span>
+				<span class="c1"># 							Vo, P, pet, aoz, a, Vmax, cell_area)</span>
+					<span class="c1"># transfer data to the entire model domain</span>
+					<span class="c1">#rain[id_ponds] = P</span>
+				
 				<span class="c1"># INFILTRATION: estimate infiltration --------------------</span>
 				<span class="c1">#inf.run_infiltration_one_step(Pth, env_state, data_in)</span>
 				<span class="n">INF</span><span class="p">,</span> <span class="n">EXS</span><span class="p">,</span> <span class="n">Ft0</span><span class="p">,</span> <span class="n">SORP0</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">dry_day</span> <span class="o">=</span> <span class="n">inf</span><span class="o">.</span><span class="n">run_infiltration_one_step</span><span class="p">(</span>
@@ -516,9 +531,10 @@
 				<span class="k">if</span> <span class="n">Kc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 					<span class="n">PETh</span> <span class="o">=</span> <span class="n">Kc</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span><span class="o">*</span><span class="n">PETh</span><span class="c1">#[act_nodes]</span>
 				<span class="c1"># potential evapotranspiration for saturated zone</span>
-				<span class="n">PETsz</span> <span class="o">=</span> <span class="n">PETh</span><span class="o">*</span><span class="n">ratio_etp</span>
+				<span class="c1">#PETsz = PETh*ratio_etp</span>
 				<span class="c1"># potential evapotranspiration for unsaturated zone</span>
-				<span class="n">PETuz</span> <span class="o">=</span> <span class="n">PETh</span> <span class="o">-</span> <span class="n">PETsz</span>
+				<span class="c1">#PETuz = PETh - PETsz</span>
+				<span class="n">PETuz</span> <span class="o">=</span> <span class="n">PETh</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="c1"># - PETsz</span>
 				
 				<span class="c1"># SOIL WATER BALANCE: Mestimate soil water balance-------</span>
 				<span class="c1"># Units for fluxes are in mm, units of soil moisture [--]</span>
@@ -646,6 +662,13 @@
 				
 				<span class="c1">#### apply dumping to groundwater recharge</span>
 				<span class="c1">###rech = Qusz.run_recharge_routing(soil, rech, Dusz)</span>
+				<span class="c1"># this is an update for increasing evapranspiration in humid areas</span>
+				<span class="n">PETsz</span> <span class="o">=</span> <span class="p">(</span><span class="n">PETh</span> <span class="o">-</span> <span class="n">AET</span><span class="p">)</span><span class="c1"># + rAET))*ratio_etp #this is to increase evapotranspiraiton rates</span>
+				
+				<span class="k">if</span> <span class="n">riv_nodes</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="n">PETsz</span><span class="p">[</span><span class="n">act_riv_nodes</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">PETsz</span><span class="p">[</span><span class="n">act_riv_nodes</span><span class="p">]</span> <span class="o">-</span> <span class="n">rAET</span><span class="p">)</span><span class="c1"># + rAET))*ratio_etp #this is to increase evapotranspiraiton rates</span>
+				
+				<span class="n">PETsz</span> <span class="o">=</span> <span class="n">PETsz</span><span class="o">*</span><span class="n">ratio_etp</span>																						  
 				
 				<span class="c1"># temporal aggregation of fluxes for groundwater</span>
 				<span class="c1"># this will allow to run the groundwater component</span>
@@ -863,6 +886,15 @@
 			<span class="c1">#length_var,</span>
 			<span class="n">multi_files</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 	
+	<span class="c1">#if id_ponds.size &gt; 0: -----------------</span>
+	<span class="c1">#	# variables names</span>
+	<span class="c1">#	#var_name = [&#39;aet&#39;, &#39;fch&#39;, &#39;tls&#39;, &#39;tht&#39;, &#39;ssz&#39;]</span>
+	<span class="c1">#	</span>
+	<span class="c1">#	# save grided model result datasets </span>
+	<span class="c1">#	grid_pndsvar.save_netCDF_var(data_in.fnameTS_grid+&#39;pnd.nc&#39;,</span>
+	<span class="c1">#		   topo.lat, topo.lon, id_ponds,# var_name</span>
+	<span class="c1">#		   )</span>
+		
 	<span class="c1"># SAVE RASTER FILES FOR INITIAL CONDITIONS</span>
 	<span class="c1"># Save water table for initial conditions</span>
 	<span class="n">save_map_to_rastergrid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span>

@@ -1,0 +1,14 @@
+{
+    "plot_scales": ["County"],
+    "country": "kenya",
+    "place_names": ["Samburu", "Laikipia", "Meru"],
+    "seasons": ["OND"],
+    "water_status": ["Flood"],
+    "year": 2022,
+    "language": "English",
+    "output_dir": "output",
+    "netcdf_path": "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_YYYY_grid.nc",
+    "threshold_path":  "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_SSS",
+    "mask_path": "forecasting_dataset/HAD/input_model/HAD_mask_utm_m.asc",
+    "river_path": "forecasting_dataset/HAD/input_model/HAD_riv_length_utm.asc"
+}

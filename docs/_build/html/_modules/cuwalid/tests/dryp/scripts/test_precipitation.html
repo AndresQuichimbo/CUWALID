@@ -140,7 +140,7 @@
 	<span class="n">dt_pre</span> <span class="o">=</span> <span class="mi">60</span> <span class="c1"># dataset time step</span>
 	<span class="n">ini_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 	<span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-	<span class="n">netcf_pre</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># read precipitation as netcdf</span>
+	<span class="n">data_reading</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># read precipitation as netcdf</span>
 	<span class="n">reproject_pre</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># activate reprojection</span>
 	<span class="n">interpolate_pre</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># activate interpolation</span>
 	
@@ -174,7 +174,7 @@
 	<span class="c1"># Read precipitation</span>
 	<span class="n">PRE</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">dt_pre</span><span class="p">,</span>
 		<span class="n">ini_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span>
-		<span class="n">netcf_pre</span><span class="p">,</span>
+		<span class="n">data_reading</span><span class="p">,</span>
 		<span class="n">reproject_pre</span><span class="p">,</span>
 		<span class="n">interpolate_pre</span><span class="p">,</span>
 		<span class="n">grid_size</span><span class="p">,</span>

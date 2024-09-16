@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>A Short DRYP Tutorial &mdash; CUWALID 0.0.1 documentation</title>
+  <title>DRYP Tutorial &mdash; CUWALID 0.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -53,7 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models_info.html">Models Information</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorials</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">A Short DRYP Tutorial</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">DRYP Tutorial</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#runing-the-tilted-v-catchment-model-test">Runing the Tilted-V catchment model test</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#model-parameters-and-simulation-settings">Model parameters and simulation settings</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#running-the-simulation">Running the simulation</a></li>
@@ -72,6 +72,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="forecast_plot_tutorial.html">Forecast plot maps Tutorial</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
@@ -95,7 +96,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="tutorial.html">Tutorials</a></li>
-      <li class="breadcrumb-item active">A Short DRYP Tutorial</li>
+      <li class="breadcrumb-item active">DRYP Tutorial</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/dryp_tutorial.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -105,8 +106,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="a-short-dryp-tutorial">
-<h1>A Short DRYP Tutorial<a class="headerlink" href="#a-short-dryp-tutorial" title="Link to this heading"></a></h1>
+  <section id="dryp-tutorial">
+<h1>DRYP Tutorial<a class="headerlink" href="#dryp-tutorial" title="Link to this heading"></a></h1>
 <section id="runing-the-tilted-v-catchment-model-test">
 <h2>Runing the Tilted-V catchment model test<a class="headerlink" href="#runing-the-tilted-v-catchment-model-test" title="Link to this heading"></a></h2>
 <p>This folder contains files to run the tilted-V catchment model.</p>
@@ -133,10 +134,10 @@ setting_test.dmp</p>
 <p>The test can can also be run from the python command line or a python file with the following code:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cuwalid.dryp.main_DRYP</span> <span class="kn">import</span> <span class="n">run_DRYP</span>
 
-<span class="n">run_DRYP</span><span class="p">(</span><span class="s2">&quot;test_input/input_test.dmp&quot;</span><span class="p">)</span>
+<span class="n">run_DRYP</span><span class="p">(</span><span class="s2">&quot;test_input/input_test.json&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The location of all file locations must be relative to the location you run the file from. This example has the input in a directory in the main directory</p>
+<p>The location of all file locations must be relative to the location you run the file from. This example has the input in a directory called ‘test_input’ in the main directory</p>
 </section>
 <section id="model-outputs">
 <h3>Model outputs<a class="headerlink" href="#model-outputs" title="Link to this heading"></a></h3>

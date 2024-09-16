@@ -58,7 +58,7 @@
    "metadata": {},
    "source": [
     "* Create stochastic realizations of potential evapotranspiration for the MAM season using stoPET.\n",
-    "Forecasting the seasonal path_pet (PET) values uses the stoPET model and the ICPAC seasonal temperature forecast  <a href=\"https://www.icpac.net/seasonal-forecast/\" target=\"_blank\">(ICPAC seasonal forecast)</a>.\n",
+    "Forecasting the seasonal Potential Evapotranspiration (PET) values uses the stoPET model and the ICPAC seasonal temperature forecast  <a href=\"https://www.icpac.net/seasonal-forecast/\" target=\"_blank\">(ICPAC seasonal forecast)</a>.\n",
     "\n",
     "Details of the model description can be found in the following paper <a href=\"https://doi.org/10.5194/gmd-16-557-2023\" target=\"_blank\">stoPET paper</a> and you can download the model from <a href=\"https://doi.org/10.6084/m9.figshare.19665531\" target=\"_blank\">this link</a>.\n",
     "\n",

@@ -59,9 +59,6 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#model-parameters-and-setting-files">Model parameters and setting files</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#input-parameter-file">Input parameter file</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#simulation-settings-file">Simulation settings file</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#riparian-zone-parameter-files">Riparian zone parameter files</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#groudwater-parameter-file">Groudwater parameter file</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#projection-system-file">Projection system file</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vegetation-parameters-file">Vegetation parameters file</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#overland-flow-boundary-condition-file">Overland flow boundary condition file</a></li>
@@ -275,72 +272,117 @@ order to close the mass balance of the catchment, the first row of the coordinat
 coordinate of the catchment output.</p>
 <p>Finally, an example of input parameter file is shown bellow, user can copy this template to
 create a nuew model.</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">{</span>
-<span class="linenos"> 2</span><span class="w">    </span><span class="nt">&quot;drylandmodel&quot;</span><span class="p">:{</span>
-<span class="linenos"> 3</span><span class="w">        </span><span class="nt">&quot;model_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span>
-<span class="linenos"> 4</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos"> 5</span><span class="w">    </span><span class="nt">&quot;TERRAIN COMPONENTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 6</span><span class="w">        </span><span class="nt">&quot;path_dem&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_dem_m.asc&quot;</span><span class="p">,</span>
-<span class="linenos"> 7</span><span class="w">        </span><span class="nt">&quot;path_Qo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos"> 8</span><span class="w">        </span><span class="nt">&quot;path_fdl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_flowdir_m.asc&quot;</span><span class="p">,</span>
-<span class="linenos"> 9</span><span class="w">        </span><span class="nt">&quot;path_riv_decay&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">10</span><span class="w">        </span><span class="nt">&quot;path_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_mask_m.asc&quot;</span><span class="p">,</span>
-<span class="linenos">11</span><span class="w">        </span><span class="nt">&quot;path_riv_len&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_riv_m.asc&quot;</span><span class="p">,</span>
-<span class="linenos">12</span><span class="w">        </span><span class="nt">&quot;path_riv_width&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">13</span><span class="w">        </span><span class="nt">&quot;path_riv_elev&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
-<span class="linenos">14</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">15</span><span class="w">    </span><span class="nt">&quot;VEGETATION&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">16</span><span class="w">        </span><span class="nt">&quot;path_veg_kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">17</span><span class="w">        </span><span class="nt">&quot;path_veg_lulc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">18</span><span class="w">        </span><span class="nt">&quot;path_veg_nn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
-<span class="linenos">19</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">20</span><span class="w">    </span><span class="nt">&quot;UNSATURATED&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">21</span><span class="w">        </span><span class="nt">&quot;path_uz_theta_sat: porosity&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_ne.txt&quot;</span><span class="p">,</span>
-<span class="linenos">22</span><span class="w">        </span><span class="nt">&quot;path_uz_theta_res&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_theta_r.txt&quot;</span><span class="p">,</span>
-<span class="linenos">23</span><span class="w">        </span><span class="nt">&quot;path_uz_theta_awc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_awc.txt&quot;</span><span class="p">,</span>
-<span class="linenos">24</span><span class="w">        </span><span class="nt">&quot;path_uz_theta_wp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_wp.txt&quot;</span><span class="p">,</span>
-<span class="linenos">25</span><span class="w">        </span><span class="nt">&quot;path_uz_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_depth_m.asc&quot;</span><span class="p">,</span>
-<span class="linenos">26</span><span class="w">        </span><span class="nt">&quot;path_uz_lambda&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_n.txt&quot;</span><span class="p">,</span>
-<span class="linenos">27</span><span class="w">        </span><span class="nt">&quot;path_uz_psi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_phi.txt&quot;</span><span class="p">,</span>
-<span class="linenos">28</span><span class="w">        </span><span class="nt">&quot;Saturated hydraulic conductivity&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_ks.txt&quot;</span><span class="p">,</span>
-<span class="linenos">29</span><span class="w">        </span><span class="nt">&quot;path_uz_sigmaksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_sigma_ks.txt&quot;</span><span class="p">,</span>
-<span class="linenos">30</span><span class="w">        </span><span class="nt">&quot;path_uz_theta&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">31</span><span class="w">        </span><span class="nt">&quot;path_riv_ksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
-<span class="linenos">32</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">33</span><span class="w">    </span><span class="nt">&quot;SATURATED&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">34</span><span class="w">        </span><span class="nt">&quot;path_sz_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_mask_m.asc&quot;</span><span class="p">,</span>
-<span class="linenos">35</span><span class="w">        </span><span class="nt">&quot;path_sz_ksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_rawls_ks1.txt&quot;</span><span class="p">,</span>
-<span class="linenos">36</span><span class="w">        </span><span class="nt">&quot;path_sz_sy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">37</span><span class="w">        </span><span class="nt">&quot;path_sz_wte&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_wte_ini.asc&quot;</span><span class="p">,</span>
-<span class="linenos">38</span><span class="w">        </span><span class="nt">&quot;path_sz_bc_flux&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">39</span><span class="w">        </span><span class="nt">&quot;path_sz_bc_head&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_CHB1.asc&quot;</span><span class="p">,</span>
-<span class="linenos">40</span><span class="w">        </span><span class="nt">&quot;path_sz_bottom&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
-<span class="linenos">41</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">42</span><span class="w">    </span><span class="nt">&quot;METEO&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">43</span><span class="w">        </span><span class="nt">&quot;path_pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/Pre_60m_00_05_sin.csv&quot;</span><span class="p">,</span>
-<span class="linenos">44</span><span class="w">        </span><span class="nt">&quot;path_pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/Pre_60m_00_05_sin.csv&quot;</span><span class="p">,</span>
-<span class="linenos">45</span><span class="w">        </span><span class="nt">&quot;path_aof&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">46</span><span class="w">        </span><span class="nt">&quot;path_veg_nn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
-<span class="linenos">47</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">48</span><span class="w">    </span><span class="nt">&quot;OUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">49</span><span class="w">        </span><span class="nt">&quot;path_out_sz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_Flumes_points.csv&quot;</span><span class="p">,</span>
-<span class="linenos">50</span><span class="w">        </span><span class="nt">&quot;path_out_uz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_SM_points.csv&quot;</span><span class="p">,</span>
-<span class="linenos">51</span><span class="w">        </span><span class="nt">&quot;path_out_oz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/example-inputs/test_well_point_m.csv&quot;</span><span class="p">,</span>
-<span class="linenos">52</span><span class="w">        </span><span class="nt">&quot;path_output&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dryp_output/&quot;</span><span class="p">,</span>
-<span class="linenos">53</span><span class="w">        </span><span class="nt">&quot;path_veg_nn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">54</span><span class="w">        </span><span class="nt">&quot;path_setting&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;input/dryp_settings.json&quot;</span><span class="p">,</span>
-<span class="linenos">55</span><span class="w">        </span><span class="nt">&quot;path_gw_settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">56</span><span class="w">        </span><span class="nt">&quot;path_vg_settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">57</span><span class="w">        </span><span class="nt">&quot;path_rp_settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">58</span><span class="w">        </span><span class="nt">&quot;path_of_settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">59</span><span class="w">        </span><span class="nt">&quot;path_projection&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
-<span class="linenos">60</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">61</span><span class="p">}</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span><span class="p">{</span>
+<span class="linenos">  2</span>
+<span class="linenos">  3</span><span class="w">    </span><span class="nt">&quot;model_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DRYP_model_sim&quot;</span><span class="p">,</span>
+<span class="linenos">  4</span><span class="w">    </span><span class="nt">&quot;path_input&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="linenos">  5</span><span class="w"> </span>
+<span class="linenos">  6</span><span class="w">    </span><span class="nt">&quot;TERRAIN&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">  7</span><span class="w">       </span><span class="nt">&quot;path_dem&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;required&quot;</span><span class="p">,</span>
+<span class="linenos">  8</span><span class="w">       </span><span class="nt">&quot;path_Qo&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos">  9</span><span class="w">       </span><span class="nt">&quot;path_fdl&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 10</span><span class="w">       </span><span class="nt">&quot;path_riv_decay&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 11</span><span class="w">       </span><span class="nt">&quot;path_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 12</span><span class="w">       </span><span class="nt">&quot;path_riv_len&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 13</span><span class="w">       </span><span class="nt">&quot;path_riv_width&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 14</span><span class="w">       </span><span class="nt">&quot;path_riv_elev&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos"> 15</span><span class="w">    </span><span class="p">},</span>
+<span class="linenos"> 16</span><span class="w"> </span>
+<span class="linenos"> 17</span><span class="w">    </span><span class="nt">&quot;VEGETATION&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 18</span><span class="w">       </span><span class="nt">&quot;path_veg_kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 19</span><span class="w">       </span><span class="nt">&quot;path_veg_lulc&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos"> 20</span><span class="w">    </span><span class="p">},</span>
+<span class="linenos"> 21</span><span class="w"> </span>
+<span class="linenos"> 22</span><span class="w">    </span><span class="nt">&quot;UNSATURATED&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 23</span><span class="w">       </span><span class="nt">&quot;path_uz_theta_sat&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 24</span><span class="w">       </span><span class="nt">&quot;path_uz_theta_res&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 25</span><span class="w">       </span><span class="nt">&quot;path_uz_theta_awc&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 26</span><span class="w">       </span><span class="nt">&quot;path_uz_theta_wp&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 27</span><span class="w">       </span><span class="nt">&quot;path_uz_root&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 28</span><span class="w">       </span><span class="nt">&quot;path_uz_lambda&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 29</span><span class="w">       </span><span class="nt">&quot;path_uz_psi&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 30</span><span class="w">       </span><span class="nt">&quot;path_uz_ksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 31</span><span class="w">       </span><span class="nt">&quot;path_uz_sigmaksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 32</span><span class="w">       </span><span class="nt">&quot;path_uz_theta&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 33</span><span class="w">       </span><span class="nt">&quot;path_riv_ksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 34</span><span class="w">       </span><span class="nt">&quot;path_uz_bottomksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos"> 35</span><span class="w">    </span><span class="p">},</span>
+<span class="linenos"> 36</span><span class="w"> </span>
+<span class="linenos"> 37</span><span class="w">    </span><span class="nt">&quot;SATURATED&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 38</span><span class="w">       </span><span class="nt">&quot;path_sz_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 39</span><span class="w">       </span><span class="nt">&quot;path_sz_ksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 40</span><span class="w">       </span><span class="nt">&quot;path_sz_sy&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 41</span><span class="w">       </span><span class="nt">&quot;path_sz_wte&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 42</span><span class="w">       </span><span class="nt">&quot;path_sz_bc_flux&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 43</span><span class="w">       </span><span class="nt">&quot;path_sz_bc_head&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 44</span><span class="w">       </span><span class="nt">&quot;path_sz_bottom&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos"> 45</span><span class="w">    </span><span class="p">},</span>
+<span class="linenos"> 46</span><span class="w"> </span>
+<span class="linenos"> 47</span><span class="w">    </span><span class="nt">&quot;METEO&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 48</span><span class="w">       </span><span class="nt">&quot;path_pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 49</span><span class="w">       </span><span class="nt">&quot;path_pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 50</span><span class="w">       </span><span class="nt">&quot;path_aof&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos"> 51</span><span class="w">    </span><span class="p">},</span>
+<span class="linenos"> 52</span><span class="w"> </span>
+<span class="linenos"> 53</span><span class="w">    </span><span class="nt">&quot;OUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 54</span><span class="w">       </span><span class="nt">&quot;path_out_sz&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 55</span><span class="w">       </span><span class="nt">&quot;path_out_uz&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 56</span><span class="w">       </span><span class="nt">&quot;path_out_oz&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 57</span><span class="w">       </span><span class="nt">&quot;path_output&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 58</span><span class="w">       </span><span class="nt">&quot;Other&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 59</span><span class="w">       </span><span class="nt">&quot;path_setting&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 60</span><span class="w">       </span><span class="nt">&quot;path_projection&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos"> 61</span><span class="w">    </span><span class="p">},</span>
+<span class="linenos"> 62</span><span class="w"> </span>
+<span class="linenos"> 63</span><span class="w">    </span><span class="nt">&quot;RIPARIAN&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 64</span><span class="w">       </span><span class="nt">&quot;path_rp_theta_sat&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 65</span><span class="w">       </span><span class="nt">&quot;path_rp_theta_res&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 66</span><span class="w">       </span><span class="nt">&quot;path_rp_theta_awc&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 67</span><span class="w">       </span><span class="nt">&quot;path_rp_theta_wp&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 68</span><span class="w">       </span><span class="nt">&quot;path_rp_rootdepth&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 69</span><span class="w">       </span><span class="nt">&quot;path_rp_lambdas&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 70</span><span class="w">       </span><span class="nt">&quot;path_rp_psi&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 71</span><span class="w">       </span><span class="nt">&quot;path_rp_ksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 72</span><span class="w">       </span><span class="nt">&quot;path_rp_sigmaksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 73</span><span class="w">       </span><span class="nt">&quot;path_rp_theta&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 74</span><span class="w">       </span><span class="nt">&quot;path_rp_width&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos"> 75</span><span class="w">    </span><span class="p">},</span>
+<span class="linenos"> 76</span><span class="w"> </span>
+<span class="linenos"> 77</span><span class="w">    </span><span class="nt">&quot;INTERCEPTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 78</span><span class="w">       </span><span class="nt">&quot;path_veg_lulc_frac&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 79</span><span class="w">       </span><span class="nt">&quot;path_veg_hs_savi&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 80</span><span class="w">       </span><span class="nt">&quot;path_veg_hs_par_a&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 81</span><span class="w">       </span><span class="nt">&quot;path_veg_hs_par_b&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 82</span><span class="w">       </span><span class="nt">&quot;path_veg_hs_savi_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 83</span><span class="w">       </span><span class="nt">&quot;path_veg_hs_savi_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 84</span><span class="w">       </span><span class="nt">&quot;path_veg_hs_lai&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 85</span><span class="w">       </span><span class="nt">&quot;path_veg_rp_par_a&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 86</span><span class="w">       </span><span class="nt">&quot;path_veg_rp_par_b&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 87</span><span class="w">       </span><span class="nt">&quot;path_veg_rp_savi_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 88</span><span class="w">       </span><span class="nt">&quot;path_veg_rp_savi_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 89</span><span class="w">       </span><span class="nt">&quot;path_veg_rp_lai&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 90</span><span class="w">       </span><span class="nt">&quot;path_veg_rp_tap_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 91</span><span class="w">       </span><span class="nt">&quot;path_veg_rp_final_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 92</span><span class="w">       </span><span class="nt">&quot;path_veg_rp_fcw&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 93</span><span class="w">       </span><span class="nt">&quot;path_veg_rp_sca&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos"> 94</span><span class="w">    </span><span class="p">},</span>
+<span class="linenos"> 95</span><span class="w"> </span>
+<span class="linenos"> 96</span><span class="w">    </span><span class="nt">&quot;GROUNDWATER&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 97</span><span class="w">       </span><span class="nt">&quot;path_gw_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 98</span><span class="w">       </span><span class="nt">&quot;path_gw_bdd&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos"> 99</span><span class="w">       </span><span class="nt">&quot;path_gw_2l_bottom&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos">100</span><span class="w">       </span><span class="nt">&quot;path_gw_2l_ksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos">101</span><span class="w">       </span><span class="nt">&quot;path_gw_2l_sy&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos">102</span><span class="w">       </span><span class="nt">&quot;path_gw_2l_ss&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos">103</span><span class="w">       </span><span class="nt">&quot;path_gw_2l_wte&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos">104</span><span class="w">       </span><span class="nt">&quot;path_gw_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos">105</span><span class="w">       </span><span class="nt">&quot;path_gw_lake_elev&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos">106</span><span class="w">       </span><span class="nt">&quot;path_pnds_vmax&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos">107</span><span class="w">       </span><span class="nt">&quot;path_pnds_shape_par&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos">108</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">109</span><span class="w"> </span><span class="p">}</span>
 </pre></div>
 </div>
-</section>
-<section id="simulation-settings-file">
-<h3>Simulation settings file<a class="headerlink" href="#simulation-settings-file" title="Link to this heading"></a></h3>
 <section id="simulation-parameter-file">
 <h4>Simulation parameter file<a class="headerlink" href="#simulation-parameter-file" title="Link to this heading"></a></h4>
 <p>Information about simulation parameters such as period or time step must be provided in a json.
@@ -381,14 +423,48 @@ reprojection and interpolation, respectively. The order of the reading iptions p
 is not allowed to change, it will result in errors or even stop the simulation.</p>
 <p>The following is an example of the configuration of reading parameters
 options.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;READING&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;data_read&quot;</span><span class="p">:</span> <span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;data_step&quot;</span><span class="p">:</span> <span class="s2">&quot;60 60 60 60 60 60 60 60&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;data_reproject&quot;</span><span class="p">:</span> <span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;data_interp&quot;</span><span class="p">:</span> <span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;READING&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;data_reading&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;pre&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;pet&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;abs&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;kc&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;flux&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;savi&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;savi_min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;savi_max&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+    <span class="s2">&quot;data_step&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;pre&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="s2">&quot;pet&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="s2">&quot;abs&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="s2">&quot;kc&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="s2">&quot;flux&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="s2">&quot;savi&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="s2">&quot;savi_min&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="s2">&quot;savi_max&quot;</span><span class="p">:</span> <span class="mi">60</span>
+        <span class="p">},</span>
+    <span class="s2">&quot;data_reproject&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;pre&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;pet&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;abs&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;kc&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;flux&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;savi&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;savi_min&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;savi_max&quot;</span><span class="p">:</span> <span class="n">true</span>
+        <span class="p">},</span>
+    <span class="s2">&quot;data_interp&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;pre&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;pet&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;abs&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;kc&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;flux&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;savi&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;savi_min&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;savi_max&quot;</span><span class="p">:</span> <span class="n">true</span>
+        <span class="p">}</span>
+<span class="p">},</span>
 </pre></div>
 </div>
 </section>
@@ -451,109 +527,89 @@ file. Values are scale factors of the following parameters, this values are unit
 <li><p>kSy for aquifer specific yield factor,</p></li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">{</span>
-<span class="linenos"> 2</span><span class="w">    </span><span class="nt">&quot;SETTINGS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="nt">&quot;SIMULATION_PERIOD&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="linenos"> 3</span><span class="w">      </span><span class="nt">&quot;start_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2000 1 1&quot;</span><span class="p">,</span>
-<span class="linenos"> 4</span><span class="w">      </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2002 1 3&quot;</span><span class="p">,</span>
-<span class="linenos"> 5</span><span class="w">      </span><span class="nt">&quot;dt_of&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
-<span class="linenos"> 6</span><span class="w">      </span><span class="nt">&quot;dt_gw&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span>
-<span class="linenos"> 7</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos"> 8</span><span class="w">    </span><span class="nt">&quot;READING&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 9</span><span class="w">      </span><span class="nt">&quot;data_read&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span><span class="p">,</span>
-<span class="linenos">10</span><span class="w">      </span><span class="nt">&quot;data_step&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;60 60 60 60 60 60 60 60 60 60&quot;</span><span class="p">,</span>
-<span class="linenos">11</span><span class="w">      </span><span class="nt">&quot;data_reproject&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span><span class="p">,</span>
-<span class="linenos">12</span><span class="w">      </span><span class="nt">&quot;data_interp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0 0 0 0 0 0 0 0&quot;</span>
-<span class="linenos">13</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">14</span><span class="w">    </span><span class="nt">&quot;COMPONENTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">15</span><span class="w">      </span><span class="nt">&quot;method_inf&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="linenos">16</span><span class="w">      </span><span class="nt">&quot;method_gw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1 0&quot;</span><span class="p">,</span>
-<span class="linenos">17</span><span class="w">      </span><span class="nt">&quot;not used 1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-<span class="linenos">18</span><span class="w">      </span><span class="nt">&quot;not used 2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span>
-<span class="linenos">19</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">20</span><span class="w">    </span><span class="nt">&quot;OUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">21</span><span class="w">      </span><span class="nt">&quot;output_csv&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="linenos">22</span><span class="w">      </span><span class="nt">&quot;output_grid&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="linenos">23</span><span class="w">      </span><span class="nt">&quot;output_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1H&quot;</span><span class="p">,</span>
-<span class="linenos">24</span><span class="w">      </span><span class="nt">&quot;not used 1&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="linenos">25</span><span class="w">      </span><span class="nt">&quot;Save discharge in volumetric rate units&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="linenos">26</span><span class="w">      </span><span class="nt">&quot;not used 2&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="linenos">27</span><span class="w">      </span><span class="nt">&quot;not used 3&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
-<span class="linenos">28</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">29</span><span class="w">    </span><span class="nt">&quot;GLOBAL_FACTORS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">30</span><span class="w">      </span><span class="nt">&quot;factor_uz_kdt&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.00000</span><span class="p">,</span>
-<span class="linenos">31</span><span class="w">      </span><span class="nt">&quot;factor_uz_kdroot&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
-<span class="linenos">32</span><span class="w">      </span><span class="nt">&quot;factor_uz_kawc&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.00</span><span class="p">,</span>
-<span class="linenos">33</span><span class="w">      </span><span class="nt">&quot;factor_uz_kkast&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.29024</span><span class="p">,</span>
-<span class="linenos">34</span><span class="w">      </span><span class="nt">&quot;factor_uz_ksigma&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
-<span class="linenos">35</span><span class="w">      </span><span class="nt">&quot;factor_riv_kksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">10.52967</span><span class="p">,</span>
-<span class="linenos">36</span><span class="w">      </span><span class="nt">&quot;factor_riv_kdecay&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.1512967</span><span class="p">,</span>
-<span class="linenos">37</span><span class="w">      </span><span class="nt">&quot;factor_riv_kwidth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
-<span class="linenos">38</span><span class="w">      </span><span class="nt">&quot;factor_sz_kksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
-<span class="linenos">39</span><span class="w">      </span><span class="nt">&quot;factor_sz_ksy&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.00</span><span class="p">,</span>
-<span class="linenos">40</span><span class="w">      </span><span class="nt">&quot;factor_of_kflow&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span>
-<span class="linenos">41</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">42</span><span class="w">  </span><span class="p">}</span>
-<span class="linenos">43</span><span class="w">  </span>
+<span class="linenos"> 4</span><span class="w">      </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2002 1 3&quot;</span>
+<span class="linenos"> 5</span><span class="w">  </span><span class="p">},</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="w">  </span><span class="nt">&quot;TIMESTEP_SETTINGS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 8</span><span class="w">      </span><span class="nt">&quot;dt_of&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="linenos"> 9</span><span class="w">      </span><span class="nt">&quot;dt_uz&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="linenos">10</span><span class="w">      </span><span class="nt">&quot;dt_gw&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span>
+<span class="linenos">11</span><span class="w">  </span><span class="p">},</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="w">  </span><span class="nt">&quot;READING&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">14</span><span class="w">    </span>
+<span class="linenos">15</span><span class="w">      </span><span class="nt">&quot;data_reading&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">16</span><span class="w">          </span><span class="nt">&quot;pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="linenos">17</span><span class="w">          </span><span class="nt">&quot;pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="linenos">18</span><span class="w">          </span><span class="nt">&quot;abs&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="linenos">19</span><span class="w">          </span><span class="nt">&quot;kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="linenos">20</span><span class="w">          </span><span class="nt">&quot;flux&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="linenos">21</span><span class="w">          </span><span class="nt">&quot;savi&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="linenos">22</span><span class="w">          </span><span class="nt">&quot;savi_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="linenos">23</span><span class="w">          </span><span class="nt">&quot;savi_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="linenos">24</span><span class="w">          </span><span class="p">},</span>
+<span class="linenos">25</span><span class="w">      </span><span class="nt">&quot;data_step&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">26</span><span class="w">          </span><span class="nt">&quot;pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="linenos">27</span><span class="w">          </span><span class="nt">&quot;pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="linenos">28</span><span class="w">          </span><span class="nt">&quot;abs&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="linenos">29</span><span class="w">          </span><span class="nt">&quot;kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="linenos">30</span><span class="w">          </span><span class="nt">&quot;flux&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="linenos">31</span><span class="w">          </span><span class="nt">&quot;savi&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="linenos">32</span><span class="w">          </span><span class="nt">&quot;savi_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="linenos">33</span><span class="w">          </span><span class="nt">&quot;savi_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span>
+<span class="linenos">34</span><span class="w">          </span><span class="p">},</span>
+<span class="linenos">35</span><span class="w">      </span><span class="nt">&quot;data_reproject&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">36</span><span class="w">          </span><span class="nt">&quot;pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">37</span><span class="w">          </span><span class="nt">&quot;pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">38</span><span class="w">          </span><span class="nt">&quot;abs&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">39</span><span class="w">          </span><span class="nt">&quot;kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">40</span><span class="w">          </span><span class="nt">&quot;flux&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">41</span><span class="w">          </span><span class="nt">&quot;savi&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">42</span><span class="w">          </span><span class="nt">&quot;savi_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">43</span><span class="w">          </span><span class="nt">&quot;savi_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="linenos">44</span><span class="w">          </span><span class="p">},</span>
+<span class="linenos">45</span><span class="w">      </span><span class="nt">&quot;data_interp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">46</span><span class="w">          </span><span class="nt">&quot;pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">47</span><span class="w">          </span><span class="nt">&quot;pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">48</span><span class="w">          </span><span class="nt">&quot;abs&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">49</span><span class="w">          </span><span class="nt">&quot;kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">50</span><span class="w">          </span><span class="nt">&quot;flux&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">51</span><span class="w">          </span><span class="nt">&quot;savi&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">52</span><span class="w">          </span><span class="nt">&quot;savi_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">53</span><span class="w">          </span><span class="nt">&quot;savi_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="linenos">54</span><span class="w">          </span><span class="p">}</span>
+<span class="linenos">55</span><span class="w">  </span><span class="p">},</span>
+<span class="linenos">56</span>
+<span class="linenos">57</span><span class="w">  </span><span class="nt">&quot;COMPONENTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">58</span><span class="w">      </span><span class="nt">&quot;method_inf&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="linenos">59</span><span class="w">      </span><span class="nt">&quot;method_gw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1 0&quot;</span>
+<span class="linenos">60</span><span class="w">  </span><span class="p">},</span>
+<span class="linenos">61</span>
+<span class="linenos">62</span><span class="w">  </span><span class="nt">&quot;OUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">63</span><span class="w">      </span><span class="nt">&quot;output_csv&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">64</span><span class="w">      </span><span class="nt">&quot;output_grid&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="linenos">65</span><span class="w">      </span><span class="nt">&quot;output_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1M&quot;</span>
+<span class="linenos">66</span><span class="w">  </span><span class="p">},</span>
+<span class="linenos">67</span>
+<span class="linenos">68</span><span class="w">  </span><span class="nt">&quot;GLOBAL_FACTORS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">69</span><span class="w">      </span><span class="nt">&quot;uz_kdt&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">70</span><span class="w">      </span><span class="nt">&quot;uz_kdroot&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">71</span><span class="w">      </span><span class="nt">&quot;uz_kawc&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">72</span><span class="w">      </span><span class="nt">&quot;uz_kkast&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">73</span><span class="w">      </span><span class="nt">&quot;uz_ksigma&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">74</span><span class="w">      </span><span class="nt">&quot;riv_kksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">75</span><span class="w">      </span><span class="nt">&quot;riv_kdecay&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">76</span><span class="w">      </span><span class="nt">&quot;riv_kwidth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">77</span><span class="w">      </span><span class="nt">&quot;sz_kksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">78</span><span class="w">      </span><span class="nt">&quot;sz_ksy&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos">79</span><span class="w">      </span><span class="nt">&quot;of_kflow&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span>
+<span class="linenos">80</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">81</span><span class="p">}</span>
 </pre></div>
 </div>
 </section>
-</section>
-<section id="riparian-zone-parameter-files">
-<h3>Riparian zone parameter files<a class="headerlink" href="#riparian-zone-parameter-files" title="Link to this heading"></a></h3>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>RIPARIAN
-<span class="linenos"> 2</span>path_uz_theta_sat: porosity ------------------------(1):
-<span class="linenos"> 3</span>/user/work/km19051/Juba/input/JU_HAD_theta_sat_utm_m.asc
-<span class="linenos"> 4</span>path_uz_theta_res ---------------------------------(3):
-<span class="linenos"> 5</span>none
-<span class="linenos"> 6</span>path_uz_theta_awc ------------------(5):
-<span class="linenos"> 7</span>/user/work/km19051/Juba/input/JU_HAD_theta_awc_utm.asc
-<span class="linenos"> 8</span>path_uz_theta_wp -----------------------------(7):
-<span class="linenos"> 9</span>/user/work/km19051/Juba/input/JU_HAD_theta_wp_utm.asc
-<span class="linenos">10</span>path_uz_root ---------------------------------(9):
-<span class="linenos">11</span>/user/work/km19051/Juba/input/JU_HAD_rootdepth_utm_m.asc
-<span class="linenos">12</span>Soi particle distribution parameter (b) --------(11):
-<span class="linenos">13</span>/user/work/km19051/Juba/input/JU_HAD_lambdas_utm_m.asc
-<span class="linenos">14</span>path_uz_psi ------------------------------(13):
-<span class="linenos">15</span>/user/work/km19051/Juba/input/JU_HAD_psi_utm_m.asc
-<span class="linenos">16</span>Saturated hydraulic conductivity ---------------(15):
-<span class="linenos">17</span>/user/work/km19051/Juba/input/JU_HAD_ksat_utm_m.asc
-<span class="linenos">18</span>path_uz_sigmaksat -------------------------------------(17):
-<span class="linenos">19</span>none
-<span class="linenos">20</span>path_uz_theta ---------------------(19):
-<span class="linenos">21</span>/user/work/km19051/Juba/input/Juba_IM_sim_ini_avg_tht_rp_ini.asc
-<span class="linenos">22</span>path_veg_nn ------------------------------------------(21):
-<span class="linenos">23</span>none
-<span class="linenos">24</span>
-</pre></div>
-</div>
-</section>
-<section id="groudwater-parameter-file">
-<h3>Groudwater parameter file<a class="headerlink" href="#groudwater-parameter-file" title="Link to this heading"></a></h3>
-<p>The groundwater parameter file should be specified when the model uses
-multi-aquifer and a transmisivity function. If lakes is considered in
-the model, a file, indicating the bathymetry should be provided. An example
-of groundwater paramter file is provided below:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>GROUNDWATER
-<span class="linenos"> 2</span>Additional parameter a for Aquifer--------------(1):
-<span class="linenos"> 3</span>/user/work/km19051/Juba/input/JU_HAD_BDdepth_utm_m.asc
-<span class="linenos"> 4</span>Additional parameter b for Aquifer--------------(3):
-<span class="linenos"> 5</span>/user/work/km19051/Juba/input/JU_HAD_slopefactor_zero_utm_m.asc
-<span class="linenos"> 6</span>SECOND LAYER PARAMETERS ============================
-<span class="linenos"> 7</span>Bottom elevation second layer ------------------(6):
-<span class="linenos"> 8</span>none
-<span class="linenos"> 9</span>Hydraulic conductivity second layer ------------(8):
-<span class="linenos">10</span>none
-<span class="linenos">11</span>Specific yield second layer -------------------(10):
-<span class="linenos">12</span>none
-<span class="linenos">13</span>Specific storage second layer -----------------(12):
-<span class="linenos">14</span>none
-<span class="linenos">15</span>Inital head conditions second layer------------(14):
-<span class="linenos">16</span>none
-<span class="linenos">17</span>raster aquifer type for GW set 3 --------------(16):
-<span class="linenos">18</span>/user/work/km19051/Juba/input/JU_HAD_aquifer_type_utm_m.asc
-<span class="linenos">19</span>Lake maximum water elevation ------------------(18):
-<span class="linenos">20</span>/user/work/km19051/Juba/input/JU_HAD_lakes_globhaty_utm.asc
-</pre></div>
-</div>
 </section>
 <section id="projection-system-file">
 <h3>Projection system file<a class="headerlink" href="#projection-system-file" title="Link to this heading"></a></h3>
@@ -574,43 +630,6 @@ system of model, and the projection system of each dataset. An example is presen
 <section id="vegetation-parameters-file">
 <h3>Vegetation parameters file<a class="headerlink" href="#vegetation-parameters-file" title="Link to this heading"></a></h3>
 <p>This component is still under development</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>INTERCEPTION
-<span class="linenos"> 2</span>fraction of vegetation cover ------------------(1):
-<span class="linenos"> 3</span>../DynaVeg/input/DV_frac_cov.asc
-<span class="linenos"> 4</span>Soil-Adjusted Vegetation Index - SAVI----------(3):
-<span class="linenos"> 5</span>../DynaVeg/input/DV_SAVI_all_art_60min.nc
-<span class="linenos"> 6</span>Coeficient of exponential function ------------(5):
-<span class="linenos"> 7</span>../DynaVeg/input/DV_veg_a.asc
-<span class="linenos"> 8</span>Power value for exponential function ----------(7):
-<span class="linenos"> 9</span>../DynaVeg/input/DV_veg_b.asc
-<span class="linenos">10</span>Min Soil-Adjusted Vegetation Index ------------(9):
-<span class="linenos">11</span>../DynaVeg/input/DV_SAVI_min_art_60min.nc
-<span class="linenos">12</span>Max Soil-Adjusted Vegetation Index ------------(11):
-<span class="linenos">13</span>../DynaVeg/input/DV_SAVI_max_art_60min.nc
-<span class="linenos">14</span>Leaf area index -------------------------------(13)
-<span class="linenos">15</span>none
-<span class="linenos">16</span>Soil-Adjusted Vegetation Index - SAVI----------(15):
-<span class="linenos">17</span>../DynaVeg/input/DV_SAVI_all.nc
-<span class="linenos">18</span>Coeficient of exponential function ------------(17):
-<span class="linenos">19</span>../DynaVeg/input/DV_veg_a.asc
-<span class="linenos">20</span>Power value for exponential function ----------(19):
-<span class="linenos">21</span>../DynaVeg/input/DV_veg_b.asc
-<span class="linenos">22</span>Min Soil-Adjusted Vegetation Index ------------(21):
-<span class="linenos">23</span>../DynaVeg/input/DV_SAVI_min_art_60min.nc
-<span class="linenos">24</span>Max Soil-Adjusted Vegetation Index ------------(23):
-<span class="linenos">25</span>../DynaVeg/input/DV_SAVI_max_art_60min.nc
-<span class="linenos">26</span>Leaf area index -------------------------------(25)
-<span class="linenos">27</span>none
-<span class="linenos">28</span>Tap water depth -------------------------------(27)
-<span class="linenos">29</span>../DynaVeg/input/DV_tap_depth.asc
-<span class="linenos">30</span>Final water depth -----------------------------(29)
-<span class="linenos">31</span>../DynaVeg/input/DV_final_depth.asc
-<span class="linenos">32</span>biome-dependent factor ------------------------(31)
-<span class="linenos">33</span>../DynaVeg/input/DV_fcw.asc
-<span class="linenos">34</span>Initial canopy water storage ------------------(33)
-<span class="linenos">35</span>../DynaVeg/input/DV_Sca0.asc
-</pre></div>
-</div>
 </section>
 <section id="overland-flow-boundary-condition-file">
 <h3>Overland flow boundary condition file<a class="headerlink" href="#overland-flow-boundary-condition-file" title="Link to this heading"></a></h3>

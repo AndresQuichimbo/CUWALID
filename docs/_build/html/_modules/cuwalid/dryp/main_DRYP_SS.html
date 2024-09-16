@@ -134,11 +134,11 @@
 				<span class="n">data_in</span><span class="o">.</span><span class="n">fname_aquifer</span><span class="p">)</span>
 	
 	<span class="c1"># Read precipitation</span>
-	<span class="n">PRE</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">dt_pre</span><span class="p">,</span>
+	<span class="n">PRE</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">netcf_pre</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">reproject_pre</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">interpolate_pre</span><span class="p">,</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">][</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lon</span>

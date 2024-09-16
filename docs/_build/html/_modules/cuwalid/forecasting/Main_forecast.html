@@ -80,24 +80,9 @@
              
   <h1>Source code for cuwalid.forecasting.Main_forecast</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N00_cuwalid_HAD_get_csv_TS_files_from_multi_CSV</span> <span class="kn">import</span> <span class="n">get_csv_TS_files_from_multi_CSV</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N01a_cuwalid_HAD_get_TWSA_from_mult_files</span> <span class="kn">import</span> <span class="n">get_TWSA_from_mult_files</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N01b_cuwalid_HAD_get_additional_variables_multi_netcdf</span> <span class="kn">import</span> <span class="n">get_additional_variables_multi_netcdf</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N02a_cuwalid_HAD_get_percentiles_multi_files</span> <span class="kn">import</span> <span class="n">get_percentiles_multi_files</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N02c_cuwalid_HAD_get_extremes_quantiles_multi_netcdf</span> <span class="kn">import</span> <span class="n">get_extremes_quantiles_multi_netcdf</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N02d_cuwalid_HAD_get_average_multi_netcdf</span> <span class="kn">import</span> <span class="n">get_average_multi_netcdf</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N03_cuwalid_HAD_get_anomalies_multi_netcdf</span> <span class="kn">import</span> <span class="n">get_anomalies_multi_netcdf</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N04a_cuwalid_HAD_get_tercile_hindcast_fluxes</span> <span class="kn">import</span> <span class="n">get_tercile_hindcast_fluxes</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N04b_cuwalid_HAD_get_tercile_hindcast_extreme_values</span> <span class="kn">import</span> <span class="n">get_tercile_hindcast_extreme_values</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N05_cuwalid_HAD_extract_forecasting_variable</span> <span class="kn">import</span> <span class="n">extract_forecasting_variable</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N06_cuwalid_HAD_get_areas_terciles</span> <span class="kn">import</span> <span class="n">get_areas_terciles</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N07_cuwalid_HAD_get_update_TWSA</span> <span class="kn">import</span> <span class="n">get_update_TWSA</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N08_cuwalid_HAD_get_updated_TWSA_ensamble</span> <span class="kn">import</span> <span class="n">get_updated_TWSA_ensamble</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N09_cuwalid_HAD_get_ensamble_forecasting</span> <span class="kn">import</span> <span class="n">get_ensamble_forecasting</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N10a_cuwalid_HAD_get_probabilistic_tercile_forecast_ensamble</span> <span class="kn">import</span> <span class="n">get_probabilistic_tercile_forecast_ensamble</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N10b_cuwalid_HAD_get_deterministic_forecast_ensamble</span> <span class="kn">import</span> <span class="n">get_deterministic_forecast_ensamble</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N11a_cuwalid_HAD_plot_tercile_probability_forecast</span> <span class="kn">import</span> <span class="n">plot_tercile_probability_forecast</span>
-<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.N11b_cuwalid_HAD_plot_deterministic_forecast</span> <span class="kn">import</span> <span class="n">plot_deterministic_forecast</span>
+<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.hindcast</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.forecast</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.plotting</span> <span class="kn">import</span> <span class="o">*</span>
 
 <div class="viewcode-block" id="run_forecast">
 <a class="viewcode-back" href="../../../cuwalid.forecasting.html#cuwalid.forecasting.Main_forecast.run_forecast">[docs]</a>
@@ -129,31 +114,24 @@
         
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 1&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N00_cuwalid_HAD_get_csv_TS_files_from_multi_CSV code</span>
         <span class="n">get_csv_TS_files_from_multi_CSV</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">hindcast_model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 2&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N01a_cuwalid_HAD_get_TWSA_from_mult_files code</span>
         <span class="n">get_TWSA_from_mult_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">hindcast_model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 3&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N01b_cuwalid_HAD_get_additional_variables_multi_netcdf code</span>
         <span class="n">get_additional_variables_multi_netcdf</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">hindcast_model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 5&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N02a_cuwalid_HAD_get_percentiles_multi_files code</span>
         <span class="n">get_percentiles_multi_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">hindcast_model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 6&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N02c_cuwalid_HAD_get_extremes_quantiles_multi_netcdf code</span>
         <span class="n">get_extremes_quantiles_multi_netcdf</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">hindcast_model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 7&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N02d_cuwalid_HAD_get_average_multi_netcdf code</span>
         <span class="n">get_average_multi_netcdf</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">hindcast_model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 8&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N03_cuwalid_HAD_get_anomalies_multi_netcdf code</span>
         <span class="n">get_anomalies_multi_netcdf</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">hindcast_model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">)</span>
 
 
@@ -167,39 +145,30 @@
         <span class="n">forecast_model_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;forecast_model_name&#39;</span><span class="p">]</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 9&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N04a_cuwalid_HAD_get_tercile_hindcast_fluxes code</span>
         <span class="n">get_tercile_hindcast_fluxes</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">forecast_model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 10&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N04b_cuwalid_HAD_get_tercile_hindcast_extreme_values code</span>
         <span class="n">get_tercile_hindcast_extreme_values</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">forecast_model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 11&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N05_cuwalid_HAD_extract_forecasting_variable code</span>
         <span class="n">extract_forecasting_variable</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">forecast_model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 12&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N06_cuwalid_HAD_get_areas_terciles code    </span>
         <span class="n">get_areas_terciles</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">forecast_model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 13&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N07_cuwalid_HAD_get_update_TWSA code    </span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 13&quot;</span><span class="p">)</span> 
         <span class="n">get_update_TWSA</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">forecast_model_name</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 14&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N08_cuwalid_HAD_get_updated_TWSA_ensamble code    </span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 14&quot;</span><span class="p">)</span> 
         <span class="n">get_updated_TWSA_ensamble</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">forecast_model_name</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 15&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N09_cuwalid_HAD_get_ensamble_forecasting code    </span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 15&quot;</span><span class="p">)</span>   
         <span class="n">get_ensamble_forecasting</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">forecast_model_name</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 16&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N10a_cuwalid_HAD_get_probabilistic_tercile_forecast_ensamble code    </span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 16&quot;</span><span class="p">)</span>  
         <span class="n">get_probabilistic_tercile_forecast_ensamble</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">forecast_model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 17&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N10b_cuwalid_HAD_get_deterministic_forecast_ensamble code</span>
         <span class="n">get_deterministic_forecast_ensamble</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">forecast_model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">)</span>
 
 
@@ -210,11 +179,9 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running plotting&quot;</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 18&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N11a_cuwalid_HAD_plot_tercile_probability_forecast code</span>
         <span class="n">plot_tercile_probability_forecast</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">forecast_model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test 19&quot;</span><span class="p">)</span>
-        <span class="c1"># Run N11b_cuwalid_HAD_plot_deterministic_forecast code</span>
         <span class="n">plot_deterministic_forecast</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">forecast_model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">)</span></div>
 
 

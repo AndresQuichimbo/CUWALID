@@ -1,5 +1,5 @@
 ======================
-A Short DRYP Tutorial
+DRYP Tutorial
 ======================
 
 Runing the Tilted-V catchment model test
@@ -44,9 +44,9 @@ The test can can also be run from the python command line or a python file with 
 
     from cuwalid.dryp.main_DRYP import run_DRYP
 
-    run_DRYP("test_input/input_test.dmp")
+    run_DRYP("test_input/input_test.json")
 
-The location of all file locations must be relative to the location you run the file from. This example has the input in a directory in the main directory
+The location of all file locations must be relative to the location you run the file from. This example has the input in a directory called 'test_input' in the main directory
 
 Model outputs
 -------------

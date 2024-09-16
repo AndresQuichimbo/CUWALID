@@ -153,11 +153,11 @@
 	<span class="c1">#env_state.points_output(data_in)</span>
 	
 	<span class="c1"># Read precipitation</span>
-	<span class="n">PRE</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">dt_pre</span><span class="p">,</span>
+	<span class="n">PRE</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">netcf_pre</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">reproject_pre</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">interpolate_pre</span><span class="p">,</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">][</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
@@ -166,11 +166,11 @@
 		<span class="p">)</span>
 	
 	<span class="c1"># Read reference potential evpotranpiration</span>
-	<span class="n">ET0</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">dt_ETo</span><span class="p">,</span>
+	<span class="n">ET0</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">netcf_ETo</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">reproject_ETo</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">interpolate_ETo</span><span class="p">,</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">],</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
@@ -179,27 +179,27 @@
 		<span class="p">)</span>
 	
 	<span class="c1"># Read SAVI</span>
-	<span class="n">SAVI</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">dt_savi</span><span class="p">,</span>
+	<span class="n">SAVI</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">netcf_savi</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">reproject_savi</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">interpolate_savi</span><span class="p">,</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
 		
 	<span class="c1"># Read SAVI minimum value</span>
-	<span class="n">SAVImin</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">dt_savi_min</span><span class="p">,</span>
+	<span class="n">SAVImin</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;savi_min&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">netcf_savi_min</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">reproject_savi_min</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">interpolate_savi_min</span><span class="p">,</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;savi_min&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;savi_min&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;savi_min&#39;</span><span class="p">],</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
 	
 	<span class="c1"># Read SAVI maximum value</span>
-	<span class="n">SAVImax</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">dt_savi_max</span><span class="p">,</span>
+	<span class="n">SAVImax</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;savi_max&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">netcf_savi_max</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">reproject_savi_max</span><span class="p">,</span>
-		<span class="n">data_in</span><span class="o">.</span><span class="n">interpolate_savi_max</span><span class="p">,</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;savi_max&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;savi_max&#39;</span><span class="p">],</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;savi_max&#39;</span><span class="p">],</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
 	
 	
@@ -252,13 +252,13 @@
 	
 	<span class="c1"># read location of point boundary conditions</span>
 	<span class="c1">#if dataFlux.data_set is not None:</span>
-	<span class="c1">#	if data_in.netcf_ABC == 0:</span>
+	<span class="c1">#	if data_in.data_reading[&#39;abs&#39;] == 0:</span>
 	<span class="c1">#		idFluxOF = extract_id_from_coords(</span>
 	<span class="c1">#			env_state.grid,</span>
 	<span class="c1">#			data_in.filename_OF_points</span>
 	<span class="c1">#			)</span>
 	<span class="c1">#	</span>
-	<span class="c1">#	elif data_in.netcf_ABC == 2:</span>
+	<span class="c1">#	elif data_in.data_reading[&#39;abs&#39;] == 2:</span>
 	<span class="c1">#		idFluxOF = extract_id_from_raster(</span>
 	<span class="c1">#			env_state.grid,</span>
 	<span class="c1">#			data_in.filename_OF_points</span>

@@ -1,0 +1,109 @@
+{
+
+    "model_name": "DRYP_model_sim",
+    "path_input": "",
+ 
+    "TERRAIN": {
+       "path_dem": "required",
+       "path_Qo": null,
+       "path_fdl": null,
+       "path_riv_decay": null,
+       "path_mask": null,
+       "path_riv_len": null,
+       "path_riv_width": null,
+       "path_riv_elev": null
+    },
+ 
+    "VEGETATION": {
+       "path_veg_kc": null,
+       "path_veg_lulc": null
+    },
+ 
+    "UNSATURATED": {
+       "path_uz_theta_sat": null,
+       "path_uz_theta_res": null,
+       "path_uz_theta_awc": null,
+       "path_uz_theta_wp": null,
+       "path_uz_root": null,
+       "path_uz_lambda": null,
+       "path_uz_psi": null,
+       "path_uz_ksat": null,
+       "path_uz_sigmaksat": null,
+       "path_uz_theta": null,
+       "path_riv_ksat": null,
+       "path_uz_bottomksat": null
+    },
+ 
+    "SATURATED": {
+       "path_sz_mask": null,
+       "path_sz_ksat": null,
+       "path_sz_sy": null,
+       "path_sz_wte": null,
+       "path_sz_bc_flux": null,
+       "path_sz_bc_head": null,
+       "path_sz_bottom": null
+    },
+ 
+    "METEO": {
+       "path_pre": null,
+       "path_pet": null,
+       "path_aof": null
+    },
+ 
+    "OUTPUT": {
+       "path_out_sz": null,
+       "path_out_uz": null,
+       "path_out_oz": null,
+       "path_output": null,
+       "Other": null,
+       "path_setting": null,
+       "path_projection": null
+    },
+ 
+    "RIPARIAN": {
+       "path_rp_theta_sat": null,
+       "path_rp_theta_res": null,
+       "path_rp_theta_awc": null,
+       "path_rp_theta_wp": null,
+       "path_rp_rootdepth": null,
+       "path_rp_lambdas": null,
+       "path_rp_psi": null,
+       "path_rp_ksat": null,
+       "path_rp_sigmaksat": null,
+       "path_rp_theta": null,
+       "path_rp_width": null
+    },
+ 
+    "INTERCEPTION": {
+       "path_veg_lulc_frac": null,
+       "path_veg_hs_savi": null,
+       "path_veg_hs_par_a": null,
+       "path_veg_hs_par_b": null,
+       "path_veg_hs_savi_min": null,
+       "path_veg_hs_savi_max": null,
+       "path_veg_hs_lai": null,
+       "path_veg_rp_par_a": null,
+       "path_veg_rp_par_b": null,
+       "path_veg_rp_savi_min": null,
+       "path_veg_rp_savi_max": null,
+       "path_veg_rp_lai": null,
+       "path_veg_rp_tap_depth": null,
+       "path_veg_rp_final_depth": null,
+       "path_veg_rp_fcw": null,
+       "path_veg_rp_sca": null
+    },
+ 
+    "GROUNDWATER": {
+       "path_gw_depth": null,
+       "path_gw_bdd": null,
+       "path_gw_2l_bottom": null,
+       "path_gw_2l_ksat": null,
+       "path_gw_2l_sy": null,
+       "path_gw_2l_ss": null,
+       "path_gw_2l_wte": null,
+       "path_gw_type": null,
+       "path_gw_lake_elev": null,
+       "path_pnds_vmax": null,
+       "path_pnds_shape_par": null
+    }
+ }

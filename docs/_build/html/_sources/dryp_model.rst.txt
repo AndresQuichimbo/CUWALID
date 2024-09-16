@@ -207,12 +207,10 @@ coordinate of the catchment output.
 Finally, an example of input parameter file is shown bellow, user can copy this template to
 create a nuew model.
 
-.. literalinclude:: ../txt/example_input.json
+.. literalinclude:: ../txt/dryp_input.json
 	:language: json
 	:linenos:
 
-Simulation settings file
-^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Simulation parameter file
 """"""""""""""""""""""""""
@@ -264,14 +262,48 @@ options.
 
 .. parsed-literal::
 
-    {
-        "READING": {
-            "data_read": "0 0 0 0 0 0 0 0",
-            "data_step": "60 60 60 60 60 60 60 60",
-            "data_reproject": "0 0 0 0 0 0 0 0",
-            "data_interp": "0 0 0 0 0 0 0 0"
-        }
-    }
+    "READING": {
+        "data_reading": {
+            "pre": 0,
+            "pet": 0,
+            "abs": 0,
+            "kc": 0,
+            "flux": 0,
+            "savi": 0,
+            "savi_min": 0,
+            "savi_max": 0
+            },
+        "data_step": {
+            "pre": 60,
+            "pet": 60,
+            "abs": 60,
+            "kc": 60,
+            "flux": 60,
+            "savi": 60,
+            "savi_min": 60,
+            "savi_max": 60
+            },
+        "data_reproject": {
+            "pre": true,
+            "pet": true,
+            "abs": true,
+            "kc": true,
+            "flux": true,
+            "savi": true,
+            "savi_min": true,
+            "savi_max": true
+            },
+        "data_interp": {
+            "pre": true,
+            "pet": true,
+            "abs": true,
+            "kc": true,
+            "flux": true,
+            "savi": true,
+            "savi_min": true,
+            "savi_max": true
+            }
+    },
 
 
 Infiltration method selection
@@ -340,29 +372,10 @@ file. Values are scale factors of the following parameters, this values are unit
 * kSy for aquifer specific yield factor,
 
 
-.. literalinclude:: ../txt/example_par_setting.json
+.. literalinclude:: ../txt/dryp_settings.json
 	:language: json
 	:linenos:
 
-Riparian zone parameter files
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. literalinclude:: ../txt/example_riparian_inputs.txt
-	:language: none
-	:linenos:
-
-Groudwater parameter file
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The groundwater parameter file should be specified when the model uses
-multi-aquifer and a transmisivity function. If lakes is considered in
-the model, a file, indicating the bathymetry should be provided. An example
-of groundwater paramter file is provided below:
-
-
-.. literalinclude:: ../txt/example_GW_parameters.txt
-	:language: none
-	:linenos:
 
 Projection system file
 ^^^^^^^^^^^^^^^^^^^^^^^

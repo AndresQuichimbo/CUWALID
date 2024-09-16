@@ -62,10 +62,6 @@ default_input = {
       "path_output": None,
       "Other": None,
       "path_setting": None,
-      "path_gw_settings": None,
-      "path_vg_settings": None,
-      "path_rp_settings": None,
-      "path_of_settings": None,
       "path_projection": None
    },
 
