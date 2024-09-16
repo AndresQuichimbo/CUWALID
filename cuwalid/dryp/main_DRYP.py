@@ -42,6 +42,7 @@ from cuwalid.dryp.components.DRYP_io import (
 	soil_parameters,
 	groundwater_parameters,
 	interception_parameters,
+	water_body_parameters,
 	set_initial_conditions,
 	extract_id_from_coords)
 from cuwalid.dryp.components.DRYP_infiltration import infiltration
@@ -109,8 +110,14 @@ def run_DRYP(filename_input):
 				data_in.fname_aquifer)
 	
 	# read interception paramters
+	print("Reading interception parameters")
 	vegetation = interception_parameters(topo.grid_size,
 				data_in.fname_interception_hillslope)
+
+	# read pond paramters
+	print("Reading water body parameters")
+	water_bodies = water_body_parameters(topo.grid_size,
+				data_in.fname_water_bodies)
 
 	# setting location and model results
 	#env_state.set_output_dir(data_in)
@@ -216,7 +223,8 @@ def run_DRYP(filename_input):
 			aquifer.CHB,
 			data_in.gw_func)
 	
-	#pnds = ponds() # ponds	
+	if water_bodies.id_nodes is not None:
+		pnds = ponds(water_bodies.pnds_Amax, water_bodies.pnds_hmax) # ponds	
 	# read location of point boundary conditions
 	#if dataFlux.data_set is not None:
 	#	if data_in.data_reading['abs'] == 0:
@@ -401,11 +409,15 @@ def run_DRYP(filename_input):
 				
 				# PONDS: Add ponds here ------------------------------------------
 				# first check that ponds is active
-				#if id_ponds is not None:
-				#	V_pnds, rt_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(
-				# 							Vo, P, pet, aoz, a, Vmax, cell_area)
+				if water_bodies.id_nodes is not None:
+					water_bodies.pnds_Vo, et_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(
+				 							water_bodies.pnds_Vo,
+											rain[water_bodies.id_nodes],
+											PET[water_bodies.id_nodes], #aoz,
+											topo.area_cells,
+											)
 					# transfer data to the entire model domain
-					#rain[id_ponds] = P
+					rain[water_bodies.id_nodes] = Ppnds
 				
 				# INFILTRATION: estimate infiltration --------------------
 				#inf.run_infiltration_one_step(Pth, env_state, data_in)

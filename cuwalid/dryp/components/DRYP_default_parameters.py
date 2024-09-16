@@ -33,7 +33,7 @@ default_input = {
       "path_uz_psi": None,
       "path_uz_ksat": None,
       "path_uz_sigmaksat": None,
-      "path_uz_theta": None,
+      "path_uz_theta": None, # initial conditions
       "path_riv_ksat": None,
       "path_uz_bottomksat": None
    },
@@ -116,6 +116,7 @@ default_input = {
       "path_lake_depth": None, # lakes bathymetry
       "path_pnds_hmax": None, # ponds max depth
       "path_pnds_Amax": None, # ponds maximum extend
+      "path_pnds_Vo": None, # ponds volume of water
    }
 
 }

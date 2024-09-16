@@ -136,6 +136,7 @@ class get_model_settings(object):
 		self.fname_aquifer = get_list_of_groundwater_files(dryp_config, settings_config)
 		self.fname_interception_hillslope = get_list_of_interception_hillslope_files(dryp_config, settings_config)
 		self.fname_interception_riparian = get_list_of_interception_riparian_files(dryp_config, settings_config)
+		self.fname_water_bodies = get_list_of_water_bodies_files(dryp_config, settings_config)
 
 		#==================================================================
 		# Meteorological data

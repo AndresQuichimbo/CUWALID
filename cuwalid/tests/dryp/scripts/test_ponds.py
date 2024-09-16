@@ -23,20 +23,16 @@ def test_ponds():
     aoz = np.array([0])
     Amax = np.array([10*10.]) # units m2
     hmax = np.array([2.]) # units m
-    
-    # calculate lake parameters: shape factor and Vmax
-    a = (1/2)*np.log(Amax/np.log(hmax))
-    Vmax = (np.pi/(2*a+1))*hmax**(2*a+1)
 
     # forcing dataset    
     P = 0.0
     #print(Vmax, a)
     # initailaize ponds functions
-    pnds= ponds(a)
+    pnds= ponds(Amax, hmax)
 
     # run loop for time step
     for i in range(20):
-        V, rt, aoz, P = pnds.run_ponds_one_step(Vo, P, pet, aoz, a, Vmax, cell_area)
+        V, rt, aoz, P = pnds.run_ponds_one_step(Vo, P, pet, aoz, cell_area)
         #V, rt, aoz = pnds.run_ponds_one_step(Vo, pet, aoz, a)
         Vo = V
 
