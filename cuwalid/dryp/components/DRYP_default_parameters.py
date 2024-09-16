@@ -7,14 +7,14 @@ default_input = {
    "path_input": "",
 
    "TERRAIN": {
-      "path_dem": "required",
-      "path_Qo": None,
-      "path_fdl": None,
-      "path_riv_decay": None,
-      "path_mask": None,
-      "path_riv_len": None,
-      "path_riv_width": None,
-      "path_riv_elev": None
+      "path_dem": "required", # Digital elevation model
+      "path_Qo": None, # initial channel storage
+      "path_fdl": None, # flow direction in landlab format
+      "path_riv_decay": None, # river flow velocity
+      "path_mask": None, # basin mask. model active domain
+      "path_riv_len": None, # river lenght
+      "path_riv_width": None, # river width
+      "path_riv_elev": None, # tiver stream bottom elevation
    },
 
    "VEGETATION": {
@@ -105,10 +105,10 @@ default_input = {
       "path_gw_2l_ksat": None,
       "path_gw_2l_sy": None,
       "path_gw_2l_ss": None,
-      "path_gw_2l_wte": None,
-      "path_gw_type": None,
-      "path_gw_lake_elev": None,
-      "path_pnds_vmax": None,
-      "path_pnds_shape_par": None
+      "path_gw_2l_wte": None, 
+      "path_gw_type": None, # aquifer type
+      "path_gw_lake_elev": None, # lakes bathymetry
+      "path_pnds_vmax": None, # ponds max depth
+      "path_pnds_shape_par": None, # ponds maximum extend
    }
 }
