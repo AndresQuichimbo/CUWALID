@@ -1,7 +1,7 @@
 import json
 from cuwalid.forecasting.components.hindcast import *
 from cuwalid.forecasting.components.forecast import *
-from cuwalid.forecasting.components.plotting import *
+from cuwalid.forecasting.components.hydrological_forecast import *
 
 def run_forecast(config_path):
 
