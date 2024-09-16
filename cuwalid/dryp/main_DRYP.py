@@ -30,6 +30,7 @@ Version(s):
 """
 
 
+import argparse
 import numpy as np
 #import pandas as pd
 from tqdm import tqdm
@@ -834,5 +835,11 @@ def run_DRYP(filename_input):
 # ---------------------------------------------------------------------
 # Call script from external library	
 if __name__ == '__main__':
-	run_DRYP()
+	parser = argparse.ArgumentParser(description="Eun DRYP with JSON configuration.")
+	parser.add_argument('config_file', type=str, help='Path to the JSON configuration file')
+
+	# Parse command line arguments
+	args = parser.parse_args()
+
+	run_DRYP(args.config_file)
 # ---------------------------------------------------------------------

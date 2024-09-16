@@ -1,6 +1,6 @@
 import argparse
 import json
-from cuwalid.forecasting.components.map_plotter import plot_map
+from cuwalid.forecasting.components.impact_forecast import plot_map
 #from aux_HAD_plot_probabilistic_forecasting_map import plot_map
 
 # Function to plot maps based on the configuration in the JSON file
