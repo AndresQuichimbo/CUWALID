@@ -107,8 +107,15 @@ default_input = {
       "path_gw_2l_ss": None,
       "path_gw_2l_wte": None, 
       "path_gw_type": None, # aquifer type
-      "path_gw_lake_elev": None, # lakes bathymetry
-      "path_pnds_vmax": None, # ponds max depth
-      "path_pnds_shape_par": None, # ponds maximum extend
+   #   "path_gw_lake_elev": None, # lakes bathymetry
+   #   "path_pnds_hmax": None, # ponds max depth
+   #   "path_pnds_Amax": None, # ponds maximum extend
+   },
+
+   "WATER_BODIES": {
+      "path_lake_depth": None, # lakes bathymetry
+      "path_pnds_hmax": None, # ponds max depth
+      "path_pnds_Amax": None, # ponds maximum extend
    }
+
 }
