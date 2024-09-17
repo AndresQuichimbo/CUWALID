@@ -56,7 +56,8 @@
 
   "COMPONENTS": {
       "method_inf": 1,
-      "method_gw": "1 0"
+      "run_gw": true,
+      "method_gw": 0
   },
 
   "OUTPUT": {

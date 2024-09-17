@@ -706,7 +706,56 @@ class interception_parameters(object):
 		self.extintion_depth[self.extintion_depth <= 0] = Droot[self.extintion_depth <= 0]*0.001
 
 		pass
+
+class water_body_parameters(object):
+	"""This function reads all aquifer paramters required to run the saturated component
+	"""
+	def __init__(self, grid_size, inputfile, id_nodes=None):
+		"""Read aquifer parameters
 		
+		Parameters
+		----------
+		grid_size :	int
+			size of the model domain
+		inputfile :	object
+			list of file manes for aquifer parameters
+		
+		Returns
+		-------
+		"""
+		#print("Reading water body parameters")
+
+		if inputfile.fname_pnd_Amax != None and os.path.exists(inputfile.fname_pnd_hmax):
+			self.pnds_Amax = np.flip(rasterio.open(inputfile.fname_pnd_Amax).read(1), 0).flatten()
+			self.pnds_hmax = np.flip(rasterio.open(inputfile.fname_pnd_hmax).read(1), 0).flatten()
+			if inputfile.fname_pnd_Vo != None and os.path.exists(inputfile.fname_pnd_Vo):
+				self.pnds_Vo = np.flip(rasterio.open(inputfile.fname_pnd_Vo).read(1), 0).flatten()
+				
+			else:
+				print('initial watr body volume not provided. Global value 0 [m3]')
+				self.pnds_Vo = np.zeros(grid_size, dtype=float)
+
+			# add function to reduce the size of arrays
+			if id_nodes is None:
+				id_nodes = np.where(self.pnds_Amax > 0)[0]
+				if len(id_nodes) > 0:
+					self.pnds_Amax = self.pnds_Amax[id_nodes]
+					self.pnds_hmax = self.pnds_hmax[id_nodes]
+					self.pnds_Vo = self.pnds_Vo[id_nodes]
+				else:
+					id_nodes = None
+					self.pnds_Amax = None
+					self.pnds_hmax = None
+					self.pnds_Vo = None
+
+		else:
+			print('Water body parameters not provided')
+			self.pnds_Amax = None
+			self.pnds_hmax = None
+			self.pnds_Vo = None
+
+		self.id_nodes = id_nodes
+
 def extract_id_from_coords(grid, filename):
 	""" extract nodes from a csv file
 	this component uses the landlab funtion "find_nearest_node

@@ -60,11 +60,13 @@ class get_model_settings(object):
 			self.inf_method = 0
 
 		# Read groundwater model activation
-		aux_run_GW = settings_config["COMPONENTS"]["method_gw"].split()
-		self.run_GW = int(aux_run_GW[0])
+		#aux_run_GW = settings_config["COMPONENTS"]["method_gw"].split()
+		self.run_GW = bool(settings_config["COMPONENTS"]["run_GW"])
+		#self.run_GW = int(aux_run_GW[0])
 
 		# Groundwater aquifer functions
-		self.gw_func = int(aux_run_GW[1]) if len(aux_run_GW) > 1 else 0
+		#self.gw_func = int(aux_run_GW[1]) if len(aux_run_GW) > 1 else 0
+		self.gw_func = int(settings_config["COMPONENTS"]["method_gw"])
 
 		# Save netcdf files of model results
 		self.save_netcdf = bool(settings_config["OUTPUT"]["output_grid"])
@@ -136,6 +138,7 @@ class get_model_settings(object):
 		self.fname_aquifer = get_list_of_groundwater_files(dryp_config, settings_config)
 		self.fname_interception_hillslope = get_list_of_interception_hillslope_files(dryp_config, settings_config)
 		self.fname_interception_riparian = get_list_of_interception_riparian_files(dryp_config, settings_config)
+		self.fname_water_bodies = get_list_of_water_bodies_files(dryp_config, settings_config)
 
 		#==================================================================
 		# Meteorological data
@@ -379,7 +382,8 @@ class get_list_of_groundwater_files(object):
         self.fname_thickness = dryp_config["GROUNDWATER"]["path_gw_depth"]
         self.fname_b_aq = dryp_config["GROUNDWATER"]["path_gw_bdd"]
         self.fname_aquifertype = dryp_config["GROUNDWATER"]["path_gw_type"]
-        self.fname_bathymetry = dryp_config["GROUNDWATER"]["path_gw_lake_elev"]
+        #self.fname_bathymetry = dryp_config["GROUNDWATER"]["path_gw_lake_elev"]
+        self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depht"]
 
         self.fname_SZ_botb = None
         self.fname_SZ_Ksatb = None
@@ -398,13 +402,25 @@ class get_list_of_groundwater_files(object):
             #self.fname_CHBb = fgw.GROUNDWATER[61]  # Constant flux boundary
             # only for Manny's model
             self.fname_mask_of = dryp_config["GROUNDWATER"]["path_gw_type"]
-            self.fname_lakes_elevation = dryp_config["GROUNDWATER"]["path_gw_lake_elev"]
+            #self.fname_lakes_elevation = dryp_config["GROUNDWATER"]["path_gw_lake_elev"]
+            self.fname_lakes_elevation = dryp_config["WATER_BODIES"]["path_lake_depth"]
 
         self.fname_GWini = dryp_config["SATURATED"]["path_sz_wte"]  # Initial water table
         self.fname_DEM = dryp_config["TERRAIN"]["path_dem"]
         
         self.kKsat = float(factors["GLOBAL_FACTORS"]["uz_kkast"])  # k for hydraulic conductivity
         self.kSy = float(factors["GLOBAL_FACTORS"]["uz_ksigma"])  # k for specific yield
+
+class get_list_of_water_bodies_files(object):
+    """get list of file names for reading parameters"""
+
+    def __init__(self, dryp_config, factors):
+        """Model parameter settings and input file names and location"""
+
+        # water bodies component
+        self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depht"]
+        self.fname_pnd_hmax = dryp_config["WATER_BODIES"]["path_pnd_hmax"]
+        self.fname_pnd_Amax = dryp_config["WATER_BODIES"]["path_pnd_Amax"]
 
 
 def clean_input(default_dict, user_input, path="", base_path=None):

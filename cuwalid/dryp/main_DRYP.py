@@ -42,6 +42,7 @@ from cuwalid.dryp.components.DRYP_io import (
 	soil_parameters,
 	groundwater_parameters,
 	interception_parameters,
+	water_body_parameters,
 	set_initial_conditions,
 	extract_id_from_coords)
 from cuwalid.dryp.components.DRYP_infiltration import infiltration
@@ -109,8 +110,14 @@ def run_DRYP(filename_input):
 				data_in.fname_aquifer)
 	
 	# read interception paramters
+	print("Reading interception parameters")
 	vegetation = interception_parameters(topo.grid_size,
 				data_in.fname_interception_hillslope)
+
+	# read pond paramters
+	print("Reading water body parameters")
+	water_bodies = water_body_parameters(topo.grid_size,
+				data_in.fname_water_bodies)
 
 	# setting location and model results
 	#env_state.set_output_dir(data_in)
@@ -216,7 +223,8 @@ def run_DRYP(filename_input):
 			aquifer.CHB,
 			data_in.gw_func)
 	
-	#pnds = ponds() # ponds	
+	if water_bodies.id_nodes is not None:
+		pnds = ponds(water_bodies.pnds_Amax, water_bodies.pnds_hmax) # ponds	
 	# read location of point boundary conditions
 	#if dataFlux.data_set is not None:
 	#	if data_in.data_reading['abs'] == 0:
@@ -324,6 +332,15 @@ def run_DRYP(filename_input):
 			   data_in.dt_results, data_in.save_results,
 			   data_in.store.var_grid_rp)
 
+	# grid and average results from the water bodies (ponds)
+	if water_bodies.id_nodes is not None:
+		grid_pndvar = GlobalGridVar(data_in.ini_date,
+			   data_in.dt_results, data_in.save_netcdf,
+			   data_in.store.var_grid_pnd)
+		total_pndvar = GlobalGridVar(data_in.ini_date,
+			   data_in.dt_results, data_in.save_results,
+			   data_in.store.var_grid_pnd)
+
 	# Initialize the progress bar
 	progress_bar = tqdm(total=data_in.ndays, unit='days')
 	
@@ -401,11 +418,15 @@ def run_DRYP(filename_input):
 				
 				# PONDS: Add ponds here ------------------------------------------
 				# first check that ponds is active
-				#if id_ponds is not None:
-				#	V_pnds, rt_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(
-				# 							Vo, P, pet, aoz, a, Vmax, cell_area)
+				if water_bodies.id_nodes is not None:
+					water_bodies.pnds_Vo, et_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(
+				 							water_bodies.pnds_Vo,
+											rain[water_bodies.id_nodes],
+											PET[water_bodies.id_nodes], #aoz,
+											topo.area_cells,
+											)
 					# transfer data to the entire model domain
-					#rain[id_ponds] = P
+					rain[water_bodies.id_nodes] = Ppnds
 				
 				# INFILTRATION: estimate infiltration --------------------
 				#inf.run_infiltration_one_step(Pth, env_state, data_in)
@@ -728,7 +749,23 @@ def run_DRYP(filename_input):
 						"tht": rtheta,
 	    				"ssz": ro.SSZ[riv_nodes]}
 						)
-								
+
+				# get mean total values for each flux and state of water bodies
+				if water_bodies.id_nodes is not None:
+					total_pndvar.store_variables(PRE.date_sim_dt, t_pre,
+			    	  	{"epd": [np.mean(et_pnds)],
+	    				"vpd": [np.mean(water_bodies.pnds_Vo)],
+	    				"aoz": [np.mean(aoz_pnds)],
+						}
+						)
+					
+					grid_pndvar.store_variables(PRE.date_sim_dt, t_pre,
+			      		{"epd": et_pnds,
+	    				"vpd": water_bodies.pnds_Vo,
+						"aoz": aoz_pnds,
+						}
+						)
+
 				# reinitiate recharge variable
 				recharge[act_nodes] = 0.0
 
@@ -800,18 +837,26 @@ def run_DRYP(filename_input):
 		
 		#save average values in csv
 		#length_var = np.ones(len(var_name), dtype=int)
-		total_rpvar.save_csv_var(data_in.fnameTS_RZ_avg,# var_name,
+		total_rpvar.save_csv_var(data_in.fnameTS_avg+'rp',# var_name,
 			#length_var,
 			multi_files=False)
-	
-	#if id_ponds.size > 0: -----------------
-	#	# variables names
-	#	#var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
-	#	
-	#	# save grided model result datasets 
-	#	grid_pndsvar.save_netCDF_var(data_in.fnameTS_grid+'pnd.nc',
-	#		   topo.lat, topo.lon, id_ponds,# var_name
-	#		   )
+
+	# SAVE VARIABLES FROM PONDS
+	# save average riparian zone variables in a csv file
+	if water_bodies.id_nodes is not None:
+		# variables names
+		#var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
+		
+		# save grided model result datasets 
+		grid_pndvar.save_netCDF_var(data_in.fnameTS_grid+'pnd.nc',
+			   topo.lat, topo.lon, water_bodies.id_nodes,# var_name
+			   )
+		
+		#save average values in csv
+		#length_var = np.ones(len(var_name), dtype=int)
+		total_pndvar.save_csv_var(data_in.fnameTS_avg+'pnd',# var_name,
+			#length_var,
+			multi_files=False)
 		
 	# SAVE RASTER FILES FOR INITIAL CONDITIONS
 	# Save water table for initial conditions
@@ -831,11 +876,17 @@ def run_DRYP(filename_input):
 		theta[riv_nodes] = rtheta
 		save_map_to_rastergrid(grid, theta,
 				data_in.fnameTS_avg + '_tht_rp_ini.asc')
+	if water_bodies.id_nodes is not None:
+		# Save riparian soil moisture for initial conditions
+		theta[:] = -9999
+		theta[water_bodies.id_nodes] = water_bodies.pnds_Vo
+		save_map_to_rastergrid(grid, theta,
+				data_in.fnameTS_avg + '_V_pnd_ini.asc')
 
 # ---------------------------------------------------------------------
 # Call script from external library	
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser(description="Eun DRYP with JSON configuration.")
+	parser = argparse.ArgumentParser(description="Run DRYP with JSON configuration.")
 	parser.add_argument('config_file', type=str, help='Path to the JSON configuration file')
 
 	# Parse command line arguments

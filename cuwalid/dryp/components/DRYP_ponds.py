@@ -2,21 +2,24 @@
 import numpy as np
 
 class ponds():
-	def __init__(self, a):
+	def __init__(self, Amax, hmax):
 		"""This component calulate the water balance at ponds. Ponds
 		are water bodies that store water from precipitation and loss
 		water as potential evapotranspiration and human abstractions
 		
 		"""
 		# specify max colume
-		#self.Vmax = Vmax
+		# calculate pond parameters: shape factor and Vmax
+		self.a = (1/2)*np.log(Amax/np.log(hmax))
+		self.Vmax = (np.pi/(2*self.a+1))*hmax**(2*self.a+1)
+
 		# calculate denominator for reduce calculations
-		self.denominator = 2*a+1 # this could be moved to only perform once		
+		self.denominator = 2.0*self.a+1 # this could be moved to only perform once		
 
 		pass
 	
 
-	def run_ponds_one_step(self, Vo, P, PET, Aoz, a, Vmax, cell_area):
+	def run_ponds_one_step(self, Vo, P, PET, cell_area, Aoz=None):
 		"""This funciton calcu;ate one step of the water balance at
 		ponds.  at the begining f the time step
 		
@@ -48,7 +51,7 @@ class ponds():
 		Vo = P + Vo
 
 		# check if there is excess water, pond is filled
-		P = Vo - Vmax
+		P = Vo - self.Vmax
 		P[P < 0] = 0.0
 
 		# update initial volume of water with excess water
@@ -56,6 +59,9 @@ class ponds():
 
 		# It is assumed that abstractions can quickly deplet water from
 		# ponds
+		if Aoz is None:
+			Aoz = np.zeros(len(V))
+
 		V = Vo - Aoz
 		
 		# Water abstraction are limited to the water availability
@@ -69,7 +75,7 @@ class ponds():
 		
 		# Calculate the volume of water available after evaporation
 		V = (np.power(Vo, 1/self.denominator)-(np.pi*PET/self.denominator)*
-		    np.power(self.denominator/np.pi, 2*a/self.denominator))
+		    np.power(self.denominator/np.pi, 2*self.a/self.denominator))
 		
 		# Remove all zeros
 		V[V < 0] = 0.0
