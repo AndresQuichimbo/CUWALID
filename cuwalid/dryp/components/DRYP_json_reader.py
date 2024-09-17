@@ -60,11 +60,13 @@ class get_model_settings(object):
 			self.inf_method = 0
 
 		# Read groundwater model activation
-		aux_run_GW = settings_config["COMPONENTS"]["method_gw"].split()
-		self.run_GW = int(aux_run_GW[0])
+		#aux_run_GW = settings_config["COMPONENTS"]["method_gw"].split()
+		self.run_GW = bool(settings_config["COMPONENTS"]["run_GW"])
+		#self.run_GW = int(aux_run_GW[0])
 
 		# Groundwater aquifer functions
-		self.gw_func = int(aux_run_GW[1]) if len(aux_run_GW) > 1 else 0
+		#self.gw_func = int(aux_run_GW[1]) if len(aux_run_GW) > 1 else 0
+		self.gw_func = int(settings_config["COMPONENTS"]["method_gw"])
 
 		# Save netcdf files of model results
 		self.save_netcdf = bool(settings_config["OUTPUT"]["output_grid"])

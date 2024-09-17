@@ -57,15 +57,16 @@ default_settings = {
     },
 
     "COMPONENTS": {
-        "method_inf": 1,
-        "method_gw": "1 0",
+        "method_inf": 1, # choose infiltration method
+        "run_gw" : True, # activate groundwater component
+        "method_gw": 0, # choose groundwater transimissivity approach
         #"not used 1": None,
         #"not used 2": None
     },
 
     "OUTPUT": {
-        "output_csv": True,
-        "output_grid": False,
+        "output_csv": True, # activate save model outputs (only csv files)
+        "output_grid": False, # activate save model outputs (grid files)
         "output_dt": "1M",
         #"not used 1": None,
         #"not used 2": None,
