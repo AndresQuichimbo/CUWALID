@@ -1,8 +1,8 @@
 """Test ponds
 """
-from context import dryp
+#from context import dryp
 import numpy as np
-from dryp.components.DRYP_ponds import ponds
+from cuwalid.dryp.components.DRYP_ponds import ponds
 
 def test_ponds():
     """run test functions
@@ -32,7 +32,7 @@ def test_ponds():
 
     # run loop for time step
     for i in range(20):
-        V, rt, aoz, P = pnds.run_ponds_one_step(Vo, P, pet, aoz, cell_area)
+        V, et, aoz, P = pnds.run_ponds_one_step(Vo, P, pet, aoz, cell_area)
         #V, rt, aoz = pnds.run_ponds_one_step(Vo, pet, aoz, a)
         Vo = V
 
