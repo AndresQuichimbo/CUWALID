@@ -1,8 +1,7 @@
 """Test ponds
 """
-from context import dryp
 import numpy as np
-from dryp.components.DRYP_ponds import ponds
+from cuwalid.dryp.components.DRYP_ponds import ponds
 
 def test_ponds():
     """run test functions

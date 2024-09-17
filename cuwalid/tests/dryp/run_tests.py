@@ -1,6 +1,10 @@
 import os
 import sys
 import traceback
+
+package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../'))
+sys.path.insert(0, package_root)
+
 from cuwalid.tests.dryp.scripts import (
     test_precipitation,
     test_precipitation_csv,
@@ -17,7 +21,8 @@ from cuwalid.tests.dryp.scripts import (
     test_dryp_model,
     test_dryp_tilted_V,
     test_dryp,
-    test_basin_delineation
+    test_basin_delineation,
+    test_ponds
 )
 
 # Get the directory of the current script
@@ -25,7 +30,10 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 dryp_dir = os.path.join(current_dir)
 os.chdir(current_dir) 
 
+
+
 test_functions = [
+    test_ponds.test_ponds,
     test_precipitation.test_precipitation,
     test_precipitation_csv.test_precipitation,
     test_infiltration.test_infiltration,
@@ -42,6 +50,7 @@ test_functions = [
     test_dryp_tilted_V.test_dryp,
     test_dryp.test_dryp,
     test_basin_delineation.test_basin_delineation,
+    
 ]
 
 # Function to run tests
