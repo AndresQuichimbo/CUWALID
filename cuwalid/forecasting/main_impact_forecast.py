@@ -1,5 +1,7 @@
 import argparse
 import json
+import os
+import geopandas as gpd
 from cuwalid.forecasting.components.impact_forecast import plot_map
 #from aux_HAD_plot_probabilistic_forecasting_map import plot_map
 
@@ -23,7 +25,7 @@ def plot_maps_json(config_file):
 	# Extract parameters from JSON config
 	plot_scales = config.get("plot_scales", ["Zoom"])
 	country_name = config.get("country_name", "Kenya")
-	place_name = config.get("place_names", ["Isiolo"])
+	place_name = config.get("place_names", [None])
 	season = config.get("seasons", ["OND"])
 	water_status = config.get("water_status", ["Flood"])
 	year = config["year"]
@@ -34,6 +36,19 @@ def plot_maps_json(config_file):
 	mask_path = config["mask_path"]
 	river_path = config["river_path"]
 
+	# Get list of all countries within the country if the user doesn't provide a list
+	if place_name == [None]:
+		print(f"Warning: no place name given, creating a map for each county within {country_name}")
+
+		shapefile_county_dic = {
+		"kenya": 'forecasting_dataset/kenya/kenya-county/ke_county.shp',
+		"ethiopia": 'forecasting_dataset/ethiopia/Export_admin2.shp',
+		"somalia": 'forecasting_dataset/somalia/somalia_regions.shp',
+		}
+
+		shapefile_county = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_county_dic[country_name.lower()]))
+
+		gdf = gpd.read_file(shapefile_county)
 
 	# Call the plotting function
 	call_plot_maps(
@@ -55,7 +70,7 @@ def plot_maps_json(config_file):
 
 def call_plot_maps(plot_scales=["Zoom"],
 		country_name="Kenya",
-		place_names=["Isiolo"],
+		place_names=[None],
 		seasons=["MAM"],
 		water_status=["Flood"],
 		year=2010,

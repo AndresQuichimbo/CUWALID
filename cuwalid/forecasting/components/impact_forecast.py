@@ -300,7 +300,7 @@ ilanguage = "English"
 def plot_map(plot_scale="Zoom",
 			region="region",
 			country_name="Kenya",
-			place_name="Burat",
+			place_name=None,
 			iseason="OND",
 			iwater_status="Groundwater",
 			iyear=2010,
@@ -323,6 +323,8 @@ def plot_map(plot_scale="Zoom",
 	#settlements_shapefile = 'forecasting_dataset/NaturalEarth/ne_10m_populated_places.shp'
 	#facilities_shapefile = "forecasting_dataset/Jake/facilities/Health_facilities_wgs84.shp"
 
+
+	# Dictionaries holding the path to the shape files
 	shapefile_country_dic = {
 	"region": "forecasting_dataset/HAD/gis/Horn_Africa/Horn_africa_contry.shp"
 	}
@@ -337,6 +339,7 @@ def plot_map(plot_scale="Zoom",
 	"kenya": 'forecasting_dataset/kenya/kenya_wards/Kenya wards.shp'
 	}
 
+	# Get shape files from within package
 	shapefile_country = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_country_dic[region]))
 	shapefile_county = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_county_dic[country_name.lower()]))
 	shapefile_wards = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_wards_dic[country_name.lower()]))
