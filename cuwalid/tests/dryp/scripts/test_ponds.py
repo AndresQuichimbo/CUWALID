@@ -31,7 +31,7 @@ def test_ponds():
 
     # run loop for time step
     for i in range(20):
-        V, et, aoz, P = pnds.run_ponds_one_step(Vo, P, pet, aoz, cell_area)
+        V, et, aoz, P = pnds.run_ponds_one_step(Vo, P, pet, cell_area, Aoz=aoz)
         #V, rt, aoz = pnds.run_ponds_one_step(Vo, pet, aoz, a)
         Vo = V
 
