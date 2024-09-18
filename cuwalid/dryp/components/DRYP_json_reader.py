@@ -61,7 +61,7 @@ class get_model_settings(object):
 
 		# Read groundwater model activation
 		#aux_run_GW = settings_config["COMPONENTS"]["method_gw"].split()
-		self.run_GW = bool(settings_config["COMPONENTS"]["run_GW"])
+		self.run_GW = bool(settings_config["COMPONENTS"]["run_gw"])
 		#self.run_GW = int(aux_run_GW[0])
 
 		# Groundwater aquifer functions
@@ -369,8 +369,8 @@ class get_list_of_groundwater_files(object):
     def __init__(self, dryp_config, factors):
         """Model parameter settings and input file names and location"""
         
-        aux_run_GW = factors["COMPONENTS"]["method_gw"].split()
-        self.run_GW = int(aux_run_GW[0])
+        #aux_run_GW = factors["COMPONENTS"]["method_gw"].split()
+        self.run_GW = bool(factors["COMPONENTS"]["run_gw"])
         
         self.fname_GWdomain = dryp_config["SATURATED"]["path_sz_mask"]  # GW Boundary conditions
         self.fname_SZ_Ksat = dryp_config["SATURATED"]["path_sz_ksat"]  # Saturated hydraulic conductivity (Ks)
@@ -383,7 +383,7 @@ class get_list_of_groundwater_files(object):
         self.fname_b_aq = dryp_config["GROUNDWATER"]["path_gw_bdd"]
         self.fname_aquifertype = dryp_config["GROUNDWATER"]["path_gw_type"]
         #self.fname_bathymetry = dryp_config["GROUNDWATER"]["path_gw_lake_elev"]
-        self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depht"]
+        self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depth"]
 
         self.fname_SZ_botb = None
         self.fname_SZ_Ksatb = None
@@ -418,7 +418,7 @@ class get_list_of_water_bodies_files(object):
         """Model parameter settings and input file names and location"""
 
         # water bodies component
-        self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depht"]
+        self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depth"]
         self.fname_pnd_hmax = dryp_config["WATER_BODIES"]["path_pnd_hmax"]
         self.fname_pnd_Amax = dryp_config["WATER_BODIES"]["path_pnd_Amax"]
 
