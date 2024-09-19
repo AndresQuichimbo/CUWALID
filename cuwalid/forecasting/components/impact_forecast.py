@@ -341,9 +341,14 @@ def plot_map(plot_scale="Zoom",
 
 	# Get shape files from within package
 	shapefile_country = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_country_dic[region]))
-	shapefile_county = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_county_dic[country_name.lower()]))
-	shapefile_wards = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_wards_dic[country_name.lower()]))
+	if (plot_scale == "Zoom") or (plot_scale == "Ward"):
+		shapefile_wards = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_wards_dic[country_name.lower()]))
+	elif plot_scale == "County":
+		shapefile_county = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_county_dic[country_name.lower()]))
+	
 	rivers_shapefile = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'forecasting_dataset/NaturalEarth/ne_10m_rivers_lake_centerlines.shp'))
+
+
 
 
 	# load dataset of model outputs
