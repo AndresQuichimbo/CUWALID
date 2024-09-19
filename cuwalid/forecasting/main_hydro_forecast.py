@@ -1,9 +1,10 @@
+import argparse
 import json
 from cuwalid.forecasting.components.hindcast import *
 from cuwalid.forecasting.components.forecast import *
 from cuwalid.forecasting.components.hydrological_forecast import *
 
-def run_forecast(config_path):
+def run_hydro_forecast(config_path):
 
     # Load JSON data from the config_path
     with open(config_path, 'r') as file:
@@ -102,3 +103,14 @@ def run_forecast(config_path):
         plot_deterministic_forecast(model_path, forecast_model_name, season, variables, postpp_path)
 
 
+# Main function to handle command-line arguments
+if __name__ == '__main__':
+	# Set up argument parser to get the JSON config file from command line
+	parser = argparse.ArgumentParser(description="Plot hydrological forecast based on JSON configuration.")
+	parser.add_argument('config_file', type=str, help='Path to the JSON configuration file')
+
+	# Parse command line arguments
+	args = parser.parse_args()
+
+	# Run the plot_maps_json function with the config file provided by the user
+	run_hydro_forecast(args.config_file)

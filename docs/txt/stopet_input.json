@@ -1,0 +1,18 @@
+{
+    "data_path": "stopet_parameters",
+    "output_path": "stopet_output",
+    "runtype": "regional",
+    "startyear": 1994,
+    "endyear": 1996,
+    "latval": 3.8,
+    "lonval": 36.6,
+    "latval_min": -5.5,
+    "latval_max": -4.5,
+    "lonval_min": 33.0,
+    "lonval_max": 34.5,
+    "locname": "Kenya",
+    "number_ensm": 2,
+    "tempAdj": 3,
+    "deltat": 1.5,
+    "udpi_pet": 5
+}
