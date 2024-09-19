@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DRYP Training Notebooks &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Content:" href="notebooks/DRYP/DRYP_pre_processing.html" />
+    <link rel="prev" title="Training Notebooks" href="training.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="training.html">Training Notebooks</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">DRYP Training Notebooks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dryp-pre-processing">DRYP_pre_processing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html">Content:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#Preprocessing-datasets">Preprocessing datasets</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dryp-model-running">DRYP_model_running</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html">Content:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html#Preparing-DRYP-model-simulations">Preparing DRYP model simulations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dryp-post-processing">DRYP_post_processing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html">Content:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html#Post-processing-datasets">Post-processing datasets</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="stopet_training.html">stoPET Training Notebooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm_training.html">STORM Training Notebooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forecasting_training.html">Forecast Training Notebooks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="training.html">Training Notebooks</a></li>
+      <li class="breadcrumb-item active">DRYP Training Notebooks</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/dryp_training.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dryp-training-notebooks">
+<h1>DRYP Training Notebooks<a class="headerlink" href="#dryp-training-notebooks" title="Permalink to this heading"></a></h1>
+<section id="dryp-pre-processing">
+<h2>DRYP_pre_processing<a class="headerlink" href="#dryp-pre-processing" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html">Content:</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#Preprocessing-datasets">Preprocessing datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#1.-Delineate-a-watershed-(getting-a-basin-mask)">1. Delineate a watershed (getting a basin mask)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#2.-Clip-basin-extent-by-mask">2. Clip basin extent by mask</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#3.-Create-a-flow-direction-map">3. Create a flow direction map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#4.-Creating-river-network">4. Creating river network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_pre_processing.html#5.-Create-constant-head-boundary-condition">5. Create constant head boundary condition</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="dryp-model-running">
+<h2>DRYP_model_running<a class="headerlink" href="#dryp-model-running" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html">Content:</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html#Preparing-DRYP-model-simulations">Preparing DRYP model simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html#3.1.-Preparing-model-parameter-and-setting-files">3.1. Preparing model parameter and setting files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html#3.2.-Runing-DRYP">3.2. Runing DRYP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html#3.3.-Preparing-and-running-multiple-DRYP-simulations">3.3. Preparing and running multiple DRYP simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_model_running.html#3.4.-Runing-pipeline-DRYP-simulations">3.4. Runing pipeline DRYP simulations</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="dryp-post-processing">
+<h2>DRYP_post_processing<a class="headerlink" href="#dryp-post-processing" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html">Content:</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html#Post-processing-datasets">Post-processing datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html#4.1.-Understanding-model-outputs">4.1. Understanding model outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html#4.2.-Post-processing-model-outputs">4.2. Post-processing model outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html#4.3.-Sampling-model-outputs">4.3. Sampling model outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/DRYP/DRYP_post_processing.html#Visualising-spatial-variables">Visualising spatial variables</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="training.html" class="btn btn-neutral float-left" title="Training Notebooks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="notebooks/DRYP/DRYP_pre_processing.html" class="btn btn-neutral float-right" title="Content:" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

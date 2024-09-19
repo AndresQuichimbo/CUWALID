@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1. stoPET &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Learning objective:" href="stopet_introduction.html" />
+    <link rel="prev" title="Learning objective:" href="batchjob_submision.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../training.html">Training Notebooks</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../dryp_training.html">DRYP Training Notebooks</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../stopet_training.html">stoPET Training Notebooks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../stopet_training.html#batchjob-submision">batchjob_submision</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../stopet_training.html#cuwalid-stopet">cuwalid_stopet</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">1. stoPET</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#2.-Batch-job-submission">2. Batch job submission</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../stopet_training.html#stopet-introduction">stopet_introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stopet_training.html#stopet-regionaldata">stopet_regionaldata</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../storm_training.html">STORM Training Notebooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../forecasting_training.html">Forecast Training Notebooks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../training.html">Training Notebooks</a></li>
+          <li class="breadcrumb-item"><a href="../../stopet_training.html">stoPET Training Notebooks</a></li>
+      <li class="breadcrumb-item active">1. stoPET</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/notebooks/stoPET/cuwalid_stopet.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <table><tr><td><p><img alt="7058b14774a24eb7b9ed99941a5a1e56" class="no-scaled-link" src="../../_images/CardiffUniversity.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="281177c8727b4055b7e20f22c02c36b0" class="no-scaled-link" src="../../_images/Down2Earth.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="8dbd7617a76940b38545affbd86aa241" class="no-scaled-link" src="../../_images/UniversityOfBristol.PNG" style="width: 250px;" /></p>
+</td></tr></table><p>CUWALID is an integrated model used to obtain actionable forecasts for hydrological components in drylands. It consists of a main hydrological model (DRYP) which allows to estimate the partioning of the water balance. This hydrological model is driven by two major climate inputs <strong>precipitation</strong> and <strong>potential evapotranspiration (PET)</strong>. The driving climate variables are obtained based on stochastic models integrated in the system. <strong>STORM</strong> is the precipitation model and <strong>stoPET</strong> is the PET
+model that generates the required driving climate variables. Here, we disscuss the stoPET model and how it works in the CUWALID system.</p>
+<section id="1.-stoPET">
+<h1>1. stoPET<a class="headerlink" href="#1.-stoPET" title="Permalink to this heading"></a></h1>
+<p>stoPET is a stochastic PET generator over the globe (55N - 55S). The model consists of two scripts <strong>run_stoPET.py</strong> and <strong>stoPET_v1.py</strong> where the first one is used to provide the necessary inputs and run the model. The second one is the script containing the functions to generate the PET values. For training purposes, the function in the run_stoPET.py is provided below. Details of the model description can be found in the following paper stoPET paper and you can download the model from this
+link.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is for showing plots</span>
+<span class="c1"># interactively in Jupiter notebook</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">stoPET_v1</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_stoPET</span><span class="p">():</span>
+    <span class="c1">## ----- CHANGE THE INPUT VARIABLES HERE -----##</span>
+    <span class="n">datapath</span> <span class="o">=</span> <span class="s1">&#39;stopet_parameter_files/&#39;</span>
+    <span class="n">outputpath</span> <span class="o">=</span> <span class="s1">&#39;results/&#39;</span>
+    <span class="n">runtype</span> <span class="o">=</span>  <span class="s1">&#39;single&#39;</span> <span class="c1">#&#39;regional&#39; #</span>
+    <span class="n">startyear</span> <span class="o">=</span> <span class="mi">2000</span>
+    <span class="n">endyear</span> <span class="o">=</span> <span class="mi">2010</span>
+
+    <span class="c1"># Single point stoPET run</span>
+    <span class="n">latval</span> <span class="o">=</span> <span class="mf">1.73</span>
+    <span class="n">lonval</span> <span class="o">=</span> <span class="mf">40.09</span>
+
+    <span class="c1"># Regional stoPET run</span>
+    <span class="n">latval_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.5</span>
+    <span class="n">latval_max</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.5</span> <span class="c1">#5.5</span>
+    <span class="n">lonval_min</span> <span class="o">=</span> <span class="mf">33.0</span>
+    <span class="n">lonval_max</span> <span class="o">=</span> <span class="mf">34.5</span> <span class="c1">#42.0</span>
+    <span class="n">locname</span> <span class="o">=</span> <span class="s1">&#39;Wajir&#39;</span> <span class="c1">#&#39;Turkana1&#39; #</span>
+
+    <span class="n">number_ensm</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">tempAdj</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">deltat</span> <span class="o">=</span> <span class="mf">1.5</span>
+    <span class="n">udpi_pet</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="c1">## ------ NO CHANGES BELLOW THIS -------------##</span>
+    <span class="k">if</span> <span class="n">runtype</span> <span class="o">==</span> <span class="s1">&#39;single&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ens_num</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+                    <span class="n">stoPET_wrapper_singlepoint</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span>
+                                               <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span>
+                                               <span class="n">ens_num</span><span class="p">,</span><span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span>
+                                               <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">runtype</span> <span class="o">==</span> <span class="s1">&#39;regional&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ens_num</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+                    <span class="n">stoPET_wrapper_regional</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span>
+                                            <span class="n">latval_min</span><span class="p">,</span> <span class="n">latval_max</span><span class="p">,</span>
+                                            <span class="n">lonval_min</span><span class="p">,</span> <span class="n">lonval_max</span><span class="p">,</span>
+                                            <span class="n">locname</span><span class="p">,</span> <span class="n">ens_num</span><span class="p">,</span> <span class="n">datapath</span><span class="p">,</span>
+                                            <span class="n">outputpath</span><span class="p">,</span>
+                                            <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;runtype only takes single and regional ... please check!&#39;</span><span class="p">)</span>
+<br/><br/></pre></div>
+</div>
+</div>
+<section id="1.1-Changing-input-parameters">
+<h2>1.1 Changing input parameters<a class="headerlink" href="#1.1-Changing-input-parameters" title="Permalink to this heading"></a></h2>
+<p>The above function is used to run the stoPET model and generate the required PET values. There are input parameters that are required to run it. The user can change these parameters in this function. stoPET can run in two types: one is a <strong>single point run</strong> and two is a <strong>regional run</strong>. If a single point run is selected, the user will need to provide the <strong>lat/lon</strong> of the specific location and the model will choose the nearest grid point to generate the PET value. If a regional run is
+selected, the user will need to provide the <strong>four corners of a rectangle</strong> that contain the region of interest. The user also needs to provide the <strong>start year</strong> and <strong>end year</strong> for the data and a <strong>local name</strong> to differentiate the region or location.</p>
+</section>
+<section id="1.2-Adjusting-for-temperature-increase">
+<h2>1.2 Adjusting for temperature increase<a class="headerlink" href="#1.2-Adjusting-for-temperature-increase" title="Permalink to this heading"></a></h2>
+<p>If the user wants to adjust the PET values to account for increasing temperature, they can provide one of the three mothods included in the model <strong>(tempAdj)</strong>. This is an integer number with values 1, 2, or 3. Each of these numbers represents what method to use for the model to account for temperature adjustment on future PET. Method 1 = 1, Method 2 = 2, Method 3 = 3 (Refer to the stoPET paper for the description of each method).</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1. Method 1: user-defined percentage step change in annual PET
+2. Method 2: step change in PET based on a user-defined change in atmospheric temperature
+3. Method 3: progressive change in PET based on the historical trend in hPET
+</pre></div>
+</div>
+<p>If the user chooses Method 1, the value used to increase the PET given as a percentage <strong>(udpi_pet)</strong>, will be used. If Method 2 is chosen, the value of the increased temperature given as <strong>(deltat)</strong> will be used. If Method 3 is chosen, <strong>(deltat)</strong> will be used and the <strong>(udpi_pet)</strong> will be ignored.</p>
+<p>The user also needs to provide how many ensembles of run are needed <strong>(number_ensm)</strong>. Once the user provides the required input values, the model can be executed using the following function.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">run_stoPET</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+stoPET running ...
+2000
+2001
+2002
+2003
+2004
+2005
+2006
+2007
+2008
+2009
+2010
+stoPET finished successfully.
+stoPET running ...
+2000
+2001
+2002
+2003
+2004
+2005
+2006
+2007
+2008
+2009
+2010
+stoPET finished successfully.
+</pre></div></div>
+</div>
+<p>As seen in the output value the model generated eleven years (2000 - 2010) single point PET. stoPET ran twice as the number of ensembles given is two.</p>
+</section>
+<section id="1.3-Output">
+<h2>1.3 Output<a class="headerlink" href="#1.3-Output" title="Permalink to this heading"></a></h2>
+<p>Once we run the model, the outputs will be saved in the output folder user provided. The output of these functions will be written in the output directory provided, where the model creates a new named directory <code class="docutils literal notranslate"><span class="pre">outputpath+locname+_E</span> <span class="pre">+</span> <span class="pre">number_ensm</span> <span class="pre">+_stoPET/</span></code>.</p>
+<p>For the single point run, stoPET generates text files <code class="docutils literal notranslate"><span class="pre">year_latval+_+lonval+_+tempAdj+stoPET.txt</span></code> and <code class="docutils literal notranslate"><span class="pre">year_latval+_+lonval+_+tempAdj+AdjstoPET.txt</span></code>. The first file is the PET generated without accounting for any adjustment for temperature. The second file is the adjusted PET based on the user’s choice (tempAdj). If one just wants to avoid any temperature change adjustment in the model, just use the first file output and ignore the second file.</p>
+<p><strong>Example: 1994_3.8_36.6_3_stoPET.txt and 1994_3.8_36.6_3_AdjstoPET.txt</strong></p>
+<p>stoPET output are hourly PET values of the year has 8760 hours for normal years and 8784 for leap years. Hence, in procesing the values, notice these array length for each year.</p>
+</section>
+<section id="1.4-Post-processing-and-visualization">
+<h2>1.4 Post processing and visualization<a class="headerlink" href="#1.4-Post-processing-and-visualization" title="Permalink to this heading"></a></h2>
+<p>Here we have a basic script to analyse the generated PET data and visulize it through simple plots. The script is named as <strong>post_processing_stopet.py</strong> and it consists of functions that helps to process the hourly data and plot the values. The following functions are available currently but you can add any additional functions you would like to have.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1. leap_remove(timeseries)
+2. running_mean(timeseries, n)
+3. aggregate_data(timeseries, period)
+4. timeseries_plot(data, xlabel, ylabel, title, plotpath, fname)
+5. comparison_timeseries_plot(data_1, data_2, label_1, label_2, xlabel, ylabel, title, plotpath, fname)
+6. comparison_density_plot(data_1, data_2, label_1, label_2, xlabel, ylabel, title, plotpath, fname)
+7. plot_spatial(data, lats, lons, cmap , title, cbar_label, climin, climax, plotpath, figfname)
+</pre></div>
+</div>
+<p>You can get the details of the function input parapemters by using the folowing help function after importing the script. <strong>help(script.function)</strong></p>
+<p><strong>Example: help(leap_remove)</strong></p>
+<p><strong>Note:</strong> If a user wants multi year values comparison one must write a simple script to append the time series of each year before using the plotting function.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">post_processing_stopet</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">help</span><span class="p">(</span><span class="n">leap_remove</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Help on function leap_remove in module post_processing_stopet:
+
+leap_remove(timeseries)
+    This function removes leap days from a time series
+    param timeseries: array containing daily time series
+    param datastartyear: start year of the input data
+    output data: time series with the leap days removed.
+
+</pre></div></div>
+</div>
+<section id="Kenya-1996-data-doesn't-exist">
+<h3>Kenya 1996 data doesn’t exist<a class="headerlink" href="#Kenya-1996-data-doesn't-exist" title="Permalink to this heading"></a></h3>
+<p><strong>Example:</strong> let us remove the leap year data from 1996 timeseries first read the 1996 PET data and check the array length</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="s1">&#39;results/Kenya_E0_StoPET/1996_3.8_36.6_3_stoPET.txt&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+<span class="n">new_data</span> <span class="o">=</span> <span class="n">leap_remove</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_data</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">FileNotFoundError</span>                         Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[34], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> data <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">np</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">genfromtxt</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">results/Kenya_E0_StoPET/1996_3.8_36.6_3_stoPET.txt</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(0,135,0)">len</span>(data))
+<span class="ansi-green-intense-fg ansi-bold">      3</span> new_data <span style="color: rgb(98,98,98)">=</span> leap_remove(data)
+
+File <span class="ansi-green-fg">~/anaconda3/envs/IS2/lib/python3.8/site-packages/numpy/lib/npyio.py:1977</span>, in <span class="ansi-cyan-fg">genfromtxt</span><span class="ansi-blue-fg">(fname, dtype, comments, delimiter, skip_header, skip_footer, converters, missing_values, filling_values, usecols, names, excludelist, deletechars, replace_space, autostrip, case_sensitive, defaultfmt, unpack, usemask, loose, invalid_raise, max_rows, encoding, ndmin, like)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1975</span>     fname <span style="color: rgb(98,98,98)">=</span> os_fspath(fname)
+<span class="ansi-green-intense-fg ansi-bold">   1976</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">isinstance</span>(fname, <span style="color: rgb(0,135,0)">str</span>):
+<span class="ansi-green-fg">-&gt; 1977</span>     fid <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">np</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">lib</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_datasource</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">fname</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">rt</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1978</span>     fid_ctx <span style="color: rgb(98,98,98)">=</span> contextlib<span style="color: rgb(98,98,98)">.</span>closing(fid)
+<span class="ansi-green-intense-fg ansi-bold">   1979</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+
+File <span class="ansi-green-fg">~/anaconda3/envs/IS2/lib/python3.8/site-packages/numpy/lib/_datasource.py:193</span>, in <span class="ansi-cyan-fg">open</span><span class="ansi-blue-fg">(path, mode, destpath, encoding, newline)</span>
+<span class="ansi-green-intense-fg ansi-bold">    156</span> <span style="color: rgb(175,0,0)">&#34;&#34;&#34;</span>
+<span class="ansi-green-intense-fg ansi-bold">    157</span> <span style="color: rgb(175,0,0)">Open `path` with `mode` and return the file object.</span>
+<span class="ansi-green-intense-fg ansi-bold">    158</span>
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    189</span>
+<span class="ansi-green-intense-fg ansi-bold">    190</span> <span style="color: rgb(175,0,0)">&#34;&#34;&#34;</span>
+<span class="ansi-green-intense-fg ansi-bold">    192</span> ds <span style="color: rgb(98,98,98)">=</span> DataSource(destpath)
+<span class="ansi-green-fg">--&gt; 193</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">ds</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">open</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">path</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">encoding</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">newline</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg">newline</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/anaconda3/envs/IS2/lib/python3.8/site-packages/numpy/lib/_datasource.py:533</span>, in <span class="ansi-cyan-fg">DataSource.open</span><span class="ansi-blue-fg">(self, path, mode, encoding, newline)</span>
+<span class="ansi-green-intense-fg ansi-bold">    530</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> _file_openers[ext](found, mode<span style="color: rgb(98,98,98)">=</span>mode,
+<span class="ansi-green-intense-fg ansi-bold">    531</span>                               encoding<span style="color: rgb(98,98,98)">=</span>encoding, newline<span style="color: rgb(98,98,98)">=</span>newline)
+<span class="ansi-green-intense-fg ansi-bold">    532</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">--&gt; 533</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">FileNotFoundError</span>(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">&#34;</span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>path<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)"> not found.</span><span style="color: rgb(175,0,0)">&#34;</span>)
+
+<span class="ansi-red-fg">FileNotFoundError</span>: results/Kenya_E0_StoPET/1996_3.8_36.6_3_stoPET.txt not found.
+</pre></div></div>
+</div>
+<p>As seen above the origional data has a length of 8784 which is 366 days of hourly data. After we use the remove leap year function the new data has a length of 8760 which is 365 days of hourly values.</p>
+<blockquote>
+<div><p>Example 1</p>
+</div></blockquote>
+<hr class="docutils" />
+<p>Now lets do a simple exercise based on a 10 year data for a single location in Eastern Kenya (Wajir).</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>* lat = 1.73
+* lon = 40.09
+* start year = 2000
+* end year = 2010
+* two ensembles
+* using Method 3 for temperature adjustment
+* temperature increase of 1.5 degrees
+</pre></div>
+</div>
+<p>Adjust the <strong>run_stoPET.py</strong> acordingly and run to generate the PET data</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_stoPET</span><span class="p">():</span>
+    <span class="c1">## ----- CHANGE THE INPUT VARIABLES HERE -----##</span>
+    <span class="n">datapath</span> <span class="o">=</span> <span class="s1">&#39;stopet_parameter_files/&#39;</span>
+    <span class="n">outputpath</span> <span class="o">=</span> <span class="s1">&#39;results/&#39;</span>
+    <span class="n">runtype</span> <span class="o">=</span>  <span class="s1">&#39;single&#39;</span> <span class="c1">#&#39;regional&#39; #</span>
+    <span class="n">startyear</span> <span class="o">=</span> <span class="mi">2000</span>
+    <span class="n">endyear</span> <span class="o">=</span> <span class="mi">2010</span>
+
+    <span class="c1"># Single point stoPET run</span>
+    <span class="n">latval</span> <span class="o">=</span> <span class="mf">1.73</span>
+    <span class="n">lonval</span> <span class="o">=</span> <span class="mf">40.09</span>
+
+    <span class="c1"># Regional stoPET run</span>
+    <span class="n">latval_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.5</span>
+    <span class="n">latval_max</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.5</span> <span class="c1">#5.5</span>
+    <span class="n">lonval_min</span> <span class="o">=</span> <span class="mf">33.0</span>
+    <span class="n">lonval_max</span> <span class="o">=</span> <span class="mf">34.5</span> <span class="c1">#42.0</span>
+    <span class="n">locname</span> <span class="o">=</span> <span class="s1">&#39;Wajir&#39;</span> <span class="c1">#&#39;Turkana1&#39; #</span>
+
+    <span class="n">number_ensm</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">tempAdj</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">deltat</span> <span class="o">=</span> <span class="mf">1.5</span>
+    <span class="n">udpi_pet</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="c1">## ------ NO CHANGES BELLOW THIS -------------##</span>
+    <span class="k">if</span> <span class="n">runtype</span> <span class="o">==</span> <span class="s1">&#39;single&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ens_num</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+                    <span class="n">stoPET_wrapper_singlepoint</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span>
+                                               <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span>
+                                               <span class="n">ens_num</span><span class="p">,</span><span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span>
+                                               <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">runtype</span> <span class="o">==</span> <span class="s1">&#39;regional&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ens_num</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+                    <span class="n">stoPET_wrapper_regional</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span>
+                                            <span class="n">latval_min</span><span class="p">,</span> <span class="n">latval_max</span><span class="p">,</span>
+                                            <span class="n">lonval_min</span><span class="p">,</span> <span class="n">lonval_max</span><span class="p">,</span>
+                                            <span class="n">locname</span><span class="p">,</span> <span class="n">ens_num</span><span class="p">,</span> <span class="n">datapath</span><span class="p">,</span>
+                                            <span class="n">outputpath</span><span class="p">,</span>
+                                            <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;runtype only takes single and regional ... please check!&#39;</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">run_stoPET</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+stoPET running ...
+2000
+2001
+2002
+2003
+2004
+2005
+2006
+2007
+2008
+2009
+2010
+stoPET finished successfully.
+stoPET running ...
+2000
+2001
+2002
+2003
+2004
+2005
+2006
+2007
+2008
+2009
+2010
+stoPET finished successfully.
+</pre></div></div>
+</div>
+<p>Now let us make the visulization of the daily time series of PET for the first year (2000). Notice 2000 is a leap year so first we need to remove the leap year values since it won’t be necessary for now</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># read the PET data for the year without temperature adjustment</span>
+<span class="n">data_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="s1">&#39;results/Wajir_E0_StoPET/2000_1.73_40.09_3_stoPET.txt&#39;</span><span class="p">)</span>
+<span class="c1"># read the PET data for the year with adjusted temeperature</span>
+<span class="n">data_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="s1">&#39;results/Wajir_E0_StoPET/2009_1.73_40.09_3_AdjstoPET.txt&#39;</span><span class="p">)</span>
+<span class="c1"># lets remove the leap year day data</span>
+<span class="n">data_1</span> <span class="o">=</span> <span class="n">leap_remove</span><span class="p">(</span><span class="n">data_1</span><span class="p">)</span>
+<span class="n">data_2</span> <span class="o">=</span> <span class="n">leap_remove</span><span class="p">(</span><span class="n">data_2</span><span class="p">)</span>
+<span class="c1"># check the length of the array</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_1</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+8760
+8736
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Density plot</span>
+<span class="n">label_1</span> <span class="o">=</span> <span class="s1">&#39;stoPET&#39;</span>
+<span class="n">label_2</span> <span class="o">=</span> <span class="s1">&#39;Adj. stoPET&#39;</span>
+<span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;PET ($\mathbf{mm\,hour^{-1}}$)&#39;</span>
+<span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Density&#39;</span>
+<span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Hourly PET value&#39;</span>
+<span class="n">plotpath</span> <span class="o">=</span> <span class="s1">&#39;./plots/&#39;</span>
+<span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="c1"># Draw the density plot</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span>  <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="n">label_1</span><span class="p">)</span>
+<span class="c1"># Draw the density plot</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data_2</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="n">label_2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span><span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_stoPET_cuwalid_stopet_21_0.png" src="../../_images/notebooks_stoPET_cuwalid_stopet_21_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Now lets plot the timeseres for both PET</span>
+<span class="c1"># values to visulize the daily timeseris of</span>
+<span class="c1"># non-adjusted and adjusted PET</span>
+<span class="n">label_1</span> <span class="o">=</span> <span class="s1">&#39;stoPET&#39;</span>
+<span class="n">label_2</span> <span class="o">=</span> <span class="s1">&#39;Adj. stoPET&#39;</span>
+<span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;PET ($\mathbf{mm\,hour^{-1}}$)&#39;</span>
+<span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Density&#39;</span>
+<span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Hourly PET value&#39;</span>
+<span class="n">plotpath</span> <span class="o">=</span> <span class="s1">&#39;./plots/&#39;</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;Wajir_2000_hourly_density_stoPET.png&#39;</span>
+<span class="c1"># by using the function for plotting from the</span>
+<span class="c1"># post_processing_stopet.py the figures will be</span>
+<span class="c1"># saved in the folder user provided.</span>
+<span class="n">comparison_density_plot</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span><span class="p">,</span> <span class="n">label_1</span><span class="p">,</span> <span class="n">label_2</span><span class="p">,</span>
+                        <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">plotpath</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_stoPET_cuwalid_stopet_22_0.png" src="../../_images/notebooks_stoPET_cuwalid_stopet_22_0.png" />
+</div>
+</div>
+<p>Now lets make the daily and monthly aggregate for the two datasets using the <strong>aggregate_data(timeseries, period)</strong> function.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># daily</span>
+<span class="n">data_1_day</span> <span class="o">=</span> <span class="n">aggregate_data</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">)</span>
+<span class="n">data_2_day</span> <span class="o">=</span> <span class="n">aggregate_data</span><span class="p">(</span><span class="n">data_2</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_1_day</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_2_day</span><span class="p">))</span>
+<span class="c1"># check for the array length</span>
+<span class="c1"># monthly</span>
+<span class="n">data_1_month</span> <span class="o">=</span> <span class="n">aggregate_data</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">)</span>
+<span class="n">data_2_month</span> <span class="o">=</span> <span class="n">aggregate_data</span><span class="p">(</span><span class="n">data_2</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">)</span>
+<span class="c1"># check for the array length</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_1_month</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_2_month</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+365
+364
+12
+12
+</pre></div></div>
+</div>
+<p>Now lets plot the timeseres for both PET values to visulize the daily timeseris of non-adjusted and adjusted PET.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">data_1_day</span>
+<span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;Day of year&#39;</span>
+<span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;PET ($\mathbf{mm\,day^{-1}}$)&#39;</span>
+<span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Daily PET value&#39;</span>
+<span class="n">plotpath</span> <span class="o">=</span> <span class="s1">&#39;./plots/&#39;</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;Wajir_2000_daily_stoPET.png&#39;</span>
+<span class="n">timeseries_plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">plotpath</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_stoPET_cuwalid_stopet_26_0.png" src="../../_images/notebooks_stoPET_cuwalid_stopet_26_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is just to show the plots in the document the function</span>
+<span class="c1"># already saved the plot in the plots folder.</span>
+<span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span><span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_stoPET_cuwalid_stopet_27_0.png" src="../../_images/notebooks_stoPET_cuwalid_stopet_27_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Now lets plot the timeseres for the monthly PET values of the year 2000.</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">data_1_month</span>
+<span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;Month&#39;</span>
+<span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;PET ($\mathbf{mm\,month^{-1}}$)&#39;</span>
+<span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Monthly PET value&#39;</span>
+<span class="n">plotpath</span> <span class="o">=</span> <span class="s1">&#39;./plots/&#39;</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;Wajir_2000_monthly_stoPET.png&#39;</span>
+<span class="n">timeseries_plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">plotpath</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_stoPET_cuwalid_stopet_28_0.png" src="../../_images/notebooks_stoPET_cuwalid_stopet_28_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is just to show the plots in the document the function</span>
+<span class="c1"># already saved the plot in the plots folder.</span>
+<span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span><span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_stoPET_cuwalid_stopet_29_0.png" src="../../_images/notebooks_stoPET_cuwalid_stopet_29_0.png" />
+</div>
+</div>
+<p>Now lets plot the annual PET values and compare the temperature adjusted PET with non adjusted PET. Remember stoPET provide one file for each year so we need to loop through each year data and concatenate the values before plotting.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># first lets make the year list</span>
+<span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span><span class="mi">2011</span><span class="p">)</span>
+<span class="c1"># create empty array</span>
+<span class="n">data_1_year</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># this is non adjusted PET</span>
+<span class="n">data_2_year</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># this is the adjusted PET</span>
+<span class="c1"># make a loop and estimate the annual PET value for both data</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">years</span><span class="p">)):</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="n">years</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">data_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="s1">&#39;results/Wajir_E0_StoPET/</span><span class="si">%s</span><span class="s1">_1.73_40.09_3_stoPET.txt&#39;</span>
+                           <span class="o">%</span><span class="k">year</span>)
+    <span class="n">data_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="s1">&#39;results/Wajir_E0_StoPET/</span><span class="si">%s</span><span class="s1">_1.73_40.09_3_AdjstoPET.txt&#39;</span>
+                           <span class="o">%</span><span class="k">year</span>)
+    <span class="c1"># make the annual aggregate</span>
+    <span class="n">data_1_val</span> <span class="o">=</span> <span class="n">aggregate_data</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">)</span>
+    <span class="n">data_2_val</span> <span class="o">=</span> <span class="n">aggregate_data</span><span class="p">(</span><span class="n">data_2</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">)</span>
+    <span class="c1"># append the data to the empty array</span>
+    <span class="n">data_1_year</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_1_year</span><span class="p">,</span> <span class="n">data_1_val</span><span class="p">)</span>
+    <span class="n">data_2_year</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_2_year</span><span class="p">,</span> <span class="n">data_2_val</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2000
+2001
+2002
+2003
+2004
+2005
+2006
+2007
+2008
+2009
+2010
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># now let us plot the two datasets for comparison</span>
+<span class="n">data_1</span> <span class="o">=</span> <span class="n">data_1_year</span>
+<span class="n">data_2</span> <span class="o">=</span> <span class="n">data_2_year</span>
+<span class="n">label_1</span> <span class="o">=</span> <span class="s1">&#39;stoPET&#39;</span>
+<span class="n">label_2</span> <span class="o">=</span> <span class="s1">&#39;Adj. stoPET&#39;</span>
+<span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;Year&#39;</span>
+<span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;PET ($\mathbf{mm\,year^{-1}}$)&#39;</span>
+<span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Annual PET value&#39;</span>
+<span class="n">plotpath</span> <span class="o">=</span> <span class="s1">&#39;./plots/&#39;</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;Wajir_annual_stoPET_comparison.png&#39;</span>
+<span class="n">comparison_timeseries_plot</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span><span class="p">,</span> <span class="n">label_1</span><span class="p">,</span> <span class="n">label_2</span><span class="p">,</span>
+                           <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">plotpath</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_stoPET_cuwalid_stopet_32_0.png" src="../../_images/notebooks_stoPET_cuwalid_stopet_32_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is just to show the plots in the document the function</span>
+<span class="c1"># already saved the plot in the plots folder.</span>
+<span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label_1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_2</span><span class="p">,</span><span class="s1">&#39;k--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label_2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span><span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_stoPET_cuwalid_stopet_33_0.png" src="../../_images/notebooks_stoPET_cuwalid_stopet_33_0.png" />
+</div>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>## EXERCISE 1 Based on
+the above examples
+please try to do the
+folowing.</p></td>
+</tr>
+<tr class="row-even"><td><p>1. Generate a 15 year
+dataset for the location
+of your choice. 2. use
+each method of
+temperature adjustment
+(Method 1, Method 2 and
+Method 3) separatelly.
+3. generate 3 plots (one
+for each method)
+comparing the values of
+the annual PET and
+adjusted PET.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="1.5-Generating-regional-data">
+<h2>1.5 Generating regional data<a class="headerlink" href="#1.5-Generating-regional-data" title="Permalink to this heading"></a></h2>
+<p>Here we will generate the data for <strong>Kenya</strong> and use some plotting functions to visualize the data. Notice regional data takes more space so make sure there is enough storage for the data.</p>
+<p>To generate the regional data please adjust the input values in the <strong>run_stoPET()</strong> function and generate 5 years data for Kenya using Method 2 as temperature adjustment with a 1.5 degree increase.</p>
+<blockquote>
+<div><p>Example 2</p>
+</div></blockquote>
+<hr class="docutils" />
+<p>Now lets do a simple exercise based on a 5 year data for Kenya.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>* latval_min = -5.5
+* latval_max = 5.5
+* lonval_min = 33.0
+* lonval_max = 42.0
+* start year = 2000
+* end year = 2005
+* two ensembles
+* using Method 2 for temperature adjustment
+* temperature increase of 1.5 degrees
+</pre></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[54]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_stoPET</span><span class="p">():</span>
+    <span class="c1">## ----- CHANGE THE INPUT VARIABLES HERE -----##</span>
+    <span class="n">datapath</span> <span class="o">=</span> <span class="s1">&#39;stopet_parameter_files/&#39;</span>
+    <span class="n">outputpath</span> <span class="o">=</span> <span class="s1">&#39;results/&#39;</span>
+    <span class="n">runtype</span> <span class="o">=</span>  <span class="s1">&#39;regional&#39;</span> <span class="c1">#&#39;single&#39;</span>
+    <span class="n">startyear</span> <span class="o">=</span> <span class="mi">2000</span>
+    <span class="n">endyear</span> <span class="o">=</span> <span class="mi">2005</span>
+
+    <span class="c1"># Single point stoPET run</span>
+    <span class="n">latval</span> <span class="o">=</span> <span class="mf">1.73</span>
+    <span class="n">lonval</span> <span class="o">=</span> <span class="mf">40.09</span>
+
+    <span class="c1"># Regional stoPET run</span>
+    <span class="n">latval_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.5</span>
+    <span class="n">latval_max</span> <span class="o">=</span> <span class="mf">5.5</span>
+    <span class="n">lonval_min</span> <span class="o">=</span> <span class="mf">33.0</span>
+    <span class="n">lonval_max</span> <span class="o">=</span> <span class="mf">42.0</span>
+    <span class="n">locname</span> <span class="o">=</span> <span class="s1">&#39;Kenya&#39;</span>
+
+    <span class="n">number_ensm</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">tempAdj</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">deltat</span> <span class="o">=</span> <span class="mf">1.5</span>
+    <span class="n">udpi_pet</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="c1">## ------ NO CHANGES BELLOW THIS -------------##</span>
+    <span class="k">if</span> <span class="n">runtype</span> <span class="o">==</span> <span class="s1">&#39;single&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ens_num</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+                    <span class="n">stoPET_wrapper_singlepoint</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span>
+                                               <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span>
+                                               <span class="n">ens_num</span><span class="p">,</span><span class="n">datapath</span><span class="p">,</span>
+                                               <span class="n">outputpath</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span>
+                                               <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">runtype</span> <span class="o">==</span> <span class="s1">&#39;regional&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ens_num</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+                    <span class="n">stoPET_wrapper_regional</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span>
+                                            <span class="n">latval_min</span><span class="p">,</span> <span class="n">latval_max</span><span class="p">,</span>
+                                            <span class="n">lonval_min</span><span class="p">,</span> <span class="n">lonval_max</span><span class="p">,</span>
+                                            <span class="n">locname</span><span class="p">,</span> <span class="n">ens_num</span><span class="p">,</span> <span class="n">datapath</span><span class="p">,</span>
+                                            <span class="n">outputpath</span><span class="p">,</span>
+                                            <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;runtype only takes single and regional ... please check!&#39;</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+<p>Now run the function run_stoPET()</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[58]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">run_stoPET</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+stoPET running ...
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">PermissionError</span>                           Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[58], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">run_stoPET</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+
+Cell <span class="ansi-green-fg">In[54], line 35</span>, in <span class="ansi-cyan-fg">run_stoPET</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-intense-fg ansi-bold">     33</span> <span class="ansi-bold" style="color: rgb(0,135,0)">elif</span> runtype <span style="color: rgb(98,98,98)">==</span> <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">regional</span><span style="color: rgb(175,0,0)">&#39;</span>:
+<span class="ansi-green-intense-fg ansi-bold">     34</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> ens_num <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> np<span style="color: rgb(98,98,98)">.</span>arange(<span style="color: rgb(98,98,98)">0</span>,number_ensm):
+<span class="ansi-green-fg">---&gt; 35</span>                 <span class="ansi-yellow-bg">stoPET_wrapper_regional</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">startyear</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">endyear</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
+<span class="ansi-green-intense-fg ansi-bold">     36</span> <span class="ansi-yellow-bg">                                        </span><span class="ansi-yellow-bg">latval_min</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">latval_max</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
+<span class="ansi-green-intense-fg ansi-bold">     37</span> <span class="ansi-yellow-bg">                                        </span><span class="ansi-yellow-bg">lonval_min</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">lonval_max</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">     38</span> <span class="ansi-yellow-bg">                                        </span><span class="ansi-yellow-bg">locname</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ens_num</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">datapath</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
+<span class="ansi-green-intense-fg ansi-bold">     39</span> <span class="ansi-yellow-bg">                                        </span><span class="ansi-yellow-bg">outputpath</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span>
+<span class="ansi-green-intense-fg ansi-bold">     40</span> <span class="ansi-yellow-bg">                                        </span><span class="ansi-yellow-bg">tempAdj</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">deltat</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">udpi_pet</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     41</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-intense-fg ansi-bold">     42</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">runtype only takes single and regional ... please check!</span><span style="color: rgb(175,0,0)">&#39;</span>)
+
+File <span class="ansi-green-fg">~/Documents/CUWALID_training/stoPET/stoPET_v1.py:306</span>, in <span class="ansi-cyan-fg">stoPET_wrapper_regional</span><span class="ansi-blue-fg">(startyear, endyear, latval_min, latval_max, lonval_min, lonval_max, locname, ens_num, datapath, outputpath, tempAdj, deltat, udpi_pet)</span>
+<span class="ansi-green-intense-fg ansi-bold">    302</span> mpercent<span style="color: rgb(98,98,98)">=</span>Dataset(datapath<span style="color: rgb(98,98,98)">+</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">monthly_cont_percentage.nc</span><span style="color: rgb(175,0,0)">&#39;</span>)
+<span class="ansi-green-intense-fg ansi-bold">    303</span> mcont_vals <span style="color: rgb(98,98,98)">=</span> mpercent<span style="color: rgb(98,98,98)">.</span>variables[<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">mcontper</span><span style="color: rgb(175,0,0)">&#39;</span>][:,:,:]
+<span class="ansi-green-fg">--&gt; 306</span> stopet <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">future_pet_ts_generate_regional</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">startyear</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">endyear</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">latval_min</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg">latval_max</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">lonval_min</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg">lonval_max</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    307</span> <span class="ansi-yellow-bg">                                         </span><span class="ansi-yellow-bg">lats</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">lons</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">locname</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ampl</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">omega</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">phase</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">shift</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">sr</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">ss</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">skew</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">loc</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">scale</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    308</span> <span class="ansi-yellow-bg">                                         </span><span class="ansi-yellow-bg">slope_vals</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">mcont_vals</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg">ens_num</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">datapath</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">outputpath</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">tempAdj</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">deltat</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">dpetdt</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    310</span> <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">stoPET finished successfully.</span><span style="color: rgb(175,0,0)">&#39;</span>)
+<span class="ansi-green-intense-fg ansi-bold">    312</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+
+File <span class="ansi-green-fg">~/Documents/CUWALID_training/stoPET/stoPET_v1.py:413</span>, in <span class="ansi-cyan-fg">future_pet_ts_generate_regional</span><span class="ansi-blue-fg">(startyear, endyear, latval_min, latval_max, lonval_min, lonval_max, lats, lons, locname, ampl, omega, phase, shift, sr, ss, skew, loc, scale, slope_vals, mcont_vals, ens_num, datapath, outputpath, tempAdj, deltat, dpetdt)</span>
+<span class="ansi-green-intense-fg ansi-bold">    411</span> filename2 <span style="color: rgb(98,98,98)">=</span> outputpath<span style="color: rgb(98,98,98)">+</span>locname<span style="color: rgb(98,98,98)">+</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">_E</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(98,98,98)">+</span><span style="color: rgb(0,135,0)">str</span>(ens_num)<span style="color: rgb(98,98,98)">+</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">_StoPET/</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(98,98,98)">+</span><span style="color: rgb(0,135,0)">str</span>(yr)<span style="color: rgb(98,98,98)">+</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">_</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(98,98,98)">+</span><span style="color: rgb(0,135,0)">str</span>(tempAdj)<span style="color: rgb(98,98,98)">+</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">_AdjstoPET.nc</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-intense-fg ansi-bold">    412</span> tunits <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">days since </span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(98,98,98)">+</span><span style="color: rgb(0,135,0)">str</span>(yr)<span style="color: rgb(98,98,98)">+</span><span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">-01-01</span><span style="color: rgb(175,0,0)">&#39;</span>
+<span class="ansi-green-fg">--&gt; 413</span> <span class="ansi-yellow-bg">nc_write</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">stoch_pet</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">latlen</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">lonlen</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">pet</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">tunits</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">filename1</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    414</span> nc_write(stoch_pet_adj, latlen, lonlen, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">pet</span><span style="color: rgb(175,0,0)">&#39;</span>, tunits, filename2)
+<span class="ansi-green-intense-fg ansi-bold">    416</span> <span style="color: rgb(95,135,135)"># delete the array for next year</span>
+
+File <span class="ansi-green-fg">~/Documents/CUWALID_training/stoPET/stoPET_v1.py:531</span>, in <span class="ansi-cyan-fg">nc_write</span><span class="ansi-blue-fg">(data, lat, lon, varname, tunits, filename)</span>
+<span class="ansi-green-intense-fg ansi-bold">    517</span> <span class="ansi-bold" style="color: rgb(0,135,0)">def</span> <span style="color: rgb(0,0,255)">nc_write</span>(data, lat, lon, varname, tunits, filename):
+<span class="ansi-green-intense-fg ansi-bold">    518</span> <span style="color: rgb(188,188,188)">    </span><span style="color: rgb(175,0,0)">&#34;&#34;&#34;</span>
+<span class="ansi-green-intense-fg ansi-bold">    519</span> <span style="color: rgb(175,0,0)">    this function write the PET on a netCDF file.</span>
+<span class="ansi-green-intense-fg ansi-bold">    520</span>
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">    528</span> <span style="color: rgb(175,0,0)">    :return:  produce a netCDF file in the same directory.</span>
+<span class="ansi-green-intense-fg ansi-bold">    529</span> <span style="color: rgb(175,0,0)">    &#34;&#34;&#34;</span>
+<span class="ansi-green-fg">--&gt; 531</span>     ds <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">Dataset</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">filename</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">mode</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">w</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg" style="color: rgb(0,135,0)">format</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">=</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">NETCDF4_CLASSIC</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    533</span>     time <span style="color: rgb(98,98,98)">=</span> ds<span style="color: rgb(98,98,98)">.</span>createDimension(<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">time</span><span style="color: rgb(175,0,0)">&#39;</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>)
+<span class="ansi-green-intense-fg ansi-bold">    534</span>     latitude <span style="color: rgb(98,98,98)">=</span> ds<span style="color: rgb(98,98,98)">.</span>createDimension(<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">latitude</span><span style="color: rgb(175,0,0)">&#39;</span>, <span style="color: rgb(0,135,0)">len</span>(lat))
+
+File <span class="ansi-green-fg">src/netCDF4/_netCDF4.pyx:2449</span>, in <span class="ansi-cyan-fg">netCDF4._netCDF4.Dataset.__init__</span><span class="ansi-blue-fg">()</span>
+
+File <span class="ansi-green-fg">src/netCDF4/_netCDF4.pyx:2012</span>, in <span class="ansi-cyan-fg">netCDF4._netCDF4._ensure_nc_success</span><span class="ansi-blue-fg">()</span>
+
+<span class="ansi-red-fg">PermissionError</span>: [Errno 13] Permission denied: &#39;results/Kenya_E0_StoPET/2000_2_stoPET.nc&#39;
+</pre></div></div>
+</div>
+<p>Lets read first year data and aggregate to annual PET. Each year’s file will have a <strong>four dimensional array (days, hours, latitude, longitude)</strong>. The variable name for the stochastically generated PET is <strong>pet</strong> within the netCDF files.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[63]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nc</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="s1">&#39;results/Kenya_E0_StoPET/2000_2_stoPET.nc&#39;</span><span class="p">)</span>
+<span class="n">lats</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">][:]</span>
+<span class="n">lons</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">][:]</span>
+<span class="n">pet</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">][:,:,:,:]</span>
+<span class="c1"># check array shape</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pet</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c1"># make the annual sum PET</span>
+<span class="n">annual_pet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pet</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="c1"># check array shape</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">annual_pet</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">OSError</span>                                   Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[63], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> nc <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">Dataset</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">results/Kenya_E0_StoPET/2000_2_stoPET.nc</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">      2</span> lats <span style="color: rgb(98,98,98)">=</span> nc<span style="color: rgb(98,98,98)">.</span>variables[<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">latitude</span><span style="color: rgb(175,0,0)">&#39;</span>][:]
+<span class="ansi-green-intense-fg ansi-bold">      3</span> lons <span style="color: rgb(98,98,98)">=</span> nc<span style="color: rgb(98,98,98)">.</span>variables[<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">longitude</span><span style="color: rgb(175,0,0)">&#39;</span>][:]
+
+File <span class="ansi-green-fg">src/netCDF4/_netCDF4.pyx:2449</span>, in <span class="ansi-cyan-fg">netCDF4._netCDF4.Dataset.__init__</span><span class="ansi-blue-fg">()</span>
+
+File <span class="ansi-green-fg">src/netCDF4/_netCDF4.pyx:2012</span>, in <span class="ansi-cyan-fg">netCDF4._netCDF4._ensure_nc_success</span><span class="ansi-blue-fg">()</span>
+
+<span class="ansi-red-fg">OSError</span>: [Errno -51] NetCDF: Unknown file format: &#39;results/Kenya_E0_StoPET/2000_2_stoPET.nc&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[64]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># let us plot the annual PET</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">annual_pet</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">YlOrBr</span>
+<span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Annual PET&#39;</span>
+<span class="n">cbar_label</span> <span class="o">=</span> <span class="s1">&#39;$\mathbf{mm\,year^{-1}}$&#39;</span>
+<span class="n">climin</span> <span class="o">=</span> <span class="mf">1000.0</span>
+<span class="n">climax</span> <span class="o">=</span> <span class="mf">2500.0</span>
+<span class="n">plotpath</span> <span class="o">=</span> <span class="s1">&#39;./plots/&#39;</span>
+<span class="n">figfname</span> <span class="o">=</span> <span class="s1">&#39;Kenya_annual+PET_2000.png&#39;</span>
+<span class="n">plot_spatial</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">cmap</span> <span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">cbar_label</span><span class="p">,</span>
+             <span class="n">climin</span><span class="p">,</span> <span class="n">climax</span><span class="p">,</span> <span class="n">plotpath</span><span class="p">,</span> <span class="n">figfname</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[64], line 2</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span style="color: rgb(95,135,135)"># let us plot the annual PET</span>
+<span class="ansi-green-fg">----&gt; 2</span> data <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">annual_pet</span>
+<span class="ansi-green-intense-fg ansi-bold">      3</span> cmap <span style="color: rgb(98,98,98)">=</span> plt<span style="color: rgb(98,98,98)">.</span>cm<span style="color: rgb(98,98,98)">.</span>YlOrBr
+<span class="ansi-green-intense-fg ansi-bold">      4</span> title <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Annual PET</span><span style="color: rgb(175,0,0)">&#39;</span>
+
+<span class="ansi-red-fg">NameError</span>: name &#39;annual_pet&#39; is not defined
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;cyl&#39;</span><span class="p">,</span> <span class="n">llcrnrlat</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">lats</span><span class="p">),</span>
+            <span class="n">urcrnrlat</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">lats</span><span class="p">),</span> <span class="n">llcrnrlon</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">lons</span><span class="p">),</span>
+            <span class="n">urcrnrlon</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">lons</span><span class="p">),</span> <span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;l&#39;</span><span class="p">)</span>
+
+<span class="n">cs4</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+                     <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">lons</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">lons</span><span class="p">),</span>
+                             <span class="nb">min</span><span class="p">(</span><span class="n">lats</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">lats</span><span class="p">)])</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawcoastlines</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawcountries</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="n">parallels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">90.</span><span class="p">,</span><span class="mf">90.</span><span class="p">,</span><span class="mf">10.0</span><span class="p">)</span>
+<span class="n">meridians</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">360.</span><span class="p">,</span><span class="mf">10.0</span><span class="p">)</span>
+
+<span class="n">m</span><span class="o">.</span><span class="n">drawlsmask</span><span class="p">(</span><span class="n">land_color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">ocean_color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">lakes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+<span class="n">cb4</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cs4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">cbar_label</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+                   <span class="n">pad</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+<span class="n">cb4</span><span class="o">.</span><span class="n">mappable</span><span class="o">.</span><span class="n">set_clim</span><span class="p">(</span><span class="n">climin</span><span class="p">,</span> <span class="n">climax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_stoPET_cuwalid_stopet_42_0.png" src="../../_images/notebooks_stoPET_cuwalid_stopet_42_0.png" />
+</div>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>## EXERCISE 2 Based on
+the above example on
+generating regional PET
+data please do the
+folowing.</p></td>
+</tr>
+<tr class="row-even"><td><p>1. Generate a 5 year
+dataset for Uganda. 2.
+use Method 1 for
+temperaature adjustment.
+3. generate comparison
+plots side-by-side
+(write your own
+visualization code using
+python subplots) for the
+average annual PET
+values of the
+non-adjusted PET and
+adjusted PET.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="2.-Batch-job-submission">
+<h1>2. Batch job submission<a class="headerlink" href="#2.-Batch-job-submission" title="Permalink to this heading"></a></h1>
+<p>In order to run the CUWALID model, we use the High Performance Computers (HPC) provided by institutes. These HPC’s are better for running multiple jobs at the same time. This will save time and allow us to run models that use large data.</p>
+<p>Here, we discuss on how you can submit multiple jobs to HPC. <strong>Please notice that this is not the only way to do the work but just to share one way of doing it</strong>.</p>
+<section id="2.1-creating-directories-to-hold-necessary-files">
+<h2>2.1 creating directories to hold necessary files<a class="headerlink" href="#2.1-creating-directories-to-hold-necessary-files" title="Permalink to this heading"></a></h2>
+<p>The first step we need to do is create three important directories in our home directory. These are:</p>
+<ul class="simple">
+<li><p>bSub_runME</p></li>
+<li><p>bSub_logME</p></li>
+<li><p>bSub_doneME</p></li>
+</ul>
+<p>You can create these directories by runing the mkdir command in the terminal. Here is the command * <code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">bSub_runME</span></code> * <code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">bSub_logME</span></code> * <code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">bSub_doneME</span></code></p>
+<p>Once you create these directories you can use them anytime for any job submission (i.e No need to make these directories everytime).</p>
+<p><strong>How do we use these three directories?</strong></p>
+<p>The <strong>bSub_runME</strong> directory is used to save our bash files (e.g <strong>myjob.bash</strong>) that contain all the necessary submission commands and the job to be run.</p>
+<p>The <strong>bSub_logME</strong> directory is used to save error files and output files from the job we are running. If there isan error and the job is cancelled you can go tho this directory and read the error message in the <strong>jobid.error</strong> file. If there are any print statments in your job or any other print that would have been printed on the terminal will be saved in the <strong>jonid.out</strong> file.</p>
+<p>The <strong>bSub_doneME</strong> directory is used to save our bash files (e.g <strong>myjob.bash</strong>) after the job is submitted. Hence, if there is an error and you have to run the job again you can easily move the bash files from this directory to the bSub_runME directory without creating them again.</p>
+</section>
+<section id="2.2-Creating-the-bash-files">
+<h2>2.2 Creating the bash files<a class="headerlink" href="#2.2-Creating-the-bash-files" title="Permalink to this heading"></a></h2>
+<p>In order to submit multiple jobs to HPC, we need to follow certain commands that are set by the institute. Hence, we can prepare a python script to write these bash files so that we save time to write each file mannually. The following python script <strong>write_bash_files.py</strong> is provided to prepare the bash files used in the job sumbission. Below, we will discuss how it works using one example function in the script.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This script prepare the .bash file</span>
+<span class="c1"># containing the arguments for downloading data</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="k">def</span> <span class="nf">write_bsub</span><span class="p">(</span><span class="n">year</span><span class="p">):</span>
+    <span class="c1"># file name to be saved in the bSub_runME directory</span>
+    <span class="n">run_file</span> <span class="o">=</span> <span class="s1">&#39;bSub_runMe/imerg_download_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.bash&#39;</span>
+    <span class="c1"># create empty array to hold the lines</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># this is internal command indicateing it ia a bash file</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;#!/bin/bash&#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># job name</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;#SBATCH --job-name=i&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># time required to run job</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;#SBATCH --time=0:15:00&#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># number of nodes requested for the job</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;#SBATCH --nodes=1&#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># number of task allocated for each node</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;#SBATCH --ntasks-per-node=1&#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># RAM space requested for the job</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;#SBATCH --mem=20gb&#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1">#  account name</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;#SBATCH --account=geog014522&#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># this is internal command for SLURM</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;#cd $SLURM_SUBMIT_DIR&#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># your home directory wher you run the job from</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;cd /user/home/fp20123/&#39;</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># which ever python you want to use</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;module add lang/python/anaconda/3.7-2019.10&#39;</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># this is if you using your own python environment</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;source /user/home/fp20123/my_uavproject/bin/activate&#39;</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># the python script you want to run</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;python /user/home/fp20123/my_python_code.py &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># writing file</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">run_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="c1">#  close file</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="s1">&#39;done&#39;</span>
+</pre></div>
+</div>
+</div>
+<p>The above function helps us write the bash files with the necessary commands for the HPC job submission. As you can see, most of the lines are common and similar required by the HPC, hence, we can use this function to write any bash file we need with little modification. An example of the bash file produced using this function is shown below.</p>
+<table><tr><td><p><img alt="93ae90ef39ab4d5a8b5f20cddb4cd9de" class="no-scaled-link" src="../../_images/bashfile.png" style="width: 800px;" /></p>
+</td></tr></table><p>This will be what is written in the imerg_download_2012.bash according to the example.</p>
+<p>If there are multiple jobs that use similar python scripts, then what you have to do is run above function to write the bash files with same <strong>suffix</strong> and a differetiating <strong>prefix</strong> so that we can submit it at the same time. In the above example we can see the file name is <strong>imerg_download_year.bash</strong> here the imerg_download is the prefix while the year is suffix. Now we can write any number of years we want to download (e.g imerg_download_2018.bash, imerg_download_2019.bash, …). Once we
+prepare these files, then we are ready to submit multiple jobs to the HPC.</p>
+</section>
+<section id="1.3-Submitting-multiple-jobs">
+<h2>1.3 Submitting multiple jobs<a class="headerlink" href="#1.3-Submitting-multiple-jobs" title="Permalink to this heading"></a></h2>
+<p>Once we prepare the bash files containing the jobs we want to run on HPC next is to use a little shell script to submit the jobs. The shell script is given as <strong>runBashFiles.sh</strong>. The file contains a few lines of code that allows to read all the bash files we prepare and sumbit it to the HPC. Here is an example file looks like</p>
+<table><tr><td><p><img alt="3bca2c548101439f860f12f5bcb308d6" class="no-scaled-link" src="../../_images/shellfile.png" style="width: 800px;" /></p>
+</td></tr></table><p>In the above image as you can see from line 5, all the files that start with <strong>imerg_download_</strong> will be submited to the HPC and the files will be moved to the <strong>bSub_doneME</strong> directory we create earlier (Line 7).</p>
+<p>Line 6 is where you see the <strong>.error</strong> and <strong>.out</strong> files that we discussed above to put any error message and output message from the job will be printed and svaed in the <strong>bSub_logME</strong> directory.</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>## EXERCISE 3 Based on
+the above example please
+try to do the following</p></td>
+</tr>
+<tr class="row-even"><td><p>1. Write a python script
+that calculates area of
+a circle with radius as
+an input argument. 2.
+Print the area of the
+circle as an output. 3.
+Write 5 bash files with
+diffrent radius values.
+4. Submit the job to the
+HPC. 5. Check the
+results in the output
+file.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="batchjob_submision.html" class="btn btn-neutral float-left" title="Learning objective:" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stopet_introduction.html" class="btn btn-neutral float-right" title="Learning objective:" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

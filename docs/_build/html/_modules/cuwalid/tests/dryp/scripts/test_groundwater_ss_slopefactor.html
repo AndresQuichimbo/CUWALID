@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.tests.dryp.scripts.test_groundwater_ss_slopefactor &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.tests.dryp.scripts.test_groundwater_ss_slopefactor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.tests.dryp.scripts.test_groundwater_ss_slopefactor</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Mon Feb 13 11:14:04 2023</span>
+<span class="sd">Funtion to test steady-state conditions for the groundwater component</span>
+<span class="sd">@author: Edisson Quichimbo</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">cuwalid.dryp.components.DRYP_io</span> <span class="kn">import</span> <span class="p">(</span><span class="n">grid_environment</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cuwalid.dryp.components.DRYP_groundwater_EFD_SS</span> <span class="kn">import</span> <span class="p">(</span><span class="n">gwflow_EFD</span><span class="p">)</span>
+
+<span class="n">run_fortran</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="c1">#run_fortran = True</span>
+<span class="k">if</span> <span class="n">run_fortran</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+	<span class="kn">import</span> <span class="nn">cuwalid.dryp.components.gaussf90</span> <span class="k">as</span> <span class="nn">gauss</span>
+<span class="k">else</span><span class="p">:</span>
+	<span class="kn">from</span> <span class="nn">cuwalid.dryp.components.DRYP_solvers</span> <span class="kn">import</span> <span class="n">gauss_seidel_iteration</span>
+
+<span class="c1">#@profile</span>
+<div class="viewcode-block" id="run_DRYP_SS"><a class="viewcode-back" href="../../../../../cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_groundwater_ss_slopefactor.run_DRYP_SS">[docs]</a><span class="k">def</span> <span class="nf">run_DRYP_SS</span><span class="p">():</span>
+	<span class="c1"># define grid properties</span>
+	<span class="n">grid_ncols</span> <span class="o">=</span> <span class="mi">12</span>
+	<span class="n">grid_nrows</span> <span class="o">=</span> <span class="mi">3</span>
+	<span class="n">grid_xllcorner</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">grid_yllcorner</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">grid_cellsize</span> <span class="o">=</span> <span class="mf">1000.0</span>
+	<span class="n">grid_size</span> <span class="o">=</span> <span class="n">grid_ncols</span><span class="o">*</span><span class="n">grid_nrows</span>
+	<span class="n">domain</span> <span class="o">=</span> <span class="kc">None</span>
+	
+	<span class="c1"># create a raster grid environment, landlab grid</span>
+	<span class="n">grid_env</span> <span class="o">=</span> <span class="n">grid_environment</span><span class="p">()</span>
+	<span class="n">grid</span> <span class="o">=</span> <span class="n">grid_env</span><span class="o">.</span><span class="n">create_grid</span><span class="p">(</span>
+		<span class="n">grid_ncols</span><span class="p">,</span>
+		<span class="n">grid_nrows</span><span class="p">,</span>
+		<span class="n">grid_xllcorner</span><span class="p">,</span>
+		<span class="n">grid_yllcorner</span><span class="p">,</span>
+		<span class="n">grid_cellsize</span><span class="p">,</span>
+		<span class="n">domain</span><span class="p">)</span>
+	
+	<span class="c1"># create arrays and model variables</span>
+	<span class="c1"># surface, with high slope</span>
+	<span class="n">surface</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">node_x</span><span class="o">*</span><span class="mf">0.01</span> <span class="o">+</span> <span class="mf">120.0</span>
+	<span class="n">Droot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+	<span class="n">inode</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">grid_size</span><span class="o">*</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">grid_size</span><span class="p">)</span>
+	<span class="n">surface</span><span class="p">[</span><span class="n">inode</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">250.0</span>
+	<span class="c1">#surface = np.full(grid_size, 200.0)</span>
+	<span class="n">riv_elevation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">195.0</span><span class="p">)</span>
+	<span class="n">riv_width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">)</span>
+	<span class="n">riv_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">)</span>
+	<span class="n">river_cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">)</span>
+	<span class="n">area_river</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">10000.0</span><span class="p">)</span>
+	<span class="n">rip_to_cell_area_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">1000.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">grid_cellsize</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+	<span class="n">flowDir</span> <span class="o">=</span> <span class="kc">None</span>
+	<span class="n">decay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">3600.0</span><span class="o">*</span><span class="mf">0.5</span><span class="o">/</span><span class="n">grid_cellsize</span><span class="p">)</span>
+	<span class="n">area_bank_cells</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">*</span><span class="mf">110.0</span>
+	<span class="n">area_cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">grid_cellsize</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+	
+	<span class="c1"># groundwater</span>
+	<span class="n">bottom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+	<span class="c1">#thickness = surface - bottom</span>
+	<span class="n">thickness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">)</span>
+	<span class="n">Ksat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">10.00</span><span class="p">)</span>
+	<span class="n">conductivity</span> <span class="o">=</span> <span class="n">riv_width</span><span class="o">*</span><span class="n">riv_length</span><span class="o">*</span><span class="n">Ksat</span>
+	
+	<span class="c1"># create a grid of aquifer type</span>
+	<span class="n">aqtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">grid_size</span><span class="p">)</span>
+	<span class="n">aqtype</span><span class="p">[</span><span class="mi">18</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">3</span>
+	<span class="c1">#print(aqtype)</span>
+	
+	<span class="c1">#bathymetry = np.full(grid_size, 200)</span>
+	<span class="n">head</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">)</span>
+	<span class="c1">#Sy = np.full(grid_size, 0.05)</span>
+	<span class="n">Ksat_aq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">1.00</span><span class="p">)</span>
+	<span class="n">CHB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">9999</span><span class="p">)</span>
+	<span class="n">CHB</span><span class="p">[</span><span class="n">grid_ncols</span><span class="p">]</span> <span class="o">=</span> <span class="mf">100.0</span>
+	
+	<span class="c1"># get rainfall</span>
+	<span class="n">rain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span>
+	
+	<span class="c1"># aquifer type activated</span>
+	<span class="n">gwmethod</span> <span class="o">=</span> <span class="mi">3</span>
+	<span class="n">f_aquifer_slope_factor</span> <span class="o">=</span> <span class="kc">True</span>
+	<span class="c1"># create groundwater component</span>
+	<span class="n">gw</span> <span class="o">=</span> <span class="n">gwflow_EFD</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span>
+		 	<span class="n">surface</span><span class="p">,</span>
+			<span class="n">Ksat_aq</span><span class="p">,</span>
+			<span class="n">area_river</span><span class="p">,</span>
+			<span class="n">CHB</span><span class="p">,</span>
+			<span class="n">gwmethod</span><span class="p">,</span>
+			<span class="n">f_aquifer_slope_factor</span>
+	        <span class="p">)</span>
+	
+	<span class="n">head</span> <span class="o">=</span> <span class="n">head</span><span class="p">[:]</span>
+	
+	<span class="n">stage</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">head</span><span class="p">)</span>
+	<span class="c1">#error tolerance</span>
+	<span class="n">error_tol</span> <span class="o">=</span> <span class="kc">False</span>
+	
+	<span class="c1">#error = np.zeros(len(env_state.SZgrid.node_y))</span>
+	<span class="n">max_iter</span> <span class="o">=</span> <span class="mi">10000</span>
+	<span class="nb">iter</span> <span class="o">=</span> <span class="mi">0</span>
+	
+	<span class="c1"># nodes to perform calculation</span>
+	<span class="n">act_nodes</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">core_nodes</span><span class="p">[:]</span>
+	<span class="n">riv_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">)</span>
+	<span class="n">riv_nodes</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="n">river_cells</span> <span class="o">=</span> <span class="n">riv_nodes</span><span class="o">*</span><span class="n">river_cells</span>		
+	<span class="n">riv_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">river_cells</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+	
+	<span class="c1"># nodes to transfer information from river grid</span>
+	<span class="c1"># to core nodes grid (active nodes)</span>
+	<span class="k">if</span> <span class="n">riv_nodes</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">act_riv_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">river_cells</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	
+	<span class="c1"># flip order of node calcualtion to improve convergence</span>
+	<span class="c1">#flip_order = True</span>
+	<span class="n">flip_order</span> <span class="o">=</span> <span class="kc">False</span><span class="c1">#True</span>
+	
+	<span class="c1"># relaxation factor w</span>
+	<span class="c1"># w &gt; 0 is over relaxation, w &lt; 1 under relaxation</span>
+	<span class="n">w</span> <span class="o">=</span> <span class="mf">1.5</span>
+	<span class="c1">#print(rain)</span>
+	<span class="n">head0</span> <span class="o">=</span> <span class="n">head</span><span class="p">[:]</span>
+	
+	<span class="k">while</span> <span class="n">error_tol</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>				
+		<span class="c1"># GROUNDWATER --------------------------------------------------</span>
+		<span class="c1"># calculate transmissibity</span>
+		<span class="n">head_ini</span> <span class="o">=</span> <span class="n">head0</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span>
+
+		<span class="c1"># calculate transmissivity</span>
+		<span class="n">gw</span><span class="o">.</span><span class="n">run_one_step_gw_SS</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span>
+				<span class="n">surface</span><span class="p">,</span>
+				<span class="n">bottom</span><span class="p">,</span>
+				<span class="n">thickness</span><span class="p">,</span>
+				<span class="n">Droot</span><span class="p">,</span>
+				<span class="n">riv_elevation</span><span class="p">,</span>
+				<span class="n">riv_nodes</span><span class="p">,</span>
+				<span class="n">conductivity</span><span class="p">,</span>
+				<span class="n">aqtype</span><span class="p">,</span>
+				<span class="n">head0</span><span class="p">,</span>
+				<span class="n">rain</span><span class="o">*</span><span class="mf">0.001</span><span class="p">,</span> <span class="c1">#[mm/dt]recharge,</span>
+				<span class="n">stage</span><span class="p">,</span>
+				<span class="mi">1</span><span class="p">,</span>
+				<span class="p">)</span>
+								
+		<span class="c1"># flip nodes to improve convergence</span>
+		<span class="k">if</span> <span class="n">flip_order</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+		
+		<span class="c1"># call gauss seidel iterator for solving groundwater flow</span>
+		<span class="c1">#RUN FORTRAN</span>
+		<span class="k">if</span> <span class="n">run_fortran</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">head</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">head0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+			<span class="n">gauss</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">gauss_seidel_iteration</span><span class="p">(</span>
+				<span class="n">head</span><span class="p">,</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span><span class="c1">#*env_state.SZgrid.dx, # conductivity</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gw</span><span class="o">.</span><span class="n">fluxes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">act_nodes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="c1">#nodes</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">links_at_node</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">node_at_link_head</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>
+				<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">node_at_link_tail</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>
+				<span class="n">w</span><span class="p">,</span>
+				<span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">head</span> <span class="o">=</span> <span class="n">gauss_seidel_iteration</span><span class="p">(</span>
+				<span class="n">surface</span><span class="p">,</span>
+				<span class="n">head0</span><span class="p">,</span>
+				<span class="n">gw</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+				<span class="n">gw</span><span class="o">.</span><span class="n">fluxes</span><span class="p">,</span>
+				<span class="n">act_nodes</span><span class="p">,</span> <span class="c1">#nodes</span>
+				<span class="n">grid</span><span class="o">.</span><span class="n">links_at_node</span><span class="p">,</span>
+				<span class="n">grid</span><span class="o">.</span><span class="n">node_at_link_head</span><span class="p">,</span>
+				<span class="n">grid</span><span class="o">.</span><span class="n">node_at_link_tail</span><span class="p">,</span>
+				<span class="n">w</span><span class="p">)</span>
+		
+		<span class="c1"># updated water table for evaluation</span>
+		<span class="n">head_updated</span> <span class="o">=</span> <span class="n">head</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span>
+		
+		<span class="c1"># evaluate errors</span>
+		<span class="n">error_tol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">head_ini</span><span class="p">,</span> <span class="n">head_updated</span><span class="p">,</span>
+			<span class="n">rtol</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-015</span><span class="p">,</span> <span class="n">equal_nan</span><span class="o">=</span><span class="kc">True</span>
+			<span class="p">)</span>
+		
+		<span class="c1"># update water table</span>
+		<span class="n">head0</span> <span class="o">=</span> <span class="n">head</span><span class="p">[:]</span>
+		
+		<span class="c1"># calculate iteration</span>
+		<span class="nb">iter</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="k">if</span> <span class="nb">iter</span> <span class="o">&gt;=</span> <span class="n">max_iter</span><span class="p">:</span>
+			<span class="n">error_tol</span> <span class="o">=</span> <span class="kc">True</span>
+	
+	<span class="c1">#print(iter)</span>
+	<span class="c1">#print(head[act_nodes])</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;T Function Groundwater: Test runs successfully&#39;</span><span class="p">)</span></div>
+	
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="n">run_DRYP_SS</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

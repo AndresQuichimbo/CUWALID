@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StoPET Tutorial &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Forecast" href="forecast_tutorial.html" />
+    <link rel="prev" title="Simple Water balance calculation" href="notebooks/DRYP_water_balance.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models_info.html">Models Information</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dryp_tutorial.html">DRYP Tutorial</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">StoPET Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-model">Running the model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#input-parameters">Input Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="forecast_tutorial.html">Forecast</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tutorial.html">Tutorials</a></li>
+      <li class="breadcrumb-item active">StoPET Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/stopet_tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="stopet-tutorial">
+<h1>StoPET Tutorial<a class="headerlink" href="#stopet-tutorial" title="Permalink to this heading"></a></h1>
+<section id="running-the-model">
+<h2>Running the model<a class="headerlink" href="#running-the-model" title="Permalink to this heading"></a></h2>
+<p>To run the StoPET model you can run the command below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cuwalid.stopet.main_stoPET</span> <span class="kn">import</span> <span class="n">run_stoPET</span>
+
+<span class="n">run_stoPET</span><span class="p">(</span><span class="s2">&quot;input.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or run from the terminal using this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># replace &quot;input.json&quot; with the path to your input json</span>
+python<span class="w"> </span>-m<span class="w"> </span>cuwalid.stopet.main_stoPET<span class="w"> </span>input.json
+</pre></div>
+</div>
+</section>
+<section id="input-parameters">
+<h2>Input Parameters<a class="headerlink" href="#input-parameters" title="Permalink to this heading"></a></h2>
+<p>The input JSON shown above will look something like this:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">    </span><span class="nt">&quot;data_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stopet_parameters&quot;</span><span class="p">,</span>
+<span class="linenos"> 3</span><span class="w">    </span><span class="nt">&quot;output_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stopet_output&quot;</span><span class="p">,</span>
+<span class="linenos"> 4</span><span class="w">    </span><span class="nt">&quot;runtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;regional&quot;</span><span class="p">,</span>
+<span class="linenos"> 5</span><span class="w">    </span><span class="nt">&quot;startyear&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1994</span><span class="p">,</span>
+<span class="linenos"> 6</span><span class="w">    </span><span class="nt">&quot;endyear&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1996</span><span class="p">,</span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="nt">&quot;latval&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">3.8</span><span class="p">,</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="nt">&quot;lonval&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">36.6</span><span class="p">,</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="nt">&quot;latval_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">-5.5</span><span class="p">,</span>
+<span class="linenos">10</span><span class="w">    </span><span class="nt">&quot;latval_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">-4.5</span><span class="p">,</span>
+<span class="linenos">11</span><span class="w">    </span><span class="nt">&quot;lonval_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">33.0</span><span class="p">,</span>
+<span class="linenos">12</span><span class="w">    </span><span class="nt">&quot;lonval_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">34.5</span><span class="p">,</span>
+<span class="linenos">13</span><span class="w">    </span><span class="nt">&quot;locname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Kenya&quot;</span><span class="p">,</span>
+<span class="linenos">14</span><span class="w">    </span><span class="nt">&quot;number_ensm&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="linenos">15</span><span class="w">    </span><span class="nt">&quot;tempAdj&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="linenos">16</span><span class="w">    </span><span class="nt">&quot;deltat&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.5</span><span class="p">,</span>
+<span class="linenos">17</span><span class="w">    </span><span class="nt">&quot;udpi_pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span>
+<span class="linenos">18</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Here is an explanation of what each parameter does:</p>
+<ul>
+<li><p><strong>data_path</strong>: <cite>“stopet_parameters”</cite></p>
+<p>The path to the input data parameters.</p>
+</li>
+<li><p><strong>output_path</strong>: <cite>“stopet_output”</cite></p>
+<p>The path where output data will be saved.</p>
+</li>
+<li><p><strong>runtype</strong>: <cite>“regional”</cite></p>
+<p>The type of run for the model. Options might include regional or other types.</p>
+</li>
+<li><p><strong>startyear</strong>: <cite>1994</cite></p>
+<p>The start year for the model simulation.</p>
+</li>
+<li><p><strong>endyear</strong>: <cite>1996</cite></p>
+<p>The end year for the model simulation.</p>
+</li>
+<li><p><strong>latval</strong>: <cite>3.8</cite></p>
+<p>Latitude value for the location of interest.</p>
+</li>
+<li><p><strong>lonval</strong>: <cite>36.6</cite></p>
+<p>Longitude value for the location of interest.</p>
+</li>
+<li><p><strong>latval_min</strong>: <cite>-5.5</cite></p>
+<p>Minimum latitude for the region of interest.</p>
+</li>
+<li><p><strong>latval_max</strong>: <cite>-4.5</cite></p>
+<p>Maximum latitude for the region of interest.</p>
+</li>
+<li><p><strong>lonval_min</strong>: <cite>33.0</cite></p>
+<p>Minimum longitude for the region of interest.</p>
+</li>
+<li><p><strong>lonval_max</strong>: <cite>34.5</cite></p>
+<p>Maximum longitude for the region of interest.</p>
+</li>
+<li><p><strong>locname</strong>: <cite>“Kenya”</cite></p>
+<p>Name of the location.</p>
+</li>
+<li><p><strong>number_ensm</strong>: <cite>2</cite></p>
+<p>Number of ensemble members used in the simulation.</p>
+</li>
+<li><p><strong>tempAdj</strong>: <cite>3</cite></p>
+<p>Temperature adjustment parameter.</p>
+</li>
+<li><p><strong>deltat</strong>: <cite>1.5</cite></p>
+<p>Time step parameter.</p>
+</li>
+<li><p><strong>udpi_pet</strong>: <cite>5</cite></p>
+<p>UDPI PET (Potential Evapotranspiration) parameter.</p>
+</li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="notebooks/DRYP_water_balance.html" class="btn btn-neutral float-left" title="Simple Water balance calculation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="forecast_tutorial.html" class="btn btn-neutral float-right" title="Forecast" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

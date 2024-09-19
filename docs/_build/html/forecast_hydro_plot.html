@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forecast Hydrological Tutorial &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Forecast Impact Tutorial" href="forecast_impact_plot.html" />
+    <link rel="prev" title="Forecast" href="forecast_tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models_info.html">Models Information</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dryp_tutorial.html">DRYP Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stopet_tutorial.html">StoPET Tutorial</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="forecast_tutorial.html">Forecast</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Forecast Hydrological Tutorial</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#running-the-model">Running the model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#input-parameters">Input Parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="forecast_impact_plot.html">Forecast Impact Tutorial</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tutorial.html">Tutorials</a></li>
+          <li class="breadcrumb-item"><a href="forecast_tutorial.html">Forecast</a></li>
+      <li class="breadcrumb-item active">Forecast Hydrological Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/forecast_hydro_plot.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="forecast-hydrological-tutorial">
+<h1>Forecast Hydrological Tutorial<a class="headerlink" href="#forecast-hydrological-tutorial" title="Permalink to this heading"></a></h1>
+<section id="running-the-model">
+<h2>Running the model<a class="headerlink" href="#running-the-model" title="Permalink to this heading"></a></h2>
+<p>Plotting hydrological forecast is done by running this command in the terminal:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># replace &quot;input.json&quot; with the path to your input json</span>
+python<span class="w"> </span>-m<span class="w"> </span>cuwalid.forecasting.main_hydro_forecast<span class="w"> </span>input.json
+</pre></div>
+</div>
+<p>Or you can import the function into your code like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cuwalid.forecasting.main_hydro_forecast</span> <span class="kn">import</span> <span class="n">run_hydro_forecast</span>
+
+<span class="c1"># replace &quot;input.json&quot; with the path to your input json</span>
+<span class="n">run_hydro_forecast</span><span class="p">(</span><span class="s2">&quot;input.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="input-parameters">
+<h2>Input Parameters<a class="headerlink" href="#input-parameters" title="Permalink to this heading"></a></h2>
+<p>The input JSON shown above will look something like this:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">    </span><span class="nt">&quot;run_hindcast&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos"> 3</span><span class="w">    </span><span class="nt">&quot;run_forecast&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos"> 4</span><span class="w">    </span><span class="nt">&quot;run_plotting&quot;</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="w">    </span><span class="nt">&quot;hindcast_model_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HAD_IMERGba_sim0&quot;</span><span class="p">,</span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="nt">&quot;forecast_model_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MAM_2022_realization_test&quot;</span><span class="p">,</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="nt">&quot;model_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/outputs/&quot;</span><span class="p">,</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="nt">&quot;postpp_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/aquichimbo/training/historical/regional/postpp/&quot;</span><span class="p">,</span>
+<span class="linenos">10</span><span class="w">    </span><span class="nt">&quot;threshold_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/aquichimbo/training/historical/regional/postpp/netcdf/HAD_IMERGba_sim0_MAM_extremes_quantiles.nc&quot;</span><span class="p">,</span>
+<span class="linenos">11</span><span class="w">    </span><span class="nt">&quot;dataset_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/dataset&quot;</span><span class="p">,</span>
+<span class="linenos">12</span><span class="w">    </span><span class="nt">&quot;season&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;MAM&quot;</span><span class="p">],</span>
+<span class="linenos">13</span><span class="w">    </span><span class="nt">&quot;start_year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2003</span><span class="p">,</span>
+<span class="linenos">14</span><span class="w">    </span><span class="nt">&quot;end_year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2023</span><span class="p">,</span>
+<span class="linenos">15</span><span class="w">    </span><span class="nt">&quot;variables&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">16</span><span class="w">        </span><span class="nt">&quot;pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">17</span><span class="w">        </span><span class="nt">&quot;pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">18</span><span class="w">        </span><span class="nt">&quot;aet&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">19</span><span class="w">        </span><span class="nt">&quot;tht&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">20</span><span class="w">        </span><span class="nt">&quot;egw&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">21</span><span class="w">        </span><span class="nt">&quot;inf&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="linenos">22</span><span class="w">        </span><span class="nt">&quot;run&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="linenos">23</span><span class="w">        </span><span class="nt">&quot;rch&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">24</span><span class="w">        </span><span class="nt">&quot;fch&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">25</span><span class="w">        </span><span class="nt">&quot;gdh&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="linenos">26</span><span class="w">        </span><span class="nt">&quot;dis&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">27</span><span class="w">        </span><span class="nt">&quot;tls&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="linenos">28</span><span class="w">        </span><span class="nt">&quot;wte&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">29</span><span class="w">        </span><span class="nt">&quot;twsc&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">30</span><span class="w">        </span><span class="nt">&quot;wrsi&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="linenos">31</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">32</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Here is an explanation of what each parameter does:</p>
+<ul class="simple">
+<li><p><strong>run_hindcast</strong>: A boolean value that specifies whether to run the hindcast simulation. Set to <cite>true</cite> to enable this step.</p></li>
+<li><p><strong>run_forecast</strong>: A boolean value that specifies whether to run the forecast simulation. Set to <cite>true</cite> to enable this step.</p></li>
+<li><p><strong>run_plotting</strong>: A boolean value that specifies whether to generate plots from the forecast and hindcast simulations. Set to <cite>true</cite> to enable plotting.</p></li>
+<li><p><strong>hindcast_model_name</strong>: The name of the model used for the hindcast simulation. In this case, the hindcast model is named “HAD_IMERGba_sim0”.</p></li>
+<li><p><strong>forecast_model_name</strong>: The name of the model used for the forecast simulation. In this example, the forecast model is named “MAM_2022_realization_test”.</p></li>
+<li><p><strong>model_path</strong>: The directory path where the model’s outputs (hindcast and forecast data) are stored. It should point to the location containing the regional model output files.</p></li>
+<li><p><strong>postpp_path</strong>: Specifies the path to the directory where the post-processing files are stored. This path is used after the hindcast and forecast simulations are complete for further analysis.</p></li>
+<li><p><strong>threshold_path</strong>: The path to the NetCDF file containing threshold data used for defining extreme weather conditions. For example, it helps in classifying conditions like floods or droughts. In the file name, replace specific indicators (e.g., year) with placeholders like <cite>YYYY</cite> to handle multiple time periods automatically.</p></li>
+<li><p><strong>dataset_path</strong>: The directory where the dataset used in the simulation is located. This typically contains observational or gridded data required for the model.</p></li>
+<li><p><strong>season</strong>: A list that specifies the seasons for which the forecast or hindcast is being generated. For example, “MAM” refers to the March-April-May season.</p></li>
+<li><p><strong>start_year</strong>: The starting year for the hindcast or forecast simulation. Defines the earliest year included in the analysis.</p></li>
+<li><p><strong>end_year</strong>: The ending year for the hindcast or forecast simulation. Defines the most recent year included in the analysis.</p></li>
+<li><p><strong>variables</strong>: A dictionary that specifies which variables are included in the simulation. Each key is a variable name, and the value is a boolean indicating whether it is active (<cite>true</cite>) or inactive (<cite>false</cite>).</p>
+<ul>
+<li><p><strong>pre</strong>: A boolean indicating whether precipitation (<cite>pre</cite>) is included in the simulation.</p></li>
+<li><p><strong>pet</strong>: A boolean indicating whether potential evapotranspiration (<cite>pet</cite>) is included.</p></li>
+<li><p><strong>aet</strong>: A boolean indicating whether actual evapotranspiration (<cite>aet</cite>) is included.</p></li>
+<li><p><strong>tht</strong>: A boolean indicating whether total heat (<cite>tht</cite>) is included.</p></li>
+<li><p><strong>egw</strong>: A boolean indicating whether groundwater evaporation (<cite>egw</cite>) is included.</p></li>
+<li><p><strong>inf</strong>: A boolean indicating whether infiltration (<cite>inf</cite>) is included.</p></li>
+<li><p><strong>run</strong>: A boolean indicating whether surface runoff (<cite>run</cite>) is included.</p></li>
+<li><p><strong>rch</strong>: A boolean indicating whether recharge (<cite>rch</cite>) is included.</p></li>
+<li><p><strong>fch</strong>: A boolean indicating whether flow from catchment (<cite>fch</cite>) is included.</p></li>
+<li><p><strong>gdh</strong>: A boolean indicating whether groundwater depth (<cite>gdh</cite>) is included.</p></li>
+<li><p><strong>dis</strong>: A boolean indicating whether discharge (<cite>dis</cite>) is included.</p></li>
+<li><p><strong>tls</strong>: A boolean indicating whether total land surface temperature (<cite>tls</cite>) is included.</p></li>
+<li><p><strong>wte</strong>: A boolean indicating whether water table elevation (<cite>wte</cite>) is included.</p></li>
+<li><p><strong>twsc</strong>: A boolean indicating whether terrestrial water storage change (<cite>twsc</cite>) is included.</p></li>
+<li><p><strong>wrsi</strong>: A boolean indicating whether water requirement satisfaction index (<cite>wrsi</cite>) is included.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="forecast_tutorial.html" class="btn btn-neutral float-left" title="Forecast" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="forecast_impact_plot.html" class="btn btn-neutral float-right" title="Forecast Impact Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

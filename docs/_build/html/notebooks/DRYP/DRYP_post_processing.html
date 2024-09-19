@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Content: &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="stoPET Training Notebooks" href="../../stopet_training.html" />
+    <link rel="prev" title="Content:" href="DRYP_model_running.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../training.html">Training Notebooks</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../dryp_training.html">DRYP Training Notebooks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../dryp_training.html#dryp-pre-processing">DRYP_pre_processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dryp_training.html#dryp-model-running">DRYP_model_running</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../dryp_training.html#dryp-post-processing">DRYP_post_processing</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Content:</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Post-processing-datasets">Post-processing datasets</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../stopet_training.html">stoPET Training Notebooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../storm_training.html">STORM Training Notebooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../forecasting_training.html">Forecast Training Notebooks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../training.html">Training Notebooks</a></li>
+          <li class="breadcrumb-item"><a href="../../dryp_training.html">DRYP Training Notebooks</a></li>
+      <li class="breadcrumb-item active">Content:</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/notebooks/DRYP/DRYP_post_processing.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Content:">
+<h1>Content:<a class="headerlink" href="#Content:" title="Permalink to this heading"></a></h1>
+<ul class="simple">
+<li><p>Installation</p></li>
+<li><p>Preparing model inputs parameters and dataset</p></li>
+<li><p>Runing DRYP model</p></li>
+<li><p><strong>Post processing model outputs</strong></p></li>
+</ul>
+</section>
+<section id="Post-processing-datasets">
+<h1>Post-processing datasets<a class="headerlink" href="#Post-processing-datasets" title="Permalink to this heading"></a></h1>
+<ol class="arabic simple">
+<li><p>Understanding model outputs</p></li>
+</ol>
+<ul class="simple">
+<li><p>Sampling model outputs</p></li>
+<li><p>Post-processing model outputs</p></li>
+</ul>
+<p><strong>NOTE</strong>: Before you start, please change the path to access the following directories:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">training_general_path</span> <span class="o">=</span> <span class="s2">&quot;D:/HAD/training/&quot;</span>
+<span class="n">regional_path</span> <span class="o">=</span> <span class="s2">&quot;D:/HAD/training/regional/&quot;</span>
+<span class="n">basin_path</span> <span class="o">=</span> <span class="s2">&quot;D:/HAD/training/basin/&quot;</span>
+<br/></pre></div>
+</div>
+</div>
+<section id="4.1.-Understanding-model-outputs">
+<h2>4.1. Understanding model outputs<a class="headerlink" href="#4.1.-Understanding-model-outputs" title="Permalink to this heading"></a></h2>
+<p>Model results are stored in two different formats:</p>
+<ul class="simple">
+<li><p>Comma delimited files (<em>.csv</em>) to store time series, and</p></li>
+<li><p>netCDF files (<em>.nc</em>) to store gridded output datasets</p></li>
+<li><p>ascii raster files (<em>.asc</em>) to store hydrological states for initial condions</p></li>
+</ul>
+<p>Model outputs stored in csv files store model results at specified locations as well as average model results. Point location result files have a letter “p” followed by name of the stored variable (e.g. tht) added at the end of the name of the file. Basin average results have the letters “avg” added at the end of the file name.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">####File does not exist</span>
+<span class="n">fsim</span> <span class="o">=</span> <span class="p">[</span>
+<span class="n">basin_path</span> <span class="o">+</span> <span class="s2">&quot;output/Tana_IMb_sim_p_dis_avg.csv&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+<p><strong>TASK</strong>: Take a look at the content of the file specified above. HINT: use pandas to open and explore the dataset</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">aggregate_slice_csv</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">agg_step</span><span class="o">=</span><span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">date_start</span><span class="o">=</span><span class="s1">&#39;2000-01-01&#39;</span><span class="p">,</span> <span class="n">date_end</span><span class="o">=</span><span class="s1">&#39;2023-01-01&#39;</span><span class="p">,</span>
+                        <span class="n">timefield</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">):</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">timefield</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">timefield</span><span class="p">])</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">timefield</span><span class="p">]</span><span class="o">.</span><span class="n">between</span><span class="p">(</span><span class="n">date_start</span><span class="p">,</span> <span class="n">date_end</span><span class="p">)]</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">timefield</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">mean</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">agg_step</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">agg_step</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">df</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot data</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)</span>
+<span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="s1">&#39;tht&#39;</span><span class="p">,</span> <span class="s2">&quot;aet&quot;</span><span class="p">]</span><span class="c1">#, &quot;twsc&quot;]</span>
+<span class="n">field</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pre_0&#39;</span><span class="p">,</span><span class="s1">&#39;tht_0&#39;</span><span class="p">,</span> <span class="s2">&quot;aet_0&quot;</span><span class="p">]</span><span class="c1">#, &quot;twsc_0&quot;]</span>
+<span class="c1">#ilabel = &quot;sim&quot;</span>
+<span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fsim</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">ifield</span><span class="p">,</span> <span class="n">ilabel</span><span class="p">,</span> <span class="n">iax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">aggregate_slice_csv</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="n">timefield</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+        <span class="c1">#ax.plot(data[&#39;date&#39;], data[&#39;flow(m3/s)&#39;], label=ilabel)#data.plot(y=&#39;Flow (Cumecs)&#39;)</span>
+        <span class="k">if</span> <span class="n">ifield</span> <span class="o">==</span> <span class="s2">&quot;twsc_0&quot;</span><span class="p">:</span>
+            <span class="n">iax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ifield</span><span class="p">]))</span><span class="c1">#, label=ilabel)</span>
+        <span class="k">elif</span> <span class="n">ifield</span> <span class="o">==</span> <span class="s2">&quot;tht_0&quot;</span><span class="p">:</span>
+            <span class="n">iax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">ifield</span><span class="p">])</span><span class="c1">#, scale=True)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">iax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">ifield</span><span class="p">])</span><span class="c1">#, label=ilabel)</span>
+
+        <span class="n">iax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ilabel</span><span class="p">)</span>
+<span class="n">iax</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;Sim&quot;</span><span class="p">],</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Reading output stored at specific locations</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fnamesim</span><span class="o">=</span><span class="p">[</span>
+<span class="n">basin_path</span> <span class="o">+</span> <span class="s2">&quot;output/Juba_IMa_sim_p_dis.csv&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="c1">#/Users/isamarcortes/Downloads/training/basin/output/Juba_IMa_sim_p_dis.csv</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">ifnamesim</span> <span class="ow">in</span> <span class="n">fnamesim</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">aggregate_slice_csv</span><span class="p">(</span><span class="n">ifnamesim</span><span class="p">)</span>
+    <span class="n">stn</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dis_5&#39;</span><span class="p">,</span> <span class="s2">&quot;dis_3&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">istn</span><span class="p">,</span> <span class="n">iax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">stn</span><span class="p">,</span> <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">):</span>
+        <span class="n">iax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">istn</span><span class="p">]</span><span class="o">/</span><span class="mf">30.5</span><span class="o">/</span><span class="mi">86400</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Sim&#39;</span><span class="p">)</span>
+        <span class="n">iax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Flow (m3/s)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># uncomment this line and save it in a local directory</span>
+<span class="c1">#fname_out = &#39;d:/HAD_basins/basin_postpp/fig/Juba_streamflow.png&#39;</span>
+<span class="c1">#fig.savefig(fname_out, dpi=300)</span>
+</pre></div>
+</div>
+</div>
+<p><strong>TASK</strong>: plot groundwater recharge and total water storage at specific locations and basin average results.</p>
+<p>Gridded datasets are stored by DRYP in netCDF and raster files. NetCFD files store temporal grided datasets whereas raster datasets store the last step of the simulation.</p>
+<p>The following variables are stored as netCDF files:</p>
+<ul class="simple">
+<li><p>Precipitaion (pre)</p></li>
+<li><p>Potential evapotranspiration (pet)</p></li>
+<li><p>Actual evapotranspiration (aet)</p></li>
+<li><p>soil water content (tht)</p></li>
+<li><p>Total groundwater recharge (rch)</p></li>
+<li><p>Focused groundwater recharge (fch)</p></li>
+<li><p>Water table elevation (wte)</p></li>
+<li><p>Groundwater discharge (gdh)</p></li>
+<li><p>Groundwater Evapotranspiration (egw)</p></li>
+<li><p>Streamflow (dis)</p></li>
+<li><p>Infiltration (inf)</p></li>
+<li><p>Runoff (run)</p></li>
+<li><p>Total water storage (twsc)</p></li>
+<li><p>soil water content riparian zone (tht)</p></li>
+</ul>
+<p>NetCDF files are easily handled with xarray, although netCDF4 or geopands can also be used to deal with this files.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#/Users/isamarcortes/Downloads/training/basin/output/Tana_IMb_sim_grid.nc</span>
+<span class="n">fname_nc</span> <span class="o">=</span> <span class="n">basin_path</span> <span class="o">+</span> <span class="s2">&quot;output/Tana_IMb_sim_grid.nc&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#xr.open_dataset(fname_nc)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">read_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;tht&#39;</span><span class="p">):</span>
+    <span class="c1"># Open the first netCDF file</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+<span class="k">def</span> <span class="nf">slice_dataset_time</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="s2">&quot;2003-01-01&quot;</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="s2">&quot;2012-01-01&quot;</span><span class="p">):</span>
+    <span class="c1"># Slice the dataset between two dates</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">dataset</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#read_dataset(fname_nc, var_name=&#39;tht&#39;)</span>
+</pre></div>
+</div>
+</div>
+<p>DRYP stores as raster files, at the end of the simulation, the following variables:</p>
+<ul class="simple">
+<li><p>water table elevation</p></li>
+<li><p>soil and riparian water content</p></li>
+<li><p>surface water storage</p></li>
+</ul>
+<p>Raster files can easily be handled with rasterio.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rasterio</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_raster_file</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">20.0</span><span class="p">):</span>
+    <span class="c1"># create plot</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;coolwarm_r&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="c1"># origin=&quot;lower&quot;,#cmap=cmap,</span>
+                   <span class="c1">#vmin=vmin, vmax=vmax,</span>
+                   <span class="p">)</span><span class="c1">#extent=bounds)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">im</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">fname_raster</span> <span class="o">=</span> <span class="n">basin_path</span> <span class="o">+</span> <span class="s2">&quot;output/Tana_IMb_sim_avg_wte_ini.asc&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_raster_file</span><span class="p">(</span><span class="n">fname_raster</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">20.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="4.2.-Post-processing-model-outputs">
+<h2>4.2. Post-processing model outputs<a class="headerlink" href="#4.2.-Post-processing-model-outputs" title="Permalink to this heading"></a></h2>
+<p>A post-processing component (DRYP_pptools) has been added to DRYP to perform basic operation with model outputs. This tool is still under development therefore capabilities are limited.</p>
+<p>Bellow some of the operations that can be performed with DRYP_pptools are listed, some examples are also shown below:</p>
+<ol class="arabic simple">
+<li><p>calulate long term average</p></li>
+</ol>
+<ul class="simple">
+<li><p>calculate WRSI</p></li>
+<li><p>calculate anomalies</p></li>
+<li><p>calculate total water storage anomalies (TWSA)</p></li>
+<li><p>calculate seasonal average</p></li>
+<li><p>calculate seasonal anomalies</p></li>
+<li><p>sampling model outputs</p></li>
+</ul>
+<p>Initiallize DRYP post processing tool library</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import general libraries</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1"># Import libraries from local repository</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;C:/Users/Edisson/Documents/GitHub/DRYPv2.0.1&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">cuwalid.tools.DRYP_pptools</span> <span class="k">as</span> <span class="nn">pptools</span>
+</pre></div>
+</div>
+</div>
+<p>Initialize the grid postprocessing tool, this step will create a python object with all model output filenames. This function uses the model parameter input file to get model output and paths:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">file_model_input</span> <span class="o">=</span> <span class="n">basin_path</span> <span class="o">+</span> <span class="s2">&quot;model/HAD_IMERG_Tana_input_sim.dmp&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#gridpp = pptools.grid_pptools(file_model_input)</span>
+</pre></div>
+</div>
+</div>
+<p>When runing the function bellow, the long term average, WRSI, and TWSA will be estimated. These functions will directly use model paths and output files specified in the input model file</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#gridpp.get_mean() # save mean values</span>
+<span class="c1">#gridpp.get_wrsi() # save wsri</span>
+<span class="c1">#gridpp.get_twsa() # save total water storage anomaly</span>
+</pre></div>
+</div>
+</div>
+<p>We can also use DRYP_pptools without initalising the gridded component. We can directly call all the functions used by the post processing tools. This function is useful when model outputs are located in other folders.</p>
+<p>A detailed description of each function can be found in DRYP documentation, which is located in DRYP/doc/build/html (you can use your browser to open html files).</p>
+<ol class="arabic simple">
+<li><p>Calculate the long term average of model fluxes</p></li>
+</ol>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fname_nc</span> <span class="o">=</span> <span class="n">basin_path</span> <span class="o">+</span> <span class="s2">&quot;postpp/Tana_IMb_sim_grid.nc&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="s1">&#39;inf&#39;</span><span class="p">,</span> <span class="s1">&#39;pet&#39;</span><span class="p">,</span> <span class="s1">&#39;rch&#39;</span><span class="p">,</span> <span class="s1">&#39;aet&#39;</span><span class="p">,</span> <span class="s1">&#39;gdh&#39;</span><span class="p">,</span> <span class="s1">&#39;egw&#39;</span><span class="p">,</span> <span class="s1">&#39;fch&#39;</span><span class="p">,</span> <span class="s1">&#39;twsc&#39;</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pptools</span><span class="o">.</span><span class="n">calculate_mean_from_netCDF</span><span class="p">(</span><span class="n">fname_nc</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span><span class="c1">#, fname_out=None, deltat=&#39;Y&#39;, start_time=&#39;2000-20-1&#39;, end_time=None)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+<p><strong>TASK</strong> Plot long term average values of focused recharge</p>
+<ol class="arabic simple" start="2">
+<li><p>Calculate the lWater Requirement Satisfaction Index (WRSI)</p></li>
+</ol>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pptools</span><span class="o">.</span><span class="n">calculate_WRSI_from_netCDF</span><span class="p">(</span><span class="n">fname_nc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Calculate Total Water Storage Anomalies (TWSA)</p></li>
+</ol>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pptools</span><span class="o">.</span><span class="n">calculate_twsa_from_netCDF</span><span class="p">(</span><span class="n">fname_nc</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Calculate Aridity Index (AI)</p></li>
+</ol>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pptools</span><span class="o">.</span><span class="n">calculate_AI_from_netCDF</span><span class="p">(</span><span class="n">fname_pre</span><span class="p">,</span> <span class="n">fname_pet</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>Calculate the anomalies</p></li>
+</ol>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pptools</span><span class="o">.</span><span class="n">calculate_anomalies_from_netCDF</span><span class="p">(</span><span class="n">fname_nc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<ol class="arabic simple" start="6">
+<li><p>Calculate seasonal averages</p></li>
+</ol>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pptools</span><span class="o">.</span><span class="n">calculate_seasonal_average_from_netCDF</span><span class="p">(</span><span class="n">fname_nc</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="s2">&quot;OND&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="4.3.-Sampling-model-outputs">
+<h2>4.3. Sampling model outputs<a class="headerlink" href="#4.3.-Sampling-model-outputs" title="Permalink to this heading"></a></h2>
+<p>Analysing model outputs often requires extracting especific values from gridded datasets that where not stored as <em>.csv</em> files. Python has different libraries to process netCDF files that can be uses to extract values from gridded datasets. Here, we have combined some of the Python libraries to facilitate DRYP postprocessing outputs, these functions have beed added into the DRYP pptool.</p>
+<ul class="simple">
+<li><p>Extranting values from point locations</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fname_points</span> <span class="o">=</span> <span class="n">basin_path</span> <span class="o">+</span> <span class="s2">&quot;/Tana/input/HAD_tana_dryp_station_utm.csv&quot;</span>
+<span class="n">fname_netcdf</span> <span class="o">=</span> <span class="n">regional_path</span> <span class="o">+</span> <span class="s2">&quot;output/HAD_IMERG_sim_ini_grid.nc&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pptools</span><span class="o">.</span><span class="n">get_dataframe_point_from_netcdf</span><span class="p">(</span><span class="n">fname_netcdf</span><span class="p">,</span> <span class="n">fname_points</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;dis&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p><strong>TASK</strong>: Explore and plot the created dataframe</p>
+<ul class="simple">
+<li><p>Extracting values from specified regions</p></li>
+</ul>
+<p>For this task, a region has to be provided, it can be as raster file or a shapefile.</p>
+<p>As an example a shape file will be used to extract infomation from a netCDF file.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fname_shp</span> <span class="o">=</span> <span class="n">basin_path</span> <span class="o">+</span> <span class="s2">&quot;datasets/shp/Tana_basin.shp&quot;</span>
+<span class="n">fname_raster</span> <span class="o">=</span> <span class="n">regional_path</span> <span class="o">+</span> <span class="s2">&quot;model/inputs/TA_HAD_DEM_utm_mm.asc&quot;</span>
+<span class="n">fname_netcdf</span> <span class="o">=</span> <span class="n">regional_path</span> <span class="o">+</span> <span class="s2">&quot;output/HAD_IMERG_sim_ini_grid.nc&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fname_output</span> <span class="o">=</span> <span class="n">regional_path</span> <span class="o">+</span> <span class="s2">&quot;postpp/HAD_area_mask.asc&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#This function will create araster file</span>
+<span class="n">rrtools</span><span class="o">.</span><span class="n">create_raster_from_shapefile</span><span class="p">(</span><span class="n">fname_shp</span><span class="p">,</span> <span class="n">fname_raster</span><span class="p">,</span> <span class="n">fname_output</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#This function will produce a pandas dataframe</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pptools</span><span class="o">.</span><span class="n">extract_dataframe_zone_from_netcdf</span><span class="p">(</span><span class="n">fname_netcdf</span><span class="p">,</span> <span class="n">fname_output</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;aet&#39;</span><span class="p">,</span> <span class="s1">&#39;twsc&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p><strong>TASK</strong>: Explore and plot the created dataframe</p>
+</section>
+<section id="Visualising-spatial-variables">
+<h2>Visualising spatial variables<a class="headerlink" href="#Visualising-spatial-variables" title="Permalink to this heading"></a></h2>
+<p>Plot model results (this can be done with any library available in python for processing netcdf files or even in other application)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">shapefile</span> <span class="k">as</span> <span class="nn">shp</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">read_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;tht&#39;</span><span class="p">):</span>
+    <span class="c1"># Open and select a variable of the netCDF file</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+<span class="k">def</span> <span class="nf">get_mask</span><span class="p">(</span><span class="n">fmask</span><span class="p">):</span>
+    <span class="c1"># get a mask</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fmask</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># mask values for visualisation</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">mask</span><span class="p">[</span><span class="n">mask</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">return</span> <span class="n">mask</span> <span class="c1"># output an array</span>
+
+<span class="k">def</span> <span class="nf">resample_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">):</span>
+    <span class="c1"># calculate climatological mean</span>
+    <span class="k">if</span> <span class="n">mean</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">data</span> <span class="c1"># output an array</span>
+
+<span class="k">def</span> <span class="nf">get_bounds</span><span class="p">(</span><span class="n">fmask</span><span class="p">):</span>
+    <span class="c1"># get map extend</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fmask</span><span class="p">)</span>
+    <span class="n">extend</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
+            <span class="n">extend</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">extend</span>
+
+<span class="k">def</span> <span class="nf">plot_map_raster</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">20.0</span><span class="p">):</span>
+    <span class="c1"># create plot</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;coolwarm_r&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+                            <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span>
+                            <span class="n">extent</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">im</span>
+
+<span class="k">def</span> <span class="nf">plot_map_raster_by_field</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># create figure</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="c1"># create var</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="s1">&#39;pet&#39;</span><span class="p">,</span> <span class="s1">&#39;aet&#39;</span><span class="p">,</span> <span class="s1">&#39;tht&#39;</span><span class="p">,</span> <span class="s1">&#39;inf&#39;</span><span class="p">,</span> <span class="s1">&#39;rch&#39;</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;tls&#39;</span><span class="p">,</span> <span class="s1">&#39;fch&#39;</span><span class="p">,</span> <span class="s1">&#39;dch&#39;</span><span class="p">,</span> <span class="s1">&#39;gdh&#39;</span><span class="p">,</span> <span class="s1">&#39;wte&#39;</span><span class="p">,</span> <span class="s1">&#39;egw&#39;</span><span class="p">,</span> <span class="s1">&#39;dis&#39;</span><span class="p">]</span>
+    <span class="n">vmin</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+                            <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">vmax</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1200</span><span class="p">,</span> <span class="mf">24e2</span><span class="p">,</span> <span class="mf">2e3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">1200</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span>
+                            <span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mf">80.0</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span>
+                            <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">]</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="s1">&#39;viridis_r&#39;</span><span class="p">,</span> <span class="s1">&#39;coolwarm_r&#39;</span><span class="p">,</span> <span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="s1">&#39;coolwarm_r&#39;</span><span class="p">,</span> <span class="s1">&#39;coolwarm_r&#39;</span><span class="p">,</span> <span class="s1">&#39;hot_r&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;hot_r&#39;</span><span class="p">,</span> <span class="s1">&#39;hot_r&#39;</span><span class="p">,</span> <span class="s1">&#39;hot_r&#39;</span><span class="p">,</span> <span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="s1">&#39;Spectral&#39;</span><span class="p">,</span> <span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="s1">&#39;viridis&#39;</span><span class="p">]</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;vmin&#39;</span><span class="p">,</span> <span class="s1">&#39;vmax&#39;</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">,</span> <span class="s1">&#39;cmap&#39;</span><span class="p">]</span>
+
+    <span class="n">parameters_field</span> <span class="o">=</span> <span class="p">[</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">cmap</span><span class="p">]</span>
+
+    <span class="n">var</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">parameters_field</span><span class="p">),</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+
+    <span class="c1"># create plot</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">var</span><span class="p">[</span><span class="n">field</span><span class="p">][</span><span class="s1">&#39;cmap&#39;</span><span class="p">],</span> <span class="mi">12</span><span class="p">)</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+                            <span class="n">vmin</span><span class="o">=</span><span class="n">var</span><span class="p">[</span><span class="n">field</span><span class="p">][</span><span class="s1">&#39;vmin&#39;</span><span class="p">],</span>
+                            <span class="n">vmax</span><span class="o">=</span><span class="n">var</span><span class="p">[</span><span class="n">field</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">],</span>
+                            <span class="n">extent</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">im</span>
+
+<span class="k">def</span> <span class="nf">plot_polygon</span><span class="p">(</span><span class="n">polygone</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">polygone</span><span class="o">.</span><span class="n">shapeRecords</span><span class="p">():</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">shape</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[:]]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">shape</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[:]]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.65</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">ymax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">ymin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">-</span><span class="n">ymin</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">ymax</span><span class="o">-</span><span class="n">ymin</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span> <span class="c1">#print(ymax, ymin)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fname</span> <span class="o">=</span> <span class="n">basin_path</span> <span class="o">+</span> <span class="s2">&quot;postpp/Tana_IMb_sim82_grid_mean.nc&quot;</span>
+<span class="n">fmask</span> <span class="o">=</span> <span class="n">basin_path</span> <span class="o">+</span> <span class="s2">&quot;model/input/HAD_basin_Tana_mask.asc&quot;</span>
+<span class="n">fname_shp</span> <span class="o">=</span> <span class="n">basin_path</span> <span class="o">+</span> <span class="s2">&quot;dataset/shp/Tana_basin.shp&quot;</span>
+</pre></div>
+</div>
+</div>
+<p>Read dataset of model outputs</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;pre&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>read raster, a mask for plotting the dataset</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mask</span> <span class="o">=</span> <span class="n">get_mask</span><span class="p">(</span><span class="n">fmask</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>get boundaries of the raster dataset to specified the extent</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bounds</span> <span class="o">=</span> <span class="n">get_bounds</span><span class="p">(</span><span class="n">fmask</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>read shapefile, to add boundaries to the map</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">boundary</span> <span class="o">=</span> <span class="n">shp</span><span class="o">.</span><span class="n">Reader</span><span class="p">(</span><span class="n">fname_shp</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">3.1</span><span class="p">)</span>
+
+<span class="c1"># plot raster</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">plot_map_raster_by_field</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">data</span><span class="o">*</span><span class="n">mask</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">ifield</span><span class="p">)</span>
+
+<span class="c1"># plot polygone</span>
+<span class="n">plot_polygon</span><span class="p">(</span><span class="n">boundary</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+
+<span class="c1"># add labels and other characteristics</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">ifield</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">ifield</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#fname_fig = &quot;&quot;</span>
+<span class="c1">#plt.savefig(fname_fig, dpi=300)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="DRYP_model_running.html" class="btn btn-neutral float-left" title="Content:" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../stopet_training.html" class="btn btn-neutral float-right" title="stoPET Training Notebooks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

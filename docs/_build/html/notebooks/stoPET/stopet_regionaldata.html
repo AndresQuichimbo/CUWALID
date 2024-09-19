@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learning objective: &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="STORM Training Notebooks" href="../../storm_training.html" />
+    <link rel="prev" title="Learning objective:" href="stopet_introduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../training.html">Training Notebooks</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../dryp_training.html">DRYP Training Notebooks</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../stopet_training.html">stoPET Training Notebooks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../stopet_training.html#batchjob-submision">batchjob_submision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stopet_training.html#cuwalid-stopet">cuwalid_stopet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../stopet_training.html#stopet-introduction">stopet_introduction</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../stopet_training.html#stopet-regionaldata">stopet_regionaldata</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Learning objective:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../storm_training.html">STORM Training Notebooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../forecasting_training.html">Forecast Training Notebooks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../training.html">Training Notebooks</a></li>
+          <li class="breadcrumb-item"><a href="../../stopet_training.html">stoPET Training Notebooks</a></li>
+      <li class="breadcrumb-item active">Learning objective:</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/notebooks/stoPET/stopet_regionaldata.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <table><tr><td><p><img alt="088002c40af44286bc61e55547b42c84" class="no-scaled-link" src="../../_images/CardiffUniversity.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="485ecc336c1443c4981306e2a5cf09c7" class="no-scaled-link" src="../../_images/Down2Earth.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="59ef015d214c4a02aff5943ac328b5ce" class="no-scaled-link" src="../../_images/UniversityOfBristol.PNG" style="width: 250px;" /></p>
+</td></tr></table><section id="Learning-objective:">
+<h1>Learning objective:<a class="headerlink" href="#Learning-objective:" title="Permalink to this heading"></a></h1>
+<ul class="simple">
+<li><p>generating regional PET data</p></li>
+<li><p>understand the output format from the model</p></li>
+<li><p>learn data visualization from stoPET output</p></li>
+</ul>
+<p>est. time 2 hour</p>
+<section id="Generating-regional-data">
+<h2>Generating regional data<a class="headerlink" href="#Generating-regional-data" title="Permalink to this heading"></a></h2>
+<p>Here we will generate the data for <strong>Kenya</strong> and use some plotting functions to visualize the data. Notice regional data takes more space so make sure there is enough storage for the data.</p>
+<p>To generate the regional data please adjust the input values in the <strong>run_stoPET()</strong> function and generate 5 years data for Kenya using Method 2 as temperature adjustment with a 1.5 degree increase.</p>
+<blockquote>
+<div><p>Example</p>
+</div></blockquote>
+<hr class="docutils" />
+<p>Now lets do a simple exercise based on a 5 year data for Kenya.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>* latval_min = -5.5
+* latval_max = 5.5
+* lonval_min = 33.0
+* lonval_max = 42.0
+* start year = 2000
+* end year = 2005
+* two ensembles
+* using Method 2 for temperature adjustment
+* temperature increase of 1.5 degrees
+</pre></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is for showing plots</span>
+<span class="c1"># interactively in Jupiter notebook</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">stoPET_v1</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_stoPET</span><span class="p">():</span>
+    <span class="c1">## ----- CHANGE THE INPUT VARIABLES HERE -----##</span>
+    <span class="n">datapath</span> <span class="o">=</span> <span class="s1">&#39;stopet_parameter_files/&#39;</span>
+    <span class="n">outputpath</span> <span class="o">=</span> <span class="s1">&#39;results/&#39;</span>
+    <span class="n">runtype</span> <span class="o">=</span>  <span class="s1">&#39;regional&#39;</span> <span class="c1">#&#39;single&#39;</span>
+    <span class="n">startyear</span> <span class="o">=</span> <span class="mi">2000</span>
+    <span class="n">endyear</span> <span class="o">=</span> <span class="mi">2005</span>
+
+    <span class="c1"># Single point stoPET run</span>
+    <span class="n">latval</span> <span class="o">=</span> <span class="mf">1.73</span>
+    <span class="n">lonval</span> <span class="o">=</span> <span class="mf">40.09</span>
+
+    <span class="c1"># Regional stoPET run</span>
+    <span class="n">latval_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.5</span>
+    <span class="n">latval_max</span> <span class="o">=</span> <span class="mf">5.5</span>
+    <span class="n">lonval_min</span> <span class="o">=</span> <span class="mf">33.0</span>
+    <span class="n">lonval_max</span> <span class="o">=</span> <span class="mf">42.0</span>
+    <span class="n">locname</span> <span class="o">=</span> <span class="s1">&#39;Kenya&#39;</span>
+
+    <span class="n">number_ensm</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">tempAdj</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">deltat</span> <span class="o">=</span> <span class="mf">1.5</span>
+    <span class="n">udpi_pet</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="c1">## ------ NO CHANGES BELLOW THIS -------------##</span>
+    <span class="k">if</span> <span class="n">runtype</span> <span class="o">==</span> <span class="s1">&#39;single&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ens_num</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+                    <span class="n">stoPET_wrapper_singlepoint</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span>
+                                               <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span>
+                                               <span class="n">ens_num</span><span class="p">,</span><span class="n">datapath</span><span class="p">,</span>
+                                               <span class="n">outputpath</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span>
+                                               <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">runtype</span> <span class="o">==</span> <span class="s1">&#39;regional&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ens_num</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+                    <span class="n">stoPET_wrapper_regional</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span>
+                                            <span class="n">latval_min</span><span class="p">,</span> <span class="n">latval_max</span><span class="p">,</span>
+                                            <span class="n">lonval_min</span><span class="p">,</span> <span class="n">lonval_max</span><span class="p">,</span>
+                                            <span class="n">locname</span><span class="p">,</span> <span class="n">ens_num</span><span class="p">,</span> <span class="n">datapath</span><span class="p">,</span>
+                                            <span class="n">outputpath</span><span class="p">,</span>
+                                            <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;runtype only takes single and regional ... please check!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now run the function run_stoPET()</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">run_stoPET</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>Lets read first year data and aggregate to annual PET. Each year’s file will have a <strong>four dimensional array (days, hours, latitude, longitude)</strong>. The variable name for the stochastically generated PET is <strong>pet</strong> within the netCDF files.</p>
+<p>The file name of the outputs are given as <strong>year_method_stoPET.nc</strong> and <strong>year_method_AdjstoPET.nc</strong> (e.g. 2002_2_stoPET.nc, 2002_2_AdjstoPET.nc)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nc</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="s1">&#39;results/Kenya_E0_StoPET/2000_2_stoPET.nc&#39;</span><span class="p">)</span>
+<span class="n">lats</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">][:]</span>
+<span class="n">lons</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">][:]</span>
+<span class="n">pet</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">][:,:,:,:]</span>
+<span class="c1"># check array shape</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pet</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c1"># make the annual sum PET</span>
+<span class="n">annual_pet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pet</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="c1"># check array shape</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">annual_pet</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="plot_spatial-function-doesn't-exist">
+<h3>plot_spatial function doesn’t exist<a class="headerlink" href="#plot_spatial-function-doesn't-exist" title="Permalink to this heading"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># let us plot the annual PET</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">annual_pet</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">YlOrBr</span>
+<span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Annual PET&#39;</span>
+<span class="n">cbar_label</span> <span class="o">=</span> <span class="s1">&#39;$\mathbf{mm\,year^{-1}}$&#39;</span>
+<span class="n">climin</span> <span class="o">=</span> <span class="mf">1000.0</span>
+<span class="n">climax</span> <span class="o">=</span> <span class="mf">2500.0</span>
+<span class="n">plotpath</span> <span class="o">=</span> <span class="s1">&#39;./plots/&#39;</span>
+<span class="n">figfname</span> <span class="o">=</span> <span class="s1">&#39;Kenya_annual+PET_2000.png&#39;</span>
+<span class="n">plot_spatial</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">cmap</span> <span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">cbar_label</span><span class="p">,</span>
+             <span class="n">climin</span><span class="p">,</span> <span class="n">climax</span><span class="p">,</span> <span class="n">plotpath</span><span class="p">,</span> <span class="n">figfname</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;cyl&#39;</span><span class="p">,</span> <span class="n">llcrnrlat</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">lats</span><span class="p">),</span>
+            <span class="n">urcrnrlat</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">lats</span><span class="p">),</span> <span class="n">llcrnrlon</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">lons</span><span class="p">),</span>
+            <span class="n">urcrnrlon</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">lons</span><span class="p">),</span> <span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;l&#39;</span><span class="p">)</span>
+
+<span class="n">cs4</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+                     <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">lons</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">lons</span><span class="p">),</span>
+                             <span class="nb">min</span><span class="p">(</span><span class="n">lats</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">lats</span><span class="p">)])</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawcoastlines</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawcountries</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="n">parallels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">90.</span><span class="p">,</span><span class="mf">90.</span><span class="p">,</span><span class="mf">10.0</span><span class="p">)</span>
+<span class="n">meridians</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">360.</span><span class="p">,</span><span class="mf">10.0</span><span class="p">)</span>
+
+<span class="n">m</span><span class="o">.</span><span class="n">drawlsmask</span><span class="p">(</span><span class="n">land_color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">ocean_color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">lakes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+<span class="n">cb4</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cs4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">cbar_label</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+                   <span class="n">pad</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+<span class="n">cb4</span><span class="o">.</span><span class="n">mappable</span><span class="o">.</span><span class="n">set_clim</span><span class="p">(</span><span class="n">climin</span><span class="p">,</span> <span class="n">climax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>## EXERCISE Based on the
+above example on
+generating regional PET
+data please do the
+folowing.</p></td>
+</tr>
+<tr class="row-even"><td><p>1. Generate a 5 year
+dataset for Uganda. 2.
+Use Method 1 for
+temperature adjustment.
+3. Generate comparison
+plots side-by-side
+(write your own
+visualization code using
+python subplots) for the
+average annual PET
+values of the
+non-adjusted PET and
+adjusted PET.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="stopet_introduction.html" class="btn btn-neutral float-left" title="Learning objective:" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../storm_training.html" class="btn btn-neutral float-right" title="STORM Training Notebooks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

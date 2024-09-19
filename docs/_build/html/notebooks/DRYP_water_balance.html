@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Water balance calculation &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/nbsphinx-code-cells.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="StoPET Tutorial" href="../stopet_tutorial.html" />
+    <link rel="prev" title="DRYP Tutorial" href="../dryp_tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models_info.html">Models Information</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorial.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../dryp_tutorial.html">DRYP Tutorial</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../dryp_tutorial.html#runing-the-tilted-v-catchment-model-test">Runing the Tilted-V catchment model test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dryp_tutorial.html#running-a-regional-model">Running a regional model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dryp_tutorial.html#pre-processing-dataset">Pre-processing dataset</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../dryp_tutorial.html#creating-a-hydrological-model-from-regional-datasets">Creating a hydrological model from regional datasets</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../dryp_tutorial.html#prepraring-dryp-code">Prepraring DRYP code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dryp_tutorial.html#preprocessing-datasets">Preprocessing datasets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dryp_tutorial.html#runing-dryp">Runing DRYP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../dryp_tutorial.html#postprocessing-podel-outputs">Postprocessing podel outputs</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../dryp_tutorial.html#quick-mass-balance-calculation">Quick mass balance calculation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../stopet_tutorial.html">StoPET Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../forecast_tutorial.html">Forecast</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../tutorial.html">Tutorials</a></li>
+          <li class="breadcrumb-item"><a href="../dryp_tutorial.html">DRYP Tutorial</a></li>
+      <li class="breadcrumb-item active">Simple Water balance calculation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/notebooks/DRYP_water_balance.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Simple-Water-balance-calculation">
+<h1>Simple Water balance calculation<a class="headerlink" href="#Simple-Water-balance-calculation" title="Permalink to this heading"></a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">water_balance</span><span class="p">(</span><span class="n">avg_hs</span><span class="p">,</span> <span class="n">avg_rp</span><span class="p">,</span> <span class="n">avg_dis</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">ofstorage</span><span class="p">,</span> <span class="n">label_discharge</span><span class="o">=</span><span class="s2">&quot;dis_0&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;All output units are in mm&quot;&quot;&quot;</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;pre_0&quot;</span><span class="p">]</span>
+    <span class="n">AET</span> <span class="o">=</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;aet_0&quot;</span><span class="p">]</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;rch_0&quot;</span><span class="p">]</span>
+    <span class="n">OF</span> <span class="o">=</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;run_0&quot;</span><span class="p">]</span>
+    <span class="n">Qgw</span> <span class="o">=</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;gdh_0&quot;</span><span class="p">]</span><span class="o">*</span><span class="mf">1000.0</span>
+    <span class="n">TL</span> <span class="o">=</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;tls_0&quot;</span><span class="p">]</span><span class="o">*</span><span class="mi">1000</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">Peff</span> <span class="o">=</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;pre_0&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;inf_0&quot;</span><span class="p">]</span>
+    <span class="n">Qgw</span> <span class="o">=</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;gdh_0&quot;</span><span class="p">]</span><span class="o">*</span><span class="mf">1000.</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">avg_dis</span><span class="p">[</span><span class="n">label_discharge</span><span class="p">]</span><span class="o">*</span><span class="mi">1000</span><span class="o">/</span><span class="n">area</span>
+    <span class="n">factor</span> <span class="o">=</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;tls_0&quot;</span><span class="p">]</span><span class="o">/</span><span class="n">avg_rp</span><span class="p">[</span><span class="s2">&quot;tls_0&quot;</span><span class="p">]</span>
+    <span class="n">AER</span> <span class="o">=</span> <span class="n">avg_rp</span><span class="p">[</span><span class="s2">&quot;aet_0&quot;</span><span class="p">]</span><span class="o">*</span><span class="n">factor</span>
+    <span class="n">Rfch</span> <span class="o">=</span> <span class="n">avg_rp</span><span class="p">[</span><span class="s2">&quot;fch_0&quot;</span><span class="p">]</span><span class="o">*</span><span class="n">factor</span>
+    <span class="n">Rdch</span> <span class="o">=</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;rch_0&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">Rfch</span>
+    <span class="n">ofstorage</span> <span class="o">=</span> <span class="n">ofstorage</span><span class="o">*</span><span class="n">factor</span><span class="o">*</span><span class="mi">1000</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">Qbc</span> <span class="o">=</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;chb_0&quot;</span><span class="p">]</span><span class="o">*</span><span class="mf">1000.</span>
+    <span class="n">EGW</span> <span class="o">=</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;egw_0&quot;</span><span class="p">]</span>
+    <span class="n">MBuz</span> <span class="o">=</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;inf_0&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;aet_0&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">Rdch</span>
+    <span class="n">MB</span> <span class="o">=</span> <span class="p">(</span><span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;pre_0&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;aet_0&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;egw_0&quot;</span><span class="p">]</span>
+        <span class="o">-</span> <span class="n">Q</span> <span class="o">-</span> <span class="n">AER</span> <span class="o">-</span> <span class="n">ofstorage</span> <span class="o">-</span> <span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;twsc_0&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">Qbc</span><span class="p">)</span>
+
+    <span class="c1"># store fluxes in a dictionary</span>
+    <span class="n">fluxes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;P&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">],</span>
+              <span class="s2">&quot;AET&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">AET</span><span class="p">,</span> <span class="n">AET</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span> <span class="s2">&quot;AER&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">AER</span><span class="p">,</span> <span class="n">AER</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span>  <span class="s2">&quot;EGW&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">EGW</span><span class="p">,</span> <span class="n">EGW</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span>
+              <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">R</span><span class="p">,</span> <span class="n">R</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span> <span class="s2">&quot;Rfch&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Rfch</span><span class="p">,</span> <span class="n">Rfch</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span> <span class="s2">&quot;Rdch&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Rdch</span><span class="p">,</span> <span class="n">Rdch</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span>
+              <span class="s2">&quot;Q&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Q</span><span class="p">,</span> <span class="n">Q</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span> <span class="s2">&quot;Qgw&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Qgw</span><span class="p">,</span> <span class="n">Qgw</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span>
+              <span class="s2">&quot;Peff&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Peff</span><span class="p">,</span> <span class="n">Peff</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span>
+              <span class="s2">&quot;OF&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">OF</span><span class="p">,</span> <span class="n">OF</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span> <span class="s2">&quot;TL&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">TL</span><span class="p">,</span> <span class="n">TL</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span>
+              <span class="s2">&quot;TSWS&quot;</span><span class="p">:[</span><span class="n">ofstorage</span><span class="p">,</span> <span class="n">ofstorage</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span>
+              <span class="s2">&quot;TWSA&quot;</span><span class="p">:[</span><span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;twsc_0&quot;</span><span class="p">],</span><span class="n">avg_hs</span><span class="p">[</span><span class="s2">&quot;twsc_0&quot;</span><span class="p">]</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span>
+              <span class="s2">&quot;Qbc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Qbc</span><span class="p">,</span> <span class="n">Qbc</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span>
+              <span class="s2">&quot;MB&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">MB</span><span class="p">,</span> <span class="n">MB</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">],</span>
+             <span class="s2">&quot;MBuz&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">MBuz</span><span class="p">,</span> <span class="n">MBuz</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">P</span><span class="p">]}</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">fluxes</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">calculate_water_balance_from_csv</span><span class="p">(</span><span class="n">fhillslope</span><span class="p">,</span> <span class="n">friparian</span><span class="p">,</span> <span class="n">fdischarge</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">label_discharge</span><span class="o">=</span><span class="s2">&quot;dis_0&quot;</span><span class="p">):</span>
+    <span class="n">avg_hs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fhillslope</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">avg_rp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">friparian</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">avg_dis</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fdischarge</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">avg_rp_mean</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">friparian</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">ofstorage</span> <span class="o">=</span> <span class="n">avg_rp_mean</span><span class="p">[</span><span class="s2">&quot;ssz_0&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">water_balance</span><span class="p">(</span><span class="n">avg_hs</span><span class="p">,</span> <span class="n">avg_rp</span><span class="p">,</span> <span class="n">avg_dis</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">ofstorage</span><span class="p">,</span> <span class="n">label_discharge</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="Tilted-V-basin-test">
+<h2>Tilted-V basin test<a class="headerlink" href="#Tilted-V-basin-test" title="Permalink to this heading"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">folder</span> <span class="o">=</span> <span class="s2">&quot;/home/andresqm/Documents/GitHub/DRYPv2.0.1/tests/tilted_v/output/&quot;</span>
+<span class="n">fname_avg_hs</span> <span class="o">=</span> <span class="n">folder</span> <span class="o">+</span> <span class="s2">&quot;test_avg.csv&quot;</span>
+<span class="n">fname_avg_rp</span> <span class="o">=</span> <span class="n">folder</span> <span class="o">+</span> <span class="s2">&quot;test_RZ_avg.csv&quot;</span>
+<span class="n">fname_avg_dis</span> <span class="o">=</span> <span class="n">folder</span> <span class="o">+</span> <span class="s2">&quot;test_p_dis.csv&quot;</span>
+<span class="n">cell_size</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># m</span>
+<span class="n">basin_area</span> <span class="o">=</span> <span class="p">(</span><span class="n">cell_size</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="mi">7</span><span class="o">*</span><span class="mi">10</span> <span class="c1"># m2</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">calculate_water_balance_from_csv</span><span class="p">(</span><span class="n">fname_avg_hs</span><span class="p">,</span> <span class="n">fname_avg_rp</span><span class="p">,</span> <span class="n">fname_avg_dis</span><span class="p">,</span>
+                                 <span class="n">basin_area</span><span class="p">,</span> <span class="n">cell_size</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/tmp/ipykernel_7306/1726732392.py:40: FutureWarning: The default value of numeric_only in DataFrame.mean is deprecated. In a future version, it will default to False. In addition, specifying &#39;numeric_only=None&#39; is deprecated. Select only valid columns or specify the value of numeric_only to silence this warning.
+  avg_rp_mean = pd.read_csv(friparian).mean()
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>P</th>
+      <th>AET</th>
+      <th>AER</th>
+      <th>EGW</th>
+      <th>R</th>
+      <th>Rfch</th>
+      <th>Rdch</th>
+      <th>Q</th>
+      <th>Qgw</th>
+      <th>Peff</th>
+      <th>OF</th>
+      <th>TL</th>
+      <th>TSWS</th>
+      <th>TWSA</th>
+      <th>Qbc</th>
+      <th>MB</th>
+      <th>MBuz</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1499.75</td>
+      <td>815.386134</td>
+      <td>0.000154</td>
+      <td>63.667404</td>
+      <td>548.820619</td>
+      <td>0.0</td>
+      <td>548.820619</td>
+      <td>278.084841</td>
+      <td>199.511999</td>
+      <td>0.0</td>
+      <td>278.084841</td>
+      <td>6.774715e-19</td>
+      <td>0.0</td>
+      <td>341.828427</td>
+      <td>0.0</td>
+      <td>0.783041</td>
+      <td>135.543247</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>100.00</td>
+      <td>54.368137</td>
+      <td>0.000010</td>
+      <td>4.245201</td>
+      <td>36.594140</td>
+      <td>0.0</td>
+      <td>36.594140</td>
+      <td>18.542080</td>
+      <td>13.303017</td>
+      <td>0.0</td>
+      <td>18.542080</td>
+      <td>4.517229e-20</td>
+      <td>0.0</td>
+      <td>22.792361</td>
+      <td>0.0</td>
+      <td>0.052211</td>
+      <td>9.037723</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../dryp_tutorial.html" class="btn btn-neutral float-left" title="DRYP Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../stopet_tutorial.html" class="btn btn-neutral float-right" title="StoPET Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

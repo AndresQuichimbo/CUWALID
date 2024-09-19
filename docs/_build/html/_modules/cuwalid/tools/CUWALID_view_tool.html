@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.tools.CUWALID_view_tool &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.tools.CUWALID_view_tool</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.tools.CUWALID_view_tool</h1><div class="highlight"><pre>
+<span></span><span class="c1">#import netCDF4</span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">rioxarray</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1.inset_locator</span> <span class="kn">import</span> <span class="n">inset_axes</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">gaussian_filter</span>
+<span class="kn">from</span> <span class="nn">rasterio.enums</span> <span class="kn">import</span> <span class="n">Resampling</span>
+
+<div class="viewcode-block" id="plot_probabilistic_tercile_forecast"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.plot_probabilistic_tercile_forecast">[docs]</a><span class="k">def</span> <span class="nf">plot_probabilistic_tercile_forecast</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+		<span class="n">title</span><span class="o">=</span><span class="s2">&quot;Probabilistic Forecasting&quot;</span><span class="p">,</span> <span class="n">reproject</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+		<span class="n">fshapefile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function create a tercile plot</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	</span>
+<span class="sd">	data : dataset</span>
+<span class="sd">		tercile forecasting datset</span>
+<span class="sd">	title : str</span>
+<span class="sd">		specify title for the figure</span>
+<span class="sd">	</span>
+<span class="sd">	Return</span>
+<span class="sd">	------</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># apply mask</span>
+	<span class="c1">#if fmask is not None:</span>
+	<span class="c1">#	mask = np.flip(get_mask(fmask), 0)#*np.flip(get_mask(friver), 0)</span>
+	<span class="c1">#	data = data*mask</span>
+	
+	<span class="c1"># reproject dataset</span>
+	<span class="k">if</span> <span class="n">reproject</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">reproject_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">oldPP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">newPP</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+		
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mf">0.3333</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+	
+	<span class="c1">#data[data &lt; 0.3333] = np.nan</span>
+	
+	<span class="n">tercile</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AN&quot;</span><span class="p">,</span> <span class="s2">&quot;NN&quot;</span><span class="p">,</span> <span class="s2">&quot;BN&quot;</span><span class="p">]</span>
+	<span class="n">barloc</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">]</span>
+	<span class="n">cmap</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Blues&quot;</span><span class="p">,</span> <span class="s2">&quot;Greens&quot;</span><span class="p">,</span> <span class="s2">&quot;Oranges&quot;</span><span class="p">]</span>
+	
+	
+	<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="c1">#wspace=0.40, hspace=0.40,</span>
+						<span class="c1">#left=0.075, right=0.97,</span>
+						<span class="n">top</span><span class="o">=</span><span class="mf">0.92</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.20</span>
+						<span class="p">)</span>
+						
+	<span class="c1">#bounds = [40,45,50,55,60,65,70,75,80]</span>
+	<span class="n">bounds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">80</span><span class="p">]</span>
+	<span class="n">nbounds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">40</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">50</span><span class="p">]</span>
+	<span class="n">isigma</span> <span class="o">=</span> <span class="mf">0.5</span>
+	<span class="c1">#for itercile, ibarloc, icmap in zip(var, barloc, cmap):</span>
+	<span class="c1">#g1 = smooth_dataarray(data[tercile[0]], sigma=isigma).plot(</span>
+	<span class="n">g1</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">tercile</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+			<span class="n">x</span><span class="o">=</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+			<span class="n">vmin</span><span class="o">=</span><span class="mf">0.30</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.80</span><span class="p">,</span>
+			<span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">cmap</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">5</span><span class="p">),</span>
+			<span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">add_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+			
+			<span class="p">)</span>
+	
+	<span class="c1">#g2 = smooth_dataarray(data[tercile[1]], sigma=isigma).plot(</span>
+	<span class="n">g2</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">tercile</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+			<span class="n">x</span><span class="o">=</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+			<span class="n">vmin</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span>
+			<span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">cmap</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">4</span><span class="p">),</span>
+			<span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">add_colorbar</span><span class="o">=</span><span class="kc">False</span>
+			<span class="p">)</span>
+	
+	<span class="c1">#g3 = smooth_dataarray(data[tercile[2]], sigma=isigma).plot(</span>
+	<span class="n">g3</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">tercile</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+			<span class="n">x</span><span class="o">=</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+			<span class="n">vmin</span><span class="o">=</span><span class="mf">0.30</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.80</span><span class="p">,</span>
+			<span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">cmap</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">5</span><span class="p">),</span>
+			<span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">add_colorbar</span><span class="o">=</span><span class="kc">False</span>
+			<span class="p">)</span>
+	
+	<span class="k">if</span> <span class="n">fshapefile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">boundaries</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">fshapefile</span><span class="p">)</span>
+		
+		<span class="n">boundaries</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+				<span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+				<span class="c1">#edgecolor=line_colors[&quot;Administrative Boundary&quot;],</span>
+				<span class="c1">#linewidth=line_width[&quot;Administrative Boundary&quot;],</span>
+				<span class="c1">#ls=line_ls[&quot;Administrative Boundary&quot;],</span>
+				<span class="c1"># legend=True, label=&#39;Boundaries&#39;,</span>
+				<span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span>
+				<span class="p">)</span>
+	
+	
+	<span class="n">axins1_bottom</span> <span class="o">=</span> <span class="n">inset_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;35%&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;5%&quot;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower left&#39;</span><span class="p">,</span>
+		<span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.15</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">bbox_transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">borderpad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+	<span class="n">axins2_bottom</span> <span class="o">=</span> <span class="n">inset_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;20%&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;5%&quot;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower center&#39;</span><span class="p">,</span>
+		<span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.15</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">bbox_transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">borderpad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+	<span class="n">axins3_bottom</span> <span class="o">=</span> <span class="n">inset_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;35%&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;5%&quot;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">,</span>
+		<span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.15</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">bbox_transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">borderpad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+	
+	<span class="n">cbar_fbr</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">g1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">axins3_bottom</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+	<span class="n">cbar_fbr</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;Above-Normal (%)&#39;</span><span class="p">)</span>
+	<span class="n">cbar_fbr</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([</span><span class="n">i</span><span class="o">/</span><span class="mf">100.0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">bounds</span><span class="p">])</span>
+	<span class="n">cbar_fbr</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+	
+	
+	<span class="n">cbar_fbc</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">g2</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">axins2_bottom</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+	<span class="n">cbar_fbc</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;Near-Normal (%)&#39;</span><span class="p">)</span>
+	<span class="n">cbar_fbc</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([</span><span class="n">i</span><span class="o">/</span><span class="mf">100.0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">nbounds</span><span class="p">])</span>
+	<span class="n">cbar_fbc</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">(</span><span class="n">nbounds</span><span class="p">)</span>
+	
+	<span class="n">cbar_fbl</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">g3</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">axins1_bottom</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+	<span class="n">cbar_fbl</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;Below-Normal (%)&#39;</span><span class="p">)</span>
+	<span class="n">cbar_fbl</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([</span><span class="n">i</span><span class="o">/</span><span class="mf">100.0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">bounds</span><span class="p">])</span>
+	<span class="n">cbar_fbl</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
+	
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Latitude&quot;</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Longitude&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="plot_deterministic_forecast"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.plot_deterministic_forecast">[docs]</a><span class="k">def</span> <span class="nf">plot_deterministic_forecast</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+		<span class="n">title</span><span class="o">=</span><span class="s2">&quot;Deterministic Forecasting&quot;</span><span class="p">,</span> <span class="n">reproject</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+		<span class="n">fshapefile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_anomaly</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function create a tercile plot</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	</span>
+<span class="sd">	data : dataset</span>
+<span class="sd">		tercile forecasting datset</span>
+<span class="sd">	title : str</span>
+<span class="sd">		specify title for the figure</span>
+<span class="sd">	</span>
+<span class="sd">	Return</span>
+<span class="sd">	------</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># apply mask</span>
+	<span class="k">if</span> <span class="n">fmask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">get_mask</span><span class="p">(</span><span class="n">fmask</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="c1">#*np.flip(get_mask(friver), 0)</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">*</span><span class="n">mask</span>
+	
+	<span class="c1"># reproject dataset</span>
+	<span class="k">if</span> <span class="n">reproject</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">reproject_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">oldPP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">newPP</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+	
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span> <span class="o">&lt;</span> <span class="mf">1.0e100</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+	
+	<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="c1">#wspace=0.40, hspace=0.40,</span>
+						<span class="c1">#left=0.075, right=0.97,</span>
+						<span class="n">top</span><span class="o">=</span><span class="mf">0.92</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.25</span>
+						<span class="p">)</span>
+	
+	<span class="n">idplot</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">plot_anomaly</span><span class="p">)</span>
+	
+	<span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;average&quot;</span><span class="p">,</span> <span class="s2">&quot;anomaly&quot;</span><span class="p">,</span> <span class="s2">&quot;Variability&quot;</span><span class="p">]</span>
+	<span class="n">cmap</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;GnBu&quot;</span><span class="p">,</span> <span class="s2">&quot;BrBG&quot;</span><span class="p">,</span> <span class="s2">&quot;GnBu&quot;</span><span class="p">]</span>
+	
+	<span class="n">g1</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">fields</span><span class="p">[</span><span class="n">idplot</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+			<span class="n">x</span><span class="o">=</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+			<span class="c1">#vmin=0.35, vmax=0.55,</span>
+			<span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">cmap</span><span class="p">[</span><span class="n">idplot</span><span class="p">],</span> <span class="mi">8</span><span class="p">),</span>
+			<span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">add_colorbar</span><span class="o">=</span><span class="kc">False</span>
+			<span class="p">)</span>
+	
+	<span class="n">g2</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">fields</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+			<span class="n">x</span><span class="o">=</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span>
+			<span class="c1">#vmin=0.35, vmax=0.55,</span>
+			<span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">cmap</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">8</span><span class="p">),</span>
+			<span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">add_colorbar</span><span class="o">=</span><span class="kc">False</span>
+			<span class="p">)</span>
+	
+	<span class="k">if</span> <span class="n">fshapefile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">boundaries</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">fshapefile</span><span class="p">)</span>
+		
+		<span class="n">boundaries</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+				<span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+				<span class="c1">#edgecolor=line_colors[&quot;Administrative Boundary&quot;],</span>
+				<span class="c1">#linewidth=line_width[&quot;Administrative Boundary&quot;],</span>
+				<span class="c1">#ls=line_ls[&quot;Administrative Boundary&quot;],</span>
+				<span class="c1"># legend=True, label=&#39;Boundaries&#39;,</span>
+				<span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span>
+				<span class="p">)</span>
+		
+		<span class="n">boundaries</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+				<span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+				<span class="c1">#edgecolor=line_colors[&quot;Administrative Boundary&quot;],</span>
+				<span class="c1">#linewidth=line_width[&quot;Administrative Boundary&quot;],</span>
+				<span class="c1">#ls=line_ls[&quot;Administrative Boundary&quot;],</span>
+				<span class="c1"># legend=True, label=&#39;Boundaries&#39;,</span>
+				<span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span>
+				<span class="p">)</span>
+	
+	<span class="c1"># Add color bars</span>
+	<span class="n">axins1_bottom</span> <span class="o">=</span> <span class="n">inset_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;80%&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;5%&quot;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower center&#39;</span><span class="p">,</span>
+		<span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.15</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">bbox_transform</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">borderpad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+		
+	<span class="n">axins2_bottom</span> <span class="o">=</span> <span class="n">inset_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;80%&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;5%&quot;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower center&#39;</span><span class="p">,</span>
+		<span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.15</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">bbox_transform</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">borderpad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+		
+	<span class="n">cbar_fbc</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">g1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cax</span><span class="o">=</span><span class="n">axins1_bottom</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+	<span class="n">cbar_fbc</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="n">idplot</span><span class="p">])</span>
+	<span class="c1">#cbar_fbc.set_ticks([i/100.0 for i in nbounds])</span>
+	<span class="c1">#cbar_fbc.set_ticklabels(nbounds)</span>
+	
+	<span class="n">cbar_fbc</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">g2</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cax</span><span class="o">=</span><span class="n">axins2_bottom</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+	<span class="n">cbar_fbc</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;Standard Deviation&#39;</span><span class="p">)</span>
+	<span class="c1">#cbar_fbc.set_ticks([i/100.0 for i in nbounds])</span>
+	<span class="c1">#cbar_fbc.set_ticklabels(nbounds)</span>
+	
+	<span class="c1"># add titles and axis lables</span>
+	<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="n">fields</span><span class="p">[</span><span class="n">idplot</span><span class="p">])</span>
+	<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Latitude&quot;</span><span class="p">)</span>
+	<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Longitude&quot;</span><span class="p">)</span>
+	
+	<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="s2">&quot;Standard Deviation&quot;</span><span class="p">)</span>
+	<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Latitude&quot;</span><span class="p">)</span>
+	<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Longitude&quot;</span><span class="p">)</span></div>
+	
+	
+<span class="c1"># Function to smooth a 2D xarray DataArray</span>
+<div class="viewcode-block" id="smooth_dataarray"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.smooth_dataarray">[docs]</a><span class="k">def</span> <span class="nf">smooth_dataarray</span><span class="p">(</span><span class="n">dataarray</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Smooth a 2D xarray DataArray using a Gaussian filter.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - dataarray: xarray.DataArray, the input 2D data array</span>
+<span class="sd">    - sigma: float, standard deviation for Gaussian kernel</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">    - smoothed_data: xarray.DataArray, the smoothed 2D data array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">smoothed_data</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">dataarray</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">smoothed_data</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="n">dataarray</span><span class="o">.</span><span class="n">dims</span><span class="p">,</span>
+			<span class="n">coords</span><span class="o">=</span><span class="n">dataarray</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span></div>
+
+	
+<div class="viewcode-block" id="reproject_dataset"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.reproject_dataset">[docs]</a><span class="k">def</span> <span class="nf">reproject_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">oldPP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">newPP</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Transform projection system</span>
+<span class="sd">	oldPP and newPP have to be defined first</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	Data:	Dataset</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	Data:	Dataset</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="k">if</span> <span class="n">oldPP</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="c1">#oldfPP = (#rasterio.crs.CRS.from_string(</span>
+		<span class="n">oldPP</span> <span class="o">=</span> <span class="s2">&quot;+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs&quot;</span>
+		<span class="c1">#)</span>
+		
+	<span class="c1"># define current projection (input)</span>
+	<span class="k">if</span> <span class="n">newPP</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">newPP</span> <span class="o">=</span> <span class="s1">&#39;EPSG:4326&#39;</span>
+	
+	
+	<span class="c1"># check if projection is in ERSG format</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">oldPP</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">11</span><span class="p">:</span>
+		<span class="n">oldPP</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">CRS</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">oldPP</span><span class="p">)</span>
+	
+	<span class="c1"># reprojec dataset</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="s1">&#39;y&#39;</span><span class="p">})</span>  <span class="c1"># new method</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_crs</span><span class="p">(</span><span class="n">oldPP</span><span class="p">)</span> <span class="c1"># write crs</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">reproject</span><span class="p">(</span><span class="n">newPP</span><span class="p">,</span>
+				<span class="c1">#resampling=Resampling.nearest</span>
+				<span class="p">)</span> <span class="c1"># reproject the file</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="s1">&#39;lat&#39;</span><span class="p">})</span>  <span class="c1"># new method</span>
+	
+	<span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="get_label_variable"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.get_label_variable">[docs]</a><span class="k">def</span> <span class="nf">get_label_variable</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+	<span class="n">field_labels</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s2">&quot;pre&quot;</span> <span class="p">:</span> <span class="s1">&#39;Precipitation [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;pet&quot;</span> <span class="p">:</span> <span class="s1">&#39;Potential ET. [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;aet&quot;</span> <span class="p">:</span> <span class="s1">&#39;Actual ET. [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;tht&quot;</span> <span class="p">:</span> <span class="s1">&#39;Soil moisture [--]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;inf&quot;</span> <span class="p">:</span> <span class="s1">&#39;Infiltration [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;run&quot;</span> <span class="p">:</span> <span class="s1">&#39;Overland Flow [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;tls&quot;</span> <span class="p">:</span> <span class="s1">&#39;Trans. Losses [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;fch&quot;</span> <span class="p">:</span> <span class="s1">&#39;Focused Rch. [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;rch&quot;</span> <span class="p">:</span> <span class="s1">&#39;Diffuse Rch. [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;ghd&quot;</span> <span class="p">:</span> <span class="s1">&#39;GW Discharge [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;dis&quot;</span> <span class="p">:</span> <span class="s1">&#39;Flow channel [m3/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;twsc&quot;</span><span class="p">:</span> <span class="s2">&quot;Total Water storage </span><span class="se">\n</span><span class="s2"> Anomalies [mm/month]&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;wrsi&quot;</span><span class="p">:</span> <span class="s2">&quot;Water Requirement Satisfaction </span><span class="se">\n</span><span class="s2"> Index [-]&quot;</span><span class="p">,</span>
+		
+		<span class="p">}</span>
+	<span class="k">return</span> <span class="n">field_labels</span><span class="p">[</span><span class="n">var</span><span class="p">]</span></div>
+	
+<div class="viewcode-block" id="get_mask"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.get_mask">[docs]</a><span class="k">def</span> <span class="nf">get_mask</span><span class="p">(</span><span class="n">fmask</span><span class="p">):</span>
+	<span class="c1"># output an array</span>
+	<span class="c1"># get a mask</span>
+	<span class="n">mask</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fmask</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="c1"># mask values for visualisation</span>
+	<span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+	<span class="n">mask</span><span class="p">[</span><span class="n">mask</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+	<span class="n">mask</span><span class="p">[</span><span class="n">mask</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+	<span class="k">return</span> <span class="n">mask</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
