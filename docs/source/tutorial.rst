@@ -8,4 +8,5 @@ Tutorials
    :maxdepth: 2
 
    dryp_tutorial
-   forecast_plot_tutorial
+   stopet_tutorial
+   forecast_tutorial

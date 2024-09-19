@@ -11,3 +11,7 @@ build
 stopet_result
 cuwalid/stopet/stopet_parameter_files/monthly_cont_percentage.nc
 cuwalid/stopet/stopet_parameter_files/stopet_parameters.nc
+forecasting_dataset/
+cache/
+forecast_plot_input.json
+run_forecast.py

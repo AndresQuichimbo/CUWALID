@@ -1,0 +1,91 @@
+===========================
+Forecast Impact Tutorial
+===========================
+
+Running the model
+=================
+
+Plotting maps using cuwalid forecasting is done by running this command in the terminal:
+
+.. code-block:: bash
+
+    # replace "input.json" with the path to your input json
+    python -m cuwalid.forecasting.main_impact_forecast input.json
+
+Or you can import the function into your code like this:
+
+.. code-block:: python
+
+    from cuwalid.forecasting.main_impact_forecast import plot_maps_json
+
+    # replace "input.json" with the path to your input json
+    plot_maps_json("input.json")
+
+
+
+Input Parameters
+================
+
+The input JSON shown above will look something like this:
+
+.. literalinclude:: ../txt/forecast_input.json
+    :language: json
+    :linenos:
+
+Here is an explanation of what each parameter does:
+
+- **run_hindcast**: A boolean value that specifies whether to run the hindcast simulation. Set to `true` to enable this step.
+
+- **run_forecast**: A boolean value that specifies whether to run the forecast simulation. Set to `true` to enable this step.
+
+- **run_plotting**: A boolean value that specifies whether to generate plots from the forecast and hindcast simulations. Set to `true` to enable plotting.
+
+- **hindcast_model_name**: The name of the model used for the hindcast simulation. In this case, the hindcast model is named "HAD_IMERGba_sim0".
+
+- **forecast_model_name**: The name of the model used for the forecast simulation. In this example, the forecast model is named "MAM_2022_realization_test".
+
+- **model_path**: The directory path where the model's outputs (hindcast and forecast data) are stored. It should point to the location containing the regional model output files.
+
+- **postpp_path**: Specifies the path to the directory where the post-processing files are stored. This path is used after the hindcast and forecast simulations are complete for further analysis.
+
+- **threshold_path**: The path to the NetCDF file containing threshold data used for defining extreme weather conditions. For example, it helps in classifying conditions like floods or droughts. In the file name, replace specific indicators (e.g., year) with placeholders like `YYYY` to handle multiple time periods automatically.
+
+- **dataset_path**: The directory where the dataset used in the simulation is located. This typically contains observational or gridded data required for the model.
+
+- **season**: A list that specifies the seasons for which the forecast or hindcast is being generated. For example, "MAM" refers to the March-April-May season.
+
+- **start_year**: The starting year for the hindcast or forecast simulation. Defines the earliest year included in the analysis.
+
+- **end_year**: The ending year for the hindcast or forecast simulation. Defines the most recent year included in the analysis.
+
+- **variables**: A dictionary that specifies which variables are included in the simulation. Each key is a variable name, and the value is a boolean indicating whether it is active (`true`) or inactive (`false`).
+
+  - **pre**: A boolean indicating whether precipitation (`pre`) is included in the simulation.
+  
+  - **pet**: A boolean indicating whether potential evapotranspiration (`pet`) is included.
+
+  - **aet**: A boolean indicating whether actual evapotranspiration (`aet`) is included.
+
+  - **tht**: A boolean indicating whether total heat (`tht`) is included.
+
+  - **egw**: A boolean indicating whether groundwater evaporation (`egw`) is included.
+
+  - **inf**: A boolean indicating whether infiltration (`inf`) is included.
+
+  - **run**: A boolean indicating whether surface runoff (`run`) is included.
+
+  - **rch**: A boolean indicating whether recharge (`rch`) is included.
+
+  - **fch**: A boolean indicating whether flow from catchment (`fch`) is included.
+
+  - **gdh**: A boolean indicating whether groundwater depth (`gdh`) is included.
+
+  - **dis**: A boolean indicating whether discharge (`dis`) is included.
+
+  - **tls**: A boolean indicating whether total land surface temperature (`tls`) is included.
+
+  - **wte**: A boolean indicating whether water table elevation (`wte`) is included.
+
+  - **twsc**: A boolean indicating whether terrestrial water storage change (`twsc`) is included.
+
+  - **wrsi**: A boolean indicating whether water requirement satisfaction index (`wrsi`) is included.

@@ -1,0 +1,32 @@
+{
+    "run_hindcast": true,
+    "run_forecast": true,
+    "run_plotting":true,
+
+    "hindcast_model_name": "HAD_IMERGba_sim0",
+    "forecast_model_name": "MAM_2022_realization_test",
+    "model_path": "/home/cuwalid/training/historical/regional/outputs/",
+    "postpp_path": "/home/aquichimbo/training/historical/regional/postpp/",
+    "threshold_path": "/home/aquichimbo/training/historical/regional/postpp/netcdf/HAD_IMERGba_sim0_MAM_extremes_quantiles.nc",
+    "dataset_path": "/path/to/dataset",
+    "season": ["MAM"],
+    "start_year": 2003,
+    "end_year": 2023,
+    "variables": {
+        "pre": true,
+        "pet": true,
+        "aet": true,
+        "tht": true,
+        "egw": true,
+        "inf": false,
+        "run": false,
+        "rch": true,
+        "fch": true,
+        "gdh": false,
+        "dis": true,
+        "tls": false,
+        "wte": true,
+        "twsc": true,
+        "wrsi": false
+    }
+}
