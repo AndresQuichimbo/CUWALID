@@ -257,15 +257,17 @@ class grid_environment(object):
 	def create_grid(self, ncol, nrow, xllcorner, yllcorner, cellsize, domain):
 		"""this function create a grid landlab object, this function can be
 		used directly from landlab rastergrid function
+		
 		Parameters
-		------
+		----------
 		ncol:		number of column of the grid, grid width (integer)
 		nrow:		number of column of the grid, grid width (integer)
 		xllcorner:	lower left x coordinate
 		yllcorner:	lower left x coordinate
 		cellsize:	grid spacing, size of the model cells
+		
 		Returns
-		------
+		-------
 		grid:	landlab grid
 		"""
 		grid = RasterModelGrid((nrow, ncol), xy_spacing=cellsize,

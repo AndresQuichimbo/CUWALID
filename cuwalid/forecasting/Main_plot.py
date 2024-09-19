@@ -51,6 +51,56 @@ def plot_maps_json(config_file):
 		river_path=river_path,
 	)
 
+# Function to plot maps based on the configuration in the JSON file
+def plot_maps_from_file_json(config_file):
+	# Open and load the JSON config file
+	with open(config_file, 'r') as file:
+		try:
+			config = json.load(file)
+		except json.JSONDecodeError as e:
+			print(f"Error reading JSON file: {e}")
+			return
+
+	# Check for required keys and provide feedback if missing
+	required_keys = ["plot_scales", "place_names", "seasons", "water_status", "year", "netcdf_path", "threshold_path", "mask_path", "river_path"]
+	for key in required_keys:
+		if key not in config:
+			print(f"Missing required key: {key} in the configuration file.")
+			return
+
+	# Extract parameters from JSON config
+	plot_scales = config.get("plot_scales", ["Zoom"])
+	country_name = config.get("country_name", "Kenya")
+	place_name = config.get("place_names", ["Isiolo"])
+	season = config.get("seasons", ["OND"])
+	water_status = config.get("water_status", ["Flood"])
+	year = config["year"]
+	language = config.get("language", "English")
+	output_dir = config.get("output_dir", "output")
+	netcdf_path = config["netcdf_path"]
+	threshold_path = config["threshold_path"]
+	mask_path = config["mask_path"]
+	river_path = config["river_path"]
+
+	# read list of files containing the list of places to plot
+	fname_places_list_file # in default parameter dataset
+
+
+	# Call the plotting function
+	call_plot_maps(
+		plot_scales=plot_scales, 
+		country_name=country_name, 
+		place_names=place_name, 
+		seasons=season, 
+		water_status=water_status, 
+		year=year, 
+		output_dir=output_dir, 
+		language=language,
+		netcdf_path=netcdf_path,
+		threshold_path=threshold_path,
+		mask_path=mask_path,
+		river_path=river_path,
+	)
 
 
 def call_plot_maps(plot_scales=["Zoom"],
