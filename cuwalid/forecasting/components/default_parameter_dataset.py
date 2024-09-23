@@ -12,7 +12,6 @@ name_short_country = {
 		"somalia":'SO',
 	}
 
-
 name_field_county_shp = {
 		"kenya":'county',
 		"ethiopia":'NAME_2',
@@ -31,7 +30,6 @@ name_county_shp = {
 		"somalia":'NAME',
 	}
 
-# do not change this
 name_field_shp = {
 	"Zoom": "IEBC_WARDS",
 	"Ward": "IEBC_WARDS",
@@ -39,16 +37,14 @@ name_field_shp = {
 	"Country": "NAME",	
 	}
 
-
-
 shapefile_country_dic = {
 	"region": "forecasting_dataset/HAD/gis/Horn_Africa/Horn_africa_contry.shp"
 	}
 
 shapefile_county_dic = {
-		"kenya": 'forecasting_dataset/kenya/kenya-county/ke_county.shp',
-		"ethiopia": 'forecasting_dataset/ethiopia/Export_admin2.shp',
-		"somalia": 'forecasting_dataset/somalia/somalia_regions.shp',
+	"kenya": 'forecasting_dataset/kenya/kenya-county/ke_county.shp',
+	"ethiopia": 'forecasting_dataset/ethiopia/Export_admin2.shp',
+	"somalia": 'forecasting_dataset/somalia/somalia_regions.shp',
 	}
 
 shapefile_wards_dic = {
@@ -56,8 +52,13 @@ shapefile_wards_dic = {
 	}
 
 fname_places_list_file = {
-		"kenya": 'forecasting_dataset/KE_Kenya_county.csv',
-		"ethiopia": 'forecasting_dataset/ET_Ethiopia_region.csv',
-		"somalia": 'forecasting_dataset/SO_Somalia_region.csv',
+	"kenya": 'forecasting_dataset/kenya/kenya-county/KE_Kenya_county.csv',
+	"ethiopia": 'forecasting_dataset/ethiopia/ET_Ethiopia_region.csv',
+	"somalia": 'forecasting_dataset/somalia/SO_Somalia_region.csv',
+	}
 
-}
+# Rivers shape path
+rivers_shape_path = 'forecasting_dataset/NaturalEarth/ne_10m_rivers_lake_centerlines.shp'
+
+# Default netcdf path (YYYY represents the year to be replaced by the users input)
+default_netcdf = "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_YYYY_grid.nc"

@@ -21,8 +21,9 @@ from matplotlib.patches import Rectangle
 import matplotlib.patheffects as path_effects
 #sys.path.append('C:/Users/Edisson/Documents/GitHub/DRYPv2.0.1')
 #sys.path.append("/user/home/km19051/DRYPv2.0.1")
-#from cuwalid.forecasting.components.map_properties import *
-#from cuwalid.forecasting.components.default_parameter_dataset import *
+from cuwalid.forecasting.components.helper_functions import add_label_features, bounding_box, get_mask, get_season_dataset, read_dataset, resample_dataset
+from cuwalid.forecasting.components.map_properties import *
+from cuwalid.forecasting.components.default_parameter_dataset import *
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -38,267 +39,6 @@ pip install <package>
 example: pip install osmnx
 
 """
-
-
-# =======================================================
-def read_dataset(fname, var_name='tht'):
-	# Open the first netCDF file
-	# output dataset
-	data = xr.open_dataset(fname)
-	data = data[var_name]
-	return data
-	
-def resample_dataset(data, mean=True, delt='Y'):
-	# calculate climatological mean
-	# output an array
-	if mean is True:
-		data = data.resample(time=delt).mean()
-	else:
-		data = data.resample(time=delt).sum()	
-	return data
-
-def season_name_to_number(season):
-	"""This function read a string representing seasons and return a
-	list of numbers indicating months
-	
-	Parameters
-	----------
-	season : str
-		season represented by three capital letters (e.g. "OND")
-
-	Returns
-	-------
-	list
-		list of months
-	"""
-
-	if season == "MAM":
-		season = [3,4,5]
-	elif season == "OND":
-		season = [10,11,12]
-
-	return season
-
-def get_season_dataset(data, season):
-	# get seasson
-	return data.where(data.time.dt.month.isin(season_name_to_number(season)))
-
-def reproject_dataset(data, oldPP, newPP):
-	"""Transform projection system
-	oldPP and newPP have to be defined first
-	
-	Parameters
-	----------
-	Data:	Dataset
-	
-	Returns
-	-------
-	Data:	Dataset
-	"""
-	# check if projection is in ERSG format
-	if len(newPP) > 11:
-		newPP = rasterio.crs.CRS.from_string(newPP)
-	
-	# reprojec dataset
-	data = data.rename({'lon': 'x', 'lat': 'y'})  # new method
-	data = data.rio.write_crs(oldPP) # write crs
-	data = data.rio.reproject(newPP) # reproject the file
-	data = data.rename({'x': 'lon', 'y': 'lat'})  # new method
-	
-	return data
-
-def get_mask(fmask):
-	# output an array
-	# get a mask
-	mask = rasterio.open(fmask).read(1)
-	# mask values for visualisation
-	mask = np.array(mask, dtype=float)
-	mask[mask <= 0] = np.nan
-	mask[mask > 0] = 1.0
-	return mask
-
-def bounding_box(center, distance=10):
-	lat, lon = center[0], center[1]
-	# sw, ne
-	bearings = [225, 45]
-	origin = geopy.Point(lat, lon)
-	bbox = []
-
-	for bearing in bearings:
-		destination = geodesic(kilometers=np.sqrt(2)*distance).destination(origin, bearing)
-		coords = destination.longitude, destination.latitude
-		bbox.extend(coords)
-	# xmin, ymin, xmax, ymax
-	return bbox
-	
-def add_scale_bar(ax, length, location=(0.05, 0.05), linewidth=3, text='1 km'):
-	"""
-	Add a scale bar to a Matplotlib Axes object.
-	
-	Parameters:
-	- ax: The Matplotlib Axes object to add the scale bar to.
-	- length: Length of the scale bar in Axes coordinates (0 to 1).
-	- location: Tuple indicating the location of the scale bar in Axes coordinates.
-	- linewidth: The thickness of the scale bar line.
-	- text: A string with the text label for the scale bar.
-	"""
-	# Transform from Axes coordinates (0-1) to figure coordinates
-	trans = ax.transAxes + ax.figure.transFigure.inverted()
-	x, y = trans.transform(location)
-	
-	# Draw the scale bar
-	bar = mpatches.Rectangle((x, y), length*100, linewidth/100,
-			#transform=ax.figure.transFigure,
-			color='black')
-	ax.figure.patches.extend([bar])
-	
-	# Add text annotation for the scale bar
-	ax.text(x + length/2, y - linewidth/100 * 2,
-		text, ha='center', va='top',
-		transform=ax.figure.transFigure
-		)
-
-def add_label_features(geodata, fontsize=6, boundbox=None, offset=0,
-	fontstyle="normal", halignament="center", alpha=1.0, color="k",
-	language="name"):
-	
-	if len(geodata) > 10:
-		geodata = geodata.sample(n=10)
-	#print(geodata.columns)
-	#print(c)
-	for idx, row in geodata.iterrows():
-		x_mid, y_mid = row.geometry.centroid.coords[0]
-		iname = row[language].split(' ')
-		if len(iname) > 2:
-			iname = "\n".join(iname)
-		else:
-			iname = row[language]
-		#print(x_mid, y_mid, boundbox, iname)
-		if boundbox is not None:
-			if (boundbox[0] > x_mid) or (x_mid > boundbox[2]):
-				x_mid = None
-				iname = None
-			if (boundbox[1] > y_mid) or (y_mid > boundbox[3]):
-				y_mid = None
-				iname = None
-		#print(x_mid, y_mid, boundbox)
-		#if boundbox is not None:
-		#	x_mid = np.max([boundbox[0]+offset, x_mid])
-		#	y_mid = np.max([boundbox[1]+offset, y_mid])
-		#	x_mid = np.min([boundbox[2]-offset, x_mid])
-		#	y_mid = np.min([boundbox[3]-offset, y_mid])
-		#print(x_mid, y_mid, boundbox)
-		#print(iname)
-		if iname is not None:
-			plt.text(x_mid+offset, y_mid+offset, s=iname,
-				fontsize=fontsize, fontstyle=fontstyle,
-				horizontalalignment=halignament, alpha=alpha,
-				color=color)
-	
-# ==========================================================
-# ==========================================================
-# CHANGE NAME WHEN YOU RUN THE MODEL
-# ==========================================================
-
-# PLOT TYPE
-plot_scale = "Country"
-plot_scale = "County"
-#plot_scale = "Ward"
-#plot_scale = "Zoom"
-
-# SELECT WARD
-place_name = "Isiolo"
-place_name = "Meru"
-#place_name = "Samburu"
-#place_name = "Laikipia"
-#place_name = "Kinna"
-#place_name = "Burat"
-#place_name = "Somalia"
-#place_name = "Kenya"
-
-# SELCT TIME STEP TO PRINT AS EXAMPLE
-#time_plot = 15 # Example contain only 24 months
-
-# SELECT SEASON
-iseason = "MAM"
-iseason = "OND"
-
-# SELECT VARIABLE FOR ANALYSIS
-iwater_status = "Flood"
-#iwater_status = "Groundwater"
-#iwater_status = "Surface"
-iwater_status = "Soil"
-#iwater_status = "Evaporation"
-
-#var = 'twsc'
-#var = 'flood'
-#var = 'dis'
-
-# SELECT YEAR
-iyear = 2010
-
-# LANGUAGE
-ilanguage = "English"
-#ilanguage = "Swahili"
-
-# main functions
-#def call_plot_maps():
-#	"""Function to call the plot map function
-#	it requires all parameters of the ploting funciton
-#	
-#	you can run from the anaconda command prompt
-#	>>> python aux_HAD_plot_forecasting_maps.py
-#
-#	Parameters
-#	----------
-#	plot_scale: str
-#		default "Zoom"
-#	place_name: str
-#		default "Isiolo"
-#	iseason: str
-#		default "MAM"
-#	iwater_status: str
-#		default "Flood"
-#	iyear: str
-#		default 2010
-#	ilanguage: str
-#		default "English"
-#	
-#	Returns
-#	-------
-#
-#	"""
-#	all_plot_scales = ["Ward", "Zoom"] #"County", 
-#	all_place_names = ["Kinna", "Burat"] #"Isiolo", 
-#	all_seasons = ["OND", "MAM"]
-#	all_water_status = ["Flood", "Surface", "Groundwater"]
-#
-#
-#	for iiseason in all_seasons:
-#		for iiwater_status in all_water_status:
-#			plot_map(plot_scale="County",
-#			  				place_name="Isiolo",
-#							iseason=iiseason,
-#							iwater_status=iiwater_status,
-#							iyear=2010,
-#							ilanguage="English"
-#							)
-#
-#
-#	#plot_map(plot_scale="Zoom", place_name="Burat", iseason="OND", iwater_status="Flood", iyear=2010, ilanguage="English")
-#	for iplot_scale in all_plot_scales:
-#		for iplace_name in all_place_names:
-#			for iiseason in all_seasons:
-#				for iiwater_status in all_water_status:
-#					plot_map(plot_scale=iplot_scale,
-#			  				place_name=iplace_name,
-#							iseason=iiseason,
-#							iwater_status=iiwater_status,
-#							iyear=2010,
-#							ilanguage="English"
-#							)
-
-
 
 def plot_map(plot_scale="Zoom",
 			region="region",
@@ -347,31 +87,6 @@ def plot_map(plot_scale="Zoom",
 	
 	
 	"""
-	# ===================================================================
-	# ===================================================================
-	# -----------------------------------------------------------------------
-	# SPECIFY PATHS - GEOGRAPHICAL UNITS WGS64
-	# Load the polygon shapefile using geopandas
-	# shapefile_country = "forecasting_dataset/HAD/gis/Horn_Africa/Horn_africa_contry.shp"
-	# shapefile_county = 'forecasting_dataset/kenya/kenya-county/ke_county.shp'
-	# shapefile_wards = 'forecasting_dataset/kenya/kenya_wards/Kenya wards.shp'
-	# rivers_shapefile = 'forecasting_dataset/NaturalEarth/ne_10m_rivers_lake_centerlines.shp'
-	#settlements_shapefile = 'forecasting_dataset/NaturalEarth/ne_10m_populated_places.shp'
-	#facilities_shapefile = "forecasting_dataset/Jake/facilities/Health_facilities_wgs84.shp"
-
-	shapefile_country_dic = {
-	"region": "forecasting_dataset/HAD/gis/Horn_Africa/Horn_africa_contry.shp"
-	}
-
-	shapefile_county_dic = {
-		"kenya": 'forecasting_dataset/kenya/kenya-county/ke_county.shp',
-		"ethiopia": 'forecasting_dataset/ethiopia/Export_admin2.shp',
-		"somalia": 'forecasting_dataset/somalia/somalia_regions.shp',
-	}
-
-	shapefile_wards_dic = {
-	"kenya": 'forecasting_dataset/kenya/kenya_wards/Kenya wards.shp'
-	}
 
 	if shape_path == None:
 		shapefile_country = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_country_dic[region]))
@@ -384,14 +99,14 @@ def plot_map(plot_scale="Zoom",
 			shapefile_wards = shape_path
 
 
-	rivers_shapefile = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'forecasting_dataset/NaturalEarth/ne_10m_rivers_lake_centerlines.shp'))
+	rivers_shapefile = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', rivers_shape_path))
 
 
 	# load dataset of model outputs
 	#netcdf_path = "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_"+ str(iyear)+"_grid.nc"
 	#netcdf_path = 'forecasting_dataset/HAD/output/HAD_IMERG_sim_ini_grid.nc'
 	if netcdf_path == None:
-		netcdf_path = "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_YYYY_grid.nc".replace("YYYY", str(iyear))
+		netcdf_path = default_netcdf.replace("YYYY", str(iyear))
 	else:
 		if "YYYY" in netcdf_path:
 			netcdf_path = netcdf_path.replace("YYYY", str(iyear))
@@ -401,7 +116,7 @@ def plot_map(plot_scale="Zoom",
 
 	if iwater_status == "Groundwater":
 		var = "twsc"
-		#netcdf_path = "forecasting_dataset/HAD/postpp/HAD_IMERGb_sim_" + var + "_"+ str(iyear)+".nc"
+		# If netcdf path is None use the default
 		if netcdf_path == None:
 			print("Using default netcdf path")
 			netcdf_path = "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_"+ str(iyear)+ "_grid_" + var + ".nc"
@@ -426,12 +141,6 @@ def plot_map(plot_scale="Zoom",
 	else:
 		nc_path_threshold = nc_path_threshold + "_quantiles.nc"
 
-	# if (iwater_status == "Surface") or (iwater_status == "Flood"):
-	# 	nc_path_threshold = "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_" + iseason + "_flow_quantiles.nc"
-
-	#nc_path_threshold = "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_" + iseason + "_dis_quantiles.nc"
-	#nc_path_threshold = "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_quantiles.nc"
-
 	if mask_path == None:
 		print("Using default mask path")
 		fmask = "forecasting_dataset\HAD\input_model\HAD_mask_utm_m.asc"
@@ -444,350 +153,9 @@ def plot_map(plot_scale="Zoom",
 	else:
 		friver = river_path
 
-	# MAP PROPERTIES ===================================================
-	# Define filter for tertiary highways
-	highway_filter = ["primary", "motorway", "tertiary", "trunk"]
-
-	# do not modify this
-	highways = {
-	'highway':["primary", "motorway", "tertiary"],
-	#"color" : "r",
-	#"label" : "Main Roads"
-	}
-
-	#boundaries = {
-	#'highway':["admin_level",],
-	#"color" : "r",
-	#"label" : "Main Roads"
-	#}
-
-	# LINE PROPERTIES -----------------
-	# specify colours of streets and roads
-	line_colors = {
-	"Small Roads": "#333333",
-	"Main Roads": "#000000",
-	"Administrative Boundary": "k",
-	}
-
-	# specify line widths of streets and roads
-	line_width = {
-	"Small Roads": 0.50,
-	"Main Roads": 2.0,
-	"Administrative Boundary": 2.0,
-	}
-
-	# specify lines styles
-	line_ls = {
-	"Small Roads": ":",
-	"Main Roads": ":",
-	"Administrative Boundary": "dashed",
-	}
-
-	# dictionaries
-	
-	aeroway_obj = ["Airport", ]
-	
-	aeroway_ids = {
-	"Airport": ["aerodrome"],
-	}
-	
-	# color of mark/symbols
-	aeroway_color = {
-	"Airport": 'k',
-	}
-
-	aeroway_marker = {
-	"Airport": '$\u2708$',
-	}
-	
-	# marker size of reference points
-	aeroway_size = {
-	"Airport": 100,
-	}
-	# do not modify this
-	points = ["Church", "School", "Health centre"]#, "Gas"]
-
-	# do not modify this
-	points_ids = {
-	#"Airport": ["aerodrome"],
-	"Church": ["place_of_worship"],
-	"School": ["school", "college", "university"],
-	"Gas": ["fuel"],
-	"Health centre" : ["hospital", "clinic",],
-	}
-
-	# color of mark/symbols
-	point_color = {
-	#"Airport": 'k',
-	"Church": 'k',
-	"School": 'k',
-	"Gas": 'k',
-	"Health centre": "k",
-	}
-
-	# marker (symbol) of reference points
-	point_marker = {
-	#"Airport": '$\u2708$',
-	"Church": '$\u2628$',
-	"School": '$\u2302$',
-	"Gas": '$\u26FD$',
-	"Health centre": '$\u0048$',
-	}
-
-	# marker size of reference points
-	marker_size = {
-	"Airport": 35,
-	"Church": 40,
-	"School": 10,
-	"Gas": 20,
-	"Health centre": 45,
-	}
-
-	# PLACES, IMPORTANT URNAM CENTERS
-	places_obj = ["Town",]
-
-	place_ids = {
-	"Town": ["town",],
-	}
-
-	place_color = {
-	"Town": 'k',
-	}
-
-	place_marker = {
-	"Town": 'o',
-	}
-
-	place_size = {
-	"Town": 30,
-	}
-
-	# WATER BODIES
-	# do not change dthis
-	water_objects = ["River", "Stream"]
-	water_body = {
-	"River": ["river", "stream"],
-	"Stream": ["stream",],
-	}
-
-	# specify the colour of rivers
-	water_color = {
-	"River": '#56B4E9',
-	"Stream": '#56B4E9',
-	}
-
-	# this dictionary modify line widths of rivers
-	water_lw = {
-	"River": 2.0,
-	"Stream": 0.1,
-	}
-
-
-	# LEISURE OBJECTS
-	leisure_objects = ["Natural Reserve"]
-	leisure_body = {
-	"Natural Reserve": ["nature_reserve",],
-	}
-
-	leisure_color = {
-	"Natural Reserve": 'g',
-	}
-
-	# boundary OBJECTS
-	boundary_objects = ["Administrative Boundary"]
-	
-	boundary_ids = {
-	"Administrative Boundary": ["admininstrative",],
-	}
-
-	boundary_color = {
-	"Administrative Boundary": 'gray',
-	}
-
-	admin_level_map = {
-	"Zoom": "4",
-	"Ward": "4",
-	"County": "4",
-	"Country": "2",
-	}
-	# MAP SCALE ---------------------------------------------------
-	# do not change this, paramters have been calibrated
-	plot_scale_id = {
-	"Zoom": 1.0,
-	"Ward": 1.0,
-	"County": 1.6,
-	"Country": 2.0,
-	}
-
-	# do not change this
-	name_field_shp = {
-	"Zoom": "IEBC_WARDS",
-	"Ward": "IEBC_WARDS",
-	"County": None,
-	"Country": "NAME",	
-	}
-
-	# Set the correct name field dependent on the country inputed
-	name_field_county_shp = {
-		"kenya":'county',
-		"ethiopia":'NAME_2',
-		"somalia":'NAME',
-	}
-
+	# Changing the country name depending on the country plotting. e.g. "kenya": "county"
 	name_field_shp["County"] = name_field_county_shp[country_name.lower()]
-
-
-	# change only if an element is not required
-	plot_obj_id = {
-	"Zoom": {"Administrative Boundary": True,
-			"Natural Reserve": True,
-			"River": True,
-			"Stream": False,
-			"Airport": True,
-			"Church": False,
-			"School": False,
-			"Health centre": True,
-			"Main Roads": True,
-			"Small Roads": False,
-			"Town": True,
-			},
-	"Ward": {"Administrative Boundary": True,
-			"Natural Reserve": True,
-			"River": True,
-			"Stream": False,
-			"Airport": True,
-			"Church": False,
-			"Health centre": True,
-			"School": False,
-			"Main Roads": True,
-			"Small Roads": False,
-			"Town": True,
-			},
-	"County": {"Administrative Boundary": True,
-			"Natural Reserve": True,
-			"River": True,
-			"Stream": False,
-			"Airport": True,
-			"Church": False,
-			"School": False,
-			"Health centre": False,
-			"Main Roads": True,
-			"Small Roads": False,
-			"Town": True,
-			},
-	"Country": {"Administrative Boundary": True,
-			"Natural Reserve": False,
-			"River": False,
-			"Stream": False,
-			"Airport": False,
-			"Church": False,
-			"School": False,
-			"Health centre": False,
-			"Main Roads": False,
-			"Small Roads": False,
-			"Town": True,
-			},
-	}
-
-	# do not change this
-	language_map = {
-	"English": "name",
-	"Swahili": "name:sw",
-	}
-
-	language_labels = {
-	"English":{"Administrative Boundary": "Boundary",
-			"Natural Reserve": "Natural Reserve",
-			"River": "River",
-			"Stream": "Stream",
-			"Airport": "Airport",
-			"Church": "Church",
-			"School": "School",
-			"Health centre": "Health centre",
-			"Main Roads": "Main Roads",
-			"Small Roads": "Small Roads",
-			"Town": "Town",
-			"OND": "Short rains (Oct-Dec)",
-			"MAM": "Long rains (MAR-MAY)",
-			"Soil": "Soil Moisture Status",
-			"Evaporation": "Evapotranspiration",
-			"Groundwater": "Groundwater status",
-			"Surface": "Surface Water Status",
-			"Flood": "Flood Hazard Potential",
-			"in": "in"
-			},
-	"Swahili":{"Administrative Boundary": "Mpaka",
-			"Natural Reserve": "Natural Reserve",
-			"River": "River",
-			"Stream": "Stream",
-			"Airport": "Uwanja wa ndege",
-			"Church": "",
-			"School": "",
-			"Health centre": "Kituo cha afya na matibabu",
-			"Main Roads": "Barabara kuu",
-			"Small Roads": "Small Roads",
-			"Town": "Town",
-			"OND": "Mvua kidogo wa mda mfupi (Oktoba-Desemba)",
-			"MAM": "Mvua mingi wa masika (Machi - Mei)",
-			"Soil": "Soil Moisture Status",
-			"Evaporation": "Evapotranspiration",
-			"Groundwater": "Hali ya maji ya chini ya ardhi",
-			"Surface": "Hali ya maji ya juu ya ardhi",
-			"Flood": "Uwezekano wa hadhari\nza Mafuriko",
-			"in": "in"
-			}
-	}
-
-	# season labels
-	season_name = {
-	"OND": "Short rains (Oct-Dec)",
-	"MAM": "Long rains (MAR-MAY)",
-	}
 	
-	# variable labels and colorbar labels -------------------------
-	water_var = {
-	"Flood": "dis",
-	"Groundwater": "twsc",
-	"Surface": "dis",
-	"Soil": "tht",
-	"Evaporation": "aet",
-	"Crop": "wrsi",
-	}
-
-	variable = {
-	"Soil": "Soil Moisture Status",
-	"Evaporation": "Evapotranspiration",
-	"Groundwater": "Groundwater status",
-	"Surface": "Surface Water Status",
-	"Flood": "Flood Hazard Potential",
-	"Crop": "Potential crop health",
-	"Pasture": "Potential pasture/browse health",
-	}
-
-	status = {
-	"Flood": ["Low\nSio sana", "High\nNi sana"],
-	"Groundwater": ["Bad\nHali mbaya", "Good\nHali mzuri"],
-	"Surface": ["Bad\nHali mbaya", "Good\nHali mzuri"],
-	"Soil": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-	"Evaporation": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-	"Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-	}
-
-	var_colour = {
-	"Groundwater": ["#E69F00", "#009E73"],
-	"Surface": ["#E69F00", "#009E73"],
-	"Soil": ["darkviolet", "seagreen"],
-	"Evaporation": ["darkviolet", "seagreen"],
-	"Flood": ["#009E73", "#E69F00"],
-	"Crop": ["#E69F00", "#009E73"],
-	}
-
-	# ward name and center (lat, lon)
-	wards_data = {
-	"Burat": (0.3475694841724472, 37.493336034162525), #(0.353, 37.584),
-	"Kinna": (0.263515185704488, 38.240486302993496), #(0.31883, 38.20499),
-	}
-	# =========================================================
 	# =========================================================
 	# DO NOT CHANGE FROM THIS LINE
 	# =========================================================
@@ -803,17 +171,6 @@ def plot_map(plot_scale="Zoom",
 	# ----------------------------------------------------------
 	# load shapefiles
 	# name field for shapefile
-	name_county_shp = {
-		"kenya":'county',
-		"ethiopia":'NAME_2',
-		"somalia":'NAME',
-	}
-
-	code_county_shp = {
-		"kenya":'gid',
-		"ethiopia":'OBJECTID',
-		"somalia":'REGN_NO',
-	}
 
 	name_field_name = {
 		"Zoom" : name_field_county_shp,
@@ -1123,7 +480,6 @@ def plot_map(plot_scale="Zoom",
 
 	# Add river layers from other datasets
 	#rivers.plot(ax=ax, color='#0099ff', label='Rivers')
-
 
 	# plot water bodies and rivers
 	# plot only when discharge is ploted
