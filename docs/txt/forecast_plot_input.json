@@ -10,5 +10,10 @@
     "netcdf_path": "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_YYYY_grid.nc",
     "threshold_path":  "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_SSS",
     "mask_path": "forecasting_dataset/HAD/input_model/HAD_mask_utm_m.asc",
-    "river_path": "forecasting_dataset/HAD/input_model/HAD_riv_length_utm.asc"
+    "river_path": "forecasting_dataset/HAD/input_model/HAD_riv_length_utm.asc",
+    "shape_path": "path/to/shape_file",
+    "prev_output_path": "forecasting_dataset/HAD/output/",
+    "pp_path": "forecasting_dataset/HAD/postpp/",
+    "name_historical_value": "name_historical",
+    "model_name": "HAD_IMERGba_sim0"
 }

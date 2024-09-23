@@ -21,8 +21,8 @@ from matplotlib.patches import Rectangle
 import matplotlib.patheffects as path_effects
 #sys.path.append('C:/Users/Edisson/Documents/GitHub/DRYPv2.0.1')
 #sys.path.append("/user/home/km19051/DRYPv2.0.1")
-from cuwalid.forecasting.components.map_properties import *
-from cuwalid.forecasting.components.default_parameter_dataset import *
+#from cuwalid.forecasting.components.map_properties import *
+#from cuwalid.forecasting.components.default_parameter_dataset import *
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -315,7 +315,8 @@ def plot_map(plot_scale="Zoom",
 			mask_path=None,
 			river_path=None,
 			fname_output=None,
-			place_code_field=False,):
+			place_code_field=False,
+			shape_path=None):
 	"""Plot maps
 	
 	Parameters:
@@ -338,7 +339,8 @@ def plot_map(plot_scale="Zoom",
 	fname_output=None,
 	place_code_field : bool
 		Name of shapefile attribute to use as poligon, default is False,
-		it will use the place name
+		it will use the place name,
+	shape_path
 	
 	Returns:
 	--------
@@ -371,9 +373,17 @@ def plot_map(plot_scale="Zoom",
 	"kenya": 'forecasting_dataset/kenya/kenya_wards/Kenya wards.shp'
 	}
 
-	shapefile_country = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_country_dic[region]))
-	shapefile_county = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_county_dic[country_name.lower()]))
-	shapefile_wards = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_wards_dic[country_name.lower()]))
+	if shape_path == None:
+		shapefile_country = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_country_dic[region]))
+		shapefile_county = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_county_dic[country_name.lower()]))
+		shapefile_wards = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_wards_dic[country_name.lower()]))
+	else:
+		if plot_scale == "County":
+			shapefile_county = shape_path
+		elif plot_scale == "Wards":
+			shapefile_wards = shape_path
+
+
 	rivers_shapefile = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'forecasting_dataset/NaturalEarth/ne_10m_rivers_lake_centerlines.shp'))
 
 
@@ -436,347 +446,347 @@ def plot_map(plot_scale="Zoom",
 
 	# MAP PROPERTIES ===================================================
 	# Define filter for tertiary highways
-	#highway_filter = ["primary", "motorway", "tertiary", "trunk"]
+	highway_filter = ["primary", "motorway", "tertiary", "trunk"]
 
-	## do not modify this
-	#highways = {
-	#'highway':["primary", "motorway", "tertiary"],
-	##"color" : "r",
-	##"label" : "Main Roads"
+	# do not modify this
+	highways = {
+	'highway':["primary", "motorway", "tertiary"],
+	#"color" : "r",
+	#"label" : "Main Roads"
+	}
+
+	#boundaries = {
+	#'highway':["admin_level",],
+	#"color" : "r",
+	#"label" : "Main Roads"
 	#}
 
-	##boundaries = {
-	##'highway':["admin_level",],
-	##"color" : "r",
-	##"label" : "Main Roads"
-	##}
+	# LINE PROPERTIES -----------------
+	# specify colours of streets and roads
+	line_colors = {
+	"Small Roads": "#333333",
+	"Main Roads": "#000000",
+	"Administrative Boundary": "k",
+	}
 
-	## LINE PROPERTIES -----------------
-	## specify colours of streets and roads
-	#line_colors = {
-	#"Small Roads": "#333333",
-	#"Main Roads": "#000000",
-	#"Administrative Boundary": "k",
-	#}
+	# specify line widths of streets and roads
+	line_width = {
+	"Small Roads": 0.50,
+	"Main Roads": 2.0,
+	"Administrative Boundary": 2.0,
+	}
 
-	## specify line widths of streets and roads
-	#line_width = {
-	#"Small Roads": 0.50,
-	#"Main Roads": 2.0,
-	#"Administrative Boundary": 2.0,
-	#}
+	# specify lines styles
+	line_ls = {
+	"Small Roads": ":",
+	"Main Roads": ":",
+	"Administrative Boundary": "dashed",
+	}
 
-	## specify lines styles
-	#line_ls = {
-	#"Small Roads": ":",
-	#"Main Roads": ":",
-	#"Administrative Boundary": "dashed",
-	#}
+	# dictionaries
+	
+	aeroway_obj = ["Airport", ]
+	
+	aeroway_ids = {
+	"Airport": ["aerodrome"],
+	}
+	
+	# color of mark/symbols
+	aeroway_color = {
+	"Airport": 'k',
+	}
 
-	## dictionaries
-	#
-	#aeroway_obj = ["Airport", ]
-	#
-	#aeroway_ids = {
+	aeroway_marker = {
+	"Airport": '$\u2708$',
+	}
+	
+	# marker size of reference points
+	aeroway_size = {
+	"Airport": 100,
+	}
+	# do not modify this
+	points = ["Church", "School", "Health centre"]#, "Gas"]
+
+	# do not modify this
+	points_ids = {
 	#"Airport": ["aerodrome"],
-	#}
-	#
-	## color of mark/symbols
-	#aeroway_color = {
+	"Church": ["place_of_worship"],
+	"School": ["school", "college", "university"],
+	"Gas": ["fuel"],
+	"Health centre" : ["hospital", "clinic",],
+	}
+
+	# color of mark/symbols
+	point_color = {
 	#"Airport": 'k',
-	#}
+	"Church": 'k',
+	"School": 'k',
+	"Gas": 'k',
+	"Health centre": "k",
+	}
 
-	#aeroway_marker = {
+	# marker (symbol) of reference points
+	point_marker = {
 	#"Airport": '$\u2708$',
-	#}
-	#
-	## marker size of reference points
-	#aeroway_size = {
-	#"Airport": 100,
-	#}
-	## do not modify this
-	#points = ["Church", "School", "Health centre"]#, "Gas"]
+	"Church": '$\u2628$',
+	"School": '$\u2302$',
+	"Gas": '$\u26FD$',
+	"Health centre": '$\u0048$',
+	}
 
-	## do not modify this
-	#points_ids = {
-	##"Airport": ["aerodrome"],
-	#"Church": ["place_of_worship"],
-	#"School": ["school", "college", "university"],
-	#"Gas": ["fuel"],
-	#"Health centre" : ["hospital", "clinic",],
-	#}
+	# marker size of reference points
+	marker_size = {
+	"Airport": 35,
+	"Church": 40,
+	"School": 10,
+	"Gas": 20,
+	"Health centre": 45,
+	}
 
-	## color of mark/symbols
-	#point_color = {
-	##"Airport": 'k',
-	#"Church": 'k',
-	#"School": 'k',
-	#"Gas": 'k',
-	#"Health centre": "k",
-	#}
+	# PLACES, IMPORTANT URNAM CENTERS
+	places_obj = ["Town",]
 
-	## marker (symbol) of reference points
-	#point_marker = {
-	##"Airport": '$\u2708$',
-	#"Church": '$\u2628$',
-	#"School": '$\u2302$',
-	#"Gas": '$\u26FD$',
-	#"Health centre": '$\u0048$',
-	#}
+	place_ids = {
+	"Town": ["town",],
+	}
 
-	## marker size of reference points
-	#marker_size = {
-	#"Airport": 35,
-	#"Church": 40,
-	#"School": 10,
-	#"Gas": 20,
-	#"Health centre": 45,
-	#}
+	place_color = {
+	"Town": 'k',
+	}
 
-	## PLACES, IMPORTANT URNAM CENTERS
-	#places_obj = ["Town",]
+	place_marker = {
+	"Town": 'o',
+	}
 
-	#place_ids = {
-	#"Town": ["town",],
-	#}
+	place_size = {
+	"Town": 30,
+	}
 
-	#place_color = {
-	#"Town": 'k',
-	#}
+	# WATER BODIES
+	# do not change dthis
+	water_objects = ["River", "Stream"]
+	water_body = {
+	"River": ["river", "stream"],
+	"Stream": ["stream",],
+	}
 
-	#place_marker = {
-	#"Town": 'o',
-	#}
+	# specify the colour of rivers
+	water_color = {
+	"River": '#56B4E9',
+	"Stream": '#56B4E9',
+	}
 
-	#place_size = {
-	#"Town": 30,
-	#}
-
-	## WATER BODIES
-	## do not change dthis
-	#water_objects = ["River", "Stream"]
-	#water_body = {
-	#"River": ["river", "stream"],
-	#"Stream": ["stream",],
-	#}
-
-	## specify the colour of rivers
-	#water_color = {
-	#"River": '#56B4E9',
-	#"Stream": '#56B4E9',
-	#}
-
-	## this dictionary modify line widths of rivers
-	#water_lw = {
-	#"River": 2.0,
-	#"Stream": 0.1,
-	#}
+	# this dictionary modify line widths of rivers
+	water_lw = {
+	"River": 2.0,
+	"Stream": 0.1,
+	}
 
 
-	## LEISURE OBJECTS
-	#leisure_objects = ["Natural Reserve"]
-	#leisure_body = {
-	#"Natural Reserve": ["nature_reserve",],
-	#}
+	# LEISURE OBJECTS
+	leisure_objects = ["Natural Reserve"]
+	leisure_body = {
+	"Natural Reserve": ["nature_reserve",],
+	}
 
-	#leisure_color = {
-	#"Natural Reserve": 'g',
-	#}
+	leisure_color = {
+	"Natural Reserve": 'g',
+	}
 
-	## boundary OBJECTS
-	#boundary_objects = ["Administrative Boundary"]
-	#
-	#boundary_ids = {
-	#"Administrative Boundary": ["admininstrative",],
-	#}
+	# boundary OBJECTS
+	boundary_objects = ["Administrative Boundary"]
+	
+	boundary_ids = {
+	"Administrative Boundary": ["admininstrative",],
+	}
 
-	#boundary_color = {
-	#"Administrative Boundary": 'gray',
-	#}
+	boundary_color = {
+	"Administrative Boundary": 'gray',
+	}
 
-	#admin_level_map = {
-	#"Zoom": "4",
-	#"Ward": "4",
-	#"County": "4",
-	#"Country": "2",
-	#}
-	## MAP SCALE ---------------------------------------------------
-	## do not change this, paramters have been calibrated
-	#plot_scale_id = {
-	#"Zoom": 1.0,
-	#"Ward": 1.0,
-	#"County": 1.6,
-	#"Country": 2.0,
-	#}
+	admin_level_map = {
+	"Zoom": "4",
+	"Ward": "4",
+	"County": "4",
+	"Country": "2",
+	}
+	# MAP SCALE ---------------------------------------------------
+	# do not change this, paramters have been calibrated
+	plot_scale_id = {
+	"Zoom": 1.0,
+	"Ward": 1.0,
+	"County": 1.6,
+	"Country": 2.0,
+	}
 
-	## do not change this
-	#name_field_shp = {
-	#"Zoom": "IEBC_WARDS",
-	#"Ward": "IEBC_WARDS",
-	#"County": None,
-	#"Country": "NAME",	
-	#}
+	# do not change this
+	name_field_shp = {
+	"Zoom": "IEBC_WARDS",
+	"Ward": "IEBC_WARDS",
+	"County": None,
+	"Country": "NAME",	
+	}
 
-	## Set the correct name field dependent on the country inputed
-	#name_field_county_shp = {
-	#	"kenya":'county',
-	#	"ethiopia":'NAME_2',
-	#	"somalia":'NAME',
-	#}
+	# Set the correct name field dependent on the country inputed
+	name_field_county_shp = {
+		"kenya":'county',
+		"ethiopia":'NAME_2',
+		"somalia":'NAME',
+	}
 
-	#name_field_shp["County"] = name_field_county_shp[country_name.lower()]
+	name_field_shp["County"] = name_field_county_shp[country_name.lower()]
 
 
-	## change only if an element is not required
-	#plot_obj_id = {
-	#"Zoom": {"Administrative Boundary": True,
-	#		"Natural Reserve": True,
-	#		"River": True,
-	#		"Stream": False,
-	#		"Airport": True,
-	#		"Church": False,
-	#		"School": False,
-	#		"Health centre": True,
-	#		"Main Roads": True,
-	#		"Small Roads": False,
-	#		"Town": True,
-	#		},
-	#"Ward": {"Administrative Boundary": True,
-	#		"Natural Reserve": True,
-	#		"River": True,
-	#		"Stream": False,
-	#		"Airport": True,
-	#		"Church": False,
-	#		"Health centre": True,
-	#		"School": False,
-	#		"Main Roads": True,
-	#		"Small Roads": False,
-	#		"Town": True,
-	#		},
-	#"County": {"Administrative Boundary": True,
-	#		"Natural Reserve": True,
-	#		"River": True,
-	#		"Stream": False,
-	#		"Airport": True,
-	#		"Church": False,
-	#		"School": False,
-	#		"Health centre": False,
-	#		"Main Roads": True,
-	#		"Small Roads": False,
-	#		"Town": True,
-	#		},
-	#"Country": {"Administrative Boundary": True,
-	#		"Natural Reserve": False,
-	#		"River": False,
-	#		"Stream": False,
-	#		"Airport": False,
-	#		"Church": False,
-	#		"School": False,
-	#		"Health centre": False,
-	#		"Main Roads": False,
-	#		"Small Roads": False,
-	#		"Town": True,
-	#		},
-	#}
+	# change only if an element is not required
+	plot_obj_id = {
+	"Zoom": {"Administrative Boundary": True,
+			"Natural Reserve": True,
+			"River": True,
+			"Stream": False,
+			"Airport": True,
+			"Church": False,
+			"School": False,
+			"Health centre": True,
+			"Main Roads": True,
+			"Small Roads": False,
+			"Town": True,
+			},
+	"Ward": {"Administrative Boundary": True,
+			"Natural Reserve": True,
+			"River": True,
+			"Stream": False,
+			"Airport": True,
+			"Church": False,
+			"Health centre": True,
+			"School": False,
+			"Main Roads": True,
+			"Small Roads": False,
+			"Town": True,
+			},
+	"County": {"Administrative Boundary": True,
+			"Natural Reserve": True,
+			"River": True,
+			"Stream": False,
+			"Airport": True,
+			"Church": False,
+			"School": False,
+			"Health centre": False,
+			"Main Roads": True,
+			"Small Roads": False,
+			"Town": True,
+			},
+	"Country": {"Administrative Boundary": True,
+			"Natural Reserve": False,
+			"River": False,
+			"Stream": False,
+			"Airport": False,
+			"Church": False,
+			"School": False,
+			"Health centre": False,
+			"Main Roads": False,
+			"Small Roads": False,
+			"Town": True,
+			},
+	}
 
-	## do not change this
-	#language_map = {
-	#"English": "name",
-	#"Swahili": "name:sw",
-	#}
+	# do not change this
+	language_map = {
+	"English": "name",
+	"Swahili": "name:sw",
+	}
 
-	#language_labels = {
-	#"English":{"Administrative Boundary": "Boundary",
-	#		"Natural Reserve": "Natural Reserve",
-	#		"River": "River",
-	#		"Stream": "Stream",
-	#		"Airport": "Airport",
-	#		"Church": "Church",
-	#		"School": "School",
-	#		"Health centre": "Health centre",
-	#		"Main Roads": "Main Roads",
-	#		"Small Roads": "Small Roads",
-	#		"Town": "Town",
-	#		"OND": "Short rains (Oct-Dec)",
-	#		"MAM": "Long rains (MAR-MAY)",
-	#		"Soil": "Soil Moisture Status",
-	#		"Evaporation": "Evapotranspiration",
-	#		"Groundwater": "Groundwater status",
-	#		"Surface": "Surface Water Status",
-	#		"Flood": "Flood Hazard Potential",
-	#		"in": "in"
-	#		},
-	#"Swahili":{"Administrative Boundary": "Mpaka",
-	#		"Natural Reserve": "Natural Reserve",
-	#		"River": "River",
-	#		"Stream": "Stream",
-	#		"Airport": "Uwanja wa ndege",
-	#		"Church": "",
-	#		"School": "",
-	#		"Health centre": "Kituo cha afya na matibabu",
-	#		"Main Roads": "Barabara kuu",
-	#		"Small Roads": "Small Roads",
-	#		"Town": "Town",
-	#		"OND": "Mvua kidogo wa mda mfupi (Oktoba-Desemba)",
-	#		"MAM": "Mvua mingi wa masika (Machi - Mei)",
-	#		"Soil": "Soil Moisture Status",
-	#		"Evaporation": "Evapotranspiration",
-	#		"Groundwater": "Hali ya maji ya chini ya ardhi",
-	#		"Surface": "Hali ya maji ya juu ya ardhi",
-	#		"Flood": "Uwezekano wa hadhari\nza Mafuriko",
-	#		"in": "in"
-	#		}
-	#}
+	language_labels = {
+	"English":{"Administrative Boundary": "Boundary",
+			"Natural Reserve": "Natural Reserve",
+			"River": "River",
+			"Stream": "Stream",
+			"Airport": "Airport",
+			"Church": "Church",
+			"School": "School",
+			"Health centre": "Health centre",
+			"Main Roads": "Main Roads",
+			"Small Roads": "Small Roads",
+			"Town": "Town",
+			"OND": "Short rains (Oct-Dec)",
+			"MAM": "Long rains (MAR-MAY)",
+			"Soil": "Soil Moisture Status",
+			"Evaporation": "Evapotranspiration",
+			"Groundwater": "Groundwater status",
+			"Surface": "Surface Water Status",
+			"Flood": "Flood Hazard Potential",
+			"in": "in"
+			},
+	"Swahili":{"Administrative Boundary": "Mpaka",
+			"Natural Reserve": "Natural Reserve",
+			"River": "River",
+			"Stream": "Stream",
+			"Airport": "Uwanja wa ndege",
+			"Church": "",
+			"School": "",
+			"Health centre": "Kituo cha afya na matibabu",
+			"Main Roads": "Barabara kuu",
+			"Small Roads": "Small Roads",
+			"Town": "Town",
+			"OND": "Mvua kidogo wa mda mfupi (Oktoba-Desemba)",
+			"MAM": "Mvua mingi wa masika (Machi - Mei)",
+			"Soil": "Soil Moisture Status",
+			"Evaporation": "Evapotranspiration",
+			"Groundwater": "Hali ya maji ya chini ya ardhi",
+			"Surface": "Hali ya maji ya juu ya ardhi",
+			"Flood": "Uwezekano wa hadhari\nza Mafuriko",
+			"in": "in"
+			}
+	}
 
-	## season labels
-	#season_name = {
-	#"OND": "Short rains (Oct-Dec)",
-	#"MAM": "Long rains (MAR-MAY)",
-	#}
-	#
-	## variable labels and colorbar labels -------------------------
-	#water_var = {
-	#"Flood": "dis",
-	#"Groundwater": "twsc",
-	#"Surface": "dis",
-	#"Soil": "tht",
-	#"Evaporation": "aet",
-	#"Crop": "wrsi",
-	#}
+	# season labels
+	season_name = {
+	"OND": "Short rains (Oct-Dec)",
+	"MAM": "Long rains (MAR-MAY)",
+	}
+	
+	# variable labels and colorbar labels -------------------------
+	water_var = {
+	"Flood": "dis",
+	"Groundwater": "twsc",
+	"Surface": "dis",
+	"Soil": "tht",
+	"Evaporation": "aet",
+	"Crop": "wrsi",
+	}
 
-	#variable = {
-	#"Soil": "Soil Moisture Status",
-	#"Evaporation": "Evapotranspiration",
-	#"Groundwater": "Groundwater status",
-	#"Surface": "Surface Water Status",
-	#"Flood": "Flood Hazard Potential",
-	#"Crop": "Potential crop health",
-	#"Pasture": "Potential pasture/browse health",
-	#}
+	variable = {
+	"Soil": "Soil Moisture Status",
+	"Evaporation": "Evapotranspiration",
+	"Groundwater": "Groundwater status",
+	"Surface": "Surface Water Status",
+	"Flood": "Flood Hazard Potential",
+	"Crop": "Potential crop health",
+	"Pasture": "Potential pasture/browse health",
+	}
 
-	#status = {
-	#"Flood": ["Low\nSio sana", "High\nNi sana"],
-	#"Groundwater": ["Bad\nHali mbaya", "Good\nHali mzuri"],
-	#"Surface": ["Bad\nHali mbaya", "Good\nHali mzuri"],
-	#"Soil": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-	#"Evaporation": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-	#"Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-	#}
+	status = {
+	"Flood": ["Low\nSio sana", "High\nNi sana"],
+	"Groundwater": ["Bad\nHali mbaya", "Good\nHali mzuri"],
+	"Surface": ["Bad\nHali mbaya", "Good\nHali mzuri"],
+	"Soil": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+	"Evaporation": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+	"Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+	}
 
-	#var_colour = {
-	#"Groundwater": ["#E69F00", "#009E73"],
-	#"Surface": ["#E69F00", "#009E73"],
-	#"Soil": ["darkviolet", "seagreen"],
-	#"Evaporation": ["darkviolet", "seagreen"],
-	#"Flood": ["#009E73", "#E69F00"],
-	#"Crop": ["#E69F00", "#009E73"],
-	#}
+	var_colour = {
+	"Groundwater": ["#E69F00", "#009E73"],
+	"Surface": ["#E69F00", "#009E73"],
+	"Soil": ["darkviolet", "seagreen"],
+	"Evaporation": ["darkviolet", "seagreen"],
+	"Flood": ["#009E73", "#E69F00"],
+	"Crop": ["#E69F00", "#009E73"],
+	}
 
-	## ward name and center (lat, lon)
-	#wards_data = {
-	#"Burat": (0.3475694841724472, 37.493336034162525), #(0.353, 37.584),
-	#"Kinna": (0.263515185704488, 38.240486302993496), #(0.31883, 38.20499),
-	#}
+	# ward name and center (lat, lon)
+	wards_data = {
+	"Burat": (0.3475694841724472, 37.493336034162525), #(0.353, 37.584),
+	"Kinna": (0.263515185704488, 38.240486302993496), #(0.31883, 38.20499),
+	}
 	# =========================================================
 	# =========================================================
 	# DO NOT CHANGE FROM THIS LINE
@@ -793,6 +803,18 @@ def plot_map(plot_scale="Zoom",
 	# ----------------------------------------------------------
 	# load shapefiles
 	# name field for shapefile
+	name_county_shp = {
+		"kenya":'county',
+		"ethiopia":'NAME_2',
+		"somalia":'NAME',
+	}
+
+	code_county_shp = {
+		"kenya":'gid',
+		"ethiopia":'OBJECTID',
+		"somalia":'REGN_NO',
+	}
+
 	name_field_name = {
 		"Zoom" : name_field_county_shp,
 		"County" : name_county_shp,
@@ -824,7 +846,7 @@ def plot_map(plot_scale="Zoom",
 		#wards = wards[(wards["NAME"] == place_name)]
 
 	if place_code_field is False:
-		wards = wards[(wards[iname_field_shp] == place_name)]
+		wards = wards[(wards[iname_field_shp[country_name.lower()]] == place_name)]
 	else:
 		wards = wards[(wards[iname_field_shp] == place_code)]
 

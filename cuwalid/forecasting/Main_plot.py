@@ -83,7 +83,7 @@ def plot_maps_from_file_json(config_file):
 	river_path = config["river_path"]
 
 	# read list of files containing the list of places to plot
-	fname_places_list_file # in default_parameter_dataset
+	fname_places_list_file = None # in default_parameter_dataset
 
 	#get list of places
 

@@ -37,7 +37,7 @@ Here is an explanation of what each parameter does:
 
 - **plot_scales**: A list that defines the geographical scale at which the plot will be made. Examples include "County" or "Zoom".
   
-- **country**: Specifies the name of the country for which the forecast will be generated. In this example, it is set to "Kenya".
+- **country_name**: Specifies the name of the country for which the forecast will be generated. In this example, it is set to "Kenya".
 
 - **place_names**: A list of specific places (regions, counties, etc.) within the country where the forecast will focus. For example, ["Samburu", "Laikipia", "Meru"].
 
@@ -59,3 +59,4 @@ Here is an explanation of what each parameter does:
 
 - **river_path**: Path to the river network data file, which is used to model the river system within the forecast region. It helps in determining river lengths and other hydrological features.
 
+- **shape_path**: Path to the shape file to override built in shape files for the HAD region (shape files for the HAD region built into the package e.g. when 'country_name' is picked as kenya the in built shape file will be used).

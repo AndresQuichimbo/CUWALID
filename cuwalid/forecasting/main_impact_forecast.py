@@ -91,6 +91,16 @@ def plot_maps_json(config_file):
 	threshold_path = config["threshold_path"]
 	mask_path = config["mask_path"]
 	river_path = config["river_path"]
+	shape_path = config.get("shape_path", None)
+	prev_output_path = config.get("prev_output_path", None)
+	pp_path = config.get("pp_path", None)
+	name_historical_value = config.get("name_historical_value", None)
+	model_name = config.get("model_name", None)
+
+	if model_name != None:
+
+		netcdf_path2 = os.path.join(prev_output_path, model_name + "_YYYY_grid.nc")
+		threshold_path = os.path.join(pp_path, model_name + "_SSS")
 
 	if place_name != [None] and len(country_name)>1:
 		print("Error: if creating maps for multiple countries at once, please remove place_name from the json input to create maps for all counties")
@@ -120,7 +130,7 @@ def plot_maps_json(config_file):
 			gdf = gpd.read_file(shapefile_county)
 
 			# Get county list 
-			place_name = gdf[name_field_county_shp[country]].tolist()
+			place_name = gdf[name_field_county_shp[country.lower()]].tolist()
 
 			# Create maps
 			call_plot_maps(
@@ -136,7 +146,24 @@ def plot_maps_json(config_file):
 				threshold_path=threshold_path,
 				mask_path=mask_path,
 				river_path=river_path,
+				shape_path=shape_path
 			)
+	elif len(country_name) == 1:
+		call_plot_maps(
+			plot_scales=plot_scales, 
+			country_name=country_name[0], 
+			place_names=place_name, 
+			seasons=season, 
+			water_status=water_status, 
+			year=year, 
+			output_dir=output_dir, 
+			language=language,
+			netcdf_path=netcdf_path,
+			threshold_path=threshold_path,
+			mask_path=mask_path,
+			river_path=river_path,
+			shape_path=shape_path
+		)
 	else:
 		# Call the plotting function
 		call_plot_maps(
@@ -152,6 +179,7 @@ def plot_maps_json(config_file):
 			threshold_path=threshold_path,
 			mask_path=mask_path,
 			river_path=river_path,
+			shape_path=shape_path
 		)
 
 def call_plot_maps(plot_scales=["Zoom"],
@@ -165,7 +193,8 @@ def call_plot_maps(plot_scales=["Zoom"],
 		netcdf_path=None,
 		threshold_path=None,
 		mask_path=None,
-		river_path=None):
+		river_path=None,
+		shape_path=None):
 	"""
 	Function to call the map plotting function for specified regions and conditions.
 	
@@ -219,6 +248,9 @@ def call_plot_maps(plot_scales=["Zoom"],
 	river_path : str, optional
 		Path to the file containing river data to be overlaid on the map. Defaults to None.
 
+	shape_path : str, optional
+		Path to the optional shape file to overide built in shape files for HAD region. Defaults to None.
+
 	Returns
 	-------
 	None
@@ -239,7 +271,8 @@ def call_plot_maps(plot_scales=["Zoom"],
 			netcdf_path="/path/to/netcdf_file.nc",
 			threshold_path="/path/to/threshold_file.csv",
 			mask_path="/path/to/mask_file.shp",
-			river_path="/path/to/river_file.shp"
+			river_path="/path/to/river_file.shp",
+			shape_path="/path/to/shape_path.shp",
 		)
 
 	Notes
@@ -254,6 +287,7 @@ def call_plot_maps(plot_scales=["Zoom"],
 	#plot_map(plot_scale="Zoom", place_name="Burat", iseason="OND", iwater_status="Flood", year=2010, ilanguage="English")
 	for iplot_scale in plot_scales:
 		for iplace_name in place_names:
+			print(f"Place name {iplace_name}")
 			for iiseason in seasons:
 				for iiwater_status in water_status:
 					plot_map(plot_scale=iplot_scale,
@@ -268,6 +302,7 @@ def call_plot_maps(plot_scales=["Zoom"],
 							threshold_path=threshold_path,
 							mask_path=mask_path,
 							river_path=river_path,
+							shape_path=shape_path
 							)
 							  
 # Main function to handle command-line arguments

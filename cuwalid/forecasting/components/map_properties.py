@@ -188,7 +188,7 @@ name_field_county_shp = {
 	"somalia":'NAME',
 }
 
-name_field_shp["County"] = name_field_county_shp[country_name.lower()]
+#name_field_shp["County"] = name_field_county_shp[country_name.lower()]
 
 # change only if an element is not required
 plot_obj_id = {
