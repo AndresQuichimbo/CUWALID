@@ -250,7 +250,7 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 	df.to_csv(fname)
 
 def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
-					  fname_flowDir=None, fname_mask=None):
+					  fname_flowDir=None, fname_mask=None, raster=False):
 	"""Function to delineate a basin assuming an outlet
 	point is provided. This function requires a flow direction map
 	but if not provided the flow direction will be created
@@ -263,9 +263,10 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 		file name of the outflow raster map
 	fname_floedir : str
 		(optional) filename of the flow direction raster map
-
 	fname_out : str
 		(optional) filename of the output raster file
+	raster: bool
+		value that specify if it is a raster or csv fname_outlet
 
 	Returns
 	-------
@@ -278,9 +279,7 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 	>>> fname_surface = "surface.asc"
 	>>> fname_flowdir = "flowdir.asc"
 	>>> fname_outlet = "point.csv"
-
 	>>> get_watershed_mask(fname_surface, fname_outlet, fname_flowdir)
-	
 	"""
 
 	# read datasets: surface, flow direction, and list of points
@@ -315,12 +314,15 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 	basin = watershed(grid, surface, flowDir)
 
 	# get basin outlets
-	# Output variables and location
-	idnodes = extract_id_from_coords(grid, fname_outlet)[0]
+	if raster is True:
+		outlet = read_raster(fname_outlet)
+	else:	
+		# Output variables and location
+		idnodes = extract_id_from_coords(grid, fname_outlet)[0]
 
-	# create array with outlets
-	outlet = np.zeros_like(surface)
-	outlet[idnodes] = 1
+		# create array with outlets
+		outlet = np.zeros_like(surface)
+		outlet[idnodes] = 1
 
 	# get watershed
 	basinmask = basin.get_watersheds(outlet)
