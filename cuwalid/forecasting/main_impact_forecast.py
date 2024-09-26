@@ -107,11 +107,6 @@ def plot_maps_json(config_file):
 		netcdf_path = os.path.join(prev_output_path, model_name + "_YYYY_grid.nc")
 		threshold_path = os.path.join(pp_path, model_name + "_SSS")
 
-	print("############################")
-	print(netcdf_path)
-	print(threshold_path)
-	print("############################")
-
 
 	if place_name != [None] and len(country_names)>1:
 		print("Error: if creating maps for multiple countries at once, please remove place_name from the json input to create maps for all counties")

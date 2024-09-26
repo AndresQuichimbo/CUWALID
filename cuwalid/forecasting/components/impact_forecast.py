@@ -91,7 +91,9 @@ def plot_map(plot_scale="Zoom",
 	if shape_path == None:
 		shapefile_country = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_country_dic[region]))
 		shapefile_county = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_county_dic[country_name.lower()]))
-		shapefile_wards = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_wards_dic[country_name.lower()]))
+		# TODO: rewrite
+		if plot_scale == "Wards":
+			shapefile_wards = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_wards_dic[country_name.lower()]))
 	else:
 		if plot_scale == "County":
 			shapefile_county = shape_path
@@ -237,10 +239,13 @@ def plot_map(plot_scale="Zoom",
 
 	# get roads and street from OSM
 	if plot_obj_id[plot_scale]["Main Roads"] is True:
-		# Query amenities using the latest OSMnx version (0.18.1 as of 2024-02-21)
-		highway = ox.features.features_from_polygon(polygon, tags={'highway': True})
-		highway.crs = mapPP
-		highway = highway.to_crs(netcdfPP)#ds.rio.crs)
+		try:
+			# Query amenities using the latest OSMnx version (0.18.1 as of 2024-02-21)
+			highway = ox.features.features_from_polygon(polygon, tags={'highway': True})
+			highway.crs = mapPP
+			highway = highway.to_crs(netcdfPP)#ds.rio.crs)
+		except:
+			print("error with highway")
 
 	# read point locations
 	read_oms = False
@@ -261,13 +266,16 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
-		aeroway = ox.features.features_from_polygon(polygon, tags={'aeroway': True})
-		aeroway = aeroway[aeroway["name"].notnull()]
-		#print(aeroway)
-		#aeroway = aeroway.loc["node"]
-		aeroway.crs = mapPP
-		aeroway = aeroway.to_crs(netcdfPP)
-		aeroway = aeroway.centroid
+		try:
+			aeroway = ox.features.features_from_polygon(polygon, tags={'aeroway': True})
+			aeroway = aeroway[aeroway["name"].notnull()]
+			#aeroway = aeroway.loc["node"]
+			aeroway.crs = mapPP
+			aeroway = aeroway.to_crs(netcdfPP)
+			aeroway = aeroway.centroid
+		except:
+			print("no airports found")
+			aeroway = []
 
 	# read waterways
 	read_oms = False	
@@ -276,9 +284,12 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
-		water = ox.features.features_from_polygon(polygon, tags={'waterway': True})
-		water.crs = mapPP
-		water = water.to_crs(netcdfPP)
+		try:
+			water = ox.features.features_from_polygon(polygon, tags={'waterway': True})
+			water.crs = mapPP
+			water = water.to_crs(netcdfPP)
+		except:
+			print("error with waterway")
 
 	# read natural reserves
 	read_oms = False	
@@ -287,9 +298,13 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
-		leisure = ox.features.features_from_polygon(polygon, tags={'leisure': True})
-		leisure.crs = mapPP
-		leisure = leisure.to_crs(netcdfPP)
+		try:
+			leisure = ox.features.features_from_polygon(polygon, tags={'leisure': True})
+			leisure.crs = mapPP
+			leisure = leisure.to_crs(netcdfPP)
+
+		except:
+			print("error with leisure")
 
 	# read urban centres
 	read_oms = False	
@@ -502,45 +517,56 @@ def plot_map(plot_scale="Zoom",
 	# plot natural reserves
 	for ileisure in leisure_objects:
 		if plot_obj_id[plot_scale][ileisure] is True:
-			leisure_filter = leisure[leisure['leisure'].isin(leisure_body[ileisure])]
-			leisure_filter.plot(ax=ax,
-				#color=water_color[iwater],
-				#marker=point_marker[ipoint],
-				edgecolor=leisure_color[ileisure],
-				linewidths=0.1,
-				facecolor='none',#leisure_color[ileisure],
-				#markersize=0.0*leisure_size[ipoint],
-				label=ileisure+ "\n" + language_labels["Swahili"][ileisure],
-				alpha=0.5,
-				)
+			try:
+				leisure_filter = leisure[leisure['leisure'].isin(leisure_body[ileisure])]
+			
+				leisure_filter.plot(ax=ax,
+					#color=water_color[iwater],
+					#marker=point_marker[ipoint],
+					edgecolor=leisure_color[ileisure],
+					linewidths=0.1,
+					facecolor='none',#leisure_color[ileisure],
+					#markersize=0.0*leisure_size[ipoint],
+					label=ileisure+ "\n" + language_labels["Swahili"][ileisure],
+					alpha=0.5,
+					)
+			
 
-			# add labels
-			# Filter edges to reduce the number of labels (optional)
-			leisure_filter = leisure_filter[leisure_filter["name"].notnull()]#.sample(n=50)
+				# add labels
+				# Filter edges to reduce the number of labels (optional)
+				leisure_filter = leisure_filter[leisure_filter["name"].notnull()]#.sample(n=50)
 
-			# Annotate the plot with street names
-			add_label_features(leisure_filter, boundbox=extend,
-				#language=language_map[ilanguage],
-				)
+				# Annotate the plot with street names
+				add_label_features(leisure_filter, boundbox=extend,
+					#language=language_map[ilanguage],
+					)
+			except:
+				print("error with leisure filter")
 
 	# plot layers from Open Street Map
 	if plot_obj_id[plot_scale]["Small Roads"] is True:		
-		highway.plot(ax=ax,
-					linewidth=line_width["Small Roads"],
-					edgecolor=line_colors["Small Roads"],
-					facecolor='none',
-					label='Small Roads',
-					alpha=0.2)
+		try:
+			highway.plot(ax=ax,
+						linewidth=line_width["Small Roads"],
+						edgecolor=line_colors["Small Roads"],
+						facecolor='none',
+						label='Small Roads',
+						alpha=0.2)
+		except:
+			print("error with highway")
 
 	# plot main roads			
 	if plot_obj_id[plot_scale]["Main Roads"] is True:
-		highway[highway['highway'].isin(highway_filter)].plot(ax=ax,
-					linewidth=line_width["Main Roads"],
-					edgecolor=line_colors["Main Roads"],
-					facecolor='none',
-					label='Main Roads'+ "\n" + language_labels["Swahili"]["Main Roads"],
-					alpha=1.0,
-					)
+		try:
+			highway[highway['highway'].isin(highway_filter)].plot(ax=ax,
+						linewidth=line_width["Main Roads"],
+						edgecolor=line_colors["Main Roads"],
+						facecolor='none',
+						label='Main Roads'+ "\n" + language_labels["Swahili"]["Main Roads"],
+						alpha=1.0,
+						)
+		except:
+			print("error with highway")
 
 	# print label of admin boundaries
 	if plot_obj_id[plot_scale]["Administrative Boundary"] is True:
@@ -614,12 +640,14 @@ def plot_map(plot_scale="Zoom",
 				label=iplaces + "\n" + language_labels["Swahili"][iplaces],
 				)
 
-
-			add_label_features(place_filter, boundbox=extend, #, offset=1000)
-				fontsize=8, fontstyle="italic", offset=1000,
-				halignament="left", #alpha=0.7,
-				language=language_map[ilanguage], #color="gray"
-				)
+			try:
+				add_label_features(place_filter, boundbox=extend, #, offset=1000)
+					fontsize=8, fontstyle="italic", offset=1000,
+					halignament="left", #alpha=0.7,
+					language=language_map[ilanguage], #color="gray"
+					)
+			except:
+				print("error with add_label_features")
 
 	# MAP TITLE ----------------------------------------
 	# Configure and display the map
