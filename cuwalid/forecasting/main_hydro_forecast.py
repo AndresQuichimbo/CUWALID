@@ -31,25 +31,25 @@ def run_hydro_forecast(config_path):
         hindcast_model_name = config['hindcast_model_name']
         
 
-        print("test 1")
+        print("Step 1: Concatenate multiple csv historical files")
         get_csv_TS_files_from_multi_CSV(model_path, hindcast_model_name, start_year, end_year)
 
-        print("test 2")
+        print("Step 2: Calculate TWSA from storage change")
         get_TWSA_from_mult_files(model_path, hindcast_model_name, start_year, end_year)
 
-        print("test 3")
+        print("Step 3: Calculate WRSI")
         get_additional_variables_multi_netcdf(model_path, hindcast_model_name, start_year, end_year)
 
-        print("test 5")
+        print("Step 5: Get terciles from historical simulations")
         get_percentiles_multi_files(model_path, hindcast_model_name, start_year, end_year, season, variables, postpp_path)
 
-        print("test 6")
+        print("Step 6: Get quatiles 05, 33, 50, 66, 95 form historical simulations")
         get_extremes_quantiles_multi_netcdf(model_path, hindcast_model_name, start_year, end_year, season, variables, postpp_path)
 
-        print("test 7")
+        print("Step 7: Get average values form historical simualations")
         get_average_multi_netcdf(model_path, hindcast_model_name, start_year, end_year, season, variables, postpp_path)
 
-        print("test 8")
+        print("Step 8: Get anomalies from historical simulations")
         get_anomalies_multi_netcdf(model_path, hindcast_model_name, start_year, end_year, season, variables, postpp_path)
 
 
@@ -57,36 +57,40 @@ def run_hydro_forecast(config_path):
 
     if include_forecast:
 
-        print("Running forecasting")
+        print("|=========== Running forecasting ==========|")
 
         # Getting forecast config
         forecast_model_name = config['forecast_model_name']
 
-        print("test 9")
-        get_tercile_hindcast_fluxes(model_path, forecast_model_name, season, variables, postpp_path)
+        #print("Step 9")
+        #get_tercile_hindcast_fluxes(model_path, forecast_model_name, season, variables, postpp_path)
 
-        print("test 10")
-        get_tercile_hindcast_extreme_values(model_path, forecast_model_name, season, variables, postpp_path)
+        #print("Step 10")
+        #get_tercile_hindcast_extreme_values(model_path, forecast_model_name, season, variables, postpp_path)
 
-        print("test 11")
-        extract_forecasting_variable(model_path, forecast_model_name, season, variables, postpp_path)
+        # this function will be moved to another file, this ones corresponds
+        # to the impact forecasting not to the hydrological forecasting
+        #print("Step 11")
+        # function to get netcdf files from regional files at each selected place
+        #extract_forecasting_variable(model_path, forecast_model_name, season, variables, postpp_path)
 
-        print("test 12")
-        get_areas_terciles(model_path, forecast_model_name, season, variables, postpp_path)
+        #print("Step 12")
+        # funtion to calculate areas for county provided in the list
+        #get_areas_terciles(model_path, forecast_model_name, season, variables, postpp_path)
 
-        print("test 13") 
+        print("Step 1: Update TWSA") 
         get_update_TWSA(model_path, forecast_model_name)
 
-        print("test 14") 
+        print("Step 2: Update TWSA of hydrological realizations") 
         get_updated_TWSA_ensamble(model_path, forecast_model_name)
 
-        print("test 15")   
+        print("Step 3: Creating ensamble of hydrological realizations")   
         get_ensamble_forecasting(model_path, forecast_model_name, variables, postpp_path)
 
-        print("test 16")  
+        print("Step 4: Calculating the probabilistic forecasting")  
         get_probabilistic_tercile_forecast_ensamble(model_path, forecast_model_name, season, variables, postpp_path)
 
-        print("test 17")
+        print("Step 5: Calculating the deterministic forecasting")
         get_deterministic_forecast_ensamble(model_path, forecast_model_name, season, variables, postpp_path)
 
 
@@ -96,10 +100,10 @@ def run_hydro_forecast(config_path):
 
         print("Running plotting")
 
-        print("test 18")
+        print("Step 1: Plot probabilistic tercile forecasting")
         plot_tercile_probability_forecast(model_path, forecast_model_name, season, variables, postpp_path)
 
-        print("test 19")
+        print("Step 2: Plot deterministic forecasting")
         plot_deterministic_forecast(model_path, forecast_model_name, season, variables, postpp_path)
 
 

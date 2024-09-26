@@ -218,6 +218,25 @@ def read_dataset(fname, var_name='tht'):
 
 
 def get_areas_terciles(model_path, model_name, season, variables, postpp_path):
+	"""Function to extract values form selected areas
+	
+	Parameters
+	----------
+	model_path: str
+		paht for model netcdf file
+	model_name: str
+		model name
+	season: str
+		season eg. OND
+	variables: str
+		variables to plot
+	postpp_path: str
+		paht for storing outputs
+
+	Returns
+	-------
+	
+	"""
 		
 	# ==================================================
 
