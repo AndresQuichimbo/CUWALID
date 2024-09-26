@@ -139,7 +139,9 @@ def add_label_features(geodata, fontsize=6, boundbox=None, offset=0,
 	#print(c)
 	for idx, row in geodata.iterrows():
 		x_mid, y_mid = row.geometry.centroid.coords[0]
+
 		iname = row[language].split(' ')
+
 		if len(iname) > 2:
 			iname = "\n".join(iname)
 		else:
