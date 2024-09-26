@@ -296,24 +296,24 @@ def call_plot_maps(plot_scales=["Zoom"],
 			print(f"Place name {iplace_name}")
 			for iiseason in seasons:
 				for iiwater_status in water_status:
-					# try:
-					plot_map(plot_scale=iplot_scale,
-							country_name=country_name,
-							place_name=iplace_name,
-							iseason=iiseason,
-							iwater_status=iiwater_status,
-							iyear=year,
-							ilanguage=language,
-							output_dir=output_dir,
-							netcdf_path=netcdf_path,
-							threshold_path=threshold_path,
-							mask_path=mask_path,
-							river_path=river_path,
-							shape_path=shape_path
-							)
-					# except Exception as e:
-					# 	print(f"An exception occured {country_name} {iplace_name}")
-					# 	print(f"Error: {e}")
+					try:
+						plot_map(plot_scale=iplot_scale,
+								country_name=country_name,
+								place_name=iplace_name,
+								iseason=iiseason,
+								iwater_status=iiwater_status,
+								iyear=year,
+								ilanguage=language,
+								output_dir=output_dir,
+								netcdf_path=netcdf_path,
+								threshold_path=threshold_path,
+								mask_path=mask_path,
+								river_path=river_path,
+								shape_path=shape_path
+								)
+					except Exception as e:
+						print(f"An exception occured {country_name} {iplace_name}")
+						print(f"Error: {e}")
 							  
 # Main function to handle command-line arguments
 if __name__ == '__main__':
