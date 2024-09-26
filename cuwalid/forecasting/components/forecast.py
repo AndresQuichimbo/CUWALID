@@ -129,11 +129,86 @@ def get_tercile_hindcast_extreme_values(model_path, model_name, season, variable
 			# save probabilistic forecast as netcdf
 			tercile.to_netcdf(fname_out)
 
-def extract_forecasting_variable(model_name, model_path, season, variables, postpp_path):
+def extract_forecasting_variable(model_name,
+								#model_path,
+								plot_scale,
+								season, variables,
+								postpp_path,
+								netcdf_path,
+								shapefile_path,
+								place_name,
+								name_field_shp,
+								save_nc=False
+								):
 
+	"""Function to get a set netCDF files for each place listed in place_name
+	Each file is cliped only for the area whithin the boundaries of each place
+	
+	Parameters:
+	-----------
+	model_name: str
+	model_path: str
+	plot_scale: str
+	season: list
+	variables: list
+	postpp_path: str
+	netcdf_path: str
+	shapefile_path: str
+	place_name: list
+	name_field_shp: str
+
+	plot_scales : list of str, optional
+		A list of zoom levels or plot scales for the maps (e.g., "Zoom", "National", "Regional").
+		Defaults to ["Zoom"].
+		
+	country_name : str, optional
+		The name of the country for which the maps are being generated. Defaults to "Kenya".
+		
+	place_names : list of str or [None], optional
+		A list of specific places (e.g., counties) for which maps will be created.
+		If [None], maps will be created for all counties in the country. Defaults to [None].
+		
+	seasons : list of str, optional
+		A list of seasons for which the maps will be generated. Examples include "MAM" (March-April-May) 
+		and "OND" (October-November-December). Defaults to ["MAM"].
+		
+	water_status : list of str, optional
+		Water condition or status, such as "Flood", "Drought", etc. Defaults to ["Flood"].
+		
+	year : int, optional
+		The year for which the maps are generated. Defaults to 2010.
+		
+	output_dir : str, optional
+		The directory where the generated maps will be saved. Defaults to "output".
+		
+	language : str, optional
+		The language for the map labels and outputs. Defaults to "English".
+		
+	netcdf_path : str, optional
+		Path to the NetCDF file containing climate or forecast data. Defaults to None.
+		
+	threshold_path : str, optional
+		Path to the threshold file used to determine warning or risk levels. Defaults to None.
+		
+	mask_path : str, optional
+		Path to the file containing mask data for areas that should be excluded from the maps.
+		Defaults to None.
+		
+	river_path : str, optional
+		Path to the file containing river data to be overlaid on the map. Defaults to None.
+
+	shape_path : str, optional
+		Path to the optional shape file to overide built in shape files for HAD region. Defaults to None.
+
+	
+	Returns
+	-------
+
+	
+	"""
 	# PLOT TYPE
-	plot_scale = "Country"
-	plot_scale = "County"
+	#plot_scale = "Country"
+	#plot_scale = "County"
 	#plot_scale = "Ward"
 
 	# SELECT WARD
@@ -146,12 +221,12 @@ def extract_forecasting_variable(model_name, model_path, season, variables, post
 	#place_name = "Somalia"
 	#place_name = "Kenya"
 
-	place_name = {
-		"Isiolo",
-		"Meru",
-		"Samburu",
-		"Laikipia",
-		}
+	#place_name = {
+	#	"Isiolo",
+	#	"Meru",
+	#	"Samburu",
+	#	"Laikipia",
+	#	}
 
 	# SELCT TIME STEP TO PRINT AS EXAMPLE
 	#time_plot = 15 # Example contain only 24 months
@@ -174,18 +249,33 @@ def extract_forecasting_variable(model_name, model_path, season, variables, post
 	#shapefile_country = "D:/HAD/data/gis/Horn_Africa/Horn_africa_contry.shp"
 	#shapefile_county = 'D:/kenya/GIS/kenya-county/ke_county.shp'
 
-	shapefile_country = "/home/c1755103/WS/HAD/Data/gis/wgs84/Horn_africa_contry.shp"
-	shapefile_county = "/home/c1755103/WS/HAD/Data/gis/wgs84/kenya/kenya-county/ke_county.shp"
+	#shapefile_country = "/home/c1755103/WS/HAD/Data/gis/wgs84/Horn_africa_contry.shp"
+	#shapefile_path = "/home/c1755103/WS/HAD/Data/gis/wgs84/kenya/kenya-county/ke_county.shp"
 
 	#netcdf_path = "D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_" + iseason + "_probabilistic_tercile_forecast.nc"
 	#"/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_"+ivar+"_"+iseason+"_"+str(iyear)+"_probabilistic_tercile_forecast.nc"
-	netcdf_path = "/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_VVV_SSS_2022_probabilistic_tercile_forecast.nc"
+	#netcdf_path = "/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_VVV_SSS_2022_probabilistic_tercile_forecast.nc"
+	
+	# list of labels for of the terciles
+	tercile = ["AN", "NN", "BN"]
+	# create list to store data
+	# name list
+	#fname = []
+	# season list
+	season_list = []
+	# store variable
+	variable_list = []
+	# store place name
+	place_list = []
+	# loop over list of files
+	area_list = []
+
 	for iseason in season:
 		for iplace_name in place_name:
 			for ivar in field:
 				# read shapefile and select area/region
 				if plot_scale == "County":
-					region = gpd.read_file(shapefile_county)
+					region = gpd.read_file(shapefile_path)
 					
 				region = region[(region[iname_field_shp] == iplace_name)]
 				
@@ -198,15 +288,58 @@ def extract_forecasting_variable(model_name, model_path, season, variables, post
 				inetcdf_path = inetcdf_path.replace("VVV", ivar)
 				dataset = cuwalid.extract_dataset(inetcdf_path, region)
 				
-				# save dataset as netcdf
-				fname = (postpp_path + "netcdf/" +
-						model_name + "_" +
-						iseason +"_"+iplace_name+"_"+ivar+
-						"_2022_probabilistic_tercile_forecast_region.nc"
-						)
-				#fname = "D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_" + iseason + "_probabilistic_tercile_forecast_region.nc"
-			
-				dataset.to_netcdf(fname)
+				if save_nc is True:
+					# save dataset as netcdf
+					fname_nc = (postpp_path + "netcdf/" +
+							model_name + "_" +
+							iseason +"_"+iplace_name+"_"+ivar+
+							"_2022_probabilistic_tercile_forecast_region.nc"
+							)
+					#fname = "D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_" + iseason + "_probabilistic_tercile_forecast_region.nc"
+
+					dataset.to_netcdf(fname_nc)
+				
+				# store season
+				season_list.append(iseason)
+				# store variable
+				variable_list.append(ivar)
+				# store place name
+				place_list.append(iplace_name)
+
+				# CALUCATE AREAS FOR EACH TERCILE
+				# loop over list of files
+				#area_list = []
+				#for ifname in fname:
+				# read dataset and extract selected tercile
+				area = []
+				for itercile in tercile:
+					# read tercile
+					#data = read_dataset(ifname, var_name=itercile).values
+					data = dataset[itercile].values
+					# count terciles with higher probability
+					data[data > 0.33] = 1
+					data[data <= 0.33] = 0
+					# create list areas
+					area.append(np.nansum(data))
+				
+				# calculate percentages
+				area_list.append(area*1/np.sum(area))
+				
+			# change to numpy array
+			area = np.array(area_list)
+			# save as dataframe
+
+
+	# create dataframe of contributin areas
+	df = pd.DataFrame()
+	df["place"] = place_list
+	df["season"] = season_list
+	df["variable"] = variable_list
+	for i, itercile in enumerate(tercile):
+		df[itercile] = area[:, i]
+
+	fname = postpp_path + "csv/" + model_name+"_county_areas.csv"
+	df.to_csv(fname)
 				
 
 def read_dataset(fname, var_name='tht'):

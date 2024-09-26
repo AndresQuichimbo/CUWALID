@@ -3,6 +3,7 @@ import json
 import os
 import geopandas as gpd
 from cuwalid.forecasting.components.impact_forecast import plot_map
+import cuwalid.forecasting.components.forecast as forecast
 #from aux_HAD_plot_probabilistic_forecasting_map import plot_map
 
 # Function to plot maps based on the configuration in the JSON file
@@ -79,6 +80,10 @@ def plot_maps_json(config_file):
 			return
 
 	# Extract parameters from JSON config
+	create_dataset = config.get("create_dataset", False)
+	create_table = config.get("create_table", True)
+	create_map = config.get("create_map", True)
+	
 	plot_scales = config.get("plot_scales", ["Zoom"])
 	country_names = config.get("country_names", ["Kenya"])
 	place_name = config.get("place_names", [None])
@@ -111,37 +116,93 @@ def plot_maps_json(config_file):
 	if place_name != [None] and len(country_names)>1:
 		print("Error: if creating maps for multiple countries at once, please remove place_name from the json input to create maps for all counties")
 		return
+	print("WARNING!")
+	print("Run function only if hydrological forecasting has been performed")
+		
+	if create_map is True:
+		print("Plot Impact forecasting maps")
+		# Get list of all countries within the countries if the user doesn't provide a list
+		if place_name == [None]:
 
-	# Get list of all countries within the countries if the user doesn't provide a list
-	if place_name == [None]:
+			shapefile_county_dic = {
+				"kenya": 'forecasting_dataset/kenya/kenya-county/ke_county.shp',
+				"ethiopia": 'forecasting_dataset/ethiopia/Export_admin2.shp',
+				"somalia": 'forecasting_dataset/somalia/somalia_regions.shp',
+			}
 
-		shapefile_county_dic = {
-			"kenya": 'forecasting_dataset/kenya/kenya-county/ke_county.shp',
-			"ethiopia": 'forecasting_dataset/ethiopia/Export_admin2.shp',
-			"somalia": 'forecasting_dataset/somalia/somalia_regions.shp',
-		}
+			name_field_county_shp = {
+				"kenya":'county',
+				"ethiopia":'NAME_2',
+				"somalia":'NAME',
+			}
 
-		name_field_county_shp = {
-			"kenya":'county',
-			"ethiopia":'NAME_2',
-			"somalia":'NAME',
-		}
+			# Get list of counties from each country given in the iput
+			for country in country_names:
+				print(f"Warning: no place name given, creating a map for each county within {country}")
 
-		# Get list of counties from each country given in the iput
-		for country in country_names:
-			print(f"Warning: no place name given, creating a map for each county within {country}")
+				# Open shape file
+				shapefile_county = os.path.abspath(os.path.join(os.path.dirname(__file__), shapefile_county_dic[country.lower()]))
+				gdf = gpd.read_file(shapefile_county)
 
-			# Open shape file
-			shapefile_county = os.path.abspath(os.path.join(os.path.dirname(__file__), shapefile_county_dic[country.lower()]))
-			gdf = gpd.read_file(shapefile_county)
+				# Get county list 
+				place_name = gdf[name_field_county_shp[country.lower()]].tolist()
 
-			# Get county list 
-			place_name = gdf[name_field_county_shp[country.lower()]].tolist()
+				# Create maps
+				call_plot_maps(
+					plot_scales=plot_scales, 
+					country_name=country, 
+					place_names=place_name, 
+					seasons=season, 
+					water_status=water_status, 
+					year=year, 
+					output_dir=output_dir, 
+					language=language,
+					netcdf_path=netcdf_path,
+					threshold_path=threshold_path,
+					mask_path=mask_path,
+					river_path=river_path,
+					shape_path=shape_path
+				)
+		#elif len(country_names) == 1:
+		#	country_names = country_names[0]
+			#call_plot_maps(
+			#	plot_scales=plot_scales, 
+			#	country_name=country_names[0], 
+			#	place_names=place_name, 
+			#	seasons=season, 
+			#	water_status=water_status, 
+			#	year=year, 
+			#	output_dir=output_dir, 
+			#	language=language,
+			#	netcdf_path=netcdf_path,
+			#	threshold_path=threshold_path,
+			#	mask_path=mask_path,
+			#	river_path=river_path,
+			#	shape_path=shape_path
+			#)
+		else:
+			if len(country_names) == 1:
+				country_names = country_names[0]
+			# Call the plotting function
+			#call_plot_maps(
+			#	plot_scales=plot_scales, 
+			#	country_name=country_names, 
+			#	place_names=place_name, 
+			#	seasons=season, 
+			#	water_status=water_status, 
+			#	year=year, 
+			#	output_dir=output_dir, 
+			#	language=language,
+			#	netcdf_path=netcdf_path,
+			#	threshold_path=threshold_path,
+			#	mask_path=mask_path,
+			#	river_path=river_path,
+			#	shape_path=shape_path
+			#)
 
-			# Create maps
 			call_plot_maps(
 				plot_scales=plot_scales, 
-				country_name=country, 
+				country_name=country_names, 
 				place_names=place_name, 
 				seasons=season, 
 				water_status=water_status, 
@@ -153,40 +214,32 @@ def plot_maps_json(config_file):
 				mask_path=mask_path,
 				river_path=river_path,
 				shape_path=shape_path
-			)
-	elif len(country_names) == 1:
-		call_plot_maps(
-			plot_scales=plot_scales, 
-			country_name=country_names[0], 
-			place_names=place_name, 
-			seasons=season, 
-			water_status=water_status, 
-			year=year, 
-			output_dir=output_dir, 
-			language=language,
-			netcdf_path=netcdf_path,
-			threshold_path=threshold_path,
-			mask_path=mask_path,
-			river_path=river_path,
-			shape_path=shape_path
-		)
-	else:
-		# Call the plotting function
-		call_plot_maps(
-			plot_scales=plot_scales, 
-			country_name=country_names, 
-			place_names=place_name, 
-			seasons=season, 
-			water_status=water_status, 
-			year=year, 
-			output_dir=output_dir, 
-			language=language,
-			netcdf_path=netcdf_path,
-			threshold_path=threshold_path,
-			mask_path=mask_path,
-			river_path=river_path,
-			shape_path=shape_path
-		)
+				)
+
+
+	if create_dataset is True:
+		print("Create netCDF files for each selected place")
+        # function to get netcdf files from regional files at each selected place
+        #forecast.extract_forecasting_variable(model_path, forecast_model_name, season, variables, postpp_path)
+		forecast.extract_forecasting_variable(
+								model_name,
+								#model_path,
+								plot_scale=plot_scales,
+								season=season,
+								variables=water_status,
+								postpp_path=pp_path,
+								netcdf_path=netcdf_path,
+								shapefile_path=shape_path,
+								place_name=place_name,
+								#name_field_shp,
+								save_nc=False
+								)
+
+	if create_table is True:
+		print("Create CSV file for the entire country")
+        # funtion to calculate areas for county provided in the list
+        #forecast.get_areas_terciles(model_path, forecast_model_name, season, variables, postpp_path)
+
 
 def call_plot_maps(plot_scales=["Zoom"],
 		country_name="Kenya",

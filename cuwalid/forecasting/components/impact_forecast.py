@@ -24,6 +24,7 @@ import matplotlib.patheffects as path_effects
 from cuwalid.forecasting.components.helper_functions import add_label_features, bounding_box, get_mask, get_season_dataset, read_dataset, resample_dataset
 from cuwalid.forecasting.components.map_properties import *
 from cuwalid.forecasting.components.default_parameter_dataset import *
+from cuwalid.forecasting.components.read_paths import *
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -87,6 +88,8 @@ def plot_map(plot_scale="Zoom",
 	
 	
 	"""
+	# use this function to cleam some variables and names in the code
+	paths_all = read_dataset(plot_scale)
 
 	if shape_path == None:
 		shapefile_country = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_country_dic[region]))
@@ -174,40 +177,42 @@ def plot_map(plot_scale="Zoom",
 	# load shapefiles
 	# name field for shapefile
 
-	name_field_name = {
-		"Zoom" : name_field_county_shp,
-		"County" : name_county_shp,
-		#"Country" : name_field_county_shp,
-		}
+	#name_field_name = {
+	#	"Zoom" : name_field_county_shp,
+	#	"County" : name_county_shp,
+	#	#"Country" : name_field_county_shp,
+	#	}
+	#
+	#name_field_code = {
+	#	"Zoom" : name_field_county_shp,
+	#	"County" : code_county_shp,
+	#	#"Country" : name_field_county_shp,
+	#	}
 	
-	name_field_code = {
-		"Zoom" : name_field_county_shp,
-		"County" : code_county_shp,
-		#"Country" : name_field_county_shp,
-		}
-	
-	# select the field to use as polygon attribute
-	if place_code_field is False:
-		iname_field_shp = name_field_name[plot_scale]
-	else:		
-		iname_field_shp = name_field_code[plot_scale]
+	## select the field to use as polygon attribute
+	#if place_code_field is False:
+	#	iname_field_shp = name_field_name[plot_scale]
+	#else:		
+	#	iname_field_shp = name_field_code[plot_scale]
 
-	# additional files to plot as well as boundaries)
-	# Select the ward that is requiested to plot
-	if (plot_scale == "Zoom") or (plot_scale == "Ward"):
-		wards = gpd.read_file(shapefile_wards)
-		#wards = wards[(wards["IEBC_WARDS"] == place_name)]
-	elif plot_scale == "County":
-		wards = gpd.read_file(shapefile_county)
-		#wards = wards[(wards["county"] == place_name)]
-	elif plot_scale == "Country":
-		wards = gpd.read_file(shapefile_county)
-		#wards = wards[(wards["NAME"] == place_name)]
+	## additional files to plot as well as boundaries)
+	## Select the ward that is requiested to plot
+	#if (plot_scale == "Zoom") or (plot_scale == "Ward"):
+	#	wards = gpd.read_file(shapefile_wards)
+	#	#wards = wards[(wards["IEBC_WARDS"] == place_name)]
+	#elif plot_scale == "County":
+	#	wards = gpd.read_file(shapefile_county)
+	#	#wards = wards[(wards["county"] == place_name)]
+	#elif plot_scale == "Country":
+	#	wards = gpd.read_file(shapefile_county)
+	#	#wards = wards[(wards["NAME"] == place_name)]
+
+	wards = gpd.read_file(paths_all.fname_place)
 
 	if place_code_field is False:
-		wards = wards[(wards[iname_field_shp[country_name.lower()]] == place_name)]
+		wards = wards[(wards[paths_all.iname_field_shp[country_name.lower()]] == place_name)]
 	else:
-		wards = wards[(wards[iname_field_shp] == place_code)]
+		wards = wards[(wards[paths_all.iname_field_shp] == place_code)]
 
 	# select polygon to use as mask
 	polygon = wards["geometry"].iloc[0]
@@ -734,7 +739,7 @@ def plot_map(plot_scale="Zoom",
 	plt.xlabel("")
 	plt.tight_layout()
 	
-	# ADD LOCATION PLOT
+	# ADD LOCATION PLOT ===========================================
 	ax2 = fig.add_axes([0.80, 0.70, #location: x, y
 		0.4*0.5,# axes width,
 		0.4*0.7*ratio_bw # axes height
