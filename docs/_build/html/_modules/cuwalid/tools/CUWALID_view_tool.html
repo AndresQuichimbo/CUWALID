@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.tools.CUWALID_view_tool &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -86,7 +90,9 @@
 <span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">gaussian_filter</span>
 <span class="kn">from</span> <span class="nn">rasterio.enums</span> <span class="kn">import</span> <span class="n">Resampling</span>
 
-<div class="viewcode-block" id="plot_probabilistic_tercile_forecast"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.plot_probabilistic_tercile_forecast">[docs]</a><span class="k">def</span> <span class="nf">plot_probabilistic_tercile_forecast</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+<div class="viewcode-block" id="plot_probabilistic_tercile_forecast">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.plot_probabilistic_tercile_forecast">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_probabilistic_tercile_forecast</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
 		<span class="n">title</span><span class="o">=</span><span class="s2">&quot;Probabilistic Forecasting&quot;</span><span class="p">,</span> <span class="n">reproject</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 		<span class="n">fshapefile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function create a tercile plot</span>
@@ -197,7 +203,10 @@
 	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Latitude&quot;</span><span class="p">)</span>
 	<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Longitude&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="plot_deterministic_forecast"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.plot_deterministic_forecast">[docs]</a><span class="k">def</span> <span class="nf">plot_deterministic_forecast</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+
+<div class="viewcode-block" id="plot_deterministic_forecast">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.plot_deterministic_forecast">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_deterministic_forecast</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
 		<span class="n">title</span><span class="o">=</span><span class="s2">&quot;Deterministic Forecasting&quot;</span><span class="p">,</span> <span class="n">reproject</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 		<span class="n">fshapefile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_anomaly</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function create a tercile plot</span>
@@ -296,10 +305,13 @@
 	<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="s2">&quot;Standard Deviation&quot;</span><span class="p">)</span>
 	<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Latitude&quot;</span><span class="p">)</span>
 	<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Longitude&quot;</span><span class="p">)</span></div>
+
 	
 	
 <span class="c1"># Function to smooth a 2D xarray DataArray</span>
-<div class="viewcode-block" id="smooth_dataarray"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.smooth_dataarray">[docs]</a><span class="k">def</span> <span class="nf">smooth_dataarray</span><span class="p">(</span><span class="n">dataarray</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<div class="viewcode-block" id="smooth_dataarray">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.smooth_dataarray">[docs]</a>
+<span class="k">def</span> <span class="nf">smooth_dataarray</span><span class="p">(</span><span class="n">dataarray</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Smooth a 2D xarray DataArray using a Gaussian filter.</span>
 <span class="sd">    </span>
@@ -314,8 +326,11 @@
     <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">smoothed_data</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="n">dataarray</span><span class="o">.</span><span class="n">dims</span><span class="p">,</span>
 			<span class="n">coords</span><span class="o">=</span><span class="n">dataarray</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span></div>
 
+
 	
-<div class="viewcode-block" id="reproject_dataset"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.reproject_dataset">[docs]</a><span class="k">def</span> <span class="nf">reproject_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">oldPP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">newPP</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="reproject_dataset">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.reproject_dataset">[docs]</a>
+<span class="k">def</span> <span class="nf">reproject_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">oldPP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">newPP</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Transform projection system</span>
 <span class="sd">	oldPP and newPP have to be defined first</span>
 <span class="sd">	</span>
@@ -352,7 +367,10 @@
 	
 	<span class="k">return</span> <span class="n">data</span></div>
 
-<div class="viewcode-block" id="get_label_variable"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.get_label_variable">[docs]</a><span class="k">def</span> <span class="nf">get_label_variable</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+
+<div class="viewcode-block" id="get_label_variable">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.get_label_variable">[docs]</a>
+<span class="k">def</span> <span class="nf">get_label_variable</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
 	<span class="n">field_labels</span> <span class="o">=</span> <span class="p">{</span>
 		<span class="s2">&quot;pre&quot;</span> <span class="p">:</span> <span class="s1">&#39;Precipitation [mm/month]&#39;</span><span class="p">,</span>
 		<span class="s2">&quot;pet&quot;</span> <span class="p">:</span> <span class="s1">&#39;Potential ET. [mm/month]&#39;</span><span class="p">,</span>
@@ -370,8 +388,11 @@
 		
 		<span class="p">}</span>
 	<span class="k">return</span> <span class="n">field_labels</span><span class="p">[</span><span class="n">var</span><span class="p">]</span></div>
+
 	
-<div class="viewcode-block" id="get_mask"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.get_mask">[docs]</a><span class="k">def</span> <span class="nf">get_mask</span><span class="p">(</span><span class="n">fmask</span><span class="p">):</span>
+<div class="viewcode-block" id="get_mask">
+<a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.get_mask">[docs]</a>
+<span class="k">def</span> <span class="nf">get_mask</span><span class="p">(</span><span class="n">fmask</span><span class="p">):</span>
 	<span class="c1"># output an array</span>
 	<span class="c1"># get a mask</span>
 	<span class="n">mask</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fmask</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -380,6 +401,7 @@
 	<span class="n">mask</span><span class="p">[</span><span class="n">mask</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 	<span class="n">mask</span><span class="p">[</span><span class="n">mask</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
 	<span class="k">return</span> <span class="n">mask</span></div>
+
 </pre></div>
 
            </div>

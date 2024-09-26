@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SAMPLING STORM CENTERS &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -101,9 +105,9 @@
            <div itemprop="articleBody">
              
   <section id="SAMPLING-STORM-CENTERS">
-<h1><strong>SAMPLING STORM CENTERS</strong><a class="headerlink" href="#SAMPLING-STORM-CENTERS" title="Permalink to this heading"></a></h1>
+<h1><strong>SAMPLING STORM CENTERS</strong><a class="headerlink" href="#SAMPLING-STORM-CENTERS" title="Link to this heading"></a></h1>
 <section id="Objectives:">
-<h2>Objectives:<a class="headerlink" href="#Objectives:" title="Permalink to this heading"></a></h2>
+<h2>Objectives:<a class="headerlink" href="#Objectives:" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>Getting a grip on the spatial sampling of storm centres</p></li>
 <li><p>Recipes for spatial plotting (via <a class="reference external" href="https://numpy.org/doc/stable/">Numpy</a> and <a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/getting_started/index.html">Cartopy</a>)</p></li>
@@ -117,7 +121,7 @@
 <p>The sampling and processing of storm centres is done by STORM through the functions: SCENTRES, SHP_REGION, and SHP_REGION_GRID of the <a class="reference external" href="../rainfall.py">rainfall.py</a> module.</p>
 <hr class="docutils" />
 <section id="STORM-PARAMETERS">
-<h3>STORM PARAMETERS<a class="headerlink" href="#STORM-PARAMETERS" title="Permalink to this heading"></a></h3>
+<h3>STORM PARAMETERS<a class="headerlink" href="#STORM-PARAMETERS" title="Link to this heading"></a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
 </pre></div>
@@ -151,7 +155,7 @@
 </div>
 </div>
 <section id="RANDOM-SAMPLING-OF-POINTS-INSIDE-A-(SPATIAL)-WINDOW">
-<h4>RANDOM SAMPLING OF POINTS INSIDE A (SPATIAL) WINDOW<a class="headerlink" href="#RANDOM-SAMPLING-OF-POINTS-INSIDE-A-(SPATIAL)-WINDOW" title="Permalink to this heading"></a></h4>
+<h4>RANDOM SAMPLING OF POINTS INSIDE A (SPATIAL) WINDOW<a class="headerlink" href="#RANDOM-SAMPLING-OF-POINTS-INSIDE-A-(SPATIAL)-WINDOW" title="Link to this heading"></a></h4>
 <p>The exercise below samples random points (storm centres) within a buffer of the <a class="reference external" href="https://en.wikipedia.org/wiki/Shapefile">Shapefile</a> (SHP) of the HAD.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
@@ -265,7 +269,7 @@
 </section>
 </section>
 <section id="Visualization-(via-Matplotlib)">
-<h3>Visualization (via Matplotlib)<a class="headerlink" href="#Visualization-(via-Matplotlib)" title="Permalink to this heading"></a></h3>
+<h3>Visualization (via Matplotlib)<a class="headerlink" href="#Visualization-(via-Matplotlib)" title="Link to this heading"></a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
 </pre></div>
@@ -321,7 +325,7 @@
 </div>
 </section>
 <section id="Visualization-(via-Cartopy)">
-<h3>Visualization (via Cartopy)<a class="headerlink" href="#Visualization-(via-Cartopy)" title="Permalink to this heading"></a></h3>
+<h3>Visualization (via Cartopy)<a class="headerlink" href="#Visualization-(via-Cartopy)" title="Link to this heading"></a></h3>
 <p>Note: The use of Proj strings is being higly discouraged (check <a class="reference external" href="https://gis.stackexchange.com/questions/374508/spproj4string-equivalent-in-the-proj6-framework/374968#374968">this</a> or <a class="reference external" href="https://inbo.github.io/tutorials/tutorials/spatial_crs_coding/">this</a> out).</p>
 <p>Cartopy allows some few <a class="reference external" href="https://scitools.org.uk/cartopy/docs/v0.15/crs/projections.html">projections</a> defined mainly? via <a class="reference external" href="https://proj.org/en/9.3/">Proj</a> strings. <a class="reference external" href="https://pyproj4.github.io/pyproj/stable/">Pyproj</a> allows the conversion from WKT to Proj strings; something like…</p>
 <div class="nbinput docutils container">

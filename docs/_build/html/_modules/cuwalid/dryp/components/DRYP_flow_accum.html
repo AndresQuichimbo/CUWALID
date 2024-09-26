@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.dryp.components.DRYP_flow_accum &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -84,7 +88,9 @@
 <span class="kn">from</span> <span class="nn">landlab.components</span> <span class="kn">import</span> <span class="n">FlowDirectorD8</span>
 
 <span class="c1">#Kloss = None</span>
-<div class="viewcode-block" id="runoff_routing"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.runoff_routing">[docs]</a><span class="k">class</span> <span class="nc">runoff_routing</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="runoff_routing">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.runoff_routing">[docs]</a>
+<span class="k">class</span> <span class="nc">runoff_routing</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to discharge and transmission losses discharge.</span>
 <span class="sd">    Running run_one_step() results in the following to occur:</span>
 <span class="sd">        1. Flow directions are updated (unless update_flow_director is set</span>
@@ -157,7 +163,9 @@
         <span class="c1">#            grid.boundary_nodes)</span>
         
         
-<div class="viewcode-block" id="runoff_routing.run_runoff_one_step"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.runoff_routing.run_runoff_one_step">[docs]</a>    <span class="k">def</span> <span class="nf">run_runoff_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runoff</span><span class="p">,</span> <span class="n">AOF</span><span class="p">,</span> <span class="n">AOF_threshold</span><span class="p">,</span> <span class="n">conductivity</span><span class="p">,</span>
+<div class="viewcode-block" id="runoff_routing.run_runoff_one_step">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.runoff_routing.run_runoff_one_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">run_runoff_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runoff</span><span class="p">,</span> <span class="n">AOF</span><span class="p">,</span> <span class="n">AOF_threshold</span><span class="p">,</span> <span class="n">conductivity</span><span class="p">,</span>
              <span class="n">decay</span><span class="p">,</span> <span class="n">river_cell</span><span class="p">,</span> <span class="n">area_cells</span><span class="p">,</span> <span class="n">area_river</span><span class="p">,</span> <span class="n">river_sat_deficit</span><span class="p">,</span>
              <span class="n">boundary_nodes</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Function to make FlowAccumulator calculate drainage area and discharge.</span>
@@ -270,11 +278,15 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="p">[</span><span class="n">area_river</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">discharge</span><span class="p">[</span><span class="n">area_river</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
                 <span class="o">/</span><span class="n">area_river</span><span class="p">[</span><span class="n">area_river</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">*</span><span class="n">river_cell</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">*</span><span class="n">river_cell</span></div>
+</div>
+
         <span class="c1">#        env_state.grid.at_node[&#39;runoff&#39;][act_nodes])</span>
 
 
-<div class="viewcode-block" id="watershed"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.watershed">[docs]</a><span class="k">class</span> <span class="nc">watershed</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="watershed">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.watershed">[docs]</a>
+<span class="k">class</span> <span class="nc">watershed</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to delineate basins. This function needs to be initialized</span>
 <span class="sd">    </span>
 <span class="sd">    by providing a landlab grid, a surface elevation, and/or a flow</span>
@@ -325,7 +337,9 @@
         <span class="c1">#D = as_id_array(flow_accum_bw._make_array_of_donors(self.r, delta))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">as_id_array</span><span class="p">(</span><span class="n">flow_accum_bw</span><span class="o">.</span><span class="n">make_ordered_node_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">))</span>
         
-<div class="viewcode-block" id="watershed.get_watersheds"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.watershed.get_watersheds">[docs]</a>    <span class="k">def</span> <span class="nf">get_watersheds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outlet</span><span class="p">):</span>
+<div class="viewcode-block" id="watershed.get_watersheds">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.watershed.get_watersheds">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_watersheds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outlet</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Function call find_watershed to perforn the basin delineation.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -338,9 +352,13 @@
 <span class="sd">        basin :    numpy array of int</span>
 <span class="sd">            numpy array containg outlet values as basin (1D array)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">find_watersheds</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">outlet</span><span class="p">,</span> <span class="n">boundary_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">find_watersheds</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">outlet</span><span class="p">,</span> <span class="n">boundary_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+</div>
 
-<div class="viewcode-block" id="Create_parameter_WV"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.Create_parameter_WV">[docs]</a><span class="k">def</span> <span class="nf">Create_parameter_WV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">riv_width</span><span class="p">,</span> <span class="n">riv_length</span><span class="p">):</span><span class="c1">#, kKloss):</span>
+
+<div class="viewcode-block" id="Create_parameter_WV">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.Create_parameter_WV">[docs]</a>
+<span class="k">def</span> <span class="nf">Create_parameter_WV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">riv_width</span><span class="p">,</span> <span class="n">riv_length</span><span class="p">):</span><span class="c1">#, kKloss):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;additional parameters to save computational time</span>
 
 <span class="sd">    Parameters</span>
@@ -371,7 +389,10 @@
     <span class="k">return</span></div>
 
 
-<div class="viewcode-block" id="find_drainage_area"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.find_drainage_area">[docs]</a><span class="k">def</span> <span class="nf">find_drainage_area</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">node_cell_area</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">boundary_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="find_drainage_area">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.find_drainage_area">[docs]</a>
+<span class="k">def</span> <span class="nf">find_drainage_area</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">node_cell_area</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">boundary_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the drainage area and water discharge at each node, permitting</span>
 <span class="sd">    discharge to fall (or gain) as it moves downstream according to some</span>
@@ -445,7 +466,10 @@
             
     <span class="k">return</span> <span class="n">drainage_area</span></div>
 
-<div class="viewcode-block" id="find_watersheds"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.find_watersheds">[docs]</a><span class="k">def</span> <span class="nf">find_watersheds</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">outlet</span><span class="p">,</span> <span class="n">boundary_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="find_watersheds">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.find_watersheds">[docs]</a>
+<span class="k">def</span> <span class="nf">find_watersheds</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">outlet</span><span class="p">,</span> <span class="n">boundary_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the drainage area and water discharge at each node, permitting</span>
 <span class="sd">    discharge to fall (or gain) as it moves downstream according to some</span>
@@ -521,7 +545,10 @@
                 
     <span class="k">return</span> <span class="n">basin</span></div>
 
-<div class="viewcode-block" id="find_discharge_and_losses"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.find_discharge_and_losses">[docs]</a><span class="k">def</span> <span class="nf">find_discharge_and_losses</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">runoff</span><span class="p">,</span> <span class="n">Criv</span><span class="p">,</span> <span class="n">Kt</span><span class="p">,</span>
+
+<div class="viewcode-block" id="find_discharge_and_losses">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.find_discharge_and_losses">[docs]</a>
+<span class="k">def</span> <span class="nf">find_discharge_and_losses</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">runoff</span><span class="p">,</span> <span class="n">Criv</span><span class="p">,</span> <span class="n">Kt</span><span class="p">,</span>
                               <span class="n">Q_ini</span><span class="p">,</span> <span class="n">riv</span><span class="p">,</span> <span class="n">Q_aof</span><span class="p">,</span> <span class="n">Q_aoft</span><span class="p">,</span> <span class="n">riv_std</span><span class="p">,</span> <span class="n">P3</span><span class="p">,</span> <span class="n">P4</span><span class="p">,</span>
                               <span class="n">node_cell_area</span><span class="p">,</span> <span class="n">boundary_nodes</span><span class="p">):</span>
     <span class="c1"># node_cell_area=1.0, boundary_nodes=None):</span>
@@ -646,10 +673,13 @@
             <span class="n">Q_aof</span><span class="p">[</span><span class="n">donor</span><span class="p">]</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="c1">#Q_aofp</span>
             <span class="c1">#print(aux)</span>
     <span class="k">return</span> <span class="n">discharge</span><span class="p">,</span> <span class="n">QTL</span><span class="p">,</span> <span class="n">Q_ini</span><span class="p">,</span> <span class="n">Q_aof</span></div>
+
     <span class="c1">#return np.array([discharge, QTL, Q_ini, Q_aof])</span>
 
 <span class="c1">#@jit(nopython=True)</span>
-<div class="viewcode-block" id="TransLossWV"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.TransLossWV">[docs]</a><span class="k">def</span> <span class="nf">TransLossWV</span><span class="p">(</span><span class="n">Qw</span><span class="p">,</span> <span class="n">Criv</span><span class="p">,</span> <span class="n">Kt</span><span class="p">,</span> <span class="n">Q_ini</span><span class="p">,</span>
+<div class="viewcode-block" id="TransLossWV">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.TransLossWV">[docs]</a>
+<span class="k">def</span> <span class="nf">TransLossWV</span><span class="p">(</span><span class="n">Qw</span><span class="p">,</span> <span class="n">Criv</span><span class="p">,</span> <span class="n">Kt</span><span class="p">,</span> <span class="n">Q_ini</span><span class="p">,</span>
                 <span class="n">riv</span><span class="p">,</span> <span class="n">Qaof</span><span class="p">,</span> <span class="n">Qaoft</span><span class="p">,</span> <span class="n">riv_std</span><span class="p">,</span> <span class="n">P3</span><span class="p">,</span> <span class="n">P4</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Transmission losses function</span>
 <span class="sd">    </span>
@@ -712,9 +742,12 @@
         <span class="n">Q_ini</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">QTL</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Qout</span><span class="p">,</span> <span class="n">QTL</span><span class="p">,</span> <span class="n">Q_ini</span><span class="p">,</span> <span class="n">Qaof</span><span class="p">])</span></div>
+
     <span class="c1">#return Qout, QTL, Q_ini, Qaof</span>
 
-<div class="viewcode-block" id="exp_decay_loss_wp"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.exp_decay_loss_wp">[docs]</a><span class="k">def</span> <span class="nf">exp_decay_loss_wp</span><span class="p">(</span><span class="n">TL</span><span class="p">,</span> <span class="n">Qin</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">P3</span><span class="p">,</span> <span class="n">P4</span><span class="p">):</span>
+<div class="viewcode-block" id="exp_decay_loss_wp">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.exp_decay_loss_wp">[docs]</a>
+<span class="k">def</span> <span class="nf">exp_decay_loss_wp</span><span class="p">(</span><span class="n">TL</span><span class="p">,</span> <span class="n">Qin</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">P3</span><span class="p">,</span> <span class="n">P4</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate transmission losses, flow leaving the cell, and</span>
 <span class="sd">    channel storage</span>
 <span class="sd">    </span>
@@ -764,8 +797,11 @@
         
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Qout</span><span class="p">,</span> <span class="n">Qtl</span><span class="p">,</span> <span class="n">Sch</span><span class="p">])</span></div>
 
+
 <span class="c1">#@jit(nopython=True)</span>
-<div class="viewcode-block" id="exp_decay_wp"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.exp_decay_wp">[docs]</a><span class="k">def</span> <span class="nf">exp_decay_wp</span><span class="p">(</span><span class="n">Qin</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<div class="viewcode-block" id="exp_decay_wp">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.exp_decay_wp">[docs]</a>
+<span class="k">def</span> <span class="nf">exp_decay_wp</span><span class="p">(</span><span class="n">Qin</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate flow leaving the cell and channel storage</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -782,6 +818,7 @@
     <span class="n">Sch</span> <span class="o">=</span> <span class="n">Qin</span><span class="o">-</span><span class="n">Qout</span>
     
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Qout</span><span class="p">,</span> <span class="n">Sch</span><span class="p">])</span></div>
+
 </pre></div>
 
            </div>

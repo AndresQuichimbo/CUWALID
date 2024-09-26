@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.dryp.components.DRYP_io &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -89,7 +93,9 @@
 <span class="c1"># Global parameters</span>
 <span class="n">ABC_RIVER</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="c1"># River abstraction parameter</span>
 		
-<div class="viewcode-block" id="surface_parameters"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.surface_parameters">[docs]</a><span class="k">class</span> <span class="nc">surface_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="surface_parameters">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.surface_parameters">[docs]</a>
+<span class="k">class</span> <span class="nc">surface_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Setting model input varables and environmental states</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
@@ -301,7 +307,9 @@
 		
 		<span class="k">pass</span>
 	<span class="c1"># Find coordinates of points in model components</span>
-<div class="viewcode-block" id="surface_parameters.points_output"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.surface_parameters.points_output">[docs]</a>	<span class="k">def</span> <span class="nf">points_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
+<div class="viewcode-block" id="surface_parameters.points_output">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.surface_parameters.points_output">[docs]</a>
+	<span class="k">def</span> <span class="nf">points_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot; This function reads data points to report model results</span>
 <span class="sd">		Values at each point will be extracted for all components depending</span>
 <span class="sd">		on the specified points:</span>
@@ -320,10 +328,14 @@
 		<span class="n">gaugeid</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
 			<span class="n">inputfile</span><span class="p">)</span>
 		
-		<span class="k">return</span> <span class="n">gaugeid</span></div></div>
+		<span class="k">return</span> <span class="n">gaugeid</span></div>
+</div>
 
 
-<div class="viewcode-block" id="grid_environment"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.grid_environment">[docs]</a><span class="k">class</span> <span class="nc">grid_environment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="grid_environment">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.grid_environment">[docs]</a>
+<span class="k">class</span> <span class="nc">grid_environment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;grid elements and state variables required for running the model&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;this function create a grid landlab object, this function can be</span>
@@ -331,18 +343,22 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">pass</span>
 
-<div class="viewcode-block" id="grid_environment.create_grid"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.grid_environment.create_grid">[docs]</a>	<span class="k">def</span> <span class="nf">create_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ncol</span><span class="p">,</span> <span class="n">nrow</span><span class="p">,</span> <span class="n">xllcorner</span><span class="p">,</span> <span class="n">yllcorner</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
+<div class="viewcode-block" id="grid_environment.create_grid">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.grid_environment.create_grid">[docs]</a>
+	<span class="k">def</span> <span class="nf">create_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ncol</span><span class="p">,</span> <span class="n">nrow</span><span class="p">,</span> <span class="n">xllcorner</span><span class="p">,</span> <span class="n">yllcorner</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;this function create a grid landlab object, this function can be</span>
 <span class="sd">		used directly from landlab rastergrid function</span>
+<span class="sd">		</span>
 <span class="sd">		Parameters</span>
-<span class="sd">		------</span>
+<span class="sd">		----------</span>
 <span class="sd">		ncol:		number of column of the grid, grid width (integer)</span>
 <span class="sd">		nrow:		number of column of the grid, grid width (integer)</span>
 <span class="sd">		xllcorner:	lower left x coordinate</span>
 <span class="sd">		yllcorner:	lower left x coordinate</span>
 <span class="sd">		cellsize:	grid spacing, size of the model cells</span>
+<span class="sd">		</span>
 <span class="sd">		Returns</span>
-<span class="sd">		------</span>
+<span class="sd">		-------</span>
 <span class="sd">		grid:	landlab grid</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">grid</span> <span class="o">=</span> <span class="n">RasterModelGrid</span><span class="p">((</span><span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span><span class="p">),</span> <span class="n">xy_spacing</span><span class="o">=</span><span class="n">cellsize</span><span class="p">,</span>
@@ -359,16 +375,23 @@
 			<span class="n">idomain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">domain</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 			<span class="n">grid</span><span class="o">.</span><span class="n">status_at_node</span><span class="p">[</span><span class="n">idomain</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">BC_NODE_IS_CLOSED</span>
 		
-		<span class="k">return</span> <span class="n">grid</span></div></div>
+		<span class="k">return</span> <span class="n">grid</span></div>
+</div>
 
-<div class="viewcode-block" id="model_environment_status"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.model_environment_status">[docs]</a><span class="k">class</span> <span class="nc">model_environment_status</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="model_environment_status">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.model_environment_status">[docs]</a>
+<span class="k">class</span> <span class="nc">model_environment_status</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;grid elements and state variables required for running the model&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;ininitalize model variables which are common for all components&quot;&quot;&quot;</span>
 		
 		<span class="k">pass</span></div>
 
-<div class="viewcode-block" id="set_initial_conditions"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.set_initial_conditions">[docs]</a><span class="k">def</span> <span class="nf">set_initial_conditions</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> 
+
+<div class="viewcode-block" id="set_initial_conditions">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.set_initial_conditions">[docs]</a>
+<span class="k">def</span> <span class="nf">set_initial_conditions</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> 
 		    <span class="n">bathymetry</span><span class="p">,</span> <span class="n">extintion_depth</span><span class="p">,</span> <span class="n">cell_size</span><span class="p">,</span> <span class="n">gw_activated</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function check for initial condition</span>
 <span class="sd">	</span>
@@ -429,7 +452,10 @@
 	
 	<span class="k">return</span> <span class="n">head</span><span class="p">,</span> <span class="n">Duz</span><span class="p">,</span> <span class="n">z_extintion</span><span class="p">,</span> <span class="n">river_sat_deficit</span><span class="p">,</span> <span class="n">Ft0</span><span class="p">,</span> <span class="n">SORP0</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">dry_day</span></div>
 
-<div class="viewcode-block" id="soil_parameters"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.soil_parameters">[docs]</a><span class="k">class</span> <span class="nc">soil_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="soil_parameters">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.soil_parameters">[docs]</a>
+<span class="k">class</span> <span class="nc">soil_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Setting model input varables and environmental states</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
@@ -530,7 +556,10 @@
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">theta_fc</span> <span class="o">=</span> <span class="n">theta_AWC</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta_wp</span></div>
 
-<div class="viewcode-block" id="groundwater_parameters"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.groundwater_parameters">[docs]</a><span class="k">class</span> <span class="nc">groundwater_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="groundwater_parameters">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.groundwater_parameters">[docs]</a>
+<span class="k">class</span> <span class="nc">groundwater_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function reads all aquifer paramters required to run the saturated component</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
@@ -650,10 +679,13 @@
 			<span class="c1">#print(&#39;Initial water table elevation assumed equal to root depth elevation&#39;)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_GWini</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span></div>
+
 			<span class="c1">#h = read_esri_ascii(inputfile.fname_GWini,</span>
 			<span class="c1">#	name=&#39;water_table__elevation&#39;, grid=gw)[1]</span>
 		
-<div class="viewcode-block" id="interception_parameters"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.interception_parameters">[docs]</a><span class="k">class</span> <span class="nc">interception_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="interception_parameters">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.interception_parameters">[docs]</a>
+<span class="k">class</span> <span class="nc">interception_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function reads all aquifer paramters required to run the saturated component</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
@@ -784,7 +816,10 @@
 
 		<span class="k">pass</span></div>
 
-<div class="viewcode-block" id="water_body_parameters"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.water_body_parameters">[docs]</a><span class="k">class</span> <span class="nc">water_body_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="water_body_parameters">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.water_body_parameters">[docs]</a>
+<span class="k">class</span> <span class="nc">water_body_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function reads all aquifer paramters required to run the saturated component</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">,</span> <span class="n">id_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -833,7 +868,10 @@
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">id_nodes</span> <span class="o">=</span> <span class="n">id_nodes</span></div>
 
-<div class="viewcode-block" id="extract_id_from_coords"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.extract_id_from_coords">[docs]</a><span class="k">def</span> <span class="nf">extract_id_from_coords</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+
+<div class="viewcode-block" id="extract_id_from_coords">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.extract_id_from_coords">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_id_from_coords</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot; extract nodes from a csv file</span>
 <span class="sd">	this component uses the landlab funtion &quot;find_nearest_node</span>
 
@@ -884,8 +922,11 @@
 		   		<span class="s1">&#39;Please check the file of sample points&#39;</span><span class="p">)</span>
 	
 	<span class="k">return</span> <span class="n">idpoint</span><span class="p">,</span> <span class="n">idpoint_active</span></div>
+
 	
-<div class="viewcode-block" id="extract_id_from_raster"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.extract_id_from_raster">[docs]</a><span class="k">def</span> <span class="nf">extract_id_from_raster</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="extract_id_from_raster">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.extract_id_from_raster">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_id_from_raster</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot; find id location of boundary conditions from raster</span>
 <span class="sd">	this component uses the landlab funtion &quot;find_nearest_node</span>
 
@@ -914,7 +955,10 @@
 	
 	<span class="k">return</span> <span class="n">id_location</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="create_coordinate_array"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.create_coordinate_array">[docs]</a><span class="k">def</span> <span class="nf">create_coordinate_array</span><span class="p">(</span><span class="n">xllcorner</span><span class="p">,</span> <span class="n">yllcorner</span><span class="p">,</span> <span class="n">grid_nrows</span><span class="p">,</span> <span class="n">grid_ncols</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">):</span>
+
+<div class="viewcode-block" id="create_coordinate_array">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.create_coordinate_array">[docs]</a>
+<span class="k">def</span> <span class="nf">create_coordinate_array</span><span class="p">(</span><span class="n">xllcorner</span><span class="p">,</span> <span class="n">yllcorner</span><span class="p">,</span> <span class="n">grid_nrows</span><span class="p">,</span> <span class="n">grid_ncols</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function create two arrays representing:</span>
 <span class="sd">	the x-axis (lon: longitud) and y-axis (lat: latitude)</span>
 <span class="sd">	WARNING: this axis have to be flipped to match landlab grid, so be carful when</span>
@@ -937,6 +981,7 @@
 	<span class="n">lon_end</span> <span class="o">=</span> <span class="n">yllcorner</span> <span class="o">+</span> <span class="n">cellsize</span><span class="o">*</span><span class="n">grid_ncols</span>
 	<span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">yllcorner</span><span class="p">,</span> <span class="n">lon_end</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span></div>
+
 		
 </pre></div>
 

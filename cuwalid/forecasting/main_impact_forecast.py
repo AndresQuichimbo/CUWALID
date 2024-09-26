@@ -72,7 +72,7 @@ def plot_maps_json(config_file):
 			return
 
 	# Check for required keys and provide feedback if missing
-	required_keys = ["plot_scales", "seasons", "water_status", "year", "netcdf_path", "threshold_path", "mask_path", "river_path"]
+	required_keys = ["plot_scales", "seasons", "water_status", "year", "mask_path", "river_path"]
 	for key in required_keys:
 		if key not in config:
 			print(f"Missing required key: {key} in the configuration file.")
@@ -80,29 +80,40 @@ def plot_maps_json(config_file):
 
 	# Extract parameters from JSON config
 	plot_scales = config.get("plot_scales", ["Zoom"])
-	country_name = config.get("country_name", ["Kenya"])
+	country_names = config.get("country_names", ["Kenya"])
 	place_name = config.get("place_names", [None])
 	season = config.get("seasons", ["OND"])
 	water_status = config.get("water_status", ["Flood"])
 	year = config["year"]
 	language = config.get("language", "English")
 	output_dir = config.get("output_dir", "output")
-	netcdf_path = config["netcdf_path"]
-	threshold_path = config["threshold_path"]
+	netcdf_path = config.get("netcdf_path", None)
+	threshold_path = config.get("threshold_path", None)
 	mask_path = config["mask_path"]
 	river_path = config["river_path"]
 	shape_path = config.get("shape_path", None)
 	prev_output_path = config.get("prev_output_path", None)
 	pp_path = config.get("pp_path", None)
-	name_historical_value = config.get("name_historical_value", None)
 	model_name = config.get("model_name", None)
 
-	if model_name != None:
+	# Ensure the user provides either netcdf_path/threshold_path or prev_output_path/pp_path/model_name
+	if netcdf_path is None or threshold_path is None:
+		if prev_output_path is None or pp_path is None or model_name is None:
+			raise ValueError("You must provide either 'netcdf_path' and 'threshold_path', "
+							"or 'prev_output_path', 'pp_path', and 'model_name'.")
 
-		netcdf_path2 = os.path.join(prev_output_path, model_name + "_YYYY_grid.nc")
+	# If netcdf_path and threshold_path are not provided, generate them using prev_output_path, pp_path, and model_name
+	if netcdf_path is None and threshold_path is None:
+		netcdf_path = os.path.join(prev_output_path, model_name + "_YYYY_grid.nc")
 		threshold_path = os.path.join(pp_path, model_name + "_SSS")
 
-	if place_name != [None] and len(country_name)>1:
+	print("############################")
+	print(netcdf_path)
+	print(threshold_path)
+	print("############################")
+
+
+	if place_name != [None] and len(country_names)>1:
 		print("Error: if creating maps for multiple countries at once, please remove place_name from the json input to create maps for all counties")
 		return
 
@@ -122,7 +133,7 @@ def plot_maps_json(config_file):
 		}
 
 		# Get list of counties from each country given in the iput
-		for country in country_name:
+		for country in country_names:
 			print(f"Warning: no place name given, creating a map for each county within {country}")
 
 			# Open shape file
@@ -148,10 +159,10 @@ def plot_maps_json(config_file):
 				river_path=river_path,
 				shape_path=shape_path
 			)
-	elif len(country_name) == 1:
+	elif len(country_names) == 1:
 		call_plot_maps(
 			plot_scales=plot_scales, 
-			country_name=country_name[0], 
+			country_name=country_names[0], 
 			place_names=place_name, 
 			seasons=season, 
 			water_status=water_status, 
@@ -168,7 +179,7 @@ def plot_maps_json(config_file):
 		# Call the plotting function
 		call_plot_maps(
 			plot_scales=plot_scales, 
-			country_name=country_name, 
+			country_name=country_names, 
 			place_names=place_name, 
 			seasons=season, 
 			water_status=water_status, 
@@ -290,20 +301,23 @@ def call_plot_maps(plot_scales=["Zoom"],
 			print(f"Place name {iplace_name}")
 			for iiseason in seasons:
 				for iiwater_status in water_status:
-					plot_map(plot_scale=iplot_scale,
-							country_name=country_name,
-			  				place_name=iplace_name,
-							iseason=iiseason,
-							iwater_status=iiwater_status,
-							iyear=year,
-							ilanguage=language,
-							output_dir=output_dir,
-							netcdf_path=netcdf_path,
-							threshold_path=threshold_path,
-							mask_path=mask_path,
-							river_path=river_path,
-							shape_path=shape_path
-							)
+					try:
+						plot_map(plot_scale=iplot_scale,
+								country_name=country_name,
+								place_name=iplace_name,
+								iseason=iiseason,
+								iwater_status=iiwater_status,
+								iyear=year,
+								ilanguage=language,
+								output_dir=output_dir,
+								netcdf_path=netcdf_path,
+								threshold_path=threshold_path,
+								mask_path=mask_path,
+								river_path=river_path,
+								shape_path=shape_path
+								)
+					except:
+						print("An exception occured {country_name} {iplace_name}")
 							  
 # Main function to handle command-line arguments
 if __name__ == '__main__':

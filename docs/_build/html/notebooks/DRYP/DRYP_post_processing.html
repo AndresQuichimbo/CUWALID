@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content: &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -98,7 +102,7 @@
            <div itemprop="articleBody">
              
   <section id="Content:">
-<h1>Content:<a class="headerlink" href="#Content:" title="Permalink to this heading"></a></h1>
+<h1>Content:<a class="headerlink" href="#Content:" title="Link to this heading"></a></h1>
 <ul class="simple">
 <li><p>Installation</p></li>
 <li><p>Preparing model inputs parameters and dataset</p></li>
@@ -107,7 +111,7 @@
 </ul>
 </section>
 <section id="Post-processing-datasets">
-<h1>Post-processing datasets<a class="headerlink" href="#Post-processing-datasets" title="Permalink to this heading"></a></h1>
+<h1>Post-processing datasets<a class="headerlink" href="#Post-processing-datasets" title="Link to this heading"></a></h1>
 <ol class="arabic simple">
 <li><p>Understanding model outputs</p></li>
 </ol>
@@ -127,7 +131,7 @@
 </div>
 </div>
 <section id="4.1.-Understanding-model-outputs">
-<h2>4.1. Understanding model outputs<a class="headerlink" href="#4.1.-Understanding-model-outputs" title="Permalink to this heading"></a></h2>
+<h2>4.1. Understanding model outputs<a class="headerlink" href="#4.1.-Understanding-model-outputs" title="Link to this heading"></a></h2>
 <p>Model results are stored in two different formats:</p>
 <ul class="simple">
 <li><p>Comma delimited files (<em>.csv</em>) to store time series, and</p></li>
@@ -363,7 +367,7 @@
 </div>
 </section>
 <section id="4.2.-Post-processing-model-outputs">
-<h2>4.2. Post-processing model outputs<a class="headerlink" href="#4.2.-Post-processing-model-outputs" title="Permalink to this heading"></a></h2>
+<h2>4.2. Post-processing model outputs<a class="headerlink" href="#4.2.-Post-processing-model-outputs" title="Link to this heading"></a></h2>
 <p>A post-processing component (DRYP_pptools) has been added to DRYP to perform basic operation with model outputs. This tool is still under development therefore capabilities are limited.</p>
 <p>Bellow some of the operations that can be performed with DRYP_pptools are listed, some examples are also shown below:</p>
 <ol class="arabic simple">
@@ -516,7 +520,7 @@
 </div>
 </section>
 <section id="4.3.-Sampling-model-outputs">
-<h2>4.3. Sampling model outputs<a class="headerlink" href="#4.3.-Sampling-model-outputs" title="Permalink to this heading"></a></h2>
+<h2>4.3. Sampling model outputs<a class="headerlink" href="#4.3.-Sampling-model-outputs" title="Link to this heading"></a></h2>
 <p>Analysing model outputs often requires extracting especific values from gridded datasets that where not stored as <em>.csv</em> files. Python has different libraries to process netCDF files that can be uses to extract values from gridded datasets. Here, we have combined some of the Python libraries to facilitate DRYP postprocessing outputs, these functions have beed added into the DRYP pptool.</p>
 <ul class="simple">
 <li><p>Extranting values from point locations</p></li>
@@ -583,7 +587,7 @@
 <p><strong>TASK</strong>: Explore and plot the created dataframe</p>
 </section>
 <section id="Visualising-spatial-variables">
-<h2>Visualising spatial variables<a class="headerlink" href="#Visualising-spatial-variables" title="Permalink to this heading"></a></h2>
+<h2>Visualising spatial variables<a class="headerlink" href="#Visualising-spatial-variables" title="Link to this heading"></a></h2>
 <p>Plot model results (this can be done with any library available in python for processing netcdf files or even in other application)</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:

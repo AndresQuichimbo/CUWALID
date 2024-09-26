@@ -1,19 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Developer Maintenance &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -87,10 +91,12 @@
            <div itemprop="articleBody">
              
   <section id="developer-maintenance">
-<h1>Developer Maintenance<a class="headerlink" href="#developer-maintenance" title="Permalink to this heading"></a></h1>
+<h1>Developer Maintenance<a class="headerlink" href="#developer-maintenance" title="Link to this heading"></a></h1>
 <p>This documentation is <strong>purely for the use of the CUWALID Team</strong> to maintain this project and should be <strong>ignored</strong> by users.</p>
 <section id="maintaining-the-documentation">
-<h2>Maintaining the documentation<a class="headerlink" href="#maintaining-the-documentation" title="Permalink to this heading"></a></h2>
+<h2>Maintaining the documentation<a class="headerlink" href="#maintaining-the-documentation" title="Link to this heading"></a></h2>
+<p>The documentation for the code (e.g. the functions and classes) are automatically generated when using sphinx as shown below, other parts of the documentation such as the part you are reading are writting in .rst (reStructuredText) files, these can be found at docs/source.</p>
+<p>Within the static folder there are also folders for ‘txt’ text files or json examples and things that you can include in your documentation. You can find out how to write .rst files <a class="reference external" href="https://www.writethedocs.org/guide/writing/reStructuredText/">here</a></p>
 <p>If you have added code to the documentation you will first need to delete any of the .rst files found in docs/source that are related to the code you changed.</p>
 <p>For example if there is a new module in the cuwalid.dryp.components module, you should delete the cuwalid.dryp.components.rst file, or just change the file to include the new module.</p>
 <p>If this is not done, you may not see your new changed appear in the documentation, after deleting the necessary files you can run this command from the docs directory in your terminal:</p>
@@ -106,9 +112,9 @@ make<span class="w"> </span>html
 <p>The easiest way to check you changes is to open the newly created html files in a browser (e.g. chrome). The html files are found in docs/_build/html</p>
 </section>
 <section id="maintaining-the-package-on-pypi">
-<h2>Maintaining the package on PyPi<a class="headerlink" href="#maintaining-the-package-on-pypi" title="Permalink to this heading"></a></h2>
+<h2>Maintaining the package on PyPi<a class="headerlink" href="#maintaining-the-package-on-pypi" title="Link to this heading"></a></h2>
 <section id="useful-tips">
-<h3>Useful Tips<a class="headerlink" href="#useful-tips" title="Permalink to this heading"></a></h3>
+<h3>Useful Tips<a class="headerlink" href="#useful-tips" title="Link to this heading"></a></h3>
 <ol class="arabic simple">
 <li><p>The setup.py file is for building the package, it contains information like the name of the package, authors, minimum python version, package dependencies and more.</p></li>
 <li><p>The MANIFEST.in file contains files that PyPi might skip over when packaging if you don’t specificy to keep it. For example it contains the compiled fortran code for the DRYP model and also data needed to run tests.</p></li>
@@ -116,7 +122,7 @@ make<span class="w"> </span>html
 </ol>
 </section>
 <section id="releasing-a-new-version">
-<h3>Releasing a new version<a class="headerlink" href="#releasing-a-new-version" title="Permalink to this heading"></a></h3>
+<h3>Releasing a new version<a class="headerlink" href="#releasing-a-new-version" title="Link to this heading"></a></h3>
 <p>To publish a new version to PyPi you should first check it works on all systems and the documentation on how to instal/use the package is all up to date.</p>
 <ol class="arabic">
 <li><p>First ensure there are no distrubution files already in your root folder. The directories you want to delete are called ‘build’, ‘CUWALID.egg-info’ and ‘dist’. If this is the first time publishing a new version these files might not exist anyway.</p></li>
@@ -149,7 +155,7 @@ pip<span class="w"> </span>install<span class="w"> </span>cuwalid
 </section>
 </section>
 <section id="creating-issues-with-fortran-files">
-<h2>Creating/Issues with fortran files<a class="headerlink" href="#creating-issues-with-fortran-files" title="Permalink to this heading"></a></h2>
+<h2>Creating/Issues with fortran files<a class="headerlink" href="#creating-issues-with-fortran-files" title="Link to this heading"></a></h2>
 <p>I often ran into issues with fortran files when testing the package, it seems they need to be compiled for each python version. To do this you can follow these steps.</p>
 <ol class="arabic">
 <li><p>First activate an environment with the python version you want to use or are having trouble with, you can create an environment with conda with a specific python version with this command:</p>
@@ -189,7 +195,7 @@ f2py<span class="w"> </span>-c<span class="w"> </span>DRYP_solver.f90<span class
 <p>Now your fortran code should be working for whatever python version you compiled it for.</p>
 </section>
 <section id="package-structure">
-<h2>Package Structure<a class="headerlink" href="#package-structure" title="Permalink to this heading"></a></h2>
+<h2>Package Structure<a class="headerlink" href="#package-structure" title="Link to this heading"></a></h2>
 <p>The package structure looks similair to the diagram below:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cuwalid/
 ├──<span class="w"> </span>dryp/

@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>REGIONALIZING A REALIZATION &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -101,9 +105,9 @@
            <div itemprop="articleBody">
              
   <section id="REGIONALIZING-A-REALIZATION">
-<h1><strong>REGIONALIZING A REALIZATION</strong><a class="headerlink" href="#REGIONALIZING-A-REALIZATION" title="Permalink to this heading"></a></h1>
+<h1><strong>REGIONALIZING A REALIZATION</strong><a class="headerlink" href="#REGIONALIZING-A-REALIZATION" title="Link to this heading"></a></h1>
 <section id="Objectives:">
-<h2>Objectives:<a class="headerlink" href="#Objectives:" title="Permalink to this heading"></a></h2>
+<h2>Objectives:<a class="headerlink" href="#Objectives:" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>Manipulating and visualizing spatial data</p></li>
 <li><p>Recipes for awesome spatial plotting (via <a class="reference external" href="https://docs.xarray.dev/en/stable/">Xarray</a> and <a class="reference external" href="https://numpy.org/doc/stable/">Numpy</a>)</p></li>
@@ -114,7 +118,7 @@
 <p>Reading and regionalizing the realization is done by STORM through the functions: EMPTY_MAP, READ_REALIZATION, KREGIONS, MORPHOPEN, and REGIONALISATION of the <a class="reference external" href="../realization.py">realization.py</a> module.</p>
 <hr class="docutils" />
 <section id="STORM-PARAMETERS">
-<h3>STORM PARAMETERS<a class="headerlink" href="#STORM-PARAMETERS" title="Permalink to this heading"></a></h3>
+<h3>STORM PARAMETERS<a class="headerlink" href="#STORM-PARAMETERS" title="Link to this heading"></a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -148,7 +152,7 @@
 </div>
 </div>
 <section id="READING-SPATIAL-DATA">
-<h4>READING SPATIAL DATA<a class="headerlink" href="#READING-SPATIAL-DATA" title="Permalink to this heading"></a></h4>
+<h4>READING SPATIAL DATA<a class="headerlink" href="#READING-SPATIAL-DATA" title="Link to this heading"></a></h4>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -447,7 +451,7 @@ CRS.from_wkt(&#39;PROJCS[&#34;WGS84_/_Lambert_Azim_Mozambique&#34;,GEOGCS[&#34;u
 </section>
 </section>
 <section id="DATA-EXPORTING:-THE-WRONG-WAY!">
-<h3>DATA-EXPORTING: THE <strong>WRONG</strong> WAY!<a class="headerlink" href="#DATA-EXPORTING:-THE-WRONG-WAY!" title="Permalink to this heading"></a></h3>
+<h3>DATA-EXPORTING: THE <strong>WRONG</strong> WAY!<a class="headerlink" href="#DATA-EXPORTING:-THE-WRONG-WAY!" title="Link to this heading"></a></h3>
 <p>Please, do yourself a favor, and avoid exporting/storing outputs in this way; especially, if saving space is what you’re after.</p>
 <p>Note: Check notebook <a class="reference internal" href="fiv_.html"><span class="doc">fiv_</span></a> for a better and very optimal way of storing data into NetCDF format.</p>
 <p>Do run the following block!. (ouputs will serve later as comparison cases)</p>
@@ -472,7 +476,7 @@ CRS.from_wkt(&#39;PROJCS[&#34;WGS84_/_Lambert_Azim_Mozambique&#34;,GEOGCS[&#34;u
 </div>
 </section>
 <section id="VISUALIZATION">
-<h3>VISUALIZATION<a class="headerlink" href="#VISUALIZATION" title="Permalink to this heading"></a></h3>
+<h3>VISUALIZATION<a class="headerlink" href="#VISUALIZATION" title="Link to this heading"></a></h3>
 <p>Haven’t you checked out <a class="reference external" href="https://github.com/hhuangwx/cmaps/blob/master/examples/colormaps.png">this awesome link</a> yet?</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
@@ -554,7 +558,7 @@ CRS.from_wkt(&#39;PROJCS[&#34;WGS84_/_Lambert_Azim_Mozambique&#34;,GEOGCS[&#34;u
 </div>
 </div>
 <section id="REGIONALIZATION">
-<h4>REGIONALIZATION<a class="headerlink" href="#REGIONALIZATION" title="Permalink to this heading"></a></h4>
+<h4>REGIONALIZATION<a class="headerlink" href="#REGIONALIZATION" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line">The catchment/region is needed here as/in Numpy format/type.</div>
 <div class="line">Check last section of notebook <a class="reference internal" href="tre_.html"><span class="doc">tre_</span></a>.</div>
@@ -627,7 +631,7 @@ CRS.from_wkt(&#39;PROJCS[&#34;WGS84_/_Lambert_Azim_Mozambique&#34;,GEOGCS[&#34;u
 </section>
 </section>
 <section id="(MORE)-STORM-PARAMETERS">
-<h3>(MORE) STORM PARAMETERS<a class="headerlink" href="#(MORE)-STORM-PARAMETERS" title="Permalink to this heading"></a></h3>
+<h3>(MORE) STORM PARAMETERS<a class="headerlink" href="#(MORE)-STORM-PARAMETERS" title="Link to this heading"></a></h3>
 <p>Having this CLUSTERS parameter here is very handy (for some toying later) .</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
@@ -696,7 +700,7 @@ CRS.from_wkt(&#39;PROJCS[&#34;WGS84_/_Lambert_Azim_Mozambique&#34;,GEOGCS[&#34;u
 </div>
 </section>
 <section id="id1">
-<h3>VISUALIZATION<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>VISUALIZATION<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>We can definitely see the regionalization by plotting the <strong>LAB</strong> numpy.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
@@ -782,7 +786,7 @@ CRS.from_wkt(&#39;PROJCS[&#34;WGS84_/_Lambert_Azim_Mozambique&#34;,GEOGCS[&#34;u
 </div>
 </section>
 <section id="MORPHOLOGICAL-FILTERING">
-<h3>MORPHOLOGICAL FILTERING<a class="headerlink" href="#MORPHOLOGICAL-FILTERING" title="Permalink to this heading"></a></h3>
+<h3>MORPHOLOGICAL FILTERING<a class="headerlink" href="#MORPHOLOGICAL-FILTERING" title="Link to this heading"></a></h3>
 <p>Maybe there is not need to have a detailed delimitation among the region/zones. Such a detail might translate in slowing STORM computations by having SHPs with too many points. Hence, decreasing the resolution of the boundaries will speed STORM’s performance (by having SHPs with much less vertices/points).</p>
 <p>Note: Following this approach implies that the actual means won’t precisely correspond to the newly delimited regions.</p>
 <div class="nbinput docutils container">
@@ -817,7 +821,7 @@ CRS.from_wkt(&#39;PROJCS[&#34;WGS84_/_Lambert_Azim_Mozambique&#34;,GEOGCS[&#34;u
 </div>
 </section>
 <section id="REGIONALIZATION-MASKS-TO-NUMPYs">
-<h3>REGIONALIZATION MASKS TO NUMPYs<a class="headerlink" href="#REGIONALIZATION-MASKS-TO-NUMPYs" title="Permalink to this heading"></a></h3>
+<h3>REGIONALIZATION MASKS TO NUMPYs<a class="headerlink" href="#REGIONALIZATION-MASKS-TO-NUMPYs" title="Link to this heading"></a></h3>
 <p>Such a conversion is necessary for STORM to simulate storms within such regions/masks.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
@@ -984,7 +988,7 @@ CRS.from_wkt(&#39;PROJCS[&#34;WGS84_/_Lambert_Azim_Mozambique&#34;,GEOGCS[&#34;u
 </section>
 </section>
 <section id="A-PEEK-INTO-WHAT-IT'S-PASSED-TO-STORM">
-<h2><em>A PEEK INTO WHAT IT’S PASSED TO STORM</em><a class="headerlink" href="#A-PEEK-INTO-WHAT-IT'S-PASSED-TO-STORM" title="Permalink to this heading"></a></h2>
+<h2><em>A PEEK INTO WHAT IT’S PASSED TO STORM</em><a class="headerlink" href="#A-PEEK-INTO-WHAT-IT'S-PASSED-TO-STORM" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>

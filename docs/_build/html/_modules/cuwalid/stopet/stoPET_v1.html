@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.stopet.stoPET_v1 &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -86,7 +90,9 @@
 <span class="c1">## ----------------------------------------------------------##</span>
 <span class="c1">## Single point stoPET </span>
 <span class="c1">## ----------------------------------------------------------##</span>
-<div class="viewcode-block" id="stoPET_wrapper_singlepoint"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.stoPET_wrapper_singlepoint">[docs]</a><span class="k">def</span> <span class="nf">stoPET_wrapper_singlepoint</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span><span class="n">ens_num</span><span class="p">,</span>
+<div class="viewcode-block" id="stoPET_wrapper_singlepoint">
+<a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.stoPET_wrapper_singlepoint">[docs]</a>
+<span class="k">def</span> <span class="nf">stoPET_wrapper_singlepoint</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span><span class="n">ens_num</span><span class="p">,</span>
                                <span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;stoPET running ...&#39;</span><span class="p">)</span>
 
@@ -146,7 +152,10 @@
     <span class="k">return</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="future_pet_ts_generate_singlepoint"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.future_pet_ts_generate_singlepoint">[docs]</a><span class="k">def</span> <span class="nf">future_pet_ts_generate_singlepoint</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span>
+
+<div class="viewcode-block" id="future_pet_ts_generate_singlepoint">
+<a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.future_pet_ts_generate_singlepoint">[docs]</a>
+<span class="k">def</span> <span class="nf">future_pet_ts_generate_singlepoint</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span>
                                        <span class="n">ampl</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">skew</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span>
                                        <span class="n">slope_vals</span><span class="p">,</span> <span class="n">mcont_vals</span><span class="p">,</span><span class="n">ens_num</span><span class="p">,</span> <span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span>
                                        <span class="n">tempAdj</span><span class="p">,</span><span class="n">deltat</span><span class="p">,</span> <span class="n">dpetdt</span><span class="p">):</span>
@@ -232,7 +241,10 @@
     <span class="k">return</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="increase_temp_singlepoint"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.increase_temp_singlepoint">[docs]</a><span class="k">def</span> <span class="nf">increase_temp_singlepoint</span><span class="p">(</span><span class="n">slope</span><span class="p">,</span> <span class="n">mcont</span><span class="p">,</span> <span class="n">annual_pet</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">yr</span><span class="p">,</span> 
+
+<div class="viewcode-block" id="increase_temp_singlepoint">
+<a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.increase_temp_singlepoint">[docs]</a>
+<span class="k">def</span> <span class="nf">increase_temp_singlepoint</span><span class="p">(</span><span class="n">slope</span><span class="p">,</span> <span class="n">mcont</span><span class="p">,</span> <span class="n">annual_pet</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">yr</span><span class="p">,</span> 
                               <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span><span class="n">dpetdt_val</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function increase the stochastically generated PET accounting</span>
@@ -326,10 +338,13 @@
         
     <span class="k">return</span> <span class="n">adj_stopet</span></div>
 
+
 <span class="c1">## ----------------------------------------------------------##</span>
 <span class="c1">## Regional stoPET </span>
 <span class="c1">## ----------------------------------------------------------##</span>
-<div class="viewcode-block" id="stoPET_wrapper_regional"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.stoPET_wrapper_regional">[docs]</a><span class="k">def</span> <span class="nf">stoPET_wrapper_regional</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval_min</span><span class="p">,</span> <span class="n">latval_max</span><span class="p">,</span> <span class="n">lonval_min</span><span class="p">,</span> <span class="n">lonval_max</span><span class="p">,</span>
+<div class="viewcode-block" id="stoPET_wrapper_regional">
+<a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.stoPET_wrapper_regional">[docs]</a>
+<span class="k">def</span> <span class="nf">stoPET_wrapper_regional</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval_min</span><span class="p">,</span> <span class="n">latval_max</span><span class="p">,</span> <span class="n">lonval_min</span><span class="p">,</span> <span class="n">lonval_max</span><span class="p">,</span>
                             <span class="n">locname</span><span class="p">,</span> <span class="n">ens_num</span><span class="p">,</span> <span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;stoPET running ...&#39;</span><span class="p">)</span>
 
@@ -388,7 +403,10 @@
 
 
 
-<div class="viewcode-block" id="future_pet_ts_generate_regional"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.future_pet_ts_generate_regional">[docs]</a><span class="k">def</span> <span class="nf">future_pet_ts_generate_regional</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval_min</span><span class="p">,</span><span class="n">latval_max</span><span class="p">,</span> <span class="n">lonval_min</span><span class="p">,</span><span class="n">lonval_max</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span>
+
+<div class="viewcode-block" id="future_pet_ts_generate_regional">
+<a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.future_pet_ts_generate_regional">[docs]</a>
+<span class="k">def</span> <span class="nf">future_pet_ts_generate_regional</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval_min</span><span class="p">,</span><span class="n">latval_max</span><span class="p">,</span> <span class="n">lonval_min</span><span class="p">,</span><span class="n">lonval_max</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span>
                                     <span class="n">ampl</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">skew</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span>
                                     <span class="n">slope_vals</span><span class="p">,</span> <span class="n">mcont_vals</span><span class="p">,</span><span class="n">ens_num</span><span class="p">,</span><span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span><span class="n">deltat</span><span class="p">,</span> <span class="n">dpetdt</span><span class="p">):</span>
 
@@ -496,8 +514,11 @@
 
     <span class="k">return</span> <span class="kc">None</span></div>
 
+
     
-<div class="viewcode-block" id="increase_temp_regional"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.increase_temp_regional">[docs]</a><span class="k">def</span> <span class="nf">increase_temp_regional</span><span class="p">(</span><span class="n">slope</span><span class="p">,</span> <span class="n">mcont</span><span class="p">,</span> <span class="n">stoch_pet</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">yr</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">dpetdt_val</span><span class="p">):</span>
+<div class="viewcode-block" id="increase_temp_regional">
+<a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.increase_temp_regional">[docs]</a>
+<span class="k">def</span> <span class="nf">increase_temp_regional</span><span class="p">(</span><span class="n">slope</span><span class="p">,</span> <span class="n">mcont</span><span class="p">,</span> <span class="n">stoch_pet</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">yr</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">dpetdt_val</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function increase the stochastically generated PET accounting</span>
 <span class="sd">    for the specified temperature increase. The increase is based on</span>
@@ -589,8 +610,11 @@
         
     <span class="k">return</span> <span class="n">adj_stopet</span></div>
 
+
 <span class="c1">##-------------- SUPPLENENTARY FUNCTONS ----------------------------------##</span>
-<div class="viewcode-block" id="nc_write"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.nc_write">[docs]</a><span class="k">def</span> <span class="nf">nc_write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">tunits</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="nc_write">
+<a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.nc_write">[docs]</a>
+<span class="k">def</span> <span class="nf">nc_write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">tunits</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    this function write the PET on a netCDF file.</span>
 
@@ -659,7 +683,10 @@
     <span class="k">return</span> <span class="kc">None</span>    </div>
 
 
-<div class="viewcode-block" id="nearest_point"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.nearest_point">[docs]</a><span class="k">def</span> <span class="nf">nearest_point</span><span class="p">(</span><span class="n">lat_var</span><span class="p">,</span> <span class="n">lon_var</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">):</span>
+
+<div class="viewcode-block" id="nearest_point">
+<a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v1.nearest_point">[docs]</a>
+<span class="k">def</span> <span class="nf">nearest_point</span><span class="p">(</span><span class="n">lat_var</span><span class="p">,</span> <span class="n">lon_var</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function identify the nearest grid location index for a specific lat-lon</span>
 <span class="sd">    point.</span>
@@ -703,6 +730,7 @@
         <span class="n">index_lon</span> <span class="o">=</span> <span class="n">index_a</span>
 
     <span class="k">return</span> <span class="n">index_lat</span><span class="p">,</span> <span class="n">index_lon</span></div>
+
 
 <span class="c1">## ------------------ END OF SCRIPT ------------------------------##</span>
 
