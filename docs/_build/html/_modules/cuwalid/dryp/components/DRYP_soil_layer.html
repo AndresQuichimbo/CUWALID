@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.dryp.components.DRYP_soil_layer &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -77,7 +81,9 @@
   <h1>Source code for cuwalid.dryp.components.DRYP_soil_layer</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<div class="viewcode-block" id="swbm"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.swbm">[docs]</a><span class="k">class</span> <span class="nc">swbm</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="swbm">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.swbm">[docs]</a>
+<span class="k">class</span> <span class="nc">swbm</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;run the soil layer component for estimating actual</span>
@@ -109,7 +115,9 @@
 		<span class="k">pass</span>
 		
 		
-<div class="viewcode-block" id="swbm.run_soil_aquifer_one_step"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.swbm.run_soil_aquifer_one_step">[docs]</a>	<span class="k">def</span> <span class="nf">run_soil_aquifer_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span>
+<div class="viewcode-block" id="swbm.run_soil_aquifer_one_step">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.swbm.run_soil_aquifer_one_step">[docs]</a>
+	<span class="k">def</span> <span class="nf">run_soil_aquifer_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span>
 					<span class="n">theta_fc</span><span class="p">,</span> <span class="n">theta_wp</span><span class="p">,</span> <span class="n">Duz0</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;	Update depth of the unsaturated soil depending on the</span>
 <span class="sd">		water table elevation.</span>
@@ -142,9 +150,12 @@
 		<span class="n">theta</span><span class="p">[</span><span class="n">Duz</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">theta_wp</span><span class="p">[</span><span class="n">Duz</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span>
 		<span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">theta_wp</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">Duz</span><span class="p">,</span> <span class="n">theta</span></div>
+
 	
 	<span class="c1">#@profile</span>
-<div class="viewcode-block" id="swbm.run_swbm_one_step"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.swbm.run_swbm_one_step">[docs]</a>	<span class="k">def</span> <span class="nf">run_swbm_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">pet</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">,</span> <span class="n">theta_sat</span><span class="p">,</span>
+<div class="viewcode-block" id="swbm.run_swbm_one_step">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.swbm.run_swbm_one_step">[docs]</a>
+	<span class="k">def</span> <span class="nf">run_swbm_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">pet</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">,</span> <span class="n">theta_sat</span><span class="p">,</span>
 		    	<span class="n">theta_fc</span><span class="p">,</span> <span class="n">theta_wp</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;This component call the one-layer soil water balance model</span>
 <span class="sd">		</span>
@@ -239,9 +250,12 @@
 		   		<span class="s1">&#39;Please check units and non-data values&#39;</span><span class="p">)</span>
 
 		<span class="k">return</span> <span class="n">AET</span><span class="p">,</span> <span class="n">PCR</span><span class="p">,</span> <span class="n">THT</span><span class="p">,</span> <span class="n">ROF</span></div>
+
 		
 	
-<div class="viewcode-block" id="swbm.water_deficit"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.swbm.water_deficit">[docs]</a>	<span class="k">def</span> <span class="nf">water_deficit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discharge</span><span class="p">,</span> <span class="n">evaporation</span><span class="p">,</span> <span class="n">soil_deficit</span><span class="p">):</span>
+<div class="viewcode-block" id="swbm.water_deficit">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.swbm.water_deficit">[docs]</a>
+	<span class="k">def</span> <span class="nf">water_deficit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discharge</span><span class="p">,</span> <span class="n">evaporation</span><span class="p">,</span> <span class="n">soil_deficit</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;Calculate the amount of water required to saturated</span>
 <span class="sd">		the riparian zone</span>
 
@@ -292,11 +306,15 @@
 		<span class="c1"># partition of river baseflow into riparian demand</span>
 		<span class="n">inf</span> <span class="o">=</span> <span class="n">discharge</span> <span class="o">-</span> <span class="n">qriv</span>
 		
-		<span class="k">return</span> <span class="n">smd</span><span class="p">,</span> <span class="n">qriv</span><span class="p">,</span> <span class="n">inf</span></div></div>
+		<span class="k">return</span> <span class="n">smd</span><span class="p">,</span> <span class="n">qriv</span><span class="p">,</span> <span class="n">inf</span></div>
+</div>
+
 	
 <span class="c1"># Soil water balance model for daily time steps - constant Kc</span>
 <span class="c1"># This model assumes that percolation occurrs immediately after precipitation </span>
-<div class="viewcode-block" id="SWBM"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.SWBM">[docs]</a><span class="k">def</span> <span class="nf">SWBM</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">L0</span><span class="p">,</span> <span class="n">z_soil</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">wp</span><span class="p">):</span>
+<div class="viewcode-block" id="SWBM">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.SWBM">[docs]</a>
+<span class="k">def</span> <span class="nf">SWBM</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">L0</span><span class="p">,</span> <span class="n">z_soil</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">wp</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Soil water balance</span>
 
 <span class="sd">	Parameters</span>
@@ -385,8 +403,11 @@
 	
 	<span class="k">return</span> <span class="n">AET</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">RO</span></div>
 
+
 <span class="c1"># Soil moisture water balance model for subhourly time steps - Variable Kc</span>
-<div class="viewcode-block" id="SWBMh"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.SWBMh">[docs]</a><span class="k">def</span> <span class="nf">SWBMh</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">L0</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">wp</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">):</span>
+<div class="viewcode-block" id="SWBMh">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.SWBMh">[docs]</a>
+<span class="k">def</span> <span class="nf">SWBMh</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">L0</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">wp</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Soil water balance</span>
 
 <span class="sd">	Parameters</span>
@@ -495,8 +516,11 @@
 	<span class="c1">#print(AET,D,L,RO,L0,I,)</span>
 	<span class="k">return</span> <span class="n">AET</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">RO</span></div>
 
+
 <span class="c1"># Variable soil depth</span>
-<div class="viewcode-block" id="variable_soil_depth"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.variable_soil_depth">[docs]</a><span class="k">def</span> <span class="nf">variable_soil_depth</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">Droot</span><span class="p">):</span>
+<div class="viewcode-block" id="variable_soil_depth">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.variable_soil_depth">[docs]</a>
+<span class="k">def</span> <span class="nf">variable_soil_depth</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">Droot</span><span class="p">):</span>
 	<span class="c1"># Luz	: Soil depth variation</span>
 	<span class="c1"># z     : Surface elevation</span>
 	<span class="c1"># h     : Water table elevation</span>
@@ -506,11 +530,14 @@
 	<span class="n">Duz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">Zs</span> <span class="o">-</span> <span class="n">h</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span> <span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">h</span><span class="p">)</span><span class="o">*</span><span class="mf">1000.0</span><span class="p">)</span>
 	<span class="n">Duz</span><span class="p">[</span><span class="n">Duz</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 	<span class="k">return</span> <span class="n">Duz</span></div>
+
 	
 <span class="c1"># Schaake infiltration approach, Schaake et. al. (1996)</span>
 <span class="c1"># Soil moisture water balance model for subhourly time steps</span>
 <span class="c1"># Needs numerical integrator to work RK4Sh</span>
-<div class="viewcode-block" id="SWBSh"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.SWBSh">[docs]</a><span class="k">def</span> <span class="nf">SWBSh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">ga_kdt</span><span class="p">):</span>
+<div class="viewcode-block" id="SWBSh">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.SWBSh">[docs]</a>
+<span class="k">def</span> <span class="nf">SWBSh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">ga_kdt</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Sheeke infiltration rates	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">TAW</span> <span class="o">=</span>  <span class="n">Lfc</span> <span class="o">-</span> <span class="n">Lwp</span>
@@ -531,9 +558,12 @@
 	<span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">L</span><span class="o">-</span><span class="n">Lfc</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span><span class="n">Ks</span><span class="o">*</span><span class="p">(</span><span class="n">L</span><span class="o">/</span><span class="n">Lsat</span><span class="p">)</span><span class="o">**</span><span class="n">c</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span>
 	<span class="n">dL</span> <span class="o">=</span> <span class="n">I</span><span class="o">-</span><span class="n">AET</span><span class="o">-</span><span class="n">R</span>
 	<span class="k">return</span> <span class="n">dL</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">AET</span><span class="p">,</span> <span class="n">R</span></div>
+
 	
 <span class="c1"># Runge Kutta apprach for solving soil moisture SWBSh</span>
-<div class="viewcode-block" id="RK4Sh"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.RK4Sh">[docs]</a><span class="k">def</span> <span class="nf">RK4Sh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L0</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">kdt</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+<div class="viewcode-block" id="RK4Sh">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.RK4Sh">[docs]</a>
+<span class="k">def</span> <span class="nf">RK4Sh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L0</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">kdt</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
 	<span class="n">k1</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">AET</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">SWBSh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L0</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">kdt</span><span class="p">)</span>
 	<span class="n">k2</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">AET</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">SWBSh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L0</span><span class="o">+</span><span class="n">k1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">kdt</span><span class="p">)</span>
 	<span class="n">k3</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">AET</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">SWBSh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L0</span><span class="o">+</span><span class="n">k2</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">kdt</span><span class="p">)</span>
@@ -542,10 +572,13 @@
 	<span class="n">k</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">AET</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">SWBSh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">kdt</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">L</span><span class="p">,</span><span class="n">I</span><span class="p">,</span><span class="n">AET</span><span class="p">,</span><span class="n">R</span></div>
 
+
 <span class="c1"># Soil water balance model for subdaily time steps</span>
 <span class="c1"># Infiltration input</span>
 <span class="c1"># Needs numerical integrator to work RK4Ph</span>
-<div class="viewcode-block" id="SWBPh"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.SWBPh">[docs]</a><span class="k">def</span> <span class="nf">SWBPh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">ga_b</span><span class="p">):</span>
+<div class="viewcode-block" id="SWBPh">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.SWBPh">[docs]</a>
+<span class="k">def</span> <span class="nf">SWBPh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">ga_b</span><span class="p">):</span>
 	<span class="n">TAW</span> <span class="o">=</span>  <span class="n">Lfc</span> <span class="o">-</span> <span class="n">Lwp</span>
 	<span class="n">RAW</span> <span class="o">=</span> <span class="n">Pc</span> <span class="o">*</span> <span class="n">TAW</span>
 	<span class="n">L_RAW</span> <span class="o">=</span> <span class="n">Lfc</span><span class="o">-</span><span class="n">RAW</span>
@@ -565,8 +598,11 @@
 	<span class="n">dL</span> <span class="o">=</span> <span class="n">I</span><span class="o">-</span><span class="n">AET</span><span class="o">-</span><span class="n">R</span>
 	<span class="k">return</span> <span class="n">dL</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">AET</span><span class="p">,</span> <span class="n">R</span></div>
 
+
 <span class="c1"># Runge Kutta apprach for solving soil moisture SWBPh</span>
-<div class="viewcode-block" id="RK4Ph"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.RK4Ph">[docs]</a><span class="k">def</span> <span class="nf">RK4Ph</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L0</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">kdt</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+<div class="viewcode-block" id="RK4Ph">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.RK4Ph">[docs]</a>
+<span class="k">def</span> <span class="nf">RK4Ph</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L0</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">kdt</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
 	<span class="n">k1</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">AET</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">SWBPh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L0</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">kdt</span><span class="p">)</span>
 	<span class="n">k2</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">AET</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">SWBPh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L0</span><span class="o">+</span><span class="n">k1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">kdt</span><span class="p">)</span>
 	<span class="n">k3</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">AET</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">SWBPh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L0</span><span class="o">+</span><span class="n">k2</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">kdt</span><span class="p">)</span>
@@ -574,6 +610,7 @@
 	<span class="n">L</span> <span class="o">=</span> <span class="n">L0</span> <span class="o">+</span> <span class="n">k1</span><span class="o">/</span><span class="mi">6</span> <span class="o">+</span> <span class="n">k2</span><span class="o">/</span><span class="mi">3</span> <span class="o">+</span> <span class="n">k3</span><span class="o">/</span><span class="mi">3</span> <span class="o">+</span> <span class="n">k4</span><span class="o">/</span><span class="mi">6</span>
 	<span class="n">k</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">AET</span><span class="p">,</span> <span class="n">R</span>  <span class="o">=</span> <span class="n">SWBPh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">Ks</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">Lwp</span><span class="p">,</span> <span class="n">Pc</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">kdt</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">L</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">AET</span><span class="p">,</span> <span class="n">R</span></div>
+
 	
 <span class="c1">#def lateral_flow_river_cell(L_riv,L_soil,Ktheta,dx):</span>
 <span class="c1">#	return (L_riv - L_soil)*np.exp(Ktheta/d_sr)+L_soil</span>
@@ -582,7 +619,9 @@
 <span class="c1"># Two layer model using and numerical integrator</span>
 <span class="c1"># The model considers firstevaporation from the upper layer</span>
 <span class="c1"># If there is enough water in the </span>
-<div class="viewcode-block" id="SWBM1L"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.SWBM1L">[docs]</a><span class="k">def</span> <span class="nf">SWBM1L</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">L0</span><span class="p">,</span> <span class="n">z_soil</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">wp</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">):</span>
+<div class="viewcode-block" id="SWBM1L">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.SWBM1L">[docs]</a>
+<span class="k">def</span> <span class="nf">SWBM1L</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">L0</span><span class="p">,</span> <span class="n">z_soil</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">wp</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Soil water balance</span>
 
 <span class="sd">	Parameters</span>
@@ -663,7 +702,10 @@
 	<span class="k">return</span> <span class="n">DL</span><span class="p">,</span> <span class="n">AET</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">RO</span></div>
 
 
-<div class="viewcode-block" id="SWBM2L"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.SWBM2L">[docs]</a><span class="k">def</span> <span class="nf">SWBM2L</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">L0u</span><span class="p">,</span> <span class="n">L0l</span><span class="p">,</span> <span class="n">z_soilu</span><span class="p">,</span> <span class="n">z_soill</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">wp</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SWBM2L">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.SWBM2L">[docs]</a>
+<span class="k">def</span> <span class="nf">SWBM2L</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">L0u</span><span class="p">,</span> <span class="n">L0l</span><span class="p">,</span> <span class="n">z_soilu</span><span class="p">,</span> <span class="n">z_soill</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">wp</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Mass balance of the two reservoirs</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># Potential evapotranspiration upper layer</span>
@@ -679,10 +721,13 @@
 	<span class="n">DLl</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">RO</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">SWBM1L</span><span class="p">(</span><span class="n">Ru</span><span class="p">,</span> <span class="n">PETl</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">L0l</span><span class="p">,</span> <span class="n">z_soill</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">wp</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">)</span>
 	
 	<span class="k">return</span> <span class="n">DLu</span><span class="p">,</span> <span class="n">DLl</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">RO</span></div>
+
 	
 	
 
-<div class="viewcode-block" id="FAO2L"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.FAO2L">[docs]</a><span class="k">def</span> <span class="nf">FAO2L</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">L0u</span><span class="p">,</span> <span class="n">L0l</span><span class="p">,</span> <span class="n">z_soilu</span><span class="p">,</span> <span class="n">z_soill</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">wp</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">):</span>
+<div class="viewcode-block" id="FAO2L">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.FAO2L">[docs]</a>
+<span class="k">def</span> <span class="nf">FAO2L</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">L0u</span><span class="p">,</span> <span class="n">L0l</span><span class="p">,</span> <span class="n">z_soilu</span><span class="p">,</span> <span class="n">z_soill</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">wp</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot; Runge Kutta apprach for solving soil moisture SWBPh</span>
 <span class="sd">	</span>
 <span class="sd">	Parameters</span>
@@ -711,6 +756,7 @@
 	<span class="n">SMD_dt</span><span class="p">[</span><span class="n">SMD_dt</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 	
 	<span class="k">return</span> <span class="n">Lu</span><span class="p">,</span> <span class="n">Ll</span><span class="p">,</span> <span class="n">SMD_dt</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">RO</span></div>
+
 	
 
 	

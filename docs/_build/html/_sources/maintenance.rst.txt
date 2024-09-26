@@ -8,6 +8,10 @@ This documentation is **purely for the use of the CUWALID Team** to maintain thi
 Maintaining the documentation
 -----------------------------
 
+The documentation for the code (e.g. the functions and classes) are automatically generated when using sphinx as shown below, other parts of the documentation such as the part you are reading are writting in .rst (reStructuredText) files, these can be found at docs/source.
+
+Within the static folder there are also folders for 'txt' text files or json examples and things that you can include in your documentation. You can find out how to write .rst files `here <https://www.writethedocs.org/guide/writing/reStructuredText/>`_
+
 If you have added code to the documentation you will first need to delete any of the .rst files found in docs/source that are related to the code you changed.
 
 For example if there is a new module in the cuwalid.dryp.components module, you should delete the cuwalid.dryp.components.rst file, or just change the file to include the new module.

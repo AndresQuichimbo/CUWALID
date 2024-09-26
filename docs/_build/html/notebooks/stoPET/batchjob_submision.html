@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Learning objective: &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -100,24 +104,24 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <table><tr><td><p><img alt="dba3bec002cb48d5852d8df88e629523" class="no-scaled-link" src="../../_images/CardiffUniversity.PNG" style="width: 250px;" /></p>
-</td><td><p><img alt="b76bda9d10dd4214ab0d85cb273abd6c" class="no-scaled-link" src="../../_images/Down2Earth.PNG" style="width: 250px;" /></p>
-</td><td><p><img alt="bc89b1c9f04e4731a3be92c5d495631f" class="no-scaled-link" src="../../_images/UniversityOfBristol.PNG" style="width: 250px;" /></p>
+  <table><tr><td><p><img alt="604042b27fd947dd87c15e402fe58dbb" class="no-scaled-link" src="../../_images/CardiffUniversity.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="7e2d8c99b0714364aea886ca7d513c51" class="no-scaled-link" src="../../_images/Down2Earth.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="605b145938c14594aba8f938470ae702" class="no-scaled-link" src="../../_images/UniversityOfBristol.PNG" style="width: 250px;" /></p>
 </td></tr></table><section id="Learning-objective:">
-<h1>Learning objective:<a class="headerlink" href="#Learning-objective:" title="Permalink to this heading"></a></h1>
+<h1>Learning objective:<a class="headerlink" href="#Learning-objective:" title="Link to this heading"></a></h1>
 <ul class="simple">
 <li><p>prepare bash files for batch job submission to HPC</p></li>
 <li><p>submit multiple jobs to HPC</p></li>
 </ul>
 <p>est. time 1 hour</p>
 <section id="1.-Batch-job-submission">
-<h2>1. Batch job submission<a class="headerlink" href="#1.-Batch-job-submission" title="Permalink to this heading"></a></h2>
+<h2>1. Batch job submission<a class="headerlink" href="#1.-Batch-job-submission" title="Link to this heading"></a></h2>
 <p>In order to run the CUWALID model, we use the High Performance Computers (HPC) provided by institutes. These HPC’s are better for running multiple jobs at the same time. This will save time and allow us to run models that use large data.</p>
 <p>Here, we discuss on how you can submit multiple jobs to HPC. <strong>Please notice that this is not the only way to do the work but just to share one way of doing it</strong>.</p>
 </section>
 </section>
 <section id="1.1-creating-directories-to-hold-necessary-files">
-<h1>1.1 creating directories to hold necessary files<a class="headerlink" href="#1.1-creating-directories-to-hold-necessary-files" title="Permalink to this heading"></a></h1>
+<h1>1.1 creating directories to hold necessary files<a class="headerlink" href="#1.1-creating-directories-to-hold-necessary-files" title="Link to this heading"></a></h1>
 <p>The first step we need to do is create three important directories in our home directory. These are:</p>
 <ul class="simple">
 <li><p>bSub_runME</p></li>
@@ -131,7 +135,7 @@
 <p>The <strong>bSub_doneME</strong> directory is used to save our bash files (e.g <strong>myjob.bash</strong>) after the job is submitted. Hence, if there is an error and you have to run the job again you can easily move the bash files from this directory to the bSub_runME directory without creating them again.</p>
 </section>
 <section id="1.2-Creating-the-bash-files">
-<h1>1.2 Creating the bash files<a class="headerlink" href="#1.2-Creating-the-bash-files" title="Permalink to this heading"></a></h1>
+<h1>1.2 Creating the bash files<a class="headerlink" href="#1.2-Creating-the-bash-files" title="Link to this heading"></a></h1>
 <p>In order to submit multiple jobs to HPC, we need to follow certain commands that are set by the institute. Hence, we can prepare a python script to write these bash files so that we save time to write each file mannually. The following python script <strong>write_bash_files.py</strong> is provided to prepare the bash files used in the job sumbission. Below, we will discuss how it works using one example function in the script.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -180,15 +184,15 @@
 </div>
 </div>
 <p>The above function helps us write the bash files with the necessary commands for the HPC job submission. As you can see, most of the lines are common and similar required by the HPC, hence, we can use this function to write any bash file we need with little modification. An example of the bash file produced using this function is shown below.</p>
-<table><tr><td><p><img alt="87d0aa09ac464649bfcdbe5771ec473a" class="no-scaled-link" src="../../_images/bashfile.png" style="width: 800px;" /></p>
+<table><tr><td><p><img alt="8f6b3a74af3f4fc9a8c366f57002d89e" class="no-scaled-link" src="../../_images/bashfile.png" style="width: 800px;" /></p>
 </td></tr></table><p>This will be what is written in the imerg_download_2012.bash according to the example.</p>
 <p>If there are multiple jobs that use similar python scripts, then what you have to do is run above function to write the bash files with same <strong>suffix</strong> and a differetiating <strong>prefix</strong> so that we can submit it at the same time. In the above example we can see the file name is <strong>imerg_download_year.bash</strong> here the imerg_download is the prefix while the year is suffix. Now we can write any number of years we want to download (e.g imerg_download_2018.bash, imerg_download_2019.bash, …). Once we
 prepare these files, then we are ready to submit multiple jobs to the HPC.</p>
 </section>
 <section id="1.3-Submitting-multiple-jobs">
-<h1>1.3 Submitting multiple jobs<a class="headerlink" href="#1.3-Submitting-multiple-jobs" title="Permalink to this heading"></a></h1>
+<h1>1.3 Submitting multiple jobs<a class="headerlink" href="#1.3-Submitting-multiple-jobs" title="Link to this heading"></a></h1>
 <p>Once we prepare the bash files containing the jobs we want to run on HPC next is to use a little shell script to submit the jobs. The shell script is given as <strong>runBashFiles.sh</strong>. The file contains a few lines of code that allows to read all the bash files we prepare and sumbit it to the HPC. Here is an example file looks like</p>
-<table><tr><td><p><img alt="76bfb73971354a9084fb9c2b5828c012" class="no-scaled-link" src="../../_images/shellfile.png" style="width: 800px;" /></p>
+<table><tr><td><p><img alt="623fb2cea1ec4ea5898698b8171a6fd9" class="no-scaled-link" src="../../_images/shellfile.png" style="width: 800px;" /></p>
 </td></tr></table><p>In the above image as you can see from line 5, all the files that start with <strong>imerg_download_</strong> will be submited to the HPC and the files will be moved to the <strong>bSub_doneME</strong> directory we create earlier (Line 7).</p>
 <p>Line 6 is where you see the <strong>.error</strong> and <strong>.out</strong> files that we discussed above to put any error message and output message from the job will be printed and svaed in the <strong>bSub_logME</strong> directory.</p>
 <table class="docutils align-default">

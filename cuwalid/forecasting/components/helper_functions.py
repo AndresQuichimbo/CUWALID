@@ -7,6 +7,11 @@ import rasterio
 import xarray as xr
 
 
+"""
+A file containing helper functions to assist with the forecasting element
+
+"""
+
 def read_dataset(fname, var_name='tht'):
 	# Open the first netCDF file
 	# output dataset

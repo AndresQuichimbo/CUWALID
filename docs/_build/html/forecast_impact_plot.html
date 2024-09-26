@@ -1,19 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Forecast Impact Tutorial &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -93,9 +97,9 @@
            <div itemprop="articleBody">
              
   <section id="forecast-impact-tutorial">
-<h1>Forecast Impact Tutorial<a class="headerlink" href="#forecast-impact-tutorial" title="Permalink to this heading"></a></h1>
+<h1>Forecast Impact Tutorial<a class="headerlink" href="#forecast-impact-tutorial" title="Link to this heading"></a></h1>
 <section id="running-the-model">
-<h2>Running the model<a class="headerlink" href="#running-the-model" title="Permalink to this heading"></a></h2>
+<h2>Running the model<a class="headerlink" href="#running-the-model" title="Link to this heading"></a></h2>
 <p>Plotting maps using cuwalid forecasting is done by running this command in the terminal:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># replace &quot;input.json&quot; with the path to your input json</span>
 python<span class="w"> </span>-m<span class="w"> </span>cuwalid.forecasting.main_impact_forecast<span class="w"> </span>input.json
@@ -110,7 +114,7 @@ python<span class="w"> </span>-m<span class="w"> </span>cuwalid.forecasting.main
 </div>
 </section>
 <section id="input-parameters">
-<h2>Input Parameters<a class="headerlink" href="#input-parameters" title="Permalink to this heading"></a></h2>
+<h2>Input Parameters<a class="headerlink" href="#input-parameters" title="Link to this heading"></a></h2>
 <p>The input JSON shown above will look something like this:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">{</span>
 <span class="linenos"> 2</span><span class="w">    </span><span class="nt">&quot;plot_scales&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;County&quot;</span><span class="p">],</span>
@@ -124,15 +128,20 @@ python<span class="w"> </span>-m<span class="w"> </span>cuwalid.forecasting.main
 <span class="linenos">10</span><span class="w">    </span><span class="nt">&quot;netcdf_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;forecasting_dataset/HAD/output/HAD_IMERGba_sim0_YYYY_grid.nc&quot;</span><span class="p">,</span>
 <span class="linenos">11</span><span class="w">    </span><span class="nt">&quot;threshold_path&quot;</span><span class="p">:</span><span class="w">  </span><span class="s2">&quot;forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_SSS&quot;</span><span class="p">,</span>
 <span class="linenos">12</span><span class="w">    </span><span class="nt">&quot;mask_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;forecasting_dataset/HAD/input_model/HAD_mask_utm_m.asc&quot;</span><span class="p">,</span>
-<span class="linenos">13</span><span class="w">    </span><span class="nt">&quot;river_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;forecasting_dataset/HAD/input_model/HAD_riv_length_utm.asc&quot;</span>
-<span class="linenos">14</span><span class="p">}</span>
+<span class="linenos">13</span><span class="w">    </span><span class="nt">&quot;river_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;forecasting_dataset/HAD/input_model/HAD_riv_length_utm.asc&quot;</span><span class="p">,</span>
+<span class="linenos">14</span><span class="w">    </span><span class="nt">&quot;shape_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;path/to/shape_file&quot;</span><span class="p">,</span>
+<span class="linenos">15</span><span class="w">    </span><span class="nt">&quot;prev_output_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;forecasting_dataset/HAD/output/&quot;</span><span class="p">,</span>
+<span class="linenos">16</span><span class="w">    </span><span class="nt">&quot;pp_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;forecasting_dataset/HAD/postpp/&quot;</span><span class="p">,</span>
+<span class="linenos">17</span><span class="w">    </span><span class="nt">&quot;name_historical_value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;name_historical&quot;</span><span class="p">,</span>
+<span class="linenos">18</span><span class="w">    </span><span class="nt">&quot;model_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HAD_IMERGba_sim0&quot;</span>
+<span class="linenos">19</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>Any parameters shown within a list will be iterated over and create a map for each, for example with ‘place_names’ there are three locatations [“Samburu”, “Laikipia”, “Meru”], In the output you will find a different output for each place,</p>
 <p>Here is an explanation of what each parameter does:</p>
 <ul class="simple">
 <li><p><strong>plot_scales</strong>: A list that defines the geographical scale at which the plot will be made. Examples include “County” or “Zoom”.</p></li>
-<li><p><strong>country</strong>: Specifies the name of the country for which the forecast will be generated. In this example, it is set to “Kenya”.</p></li>
+<li><p><strong>country_name</strong>: Specifies the name of the country for which the forecast will be generated. In this example, it is set to “Kenya”.</p></li>
 <li><p><strong>place_names</strong>: A list of specific places (regions, counties, etc.) within the country where the forecast will focus. For example, [“Samburu”, “Laikipia”, “Meru”].</p></li>
 <li><p><strong>seasons</strong>: Specifies the season for which the forecast is being generated. Common abbreviations like “OND” (October-November-December) or “MAM” (March-April-May) are used.</p></li>
 <li><p><strong>water_status</strong>: Indicates the type of water-related event being forecasted. For instance, “Flood” in this example.</p></li>
@@ -143,6 +152,7 @@ python<span class="w"> </span>-m<span class="w"> </span>cuwalid.forecasting.main
 <li><p><strong>threshold_path</strong>: Specifies the path to the threshold data used for post-processing of the forecast. Thresholds are used to define critical values for forecasting events like floods. In your file name for this file, please replace your season with ‘SSS’, this will be replaced by the seasons you entered above. In addition please leave out the ‘_flow_quantiles.nc’ and ‘_quantiles.nc’, these will be added in the script. You can see an example of this in the examplea above.</p></li>
 <li><p><strong>mask_path</strong>: The path to the mask file, which defines the areas where the forecast is applied. It typically filters or limits data to the region of interest.</p></li>
 <li><p><strong>river_path</strong>: Path to the river network data file, which is used to model the river system within the forecast region. It helps in determining river lengths and other hydrological features.</p></li>
+<li><p><strong>shape_path</strong>: Path to the shape file to override built in shape files for the HAD region (shape files for the HAD region built into the package e.g. when ‘country_name’ is picked as kenya the in built shape file will be used).</p></li>
 </ul>
 </section>
 </section>

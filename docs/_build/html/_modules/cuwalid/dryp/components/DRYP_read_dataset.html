@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.dryp.components.DRYP_read_dataset &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -92,7 +96,9 @@
 <span class="kn">from</span> <span class="nn">cuwalid.dryp.components.DRYP_projection</span> <span class="kn">import</span> <span class="n">reproject_dataset</span>
 
 <span class="c1">#@profile</span>
-<div class="viewcode-block" id="read_temporal_dataset"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset">[docs]</a><span class="k">class</span> <span class="nc">read_temporal_dataset</span><span class="p">():</span>
+<div class="viewcode-block" id="read_temporal_dataset">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset">[docs]</a>
+<span class="k">class</span> <span class="nc">read_temporal_dataset</span><span class="p">():</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Read all input dataset</span>
 
 <span class="sd">	Parameters</span>
@@ -181,7 +187,9 @@
 			<span class="nb">print</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;Flux data not provided&#39;</span><span class="p">)</span>
 				
 		<span class="c1"># find precipitation and PET for an specific time step</span>
-<div class="viewcode-block" id="read_temporal_dataset.get_dataset_one_step"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset.get_dataset_one_step">[docs]</a>	<span class="k">def</span> <span class="nf">get_dataset_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">env_state</span><span class="p">,</span> <span class="n">file_type</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span><span class="c1">#, filename):</span>
+<div class="viewcode-block" id="read_temporal_dataset.get_dataset_one_step">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset.get_dataset_one_step">[docs]</a>
+	<span class="k">def</span> <span class="nf">get_dataset_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">env_state</span><span class="p">,</span> <span class="n">file_type</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span><span class="c1">#, filename):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Call this to execute a step in the model.</span>
 
@@ -209,8 +217,11 @@
 				<span class="n">dataset_at_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">data_set</span><span class="p">[</span><span class="n">field</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="n">t</span><span class="p">]]</span>
 		
 		<span class="k">return</span> <span class="n">dataset_at_t</span></div>
+
 		
-<div class="viewcode-block" id="read_temporal_dataset.get_point_dataset_one_step"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset.get_point_dataset_one_step">[docs]</a>	<span class="k">def</span> <span class="nf">get_point_dataset_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<div class="viewcode-block" id="read_temporal_dataset.get_point_dataset_one_step">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset.get_point_dataset_one_step">[docs]</a>
+	<span class="k">def</span> <span class="nf">get_point_dataset_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Call this to read forcing data at time step t</span>
 
@@ -230,9 +241,13 @@
 		<span class="c1">#print(type(head), t)</span>
 		<span class="n">dataset_at_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_set</span><span class="p">[</span><span class="n">head</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
 	
-		<span class="k">return</span> <span class="n">dataset_at_t</span></div></div>
+		<span class="k">return</span> <span class="n">dataset_at_t</span></div>
+</div>
 
-<div class="viewcode-block" id="read_dataset_interp"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset_interp">[docs]</a><span class="k">class</span> <span class="nc">read_dataset_interp</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="read_dataset_interp">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset_interp">[docs]</a>
+<span class="k">class</span> <span class="nc">read_dataset_interp</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Read netcdf files as input datasets</span>
 <span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -319,7 +334,9 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">projm</span> <span class="o">=</span> <span class="n">projm</span>
 
 	<span class="c1">#@profile</span>
-<div class="viewcode-block" id="read_dataset_interp.get_one_step_dataset"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset_interp.get_one_step_dataset">[docs]</a>	<span class="k">def</span> <span class="nf">get_one_step_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">j_step</span><span class="p">,</span> <span class="n">fname_ds</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+<div class="viewcode-block" id="read_dataset_interp.get_one_step_dataset">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset_interp.get_one_step_dataset">[docs]</a>
+	<span class="k">def</span> <span class="nf">get_one_step_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">j_step</span><span class="p">,</span> <span class="n">fname_ds</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Call this to execute a step in the model.</span>
 
@@ -519,10 +536,14 @@
 				
 			<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="n">field</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">j_step</span><span class="p">])</span>
 		
-		<span class="k">return</span> <span class="n">data</span></div></div>
+		<span class="k">return</span> <span class="n">data</span></div>
+</div>
+
 		
 <span class="c1"># new read data for savi</span>
-<div class="viewcode-block" id="read_dataset"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset">[docs]</a><span class="k">class</span> <span class="nc">read_dataset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="read_dataset">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset">[docs]</a>
+<span class="k">class</span> <span class="nc">read_dataset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Read input datasets from different sequential files</span>
 <span class="sd">	Parameters</span>
 <span class="sd">	Returns</span>
@@ -582,7 +603,9 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">=</span> <span class="mi">1</span>
 	
 	<span class="c1"># find precipitation and PET for an specific time step</span>
-<div class="viewcode-block" id="read_dataset.get_one_step_dataset"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset.get_one_step_dataset">[docs]</a>	<span class="k">def</span> <span class="nf">get_one_step_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">j_step</span><span class="p">,</span> <span class="n">fname_ds</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+<div class="viewcode-block" id="read_dataset.get_one_step_dataset">
+<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset.get_one_step_dataset">[docs]</a>
+	<span class="k">def</span> <span class="nf">get_one_step_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">j_step</span><span class="p">,</span> <span class="n">fname_ds</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Call this to execute one step in the model.</span>
 
@@ -677,7 +700,9 @@
 			<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="n">field</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">j_step</span><span class="p">])</span>
 		
 		
-		<span class="k">return</span> <span class="n">data</span></div></div>
+		<span class="k">return</span> <span class="n">data</span></div>
+</div>
+
 </pre></div>
 
            </div>

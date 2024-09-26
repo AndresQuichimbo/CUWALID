@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MODELING ONE STORM &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -101,9 +105,9 @@
            <div itemprop="articleBody">
              
   <section id="MODELING-ONE-STORM">
-<h1><strong>MODELING ONE STORM</strong><a class="headerlink" href="#MODELING-ONE-STORM" title="Permalink to this heading"></a></h1>
+<h1><strong>MODELING ONE STORM</strong><a class="headerlink" href="#MODELING-ONE-STORM" title="Link to this heading"></a></h1>
 <section id="Objectives:">
-<h2>Objectives:<a class="headerlink" href="#Objectives:" title="Permalink to this heading"></a></h2>
+<h2>Objectives:<a class="headerlink" href="#Objectives:" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>Learn how STORM model storm as SHP-polygons and then transform them into RASTER</p></li>
 <li><p>Recipes for spatial plotting via <a class="reference external" href="https://numpy.org/doc/stable/">Numpy</a> (appealing color libraries included)</p></li>
@@ -125,7 +129,7 @@ end{equation}` where <span class="math notranslate nohighlight">\(I\big(r\big)\)
 <p>Rainfall estimation and rasterization is done by STORM through the functions: COPULA_SAMPLING, LAST_RING, LOTR, and RASTERIZE of the <a class="reference external" href="../rainfall.py">rainfall.py</a> module.</p>
 <hr class="docutils" />
 <section id="STORM-PARAMETERS">
-<h3>STORM PARAMETERS<a class="headerlink" href="#STORM-PARAMETERS" title="Permalink to this heading"></a></h3>
+<h3>STORM PARAMETERS<a class="headerlink" href="#STORM-PARAMETERS" title="Link to this heading"></a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -169,7 +173,7 @@ end{equation}` where <span class="math notranslate nohighlight">\(I\big(r\big)\)
 </div>
 </div>
 <section id="RASTERIZING-ONE-STORM-AT-A-TIME">
-<h4>RASTERIZING ONE STORM AT A TIME<a class="headerlink" href="#RASTERIZING-ONE-STORM-AT-A-TIME" title="Permalink to this heading"></a></h4>
+<h4>RASTERIZING ONE STORM AT A TIME<a class="headerlink" href="#RASTERIZING-ONE-STORM-AT-A-TIME" title="Link to this heading"></a></h4>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -217,7 +221,7 @@ end{equation}` where <span class="math notranslate nohighlight">\(I\big(r\big)\)
 </section>
 </section>
 <section id="1.-COMPUTE-PDFs">
-<h3>1. COMPUTE PDFs<a class="headerlink" href="#1.-COMPUTE-PDFs" title="Permalink to this heading"></a></h3>
+<h3>1. COMPUTE PDFs<a class="headerlink" href="#1.-COMPUTE-PDFs" title="Link to this heading"></a></h3>
 <div class="line-block">
 <div class="line">One storm is constructed from 5 PDFs.</div>
 <div class="line">(Check out notebook <a class="reference internal" href="one_.html"><span class="doc">one_</span></a>)</div>
@@ -379,7 +383,7 @@ end{equation}` where <span class="math notranslate nohighlight">\(I\big(r\big)\)
 </div>
 </section>
 <section id="2.-DEFINE-REGION">
-<h3>2. DEFINE REGION<a class="headerlink" href="#2.-DEFINE-REGION" title="Permalink to this heading"></a></h3>
+<h3>2. DEFINE REGION<a class="headerlink" href="#2.-DEFINE-REGION" title="Link to this heading"></a></h3>
 <p>Read the shapefile acting as the catchment/region over/for which the storms will be generated/simulated. Some buffer is also used here, to account also for some additional space in the underlying grid.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
@@ -449,7 +453,7 @@ end{equation}` where <span class="math notranslate nohighlight">\(I\big(r\big)\)
 </div>
 </section>
 <section id="3.-SAMPLE-STORM-CENTRES">
-<h3>3. SAMPLE STORM CENTRES<a class="headerlink" href="#3.-SAMPLE-STORM-CENTRES" title="Permalink to this heading"></a></h3>
+<h3>3. SAMPLE STORM CENTRES<a class="headerlink" href="#3.-SAMPLE-STORM-CENTRES" title="Link to this heading"></a></h3>
 <p>(Check out notebook <a class="reference internal" href="two_.html"><span class="doc">two_</span></a>)</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
@@ -476,7 +480,7 @@ end{equation}` where <span class="math notranslate nohighlight">\(I\big(r\big)\)
 </div>
 </section>
 <section id="4.-COMPUTE-I(r)">
-<h3>4. COMPUTE <span class="math notranslate nohighlight">\(I(r)\)</span><a class="headerlink" href="#4.-COMPUTE-I(r)" title="Permalink to this heading"></a></h3>
+<h3>4. COMPUTE <span class="math notranslate nohighlight">\(I(r)\)</span><a class="headerlink" href="#4.-COMPUTE-I(r)" title="Link to this heading"></a></h3>
 <p>Let’s compute rainfall intensities for several distances beyond the storm center. The regular spacing between such distances was previously set up in the RINGS_DIS variable.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
@@ -586,7 +590,7 @@ end{equation}` where <span class="math notranslate nohighlight">\(I\big(r\big)\)
 </div>
 </section>
 <section id="5.-RINGS-OF-RAINFALL">
-<h3>5. RINGS OF RAINFALL<a class="headerlink" href="#5.-RINGS-OF-RAINFALL" title="Permalink to this heading"></a></h3>
+<h3>5. RINGS OF RAINFALL<a class="headerlink" href="#5.-RINGS-OF-RAINFALL" title="Link to this heading"></a></h3>
 <p>Knowing how rainfall (intensity) behaves the further it is from the storm center, circular polygons can now be created. The idea is to later rasterize such polygons.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
@@ -664,7 +668,7 @@ end{equation}` where <span class="math notranslate nohighlight">\(I\big(r\big)\)
 </div>
 </section>
 <section id="6.-ONE-STORM-RASTERIZATION">
-<h3>6. ONE STORM RASTERIZATION<a class="headerlink" href="#6.-ONE-STORM-RASTERIZATION" title="Permalink to this heading"></a></h3>
+<h3>6. ONE STORM RASTERIZATION<a class="headerlink" href="#6.-ONE-STORM-RASTERIZATION" title="Link to this heading"></a></h3>
 <p>We rasterize all storms, but we visualize only one case.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
@@ -826,7 +830,7 @@ C:\Users\manuel\AppData\Local\Temp\ipykernel_41720\590111119.py:8: UserWarning: 
 </section>
 <hr class="docutils" />
 <section id="INTERMEZZO:-EXPORT-CATCHMENT-AS-NUMPY">
-<h3><em>INTERMEZZO: EXPORT CATCHMENT AS NUMPY</em><a class="headerlink" href="#INTERMEZZO:-EXPORT-CATCHMENT-AS-NUMPY" title="Permalink to this heading"></a></h3>
+<h3><em>INTERMEZZO: EXPORT CATCHMENT AS NUMPY</em><a class="headerlink" href="#INTERMEZZO:-EXPORT-CATCHMENT-AS-NUMPY" title="Link to this heading"></a></h3>
 <p>(while we’re at it… it will be used later in notebook <a class="reference internal" href="for_.html"><span class="doc">for_</span></a>)</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
@@ -885,7 +889,7 @@ C:\Users\manuel\AppData\Local\Temp\ipykernel_41720\3398665059.py:12: UserWarning
 </section>
 <hr class="docutils" />
 <section id="VISUALIZATION">
-<h3>VISUALIZATION<a class="headerlink" href="#VISUALIZATION" title="Permalink to this heading"></a></h3>
+<h3>VISUALIZATION<a class="headerlink" href="#VISUALIZATION" title="Link to this heading"></a></h3>
 <p>Check this awesome <a class="reference external" href="https://github.com/hhuangwx/cmaps/blob/master/examples/colormaps.png">link</a>… and then load some cool color palettes.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
@@ -1040,7 +1044,7 @@ C:\Users\manuel\AppData\Local\Temp\ipykernel_41720\3398665059.py:12: UserWarning
 </div>
 </section>
 <section id="VISUALIZATION-(VIA-XARRAY)">
-<h3>VISUALIZATION (VIA XARRAY)<a class="headerlink" href="#VISUALIZATION-(VIA-XARRAY)" title="Permalink to this heading"></a></h3>
+<h3>VISUALIZATION (VIA XARRAY)<a class="headerlink" href="#VISUALIZATION-(VIA-XARRAY)" title="Link to this heading"></a></h3>
 <p>STORM always computes the storm for the whole region/catchment of analyis. What we’ve done here is to cherry-pick the area where the storm was being modeled.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
@@ -1259,7 +1263,7 @@ C:\Users\manuel\AppData\Local\Temp\ipykernel_41720\3398665059.py:12: UserWarning
 </section>
 </section>
 <section id="ALL-STORMS-AT-ONCE">
-<h2>ALL STORMS AT ONCE<a class="headerlink" href="#ALL-STORMS-AT-ONCE" title="Permalink to this heading"></a></h2>
+<h2>ALL STORMS AT ONCE<a class="headerlink" href="#ALL-STORMS-AT-ONCE" title="Link to this heading"></a></h2>
 <p>Now let’s do a proper visulization with the storm into the (spatial) context of the HAD. We’ve read before the HAD-mask, so we can now plot it here. But first, let’s collapse the already rasterized (and filled/interpolated) da xarray into the <strong>s</strong>-dimension (z-axis).</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:

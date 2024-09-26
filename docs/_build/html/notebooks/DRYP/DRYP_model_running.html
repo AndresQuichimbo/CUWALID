@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content: &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -98,7 +102,7 @@
            <div itemprop="articleBody">
              
   <section id="Content:">
-<h1>Content:<a class="headerlink" href="#Content:" title="Permalink to this heading"></a></h1>
+<h1>Content:<a class="headerlink" href="#Content:" title="Link to this heading"></a></h1>
 <ul class="simple">
 <li><p>Installation</p></li>
 <li><p>Preparing model input parameters and dataset</p></li>
@@ -107,7 +111,7 @@
 </ul>
 </section>
 <section id="Preparing-DRYP-model-simulations">
-<h1>Preparing DRYP model simulations<a class="headerlink" href="#Preparing-DRYP-model-simulations" title="Permalink to this heading"></a></h1>
+<h1>Preparing DRYP model simulations<a class="headerlink" href="#Preparing-DRYP-model-simulations" title="Link to this heading"></a></h1>
 <ol class="arabic simple">
 <li><p>Preparing model parameter and setting files</p></li>
 </ol>
@@ -136,7 +140,7 @@
 </div>
 </div>
 <section id="3.1.-Preparing-model-parameter-and-setting-files">
-<h2>3.1. Preparing model parameter and setting files<a class="headerlink" href="#3.1.-Preparing-model-parameter-and-setting-files" title="Permalink to this heading"></a></h2>
+<h2>3.1. Preparing model parameter and setting files<a class="headerlink" href="#3.1.-Preparing-model-parameter-and-setting-files" title="Link to this heading"></a></h2>
 <p>DRYP requires at leas two files for running, this is the input-paramter-file and the setting-paramter file. Additional files may be required depending on the model settings and dataset properties.</p>
 <p>The folowing are the list of DRYP model files:</p>
 <ul class="simple">
@@ -396,7 +400,7 @@
 </div>
 </section>
 <section id="3.2.-Runing-DRYP">
-<h2>3.2. Runing DRYP<a class="headerlink" href="#3.2.-Runing-DRYP" title="Permalink to this heading"></a></h2>
+<h2>3.2. Runing DRYP<a class="headerlink" href="#3.2.-Runing-DRYP" title="Link to this heading"></a></h2>
 <p><strong>WARNING</strong>: If you are using Windows you have to use the docker for running DRYP</p>
 <p>There are two main ways of runing DRYP, you can even add more option that are more convenient for yor analysis:</p>
 <ol class="loweralpha simple">
@@ -427,7 +431,7 @@
 </div>
 </section>
 <section id="3.3.-Preparing-and-running-multiple-DRYP-simulations">
-<h2>3.3. Preparing and running multiple DRYP simulations<a class="headerlink" href="#3.3.-Preparing-and-running-multiple-DRYP-simulations" title="Permalink to this heading"></a></h2>
+<h2>3.3. Preparing and running multiple DRYP simulations<a class="headerlink" href="#3.3.-Preparing-and-running-multiple-DRYP-simulations" title="Link to this heading"></a></h2>
 <p>This is useful for performing a Monte Carlo analysis or stochastic forecasting.</p>
 <p>We can create a script to modify the model files that changes specific fiels of each of the all model files, below ther is an example of the script to genereate multiple simulation files for a calibration pourposes.</p>
 <div class="nbinput nblast docutils container">
@@ -547,7 +551,7 @@
 <p><strong>HINT</strong>: lines 66 and 68 needs to be modified in the input model parameters file, add lines in script to modify this lines</p>
 </section>
 <section id="3.4.-Runing-pipeline-DRYP-simulations">
-<h2>3.4. Runing pipeline DRYP simulations<a class="headerlink" href="#3.4.-Runing-pipeline-DRYP-simulations" title="Permalink to this heading"></a></h2>
+<h2>3.4. Runing pipeline DRYP simulations<a class="headerlink" href="#3.4.-Runing-pipeline-DRYP-simulations" title="Link to this heading"></a></h2>
 <p>For large simulations output files can become very large which may result in consuming cosiderable amount of memory that can even stop the model. This problem is very challenging to address in python, requiring significan changes in the code or even considering parallelisation. Here, we simply split a continuos simulation (in time, not in space) to store model output files in specified simulation periods (e.g. years).</p>
 <p>For this, we can create a series of model files that read and save inital conditions for the previous and subsequente simulations. An example of a python script to generate pipeline simulaiton is presented below:</p>
 <div class="nbinput nblast docutils container">
