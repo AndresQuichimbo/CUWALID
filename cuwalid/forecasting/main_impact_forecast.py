@@ -316,8 +316,9 @@ def call_plot_maps(plot_scales=["Zoom"],
 								river_path=river_path,
 								shape_path=shape_path
 								)
-					except:
-						print("An exception occured {country_name} {iplace_name}")
+					except Exception as e:
+						print(f"An exception occured {country_name} {iplace_name}")
+						print(f"Error: {e}")
 							  
 # Main function to handle command-line arguments
 if __name__ == '__main__':
