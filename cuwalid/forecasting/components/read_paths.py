@@ -1,13 +1,13 @@
 import os
 import sys
-import rasterio
+#import rasterio
 from cuwalid.forecasting.components.default_parameter_dataset import *
 
 class read_variables_and_paths(object):
 	"""Function to read all variables and path required for running the 
 	impact based forecascasting component"""
 	
-	def __init__(self, plot_scale, iwater_status, shape_path=None, place_code_field=False, netcdf_path=None):
+	def __init__(self, plot_scale, iwater_status, iyear, iseason, shape_path=None, place_code_field=False, netcdf_path=None, threshold_path=None):
 		"""Initialize paths and variables name
 		"""
 		if shape_path == None:
@@ -85,11 +85,11 @@ class read_variables_and_paths(object):
 		# =========================================================
 		# SPECIFY projection
 		# define new projection (output) #!with.PYPROJ.library
-		netcdfPP = rasterio.crs.CRS.from_string(
-		"+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
-		)
+		#netcdfPP = rasterio.crs.CRS.from_string(
+		#"+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+		#)
 		# define current projection (input)
-		mapPP = 'EPSG:4326'
+		#mapPP = 'EPSG:4326'
 		# ===========================================================
 		# READ DATA FROM REGIONAL DATASET FROM LOCAL REPO
 		# ----------------------------------------------------------
@@ -105,6 +105,7 @@ class read_variables_and_paths(object):
 			"County" : code_county_shp,
 			#"Country" : name_field_county_shp,
 			}
+		
 		# select the field to use as polygon attribute
 		if place_code_field is False:
 			self.iname_field_shp = name_field_name[plot_scale]
