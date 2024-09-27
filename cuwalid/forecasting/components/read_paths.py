@@ -11,9 +11,9 @@ class read_variables_and_paths(object):
 		"""Initialize paths and variables name
 		"""
 		if shape_path == None:
-				shapefile_country = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_country_dic[region]))
-				shapefile_county = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_county_dic[country_name.lower()]))
-			# TODO: rewrite
+			shapefile_country = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_country_dic[region]))
+			shapefile_county = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_county_dic[country_name.lower()]))
+			# rewrite
 			if plot_scale == "Wards":
 				shapefile_wards = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_wards_dic[country_name.lower()]))
 		else:
@@ -30,10 +30,10 @@ class read_variables_and_paths(object):
 		#netcdf_path = 'forecasting_dataset/HAD/output/HAD_IMERG_sim_ini_grid.nc'
 		
 		if netcdf_path == None:
-			self.netcdf_path = default_netcdf.replace("YYYY", str(iyear))
+			netcdf_path = default_netcdf.replace("YYYY", str(iyear))
 		else:
 			if "YYYY" in netcdf_path:
-				self.netcdf_path = netcdf_path.replace("YYYY", str(iyear))
+				netcdf_path = netcdf_path.replace("YYYY", str(iyear))
 			else:
 				print("The netcdf_path requires text 'YYYY' to replace with the the year being processed")
 				sys.exit(1)
@@ -43,36 +43,39 @@ class read_variables_and_paths(object):
 			# If netcdf path is None use the default
 			if netcdf_path == None:
 				print("Using default netcdf path")
-				self.netcdf_path = "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_"+ str(iyear)+ "_grid_" + var + ".nc"
+				netcdf_path = "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_"+ str(iyear)+ "_grid_" + var + ".nc"
 			else:
-				self.netcdf_path.replace("YYYY", str(iyear))
+				netcdf_path.replace("YYYY", str(iyear))
 		
 		
 		# load dataset for thresholds
 		#nc_path_threshold = "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_" + iseason + "_quantiles.nc"
 		if threshold_path == None:
 			print("Using default threshold path")
-			self.nc_path_threshold = "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_SSS".replace("SSS", iseason)
+			nc_path_threshold = "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_SSS".replace("SSS", iseason)
 		else:
 			if "SSS" in threshold_path:
-				self.nc_path_threshold = threshold_path.replace("SSS", iseason)
+				nc_path_threshold = threshold_path.replace("SSS", iseason)
 			else:
 				print("The threshold_path requires text 'SSS' to replace with the the year being processed")
 				sys.exit(1)
+		
 		if (iwater_status == "Surface") or (iwater_status == "Flood"):
-			self.nc_path_threshold = nc_path_threshold + "_flow_quantiles.nc"
+			nc_path_threshold = nc_path_threshold + "_flow_quantiles.nc"
 		else:
-			self.nc_path_threshold = nc_path_threshold + "_quantiles.nc"
-				if mask_path == None:
+			nc_path_threshold = nc_path_threshold + "_quantiles.nc"
+		
+		if mask_path == None:
 			print("Using default mask path")
-			self.fmask = "forecasting_dataset\HAD\input_model\HAD_mask_utm_m.asc"
-		else:
-			self.fmask = mask_path
-				if river_path == None:
+			mask_path = "forecasting_dataset\HAD\input_model\HAD_mask_utm_m.asc"
+		#else:
+		#	fmask = mask_path
+		
+		if river_path == None:
 			print("Using default river path")
-			self.friver =  "forecasting_dataset\HAD\input_model\HAD_riv_length_utm.asc"
-		else:
-			delf.friver = river_path
+			river_path =  "forecasting_dataset\HAD\input_model\HAD_riv_length_utm.asc"
+		#else:
+		#	friver = river_path
 		
 		## Changing the country name depending on the country plotting. e.g. "kenya": "county"
 		#name_field_shp["County"] = name_field_county_shp[country_name.lower()]
@@ -121,3 +124,9 @@ class read_variables_and_paths(object):
 			self.fname_place = shapefile_county
 			#wards = gpd.read_file(shapefile_county)
 			#wards = wards[(wards["NAME"] == place_name)]
+
+		# store all variables in python object
+		self.mask_path = mask_path
+		self.river_path = river_path
+		self.nc_path_threshold = nc_path_threshold
+		self.netcdf_path = netcdf_path
