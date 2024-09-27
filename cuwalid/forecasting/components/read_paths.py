@@ -7,7 +7,7 @@ class read_variables_and_paths(object):
 	"""Function to read all variables and path required for running the 
 	impact based forecascasting component"""
 	
-	def __init__(self, plot_scale, shape_path=None, place_code_field=False):
+	def __init__(self, plot_scale, iwater_status, shape_path=None, place_code_field=False, netcdf_path=None):
 		"""Initialize paths and variables name
 		"""
 		if shape_path == None:
@@ -23,58 +23,56 @@ class read_variables_and_paths(object):
 				shapefile_wards = shape_path
 				
         # river shape file
-		rivers_shapefile = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', rivers_shape_path))
+		self.rivers_shapefile = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', rivers_shape_path))
 		
         # load dataset of model outputs
 		#netcdf_path = "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_"+ str(iyear)+"_grid.nc"
 		#netcdf_path = 'forecasting_dataset/HAD/output/HAD_IMERG_sim_ini_grid.nc'
 		
-        #if netcdf_path == None:
-		#	netcdf_path = default_netcdf.replace("YYYY", str(iyear))
-		#else:
-		#	if "YYYY" in netcdf_path:
-		#		netcdf_path = netcdf_path.replace("YYYY", str(iyear))
-		#	else:
-		#		print("The netcdf_path requires text 'YYYY' to replace with the the year being processed")
-		#		sys.exit(1)
+        if netcdf_path == None:
+			self.netcdf_path = default_netcdf.replace("YYYY", str(iyear))
+		else:
+			if "YYYY" in netcdf_path:
+				self.netcdf_path = netcdf_path.replace("YYYY", str(iyear))
+			else:
+				print("The netcdf_path requires text 'YYYY' to replace with the the year being processed")
+				sys.exit(1)
 		
-        #if iwater_status == "Groundwater":
-		#	var = "twsc"
-		#	# If netcdf path is None use the default
-		#	if netcdf_path == None:
-		#		print("Using default netcdf path")
-		#		netcdf_path = "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_"+ str(iyear)+ "_grid_" + var + ".nc"
-		#	else:
-		#		netcdf_path.replace("YYYY", str(iyear))
-		#
+        if iwater_status == "Groundwater":
+			var = "twsc"
+			# If netcdf path is None use the default
+			if netcdf_path == None:
+				print("Using default netcdf path")
+				self.netcdf_path = "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_"+ str(iyear)+ "_grid_" + var + ".nc"
+			else:
+				self.netcdf_path.replace("YYYY", str(iyear))
 		
-        ## load dataset for thresholds
-		##nc_path_threshold = "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_" + iseason + "_quantiles.nc"
-		#if threshold_path == None:
-		#	print("Using default threshold path")
-		#	nc_path_threshold = "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_SSS".replace("SSS", iseason)
-		#else:
-		#	if "SSS" in threshold_path:
-		#		nc_path_threshold = threshold_path.replace("SSS", iseason)
-		#	else:
-		#		print("The threshold_path requires text 'SSS' to replace with the the year being processed")
-		#		sys.exit(1)
-		#if (iwater_status == "Surface") or (iwater_status == "Flood"):
-		#	nc_path_threshold = nc_path_threshold + "_flow_quantiles.nc"
-		#else:
-		#	nc_path_threshold = nc_path_threshold + "_quantiles.nc"
 		
-        #if mask_path == None:
-		#	print("Using default mask path")
-		#	fmask = "forecasting_dataset\HAD\input_model\HAD_mask_utm_m.asc"
-		#else:
-		#	fmask = mask_path
-		
-		#if river_path == None:
-		#	print("Using default river path")
-		#	friver =  "forecasting_dataset\HAD\input_model\HAD_riv_length_utm.asc"
-		#else:
-		#	friver = river_path
+        # load dataset for thresholds
+		#nc_path_threshold = "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_" + iseason + "_quantiles.nc"
+		if threshold_path == None:
+			print("Using default threshold path")
+			self.nc_path_threshold = "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_SSS".replace("SSS", iseason)
+		else:
+			if "SSS" in threshold_path:
+				self.nc_path_threshold = threshold_path.replace("SSS", iseason)
+			else:
+				print("The threshold_path requires text 'SSS' to replace with the the year being processed")
+				sys.exit(1)
+		if (iwater_status == "Surface") or (iwater_status == "Flood"):
+			self.nc_path_threshold = nc_path_threshold + "_flow_quantiles.nc"
+		else:
+			self.nc_path_threshold = nc_path_threshold + "_quantiles.nc"
+		        if mask_path == None:
+			print("Using default mask path")
+			self.fmask = "forecasting_dataset\HAD\input_model\HAD_mask_utm_m.asc"
+		else:
+			self.fmask = mask_path
+				if river_path == None:
+			print("Using default river path")
+			self.friver =  "forecasting_dataset\HAD\input_model\HAD_riv_length_utm.asc"
+		else:
+			delf.friver = river_path
 		
 		## Changing the country name depending on the country plotting. e.g. "kenya": "county"
 		#name_field_shp["County"] = name_field_county_shp[country_name.lower()]
