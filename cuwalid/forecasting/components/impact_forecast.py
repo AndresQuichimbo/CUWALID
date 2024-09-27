@@ -890,16 +890,19 @@ def plot_map(plot_scale="Zoom",
 	--------
 		
 	"""
-	# use this function to cleam some variables and names in the code
-	paths = read_dataset(plot_scale, region, iwater_status, iyear, iseason,
-					  country_name,
-					  shape_path=shape_path,
-					  place_code_field=place_code_field,
-					  netcdf_path=netcdf_path,
-					  threshold_path=threshold_path,
-					  mask_path=mask_path,
-					  river_path=river_path
-					  )
+	# use this function to place variables in an easy to access class
+	paths = get_paths(
+		plot_scale=plot_scale,
+		region=region,
+		country_name=country_name,
+		iwater_status=iwater_status,
+		iyear=iyear, iseason=iseason,
+		shape_path=shape_path,
+		place_code_field=place_code_field,
+		netcdf_path=netcdf_path,
+		threshold_path=threshold_path,
+		river_path=river_path,
+		mask_path=mask_path)
 
 	#if shape_path == None:
 	#	shapefile_country = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_country_dic[region]))
@@ -1182,7 +1185,7 @@ def plot_map(plot_scale="Zoom",
 
 	# READ MODEL OUTPUTS ---------------------------------------
 	# Open dataset of model outputs
-	ds = read_dataset(netcdf_path, var_name=var)
+	ds = read_dataset(paths.netcdf_path, var_name=var)
 
 	# Apply mask to datasets
 	if var == "dis":
