@@ -3,7 +3,7 @@ import sys
 #import rasterio
 from cuwalid.forecasting.components.default_parameter_dataset import *
 
-class read_variables_and_paths(object):
+class get_paths(object):
 	"""Function to read all variables and path required for running the 
 	impact based forecascasting component"""
 	
