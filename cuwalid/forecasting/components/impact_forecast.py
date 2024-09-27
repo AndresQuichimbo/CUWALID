@@ -89,7 +89,7 @@ def plot_map(plot_scale="Zoom",
 		
 	"""
 	# use this function to cleam some variables and names in the code
-	paths = read_dataset(plot_scale, region, iwater_status, iyear, iseason,
+	paths = get_paths(plot_scale, region, iwater_status, iyear, iseason,
 					  country_name,
 					  shape_path=shape_path,
 					  place_code_field=place_code_field,
