@@ -7,7 +7,7 @@ class read_variables_and_paths(object):
 	"""Function to read all variables and path required for running the 
 	impact based forecascasting component"""
 	
-	def __init__(self, plot_scale, iwater_status, iyear, iseason, shape_path=None, place_code_field=False, netcdf_path=None, threshold_path=None):
+	def __init__(self, plot_scale, region, country_name, iwater_status, iyear, iseason, shape_path=None, place_code_field=False, netcdf_path=None, threshold_path=None):
 		"""Initialize paths and variables name
 		"""
 		if shape_path == None:
@@ -131,3 +131,4 @@ class read_variables_and_paths(object):
 		self.river_path = river_path
 		self.nc_path_threshold = nc_path_threshold
 		self.netcdf_path = netcdf_path
+		self.shapefile_country = shapefile_country
