@@ -15,21 +15,21 @@ class read_variables_and_paths(object):
 				shapefile_county = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_county_dic[country_name.lower()]))
 			# TODO: rewrite
 			if plot_scale == "Wards":
-		        shapefile_wards = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_wards_dic[country_name.lower()]))
+				shapefile_wards = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', shapefile_wards_dic[country_name.lower()]))
 		else:
 			if plot_scale == "County":
 				shapefile_county = shape_path
 			elif plot_scale == "Wards":
 				shapefile_wards = shape_path
 				
-        # river shape file
+		# river shape file
 		self.rivers_shapefile = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', rivers_shape_path))
 		
-        # load dataset of model outputs
+		# load dataset of model outputs
 		#netcdf_path = "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_"+ str(iyear)+"_grid.nc"
 		#netcdf_path = 'forecasting_dataset/HAD/output/HAD_IMERG_sim_ini_grid.nc'
 		
-        if netcdf_path == None:
+		if netcdf_path == None:
 			self.netcdf_path = default_netcdf.replace("YYYY", str(iyear))
 		else:
 			if "YYYY" in netcdf_path:
@@ -38,7 +38,7 @@ class read_variables_and_paths(object):
 				print("The netcdf_path requires text 'YYYY' to replace with the the year being processed")
 				sys.exit(1)
 		
-        if iwater_status == "Groundwater":
+		if iwater_status == "Groundwater":
 			var = "twsc"
 			# If netcdf path is None use the default
 			if netcdf_path == None:
@@ -48,7 +48,7 @@ class read_variables_and_paths(object):
 				self.netcdf_path.replace("YYYY", str(iyear))
 		
 		
-        # load dataset for thresholds
+		# load dataset for thresholds
 		#nc_path_threshold = "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_" + iseason + "_quantiles.nc"
 		if threshold_path == None:
 			print("Using default threshold path")
@@ -63,7 +63,7 @@ class read_variables_and_paths(object):
 			self.nc_path_threshold = nc_path_threshold + "_flow_quantiles.nc"
 		else:
 			self.nc_path_threshold = nc_path_threshold + "_quantiles.nc"
-		        if mask_path == None:
+				if mask_path == None:
 			print("Using default mask path")
 			self.fmask = "forecasting_dataset\HAD\input_model\HAD_mask_utm_m.asc"
 		else:
@@ -119,5 +119,5 @@ class read_variables_and_paths(object):
 			#wards = wards[(wards["county"] == place_name)]
 		elif plot_scale == "Country":
 			self.fname_place = shapefile_county
-            #wards = gpd.read_file(shapefile_county)
+			#wards = gpd.read_file(shapefile_county)
 			#wards = wards[(wards["NAME"] == place_name)]
