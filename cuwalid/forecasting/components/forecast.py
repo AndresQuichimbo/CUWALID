@@ -273,9 +273,12 @@ def extract_forecasting_variable(model_name,
 	code_list = []
 	# water status
 	status_list = []
+	# name code list
+	code_name_list = []
+
 	# loop over list of files
 	area_list = []
-
+	
 	for iseason in season:
 		for iplace_name, iplace_code in zip(place_name, place_code):
 			for ivar in field:
@@ -318,6 +321,8 @@ def extract_forecasting_variable(model_name,
 					place_list.append(iplace_name)
 					# store place name
 					code_list.append(iplace_code)
+					# store code name list
+					code_name_list.append(model_name+"_"+str(iplace_code))
 
 					# CALUCATE AREAS FOR EACH TERCILE
 					# loop over list of files
@@ -349,6 +354,7 @@ def extract_forecasting_variable(model_name,
 
 	# create dataframe of contributin areas
 	df = pd.DataFrame()
+	df["name"] = code_name_list
 	df["place"] = place_list
 	df["season"] = season_list
 	df["variable"] = variable_list

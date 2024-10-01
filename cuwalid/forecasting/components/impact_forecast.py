@@ -284,9 +284,9 @@ def plot_map(plot_scale="Zoom",
 	#print(ds_threshold)
 	# READ MODEL OUTPUTS ---------------------------------------
 	# Open dataset of model outputs
-	print(netcdf_path)
+	#print(netcdf_path)
 	ds = read_dataset(netcdf_path, var_name=var)
-	print(netcdf_path)
+	#print(netcdf_path)
 	
 	# Apply mask to datasets
 	if var == "dis":
@@ -699,7 +699,7 @@ def plot_map(plot_scale="Zoom",
 		else:
 			fname_fig = str(place_code) + "_" + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png'
 
-	plt.savefig(fname_fig, dpi=300)
+	plt.savefig(fname_fig, dpi=100)
 	print("**************")
 	print(fname_fig)
 	print("**************")
