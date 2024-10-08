@@ -157,6 +157,26 @@ def run_DRYP(filename_input):
 		data_in.data_reproject['savi'],
 		data_in.data_interpolate['savi'],
 		topo.grid_size)
+	
+	# Read LAI (Leaf Area Index)
+	LAI = read_dataset(data_in.dt, data_in.data_step['lai'],
+		data_in.ini_date, data_in.end_date,
+		data_in.data_reading['lai'],
+		data_in.data_reproject['lai'],
+		data_in.data_interpolate['lai'],
+		topo.grid_size,
+		step_func=True
+		)
+	
+	# Read Kc: Crop coeficient factor
+	Kc = read_dataset(data_in.dt, data_in.data_step['kc'],
+		data_in.ini_date, data_in.end_date,
+		data_in.data_reading['kc'],
+		data_in.data_reproject['kc'],
+		data_in.data_interpolate['kc'],
+		topo.grid_size,
+		step_func=True
+		)
 		
 	# Read SAVI minimum value
 	SAVImin = read_dataset(data_in.dt, data_in.data_step['savi_min'],
@@ -374,11 +394,15 @@ def run_DRYP(filename_input):
 					SAVIdt = None
 					SAVIdt_min = None
 					SAVIdt_max = None
+					LAI = None
+					Kc = None
 				else:
 					SAVIdt = SAVI.get_one_step_dataset(t_savi, data_in.fname_savi, 'savi')
 					SAVIdt_min = SAVImin.get_one_step_dataset(t_savi, data_in.fname_savi_min, 'savi')
 					SAVIdt_max = SAVImax.get_one_step_dataset(t_savi, data_in.fname_savi_max, 'savi')
-				
+					LAIdt = LAI.get_one_step_dataset(t_savi, data_in.fname_TSlai, 'lai')
+					Kcdt = Kc.get_one_step_dataset(t_savi, data_in.fname_TSkc, 'kc')
+					
 				# calculate AV
 				if vegetation.av is not None:
 					av = (SAVIdt - SAVIdt_min)/(SAVIdt_max - SAVIdt_min)
@@ -386,14 +410,15 @@ def run_DRYP(filename_input):
 					av = None
 				
 				# add interception component - UZ zone
-				Pth, Eca, PETh, LAI, Kc, Sc0_cn = cnp.run_interception_one_step(
+				Pth, Eca, PETh, LAIdt, Kcdt, Sc0_cn = cnp.run_interception_one_step(
 						rain[act_nodes], PET[act_nodes], vegetation.av,
 						SAVIdt, SAVIdt_max, SAVIdt_min,
-						None,
+						LAIdt,
 						vegetation.lai_a,
 						vegetation.lai_b,
 						vegetation.fcw_cn,
-						vegetation.Sc0_cn)
+						vegetation.Sc0_cn,
+						Kcdt)
 				
 				# Estimate Kc for the riparian area
 				Pthr, Ecar, PETr, LAIr, Kcr, Sc0_cnrp = cnp.run_interception_one_step(
@@ -403,7 +428,8 @@ def run_DRYP(filename_input):
 						vegetation.lai_a,
 						vegetation.lai_b,
 						vegetation.fcw_cn,
-						vegetation.Sc0_cnrp)
+						vegetation.Sc0_cnrp,
+						Kcdt)
 						
 				##### NOT IN USE, NOT DELETE
 				##### estimate precipitation over the soil

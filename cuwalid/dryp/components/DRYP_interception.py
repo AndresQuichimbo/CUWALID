@@ -8,7 +8,7 @@ class interception(object):
 		pass
 		
 	def run_interception_one_step(self, rain, ETo, av,
-		SAVI, savi_max, savi_min, LAI, lai_a, lai_b, fcw, Sc0):
+		SAVI, savi_max, savi_min, LAI, lai_a, lai_b, fcw, Sc0, Kc):
 		"""	Canopy compartment, calculates interception and
 		evaporation from canopy.
 		
@@ -33,10 +33,11 @@ class interception(object):
 		#if Kc is not available:
 		if av is not None:
 			# Estimation of crop factor
-			if SAVI is not None:
-				Kc = get_vegetation_factor(SAVI, savi_min, savi_max)
-			else:
-				Kc = 1
+			if Kc is None:
+				if SAVI is not None:
+					Kc = get_vegetation_factor(SAVI, savi_min, savi_max)
+				else:
+					Kc = 1
 			
 			if LAI is None:	
 				# Estimation of Leaf area index

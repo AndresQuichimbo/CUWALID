@@ -145,9 +145,9 @@ class get_model_settings(object):
 		self.fname_TSPre = dryp_config["METEO"]["path_pre"]
 		self.fname_TSMeteo = dryp_config["METEO"]["path_pet"]
 		self.fname_TSABC = dryp_config["METEO"]["path_aof"]
-		self.fname_TSABC = dryp_config["METEO"]["path_lai"]
-		self.fname_TSABC = dryp_config["METEO"]["path_savi"]
-		self.fname_TSABC = dryp_config["METEO"]["path_kc"]
+		self.fname_TSlai = dryp_config["METEO"]["path_lai"]
+		self.fname_TSsavi = dryp_config["METEO"]["path_savi"]
+		self.fname_TSkc = dryp_config["METEO"]["path_kc"]
 
 		# READ DATASETS PROJECTION
 		self.fname_proj = None

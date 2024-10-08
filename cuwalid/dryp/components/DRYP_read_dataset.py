@@ -394,6 +394,8 @@ class read_dataset_interp(object):
 				# check if dimension names are compatible with DRYP names
 				if 'latitude' in list(self.ds.coords):
 					self.ds = self.ds.rename({'longitude':'lon', 'latitude':'lat'})
+				if 'X' in list(self.ds.coords):
+					self.ds = self.ds.rename({'X':'lon', 'Y':'lat'})
 
 				if field == 'pet':					
 					# THIS IS ONLY FOR HPET DATA AT HOURLY TIME STEPS
