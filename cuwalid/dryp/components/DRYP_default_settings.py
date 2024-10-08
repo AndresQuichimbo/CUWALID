@@ -23,6 +23,7 @@ default_settings = {
             "savi": 0,
             "savi_min": 0,
             "savi_max": 0,
+            "lai": 0,
             },
         "data_step": {
             "pre": 60,
@@ -33,6 +34,7 @@ default_settings = {
             "savi": 60,
             "savi_min": 60,
             "savi_max": 60,
+            "lai": 60,
             },
         "data_reproject": {
             "pre": True,
@@ -43,6 +45,7 @@ default_settings = {
             "savi": True,
             "savi_min": True,
             "savi_max": True,
+            "lai": True,
             },
         "data_interp": {
             "pre": True,
@@ -53,6 +56,7 @@ default_settings = {
             "savi": True,
             "savi_min": True,
             "savi_max": True,
+            "lai": True,
             }
     },
 
