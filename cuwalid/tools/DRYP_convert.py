@@ -154,17 +154,17 @@ def convert_text_to_json(input_file, output_file=None):
             "not used 3": None
         },
         "GLOBAL_FACTORS": {
-            "factor_uz_kdt": None,
-            "factor_uz_kdroot": None,
-            "factor_uz_kawc": None,
-            "factor_uz_kkast": None,
-            "factor_uz_ksigma": None,
-            "factor_riv_kksat": None,
-            "factor_riv_kdecay": None,
-            "factor_riv_kwidth": None,
-            "factor_sz_kksat": None,
-            "factor_sz_ksy": None,
-            "factor_of_kflow": None
+            "uz_kdt": None,
+            "uz_kdroot": None,
+            "uz_kawc": None,
+            "uz_kkast": None,
+            "uz_ksigma": None,
+            "riv_kksat": None,
+            "riv_kdecay": None,
+            "riv_kwidth": None,
+            "sz_kksat": None,
+            "sz_ksy": None,
+            "of_kflow": None
         }
     }
 
@@ -228,16 +228,16 @@ def convert_text_to_json(input_file, output_file=None):
         33: "OUTPUT.output_csv",
         35: "OUTPUT.output_grid",
         39: "OUTPUT.Save discharge in volumetric rate units",
-        46: "GLOBAL_FACTORS.factor_uz_kdt",
-        48: "GLOBAL_FACTORS.factor_uz_kdroot",
-        50: "GLOBAL_FACTORS.factor_uz_kawc",
-        52: "GLOBAL_FACTORS.factor_uz_kkast",
-        54: "GLOBAL_FACTORS.factor_uz_ksigma",
-        56: "GLOBAL_FACTORS.factor_riv_kksat",
-        58: "GLOBAL_FACTORS.factor_riv_kdecay",
-        60: "GLOBAL_FACTORS.factor_riv_kwidth",
-        62: "GLOBAL_FACTORS.factor_sz_kksat",
-        64: "GLOBAL_FACTORS.factor_sz_ksy"
+        46: "GLOBAL_FACTORS.uz_kdt",
+        48: "GLOBAL_FACTORS.uz_kdroot",
+        50: "GLOBAL_FACTORS.uz_kawc",
+        52: "GLOBAL_FACTORS.uz_kkast",
+        54: "GLOBAL_FACTORS.uz_ksigma",
+        56: "GLOBAL_FACTORS.riv_kksat",
+        58: "GLOBAL_FACTORS.riv_kdecay",
+        60: "GLOBAL_FACTORS.riv_kwidth",
+        62: "GLOBAL_FACTORS.sz_kksat",
+        64: "GLOBAL_FACTORS.sz_ksy"
     }
 
     def clean_key(key):

@@ -38,11 +38,12 @@ class interception(object):
 			else:
 				Kc = 1
 			
-			if LAI is None:		
+			if LAI is None:	
 				# Estimation of Leaf area index
-				LAI = get_LAI_from_SAVI(SAVI, lai_a, lai_b)
-			else:
-				LAI = 0
+				if SAVI is not None:
+					LAI = get_LAI_from_SAVI(SAVI, lai_a, lai_b)
+				else:
+					LAI = 0
 			
 			# Maximum amount of water store by canopy
 			Sca_max = get_Scmax_from_LAI_and_fcw(fcw, LAI)
