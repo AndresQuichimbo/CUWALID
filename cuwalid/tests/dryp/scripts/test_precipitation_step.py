@@ -12,6 +12,8 @@ value of ndays*pre*(number_of_hours_day = 24) = 696 mm
 
 Information related to projection is arbitrary
 """
+#import sys
+#sys.path.append("C:/Users/Edisson/Documents/GitHub/CUWALID")
 import os
 import numpy as np
 import pandas as pd
@@ -21,32 +23,43 @@ from cuwalid.dryp.components.DRYP_io import grid_environment
 from cuwalid.dryp.components.DRYP_read_dataset import (read_dataset_interp)
 from cuwalid.dryp.components.DRYP_io import create_coordinate_array
 
-def create_test_dataframe(fname):
+def create_test_dataset(fname):
 	"""Create dataset for resting the precipitation component"""
 	# Define the time range
 	start_date = pd.Timestamp('2000-01-01')
 	end_date = pd.Timestamp('2000-01-30')
-	dates = pd.date_range(start=start_date, end=end_date, freq='30min')
+	#dates = pd.date_range(start=start_date, end=end_date, freq='H')
+	dates = np.arange(1,31)
 
-	# Create sample data of o.5 to later aggregate to 1
-	data = np.ones(len(dates), dtype=float)  # test array
+	# Create sample data
+	lon = np.linspace(-6.0, -5.80, 10)  # Longitude values
+	lat = np.linspace(-0.0, 0.10, 5)    # Latitude values
+	data = np.ones((len(dates), len(lat), len(lon)), dtype=float)  # test array
 
 	# Create xarray DataArray
-	ds = pd.DataFrame({"Date":dates, "pre":data*0.5})
-	#ds = pd.Series(data, index=dates)
-	
+	da = xr.DataArray(data,
+		   coords=[dates, lat, lon],
+		   dims=['time', 'lat', 'lon'],
+		   name='pre')
+
+	# Create xarray Dataset
+	ds = xr.Dataset({'pre': da})
+
+	# Add attributes
+	ds.attrs['description'] = 'Test NetCDF'
+
 	# Save the dataset to NetCDF file
-	ds.to_csv(fname)
+	ds.to_netcdf(fname)
 
 def test_precipitation():	
 	# simulation parameters
 	dt = 60 # model time step
-	dt_pre = 30 # dataset time step
+	dt_pre = 1440 # dataset time step
 	ini_date = datetime(2000,1,1,0,0,0)
 	end_date = datetime(2000,1,30,0,0,0)
-	netcf_pre = 0 # read precipitation as csv
-	reproject_pre = 0 # activate reprojection
-	interpolate_pre = 0 # activate interpolation
+	data_reading = 3 # read precipitation monthly netcdf
+	reproject_pre = 1 # activate reprojection
+	interpolate_pre = 1 # activate interpolation
 	
 	# specify grid parameters
 	grid_ncols = 12
@@ -78,20 +91,21 @@ def test_precipitation():
 	# Read precipitation
 	PRE = read_dataset_interp(dt, dt_pre,
 		ini_date, end_date,
-		netcf_pre,
+		data_reading,
 		reproject_pre,
 		interpolate_pre,
 		grid_size,
 		lat,
 		lon,
 		proj="EPSG:4326",
-		projm="EPSG:32630"
+		projm="EPSG:32630",
+		step_func=True
 		)
 	
 	# create a test netcdf dataset for evaluation
-	fname = "HAD_test_precipitation.csv"
-	create_test_dataframe(fname)
-
+	fname = "HAD_test_precipitation_01.nc"
+	create_test_dataset(fname)
+	fname = "HAD_test_precipitation_MM.nc"
 	# create a numpy array to store precipitaiton
 	pre = np.zeros((grid_ncols, grid_nrows))
 
@@ -114,10 +128,11 @@ def test_precipitation():
 	# evaluate the result
 	assert np.allclose(pre, answer)
 	
+	print('Precipitation step function: Test runs successfully')
+
 	# remove the test dataset created
+	fname = "HAD_test_precipitation_01.nc"
 	os.remove(fname) if os.path.exists(fname) else None
-
-	print('Precipitation read csv: Test runs successfully')
-
+	
 if __name__ == '__main__':
 	test_precipitation()

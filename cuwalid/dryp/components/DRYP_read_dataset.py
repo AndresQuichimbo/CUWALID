@@ -425,8 +425,9 @@ class read_dataset_interp(object):
 					self.ds = reproject_dataset(self.ds, self.proj, self.projm)#, keys)
 					
 				if self.dt_ds != self.dt:
-					# temporal resampling
-					self.ds = self.ds.resample(time=self.freq_dt).sum()
+					if self.step_func is False:
+						# temporal resampling
+						self.ds = self.ds.resample(time=self.freq_dt).sum()
 					#print(self.ds)		
 				# flag to no read every time the whole dataset
 				self.read_before_ds = 0
@@ -439,8 +440,8 @@ class read_dataset_interp(object):
 			if self.step_func is False:
 				ds = self.ds.isel(time=[iindex])
 			else:
-				ds = self.ds.isel(index=[day])
-
+				ds = self.ds.isel(time=[day])
+			#print(ds)
 			if self.interpolate_ds == 1:
 				# Spatial interpolation
 				#ds = self.ds.isel(time=[j_step-self.step_0]).interp(
