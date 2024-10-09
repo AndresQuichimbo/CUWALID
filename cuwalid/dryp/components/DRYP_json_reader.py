@@ -404,7 +404,7 @@ class get_list_of_groundwater_files(object):
             #self.fname_FHBb = fgw.GROUNDWATER[59]  # flux head boundary
             #self.fname_CHBb = fgw.GROUNDWATER[61]  # Constant flux boundary
             # only for Manny's model
-            self.fname_mask_of = dryp_config["SATURATED"]["path_gw_type"]
+            self.fname_mask_of = dryp_config["SATURATED"]["path_sz_type"]
             #self.fname_lakes_elevation = dryp_config["GROUNDWATER"]["path_gw_lake_elev"]
             self.fname_lakes_elevation = dryp_config["WATER_BODIES"]["path_lake_depth"]
 
