@@ -4,7 +4,11 @@ from tqdm import tqdm
 
 download_urls = {
     "stopet_parameters.nc": "https://figshare.com/ndownloader/files/34923690",
-    "monthly_cont_percentage.nc": "https://figshare.com/ndownloader/files/34923684"
+    "monthly_cont_percentage.nc": "https://figshare.com/ndownloader/files/34923684",
+    "dpetdt.nc": "https://figshare.com/ndownloader/files/34923663",
+    "hpet_slope.nc": "https://figshare.com/ndownloader/files/34923720",
+    "meanshift_had.nc": "https://figshare.com/ndownloader/files/49400419",
+    "stdshift_had.nc": "https://figshare.com/ndownloader/files/49400425"
 }
 
 # Construct the data directory path relative to the script location

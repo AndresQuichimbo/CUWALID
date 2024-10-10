@@ -1,71 +1,122 @@
-import argparse
 import os
-import json
-import numpy as np
-import time
-from cuwalid.stopet.stoPET_v1 import stoPET_wrapper_singlepoint, stoPET_wrapper_regional
+import datetime as dt
+import sys
+from cuwalid.stopet.helper_functions import check_missing_files, load_config
+from cuwalid.stopet.run_stoPET_4dryp import run_stoPET_4_dryp
+from cuwalid.stopet.run_stoPET_inHPC import run_stoPET_in_hpc
 
-def run_stoPET(input_file):
-	# Load the configuration from the input file
-	with open(input_file, 'r') as f:
-		config = json.load(f)
+def run_stoPET(config_file):
+    start = dt.datetime.now()
+    
+    # Get stopet parameter files
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    datapath = os.path.join(script_dir, 'stopet_parameters')
 
-	# Extract the required variables from the configuration
-	script_dir = os.path.dirname(os.path.abspath(__file__))
-	data_path = os.path.join(script_dir, 'stopet_parameters')
-	output_path = os.path.join('stopet_output')
-	os.makedirs(output_path, exist_ok=True)
+    # Check for the presence of required data files
+    required_files = [
+        'dpetdt.nc', 'hpet_slope.nc', 'meanshift_had.nc', 
+        'monthly_cont_percentage.nc', 'stdshift_had.nc', 'stopet_parameters.nc'
+    ]
+    missing_files = check_missing_files(datapath, required_files)
 
-	# Check for the presence of required data files
-	required_files = ['stopet_parameters.nc', 'monthly_cont_percentage.nc']
-	missing_files = [file for file in required_files if not os.path.exists(os.path.join(data_path, file))]
+    # Stop execution if files are missing
+    if missing_files:
+        print("Error: Some necessary parameter files are missing.")
+        print("Please run the command below to download:")
+        print("python -m cuwalid.tools.download_data")
+        sys.exit(1)
 
-	if missing_files:
-		print("Error: The following required data files are missing:")
-		for file in missing_files:
-			print(f" - {file}")
-		print("Please run the following command to download the necessary files:")
-		print("    python -m cuwalid.tools.download_data")
-		return
+    # Load configuration file
+    config = load_config(config_file)
 
-	runtype = config['runtype']
-	startyear = config['startyear']
-	endyear = config['endyear']
-	latval = config['latval']
-	lonval = config['lonval']
-	latval_min = config['latval_min']
-	latval_max = config['latval_max']
-	lonval_min = config['lonval_min']
-	lonval_max = config['lonval_max']
-	locname = config['locname']
-	number_ensm = config['number_ensm']
-	tempAdj = config['tempAdj']
-	deltat = config['deltat']
-	udpi_pet = config['udpi_pet']
+    execution_type = config['execution_type']
 
-	# Run the stoPET functions based on the runtype
-	if runtype == 'single':
-		for ens_num in np.arange(0, number_ensm):
-			stoPET_wrapper_singlepoint(startyear, endyear, latval, lonval, locname,
-									   ens_num, data_path, output_path, tempAdj, deltat, udpi_pet)
-	elif runtype == 'regional':
-		for ens_num in np.arange(0, number_ensm):
-			stoPET_wrapper_regional(startyear, endyear, latval_min, latval_max, lonval_min, lonval_max,
-									locname, ens_num, data_path, output_path, tempAdj, deltat, udpi_pet)
-	else:
-		raise ValueError('runtype only takes "single" and "regional" ... please check!')
+    if execution_type not in ['dryp', 'hpc']:
+        print("Error: Invalid 'execution_type'. Please choose 'dryp' or 'hpc'.")
+        sys.exit(1)
 
-# Main function to handle command-line arguments
+    # Extract parameters from the config
+    trial_number = config.get('trial_number', 1)
+    trial = int(config.get('trial')) if 'trial' in config else None
+    outputpath = config['root_outputpath']
+    runtype = config['runtype']
+    startyear = config['startyear']
+    endyear = config['endyear']
+    seasonswitch = config['seasonswitch']
+    startdate = config['startdate']
+    enddate = config['enddate']
+    latval = config['latval']
+    lonval = config['lonval']
+    latval_min = config['latval_min']
+    latval_max = config['latval_max']
+    lonval_min = config['lonval_min']
+    lonval_max = config['lonval_max']
+    locname = config['locname']
+    number_ensm = config['number_ensm']
+    tempAdj = config['tempAdj']
+    deltat = config['deltat']
+    udpi_pet = config['udpi_pet']
+
+    if execution_type == 'dryp':
+        run_stoPET_4_dryp(
+            datapath=datapath,
+            root_outputpath=outputpath,
+            runtype=runtype,
+            startyear=startyear,
+            endyear=endyear,
+            seasonswitch=seasonswitch,
+            startdate=startdate,
+            enddate=enddate,
+            latval=latval,
+            lonval=lonval,
+            latval_min=latval_min,
+            latval_max=latval_max,
+            lonval_min=lonval_min,
+            lonval_max=lonval_max,
+            locname=locname,
+            number_ensm=number_ensm,
+            tempAdj=tempAdj,
+            deltat=deltat,
+            udpi_pet=udpi_pet,
+            trial_number=trial_number
+        )
+    elif execution_type == 'hpc':
+        run_stoPET_in_hpc(
+            trial=trial,
+            datapath=datapath,
+            root_outputpath=outputpath,
+            runtype=runtype,
+            startyear=startyear,
+            endyear=endyear,
+            seasonswitch=seasonswitch,
+            startdate=startdate,
+            enddate=enddate,
+            latval=latval,
+            lonval=lonval,
+            latval_min=latval_min,
+            latval_max=latval_max,
+            lonval_min=lonval_min,
+            lonval_max=lonval_max,
+            locname=locname,
+            number_ensm=number_ensm,
+            tempAdj=tempAdj,
+            deltat=deltat,
+            udpi_pet=udpi_pet,
+            trial_number=trial_number
+        )
+
+    print('Seasonal PET extraction finished successfully.')
+
+    # End the run and print the runtime
+    end = dt.datetime.now()
+    print('Time of run: %s' % (end - start))
+
+
+# Command-line execution
 if __name__ == '__main__':
-	# Set up argument parser to get the JSON config file from command line
-	parser = argparse.ArgumentParser(description="Run StoPET based on JSON configuration.")
-	parser.add_argument('config_file', type=str, help='Path to the JSON configuration file')
-
-	# Parse command line arguments
-	args = parser.parse_args()
-
-	start = time.time()
-	# Run the plot_maps_json function with the config file provided by the user
-	run_stoPET(args.config_file)
-	end = time.time()
-	print('Time of run: %s'%(end - start))
+    if len(sys.argv) != 2:
+        print("Usage: python <script_name.py> <path_to_config.json>")
+        sys.exit(1)
+    
+    config_file = sys.argv[1]
+    run_stoPET(config_file)
