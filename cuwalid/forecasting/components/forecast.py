@@ -137,7 +137,8 @@ def extract_forecasting_variable(model_name,
 								netcdf_path,
 								shapefile_path,
 								place_name,
-								name_field_shp,
+								place_code,
+								iname_field_shp,
 								save_nc=False
 								):
 
@@ -231,18 +232,19 @@ def extract_forecasting_variable(model_name,
 	# SELCT TIME STEP TO PRINT AS EXAMPLE
 	#time_plot = 15 # Example contain only 24 months
 
-	# do not change this
-	name_field_shp = {
-		"Zoom": "IEBC_WARDS",
-		"Ward": "IEBC_WARDS",
-		"County": "county",
-		"Country": "NAME",	
-		}
+	## do not change this
+	#name_field_shp = {
+	#	"Zoom": "IEBC_WARDS",
+	#	"Ward": "IEBC_WARDS",
+	#	"County": "county",
+	#	"Country": "NAME",	
+	#	}
 
 	#var = ["dis", "twsc", "tht", "wrsi", "flow"]
-	field = cuwalid.drop_false_keys(variables)
-		
-	iname_field_shp = name_field_shp[plot_scale]
+	#field = cuwalid.drop_false_keys(variables)
+	field = variables
+	#print(plot_scale, name_field_shp)
+	#iname_field_shp = name_field_shp[plot_scale]
 
 	# SPECIFY PATHS - GEOGRAPHICAL UNITS WGS64
 	# Load the polygon shapefile using geopandas
@@ -267,63 +269,83 @@ def extract_forecasting_variable(model_name,
 	variable_list = []
 	# store place name
 	place_list = []
+	# store place name
+	code_list = []
+	# water status
+	status_list = []
+	# name code list
+	code_name_list = []
+
 	# loop over list of files
 	area_list = []
-
+	
 	for iseason in season:
-		for iplace_name in place_name:
+		for iplace_name, iplace_code in zip(place_name, place_code):
 			for ivar in field:
 				# read shapefile and select area/region
 				if plot_scale == "County":
 					region = gpd.read_file(shapefile_path)
-					
-				region = region[(region[iname_field_shp] == iplace_name)]
-				
-				# chose path depending on the season
-				if iseason is None:
-					inetcdf_path = netcdf_path.replace("_SSS", "")
-				else:
-					inetcdf_path = netcdf_path.replace("SSS", iseason)
-				
-				inetcdf_path = inetcdf_path.replace("VVV", ivar)
-				dataset = cuwalid.extract_dataset(inetcdf_path, region)
-				
-				if save_nc is True:
-					# save dataset as netcdf
-					fname_nc = (postpp_path + "netcdf/" +
-							model_name + "_" +
-							iseason +"_"+iplace_name+"_"+ivar+
-							"_2022_probabilistic_tercile_forecast_region.nc"
-							)
-					#fname = "D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_" + iseason + "_probabilistic_tercile_forecast_region.nc"
+				#print(shapefile_path, iname_field_shp)	
+				region = region[(region[iname_field_shp] == iplace_code)]
+				#print(region, iplace_code, iplace_name)
+				if len(region) > 0:
+					# chose path depending on the season
+					if iseason is None:
+						inetcdf_path = netcdf_path.replace("_SSS", "")
+					else:
+						inetcdf_path = netcdf_path.replace("SSS", iseason)
 
-					dataset.to_netcdf(fname_nc)
-				
-				# store season
-				season_list.append(iseason)
-				# store variable
-				variable_list.append(ivar)
-				# store place name
-				place_list.append(iplace_name)
+					#print(len(region.index), iplace_code)
+					#print(region, iplace_code)
 
-				# CALUCATE AREAS FOR EACH TERCILE
-				# loop over list of files
-				#area_list = []
-				#for ifname in fname:
-				# read dataset and extract selected tercile
-				area = []
-				for itercile in tercile:
-					# read tercile
-					#data = read_dataset(ifname, var_name=itercile).values
-					data = dataset[itercile].values
-					# count terciles with higher probability
-					data[data > 0.33] = 1
-					data[data <= 0.33] = 0
-					# create list areas
-					area.append(np.nansum(data))
-				
-				# calculate percentages
-				area_list.append(area*1/np.sum(area))
+					inetcdf_path = inetcdf_path.replace("VVV", ivar)
+					dataset = cuwalid.extract_dataset(inetcdf_path, region)
+					#print(region, iplace_code)
+
+					if save_nc is True:
+						# save dataset as netcdf
+						fname_nc = (postpp_path + "netcdf/" +
+								model_name + "_" +
+								iseason +"_"+iplace_name+"_"+ivar+
+								"_2022_probabilistic_tercile_forecast_region.nc"
+								)
+						#fname = "D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_" + iseason + "_probabilistic_tercile_forecast_region.nc"
+
+						dataset.to_netcdf(fname_nc)
+
+					# store season
+					season_list.append(iseason)
+					# store variable
+					variable_list.append(ivar)
+					# store place name
+					place_list.append(iplace_name)
+					# store place name
+					code_list.append(iplace_code)
+					# store code name list
+					code_name_list.append(model_name+"_"+str(iplace_code))
+
+					# CALUCATE AREAS FOR EACH TERCILE
+					# loop over list of files
+					#area_list = []
+					#for ifname in fname:
+					# read dataset and extract selected tercile
+					area = []
+					for itercile in tercile:
+						# read tercile
+						#data = read_dataset(ifname, var_name=itercile).values
+						data = dataset[itercile].values
+						# count terciles with higher probability
+						data[data > 0.33] = 1
+						data[data <= 0.33] = 0
+						# create list areas
+						area.append(np.nansum(data))
+
+					# calculate percentages
+					area_list.append(area*1/np.sum(area))
+
+					# get status value
+					status_list.append(area.index(max(area)))
+
 				
 			# change to numpy array
 			area = np.array(area_list)
@@ -332,9 +354,11 @@ def extract_forecasting_variable(model_name,
 
 	# create dataframe of contributin areas
 	df = pd.DataFrame()
+	df["name"] = code_name_list
 	df["place"] = place_list
 	df["season"] = season_list
 	df["variable"] = variable_list
+	df["status"] = status_list
 	for i, itercile in enumerate(tercile):
 		df[itercile] = area[:, i]
 

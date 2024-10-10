@@ -45,14 +45,19 @@ default_input = {
       "path_sz_wte": None,
       "path_sz_bc_flux": None,
       "path_sz_bc_head": None,
-      "path_sz_bottom": None
+      "path_sz_bottom": None,
+      "path_sz_depth": None,
+      "path_sz_bdd": None,
+      "path_sz_type": None, # aquifer type
    },
 
    "METEO": {
       "path_pre": None,
       "path_pet": None,
       "path_aof": None,
-      #"other": None
+  		"path_lai": None,
+		"path_savi": None,
+		"path_kc": None
    },
 
    "OUTPUT": {
@@ -99,14 +104,14 @@ default_input = {
    },
 
    "GROUNDWATER": {
-      "path_gw_depth": None,
-      "path_gw_bdd": None,
+   #   "path_gw_depth": None,
+   #   "path_gw_bdd": None,
       "path_gw_2l_bottom": None,
       "path_gw_2l_ksat": None,
       "path_gw_2l_sy": None,
       "path_gw_2l_ss": None,
       "path_gw_2l_wte": None, 
-      "path_gw_type": None, # aquifer type
+   #   "path_gw_type": None, # aquifer type
    #   "path_gw_lake_elev": None, # lakes bathymetry
    #   "path_pnds_hmax": None, # ponds max depth
    #   "path_pnds_Amax": None, # ponds maximum extend

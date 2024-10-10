@@ -8,6 +8,7 @@ sys.path.insert(0, package_root)
 from cuwalid.tests.dryp.scripts import (
     test_precipitation,
     test_precipitation_csv,
+    test_precipitation_step,
     test_infiltration,
     test_soil_layer,
     test_flow_accum_fortran,
@@ -36,6 +37,7 @@ test_functions = [
     test_ponds.test_ponds,
     test_precipitation.test_precipitation,
     test_precipitation_csv.test_precipitation,
+    test_precipitation_step.test_precipitation,
     test_infiltration.test_infiltration,
     test_soil_layer.test_soil_layer,
     test_flow_accum_fortran.test_runoff,

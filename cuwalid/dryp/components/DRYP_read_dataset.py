@@ -162,20 +162,32 @@ class read_dataset_interp(object):
 	#@profile
 	def __init__(self, dt, dt_ds, ini_date, end_date, file_format,
 		reproject, interpolate, grid_length, lat, lon, proj=None,
-		projm=None):
+		projm=None, step_func=False):
 		"""set model grid time series and model files
 
 		Parameters
 		----------
-		dt:			model time step
-		dt_ds:		data set frequency
-		ini_date:	datetime- inital date for the simulation
-		end_date:	datetime- final date for the simulation
-		file_format:integer- 1: read multiple files
-		reproject:	integer- 1: activate reprojection
-		interpolate: integer- 1: activate interpolation
-		grid_length: size of the grid
-		proyection:	define the pojection of the dataset (optional)
+		dt:			int
+			model time step
+		dt_ds:		int
+			data set frequency
+		ini_date:	datetime
+			inital date for the simulation
+		end_date:	datetime
+			final date for the simulation
+		file_format:integer
+			- 1: read multiple files
+		reproject:	integer
+			- 1: activate reprojection
+		interpolate: integer
+		 	 1: activate interpolation
+		grid_length: int
+			size of the grid
+		proyection:	obj, string
+			define the pojection of the dataset (optional)
+		step_func : bool
+			reading option to use step function on temporal values
+			default values is False, which meand step function not active
 
 		Returns
 		--------
@@ -241,6 +253,8 @@ class read_dataset_interp(object):
 		else:
 			self.projm = projm
 
+		self.step_func = step_func
+
 	#@profile
 	def get_one_step_dataset(self, j_step, fname_ds, field):
 		"""
@@ -291,7 +305,7 @@ class read_dataset_interp(object):
 			# needs to find 
 			year = idate_ds.year
 			month = idate_ds.month
-			#day = idate_ds.day
+			day = idate_ds.day
 			#hour = idate_ds.hour
 
 			if (self.read_before_ds == 1):
@@ -358,13 +372,30 @@ class read_dataset_interp(object):
 					fname_ds = fname_ds.replace("MM", str_month)
 					#fname_ds = fname_ds + '/' + str(idate_ds.year) + '/chaf-v00_' + str(idate_ds.year) + '-' + str_month+'*'
 					#fname_ds = fname_ds + '/' + str(idate_ds.year) + '/IMERG_' + str(idate_ds.year) + '-' + str_month+'*'
-				
+				elif self.file_format == 4:
+					# read daily values
+					if month < 10:
+						str_month = '0'+str(month)
+					else:
+						str_month = str(month)
+					if day < 10:
+						str_day = '0'+str(day)
+					else:
+						str_day = str(day)
+					# Names should include YYYY for year  MM for months, and DD for days
+					# in order to read daily files
+					fname_ds = fname_ds.replace("YYYY", str(idate_ds.year))
+					fname_ds = fname_ds.replace("MM", str_month)
+					fname_ds = fname_ds.replace("DD", str_day)
+
 				#print(fname_ds)
 				# read dataset
 				self.ds = xr.open_dataset(fname_ds)
 				# check if dimension names are compatible with DRYP names
 				if 'latitude' in list(self.ds.coords):
 					self.ds = self.ds.rename({'longitude':'lon', 'latitude':'lat'})
+				if 'X' in list(self.ds.coords):
+					self.ds = self.ds.rename({'X':'lon', 'Y':'lat'})
 
 				if field == 'pet':					
 					# THIS IS ONLY FOR HPET DATA AT HOURLY TIME STEPS
@@ -394,21 +425,33 @@ class read_dataset_interp(object):
 					self.ds = reproject_dataset(self.ds, self.proj, self.projm)#, keys)
 					
 				if self.dt_ds != self.dt:
-					# temporal resampling
-					self.ds = self.ds.resample(time=self.freq_dt).sum()
+					if self.step_func is False:
+						# temporal resampling
+						self.ds = self.ds.resample(time=self.freq_dt).sum()
 					#print(self.ds)		
 				# flag to no read every time the whole dataset
 				self.read_before_ds = 0
 			
-			#print(self.ds, self.dt_ds, self.dt)		
+			#print(self.ds, self.dt_ds, self.dt)
+			# set index
+			iindex = j_step-self.step_0
+
+			# select data step
+			if self.step_func is False:
+				ds = self.ds.isel(time=[iindex])
+			else:
+				ds = self.ds.isel(time=[day])
+			#print(ds)
 			if self.interpolate_ds == 1:
 				# Spatial interpolation
-				ds = self.ds.isel(time=[j_step-self.step_0]).interp(
+				#ds = self.ds.isel(time=[j_step-self.step_0]).interp(
+				ds = ds.interp(
 					lat=self.lat, lon=self.lon,
 					method="linear")
-			else:
-				ds = self.ds.isel(time=[j_step-self.step_0])
-				
+			#else:
+			#	ds = self.ds.isel(time=[j_step-self.step_0])
+			
+			# get data at time step t
 			data = np.array(ds.variables[field][0][:]).flatten()
 			#print(ds)			
 			self.j_step += 1

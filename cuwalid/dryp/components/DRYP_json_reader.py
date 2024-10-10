@@ -145,6 +145,9 @@ class get_model_settings(object):
 		self.fname_TSPre = dryp_config["METEO"]["path_pre"]
 		self.fname_TSMeteo = dryp_config["METEO"]["path_pet"]
 		self.fname_TSABC = dryp_config["METEO"]["path_aof"]
+		self.fname_TSlai = dryp_config["METEO"]["path_lai"]
+		self.fname_TSsavi = dryp_config["METEO"]["path_savi"]
+		self.fname_TSkc = dryp_config["METEO"]["path_kc"]
 
 		# READ DATASETS PROJECTION
 		self.fname_proj = None
@@ -379,9 +382,9 @@ class get_list_of_groundwater_files(object):
         self.fname_CHB = dryp_config["SATURATED"]["path_sz_bc_head"]  # Constant flux boundary
         self.fname_SZ_bot = dryp_config["SATURATED"]["path_sz_bottom"]  # path_sz_bottom
         
-        self.fname_thickness = dryp_config["GROUNDWATER"]["path_gw_depth"]
-        self.fname_b_aq = dryp_config["GROUNDWATER"]["path_gw_bdd"]
-        self.fname_aquifertype = dryp_config["GROUNDWATER"]["path_gw_type"]
+        self.fname_thickness = dryp_config["SATURATED"]["path_sz_depth"]
+        self.fname_b_aq = dryp_config["SATURATED"]["path_sz_bdd"]
+        self.fname_aquifertype = dryp_config["SATURATED"]["path_sz_type"]
         #self.fname_bathymetry = dryp_config["GROUNDWATER"]["path_gw_lake_elev"]
         self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depth"]
 
@@ -401,7 +404,7 @@ class get_list_of_groundwater_files(object):
             #self.fname_FHBb = fgw.GROUNDWATER[59]  # flux head boundary
             #self.fname_CHBb = fgw.GROUNDWATER[61]  # Constant flux boundary
             # only for Manny's model
-            self.fname_mask_of = dryp_config["GROUNDWATER"]["path_gw_type"]
+            self.fname_mask_of = dryp_config["SATURATED"]["path_sz_type"]
             #self.fname_lakes_elevation = dryp_config["GROUNDWATER"]["path_gw_lake_elev"]
             self.fname_lakes_elevation = dryp_config["WATER_BODIES"]["path_lake_depth"]
 
