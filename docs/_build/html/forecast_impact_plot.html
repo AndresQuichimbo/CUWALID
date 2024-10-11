@@ -154,6 +154,14 @@ python<span class="w"> </span>-m<span class="w"> </span>cuwalid.forecasting.main
 <li><p><strong>river_path</strong>: Path to the river network data file, which is used to model the river system within the forecast region. It helps in determining river lengths and other hydrological features.</p></li>
 <li><p><strong>shape_path</strong>: Path to the shape file to override built in shape files for the HAD region (shape files for the HAD region built into the package e.g. when ‘country_name’ is picked as kenya the in built shape file will be used).</p></li>
 </ul>
+<p>Instead of providing the variables ‘netcdf_path’ and ‘threshold_path’ , you can instead provide these variables and the paths will be automatically generated.</p>
+<ul class="simple">
+<li><p><strong>prev_output_path</strong>: The path that your previous model outputted your netcdf files to for example “”forecasting_dataset/HAD/output/””</p></li>
+<li><p><strong>pp_path</strong>: The post processing path to where the threshold files are held, e.g. “forecasting_dataset/HAD/postpp/”</p></li>
+<li><p><strong>model_name</strong>: The model name used in previous steps</p></li>
+</ul>
+<p>Using these variables it can easily append the year and season to the path to use the exact file necessary.</p>
+<p>Warning: netcdf_path and threshold_path take priority so if both methods of input are provided, the netcdf_path and threshold_path path will be used.</p>
 </section>
 </section>
 

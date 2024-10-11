@@ -11,12 +11,12 @@ def run_stoPET_4_dryp(datapath, root_outputpath, runtype, startyear, endyear, se
   # This will create the output folders where all the ensembles will be saved.
   for i in range(0,trial_number): 
     # create a folder to save the data
-    if not os.path.isdir(root_outputpath + 'result_R%s/'%i):
-      os.mkdir(root_outputpath + 'result_R%s/'%i)    
+    if not os.path.isdir(os.path.join(root_outputpath, 'result_R%s/'%i)):
+      os.makedirs(os.path.join(root_outputpath, 'result_R%s/'%i))    
     # this folder will be used to save the ensembles generated on each realization
     # here the root output pass given will be changed to a new result folder
     # called result_R* where the * is the realization number.
-    outputpath = root_outputpath + 'result_R%s/'%i
+    outputpath = os.path.join(root_outputpath, 'result_R%s/'%i)
     # this will run stoPET in a loop (This will take more time to finishe the job)
     stoPET_model_main(datapath, outputpath, runtype, startyear, endyear, seasonswitch, startdate, enddate, 
                       latval, lonval, latval_min, latval_max, lonval_min, lonval_max,locname, number_ensm, 

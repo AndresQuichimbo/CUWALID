@@ -29,12 +29,12 @@ def run_stoPET_in_hpc(trial,   datapath, root_outputpath, runtype, startyear, en
     print(trial_number)
     
     # create a folder to save the data
-    if not os.path.isdir(root_outputpath + 'result_R%s/'%trial_number):
-      os.mkdir(root_outputpath + 'result_R%s/'%trial_number)    
+    if not os.path.isdir(os.path.join(root_outputpath, 'result_R%s/'%trial_number)):
+      os.makedirs(os.path.join(root_outputpath, 'result_R%s/'%trial_number))    
     # this folder will be used to save the ensembles generated on each realization
     # here the output path will change to the new folder created within the origional
     # output root path with result_R* where * is the number of the trial.
-    outputpath = root_outputpath + 'result_R%s/'%trial_number
+    outputpath = os.path.join(root_outputpath ,'result_R%s/'%trial_number)
 
     ## ------ NO CHANGES BELLOW THIS -------------##
     # Here we generate the random normal distribution values based on
