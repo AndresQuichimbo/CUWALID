@@ -38,11 +38,30 @@ def get_csv_TS_files_from_multi_CSV(model_path, model_name, start_year, end_year
 		data.to_csv(fname, index=False)
 		
 def get_TWSA_from_mult_files(model_path, model_name, start_year, end_year):
-	fname  = [
+	""" Get TWSA - total water storage anomalies form multiple netcdf files
+
+	Parameters:
+	-----------
+	model_path: path (str)
+		folder path of model outputs files
+	model_name: str
+		model name
+	start_year: int
+		starting year of the analysis
+	end_year: int
+		starting year of the analysis
+
+	Returns
+	-------
+
+	"""
+
+	fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)
+	#fname  = [
 	#'/home/c1755103/HAD/HAD_output/HAD_IMERG_sim_28b_'+ str(iyear) +'_grid.nc' for iyear in range(2003, 2022)
 	#'/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_'+ str(iyear) +'_grid.nc' for iyear in range(2001, 2023)
-	model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
-	]
+	#model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
+	#]
 
 	#imodel = "IMERGb_D2E_sim"
 
@@ -81,12 +100,31 @@ def get_TWSA_from_mult_files(model_path, model_name, start_year, end_year):
 			idfname += 1
 			
 def get_additional_variables_multi_netcdf(model_path, model_name, start_year, end_year):
+	""" Get WRSI water satisfaction index and total evapotranspiration
+	
 
-	fname  = [
+	Parameters:
+	-----------
+	model_path: path (str)
+		folder path of model outputs files
+	model_name: str
+		model name
+	start_year: int
+		starting year of the analysis
+	end_year: int
+		starting year of the analysis
+
+	Returns
+	-------
+
+	"""
+	fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)
+	
+	#fname  = [
 	#'/home/c1755103/HAD/HAD_output/HAD_IMERG_sim_28b_'+ str(iyear) +'_grid.nc' for iyear in range(2003, 2022)
 	#'/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_'+ str(iyear) +'_grid.nc' for iyear in range(2001, 2023)
-	model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
-	]
+	#model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
+	#]
 
 	#imodel = "IMERGb_D2E_sim"
 
@@ -116,14 +154,32 @@ def get_additional_variables_multi_netcdf(model_path, model_name, start_year, en
 			
 
 def get_percentiles_multi_files(model_path, model_name, start_year, end_year, season, variables, postpp_path):
+	""" Get TWSA - total water storage anomalies form multiple netcdf files
 
+	Parameters:
+	-----------
+	model_path: path (str)
+		folder path of model outputs files
+	model_name: str
+		model name
+	start_year: int
+		starting year of the analysis
+	end_year: int
+		starting year of the analysis
+
+	Returns
+	-------
+
+	"""
+	fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)
+	
 	# ==============================================================
 	# DO NOT MODIFY FROM HERE -------------------------------------
 	# get and save mean average values from netcdf
-	fname  = [
-	model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
+	#fname  = [
+	#model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
 	#'/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_'+ str(iyear) +'_grid.nc' for iyear in range(2003, 2023)
-	]
+	#]
 
 	#model_name = "IMERGba_sim0"
 
@@ -207,14 +263,33 @@ def get_percentiles_multi_files(model_path, model_name, start_year, end_year, se
 
 			
 def get_extremes_quantiles_multi_netcdf(model_path, model_name, start_year, end_year, season, variables, postpp_path):
-		
+	""" Get TWSA - total water storage anomalies form multiple netcdf files
+
+	Parameters:
+	-----------
+	model_path: path (str)
+		folder path of model outputs files
+	model_name: str
+		model name
+	start_year: int
+		starting year of the analysis
+	end_year: int
+		starting year of the analysis
+
+	Returns
+	-------
+
+	"""
+	fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)
+	
+			
 	# ==============================================================
 	# DO NOT MODIFY FROM HERE -------------------------------------
 	# get and save mean average values from netcdf
-	fname  = [
-	model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
+	#fname  = [
+	#model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
 	#'/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_'+ str(iyear) +'_grid.nc' for iyear in range(2003, 2023)
-	]
+	#]
 
 	#model_name = "IMERGba_sim0"
 
@@ -306,13 +381,32 @@ def get_extremes_quantiles_multi_netcdf(model_path, model_name, start_year, end_
 
 			
 def get_average_multi_netcdf(model_path, model_name, start_year, end_year, season, variables, postpp_path):
+	""" Get TWSA - total water storage anomalies form multiple netcdf files
 
+	Parameters:
+	-----------
+	model_path: path (str)
+		folder path of model outputs files
+	model_name: str
+		model name
+	start_year: int
+		starting year of the analysis
+	end_year: int
+		starting year of the analysis
+
+	Returns
+	-------
+
+	"""
+	fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)
+	
+	
 	# get and save mean average values from netcdf
-	fname  = [
-	model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
+	#fname  = [
+	#model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
 	#'/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_'+ str(iyear) +'_grid.nc' for iyear in range(2003, 2023)
 	#'/user/work/km19051/HAD_output/HAD_1k_10y_gw_ch_ksat_1_v2_IMERG_sim_28_grid.nc',
-	]
+	#]
 
 	#imodel = "IMERGba_sim0"
 
@@ -342,13 +436,32 @@ def get_average_multi_netcdf(model_path, model_name, start_year, end_year, seaso
 
 
 def get_anomalies_multi_netcdf(model_path, model_name, start_year, end_year, season, variables, postpp_path):
+	""" Get TWSA - total water storage anomalies form multiple netcdf files
 
+	Parameters:
+	-----------
+	model_path: path (str)
+		folder path of model outputs files
+	model_name: str
+		model name
+	start_year: int
+		starting year of the analysis
+	end_year: int
+		starting year of the analysis
+
+	Returns
+	-------
+
+	"""
+	fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)
+	
+	
 	# ===============================================================
 
 	# path of simulation files
-	fname  = [
-		model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
-	]
+	#fname  = [
+	#	model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
+	#]
 
 	#fname_lta = "/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGag_sim0_mean.nc"
 
@@ -491,3 +604,29 @@ def season_name_to_number(season):
 
 	return season
 
+def get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year):
+	""" Get list of name of historical files when multiple files are
+	are analysed
+
+	Parameters:
+	-----------
+	model_path: path (str)
+		folder path of model outputs files
+	model_name: str
+		model name
+	start_year: int
+		starting year of the analysis
+	end_year: int
+		starting year of the analysis
+
+	Returns
+	-------
+
+	"""
+	fname  = [
+	#'/home/c1755103/HAD/HAD_output/HAD_IMERG_sim_28b_'+ str(iyear) +'_grid.nc' for iyear in range(2003, 2022)
+	#'/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_'+ str(iyear) +'_grid.nc' for iyear in range(2001, 2023)
+	model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
+	]
+
+	return fname

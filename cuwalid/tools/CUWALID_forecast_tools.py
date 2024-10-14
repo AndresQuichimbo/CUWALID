@@ -557,6 +557,23 @@ def get_average_from_list(fname_list, var="pre", mean=True, season=None,
 	return data
 
 def get_average_all_variables_from_list(fname, field, season):
+	"""Create a netCDF file containing mean values from all processed
+	and output variables
+	
+	Parameters:
+	-----------
+	fname: path (str)
+		file path of model outputs
+	field: list (str)
+		list of variables to process
+	season: list (str)
+		list of season to process
+
+	Returns:
+	--------
+	xarray: dataset
+		dataset containing mean values
+	"""
 
 	# loop over all specified variables
 	first_read = True

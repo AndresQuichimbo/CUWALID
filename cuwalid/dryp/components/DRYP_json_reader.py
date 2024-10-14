@@ -424,6 +424,8 @@ class get_list_of_water_bodies_files(object):
         self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depth"]
         self.fname_pnd_hmax = dryp_config["WATER_BODIES"]["path_pnd_hmax"]
         self.fname_pnd_Amax = dryp_config["WATER_BODIES"]["path_pnd_Amax"]
+        self.fname_pnd_Vo = dryp_config["WATER_BODIES"]["path_pnd_Vo"]
+		
 
 
 def clean_input(default_dict, user_input, path="", base_path=None):

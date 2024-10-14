@@ -654,7 +654,7 @@ def plot_map(plot_scale="Zoom",
 	plt.tight_layout()
 	
 	# ADD LOCATION PLOT ===========================================
-	ax2 = fig.add_axes([0.80, 0.70, #location: x, y
+	ax2 = fig.add_axes([0.50, 0.0, #location: x, y
 		0.4*0.5,# axes width,
 		0.4*0.7*ratio_bw # axes height
 		]

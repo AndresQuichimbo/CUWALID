@@ -13,6 +13,7 @@ def run_hydro_forecast(config_path):
     include_hincast = config["run_hindcast"]
     include_forecast = config["run_forecast"]
     include_plotting = config["run_plotting"]
+    multi_files = config["multi_files"]
 
     model_path = config['model_path']
     postpp_path = config['postpp_path']
@@ -30,27 +31,29 @@ def run_hydro_forecast(config_path):
         # Getting hindcast configuration
         hindcast_model_name = config['hindcast_model_name']
         
+        if multi_files is True:
+            print("******Processing yearly-files of model outputs******")
 
-        print("Step 1: Concatenate multiple csv historical files")
-        get_csv_TS_files_from_multi_CSV(model_path, hindcast_model_name, start_year, end_year)
+            print("Step 1: Concatenate multiple csv historical files")
+            get_csv_TS_files_from_multi_CSV(model_path, hindcast_model_name, start_year, end_year)
 
-        print("Step 2: Calculate TWSA from storage change")
-        get_TWSA_from_mult_files(model_path, hindcast_model_name, start_year, end_year)
+            print("Step 2: Processing TWSA from storage change")
+            get_TWSA_from_mult_files(model_path, hindcast_model_name, start_year, end_year)
 
-        print("Step 3: Calculate WRSI")
-        get_additional_variables_multi_netcdf(model_path, hindcast_model_name, start_year, end_year)
+            print("Step 3: Processing WRSI")
+            get_additional_variables_multi_netcdf(model_path, hindcast_model_name, start_year, end_year)
 
-        print("Step 5: Get terciles from historical simulations")
-        get_percentiles_multi_files(model_path, hindcast_model_name, start_year, end_year, season, variables, postpp_path)
+            print("Step 5: Getting terciles from historical simulations")
+            get_percentiles_multi_files(model_path, hindcast_model_name, start_year, end_year, season, variables, postpp_path)
 
-        print("Step 6: Get quatiles 05, 33, 50, 66, 95 form historical simulations")
-        get_extremes_quantiles_multi_netcdf(model_path, hindcast_model_name, start_year, end_year, season, variables, postpp_path)
+            print("Step 6: Getting quatiles 05, 33, 50, 66, 95 form historical simulations")
+            get_extremes_quantiles_multi_netcdf(model_path, hindcast_model_name, start_year, end_year, season, variables, postpp_path)
 
-        print("Step 7: Get average values form historical simualations")
-        get_average_multi_netcdf(model_path, hindcast_model_name, start_year, end_year, season, variables, postpp_path)
+            print("Step 7: Getting average values form historical simualations")
+            get_average_multi_netcdf(model_path, hindcast_model_name, start_year, end_year, season, variables, postpp_path)
 
-        print("Step 8: Get anomalies from historical simulations")
-        get_anomalies_multi_netcdf(model_path, hindcast_model_name, start_year, end_year, season, variables, postpp_path)
+            print("Step 8: Getting anomalies from historical simulations")
+            get_anomalies_multi_netcdf(model_path, hindcast_model_name, start_year, end_year, season, variables, postpp_path)
 
 
     # ----------------------FORECASTING-----------------------    
