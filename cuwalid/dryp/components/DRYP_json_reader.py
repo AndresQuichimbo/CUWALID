@@ -435,11 +435,11 @@ def clean_input(default_dict, user_input, path="", base_path=None):
 
 	for key, default_value in default_dict.items():
 		full_path = f"{path}.{key}" if path else key
-
+		print(key)
 		# Check if the key exists in user_input
 		if key in user_input:
 			user_value = user_input[key]
-			
+			print(user_input[key])
 			# If the value is a dictionary, recurse into it
 			if isinstance(default_value, dict):
 				if isinstance(user_value, dict):
