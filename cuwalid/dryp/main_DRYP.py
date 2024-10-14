@@ -175,7 +175,7 @@ def run_DRYP(filename_input):
 		)
 	
 	# Read Kc: Crop coeficient factor
-	Kc = read_dataset(data_in.dt, data_in.data_step['kc'],
+	Kc = read_dataset_interp(data_in.dt, data_in.data_step['kc'],
 		data_in.ini_date, data_in.end_date,
 		data_in.data_reading['kc'],
 		data_in.data_reproject['kc'],
