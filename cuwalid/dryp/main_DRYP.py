@@ -151,21 +151,27 @@ def run_DRYP(filename_input):
 		)
 	
 	# Read SAVI
-	SAVI = read_dataset(data_in.dt, data_in.data_step['savi'],
+	SAVI = read_dataset_interp(data_in.dt, data_in.data_step['savi'],
 		data_in.ini_date, data_in.end_date,
 		data_in.data_reading['savi'],
 		data_in.data_reproject['savi'],
 		data_in.data_interpolate['savi'],
-		topo.grid_size)
+		topo.grid_size,
+		topo.lat,
+		topo.lon,
+		step_func=True,
+		)
 	
 	# Read LAI (Leaf Area Index)
-	LAI = read_dataset(data_in.dt, data_in.data_step['lai'],
+	LAI = read_dataset_interp(data_in.dt, data_in.data_step['lai'],
 		data_in.ini_date, data_in.end_date,
 		data_in.data_reading['lai'],
 		data_in.data_reproject['lai'],
 		data_in.data_interpolate['lai'],
 		topo.grid_size,
-		step_func=True
+		topo.lat,
+		topo.lon,
+		step_func=True,
 		)
 	
 	# Read Kc: Crop coeficient factor
@@ -175,6 +181,8 @@ def run_DRYP(filename_input):
 		data_in.data_reproject['kc'],
 		data_in.data_interpolate['kc'],
 		topo.grid_size,
+		topo.lat,
+		topo.lon,
 		step_func=True
 		)
 		
