@@ -93,7 +93,7 @@
 <div class="viewcode-block" id="interception.run_interception_one_step">
 <a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.interception.run_interception_one_step">[docs]</a>
 	<span class="k">def</span> <span class="nf">run_interception_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rain</span><span class="p">,</span> <span class="n">ETo</span><span class="p">,</span> <span class="n">av</span><span class="p">,</span>
-		<span class="n">SAVI</span><span class="p">,</span> <span class="n">savi_max</span><span class="p">,</span> <span class="n">savi_min</span><span class="p">,</span> <span class="n">LAI</span><span class="p">,</span> <span class="n">lai_a</span><span class="p">,</span> <span class="n">lai_b</span><span class="p">,</span> <span class="n">fcw</span><span class="p">,</span> <span class="n">Sc0</span><span class="p">):</span>
+		<span class="n">SAVI</span><span class="p">,</span> <span class="n">savi_max</span><span class="p">,</span> <span class="n">savi_min</span><span class="p">,</span> <span class="n">LAI</span><span class="p">,</span> <span class="n">lai_a</span><span class="p">,</span> <span class="n">lai_b</span><span class="p">,</span> <span class="n">fcw</span><span class="p">,</span> <span class="n">Sc0</span><span class="p">,</span> <span class="n">Kc</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;	Canopy compartment, calculates interception and</span>
 <span class="sd">		evaporation from canopy.</span>
 <span class="sd">		</span>
@@ -118,16 +118,18 @@
 		<span class="c1">#if Kc is not available:</span>
 		<span class="k">if</span> <span class="n">av</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 			<span class="c1"># Estimation of crop factor</span>
-			<span class="k">if</span> <span class="n">SAVI</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-				<span class="n">Kc</span> <span class="o">=</span> <span class="n">get_vegetation_factor</span><span class="p">(</span><span class="n">SAVI</span><span class="p">,</span> <span class="n">savi_min</span><span class="p">,</span> <span class="n">savi_max</span><span class="p">)</span>
-			<span class="k">else</span><span class="p">:</span>
-				<span class="n">Kc</span> <span class="o">=</span> <span class="mi">1</span>
+			<span class="k">if</span> <span class="n">Kc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">SAVI</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="n">Kc</span> <span class="o">=</span> <span class="n">get_vegetation_factor</span><span class="p">(</span><span class="n">SAVI</span><span class="p">,</span> <span class="n">savi_min</span><span class="p">,</span> <span class="n">savi_max</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">Kc</span> <span class="o">=</span> <span class="mi">1</span>
 			
-			<span class="k">if</span> <span class="n">LAI</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>		
+			<span class="k">if</span> <span class="n">LAI</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>	
 				<span class="c1"># Estimation of Leaf area index</span>
-				<span class="n">LAI</span> <span class="o">=</span> <span class="n">get_LAI_from_SAVI</span><span class="p">(</span><span class="n">SAVI</span><span class="p">,</span> <span class="n">lai_a</span><span class="p">,</span> <span class="n">lai_b</span><span class="p">)</span>
-			<span class="k">else</span><span class="p">:</span>
-				<span class="n">LAI</span> <span class="o">=</span> <span class="mi">0</span>
+				<span class="k">if</span> <span class="n">SAVI</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="n">LAI</span> <span class="o">=</span> <span class="n">get_LAI_from_SAVI</span><span class="p">(</span><span class="n">SAVI</span><span class="p">,</span> <span class="n">lai_a</span><span class="p">,</span> <span class="n">lai_b</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">LAI</span> <span class="o">=</span> <span class="mi">0</span>
 			
 			<span class="c1"># Maximum amount of water store by canopy</span>
 			<span class="n">Sca_max</span> <span class="o">=</span> <span class="n">get_Scmax_from_LAI_and_fcw</span><span class="p">(</span><span class="n">fcw</span><span class="p">,</span> <span class="n">LAI</span><span class="p">)</span>

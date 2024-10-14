@@ -143,7 +143,7 @@ def future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, l
 
     # create a folder to save the data
     if not os.path.isdir(outputpath+locname+'_E'+str(ens_num)+'_StoPET/'):
-        os.mkdir(outputpath+locname+'_E'+str(ens_num)+'_StoPET/')
+        os.makedirs(outputpath+locname+'_E'+str(ens_num)+'_StoPET/')
 
     # generate the hourly time series period
     years = np.arange(startyear,endyear+1)
@@ -431,7 +431,7 @@ def future_pet_ts_generate_singlepoint(startyear, endyear, latval, lonval, lats,
                                        tempAdj,deltat, dpetdt):
     # create a folder to save the data
     if not os.path.isdir(outputpath+locname+'_E'+str(ens_num)+'_StoPET/'):
-        os.mkdir(outputpath+locname+'_E'+str(ens_num)+'_StoPET/')
+        os.makedirs(outputpath+locname+'_E'+str(ens_num)+'_StoPET/')
 
     # generate the hourly time series period
     years = np.arange(startyear,endyear+1)

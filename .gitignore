@@ -24,3 +24,5 @@ output_somalia/
 test.py
 stopet_input.json
 run_stopet.py
+run_impact.py
+ICPAC_TempF_OND2022_HAD.nc

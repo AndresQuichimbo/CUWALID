@@ -5,7 +5,7 @@ StoPET Tutorial
 Running the model
 =================
 
-To run the StoPET model you can run the command below:
+To run the StoPET model you can use the code below:
 
 .. code-block:: python
 
@@ -21,6 +21,27 @@ Or run from the terminal using this command:
     python -m cuwalid.stopet.main_stoPET input.json
 
 
+Once this script runs it will produce all the required folders in the root_outputpath
+With new folders being created as result_R<trial> (e.g. result_R0, result_R1, …).
+Within each folder, there will be other folders containing the netcdf files. These are the files required to do the forecasting.
+
+Next, we run the forecast generation. This will also use the same json input you just used to get the required variables, navigate through the folders created before, and do the forecasting. The final netcdf files will be stored in a folder called ensemble_forecast, which will be created in the root_outputpath.
+
+To run the forecast in your code you can use the code below:
+
+.. code-block:: python
+
+    from cuwalid.stopet.forecast_generation_v2 import run_pet_forecast
+
+    run_pet_forecast("input.json")
+
+Or from the command line using this command
+
+.. code-block:: bash
+
+    # replace "input.json" with the path to your input json
+    python -m cuwalid.stopet.forecast_generation_v2 input.json
+
 Input Parameters
 ================
 
@@ -32,66 +53,94 @@ The input JSON shown above will look something like this:
 
 Here is an explanation of what each parameter does:
 
-- **data_path**: `"stopet_parameters"`
-  
-  The path to the input data parameters.
+- **execution_type**: `"dryp"`
 
-- **output_path**: `"stopet_output"`
+  Can be set to "dryp" or "hpc". The standard choice is "dryp" and it will complete the trials in a loop. "hpc" can be used if you would like the trials to completed one at a time, good for a batch job submission.
+
+- **root_outputpath**: `"stopet_output"`
   
-  The path where output data will be saved.
+  The directory where the output of the model will be placed.
 
 - **runtype**: `"regional"`
   
-  The type of run for the model. Options might include regional or other types.
+  This is a string input with two options. 'regional' or 'single'. It will tell the model whether the PET is generated for a single point or an area of a specified region (or rectangle).
 
 - **startyear**: `1994`
   
-  The start year for the model simulation.
+  The year from which the user wants to start the PET time series to start.
 
 - **endyear**: `1996`
   
-  The end year for the model simulation.
+  The last year requested by the user for the PET time series.
 
+- **seasonswitch**: `1`
+
+  this is the seasonal julian dates required as a start date and end date
+
+- **startdate**: `274`
+
+  this is the seasonal julian dates required as a start date and end date
+
+- **enddate**: `365`
+
+  this is the seasonal julian dates required as a start date and end date
+
+- **seasonName**: `"OND"`
+
+  this is the seasonal julian dates required as a start date and end date
+  
 - **latval**: `3.8`
   
-  Latitude value for the location of interest.
+  The latitude of the single point where the user wants the PET.
 
 - **lonval**: `36.6`
   
-  Longitude value for the location of interest.
+  The longitude of the single point where the user wants the PET.
 
 - **latval_min**: `-5.5`
   
-  Minimum latitude for the region of interest.
+  This is for running stoPET on an area.
+  The minimum latitude of the region.
 
 - **latval_max**: `-4.5`
   
-  Maximum latitude for the region of interest.
+  The maximum latitude of the region. 
 
 - **lonval_min**: `33.0`
   
-  Minimum longitude for the region of interest.
+  The minimum longitude of the region.
 
 - **lonval_max**: `34.5`
   
-  Maximum longitude for the region of interest.
+  The maximum longitude of the region. 
 
 - **locname**: `"Kenya"`
   
-  Name of the location.
+  Any name to be given as a string which will be used in the file name of the final PET outcome of the location.
 
 - **number_ensm**: `2`
   
-  Number of ensemble members used in the simulation.
+  This is the number of ensembles the user wishes to run with each realization. It is kept 1 by default but if the user wants to have multiple runs the number should be given by this variable. HERE THE NUMBER SHOULD BE DIVISIBLE BY 3
 
 - **tempAdj**: `3`
   
-  Temperature adjustment parameter.
+  This is an integer number with values 1, 2, or 3. Each of these numbers represents what method to use for the model to account for temperature adjustment on future PET.
+  
+  Method 1 = 1, Method 2 = 2, Method 3 = 3 
+  Refer to the paper for the description of each method.
 
 - **deltat**: `1.5`
   
-  Time step parameter.
+  This variable represents the user-defined temperature increase expected in the area of interest. The value will only be used if Method 2 (tempAdj = 2) is selected as the temperature adjustment technique. Otherwise, this value will be ignored by the model.
 
 - **udpi_pet**: `5`
   
-  UDPI PET (Potential Evapotranspiration) parameter.
+  This variable is the user-defined percentage increase of PET. The value should be from 0 to 100. This will be used to adjust the estimated PET by the user-provided percentage if Method 1 (tempAdj = 1). Otherwise, this value will be ignored by the model.
+
+- **trial_number**: `6`
+
+  this is the final number of ensembles you will have. This is how many times the model will run to generate a weighted PET value by ICPAC forecast.
+
+- **tercile_forecast_file**: `"ICPAC_TempF_OND2022_HAD.nc"`
+
+  This is the file containing the ICPAC seasonal tercile temperature forecast. provide the full path where it is located.

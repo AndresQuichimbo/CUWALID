@@ -254,20 +254,32 @@
 	<span class="c1">#@profile</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">dt_ds</span><span class="p">,</span> <span class="n">ini_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">file_format</span><span class="p">,</span>
 		<span class="n">reproject</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">grid_length</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-		<span class="n">projm</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="n">projm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_func</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;set model grid time series and model files</span>
 
 <span class="sd">		Parameters</span>
 <span class="sd">		----------</span>
-<span class="sd">		dt:			model time step</span>
-<span class="sd">		dt_ds:		data set frequency</span>
-<span class="sd">		ini_date:	datetime- inital date for the simulation</span>
-<span class="sd">		end_date:	datetime- final date for the simulation</span>
-<span class="sd">		file_format:integer- 1: read multiple files</span>
-<span class="sd">		reproject:	integer- 1: activate reprojection</span>
-<span class="sd">		interpolate: integer- 1: activate interpolation</span>
-<span class="sd">		grid_length: size of the grid</span>
-<span class="sd">		proyection:	define the pojection of the dataset (optional)</span>
+<span class="sd">		dt:			int</span>
+<span class="sd">			model time step</span>
+<span class="sd">		dt_ds:		int</span>
+<span class="sd">			data set frequency</span>
+<span class="sd">		ini_date:	datetime</span>
+<span class="sd">			inital date for the simulation</span>
+<span class="sd">		end_date:	datetime</span>
+<span class="sd">			final date for the simulation</span>
+<span class="sd">		file_format:integer</span>
+<span class="sd">			- 1: read multiple files</span>
+<span class="sd">		reproject:	integer</span>
+<span class="sd">			- 1: activate reprojection</span>
+<span class="sd">		interpolate: integer</span>
+<span class="sd">		 	 1: activate interpolation</span>
+<span class="sd">		grid_length: int</span>
+<span class="sd">			size of the grid</span>
+<span class="sd">		proyection:	obj, string</span>
+<span class="sd">			define the pojection of the dataset (optional)</span>
+<span class="sd">		step_func : bool</span>
+<span class="sd">			reading option to use step function on temporal values</span>
+<span class="sd">			default values is False, which meand step function not active</span>
 
 <span class="sd">		Returns</span>
 <span class="sd">		--------</span>
@@ -333,6 +345,8 @@
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">projm</span> <span class="o">=</span> <span class="n">projm</span>
 
+		<span class="bp">self</span><span class="o">.</span><span class="n">step_func</span> <span class="o">=</span> <span class="n">step_func</span>
+
 	<span class="c1">#@profile</span>
 <div class="viewcode-block" id="read_dataset_interp.get_one_step_dataset">
 <a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset_interp.get_one_step_dataset">[docs]</a>
@@ -385,7 +399,7 @@
 			<span class="c1"># needs to find </span>
 			<span class="n">year</span> <span class="o">=</span> <span class="n">idate_ds</span><span class="o">.</span><span class="n">year</span>
 			<span class="n">month</span> <span class="o">=</span> <span class="n">idate_ds</span><span class="o">.</span><span class="n">month</span>
-			<span class="c1">#day = idate_ds.day</span>
+			<span class="n">day</span> <span class="o">=</span> <span class="n">idate_ds</span><span class="o">.</span><span class="n">day</span>
 			<span class="c1">#hour = idate_ds.hour</span>
 
 			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
@@ -452,13 +466,30 @@
 					<span class="n">fname_ds</span> <span class="o">=</span> <span class="n">fname_ds</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;MM&quot;</span><span class="p">,</span> <span class="n">str_month</span><span class="p">)</span>
 					<span class="c1">#fname_ds = fname_ds + &#39;/&#39; + str(idate_ds.year) + &#39;/chaf-v00_&#39; + str(idate_ds.year) + &#39;-&#39; + str_month+&#39;*&#39;</span>
 					<span class="c1">#fname_ds = fname_ds + &#39;/&#39; + str(idate_ds.year) + &#39;/IMERG_&#39; + str(idate_ds.year) + &#39;-&#39; + str_month+&#39;*&#39;</span>
-				
+				<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+					<span class="c1"># read daily values</span>
+					<span class="k">if</span> <span class="n">month</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+						<span class="n">str_month</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">month</span><span class="p">)</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">str_month</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">month</span><span class="p">)</span>
+					<span class="k">if</span> <span class="n">day</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+						<span class="n">str_day</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">day</span><span class="p">)</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">str_day</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">day</span><span class="p">)</span>
+					<span class="c1"># Names should include YYYY for year  MM for months, and DD for days</span>
+					<span class="c1"># in order to read daily files</span>
+					<span class="n">fname_ds</span> <span class="o">=</span> <span class="n">fname_ds</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;YYYY&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">idate_ds</span><span class="o">.</span><span class="n">year</span><span class="p">))</span>
+					<span class="n">fname_ds</span> <span class="o">=</span> <span class="n">fname_ds</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;MM&quot;</span><span class="p">,</span> <span class="n">str_month</span><span class="p">)</span>
+					<span class="n">fname_ds</span> <span class="o">=</span> <span class="n">fname_ds</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;DD&quot;</span><span class="p">,</span> <span class="n">str_day</span><span class="p">)</span>
+
 				<span class="c1">#print(fname_ds)</span>
 				<span class="c1"># read dataset</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname_ds</span><span class="p">)</span>
 				<span class="c1"># check if dimension names are compatible with DRYP names</span>
 				<span class="k">if</span> <span class="s1">&#39;latitude&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">coords</span><span class="p">):</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;longitude&#39;</span><span class="p">:</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">:</span><span class="s1">&#39;lat&#39;</span><span class="p">})</span>
+				<span class="k">if</span> <span class="s1">&#39;X&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">coords</span><span class="p">):</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;X&#39;</span><span class="p">:</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span><span class="s1">&#39;lat&#39;</span><span class="p">})</span>
 
 				<span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s1">&#39;pet&#39;</span><span class="p">:</span>					
 					<span class="c1"># THIS IS ONLY FOR HPET DATA AT HOURLY TIME STEPS</span>
@@ -488,21 +519,33 @@
 					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">reproject_dataset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">proj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">projm</span><span class="p">)</span><span class="c1">#, keys)</span>
 					
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_ds</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">:</span>
-					<span class="c1"># temporal resampling</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">freq_dt</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_func</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+						<span class="c1"># temporal resampling</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">freq_dt</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 					<span class="c1">#print(self.ds)		</span>
 				<span class="c1"># flag to no read every time the whole dataset</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">=</span> <span class="mi">0</span>
 			
-			<span class="c1">#print(self.ds, self.dt_ds, self.dt)		</span>
+			<span class="c1">#print(self.ds, self.dt_ds, self.dt)</span>
+			<span class="c1"># set index</span>
+			<span class="n">iindex</span> <span class="o">=</span> <span class="n">j_step</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">step_0</span>
+
+			<span class="c1"># select data step</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_func</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+				<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">iindex</span><span class="p">])</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">day</span><span class="p">])</span>
+			<span class="c1">#print(ds)</span>
 			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolate_ds</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 				<span class="c1"># Spatial interpolation</span>
-				<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">j_step</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">step_0</span><span class="p">])</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
+				<span class="c1">#ds = self.ds.isel(time=[j_step-self.step_0]).interp(</span>
+				<span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
 					<span class="n">lat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
 					<span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
-			<span class="k">else</span><span class="p">:</span>
-				<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">j_step</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">step_0</span><span class="p">])</span>
-				
+			<span class="c1">#else:</span>
+			<span class="c1">#	ds = self.ds.isel(time=[j_step-self.step_0])</span>
+			
+			<span class="c1"># get data at time step t</span>
 			<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">field</span><span class="p">][</span><span class="mi">0</span><span class="p">][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			<span class="c1">#print(ds)			</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">j_step</span> <span class="o">+=</span> <span class="mi">1</span>

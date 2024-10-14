@@ -1,3 +1,4 @@
+import shutil
 import numpy as np
 import os
 import sys
@@ -91,17 +92,28 @@ def forecast_wrapper(tercile_forecast_file, root_outputpath, outputpath, startye
 
 
 def move_files(root_outputpath, number_ensm, trial_number, startdate, enddate, tempAdj, locname, startyear):
-  # create a folder to save the copy of the seasonal data
-  for i in range(0,trial_number):
-    if not os.path.isdir(root_outputpath + 'result_R%s/pool/'%i):
-      os.mkdir(root_outputpath + 'result_R%s/pool/'%i)  
-  # cppy the ensemble from each realization to a single folder called pool
-  for i in range(0,trial_number):
-    path = root_outputpath + 'result_R%s/'%i
-    for j in range(0,number_ensm):
-      command = 'mv %s%s_E%s_StoPET/stoPET_%s_%s_%s_%s.nc %spool/E_%s_stoPET_%s_%s_%s_%s.nc'%(path,locname,j,tempAdj,startdate,enddate,startyear,path,j,tempAdj,startdate, enddate,startyear)
-      os.system(command)
-  print('Files moved to pool!')
+    # Create the pool folder if it doesn't exist
+    for i in range(trial_number):
+        pool_dir = os.path.join(root_outputpath, f'result_R{i}/pool/')
+        if not os.path.isdir(pool_dir):
+            os.makedirs(pool_dir, exist_ok=True)  # Use makedirs to handle intermediate directories
+    
+    # Move the ensemble files to the pool folder
+    for i in range(trial_number):
+        path = os.path.join(root_outputpath, f'result_R{i}/')
+        for j in range(number_ensm):
+            # Source file path
+            source_file = os.path.join(path, f'{locname}_E{j}_StoPET', f'stoPET_{tempAdj}_{startdate}_{enddate}_{startyear}.nc')
+            # Destination file path
+            dest_file = os.path.join(path, 'pool', f'E_{j}_stoPET_{tempAdj}_{startdate}_{enddate}_{startyear}.nc')
+            
+            # Check if the source file exists before moving
+            if os.path.isfile(source_file):
+                shutil.move(source_file, dest_file)
+            else:
+                print(f"Warning: Source file {source_file} not found!")
+
+    print('Files moved to pool!')
 
 
 def read_forecast_pool(number_ensm, ori_data, outputpath, locname, tempAdj, startdate, enddate, startyear):

@@ -60,3 +60,15 @@ Here is an explanation of what each parameter does:
 - **river_path**: Path to the river network data file, which is used to model the river system within the forecast region. It helps in determining river lengths and other hydrological features.
 
 - **shape_path**: Path to the shape file to override built in shape files for the HAD region (shape files for the HAD region built into the package e.g. when 'country_name' is picked as kenya the in built shape file will be used).
+
+Instead of providing the variables 'netcdf_path' and 'threshold_path' , you can instead provide these variables and the paths will be automatically generated.
+
+- **prev_output_path**: The path that your previous model outputted your netcdf files to for example ""forecasting_dataset/HAD/output/""
+
+- **pp_path**: The post processing path to where the threshold files are held, e.g. "forecasting_dataset/HAD/postpp/"
+
+- **model_name**: The model name used in previous steps
+
+Using these variables it can easily append the year and season to the path to use the exact file necessary. 
+
+Warning: netcdf_path and threshold_path take priority so if both methods of input are provided, the netcdf_path and threshold_path path will be used.
