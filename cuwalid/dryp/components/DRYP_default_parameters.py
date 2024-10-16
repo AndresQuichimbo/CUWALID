@@ -76,7 +76,7 @@ default_input = {
       "path_rp_theta_awc": None,
       "path_rp_theta_wp": None,
       "path_rp_rootdepth": None,
-      "path_rp_lambdas": None,
+      "path_rp_lambda": None,
       "path_rp_psi": None,
       "path_rp_ksat": None,
       "path_rp_sigmaksat": None,

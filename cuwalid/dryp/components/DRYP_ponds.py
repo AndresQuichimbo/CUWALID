@@ -45,7 +45,7 @@ class ponds():
 		Aoz :	numpy array
 			Total abstraction [m3]
 		"""
-		
+		#print(Vo, P, PET, cell_area)
 		# contribution of precipitation to pond total volume
 		P = P*cell_area
 		Vo = P + Vo
@@ -60,7 +60,7 @@ class ponds():
 		# It is assumed that abstractions can quickly deplet water from
 		# ponds
 		if Aoz is None:
-			Aoz = np.zeros(len(V))
+			Aoz = np.zeros(len(Vo))
 
 		V = Vo - Aoz
 		

@@ -452,15 +452,15 @@ def run_DRYP(filename_input):
 				
 				# PONDS: Add ponds here ------------------------------------------
 				# first check that ponds is active
-				if water_bodies.id_nodes is not None:
-					water_bodies.pnds_Vo, et_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(
-				 							water_bodies.pnds_Vo,
-											rain[water_bodies.id_nodes],
-											PET[water_bodies.id_nodes], #aoz,
-											topo.area_cells,
-											)
-					# transfer data to the entire model domain
-					rain[water_bodies.id_nodes] = Ppnds
+				#if water_bodies.id_nodes is not None:
+				#	water_bodies.pnds_Vo, et_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(
+				# 							water_bodies.pnds_Vo,
+				#							rain[water_bodies.id_nodes],
+				#							PET[water_bodies.id_nodes], #aoz,
+				#							topo.area_cells,
+				#							)
+				#	# transfer data to the entire model domain
+				#	rain[water_bodies.id_nodes] = Ppnds
 				
 				# INFILTRATION: estimate infiltration --------------------
 				#inf.run_infiltration_one_step(Pth, env_state, data_in)

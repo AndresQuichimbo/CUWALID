@@ -331,13 +331,12 @@ class get_list_of_riparian_soil_files(object):
         self.fname_riparian_zone = None
 
         if "RIPARIAN" in dryp_config:
-            print("Riparian parameters provided")
             self.fname_n = dryp_config["RIPARIAN"]["path_rp_theta_sat"]  # porosity (n)
             self.fname_theta_r = dryp_config["RIPARIAN"]["path_rp_theta_res"]  # residual water content
             self.fname_theta_AWC = dryp_config["RIPARIAN"]["path_rp_theta_awc"]  # Available water content (AWC)
             self.fname_theta_wp = dryp_config["RIPARIAN"]["path_rp_theta_wp"]  # wilting point (wp)
             self.fname_SoilDepth = dryp_config["RIPARIAN"]["path_rp_rootdepth"]  # riparian root zone depth (D)
-            self.fname_b_SOIL = dryp_config["RIPARIAN"]["path_rp_lambdas"]  # Soil particle distribution (lambda)
+            self.fname_b_SOIL = dryp_config["RIPARIAN"]["path_rp_lambda"]  # Soil particle distribution (lambda)
             self.fname_PSI = dryp_config["RIPARIAN"]["path_rp_psi"]  # Air-entry pressure/suction head (psi)
             self.fname_Ksat = dryp_config["RIPARIAN"]["path_rp_ksat"]  # Channel Sat. hydraulic conductivity (Ksat)
             self.fname_sigma_ks = dryp_config["RIPARIAN"]["path_rp_sigmaksat"]  # riparian sigma Ksat
@@ -346,6 +345,7 @@ class get_list_of_riparian_soil_files(object):
             # filename riparian channel width
             self.fname_ripwidth = dryp_config["RIPARIAN"]["path_rp_width"]  # Initial water content [-]
         else:
+            print("RIPARIAN parameters not provided")
             self.fname_n = dryp_config["UNSATURATED"]["path_uz_theta_sat"]  # riparian porosity (n)
             self.fname_theta_r = dryp_config["UNSATURATED"]["path_uz_theta_res"]  # riparian Saturated infiltration rate (a-Ks)
             self.fname_theta_AWC = dryp_config["UNSATURATED"]["path_uz_theta_awc"]  # riparian Available water content (AWC)
