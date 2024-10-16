@@ -421,7 +421,7 @@ class read_dataset_interp(object):
 				#	self.ds = self.ds.sel(time=slice(self.ini_date, self.end_date))
 				#print(self.ds, self.ds['time'], self.ini_date, self.end_date)
 				# reproject dataset
-				if self.reproject_ds == 1:
+				if self.reproject_ds is True:
 					self.ds = reproject_dataset(self.ds, self.proj, self.projm)#, keys)
 					
 				if self.dt_ds != self.dt:
@@ -442,7 +442,7 @@ class read_dataset_interp(object):
 			else:
 				ds = self.ds.isel(time=[day])
 			#print(ds)
-			if self.interpolate_ds == 1:
+			if self.interpolate_ds is True:
 				# Spatial interpolation
 				#ds = self.ds.isel(time=[j_step-self.step_0]).interp(
 				ds = ds.interp(
@@ -450,10 +450,10 @@ class read_dataset_interp(object):
 					method="linear")
 			#else:
 			#	ds = self.ds.isel(time=[j_step-self.step_0])
-			
+			#print(ds)
 			# get data at time step t
 			data = np.array(ds.variables[field][0][:]).flatten()
-			#print(ds)			
+			#print(data)			
 			self.j_step += 1
 			
 		else:

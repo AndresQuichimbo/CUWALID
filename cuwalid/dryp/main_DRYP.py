@@ -133,8 +133,8 @@ def run_DRYP(filename_input):
 		topo.grid_size,
 		topo.lat,
 		topo.lon,
-		proj=data_in.proj_data,
-		projm=data_in.proj_model,
+		proj=data_in.data_projection['pre'],
+		projm=data_in.PROJECTION,
 		)
 	
 	# Read reference potential evapotranspiration
@@ -146,8 +146,8 @@ def run_DRYP(filename_input):
 		topo.grid_size,
 		topo.lat,
 		topo.lon,
-		proj=data_in.proj_data,
-		projm=data_in.proj_model,
+		proj=data_in.data_projection['pet'],
+		projm=data_in.PROJECTION,
 		)
 	
 	# Read SAVI
@@ -159,6 +159,8 @@ def run_DRYP(filename_input):
 		topo.grid_size,
 		topo.lat,
 		topo.lon,
+		proj=data_in.data_projection['savi'],
+		projm=data_in.PROJECTION,
 		step_func=True,
 		)
 	
@@ -171,6 +173,8 @@ def run_DRYP(filename_input):
 		topo.grid_size,
 		topo.lat,
 		topo.lon,
+		proj=data_in.data_projection['lai'],
+		projm=data_in.PROJECTION,
 		step_func=True,
 		)
 	
@@ -183,6 +187,8 @@ def run_DRYP(filename_input):
 		topo.grid_size,
 		topo.lat,
 		topo.lon,
+		proj=data_in.data_projection['kc'],
+		projm=data_in.PROJECTION,
 		step_func=True
 		)
 		
@@ -383,7 +389,7 @@ def run_DRYP(filename_input):
 				#rain = rain*0.5 # This is specific for IMERG 30 min resolution only
 				# for the forcast TRAINING.
 				#rain[rain>300] = 300.
-				
+				#print(rain)
 				# get potential evapotranspiration
 				PET = ET0.get_one_step_dataset(t_eto, data_in.fname_TSMeteo, 'pet')
 				#PET[PET>1] = 1.0
@@ -396,7 +402,7 @@ def run_DRYP(filename_input):
 					soil.theta_wp,
 					head,
 					)				
-				
+				#print(PET)
 				# check if interception is activated
 				if vegetation.av is None:
 					SAVIdt = None
@@ -452,15 +458,15 @@ def run_DRYP(filename_input):
 				
 				# PONDS: Add ponds here ------------------------------------------
 				# first check that ponds is active
-				#if water_bodies.id_nodes is not None:
-				#	water_bodies.pnds_Vo, et_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(
-				# 							water_bodies.pnds_Vo,
-				#							rain[water_bodies.id_nodes],
-				#							PET[water_bodies.id_nodes], #aoz,
-				#							topo.area_cells,
-				#							)
-				#	# transfer data to the entire model domain
-				#	rain[water_bodies.id_nodes] = Ppnds
+				if water_bodies.id_nodes is not None:
+					water_bodies.pnds_Vo, et_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(
+				 							water_bodies.pnds_Vo,
+											rain[water_bodies.id_nodes],
+											PET[water_bodies.id_nodes], #aoz,
+											topo.area_cells,
+											)
+					# transfer data to the entire model domain
+					rain[water_bodies.id_nodes] = Ppnds
 				
 				# INFILTRATION: estimate infiltration --------------------
 				#inf.run_infiltration_one_step(Pth, env_state, data_in)

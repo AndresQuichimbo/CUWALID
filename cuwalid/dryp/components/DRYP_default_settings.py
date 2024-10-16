@@ -6,6 +6,8 @@ default_settings = {
         "end_date": "2002 1 3",
     },
 
+    "PROJECTION" : None,
+
     "TIMESTEP_SETTINGS": {
         "dt_of": 60,
         "dt_uz": 60,
@@ -57,7 +59,18 @@ default_settings = {
             "savi_min": True,
             "savi_max": True,
             "lai": True,
-            }
+            },
+        "data_projection" : {
+			"pre": "EPSG:4326",
+			"pet": "EPSG:4326",
+			"abs": "EPSG:4326",
+			"kc": "EPSG:4326",
+			"flux": "EPSG:4326",
+			"savi":"EPSG:4326",
+			"savi_min": "EPSG:4326",
+            "savi_max": "EPSG:4326",
+            "lai": "EPSG:4326",
+            },
     },
 
     "COMPONENTS": {
