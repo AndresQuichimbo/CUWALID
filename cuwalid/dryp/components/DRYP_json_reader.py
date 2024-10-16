@@ -53,6 +53,8 @@ class get_model_settings(object):
 		self.data_step = settings_config["READING"]["data_step"]
 		self.data_reproject = settings_config["READING"]["data_reproject"]
 		self.data_interpolate = settings_config["READING"]["data_interp"]
+		self.data_projection = settings_config["READING"]["data_projection"]
+		self.PROJECTION = settings_config["PROJECTION"]
 
 		self.inf_method = bool(settings_config["COMPONENTS"]["method_inf"])
 

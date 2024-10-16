@@ -507,8 +507,8 @@ def run_DRYP(filename_input):
 				ratio_etp[ratio_etp > 1] = 1
 				
 				# potention evapotranspiration ONLY over model domain
-				if Kc is not None:
-					PETh = Kc[act_nodes]*PETh#[act_nodes]
+				if Kcdt is not None:
+					PETh = Kcdt[act_nodes]*PETh#[act_nodes]
 				# potential evapotranspiration for saturated zone
 				#PETsz = PETh*ratio_etp
 				# potential evapotranspiration for unsaturated zone
