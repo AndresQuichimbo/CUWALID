@@ -696,7 +696,7 @@ class interception_parameters(object):
 		if inputfile.fname_extintion_depth != None and os.path.exists(inputfile.fname_extintion_depth):
 			self.extintion_depth = np.flip(rasterio.open(inputfile.fname_extintion_depth).read(1), 0).flatten()
 		else:
-			print('Final root water uptake level, not provided. Default is rooting depth [mm]')
+			print('Extinction depth, not provided. Default is rooting depth [mm]')
 			#final_depth = np.flip(rasterio.open(inputfile.fname_SoilDepth).read(1), 0).flatten()
 			#self.extintion_depth = final_depth[:]
 			self.extintion_depth = Droot[:]

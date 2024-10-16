@@ -97,25 +97,25 @@ def run_DRYP(filename_input):
 	topo = surface_parameters(data_in.fname_surface)
 
 	# read soil paramters
-	print("Reading hillslope soil hydraulic parameters")
+	print("====== > Reading hillslope soil hydraulic parameters")
 	soil = soil_parameters(topo.grid_size, data_in.fname_soil)
 
 	# read soil paramters
-	print("Reading riparian soil hydraulic parameters")
+	print("====== > Reading riparian soil hydraulic parameters")
 	rsoil = soil_parameters(topo.grid_size, data_in.fname_riparian)
 
 	# read aquifer parameters
-	print("Reading groundwater aquifer hydraulic parameters")
+	print("====== > Reading groundwater aquifer hydraulic parameters")
 	aquifer = groundwater_parameters(topo.grid_size,
 				data_in.fname_aquifer)
 	
 	# read interception paramters
-	print("Reading interception parameters")
+	print("====== > Reading interception parameters")
 	vegetation = interception_parameters(topo.grid_size,
 				data_in.fname_interception_hillslope)
 
 	# read pond paramters
-	print("Reading water body parameters")
+	print("====== > Reading water body parameters")
 	water_bodies = water_body_parameters(topo.grid_size,
 				data_in.fname_water_bodies)
 
@@ -402,8 +402,8 @@ def run_DRYP(filename_input):
 					SAVIdt = None
 					SAVIdt_min = None
 					SAVIdt_max = None
-					LAI = None
-					Kc = None
+					LAIdt = None
+					Kcdt = None
 				else:
 					SAVIdt = SAVI.get_one_step_dataset(t_savi, data_in.fname_savi, 'savi')
 					SAVIdt_min = SAVImin.get_one_step_dataset(t_savi, data_in.fname_savi_min, 'savi')
