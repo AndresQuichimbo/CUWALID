@@ -211,13 +211,13 @@ class get_list_of_interception_hillslope_files(object):
         self.fname_savi_min = dryp_config["INTERCEPTION"]["path_veg_hs_savi_min"]
         self.fname_savi_max = dryp_config["INTERCEPTION"]["path_veg_hs_savi_max"]
         self.fname_lai = dryp_config["INTERCEPTION"]["path_veg_hs_lai"]
-        self.fname_tap_depth = dryp_config["INTERCEPTION"]["path_veg_rp_tap_depth"]
-        self.fname_extintion_depth = dryp_config["INTERCEPTION"]["path_veg_rp_final_depth"]
+        self.fname_tap_depth = dryp_config["INTERCEPTION"]["path_veg_hs_tap_depth"]
+        self.fname_extintion_depth = dryp_config["INTERCEPTION"]["path_veg_hs_extinction_depth"]
         # filename of initial conditions
         self.fname_fcw_canopy = dryp_config["INTERCEPTION"]["path_veg_rp_fcw"]
         self.fname_Sc0_canopy = dryp_config["INTERCEPTION"]["path_veg_rp_sca"]
 
-        self.fname_SoilDepth = dryp_config["UNSATURATED"]["path_uz_root"]
+        self.fname_SoilDepth = dryp_config["UNSATURATED"]["path_uz_rootdepth"]
         self.kDroot = float(factors["GLOBAL_FACTORS"]["uz_kdroot"])
 
 
@@ -238,12 +238,12 @@ class get_list_of_interception_riparian_files(object):
         self.fname_savi_max = dryp_config["INTERCEPTION"]["path_veg_rp_savi_max"]
         self.fname_lai = dryp_config["INTERCEPTION"]["path_veg_rp_lai"]
         self.fname_tap_depth = dryp_config["INTERCEPTION"]["path_veg_rp_tap_depth"]
-        self.fname_extintion_depth = dryp_config["INTERCEPTION"]["path_veg_rp_final_depth"]
+        self.fname_extintion_depth = dryp_config["INTERCEPTION"]["path_veg_rp_extinction_depth"]
         # filename of initial conditions
         self.fname_fcw_canopy = dryp_config["INTERCEPTION"]["path_veg_rp_fcw"]
         self.fname_Sc0_canopy = dryp_config["INTERCEPTION"]["path_veg_rp_sca"]
 
-        self.fname_SoilDepth = dryp_config["UNSATURATED"]["path_uz_root"]
+        self.fname_SoilDepth = dryp_config["UNSATURATED"]["path_uz_rootdepth"]
         self.kDroot = float(factors["GLOBAL_FACTORS"]["uz_kdroot"])
 
 
@@ -308,7 +308,7 @@ class get_list_of_soil_files(object):
         self.fname_theta_r = dryp_config["UNSATURATED"]["path_uz_theta_res"]  # Saturated infiltration rate (a-Ks)
         self.fname_theta_AWC = dryp_config["UNSATURATED"]["path_uz_theta_awc"]  # Available water content (AWC)
         self.fname_theta_wp = dryp_config["UNSATURATED"]["path_uz_theta_wp"]  # wilting point (wp)
-        self.fname_SoilDepth = dryp_config["UNSATURATED"]["path_uz_root"]  # root zone (D)
+        self.fname_SoilDepth = dryp_config["UNSATURATED"]["path_uz_rootdepth"]  # root zone (D)
         self.fname_b_SOIL = dryp_config["UNSATURATED"]["path_uz_lambda"]  # Soil parameter alpha (b)
         self.fname_PSI = dryp_config["UNSATURATED"]["path_uz_psi"]  # Soil parameter alpha (alpha)
         self.fname_Ksat = dryp_config["UNSATURATED"]["path_uz_ksat"]  # Saturated infiltration rate (a-Ks)
@@ -350,7 +350,7 @@ class get_list_of_riparian_soil_files(object):
             self.fname_theta_r = dryp_config["UNSATURATED"]["path_uz_theta_res"]  # riparian Saturated infiltration rate (a-Ks)
             self.fname_theta_AWC = dryp_config["UNSATURATED"]["path_uz_theta_awc"]  # riparian Available water content (AWC)
             self.fname_theta_wp = dryp_config["UNSATURATED"]["path_uz_theta_wp"]  # riparian wilting point (wp)
-            self.fname_SoilDepth = dryp_config["UNSATURATED"]["path_uz_root"]  # riparian root zone (D)
+            self.fname_SoilDepth = dryp_config["UNSATURATED"]["path_uz_rootdepth"]  # riparian root zone (D)
             self.fname_b_SOIL = dryp_config["UNSATURATED"]["path_uz_lambda"]  # riparian Soil parameter alpha (b)
             self.fname_PSI = dryp_config["UNSATURATED"]["path_uz_psi"]  # riparian Soil parameter alpha (alpha)
             self.fname_sigma_ks = dryp_config["UNSATURATED"]["path_uz_sigmaksat"]  # riparian sigma Ksat
