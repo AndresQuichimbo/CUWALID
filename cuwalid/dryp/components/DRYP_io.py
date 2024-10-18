@@ -98,7 +98,7 @@ class surface_parameters(object):
 		# Reading the raster file of river elevation		
 		if inputfile.fname_RiverElev == None or not os.path.exists(inputfile.fname_RiverElev):
 			self.riv_elevation = self.surface[:]
-			print('River bottom.................. not provided as raster')
+			print('River bottom........................ not provided as raster')
 			print('River bottom elevation: surface elevation')
 		else:
 			self.riv_elevation = np.flip(rasterio.open(inputfile.fname_RiverElev).read(1), 0).flatten()
@@ -108,7 +108,7 @@ class surface_parameters(object):
 			self.FlowDir = np.flip(rasterio.open(inputfile.fname_FlowDir).read(1), 0).flatten()
 		else:
 			self.FlowDir = None
-			print('Flow direction................ not provided as raster')
+			print('Flow direction...................... not provided as raster')
 			#self.act_update_flow_director = True
 
 		# LAKES COMPONENT ========================================================================
@@ -118,7 +118,7 @@ class surface_parameters(object):
 			z_lakes[z_lakes<0] = 0
 			self.bathymetry = self.surface - z_lakes
 		else:
-			print('Maximum water elevation lakes..not provided as raster. Global default z')
+			print('Lake bathymetry....not provided as raster. Global default z')
 			self.bathymetry = self.surface[:]
 	
 		# CHANNEL ===============================================================================
@@ -138,7 +138,7 @@ class surface_parameters(object):
 		if inputfile.fname_Ksat == None or not os.path.exists(inputfile.fname_Ksat):			
 			#self.Ksat = np.flip(rasterio.open(inputfile.fname_ksat).read(1), 0).flatten()
 			self.Ksat = np.ones(grid_size, dtype=float)
-			print('Channel Ksat.................. not provided')
+			print('Channel Ksat.................................. not provided')
 			print('Assumed equal to soil Ksat')
 		else:		
 			self.Ksat = np.flip(rasterio.open(inputfile.fname_Ksat).read(1), 0).flatten()
@@ -166,7 +166,7 @@ class surface_parameters(object):
 		# read initial conditions of channel flow: in m3/h
 		if inputfile.fname_Qo == None or not os.path.exists(inputfile.fname_Qo):			
 			self.Qo = np.zeros(grid_size, dtype=float)
-			print('Initial channel storage.................. not provided, assumed 0.0 m3')
+			print('Initial channel storage....... not provided, assumed 0.0 m3')
 			#print('Assumed value equivalent to a velocity of 1m/s')
 		else:		
 			self.Qo = np.flip(rasterio.open(inputfile.fname_Qo).read(1), 0).flatten()
@@ -471,7 +471,7 @@ class groundwater_parameters(object):
 		Returns
 		-------
 		"""
-		print("Reading aquifer parameters")
+		#print("Reading aquifer parameters")
 		#print("Running Groundwater component")
 
 		# read aquifer type

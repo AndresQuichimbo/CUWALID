@@ -50,7 +50,6 @@
         "path_out_uz": "tilted_v/input/test_SM_points.csv",
         "path_out_oz": "tilted_v/input/test_well_point_m.csv",
         "path_output": "tilted_v/output",
-        "Other": null,
         "path_setting": "tilted_v/setting_test.json",
         "path_gw_settings": null,
         "path_vg_settings": null,

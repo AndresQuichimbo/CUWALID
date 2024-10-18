@@ -98,7 +98,7 @@ def test_precipitation():
 		lat,
 		lon,
 		proj="EPSG:4326",
-		projm="EPSG:32630",
+		proj_model="EPSG:32630",
 		step_func=True
 		)
 	

@@ -1,22 +1,36 @@
 {
-  "SETTINGS": {
+  "SIMULATION_PERIOD": {
     "start_date": "2000 1 1",
-    "end_date": "2002 1 3",
+    "end_date": "2002 1 3"
+    },
+
+  "TIMESTEP_SETTINGS": {
     "dt_of": 60,
+    "dt_uz": 60,
     "dt_gw": 60
-  },
+    },
   "READING": {
-    "data_read": "0 0 0 0 0 0 0 0",
-    "data_step": "60 60 60 60 60 60 60 60 60 60",
-    "data_reproject": "0 0 0 0 0 0 0 0",
-    "data_interp": "0 0 0 0 0 0 0 0"
+    "data_reading": {
+      "pre": 0,
+      "pet": 0
+      },
+  "data_step": {
+      "pre": 60,
+      "pet": 60
+      },
+  "data_reproject": {
+      "pre": true,
+      "pet": true
+      },
+  "data_interp": {
+      "pre": true,
+      "pet": true
+      }
   },
   "COMPONENTS": {
     "method_inf": 1,
     "run_gw": true,
-    "method_gw": 0,
-    "not used 1": null,
-    "not used 2": null
+    "method_gw": 0
   },
   "OUTPUT": {
     "output_csv": false,

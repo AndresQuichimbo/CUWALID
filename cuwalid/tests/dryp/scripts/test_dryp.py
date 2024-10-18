@@ -1,3 +1,5 @@
+#import sys
+#sys.path.append("C:/Users/Edisson/Documents/GitHub/CUWALID")
 import os
 import numpy as np
 import pandas as pd

@@ -134,7 +134,7 @@ def run_DRYP(filename_input):
 		topo.lat,
 		topo.lon,
 		proj=data_in.data_projection['pre'],
-		projm=data_in.PROJECTION,
+		proj_model=data_in.PROJECTION,
 		)
 	
 	# Read reference potential evapotranspiration
@@ -147,7 +147,7 @@ def run_DRYP(filename_input):
 		topo.lat,
 		topo.lon,
 		proj=data_in.data_projection['pet'],
-		projm=data_in.PROJECTION,
+		proj_model=data_in.PROJECTION,
 		)
 	
 	# Read SAVI
@@ -160,7 +160,7 @@ def run_DRYP(filename_input):
 		topo.lat,
 		topo.lon,
 		proj=data_in.data_projection['savi'],
-		projm=data_in.PROJECTION,
+		proj_model=data_in.PROJECTION,
 		step_func=True,
 		)
 	
@@ -174,7 +174,7 @@ def run_DRYP(filename_input):
 		topo.lat,
 		topo.lon,
 		proj=data_in.data_projection['lai'],
-		projm=data_in.PROJECTION,
+		proj_model=data_in.PROJECTION,
 		step_func=True,
 		)
 	
@@ -188,7 +188,7 @@ def run_DRYP(filename_input):
 		topo.lat,
 		topo.lon,
 		proj=data_in.data_projection['kc'],
-		projm=data_in.PROJECTION,
+		proj_model=data_in.PROJECTION,
 		step_func=True
 		)
 		
@@ -377,7 +377,7 @@ def run_DRYP(filename_input):
 
 	# Initialize the progress bar
 	progress_bar = tqdm(total=data_in.ndays, unit='days')
-	
+	import matplotlib.pyplot as plt
 	while t < data_in.ndays:
 	
 		for UZ_ti in range(data_in.dt_hourly):
@@ -389,11 +389,29 @@ def run_DRYP(filename_input):
 				#rain = rain*0.5 # This is specific for IMERG 30 min resolution only
 				# for the forcast TRAINING.
 				#rain[rain>300] = 300.
-				#print(rain)
+				#print("rain", np.where(np.isnan(rain[act_nodes])))
+				#arr = np.full(len(rain), np.nan)
+				arr = np.zeros(len(rain))
+				arr[act_nodes]=1.0
+				#arr = np.ones(len(rain))
+				arr[np.where(np.isnan(rain[act_nodes]))] = 1e6
+				plt.imshow(arr.reshape((topo.grid_nrows,topo.grid_ncols)))
+				plt.colorbar()
+				plt.title('premain'+str(t)+str(UZ_ti)+str(dt_pre_sub)+'.png')
+				plt.savefig('premain'+str(t)+str(UZ_ti)+str(dt_pre_sub)+'.png')
+				plt.close()
 				# get potential evapotranspiration
 				PET = ET0.get_one_step_dataset(t_eto, data_in.fname_TSMeteo, 'pet')
 				#PET[PET>1] = 1.0
-				
+				arr = np.zeros(len(PET))
+				arr[act_nodes]=1.0
+				#arr = np.ones(len(PET))
+				arr[np.where(np.isnan(rain[act_nodes]))] = 1e6
+				plt.imshow(arr.reshape((topo.grid_nrows,topo.grid_ncols)))
+				plt.colorbar()
+				plt.title('petmain'+str(t)+str(UZ_ti)+str(dt_pre_sub)+'.png')
+				plt.savefig('petnmain'+str(t)+str(UZ_ti)+str(dt_pre_sub)+'.png')
+				plt.close()
 				# not in used, NOT DELETE
 				# estimate abstractions
 				AOF, AUZ, ASZ = abc.run_ABM_one_step(
@@ -402,7 +420,7 @@ def run_DRYP(filename_input):
 					soil.theta_wp,
 					head,
 					)				
-				#print(PET)
+				#print("pet", PET[act_nodes])
 				# check if interception is activated
 				if vegetation.av is None:
 					SAVIdt = None
@@ -467,7 +485,12 @@ def run_DRYP(filename_input):
 											)
 					# transfer data to the entire model domain
 					rain[water_bodies.id_nodes] = Ppnds
-				
+				#print(rain[act_nodes])
+				plt.imshow(soil.Ksat.reshape((topo.grid_nrows,topo.grid_ncols)))
+				plt.colorbar()
+				plt.title('ksatmain'+str(t)+str(UZ_ti)+str(dt_pre_sub)+'.png')
+				plt.savefig('ksatmain'+str(t)+str(UZ_ti)+str(dt_pre_sub)+'.png')
+				plt.close()
 				# INFILTRATION: estimate infiltration --------------------
 				#inf.run_infiltration_one_step(Pth, env_state, data_in)
 				INF, EXS, Ft0, SORP0, t_0, dry_day = inf.run_infiltration_one_step(
@@ -514,7 +537,7 @@ def run_DRYP(filename_input):
 				# potential evapotranspiration for unsaturated zone
 				#PETuz = PETh - PETsz
 				PETuz = PETh.copy()# - PETsz
-				
+				#print(PETuz)
 				# SOIL WATER BALANCE: Mestimate soil water balance-------
 				# Units for fluxes are in mm, units of soil moisture [--]
 				AET, PCR, theta[act_nodes], ROF= swb.run_swbm_one_step(

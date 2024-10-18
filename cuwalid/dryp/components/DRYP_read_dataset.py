@@ -4,7 +4,7 @@ warnings.filterwarnings('ignore', message="invalid value encountered in subtract
 #  slope = (y_hi - y_lo) / (x_hi - x_lo)[:, None]
 warnings.filterwarnings('ignore', message="invalid value encountered in add")
 #  y_new = slope*(x_new - x_lo)[:, None] + y_lo
-
+#import matplotlib.pyplot as plt
 import os
 import numpy as np
 import pandas as pd
@@ -162,7 +162,7 @@ class read_dataset_interp(object):
 	#@profile
 	def __init__(self, dt, dt_ds, ini_date, end_date, file_format,
 		reproject, interpolate, grid_length, lat, lon, proj=None,
-		projm=None, step_func=False):
+		proj_model=None, step_func=False):
 		"""set model grid time series and model files
 
 		Parameters
@@ -219,7 +219,7 @@ class read_dataset_interp(object):
 		self.file_format = file_format
 		self.reproject_ds = reproject
 		self.interpolate_ds = interpolate
-		self.read_before_ds = 1
+		self.read_before_ds = True
 		self.grid_length = grid_length
 		
 		# rainfall component time step
@@ -248,10 +248,10 @@ class read_dataset_interp(object):
 			self.proj = "EPSG:4326"
 		else:
 			self.proj = proj
-		if projm is None:
-			self.projm = "EPSG:4326"
+		if proj_model is None:
+			self.proj_model = "EPSG:4326"
 		else:
-			self.projm = projm
+			self.proj_model = proj_model
 
 		self.step_func = step_func
 
@@ -308,7 +308,7 @@ class read_dataset_interp(object):
 			day = idate_ds.day
 			#hour = idate_ds.hour
 
-			if (self.read_before_ds == 1):
+			if (self.read_before_ds is True):
 				self.step_0 = 0
 			
 			if (self.file_format == 3):# and (self.read_before_ds == 0):
@@ -321,17 +321,17 @@ class read_dataset_interp(object):
 			else:
 				id_ini_month = 0
 						
-			if (self.read_before_ds == 1):			
+			if (self.read_before_ds is True):			
 				j_step = aux_time_j - id_ini_month
 				self.j_step = int(j_step)
 			
 			# modified to read giraf, MONTHLY -----------------------
-			if (self.read_before_ds == 0) and (self.file_format == 3):
+			if (self.read_before_ds is True) and (self.file_format == 3):
 				if j_step == 0:
-					self.read_before_ds = 1
+					self.read_before_ds = True
 				
 			#---------------------------------------------------------
-			if (self.read_before_ds == 0) and (self.file_format == 2):
+			if (self.read_before_ds is False) and (self.file_format == 2):
 				if aux_time_j == 0:
 					self.j_step = 0
 						
@@ -339,20 +339,20 @@ class read_dataset_interp(object):
 
 			# THIS IS A PARTIAL SOLUTION, SO IT WILL BE MODIFIED LATER
 			# this will allow the model to read datasets fstarting from any time step
-			if (self.read_before_ds == 1) and (self.file_format == 1):
+			if (self.read_before_ds is True) and (self.file_format == 1):
 				self.step_0 = aux_time_j + 0
 			
-			if (self.read_before_ds == 0) and (self.file_format == 1):
+			if (self.read_before_ds is False) and (self.file_format == 1):
 				j_step = self.j_step
 			
 			#print(idate_ds, aux_time_j, j_step, self.j_step, self.file_format, id_ini_month)
 			#if field == 'pet':
 			#	keys = ['longitude', 'latitude']
 			#else:
-			keys = ['lon', 'lat']
+			#keys = ['lon', 'lat']
 			
 			# Read data at the begining of the simulation or if a new dataset starts
-			if (self.read_before_ds == 1) or (j_step == 0):
+			if (self.read_before_ds is True) or (j_step == 0):
 				
 				# Filename of the current year
 				if self.file_format == 2:
@@ -420,22 +420,25 @@ class read_dataset_interp(object):
 				#if self.file_format == 1:
 				#	self.ds = self.ds.sel(time=slice(self.ini_date, self.end_date))
 				#print(self.ds, self.ds['time'], self.ini_date, self.end_date)
-				# reproject dataset
-				if self.reproject_ds is True:
-					self.ds = reproject_dataset(self.ds, self.proj, self.projm)#, keys)
-					
+
+				# temporal resampling
 				if self.dt_ds != self.dt:
 					if self.step_func is False:
 						# temporal resampling
 						self.ds = self.ds.resample(time=self.freq_dt).sum()
-					#print(self.ds)		
+					#print("resample", self.ds)		
+				
+				# reproject dataset
+				if self.reproject_ds is True:
+					self.ds = reproject_dataset(self.ds, self.proj, self.proj_model)#, keys)
+					#print("repro", self.ds, self.proj, self.proj_model)
 				# flag to no read every time the whole dataset
-				self.read_before_ds = 0
+				self.read_before_ds = False
 			
 			#print(self.ds, self.dt_ds, self.dt)
 			# set index
 			iindex = j_step-self.step_0
-
+			#print(iindex)
 			# select data step
 			if self.step_func is False:
 				ds = self.ds.isel(time=[iindex])
@@ -448,18 +451,23 @@ class read_dataset_interp(object):
 				ds = ds.interp(
 					lat=self.lat, lon=self.lon,
 					method="linear")
+				#print("interpolate", ds)
 			#else:
 			#	ds = self.ds.isel(time=[j_step-self.step_0])
 			#print(ds)
 			# get data at time step t
+			ds[field].plot(x='lon', y='lat')
+			#plt.imshow(np.array(ds.variables[field][0][:]))
+			#plt.savefig('precipitation'+field+str(self.j_step)+'.png')
+			#plt.close()
 			data = np.array(ds.variables[field][0][:]).flatten()
-			#print(data)			
+			#print(np.where(np.isnan(data)))	
 			self.j_step += 1
 			
 		else:
 			
 			# Read time series of precipitation	csv
-			if (self.read_before_ds == 1) or (j_step == 0):
+			if (self.read_before_ds is True) or (j_step == 0):
 				self.ds = pd.read_csv(fname_ds)
 				#print(self.ds)
 				# change to txt to datetime
@@ -481,7 +489,7 @@ class read_dataset_interp(object):
 					self.ds = (self.ds[[field]].resample(self.freq_dt).sum())#.reset_index()
 					
 				#time_pre = fpre["Date"]
-				self.read_before_ds = 0
+				self.read_before_ds = False
 				
 			data = np.full(self.grid_length, self.ds[field].iloc[j_step])
 		

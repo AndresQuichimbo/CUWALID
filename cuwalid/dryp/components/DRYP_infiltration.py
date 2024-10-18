@@ -330,7 +330,7 @@ def Philip(P, ks, Sp, F, t):
 		
 	Fp = np.where(P > 0, 0.5*(Sp**2)*(P-0.5*ks)*((P-ks)**(-2)), 0)
 	Fp_aux = Fp-F
-	#print(Fp, P, ks, Sp)	
+	#print(np.where(np.isnan(F)), np.where(np.isnan(Fp)), np.where(np.isnan(P)), np.where(np.isnan(ks)), np.where(np.isnan(Sp)))	
 	dtp = np.where(P > 0.0, Fp_aux/P, 0.0)
 	
 	ts = np.where(dtp > dt, t+dt, t+dtp)

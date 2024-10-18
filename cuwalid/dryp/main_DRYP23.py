@@ -79,7 +79,7 @@ def run_DRYP(filename_input):
 		topo.lat,
 		topo.lon,
 		proj=data_in.proj_data,
-		projm=data_in.proj_model,
+		proj_model=data_in.proj_model,
 		)
 	
 	# Read reference potential evpotranpiration
@@ -92,7 +92,7 @@ def run_DRYP(filename_input):
 		topo.lat,
 		topo.lon,
 		proj=data_in.proj_data,
-		projm=data_in.proj_model,
+		proj_model=data_in.proj_model,
 		)
 	
 	# Read SAVI
