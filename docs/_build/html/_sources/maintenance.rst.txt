@@ -69,6 +69,8 @@ To publish a new version to PyPi you should first check it works on all systems 
 
     You will be asked to enter your API token for PyPi, if you have not created one yet you will need to login to PyPi's website and create one. This Token should be kept private and shared with no one.
 
+    If you get a "HTTPError: 403" and are running it in an IDE, please run in a standard terminal.
+
 4. Now you should see it uploading the files and then you can check it has all worked correctly by installing the new version in one of your environments with the command:
 
     .. code-block:: bash

@@ -1,4 +1,5 @@
 recursive-include cuwalid/tests/dryp/tilted_v *
 recursive-include cuwalid/dryp/components *
 recursive-include cuwalid/forecasting/forecasting_dataset *
+recursive-include cuwalid/storm/model_input *
 include cuwalid/tests/stopet/test_input.json

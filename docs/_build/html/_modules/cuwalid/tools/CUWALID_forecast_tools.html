@@ -697,6 +697,23 @@
 <div class="viewcode-block" id="get_average_all_variables_from_list">
 <a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.get_average_all_variables_from_list">[docs]</a>
 <span class="k">def</span> <span class="nf">get_average_all_variables_from_list</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">season</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Create a netCDF file containing mean values from all processed</span>
+<span class="sd">	and output variables</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	fname: path (str)</span>
+<span class="sd">		file path of model outputs</span>
+<span class="sd">	field: list (str)</span>
+<span class="sd">		list of variables to process</span>
+<span class="sd">	season: list (str)</span>
+<span class="sd">		list of season to process</span>
+
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	xarray: dataset</span>
+<span class="sd">		dataset containing mean values</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="c1"># loop over all specified variables</span>
 	<span class="n">first_read</span> <span class="o">=</span> <span class="kc">True</span>

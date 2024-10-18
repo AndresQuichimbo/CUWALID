@@ -9,4 +9,5 @@ Tutorials
 
    dryp_tutorial
    stopet_tutorial
+   storm_tutorial
    forecast_tutorial
