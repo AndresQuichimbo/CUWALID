@@ -180,25 +180,25 @@
 	<span class="n">topo</span> <span class="o">=</span> <span class="n">surface_parameters</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">fname_surface</span><span class="p">)</span>
 
 	<span class="c1"># read soil paramters</span>
-	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading hillslope soil hydraulic parameters&quot;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading hillslope soil hydraulic parameters&quot;</span><span class="p">)</span>
 	<span class="n">soil</span> <span class="o">=</span> <span class="n">soil_parameters</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_soil</span><span class="p">)</span>
 
 	<span class="c1"># read soil paramters</span>
-	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading riparian soil hydraulic parameters&quot;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading riparian soil hydraulic parameters&quot;</span><span class="p">)</span>
 	<span class="n">rsoil</span> <span class="o">=</span> <span class="n">soil_parameters</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_riparian</span><span class="p">)</span>
 
 	<span class="c1"># read aquifer parameters</span>
-	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading groundwater aquifer hydraulic parameters&quot;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading groundwater aquifer hydraulic parameters&quot;</span><span class="p">)</span>
 	<span class="n">aquifer</span> <span class="o">=</span> <span class="n">groundwater_parameters</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 				<span class="n">data_in</span><span class="o">.</span><span class="n">fname_aquifer</span><span class="p">)</span>
 	
 	<span class="c1"># read interception paramters</span>
-	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading interception parameters&quot;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading interception parameters&quot;</span><span class="p">)</span>
 	<span class="n">vegetation</span> <span class="o">=</span> <span class="n">interception_parameters</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 				<span class="n">data_in</span><span class="o">.</span><span class="n">fname_interception_hillslope</span><span class="p">)</span>
 
 	<span class="c1"># read pond paramters</span>
-	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading water body parameters&quot;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading water body parameters&quot;</span><span class="p">)</span>
 	<span class="n">water_bodies</span> <span class="o">=</span> <span class="n">water_body_parameters</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 				<span class="n">data_in</span><span class="o">.</span><span class="n">fname_water_bodies</span><span class="p">)</span>
 
@@ -234,30 +234,38 @@
 		<span class="p">)</span>
 	
 	<span class="c1"># Read SAVI</span>
-	<span class="n">SAVI</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
+	<span class="n">SAVI</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
-		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
+		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
+		<span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+		<span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
+		<span class="n">step_func</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+		<span class="p">)</span>
 	
 	<span class="c1"># Read LAI (Leaf Area Index)</span>
-	<span class="n">LAI</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;lai&#39;</span><span class="p">],</span>
+	<span class="n">LAI</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;lai&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;lai&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;lai&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;lai&#39;</span><span class="p">],</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
-		<span class="n">step_func</span><span class="o">=</span><span class="kc">True</span>
+		<span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+		<span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
+		<span class="n">step_func</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 		<span class="p">)</span>
 	
 	<span class="c1"># Read Kc: Crop coeficient factor</span>
-	<span class="n">Kc</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;kc&#39;</span><span class="p">],</span>
+	<span class="n">Kc</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;kc&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;kc&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reproject</span><span class="p">[</span><span class="s1">&#39;kc&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">data_interpolate</span><span class="p">[</span><span class="s1">&#39;kc&#39;</span><span class="p">],</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
+		<span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+		<span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
 		<span class="n">step_func</span><span class="o">=</span><span class="kc">True</span>
 		<span class="p">)</span>
 		
@@ -477,8 +485,8 @@
 					<span class="n">SAVIdt</span> <span class="o">=</span> <span class="kc">None</span>
 					<span class="n">SAVIdt_min</span> <span class="o">=</span> <span class="kc">None</span>
 					<span class="n">SAVIdt_max</span> <span class="o">=</span> <span class="kc">None</span>
-					<span class="n">LAI</span> <span class="o">=</span> <span class="kc">None</span>
-					<span class="n">Kc</span> <span class="o">=</span> <span class="kc">None</span>
+					<span class="n">LAIdt</span> <span class="o">=</span> <span class="kc">None</span>
+					<span class="n">Kcdt</span> <span class="o">=</span> <span class="kc">None</span>
 				<span class="k">else</span><span class="p">:</span>
 					<span class="n">SAVIdt</span> <span class="o">=</span> <span class="n">SAVI</span><span class="o">.</span><span class="n">get_one_step_dataset</span><span class="p">(</span><span class="n">t_savi</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_savi</span><span class="p">,</span> <span class="s1">&#39;savi&#39;</span><span class="p">)</span>
 					<span class="n">SAVIdt_min</span> <span class="o">=</span> <span class="n">SAVImin</span><span class="o">.</span><span class="n">get_one_step_dataset</span><span class="p">(</span><span class="n">t_savi</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_savi_min</span><span class="p">,</span> <span class="s1">&#39;savi&#39;</span><span class="p">)</span>
@@ -527,15 +535,15 @@
 				
 				<span class="c1"># PONDS: Add ponds here ------------------------------------------</span>
 				<span class="c1"># first check that ponds is active</span>
-				<span class="k">if</span> <span class="n">water_bodies</span><span class="o">.</span><span class="n">id_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-					<span class="n">water_bodies</span><span class="o">.</span><span class="n">pnds_Vo</span><span class="p">,</span> <span class="n">et_pnds</span><span class="p">,</span> <span class="n">aoz_pnds</span><span class="p">,</span> <span class="n">Ppnds</span> <span class="o">=</span> <span class="n">pnds</span><span class="o">.</span><span class="n">run_ponds_one_step</span><span class="p">(</span>
-				 							<span class="n">water_bodies</span><span class="o">.</span><span class="n">pnds_Vo</span><span class="p">,</span>
-											<span class="n">rain</span><span class="p">[</span><span class="n">water_bodies</span><span class="o">.</span><span class="n">id_nodes</span><span class="p">],</span>
-											<span class="n">PET</span><span class="p">[</span><span class="n">water_bodies</span><span class="o">.</span><span class="n">id_nodes</span><span class="p">],</span> <span class="c1">#aoz,</span>
-											<span class="n">topo</span><span class="o">.</span><span class="n">area_cells</span><span class="p">,</span>
-											<span class="p">)</span>
-					<span class="c1"># transfer data to the entire model domain</span>
-					<span class="n">rain</span><span class="p">[</span><span class="n">water_bodies</span><span class="o">.</span><span class="n">id_nodes</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ppnds</span>
+				<span class="c1">#if water_bodies.id_nodes is not None:</span>
+				<span class="c1">#	water_bodies.pnds_Vo, et_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(</span>
+				<span class="c1"># 							water_bodies.pnds_Vo,</span>
+				<span class="c1">#							rain[water_bodies.id_nodes],</span>
+				<span class="c1">#							PET[water_bodies.id_nodes], #aoz,</span>
+				<span class="c1">#							topo.area_cells,</span>
+				<span class="c1">#							)</span>
+				<span class="c1">#	# transfer data to the entire model domain</span>
+				<span class="c1">#	rain[water_bodies.id_nodes] = Ppnds</span>
 				
 				<span class="c1"># INFILTRATION: estimate infiltration --------------------</span>
 				<span class="c1">#inf.run_infiltration_one_step(Pth, env_state, data_in)</span>

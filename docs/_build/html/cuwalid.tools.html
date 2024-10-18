@@ -271,7 +271,27 @@ to 1 and negative values to 0</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.tools.CUWALID_forecast_tools.get_average_all_variables_from_list">
 <span class="sig-prename descclassname"><span class="pre">cuwalid.tools.CUWALID_forecast_tools.</span></span><span class="sig-name descname"><span class="pre">get_average_all_variables_from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/CUWALID_forecast_tools.html#get_average_all_variables_from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.CUWALID_forecast_tools.get_average_all_variables_from_list" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Create a netCDF file containing mean values from all processed
+and output variables</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>fname: path (str)</dt><dd><p>file path of model outputs</p>
+</dd>
+<dt>field: list (str)</dt><dd><p>list of variables to process</p>
+</dd>
+<dt>season: list (str)</dt><dd><p>list of season to process</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>xarray: dataset</dt><dd><p>dataset containing mean values</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.tools.CUWALID_forecast_tools.get_average_from_list">

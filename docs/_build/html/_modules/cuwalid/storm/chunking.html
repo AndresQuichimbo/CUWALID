@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.storm.chunking &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.storm.chunking</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.storm.chunking</h1><div class="highlight"><pre>
+<span></span><span class="c1"># original script:</span>
+<span class="c1"># https://bitbucket.csiro.au/projects/CMAR_RS/repos/netcdf-tools/browse/chunking/chunk_shape_3D.py?at=97c17c836371b07d9d08c9ffa05b3a8db623e0f1</span>
+
+<span class="c1"># CHUNK_3D: Tries to work out best chunking shape</span>
+<span class="c1"># Author: Russ Rew, Unidata</span>
+
+<span class="c1"># updated version on: August 06.2018 -&gt; for the script to run in Python3x</span>
+<span class="c1"># updated version on: August 08.2022 -&gt; brooming off &amp; fixing bugs (STORM2.0)</span>
+<span class="c1"># updates made by: Manuel F.</span>
+
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">mul</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+
+
+<div class="viewcode-block" id="BINLIST">
+<a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.chunking.BINLIST">[docs]</a>
+<span class="k">def</span> <span class="nf">BINLIST</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns list of bits that represent a non-negative integer</span>
+<span class="sd">    n      -&gt; non-negative integer</span>
+<span class="sd">    width  -&gt; number of bits in returned zero-filled list (default 0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span> <span class="nb">bin</span><span class="p">(</span><span class="n">n</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">width</span><span class="p">)</span> <span class="p">)</span> <span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="PERTURB_SHAPE">
+<a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.chunking.PERTURB_SHAPE">[docs]</a>
+<span class="k">def</span> <span class="nf">PERTURB_SHAPE</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">onbits</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns shape perturbed by adding 1 to elements corresponding to 1 bits in onbits</span>
+<span class="sd">    shape  -&gt; list of variable dimension sizes</span>
+<span class="sd">    onbits -&gt; non-negative integer less than 2**len(shape)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span> <span class="nb">sum</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span> <span class="n">shape</span><span class="p">,</span> <span class="n">BINLIST</span><span class="p">(</span><span class="n">onbits</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">))</span> <span class="p">)</span> <span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="CHUNK_3D">
+<a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.chunking.CHUNK_3D">[docs]</a>
+<span class="k">def</span> <span class="nf">CHUNK_3D</span><span class="p">(</span><span class="n">vorShape</span><span class="p">,</span> <span class="n">valSize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">chunkSize</span><span class="o">=</span><span class="mi">4096</span><span class="p">):</span>
+    <span class="c1"># vorShape=[108, 4612800, 6]; valSize=2; chunkSize=512</span>
+    <span class="c1"># vorShape=[1, 5, 27]; valSize=8</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FIRST OF ALL: find the Physical Sector Size (of your partition)</span>
+<span class="sd">    chunkSize == [4096 Bytes] -&gt; WOS (in this case)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="c1"># https://unix.stackexchange.com/a/2669     (find sector size)</span>
+<span class="c1"># https://unix.stackexchange.com/a/179013   (optimize sector size)</span>
+<span class="c1"># https://stackoverflow.com/a/9465556/5885810   (sector size WOS)</span>
+<span class="c1"># https://stackoverflow.com/a/36872873/5885810  (sector size WOS)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    varShape  -&gt; length 3 list of variable dimension sizes</span>
+<span class="sd">    chunkSize -&gt; maximum chunksize desired, in bytes    (default 4096)</span>
+<span class="sd">    valSize   -&gt; size/type of data values,  in bytes    (default 8   )</span>
+<span class="sd">        e.g., a 64-bit float/integer is represented as &#39;f8&#39;/&#39;i8&#39; (byte &#39;notation&#39;)</span>
+<span class="sd">    Returns integer lengths of a chunk-shape that provides balanced access of 1D,</span>
+<span class="sd">    and 2D subsets of a netCDF or HDF5 variable var with shape (V1, V2, V3).</span>
+<span class="sd">    &#39;Good shape&#39; for chunks means that the number of chunks accessed to read are</span>
+<span class="sd">    approximately equal, and the size of each chunk (uncompressed) is no more</span>
+<span class="sd">    than chunkSize, which is often a disk block (Physical Sector) size.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="c1"># https://stackoverflow.com/a/42387839/5885810  (why not np.r_)</span>
+    <span class="c1">#varShape = np.r_[ vorShape ].astype(&#39;u8&#39;)</span>
+    <span class="n">varShape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span> <span class="n">vorShape</span> <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;f8&#39;</span><span class="p">)</span>
+<span class="c1"># this is a special case of n-dimensional function chunk_shape</span>
+    <span class="n">rank</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">varShape</span><span class="p">)</span>
+    <span class="n">chunkVals</span> <span class="o">=</span> <span class="n">chunkSize</span> <span class="o">/</span><span class="n">valSize</span>                      <span class="c1"># ideal number of values in a chunk</span>
+    <span class="n">numChunks</span> <span class="o">=</span> <span class="p">(</span><span class="n">varShape</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span><span class="n">chunkVals</span>     <span class="c1"># ideal number of chunks</span>
+    <span class="n">maxpos</span> <span class="o">=</span> <span class="n">varShape</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+<span class="c1"># https://stackoverflow.com/a/47670187/5885810          # swapping</span>
+    <span class="n">varShape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">varShape</span><span class="p">[</span><span class="n">maxpos</span><span class="p">]</span> <span class="o">=</span> <span class="n">varShape</span><span class="p">[</span><span class="n">maxpos</span><span class="p">],</span> <span class="n">varShape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    radical   -&gt; is strongly influenced by the dimension of the array.</span>
+<span class="sd">    for more details check:</span>
+<span class="sd">        https://www.unidata.ucar.edu/blogs/developer/en/entry/chunking_data_choosing_shapes</span>
+<span class="sd">    here I only explore up to 3D...</span>
+<span class="sd">        for larger dims, I have no clue what the &#39;radical&#39; should be.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">radical</span> <span class="o">=</span> <span class="n">rank</span><span class="o">+</span><span class="mi">1</span> <span class="k">if</span> <span class="n">rank</span><span class="o">==</span><span class="mi">3</span> <span class="k">else</span> <span class="n">rank</span>
+    <span class="n">axisChunks</span> <span class="o">=</span> <span class="n">numChunks</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span><span class="n">radical</span><span class="p">)</span>                <span class="c1"># ideal number of chunks along each 2D axis</span>
+
+    <span class="k">if</span> <span class="n">varShape</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span><span class="n">axisChunks</span><span class="o">**</span><span class="p">(</span><span class="n">rank</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="n">chunkDim</span> <span class="o">=</span> <span class="mf">1.0</span>                                  <span class="c1"># each chunk shape.dim must be at least 1</span>
+        <span class="n">axisChunks</span> <span class="o">=</span> <span class="n">axisChunks</span> <span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">varShape</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span><span class="n">axisChunks</span><span class="o">**</span><span class="p">(</span><span class="n">rank</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">chunkDim</span> <span class="o">=</span> <span class="n">varShape</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">//</span><span class="n">axisChunks</span><span class="o">**</span><span class="p">(</span><span class="n">rank</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>\
+            <span class="k">if</span> <span class="n">rank</span><span class="o">!=</span><span class="mi">1</span> <span class="k">else</span> <span class="n">varShape</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">//</span><span class="n">axisChunks</span><span class="o">**</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>
+        <span class="n">chunkDim</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">chunkDim</span><span class="p">,</span> <span class="n">chunkVals</span><span class="p">)</span>             <span class="c1"># for large dims and low space</span>
+
+    <span class="n">cFloor</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cFloor</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">chunkDim</span> <span class="p">)</span>
+<span class="c1"># factor to increase other dims if some must be increased to 1.0</span>
+    <span class="n">prod</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="k">if</span> <span class="n">cFloor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">chunkVals</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span> <span class="n">cFloor</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">varShape</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">/</span><span class="n">axisChunks</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="c1">#prod *= axisChunks /varShape.__getitem__(i)</span>
+                <span class="n">prod</span> <span class="o">=</span> <span class="n">prod</span> <span class="o">*</span><span class="n">axisChunks</span> <span class="o">/</span><span class="n">varShape</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="c1"># # seems NOT.TO.DEVIATE too much from the original... but try: CHUNK_3D([3100,500,7],valSize=2)</span>
+<span class="c1">#         for i in range(1, rank):</span>
+<span class="c1">#             if varShape.__getitem__(i) /axisChunks &lt; 1.0:</span>
+                <span class="n">chunkDim</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">chunkDim</span> <span class="o">=</span> <span class="p">(</span><span class="n">prod</span> <span class="o">*</span><span class="n">varShape</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="o">//</span><span class="n">axisChunks</span>
+            <span class="n">cFloor</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">chunkDim</span> <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">rank</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">cFloor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">cFloor</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">varShape</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    cFloor is typically too small (numVals(cFloor) &lt; chunkSize). Adding 1 to each</span>
+<span class="sd">    shape.dim results in chunks that are too large, (numVals(cCeil) &gt; chunkSize).</span>
+<span class="sd">    Want to just add 1 to some of the axes to get as close as possible to</span>
+<span class="sd">    chunkSize without exceeding it.</span>
+<span class="sd">    Here we use brute force, compute numVals(cCand) for all 2**rank candidates</span>
+<span class="sd">    and return the one closest to chunkSize without exceeding it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bestChunkSize</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cBest</span> <span class="o">=</span> <span class="n">cFloor</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">rank</span><span class="p">):</span>
+        <span class="n">cCand</span> <span class="o">=</span> <span class="n">PERTURB_SHAPE</span><span class="p">(</span><span class="n">cFloor</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">if</span> <span class="n">rank</span><span class="o">!=</span><span class="mi">1</span> <span class="k">else</span> <span class="n">cFloor</span>
+<span class="c1"># Returns number of values in chunk of specified shape, given by a list of dimension lengths</span>
+        <span class="n">thisChunkSize</span> <span class="o">=</span> <span class="n">valSize</span> <span class="o">*</span><span class="n">reduce</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="n">cCand</span><span class="p">)</span>
+        <span class="c1">#thisChunkSize = valSize *reduce(mul, cCand) if cCand else valSize</span>
+        <span class="k">if</span> <span class="n">bestChunkSize</span> <span class="o">&lt;</span> <span class="n">thisChunkSize</span> <span class="o">&lt;=</span> <span class="n">chunkSize</span><span class="p">:</span>
+            <span class="n">bestChunkSize</span> <span class="o">=</span> <span class="n">thisChunkSize</span>
+            <span class="n">cBest</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">cCand</span> <span class="p">)</span>                       <span class="c1"># make a copy of best candidate</span>
+
+    <span class="n">fin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">cBest</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+    <span class="n">fin</span><span class="p">[</span><span class="n">maxpos</span><span class="p">],</span> <span class="n">fin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">fin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fin</span><span class="p">[</span><span class="n">maxpos</span><span class="p">]</span>           <span class="c1"># swapping</span>
+
+<span class="c1"># if INPUT is smaller than CHUNK OUTPUT -&gt; returns INPUT!!</span>
+    <span class="k">return</span> <span class="n">vorShape</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">less_equal</span><span class="p">(</span><span class="n">vorShape</span><span class="p">,</span> <span class="n">fin</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">==</span> <span class="kc">True</span>\
+        <span class="k">else</span> <span class="n">fin</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;u8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
