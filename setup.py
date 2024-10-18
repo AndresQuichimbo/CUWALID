@@ -43,7 +43,10 @@ setup(
         'bottleneck',
         'matplotlib-scalebar',
         'osmnx',
-        'geopy'
+        'geopy',
+        'fitter',
+        'rasterstats',
+        'lmfit'
         ],
     include_package_data=True,
 )
