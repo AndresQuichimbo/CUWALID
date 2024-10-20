@@ -22,7 +22,7 @@ class surface_parameters(object):
 		# build the data classes
 		# ================ Reading surface water model inputs ==============
 		
-		print('******************* Reading Input Files ********************')
+		#print('******************* Reading Input Files ********************')
 		
 		# Reading digital elevation model
 		if inputfile.fname_DEM != None and os.path.exists(inputfile.fname_DEM):

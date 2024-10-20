@@ -45,13 +45,20 @@ long_name = {'pre':'precipitation', 'aet':'actual evapotranspiration', 'pet':'po
 			 'ssz':'surface storage', 'rch':'total groundwater recharge',
 			'wte':'water table elevation', 'egw':'groundwater evaporation', 'run':'runoff',
 			'gdh':'groundwater discharge',
-			'tht':'soil moisture', 'twsc':'water storage change', 'dis':'discharge'
+			'tht':'soil moisture', 'twsc':'water storage change', 'dis':'discharge',
+			"vpd" : "Total volume of water available",
+			"epd" : "evaporation",
+			"apd" :"Total abstractions"
 			}
 
 units_var = {'pre':'mm/dt', 'aet':'mm/dt', 'pet':'mm/dt', 'inf':'mm/dt',
 						'tls':'mm/dt', 'fch':'mm/dt', 'ssz':'m3/dt', 'rch':'mm/dt',
 						'wte':'m', 'egw':'mm/dt', 'run':'mm/dt', 'gdh':'m3/dt',
-						'tht':'m3/m3', 'twsc':'mm', 'dis':'m3/dt'}
+						'tht':'m3/m3', 'twsc':'mm', 'dis':'m3/dt',
+						"vpd" : "m3",
+						"epd" : "m3/dt",
+						"apd" :"m3/dt"
+			}
 
 class GlobalGridVar:
 	"""Setting variables and arrays for saving model grid variables
@@ -291,11 +298,11 @@ class GlobalGridVar:
 			lat.units = 'meters'
 
 			# create dictionary of units
-			units_var = {'pre':'mm/dt', 'aet':'mm/dt', 'pet':'mm/dt', 'inf':'mm/dt',
-						'tls':'mm/dt', 'fch':'mm/dt', 'ssz':'m3/dt', 'rch':'mm/dt',
-						'wte':'m', 'egw':'mm/dt', 'run':'mm/dt', 'gdh':'m3/dt',
-						'tht':'m3/m3', 'twsc':'mm', 'dis':'m3/dt'
-						}
+			#units_var = {'pre':'mm/dt', 'aet':'mm/dt', 'pet':'mm/dt', 'inf':'mm/dt',
+			#			'tls':'mm/dt', 'fch':'mm/dt', 'ssz':'m3/dt', 'rch':'mm/dt',
+			#			'wte':'m', 'egw':'mm/dt', 'run':'mm/dt', 'gdh':'m3/dt',
+			#			'tht':'m3/m3', 'twsc':'mm', 'dis':'m3/dt'
+			#			}
 
 			# create variable
 			for ivar in self.store_var_names:

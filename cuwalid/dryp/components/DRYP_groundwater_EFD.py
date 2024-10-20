@@ -84,15 +84,15 @@ class gwflow_EFD(object):
 		# create additional arrays for model component variables
 		self.method = method	
 		#	print('GROUND WATER MODEL SETTINGS ********************************')		
-		#	if method == 0:
-		#		print('Constant transmissivity')
-		#	elif method == 1:
-		#		print('Linear variation with depth')
-		#	elif method == 3:
-		#		print('Exponential funtion for transmissivity')
-		#	else:
-		#		print('Multi-fuction for transmissivity')
-		#	print('Change approach in setting_file: line 26')
+		if method == 0:
+			print('Groundwater settings: Constant transmissivity function')
+		elif method == 1:
+			print('Groundwater settings: Linear transmissivity function')
+		elif method == 3:
+			print('Groundwater settings: Exponential transmissivity function')
+		else:
+			print('Groundwater settings: Multi-transmissivity function')
+		#print('Change approach in setting_file: line 26')
 		#	print('************************************************************')
 		
 		# calculate cell area

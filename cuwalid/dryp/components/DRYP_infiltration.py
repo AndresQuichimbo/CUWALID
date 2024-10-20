@@ -28,7 +28,7 @@ class infiltration(object):
 
 		"""	
 		# create all initial states and model funtion variables
-		print('************************************************************')
+		#print('************************************************************')
 		if method == 1:
 			print('Infiltration approach: Philips')			
 		elif method == 2:

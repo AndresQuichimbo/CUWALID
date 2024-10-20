@@ -89,11 +89,14 @@ def run_DRYP(filename_input):
 	the -filename_input- file.
 	
 	"""
-
+	
 	# read model paramters and model setting file
 	data_in = get_model_settings(filename_input)
+
+	print("******************* READING MODEL PARAMETERS *******************")
 	
 	# read topography and channel characteristics
+	print("====== > Reading surface and river network parameters")
 	topo = surface_parameters(data_in.fname_surface)
 
 	# read soil paramters
@@ -125,6 +128,8 @@ def run_DRYP(filename_input):
 	
 	# READING FORCING DATASET -------------------------------------------
 	# Read precipitation
+	print("*******************READING TEMPORAL DATASETS*******************")
+	print("====== > Reading precipitation")
 	PRE = read_dataset_interp(data_in.dt, data_in.data_step['pre'],
 		data_in.ini_date, data_in.end_date,
 		data_in.data_reading['pre'],
@@ -136,7 +141,7 @@ def run_DRYP(filename_input):
 		proj=data_in.data_projection['pre'],
 		proj_model=data_in.PROJECTION,
 		)
-	
+	print("====== > Reading evapoptranspiration")
 	# Read reference potential evapotranspiration
 	ET0 = read_dataset_interp(data_in.dt, data_in.data_step['pet'],
 		data_in.ini_date, data_in.end_date,
@@ -151,6 +156,7 @@ def run_DRYP(filename_input):
 		)
 	
 	# Read SAVI
+	print("====== > Reading vegetation SAVI")
 	SAVI = read_dataset_interp(data_in.dt, data_in.data_step['savi'],
 		data_in.ini_date, data_in.end_date,
 		data_in.data_reading['savi'],
@@ -165,6 +171,7 @@ def run_DRYP(filename_input):
 		)
 	
 	# Read LAI (Leaf Area Index)
+	print("====== > Reading vegetation LAI")
 	LAI = read_dataset_interp(data_in.dt, data_in.data_step['lai'],
 		data_in.ini_date, data_in.end_date,
 		data_in.data_reading['lai'],
@@ -179,6 +186,7 @@ def run_DRYP(filename_input):
 		)
 	
 	# Read Kc: Crop coeficient factor
+	print("====== > Reading vegetation Kc")
 	Kc = read_dataset_interp(data_in.dt, data_in.data_step['kc'],
 		data_in.ini_date, data_in.end_date,
 		data_in.data_reading['kc'],
@@ -210,6 +218,7 @@ def run_DRYP(filename_input):
 	
 	
 	# read overland flow boundary condition
+	print("====== > Reading surface flux boundary conditions")
 	dataFlux = read_temporal_dataset(
 			data_in.fname_surface.fname_TSOF,
 			data_in.data_reading['flux'],
@@ -236,6 +245,7 @@ def run_DRYP(filename_input):
 	#env_state = model_environment_status(data_in)
 
 	# MODEL COMPONENTS ------------------------------------------------------
+	print("*******************ASSEMBLING MODEL COMPONENTS*******************")
 	abc = ABMconnector()
 	inf = infiltration(data_in.inf_method)
 	cnp = interception()
@@ -376,8 +386,8 @@ def run_DRYP(filename_input):
 			   data_in.store.var_grid_pnd)
 
 	# Initialize the progress bar
+	print("*********************SIMULATION IN PROGRESS*********************")
 	progress_bar = tqdm(total=data_in.ndays, unit='days')
-	
 	while t < data_in.ndays:
 	
 		for UZ_ti in range(data_in.dt_hourly):
@@ -796,14 +806,14 @@ def run_DRYP(filename_input):
 					total_pndvar.store_variables(PRE.date_sim_dt, t_pre,
 			    	  	{"epd": [np.mean(et_pnds)],
 	    				"vpd": [np.mean(water_bodies.pnds_Vo)],
-	    				"aoz": [np.mean(aoz_pnds)],
+	    				"apd": [np.mean(aoz_pnds)],
 						}
 						)
 					
 					grid_pndvar.store_variables(PRE.date_sim_dt, t_pre,
 			      		{"epd": et_pnds,
 	    				"vpd": water_bodies.pnds_Vo,
-						"aoz": aoz_pnds,
+						"apd": aoz_pnds,
 						}
 						)
 
@@ -839,7 +849,7 @@ def run_DRYP(filename_input):
 	# Close the progress bar
 	progress_bar.close()
 	
-	print("*** SAVING RESULTS ***")
+	print("************************ SAVING RESULTS ************************")
 	# SAVE AVERAGE VALUES OF VARIABLES: CSV-FILES
 	#var_name = ['pre', 'pet', 'run', 'aet', 'inf', 'tht',
 	#    'rch', 'egw', 'wte', 'gdh', 'twsc', 'chb', 'tls']
@@ -848,6 +858,7 @@ def run_DRYP(filename_input):
 			#length_var,
 			multi_files=False)
 
+	print("<==== saving model temporal outputs")
 	# SAVE VARIABLES AT POINT LOCATION: CSV-FILES
 	# name of variables to store
 	#var_name = ['aet', 'inf', 'dis', 'tht', 'rch', 'wte', 'gdh', 'ssz']
@@ -867,6 +878,7 @@ def run_DRYP(filename_input):
 		
 	# SAVE VARIABLES FROM THE RIPARIAN ZONE
 	# save average riparian zone variables in a csv file
+	print("<==== saving riparian zone temporal outputs")
 	if riv_nodes.size > 0:
 		# variables names
 		#var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
@@ -884,10 +896,11 @@ def run_DRYP(filename_input):
 
 	# SAVE VARIABLES FROM PONDS
 	# save average riparian zone variables in a csv file
+	print("<==== saving water bodies temporal outputs")
 	if water_bodies.id_nodes is not None:
 		# variables names
 		#var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
-		
+		#print(grid_pndvar)
 		# save grided model result datasets 
 		grid_pndvar.save_netCDF_var(data_in.fnameTS_grid+'pnd.nc',
 			   topo.lat, topo.lon, water_bodies.id_nodes,# var_name
@@ -901,6 +914,7 @@ def run_DRYP(filename_input):
 		
 	# SAVE RASTER FILES FOR INITIAL CONDITIONS
 	# Save water table for initial conditions
+	print("<==== saving raster files for initial conditions")
 	save_map_to_rastergrid(grid, head,
 			data_in.fnameTS_avg + '_wte_ini.asc')
 	
@@ -923,7 +937,7 @@ def run_DRYP(filename_input):
 		theta[water_bodies.id_nodes] = water_bodies.pnds_Vo
 		save_map_to_rastergrid(grid, theta,
 				data_in.fnameTS_avg + '_V_pnd_ini.asc')
-
+	print("====================== ALL PROCESSES COMPLETED SUCCESSFULLY======================")
 # ---------------------------------------------------------------------
 # Call script from external library	
 if __name__ == '__main__':
