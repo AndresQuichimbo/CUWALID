@@ -194,7 +194,7 @@ def infiltration_model(rainfall, K_sat, PSI_f, Droot, SORP0, L_0, Lsat, t_0, Ft0
 	sat_excess_dt = np.where(Droot <= 0.0, rainfall, sat_excess_dt)
 	rainfall = np.where(Droot <= 0.0, 0.0, rainfall)
 	inode_inf_aux = np.where(rainfall > 0.0)[0]
-	
+
 	if len(inode_inf_aux) > 0:
 		t_i = np.zeros_like(rainfall)
 		if inf_method == 0: # SCHAAKE METHOD
@@ -330,7 +330,7 @@ def Philip(P, ks, Sp, F, t):
 		
 	Fp = np.where(P > 0, 0.5*(Sp**2)*(P-0.5*ks)*((P-ks)**(-2)), 0)
 	Fp_aux = Fp-F
-	#print(np.where(np.isnan(F)), np.where(np.isnan(Fp)), np.where(np.isnan(P)), np.where(np.isnan(ks)), np.where(np.isnan(Sp)))	
+	#print(np.where(np.isnan(F)), np.where(np.isnan(Fp)), np.where(np.isnan(P)))#, np.where(np.isnan(ks)), np.where(np.isnan(Sp)))	
 	dtp = np.where(P > 0.0, Fp_aux/P, 0.0)
 	
 	ts = np.where(dtp > dt, t+dt, t+dtp)

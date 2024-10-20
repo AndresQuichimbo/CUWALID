@@ -284,6 +284,43 @@ def create_raster_landlab_idnodes(fname, fname_out):
 	# save soil properties as raster files
 	save_raster(fname_out, idnodes, profile, transform)
 
+def create_raster_landlab_idcorenodes(fname, fname_out):
+	"""Create a raster file of landlab idnodes
+	
+	Parameters
+	----------
+	fname : str
+		path of mask raster file
+		
+	Returns
+	-------
+	file
+		idnodes raster file with name fname_out
+	"""
+	# get raster properties
+	raster, profile, transform = open_raster(fname)
+
+	# get array shape
+	shape = np.shape(raster)
+
+	# flip raster
+	raster = np.flip(raster, 0)
+
+	# flatten array
+	raster = raster.reshape(-1)
+
+	# get location of id nodes
+	core_nodes = np.where(raster > 0)[0]
+	idnodes = np.full(len(raster), -9999)
+	
+	# create id grid
+	idnodes[core_nodes] = np.arange(len(core_nodes), dtype=int)
+	idnodes = idnodes.reshape(shape)
+	idnodes = np.flip(idnodes, 0)
+	
+	# save soil properties as raster files
+	save_raster(fname_out, idnodes, profile, transform)
+
 def open_raster(fname):
 	"""read raster file
 	Parameters

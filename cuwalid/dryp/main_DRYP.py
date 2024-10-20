@@ -377,7 +377,7 @@ def run_DRYP(filename_input):
 
 	# Initialize the progress bar
 	progress_bar = tqdm(total=data_in.ndays, unit='days')
-	import matplotlib.pyplot as plt
+	
 	while t < data_in.ndays:
 	
 		for UZ_ti in range(data_in.dt_hourly):
@@ -390,28 +390,11 @@ def run_DRYP(filename_input):
 				# for the forcast TRAINING.
 				#rain[rain>300] = 300.
 				#print("rain", np.where(np.isnan(rain[act_nodes])))
-				#arr = np.full(len(rain), np.nan)
-				arr = np.zeros(len(rain))
-				arr[act_nodes]=1.0
-				#arr = np.ones(len(rain))
-				arr[np.where(np.isnan(rain[act_nodes]))] = 1e6
-				plt.imshow(arr.reshape((topo.grid_nrows,topo.grid_ncols)))
-				plt.colorbar()
-				plt.title('premain'+str(t)+str(UZ_ti)+str(dt_pre_sub)+'.png')
-				plt.savefig('premain'+str(t)+str(UZ_ti)+str(dt_pre_sub)+'.png')
-				plt.close()
+				
 				# get potential evapotranspiration
 				PET = ET0.get_one_step_dataset(t_eto, data_in.fname_TSMeteo, 'pet')
 				#PET[PET>1] = 1.0
-				arr = np.zeros(len(PET))
-				arr[act_nodes]=1.0
-				#arr = np.ones(len(PET))
-				arr[np.where(np.isnan(rain[act_nodes]))] = 1e6
-				plt.imshow(arr.reshape((topo.grid_nrows,topo.grid_ncols)))
-				plt.colorbar()
-				plt.title('petmain'+str(t)+str(UZ_ti)+str(dt_pre_sub)+'.png')
-				plt.savefig('petnmain'+str(t)+str(UZ_ti)+str(dt_pre_sub)+'.png')
-				plt.close()
+				
 				# not in used, NOT DELETE
 				# estimate abstractions
 				AOF, AUZ, ASZ = abc.run_ABM_one_step(
@@ -484,13 +467,8 @@ def run_DRYP(filename_input):
 											topo.area_cells,
 											)
 					# transfer data to the entire model domain
-					rain[water_bodies.id_nodes] = Ppnds
-				#print(rain[act_nodes])
-				plt.imshow(soil.Ksat.reshape((topo.grid_nrows,topo.grid_ncols)))
-				plt.colorbar()
-				plt.title('ksatmain'+str(t)+str(UZ_ti)+str(dt_pre_sub)+'.png')
-				plt.savefig('ksatmain'+str(t)+str(UZ_ti)+str(dt_pre_sub)+'.png')
-				plt.close()
+					#rain[water_bodies.id_nodes] = Ppnds
+				
 				# INFILTRATION: estimate infiltration --------------------
 				#inf.run_infiltration_one_step(Pth, env_state, data_in)
 				INF, EXS, Ft0, SORP0, t_0, dry_day = inf.run_infiltration_one_step(

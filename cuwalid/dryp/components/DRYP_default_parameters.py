@@ -65,7 +65,6 @@ default_input = {
       "path_out_uz": None,
       "path_out_oz": None,
       "path_output": None,
-      "Other": None,
       "path_setting": None,
       "path_projection": None
    },
