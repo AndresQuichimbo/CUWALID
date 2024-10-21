@@ -93,7 +93,7 @@ def run_DRYP(filename_input):
 	# read model paramters and model setting file
 	data_in = get_model_settings(filename_input)
 
-	print("******************* READING MODEL PARAMETERS *******************")
+	print("***************************** READING MODEL PARAMETERS *****************************")
 	
 	# read topography and channel characteristics
 	print("====== > Reading surface and river network parameters")
@@ -128,7 +128,7 @@ def run_DRYP(filename_input):
 	
 	# READING FORCING DATASET -------------------------------------------
 	# Read precipitation
-	print("*******************READING TEMPORAL DATASETS*******************")
+	print("***************************** READING TEMPORAL DATASETS ****************************")
 	print("====== > Reading precipitation")
 	PRE = read_dataset_interp(data_in.dt, data_in.data_step['pre'],
 		data_in.ini_date, data_in.end_date,
@@ -245,7 +245,7 @@ def run_DRYP(filename_input):
 	#env_state = model_environment_status(data_in)
 
 	# MODEL COMPONENTS ------------------------------------------------------
-	print("*******************ASSEMBLING MODEL COMPONENTS*******************")
+	print("*************************** ASSEMBLING MODEL COMPONENTS ****************************")
 	abc = ABMconnector()
 	inf = infiltration(data_in.inf_method)
 	cnp = interception()
@@ -386,7 +386,7 @@ def run_DRYP(filename_input):
 			   data_in.store.var_grid_pnd)
 
 	# Initialize the progress bar
-	print("*********************SIMULATION IN PROGRESS*********************")
+	print("****************************** SIMULATION IN PROGRESS ******************************")
 	progress_bar = tqdm(total=data_in.ndays, unit='days')
 	while t < data_in.ndays:
 	
@@ -428,6 +428,18 @@ def run_DRYP(filename_input):
 					LAIdt = LAI.get_one_step_dataset(t_savi, data_in.fname_TSlai, 'lai')
 					Kcdt = Kc.get_one_step_dataset(t_savi, data_in.fname_TSkc, 'kc')
 					
+				# PONDS: Add ponds here ------------------------------------------
+				# first check that ponds is active
+				if water_bodies.id_nodes is not None:
+					water_bodies.pnds_Vo, et_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(
+				 							water_bodies.pnds_Vo,
+											rain[water_bodies.id_nodes],
+											PET[water_bodies.id_nodes], #aoz,
+											topo.area_cells,
+											)
+					# transfer data to the entire model domain
+					rain[water_bodies.id_nodes] = Ppnds
+				
 				# calculate AV
 				if vegetation.av is not None:
 					av = (SAVIdt - SAVIdt_min)/(SAVIdt_max - SAVIdt_min)
@@ -445,16 +457,16 @@ def run_DRYP(filename_input):
 						vegetation.Sc0_cn,
 						Kcdt)
 				
-				# Estimate Kc for the riparian area
-				Pthr, Ecar, PETr, LAIr, Kcr, Sc0_cnrp = cnp.run_interception_one_step(
-						rain, PET, vegetation.av,
-						SAVIdt, SAVIdt_max, SAVIdt_min,
-						None,
-						vegetation.lai_a,
-						vegetation.lai_b,
-						vegetation.fcw_cn,
-						vegetation.Sc0_cnrp,
-						Kcdt)
+				## Estimate Kc for the riparian area
+				#Pthr, Ecar, PETr, LAIr, Kcr, Sc0_cnrp = cnp.run_interception_one_step(
+				#		rain, PET, vegetation.av,
+				#		SAVIdt, SAVIdt_max, SAVIdt_min,
+				#		None,
+				#		vegetation.lai_a,
+				#		vegetation.lai_b,
+				#		vegetation.fcw_cn,
+				#		vegetation.Sc0_cnrp,
+				#		Kcdt)
 						
 				##### NOT IN USE, NOT DELETE
 				##### estimate precipitation over the soil
@@ -466,19 +478,7 @@ def run_DRYP(filename_input):
 				#### NOT IN USE, NOT DELETE												
 				#### add irrigation as rain, still under development
 				####Pth = Pth[:] + abc.auz[:]
-				
-				# PONDS: Add ponds here ------------------------------------------
-				# first check that ponds is active
-				if water_bodies.id_nodes is not None:
-					water_bodies.pnds_Vo, et_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(
-				 							water_bodies.pnds_Vo,
-											rain[water_bodies.id_nodes],
-											PET[water_bodies.id_nodes], #aoz,
-											topo.area_cells,
-											)
-					# transfer data to the entire model domain
-					#rain[water_bodies.id_nodes] = Ppnds
-				
+								
 				# INFILTRATION: estimate infiltration --------------------
 				#inf.run_infiltration_one_step(Pth, env_state, data_in)
 				INF, EXS, Ft0, SORP0, t_0, dry_day = inf.run_infiltration_one_step(
@@ -487,7 +487,8 @@ def run_DRYP(filename_input):
 						soil.PSI[act_nodes],
 						soil.Droot[act_nodes],
 						theta[act_nodes],
-						rain[act_nodes],
+						#rain[act_nodes],
+						Pth,
 						Ft0, SORP0, t_0, dry_day,
 						)
 				
@@ -849,7 +850,7 @@ def run_DRYP(filename_input):
 	# Close the progress bar
 	progress_bar.close()
 	
-	print("************************ SAVING RESULTS ************************")
+	print("********************************** SAVING RESULTS **********************************")
 	# SAVE AVERAGE VALUES OF VARIABLES: CSV-FILES
 	#var_name = ['pre', 'pet', 'run', 'aet', 'inf', 'tht',
 	#    'rch', 'egw', 'wte', 'gdh', 'twsc', 'chb', 'tls']
@@ -937,7 +938,7 @@ def run_DRYP(filename_input):
 		theta[water_bodies.id_nodes] = water_bodies.pnds_Vo
 		save_map_to_rastergrid(grid, theta,
 				data_in.fnameTS_avg + '_V_pnd_ini.asc')
-	print("====================== ALL PROCESSES COMPLETED SUCCESSFULLY======================")
+	print("======================= ALL PROCESSES COMPLETED SUCCESSFULLY =======================")
 # ---------------------------------------------------------------------
 # Call script from external library	
 if __name__ == '__main__':

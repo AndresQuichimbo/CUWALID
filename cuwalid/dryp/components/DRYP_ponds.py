@@ -7,15 +7,24 @@ class ponds():
 		are water bodies that store water from precipitation and loss
 		water as potential evapotranspiration and human abstractions
 		
+		Parameters
+		----------
+		Amax: numpy array
+			maximum surface area [m2]
+		hmax : numpy array
+			maximum pond depth [m]
+		
 		"""
 		# specify max colume
 		# calculate pond parameters: shape factor and Vmax
-		self.a = (1/2)*np.log(Amax/np.log(hmax))
-		self.Vmax = (np.pi/(2*self.a+1))*hmax**(2*self.a+1)
-
+		#self.a = (1/2)*np.log(Amax)/np.log(hmax)
+		self.a = 2.0
+		self.b = (Amax/np.pi)*np.power(hmax, -2.*self.a)
+		self.Vmax = (np.pi*self.b/(2*self.a+1))*hmax**(2*self.a+1)
+		#print(Amax,hmax)
 		# calculate denominator for reduce calculations
 		self.denominator = 2.0*self.a+1 # this could be moved to only perform once		
-
+		#print(self.denominator)
 		pass
 	
 
@@ -33,8 +42,8 @@ class ponds():
 			potential evapotranspiration [mm/h]
 		Aoz : numpy array
 			Water abstractions in [m3]
-		a:	numpy array
-			pond shape factor [-]
+		cell_area:	numpy array
+			grid cell area [m2]
 			
 		Returns
 		-------
@@ -47,7 +56,8 @@ class ponds():
 		"""
 		#print(Vo, P, PET, cell_area)
 		# contribution of precipitation to pond total volume
-		P = P*cell_area
+		# transform all units to m
+		P = P*cell_area*0.001
 		Vo = P + Vo
 
 		# check if there is excess water, pond is filled
@@ -74,8 +84,8 @@ class ponds():
 		Vo = V
 		
 		# Calculate the volume of water available after evaporation
-		V = (np.power(Vo, 1/self.denominator)-(np.pi*PET/self.denominator)*
-		    np.power(self.denominator/np.pi, 2*self.a/self.denominator))
+		V = (np.power(Vo, 1/self.denominator)-(np.pi*self.b*PET*0.001/self.denominator)*
+		    np.power(self.denominator/(np.pi*self.b), 2*self.a/self.denominator))
 		
 		# Remove all zeros
 		V[V < 0] = 0.0
@@ -83,10 +93,18 @@ class ponds():
 		V = np.power(V, self.denominator)
 
 		# caluclate evaporation
-		et = V - Vo
-
+		et = Vo - V
+		
+		# check mass balance
+		#try:
+		#	MB = P + Aoz + et
+		#	assert np.allclose(MB, 0.0)
+		#except:
+		#	raise Exception('Ponds Water balance Error: '
+		#   		'Please check units and non-data values')
 		# Calulate precipitation over the cell
-		P = P/cell_area
+		# change units to mm
+		P = P*1000.0/cell_area
 	
 		return V, et, Aoz, P
 		
