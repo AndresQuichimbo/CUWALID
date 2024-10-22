@@ -571,7 +571,7 @@ class groundwater_parameters(object):
 			self.head = np.flip(rasterio.open(inputfile.fname_DEM).read(1), 0).flatten()
 			#h = gw.add_zeros('node', 'water_table__elevation', dtype=float)
 			#gw.at_node['water_table__elevation'] = z - rg.at_node['Soil_depth']*0.001
-			print('Initial water table elevation not provided assumed equal to surface')
+			print('Initial water table elevation... not provided assumed equal to surface')
 			#print('Initial water table elevation assumed equal to root depth elevation')
 		else:
 			self.head = np.flip(rasterio.open(inputfile.fname_GWini).read(1), 0).flatten()
