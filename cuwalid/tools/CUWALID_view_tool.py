@@ -120,6 +120,57 @@ def plot_probabilistic_tercile_forecast(data,
 	ax.set_ylabel("Latitude")
 	ax.set_xlabel("Longitude")
 
+def plot_impact_tercile_forecast(data,
+		title="Impact based Forecast", reproject=False,
+		fshapefile=None, fmask=None, ax = None):
+	"""This function create a tercile plot
+	
+	Parameters
+	----------
+	
+	data : dataset
+		tercile forecasting datset
+	title : str
+		specify title for the figure
+	
+	Return
+	------
+	
+	"""
+	# apply mask
+	#if fmask is not None:
+	#	mask = np.flip(get_mask(fmask), 0)#*np.flip(get_mask(friver), 0)
+	#	data = data*mask
+	
+	# reproject dataset
+	if reproject is True:
+		data = reproject_dataset(data, oldPP=None, newPP=None)
+		
+	data = data.where(data > 0.3333, np.nan)
+	
+	tercile = ["AN", "NN", "BN"]
+	color = ["Blues", "Greens", "Oranges"]
+	
+	if ax is None:
+		fig, ax=plt.subplots(figsize=(7, 8))
+		plt.subplots_adjust(#wspace=0.40, hspace=0.40,
+							#left=0.075, right=0.97,
+							top=0.92, bottom=0.20
+							)
+						
+	for itercile, icolor in zip(tercile, color):
+		data_tercile = data[itercile]
+		data_tercile = np.where(data_tercile > 0.3, 1, np.nan)
+		g1 = data_tercile.plot(
+			x="lon", y="lat",
+			vmin=0.0, vmax=1.0,
+			cmap=icolor,#plt.get_cmap(cmap[0], 5),
+			ax=ax,
+			add_colorbar=False,
+			)
+
+	return ax
+
 def plot_deterministic_forecast(data,
 		title="Deterministic Forecasting", reproject=False,
 		fshapefile=None, fmask=None, plot_anomaly=False):

@@ -17,6 +17,7 @@ import matplotlib.patheffects as path_effects
 from cuwalid.forecasting.components.helper_functions import add_label_features, bounding_box, get_mask, get_season_dataset, read_dataset, resample_dataset
 from cuwalid.forecasting.components.map_properties import *
 from cuwalid.forecasting.components.read_paths import *
+import cuwalid.tools.CUWALID_view_tool as cuwalidplt
 #import pandas as pd
 #from cmcrameri import cm
 #sys.path.append('C:/Users/Edisson/Documents/GitHub/DRYPv2.0.1')
@@ -279,45 +280,48 @@ def plot_map(plot_scale="Zoom",
 
 	# READ THRESHOLDS DATASET ---------------------------------
 	# Open dataset of thrsholds
-	ds_thrshold = read_dataset(paths.nc_path_threshold, var_name=var)
-	ds_thrshold = ds_thrshold.rio.write_crs(netcdfPP)
+	#ds_thrshold = read_dataset(paths.nc_path_threshold, var_name=var)
+	#ds_thrshold = ds_thrshold.rio.write_crs(netcdfPP)
 	#print(ds_threshold)
+	
 	# READ MODEL OUTPUTS ---------------------------------------
 	# Open dataset of model outputs
 	#print(netcdf_path)
-	ds = read_dataset(netcdf_path, var_name=var)
+	#ds = read_dataset(netcdf_path, var_name=var)
+	ds = xr.open_dataset(netcdf_path)
 	#print(netcdf_path)
 	
-	# Apply mask to datasets
-	if var == "dis":
-		mask = np.flip(get_mask(paths.mask_path), 0)*np.flip(get_mask(paths.river_path), 0)
-		#ds = ds*mask	
+	##### Apply mask to datasets
+	####if var == "dis":
+	####	mask = np.flip(get_mask(paths.mask_path), 0)*np.flip(get_mask(paths.river_path), 0)
+	####	#ds = ds*mask	
 
-	# Write projection on dataset
-	ds = ds.rio.write_crs(netcdfPP)
-	# reprojec dataset
-	#ds = reproject_dataset(ds, oldPP, newPP)
+	##### Write projection on dataset
+	####ds = ds.rio.write_crs(netcdfPP)
+	##### reprojec dataset
+	#####ds = reproject_dataset(ds, oldPP, newPP)
 
-	# get season average
-	if var == 'dis':
-		ds = get_season_dataset(ds, iseason)
-		if iwater_status == "Surface":
-			ds = xr.where(ds < ds_thrshold.time[1], 1, 0)
-			ds = ds.resample(time="Y").sum()*mask
-		else:
-			ds = ds.resample(time="Y").max()*mask
-	else:
-		ds = resample_dataset(
-			get_season_dataset(ds, iseason),
-			)
+	##### get season average
+	####if var == 'dis':
+	####	ds = get_season_dataset(ds, iseason)
+	####	if iwater_status == "Surface":
+	####		ds = xr.where(ds < ds_thrshold.time[1], 1, 0)
+	####		ds = ds.resample(time="Y").sum()*mask
+	####	else:
+	####		ds = ds.resample(time="Y").max()*mask
+	####else:
+	####	ds = resample_dataset(
+	####		get_season_dataset(ds, iseason),
+	####		)
 
 	# convert mask into xarray dataset
 	#mask = reproject_dataset(mask, oldPP, newPP)
 
 	# reprojec dataset
 	ds = ds.rename({'lon': 'x', 'lat': 'y'})
-	ds_thrshold = ds_thrshold.rename({'lon': 'x', 'lat': 'y'})
-	#ds_thrshold = reproject_dataset(ds_thrshold, oldPP, newPP)
+	#ds = reproject_dataset(ds, netcdfPP, mapPP)
+	#ds_thrshold = ds_thrshold.rename({'lon': 'x', 'lat': 'y'})
+	#ds_thrshold = reproject_dataset(ds_thrshold, netcdfPP, mapPP)
 
 	# ==========================================================
 	# FORECASTING ANALYSIS
@@ -332,49 +336,49 @@ def plot_map(plot_scale="Zoom",
 					  drop=False
 					  )
 
-		# Clip data thresholds
-		ds_threshold = ds_thrshold.rio.clip(
-					wards.geometry.values, wards.crs,
-					drop=False)
+		## Clip data thresholds
+		#ds_threshold = ds_thrshold.rio.clip(
+		#			wards.geometry.values, wards.crs,
+		#			drop=False)
 
 		# Clip the mask
 		#mask1 = mask.rio.clip(wards.geometry.values, wards.crs,
 		#		drop=False)
 
-	# create mask
-	mask = ds.values[0]
-	mask[mask>0] = 1
+	### create mask
+	##mask = ds.values[0]
+	##mask[mask>0] = 1
 
-		## Calculate 1st and 3rd quantiles along the time dimension
-		#q1 = ds_clipped_threshold.time[0]#(0.25, dim='time')
-		#q3 = ds_clipped_threshold.time[2]#(0.75, dim='time')
+	##	## Calculate 1st and 3rd quantiles along the time dimension
+	##	#q1 = ds_clipped_threshold.time[0]#(0.25, dim='time')
+	##	#q3 = ds_clipped_threshold.time[2]#(0.75, dim='time')
 
-		##ds_clipped_threshold.plot(x="lon", y="lat", col="time")#, col_wrap=12)
-		##plt.show()
-		#
-		## FILTER DATA BETWEEN THRSHOLDS ---------------------------
-		## Reassign values based on quantile thresholds
-		##rescaled = xr.where(ds_clipped < q1, -1,
-		##	xr.where(ds_clipped > q3, 1, ds_clipped*0)
-		##	)
-		#if iwater_status == "Surface":
-		#	rescaled = xr.where(ds_clipped < 3, 0.0, -1.5)*mask
-		#elif iwater_status == "Flood":
-		#	rescaled = xr.where(ds_clipped < q3, -1.5, ds_clipped*0.0)#*mask
-		#else:
-		#	rescaled = xr.where(ds_clipped < q1, -1.5, ds_clipped*0.0)
+	##	##ds_clipped_threshold.plot(x="lon", y="lat", col="time")#, col_wrap=12)
+	##	##plt.show()
+	##	#
+	##	## FILTER DATA BETWEEN THRSHOLDS ---------------------------
+	##	## Reassign values based on quantile thresholds
+	##	##rescaled = xr.where(ds_clipped < q1, -1,
+	##	##	xr.where(ds_clipped > q3, 1, ds_clipped*0)
+	##	##	)
+	##	#if iwater_status == "Surface":
+	##	#	rescaled = xr.where(ds_clipped < 3, 0.0, -1.5)*mask
+	##	#elif iwater_status == "Flood":
+	##	#	rescaled = xr.where(ds_clipped < q3, -1.5, ds_clipped*0.0)#*mask
+	##	#else:
+	##	#	rescaled = xr.where(ds_clipped < q1, -1.5, ds_clipped*0.0)
 
-	#else: # for zoomed values
-	q1 = ds_thrshold.time[0]
-	q3 = ds_thrshold.time[2]
+	###else: # for zoomed values
+	##q1 = ds_thrshold.time[0]
+	##q3 = ds_thrshold.time[2]
 
-	# Reassign values based on quantile thresholds
-	if iwater_status == "Surface":
-		rescaled = xr.where(ds < 3, 0.0, -1.5)*mask
-	elif iwater_status == "Flood":
-		rescaled = xr.where(ds < q3, -1.5, ds*0.0)*mask
-	else:
-		rescaled = xr.where(ds < q1, -1.5, ds*0.0)#*mask
+	### Reassign values based on quantile thresholds
+	##if iwater_status == "Surface":
+	##	rescaled = xr.where(ds < 3, 0.0, -1.5)*mask
+	##elif iwater_status == "Flood":
+	##	rescaled = xr.where(ds < q3, -1.5, ds*0.0)*mask
+	##else:
+	##	rescaled = xr.where(ds < q1, -1.5, ds*0.0)#*mask
 
 	# =========================================================
 	# =========================================================
@@ -394,8 +398,11 @@ def plot_map(plot_scale="Zoom",
 	fig.set_size_inches(figure_width, figure_height)
 						#7.0*ratio_bw*plot_scale_id[plot_scale])
 
+	cuwalidplt.plot_impact_tercile_forecast(ds,
+		title="Impact based Forecast", reproject=False,
+		fshapefile=None, fmask=None, ax=None)
 	# mask values outside the map extend
-	time_plot = 0
+	#time_plot = 0
 	#mask = rescaled.isel(time=time_plot).values
 	#mean_value = rescaled.isel(time=time_plot).mean()
 
@@ -403,14 +410,14 @@ def plot_map(plot_scale="Zoom",
 	#rescaled.loc[rescaled.time[time_plot]] = mean_value.values*mask
 
 	# select colors 
-	cmap = ListedColormap(var_colour[iwater_status])
+	#cmap = ListedColormap(var_colour[iwater_status])
 
 	# Example: plot the first time step
-	im = rescaled.isel(time=time_plot).plot(ax=ax,
-				levels=[-2.0, -1.0, 1.0],#, 2.0],
-				cmap=cmap, alpha=0.8,
-				add_colorbar=False
-				)
+	#im = rescaled.isel(time=time_plot).plot(ax=ax,
+	#			levels=[-2.0, -1.0, 1.0],#, 2.0],
+	#			cmap=cmap, alpha=0.8,
+	#			add_colorbar=False
+	#			)
 
 	# Add river layers from other datasets
 	#rivers.plot(ax=ax, color='#0099ff', label='Rivers')
