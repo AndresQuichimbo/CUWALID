@@ -290,14 +290,14 @@ def plot_map(plot_scale="Zoom",
 	#ds = read_dataset(netcdf_path, var_name=var)
 	ds = xr.open_dataset(netcdf_path)
 	#print(netcdf_path)
-	
+	#print(ds)
 	##### Apply mask to datasets
 	####if var == "dis":
 	####	mask = np.flip(get_mask(paths.mask_path), 0)*np.flip(get_mask(paths.river_path), 0)
 	####	#ds = ds*mask	
 
 	##### Write projection on dataset
-	####ds = ds.rio.write_crs(netcdfPP)
+	ds = ds.rio.write_crs(netcdfPP)
 	##### reprojec dataset
 	#####ds = reproject_dataset(ds, oldPP, newPP)
 
@@ -344,7 +344,8 @@ def plot_map(plot_scale="Zoom",
 		# Clip the mask
 		#mask1 = mask.rio.clip(wards.geometry.values, wards.crs,
 		#		drop=False)
-
+	#print("translated")
+	#print(ds)
 	### create mask
 	##mask = ds.values[0]
 	##mask[mask>0] = 1
@@ -400,7 +401,7 @@ def plot_map(plot_scale="Zoom",
 
 	cuwalidplt.plot_impact_tercile_forecast(ds,
 		title="Impact based Forecast", reproject=False,
-		fshapefile=None, fmask=None, ax=None)
+		fshapefile=None, fmask=None, ax=ax)
 	# mask values outside the map extend
 	#time_plot = 0
 	#mask = rescaled.isel(time=time_plot).values
@@ -659,12 +660,13 @@ def plot_map(plot_scale="Zoom",
 	plt.ylabel("")
 	plt.xlabel("")
 	plt.tight_layout()
+	x_ax2, y_ax2, width_ax2, height_ax2=0.50, -0.4*0.7*ratio_bw*0.25, 0.4*0.5, 0.4*0.7*ratio_bw
 	
 	# ADD LOCATION PLOT ===========================================
-	ax2 = fig.add_axes([0.50, 0.0, #location: x, y
-		0.4*0.5,# axes width,
-		0.4*0.7*ratio_bw # axes height
-		]
+	ax2 = fig.add_axes([x_ax2, y_ax2, width_ax2, height_ax2]#location: x, y
+	#	0.4*0.5,# axes width,
+	#	0.4*0.7*ratio_bw # axes height
+	#	]
 		)
 	ax2.set_title("Location")
 	#country = gpd.read_file(paths.shapefile_country)

@@ -160,13 +160,17 @@ def plot_impact_tercile_forecast(data,
 						
 	for itercile, icolor in zip(tercile, color):
 		data_tercile = data[itercile]
-		data_tercile = np.where(data_tercile > 0.3, 1, np.nan)
-		g1 = data_tercile.plot(
-			x="lon", y="lat",
+		#print(data_tercile)
+		#data_tercile = np.where(data_tercile > 0.3, 1, np.nan)
+		#print(data_tercile)
+		#g1 = data_tercile.plot(
+		g1 = ax.imshow(data_tercile,
+		#	x="x", y="y",
+			origin="lower",
 			vmin=0.0, vmax=1.0,
-			cmap=icolor,#plt.get_cmap(cmap[0], 5),
-			ax=ax,
-			add_colorbar=False,
+			#cmap=icolor,#plt.get_cmap(cmap[0], 5),
+			#ax=ax,
+			#add_colorbar=False,
 			)
 
 	return ax
