@@ -51,7 +51,7 @@ def plot_map(plot_scale="Zoom",
 			iseason="OND",
 			iwater_status="Groundwater",
 			iyear=2010,
-			ilanguage="English",
+			ilanguage=["English"],
 			output_dir=None,
 			netcdf_path=None,
 			threshold_path=None,
@@ -489,7 +489,8 @@ def plot_map(plot_scale="Zoom",
 						linewidth=line_width["Main Roads"],
 						edgecolor=line_colors["Main Roads"],
 						facecolor='none',
-						label='Main Roads'+ "\n" + language_labels["Swahili"]["Main Roads"],
+						#label='Main Roads'+ "\n" + language_labels["Swahili"]["Main Roads"],
+						label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
 						alpha=1.0,
 						)
 		except:
@@ -531,7 +532,8 @@ def plot_map(plot_scale="Zoom",
 				#linewidths=0.1,
 				facecolor=point_color[ipoint],
 				markersize=marker_size[ipoint],
-				label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
+				#label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
+				label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
 				)
 	# Add point attributes
 	#if plot_scale != "Country":
@@ -545,7 +547,8 @@ def plot_map(plot_scale="Zoom",
 					linewidths=0.1,
 					facecolor=aeroway_color[ipoint],
 					markersize=aeroway_size[ipoint],
-					label=ipoint + "\n" + language_labels["Swahili"][ipoint],
+					#label=ipoint + "\n" + language_labels["Swahili"][ipoint],
+					label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
 					)
 
 	# Add point attributes
@@ -564,7 +567,8 @@ def plot_map(plot_scale="Zoom",
 				linewidths=0.1,
 				facecolor=place_color[iplaces],
 				markersize=place_size[iplaces],
-				label=iplaces + "\n" + language_labels["Swahili"][iplaces],
+				#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
+				label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
 				)
 
 			try:
@@ -631,8 +635,9 @@ def plot_map(plot_scale="Zoom",
 	ax.legend(handles=rect_patches, labels=label_patches,
 			bbox_to_anchor=(1.0, 0),
 			loc=1, borderaxespad=0.,
-			title=variable[iwater_status]+ "\n" +
-						language_labels["Swahili"][iwater_status],
+			#title=variable[iwater_status]+ "\n" +
+			#			language_labels["Swahili"][iwater_status],
+			title=get_labels_by_lenguage(language_labels, ilanguage,iwater_status),
 			frameon=False)
 
 
@@ -713,6 +718,30 @@ def plot_map(plot_scale="Zoom",
 	print(fname_fig)
 	print("**************")
 	print(ratio_bw)
+
+def get_labels_by_lenguage(dictionary, language, istatus):
+	"""Funciton to create labels with different languages
+	
+	Parameters:
+	-----------
+	dictionary: dictionary
+		dictionary containing all terms in different languages
+	language: list
+		list of languages to print
+	iterm : str
+		name of the word/term to include in the label
+
+	Returns
+	--------
+	label : str
+		string containing all labels to pinclude in the map
+	"""
+	label = None
+	for ilanguage in language:
+		if label is None:
+			label = dictionary[ilanguage][iterm]
+		label = ("\n" + dictionary[ilanguage][iterm])
+	return label
 
 if __name__ == '__main__':
 	#call_plot_maps()#sys.argv[1])
