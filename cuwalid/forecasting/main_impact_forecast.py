@@ -233,7 +233,7 @@ def call_plot_maps(plot_scales=["Zoom"],
 		water_status=["Flood"],
 		year=2010,
 		output_dir="output",
-		language="English",
+		language=["English",],
 		netcdf_path=None,
 		threshold_path=None,
 		mask_path=None,
@@ -342,8 +342,8 @@ def call_plot_maps(plot_scales=["Zoom"],
 						iiseason + "_" +
 						str(year)# + "_"
 						)
-					try:
-						plot_map(plot_scale=iplot_scale,
+					#try:
+					plot_map(plot_scale=iplot_scale,
 								country_name=country_name,
 								place_name=iplace_name,
 								iwater_status=iiwater_status,
@@ -358,9 +358,9 @@ def call_plot_maps(plot_scales=["Zoom"],
 								river_path=river_path,
 								fname_output=ifname_fig
 								)
-					except Exception as e:
-						print(f"An exception occured {country_name} {iplace_name}")
-						print(f"Error: {e}")
+					#except Exception as e:
+					#	print(f"An exception occured {country_name} {iplace_name}")
+					#	print(f"Error: {e}")
 							  
 # Main function to handle command-line arguments
 if __name__ == '__main__':

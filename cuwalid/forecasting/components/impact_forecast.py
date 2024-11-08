@@ -51,7 +51,7 @@ def plot_map(plot_scale="Zoom",
 			iseason="OND",
 			iwater_status="Groundwater",
 			iyear=2010,
-			ilanguage=["English"],
+			ilanguage=["English","Swahili"],
 			output_dir=None,
 			netcdf_path=None,
 			threshold_path=None,
@@ -392,7 +392,7 @@ def plot_map(plot_scale="Zoom",
 	
 	# figure size
 	figure_width = 5.0*plot_scale_id[plot_scale]
-	figure_height = 7.0*ratio_bw*plot_scale_id[plot_scale]
+	figure_height = 6.0*ratio_bw*plot_scale_id[plot_scale]
 	
 	# Create the base map
 	fig, ax = plt.subplots()
@@ -437,6 +437,7 @@ def plot_map(plot_scale="Zoom",
 					facecolor='none',#water_color[iwater],
 					#markersize=0.0*marker_size[ipoint],
 					label=iwater+ "\n" + language_labels["Swahili"][iwater],
+					#label=get_labels_by_lenguage(language_labels, ilanguage, iwater),
 					path_effects=[path_effects.withStroke(
 							linewidth=water_lw[iwater]*1.5, foreground='w')]
 					)
@@ -455,6 +456,7 @@ def plot_map(plot_scale="Zoom",
 					facecolor='none',#leisure_color[ileisure],
 					#markersize=0.0*leisure_size[ipoint],
 					label=ileisure+ "\n" + language_labels["Swahili"][ileisure],
+					#label=get_labels_by_lenguage(language_labels, ilanguage, ileisure),
 					alpha=0.5,
 					)
 			
@@ -489,8 +491,8 @@ def plot_map(plot_scale="Zoom",
 						linewidth=line_width["Main Roads"],
 						edgecolor=line_colors["Main Roads"],
 						facecolor='none',
-						#label='Main Roads'+ "\n" + language_labels["Swahili"]["Main Roads"],
-						label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
+						label='Main Roads'+ "\n" + language_labels["Swahili"]["Main Roads"],
+						#label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
 						alpha=1.0,
 						)
 		except:
@@ -532,8 +534,8 @@ def plot_map(plot_scale="Zoom",
 				#linewidths=0.1,
 				facecolor=point_color[ipoint],
 				markersize=marker_size[ipoint],
-				#label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
-				label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
+				label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
+				#label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
 				)
 	# Add point attributes
 	#if plot_scale != "Country":
@@ -547,8 +549,8 @@ def plot_map(plot_scale="Zoom",
 					linewidths=0.1,
 					facecolor=aeroway_color[ipoint],
 					markersize=aeroway_size[ipoint],
-					#label=ipoint + "\n" + language_labels["Swahili"][ipoint],
-					label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
+					label=ipoint + "\n" + language_labels["Swahili"][ipoint],
+					#label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
 					)
 
 	# Add point attributes
@@ -567,8 +569,8 @@ def plot_map(plot_scale="Zoom",
 				linewidths=0.1,
 				facecolor=place_color[iplaces],
 				markersize=place_size[iplaces],
-				#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
-				label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
+				label=iplaces + "\n" + language_labels["Swahili"][iplaces],
+				#label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
 				)
 
 			try:
@@ -584,13 +586,19 @@ def plot_map(plot_scale="Zoom",
 	# Configure and display the map
 	plt.title(#"Map of "+ place_name + "" + ", Kenya\n"+
 		# English
+		get_labels_by_lenguage(language_labels, ilanguage, iwater_status) +
+		"-" + place_name +"\n"+
+		get_labels_by_lenguage(language_labels, ilanguage, iseason) +
+		" \n " + "YYYY"
+
 		#variable[iwater_status]+ '\n OND - YYYY' #+
-		variable[iwater_status] + " in " + place_name +"\n"+
-		season_name[iseason] + " - " + "YYYY" + "\n"+
+		#variable[iwater_status] + " in " + place_name +"\n"+
+		#season_name[iseason] + " - " + "YYYY" + "\n"+
+		
 		# Swahili
-		language_labels["Swahili"][iwater_status] + "-" +
-		place_name +"\n"+
-		language_labels["Swahili"][iseason] + " \n " + "YYYY"
+		#language_labels["Swahili"][iwater_status] + "-" +
+		#place_name +"\n"+
+		#language_labels["Swahili"][iseason] + " \n " + "YYYY"
 		#str(pd.to_datetime(rescaled.time.values[time_plot]).year)
 		)
 
@@ -637,7 +645,7 @@ def plot_map(plot_scale="Zoom",
 			loc=1, borderaxespad=0.,
 			#title=variable[iwater_status]+ "\n" +
 			#			language_labels["Swahili"][iwater_status],
-			title=get_labels_by_lenguage(language_labels, ilanguage,iwater_status),
+			title=get_labels_by_lenguage(language_labels, ilanguage, iwater_status),
 			frameon=False)
 
 
@@ -665,7 +673,15 @@ def plot_map(plot_scale="Zoom",
 	plt.ylabel("")
 	plt.xlabel("")
 	plt.tight_layout()
-	x_ax2, y_ax2, width_ax2, height_ax2=0.50, -0.4*0.7*ratio_bw*0.25, 0.4*0.5, 0.4*0.7*ratio_bw
+
+	# Get the position of the axes in the figure (as a Bbox)
+	axes_position = ax.get_position().bounds
+
+	# Print the location and size (left, bottom, width, height)
+	#print("Axes position (left, bottom, width, height):", axes_position)
+
+	#x_ax2, y_ax2, width_ax2, height_ax2=0.50, -0.4*0.7*ratio_bw*0.25, 0.4*0.5, 0.4*0.7*ratio_bw
+	x_ax2, y_ax2, width_ax2, height_ax2=0.50+axes_position[0]*0-axes_position[2]*0.25*0, -axes_position[1]*0.475, axes_position[2]*0.25, 1-axes_position[3]
 	
 	# ADD LOCATION PLOT ===========================================
 	ax2 = fig.add_axes([x_ax2, y_ax2, width_ax2, height_ax2]#location: x, y
@@ -719,7 +735,7 @@ def plot_map(plot_scale="Zoom",
 	print("**************")
 	print(ratio_bw)
 
-def get_labels_by_lenguage(dictionary, language, istatus):
+def get_labels_by_lenguage(dictionary, language, iterm):
 	"""Funciton to create labels with different languages
 	
 	Parameters:
@@ -736,6 +752,12 @@ def get_labels_by_lenguage(dictionary, language, istatus):
 	label : str
 		string containing all labels to pinclude in the map
 	"""
+	if isinstance(language, str):
+		language = [language]
+		#print("var1 is a string")
+	#print(type(language))
+	#print(language)
+
 	label = None
 	for ilanguage in language:
 		if label is None:
