@@ -201,6 +201,7 @@ def plot_map(plot_scale="Zoom",
 		if plot_obj_id[plot_scale][iwater] is True:
 			read_oms = True
 
+	water = None
 	if read_oms is True:
 		try:
 			water = ox.features.features_from_polygon(polygon, tags={'waterway': True})
@@ -392,7 +393,7 @@ def plot_map(plot_scale="Zoom",
 	
 	# figure size
 	figure_width = 5.0*plot_scale_id[plot_scale]
-	figure_height = 6.0*ratio_bw*plot_scale_id[plot_scale]
+	figure_height = 6.2*ratio_bw*plot_scale_id[plot_scale]
 	
 	# Create the base map
 	fig, ax = plt.subplots()
@@ -428,19 +429,20 @@ def plot_map(plot_scale="Zoom",
 	if var != "dis":
 		for iwater in water_objects:
 			if plot_obj_id[plot_scale][iwater] is True:
-				water_filter = water[water['waterway'].isin(water_body[iwater])]
-				water_filter.plot(ax=ax,
-					#marker=point_marker[ipoint],
-					#color=water_color[iwater],
-					edgecolor=water_color[iwater],
-					linewidths=water_lw[iwater],
-					facecolor='none',#water_color[iwater],
-					#markersize=0.0*marker_size[ipoint],
-					label=iwater+ "\n" + language_labels["Swahili"][iwater],
-					#label=get_labels_by_lenguage(language_labels, ilanguage, iwater),
-					path_effects=[path_effects.withStroke(
-							linewidth=water_lw[iwater]*1.5, foreground='w')]
-					)
+				if water is not None:
+					water_filter = water[water['waterway'].isin(water_body[iwater])]
+					water_filter.plot(ax=ax,
+						#marker=point_marker[ipoint],
+						#color=water_color[iwater],
+						edgecolor=water_color[iwater],
+						linewidths=water_lw[iwater],
+						facecolor='none',#water_color[iwater],
+						#markersize=0.0*marker_size[ipoint],
+						#label=iwater+ "\n" + language_labels["Swahili"][iwater],
+						label=get_labels_by_lenguage(language_labels, ilanguage, iwater),
+						path_effects=[path_effects.withStroke(
+								linewidth=water_lw[iwater]*1.5, foreground='w')]
+						)
 
 	# plot natural reserves
 	for ileisure in leisure_objects:
@@ -455,8 +457,8 @@ def plot_map(plot_scale="Zoom",
 					linewidths=0.1,
 					facecolor='none',#leisure_color[ileisure],
 					#markersize=0.0*leisure_size[ipoint],
-					label=ileisure+ "\n" + language_labels["Swahili"][ileisure],
-					#label=get_labels_by_lenguage(language_labels, ilanguage, ileisure),
+					#label=ileisure+ "\n" + language_labels["Swahili"][ileisure],
+					label=get_labels_by_lenguage(language_labels, ilanguage, ileisure),
 					alpha=0.5,
 					)
 			
@@ -491,8 +493,8 @@ def plot_map(plot_scale="Zoom",
 						linewidth=line_width["Main Roads"],
 						edgecolor=line_colors["Main Roads"],
 						facecolor='none',
-						label='Main Roads'+ "\n" + language_labels["Swahili"]["Main Roads"],
-						#label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
+						#label='Main Roads'+ "\n" + language_labels["Swahili"]["Main Roads"],
+						label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
 						alpha=1.0,
 						)
 		except:
@@ -534,8 +536,8 @@ def plot_map(plot_scale="Zoom",
 				#linewidths=0.1,
 				facecolor=point_color[ipoint],
 				markersize=marker_size[ipoint],
-				label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
-				#label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
+				#label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
+				label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
 				)
 	# Add point attributes
 	#if plot_scale != "Country":
@@ -549,7 +551,8 @@ def plot_map(plot_scale="Zoom",
 					linewidths=0.1,
 					facecolor=aeroway_color[ipoint],
 					markersize=aeroway_size[ipoint],
-					label=ipoint + "\n" + language_labels["Swahili"][ipoint],
+					#label=ipoint + "\n" + language_labels["Swahili"][ipoint],
+					label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
 					#label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
 					)
 
@@ -569,8 +572,8 @@ def plot_map(plot_scale="Zoom",
 				linewidths=0.1,
 				facecolor=place_color[iplaces],
 				markersize=place_size[iplaces],
-				label=iplaces + "\n" + language_labels["Swahili"][iplaces],
-				#label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
+				#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
+				label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
 				)
 
 			try:
@@ -587,9 +590,9 @@ def plot_map(plot_scale="Zoom",
 	plt.title(#"Map of "+ place_name + "" + ", Kenya\n"+
 		# English
 		get_labels_by_lenguage(language_labels, ilanguage, iwater_status) +
-		"-" + place_name +"\n"+
+		" - " + place_name +"\n"+
 		get_labels_by_lenguage(language_labels, ilanguage, iseason) +
-		" \n " + "YYYY"
+		"\n" + "YYYY"
 
 		#variable[iwater_status]+ '\n OND - YYYY' #+
 		#variable[iwater_status] + " in " + place_name +"\n"+
@@ -607,7 +610,7 @@ def plot_map(plot_scale="Zoom",
 	boundary_line, = plt.plot([], [], # Invisible in plot, visible in legend
 				color=line_colors["Administrative Boundary"],
 				ls=line_ls["Administrative Boundary"],
-				label='Boundary\nMpaka',
+				label=get_labels_by_lenguage(language_labels, ilanguage,'Boundary'),
 				)  
 
 	#rectangle_patch = mpatches.Patch(color='green', alpha=0.5, label='Rectangle patch')
@@ -621,7 +624,7 @@ def plot_map(plot_scale="Zoom",
 			bbox_to_anchor=(0.0, 0),
 			loc=2,
 			frameon=False,
-			title="Geography\nVipengele vya kijiografia",
+			title=get_labels_by_lenguage(language_labels, ilanguage,"Geography"),
 			ncols=ncol_legend
 			)
 
@@ -637,8 +640,8 @@ def plot_map(plot_scale="Zoom",
 	#for id_object in leisure_objects:
 	#	rect_patches.append(mpatches.Patch(color=leisure_color[id_object]))
 
-	label_patches = status[iwater_status]# + leisure_objects
-
+	#label_patches = status[iwater_status]# + leisure_objects
+	label_patches = status_labels[ilanguage][iwater_status]
 	# add legend
 	ax.legend(handles=rect_patches, labels=label_patches,
 			bbox_to_anchor=(1.0, 0),
@@ -681,7 +684,9 @@ def plot_map(plot_scale="Zoom",
 	#print("Axes position (left, bottom, width, height):", axes_position)
 
 	#x_ax2, y_ax2, width_ax2, height_ax2=0.50, -0.4*0.7*ratio_bw*0.25, 0.4*0.5, 0.4*0.7*ratio_bw
-	x_ax2, y_ax2, width_ax2, height_ax2=0.50+axes_position[0]*0-axes_position[2]*0.25*0, -axes_position[1]*0.475, axes_position[2]*0.25, 1-axes_position[3]
+	x_ax2, y_ax2 = 0.50+axes_position[0]*0-axes_position[2]*0.25*0, -axes_position[1]*0.475
+	
+	width_ax2, height_ax2 = axes_position[2]*0.25, 1-axes_position[3]
 	
 	# ADD LOCATION PLOT ===========================================
 	ax2 = fig.add_axes([x_ax2, y_ax2, width_ax2, height_ax2]#location: x, y
@@ -696,7 +701,7 @@ def plot_map(plot_scale="Zoom",
 	country = country.to_crs(netcdfPP)#ds.rio.crs)
 	
 	country.plot(ax=ax2, facecolor="none",
-			edgecolor="k",
+			edgecolor="gray",
 			linewidth=0.5,#line_width["Administrative Boundary"],
 			#ls=line_ls["Administrative Boundary"],
 			# legend=True, label='Boundaries',

@@ -132,6 +132,34 @@ def add_scale_bar(ax, length, location=(0.05, 0.05), linewidth=3, text='1 km'):
 def add_label_features(geodata, fontsize=6, boundbox=None, offset=0,
 	fontstyle="normal", halignament="center", alpha=1.0, color="k",
 	language="name"):
+	"""
+	Add labels to plot from geopandas
+
+	Parameters
+	----------
+
+	geodata: geopandas datasets
+	fontsize: int
+		defalult 6
+	boundbox :
+		None
+	offset: float
+		distance from the location, default 0
+	fontstyle:
+		"normal"
+	halignament:
+		"center"
+	alpha: float
+		transparency 1.0
+	color: str
+		color, default is "k"
+	language: str
+		name of the field to plot, default is "name"
+
+	Returns
+	-------
+
+	"""
 	
 	if len(geodata) > 10:
 		geodata = geodata.sample(n=10)

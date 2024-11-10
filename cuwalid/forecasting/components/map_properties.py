@@ -247,7 +247,8 @@ language_map = {
 "Swahili": "name:sw",
 }
 language_labels = {
-"English":{"Administrative Boundary": "Boundary",
+"English":{
+    	"Administrative Boundary": "Boundary",
 		"Natural Reserve": "Natural Reserve",
 		"River": "River",
 		"Stream": "Stream",
@@ -265,8 +266,10 @@ language_labels = {
 		"Groundwater": "Groundwater status",
 		"Surface": "Surface Water Status",
 		"Flood": "Flood Hazard Potential",
-		"in": "in"
-		},
+		"in": "in",
+        "Geography":"Geography",
+        'Boundary':'Boundary',
+        },
 "Swahili":{"Administrative Boundary": "Mpaka",
 		"Natural Reserve": "Natural Reserve",
 		"River": "River",
@@ -285,7 +288,9 @@ language_labels = {
 		"Groundwater": "Hali ya maji ya chini ya ardhi",
 		"Surface": "Hali ya maji ya juu ya ardhi",
 		"Flood": "Uwezekano wa hadhari\nza Mafuriko",
-		"in": "in"
+		"in": "in",
+		"Geography":"Vipengele vya kijiografia",
+        'Boundary':'Mpaka'
 		}
 }
 # season labels
@@ -320,6 +325,24 @@ status = {
 "Soil": ["Good\nHali mzuri", "Bad\nHali mbaya"],
 "Evaporation": ["Good\nHali mzuri", "Bad\nHali mbaya"],
 "Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+}
+
+status_labels = {
+"English":{"Flood": ["Low", "High"],
+"Groundwater": ["Bad", "Good"],
+"Surface": ["Bad", "Good"],
+"Soil": ["Good", "Bad"],
+"Evaporation": ["Good", "Bad"],
+"Crop": ["Good", "Bad"],
+},
+"Swahili": {"Flood": ["Low\nSio sana", "High\nNi sana"],
+"Groundwater": ["Bad\nHali mbaya", "Good\nHali mzuri"],
+"Surface": ["Bad\nHali mbaya", "Good\nHali mzuri"],
+"Soil": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+"Evaporation": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+"Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+}
+
 }
 
 var_colour = {

@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from scipy.ndimage import gaussian_filter
 from rasterio.enums import Resampling
+from matplotlib.colors import LinearSegmentedColormap
+
 
 def plot_probabilistic_tercile_forecast(data,
 		title="Probabilistic Forecasting", reproject=False,
@@ -150,6 +152,9 @@ def plot_impact_tercile_forecast(data,
 	
 	tercile = ["AN", "NN", "BN"]
 	color = ["Blues", "Greens", "Oranges"]
+	color = ["#E69F00", "#009E73", "#009E73"]
+	
+
 	
 	if ax is None:
 		fig, ax=plt.subplots(figsize=(7, 8))
@@ -159,18 +164,23 @@ def plot_impact_tercile_forecast(data,
 							)
 						
 	for itercile, icolor in zip(tercile, color):
+		# Create a custom colormap from white to a single color (e.g., green)
+		single_color_cmap = LinearSegmentedColormap.from_list("single_color", [icolor, icolor])
+		
 		data_tercile = data[itercile]
 		#print(data_tercile)
-		#data_tercile = np.where(data_tercile > 0.3, 1, np.nan)
+		data_tercile = xr.where(data_tercile > 0.3, 1, np.nan)
 		#print(data_tercile)
-		#g1 = data_tercile.plot(
-		g1 = ax.imshow(data_tercile,
-		#	x="x", y="y",
-			origin="lower",
+		#plt.imshow(data_tercile)
+		#plt.show()
+		g1 = data_tercile.plot(
+		#g1 = ax.imshow(data_tercile,
+			x="x", y="y",
+			#origin="lower",
 			vmin=0.0, vmax=1.0,
-			#cmap=icolor,#plt.get_cmap(cmap[0], 5),
+			cmap=single_color_cmap,#icolor,#plt.get_cmap(cmap[0], 5),
 			#ax=ax,
-			#add_colorbar=False,
+			add_colorbar=False,
 			)
 
 	return ax
