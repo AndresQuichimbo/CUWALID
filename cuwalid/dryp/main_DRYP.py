@@ -219,7 +219,7 @@ def run_DRYP(filename_input):
 	
 	# read overland flow boundary condition
 	print("====== > Reading surface flux boundary conditions")
-	dataFlux = read_temporal_dataset(
+	dataOF = read_temporal_dataset(
 			data_in.fname_surface.fname_TSOF,
 			data_in.data_reading['flux'],
 			data_in.dt,
@@ -227,6 +227,24 @@ def run_DRYP(filename_input):
 			data_in.ini_date,
 			)
 
+	print("====== > Reading unsaturated flux boundary conditions")
+	dataFlux = read_temporal_dataset(
+			data_in.fname_surface.fname_TSOF,
+			data_in.data_reading['flux'],
+			data_in.dt,
+			data_in.end_date,
+			data_in.ini_date,
+			)
+	
+	print("====== > Reading saturated flux boundary conditions")
+	dataFlux = read_temporal_dataset(
+			data_in.fname_surface.fname_TSOF,
+			data_in.data_reading['flux'],
+			data_in.dt,
+			data_in.end_date,
+			data_in.ini_date,
+			)
+	
 	# add variable saturated component
 	Qusz = recharge_routing(topo.grid_size)
 
