@@ -327,31 +327,60 @@ status = {
 "Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
 }
 
-status_labels = {
-"English":{"Flood": ["Low", "High"],
-"Groundwater": ["Bad", "Good"],
-"Surface": ["Bad", "Good"],
-"Soil": ["Good", "Bad"],
-"Evaporation": ["Good", "Bad"],
-"Crop": ["Good", "Bad"],
+aux_status_labels = {
+"English":{
+    "Flood": ["Low", "High"],
+	"Groundwater": ["Bad", "Good"],
+	"Surface": ["Bad", "Good"],
+	"Soil": ["Good", "Bad"],
+	"Evaporation": ["Good", "Bad"],
+	"Crop": ["Good", "Bad"],
 },
-"Swahili": {"Flood": ["Low\nSio sana", "High\nNi sana"],
-"Groundwater": ["Bad\nHali mbaya", "Good\nHali mzuri"],
-"Surface": ["Bad\nHali mbaya", "Good\nHali mzuri"],
-"Soil": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-"Evaporation": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-"Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+"Swahili": {
+    "Flood": ["Low\nSio sana", "High\nNi sana"],
+	"Groundwater": ["Bad\nHali mbaya", "Good\nHali mzuri"],
+	"Surface": ["Bad\nHali mbaya", "Good\nHali mzuri"],
+	"Soil": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+	"Evaporation": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+	"Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+}
 }
 
-}
-
-var_colour = {
+aux_var_colour = {
 "Groundwater": ["#E69F00", "#009E73"],
 "Surface": ["#E69F00", "#009E73"],
 "Soil": ["darkviolet", "seagreen"],
 "Evaporation": ["darkviolet", "seagreen"],
 "Flood": ["#009E73", "#E69F00"],
 "Crop": ["#E69F00", "#009E73"],
+}
+
+status_labels = {
+"English":{
+    "Flood": ["Low", "NN", "High"],
+	"Groundwater": ["Good","NN", "Bad"],#"Bad", "Good"
+	"Surface": ["Good","NN", "Bad"],
+	"Soil": ["Good","NN", "Bad"],
+	"Evaporation": ["Good", "NN", "Bad"],
+	"Crop": ["Good", "NN", "Bad"],
+},
+"Swahili": {
+    "Flood": ["Low\nSio sana", "High\nNi sana"],
+	"Groundwater": ["Bad\nHali mbaya", "Good\nHali mzuri"],
+	"Surface": ["Bad\nHali mbaya", "Good\nHali mzuri"],
+	"Soil": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+	"Evaporation": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+	"Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+}
+}
+
+var_colour = {
+"Groundwater": ["#009E73", "#E69F00", "#E41A1C"],
+"Surface": ["#009E73", "#E69F00", "#E41A1C"],
+"Soil": ["#009E73", "#E69F00", "#E41A1C"],
+"Evaporation": ["#009E73", "#E69F00", "#E41A1C"],
+"Flood": ["#E41A1C", "#E69F00", "#009E73"],
+"Crop": ["#009E73", "#E69F00", "#E41A1C"],
 }
 
 # ward name and center (lat, lon)

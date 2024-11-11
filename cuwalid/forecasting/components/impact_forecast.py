@@ -402,7 +402,8 @@ def plot_map(plot_scale="Zoom",
 
 	cuwalidplt.plot_impact_tercile_forecast(ds,
 		title="Impact based Forecast", reproject=False,
-		fshapefile=None, fmask=None, ax=ax)
+		fshapefile=None, fmask=None, ax=ax,
+		color=var_colour[iwater_status])
 	# mask values outside the map extend
 	#time_plot = 0
 	#mask = rescaled.isel(time=time_plot).values
@@ -683,11 +684,27 @@ def plot_map(plot_scale="Zoom",
 	# Print the location and size (left, bottom, width, height)
 	#print("Axes position (left, bottom, width, height):", axes_position)
 
-	#x_ax2, y_ax2, width_ax2, height_ax2=0.50, -0.4*0.7*ratio_bw*0.25, 0.4*0.5, 0.4*0.7*ratio_bw
-	x_ax2, y_ax2 = 0.50+axes_position[0]*0-axes_position[2]*0.25*0, -axes_position[1]*0.475
+	# location plot x-location 
+	x_ax2 = 0.50 #+ axes_position[0]*0-axes_position[2]*0.25*0
 	
-	width_ax2, height_ax2 = axes_position[2]*0.25, 1-axes_position[3]
-	
+	# location plot y-location 
+	y_ax2 = -axes_position[1]*0.475
+
+	# location plot, width and height
+	width_ax2 = axes_position[2]*0.25*0.9
+	height_ax2 = (1-axes_position[3])*0.9
+
+
+	ax_scale = 0.9
+	#reduce soze when length is lower than 1.0
+	if ratio_bw < 1.2:
+		#ax_scale = 0.95
+		if ratio_bw < 0.90:
+			ax_scale = ratio_bw
+		height_ax2 = height_ax2*ax_scale
+		width_ax2 = width_ax2*ax_scale
+		y_ax2 = y_ax2*ax_scale*0.70
+
 	# ADD LOCATION PLOT ===========================================
 	ax2 = fig.add_axes([x_ax2, y_ax2, width_ax2, height_ax2]#location: x, y
 	#	0.4*0.5,# axes width,
@@ -701,7 +718,7 @@ def plot_map(plot_scale="Zoom",
 	country = country.to_crs(netcdfPP)#ds.rio.crs)
 	
 	country.plot(ax=ax2, facecolor="none",
-			edgecolor="gray",
+			edgecolor="silver",
 			linewidth=0.5,#line_width["Administrative Boundary"],
 			#ls=line_ls["Administrative Boundary"],
 			# legend=True, label='Boundaries',

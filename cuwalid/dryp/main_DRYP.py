@@ -396,7 +396,7 @@ def run_DRYP(filename_input):
 				
 				# get rainfall
 				rain = PRE.get_one_step_dataset(t_pre, data_in.fname_TSPre, 'pre')
-				#rain = rain*0.5 # This is specific for IMERG 30 min resolution only
+				rain = rain*0.5 # This is specific for IMERG 30 min resolution only
 				# for the forcast TRAINING.
 				#rain[rain>300] = 300.
 				#print("rain", np.where(np.isnan(rain[act_nodes])))
@@ -413,6 +413,7 @@ def run_DRYP(filename_input):
 					soil.theta_wp,
 					head,
 					)				
+				
 				#print("pet", PET[act_nodes])
 				# check if interception is activated
 				if vegetation.av is None:

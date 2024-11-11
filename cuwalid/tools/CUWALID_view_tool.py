@@ -124,7 +124,8 @@ def plot_probabilistic_tercile_forecast(data,
 
 def plot_impact_tercile_forecast(data,
 		title="Impact based Forecast", reproject=False,
-		fshapefile=None, fmask=None, ax = None):
+		fshapefile=None, fmask=None, ax=None,
+		color=["#E69F00", "#009E73", "#E41A1C"]):
 	"""This function create a tercile plot
 	
 	Parameters
@@ -151,8 +152,8 @@ def plot_impact_tercile_forecast(data,
 	data = data.where(data > 0.3333, np.nan)
 	
 	tercile = ["AN", "NN", "BN"]
-	color = ["Blues", "Greens", "Oranges"]
-	color = ["#E69F00", "#009E73", "#009E73"]
+	##color = ["Blues", "Greens", "Oranges"]
+	#color = ["#E69F00", "#009E73", "#E41A1C"]
 	
 
 	
