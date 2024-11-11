@@ -269,6 +269,7 @@ language_labels = {
 		"in": "in",
         "Geography":"Geography",
         'Boundary':'Boundary',
+        'Location': 'Location',
         },
 "Swahili":{"Administrative Boundary": "Mpaka",
 		"Natural Reserve": "Natural Reserve",
@@ -290,7 +291,8 @@ language_labels = {
 		"Flood": "Uwezekano wa hadhari\nza Mafuriko",
 		"in": "in",
 		"Geography":"Vipengele vya kijiografia",
-        'Boundary':'Mpaka'
+        'Boundary':'Mpaka',
+        'Location': 'Location',
 		}
 }
 # season labels

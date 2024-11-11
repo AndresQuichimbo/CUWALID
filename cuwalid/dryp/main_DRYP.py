@@ -219,27 +219,29 @@ def run_DRYP(filename_input):
 	
 	# read overland flow boundary condition
 	print("====== > Reading surface flux boundary conditions")
-	dataOF = read_temporal_dataset(
-			data_in.fname_surface.fname_TSOF,
-			data_in.data_reading['flux'],
+	fluxOF = read_temporal_dataset(
+			data_in.fname_TSOF,
+			data_in.data_reading['fluxOF'],
 			data_in.dt,
 			data_in.end_date,
 			data_in.ini_date,
 			)
 
+	# read overland flow boundary condition
 	print("====== > Reading unsaturated flux boundary conditions")
-	dataFlux = read_temporal_dataset(
-			data_in.fname_surface.fname_TSOF,
-			data_in.data_reading['flux'],
+	fluxUZ = read_temporal_dataset(
+			data_in.fname_TSUZ,
+			data_in.data_reading['fluxUZ'],
 			data_in.dt,
 			data_in.end_date,
 			data_in.ini_date,
 			)
 	
+	# read overland flow boundary condition units should be in m3 s-1
 	print("====== > Reading saturated flux boundary conditions")
-	dataFlux = read_temporal_dataset(
-			data_in.fname_surface.fname_TSOF,
-			data_in.data_reading['flux'],
+	fluxSZ = read_temporal_dataset(
+			data_in.fname_TSSZ,
+			data_in.data_reading['fluxSZ'],
 			data_in.dt,
 			data_in.end_date,
 			data_in.ini_date,
@@ -287,19 +289,28 @@ def run_DRYP(filename_input):
 	
 	if water_bodies.id_nodes is not None:
 		pnds = ponds(water_bodies.pnds_Amax, water_bodies.pnds_hmax) # ponds	
+	
 	# read location of point boundary conditions
-	#if dataFlux.data_set is not None:
-	#	if data_in.data_reading['abs'] == 0:
-	#		idFluxOF = extract_id_from_coords(
-	#			env_state.grid,
-	#			data_in.filename_OF_points
-	#			)
-	#	
-	#	elif data_in.data_reading['abs'] == 2:
-	#		idFluxOF = extract_id_from_raster(
-	#			env_state.grid,
-	#			data_in.filename_OF_points
-	#			)
+	if fluxOF.data_set is not None:
+		if data_in.data_reading['fluxOF'] == 0:
+			idFluxOF, idFluxOF_act = extract_id_from_coords(
+				grid, data_in.fname_surface.path_of_bc_flux)
+
+	if fluxUZ.data_set is not None:
+		if data_in.data_reading['fluxUZ'] == 0:
+			idFluxUZ, idFluxUZ_act = extract_id_from_coords(
+				grid, data_in.fname_soil.path_uz_bc_flux)
+
+	if fluxSZ.data_set is not None:
+		if data_in.data_reading['fluxSZ'] == 0:
+			idFluxSZ, idFluxSZ_act = extract_id_from_coords(
+				grid, data_in.fname_aquifer.path_sz_bc_flux)
+			
+		#elif data_in.data_reading['abs'] == 2:
+		#	idFluxOF = extract_id_from_raster(
+		#		env_state.grid,
+		#		data_in.filename_OF_points
+		#		)
 	
 	t = 0	
 	t_eto = 0	
@@ -385,7 +396,7 @@ def run_DRYP(filename_input):
 			   data_in.dt_results, data_in.save_results,
 			   data_in.store.var_avg)
 	
-	# grid and average results from the riparian area
+	# create grid and average results from the riparian area
 	if riv_nodes.size > 0:
 		grid_rpvar = GlobalGridVar(data_in.ini_date,
 			   data_in.dt_results, data_in.save_netcdf,
@@ -394,7 +405,7 @@ def run_DRYP(filename_input):
 			   data_in.dt_results, data_in.save_results,
 			   data_in.store.var_grid_rp)
 
-	# grid and average results from the water bodies (ponds)
+	# create grid and average results from the water bodies (ponds)
 	if water_bodies.id_nodes is not None:
 		grid_pndvar = GlobalGridVar(data_in.ini_date,
 			   data_in.dt_results, data_in.save_netcdf,
@@ -422,6 +433,12 @@ def run_DRYP(filename_input):
 				# get potential evapotranspiration
 				PET = ET0.get_one_step_dataset(t_eto, data_in.fname_TSMeteo, 'pet')
 				#PET[PET>1] = 1.0
+				
+				# read flux boundary conditions for all components
+				# add data abstractions/sink/source points
+				# select row from dataframe and add to the excess component
+				if fluxUZ.data_set is not None:					
+					rain[idFluxUZ] += fluxUZ.get_point_dataset_one_step(t_abs)
 				
 				# not in used, NOT DELETE
 				# estimate abstractions
@@ -610,8 +627,8 @@ def run_DRYP(filename_input):
 				
 				# add data abstractions/sink/source points
 				# select row from dataframe and add to the excess component
-				#if dataFlux.data_set is not None:					
-				#	runoff[idFluxOF] += dataFlux.get_point_dataset_one_step(t_abs)
+				if fluxOF.data_set is not None:					
+					runoff[idFluxOF] += fluxOF.get_point_dataset_one_step(t_abs)
 				
 				# RUNOFF: estimate runoff---------------------------------------
 				# all variables with containing length must be changed to meters [m]
@@ -700,7 +717,11 @@ def run_DRYP(filename_input):
 				#	lai_mb.append(0)
 				#	kc_mb.append(0)
 				#	kcrip_mb.append(0)
-												
+				# add data abstractions/sink/source points
+				# select row from dataframe and add to the excess component
+				if fluxSZ.data_set is not None:					
+					rch_agg[idFluxSZ] += fluxSZ.get_point_dataset_one_step(t_abs)
+				
 				# GROUNDWATER --------------------------------------------------
 				# activate groundwater component (gw)
 				if data_in.run_GW > 0:

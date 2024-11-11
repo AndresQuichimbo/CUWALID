@@ -101,8 +101,9 @@ class read_temporal_dataset():
 		else:
 			
 			self.data_set = None
-			print(filename, 'Flux data not provided')
-				
+			#print(filename, 'Flux data not provided')
+			print('Flux dataset.....................not provided')
+
 		# find precipitation and PET for an specific time step
 	def get_dataset_one_step(self, t, env_state, file_type, field):#, filename):
 		"""

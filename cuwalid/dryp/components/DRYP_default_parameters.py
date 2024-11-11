@@ -15,6 +15,8 @@ default_input = {
       "path_riv_len": None, # river lenght
       "path_riv_width": None, # river width
       "path_riv_elev": None, # tiver stream bottom elevation
+      "path_of_bc_flux": None, # flux boundary condition overland flow
+      
    },
 
    "VEGETATION": {
@@ -35,7 +37,8 @@ default_input = {
       "path_uz_sigmaksat": None,
       "path_uz_theta": None, # initial conditions
       "path_riv_ksat": None,
-      "path_uz_bottomksat": None
+      "path_uz_bottomksat": None,
+      "path_uz_bc_flux": None,
    },
 
    "SATURATED": {
@@ -57,7 +60,10 @@ default_input = {
       "path_aof": None,
   		"path_lai": None,
 		"path_savi": None,
-		"path_kc": None
+		"path_kc": None,
+   	"path_TSOF": None,
+   	"path_TSUZ": None,
+   	"path_TSSZ": None,
    },
 
    "OUTPUT": {

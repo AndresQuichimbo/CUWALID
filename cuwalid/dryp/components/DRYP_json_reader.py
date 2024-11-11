@@ -150,6 +150,9 @@ class get_model_settings(object):
 		self.fname_TSlai = dryp_config["METEO"]["path_lai"]
 		self.fname_TSsavi = dryp_config["METEO"]["path_savi"]
 		self.fname_TSkc = dryp_config["METEO"]["path_kc"]
+		self.fname_TSOF = dryp_config["METEO"]["path_TSOF"]
+		self.fname_TSUZ = dryp_config["METEO"]["path_TSUZ"]
+		self.fname_TSSZ = dryp_config["METEO"]["path_TSSZ"]
 
 		# READ DATASETS PROJECTION
 		self.fname_proj = None
@@ -266,20 +269,22 @@ class get_list_of_surface_files(object):
         if self.fname_Ksat is None:
             self.fname_Ksat = dryp_config["UNSATURATED"]["path_uz_ksat"]
         self.fname_Q_ini = dryp_config["UNSATURATED"]["path_riv_ksat"]
+        
+		# read boundary conditions 
+        self.fname_of_bc_flux = dryp_config["TERRAIN"]["path_of_bc_flux"]
+        
+		#if len(dryp_config.get("drylandmodel", {})) == 96:
+        #    self.fname_bc = dryp_config["OUTPUT"]["path_of_settings"]
+        #else:
+        #    self.fname_bc = None
 
-        # TODO: Check this if statement
-        if len(dryp_config.get("drylandmodel", {})) == 96:
-            self.fname_bc = dryp_config["OUTPUT"]["path_of_settings"]
-        else:
-            self.fname_bc = None
+        #self.fname_TSOF = None
+        #self.filename_OF_points = None
 
-        self.fname_TSOF = None
-        self.filename_OF_points = None
-
-        if self.fname_bc is not None and os.path.exists(self.fname_bc):
-            fbc = pd.read_csv(self.fname_bc)
-            self.fname_TSOF = fbc.OFBC[1]
-            self.filename_OF_points = fbc.OFBC[3]
+        #if self.fname_of_bc_flux is not None:# and os.path.exists(self.fname_bc):
+        #    fbc = pd.read_csv(self.fname_bc)
+        #    #self.fname_TSOF = fbc.OFBC[1]
+        #    #self.filename_OF_points = fbc.OFBC[3]
 
         self.fname_bathymetry = None
         if dryp_config["OUTPUT"].get("path_gw_settings") is not None and os.path.exists(dryp_config["OUTPUT"]["path_gw_settings"]):
@@ -317,6 +322,9 @@ class get_list_of_soil_files(object):
         self.fname_sigma_ks = dryp_config["UNSATURATED"]["path_uz_sigmaksat"]
 
         self.fname_theta = dryp_config["UNSATURATED"]["path_uz_theta"]  # Initial water content [-]
+
+        self.fname_uz_bc_flux = dryp_config["UNSATURATED"]["path_uz_bc_flux"]
+        
 
         self.kdt_r = float(factors["GLOBAL_FACTORS"]["uz_kdt"])
         self.kDroot = float(factors["GLOBAL_FACTORS"]["uz_kdroot"])  # k for soil depth
@@ -389,6 +397,9 @@ class get_list_of_groundwater_files(object):
         self.fname_aquifertype = dryp_config["SATURATED"]["path_sz_type"]
         #self.fname_bathymetry = dryp_config["GROUNDWATER"]["path_gw_lake_elev"]
         self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depth"]
+
+		# read boundary conditions 
+        self.fname_sz_bc_flux = dryp_config["SATURATED"]["path_sz_bc_flux"]
 
         self.fname_SZ_botb = None
         self.fname_SZ_Ksatb = None
