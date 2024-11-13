@@ -21,7 +21,7 @@ class get_paths(object):
 				os.path.join(os.path.dirname(__file__), '..', default_dataset.shapefile_country_dic[region]))
 			shapefile_county = os.path.abspath(
 				os.path.join(
-					os.path.dirname(__file__), '..', default_dataset.shapefile_county_dic[country_name.lower()]))
+					os.path.dirname(__file__), '..', default_dataset.shapefile_level_1_dic[country_name.lower()]))
 			# rewrite
 			if plot_scale == "Wards":
 				shapefile_wards = os.path.abspath(
@@ -164,7 +164,7 @@ class read_dataset_list_json(object):
 			self.name_county_shp = dataset_list.get("name_county_shp")
 			self.name_field_shp = dataset_list.get("name_field_shp")
 			self.shapefile_country_dic = dataset_list.get("shapefile_country_dic")
-			self.shapefile_county_dic = dataset_list.get("shapefile_county_dic")
+			self.shapefile_level_1_dic = dataset_list.get("shapefile_level_1_dic")
 			self.shapefile_wards_dic = dataset_list.get("shapefile_wards_dic")
 			self.fname_places_list_file = dataset_list.get("fname_places_list_file")
 			self.rivers_shape_path = dataset_list.get("rivers_shape_path")
@@ -176,7 +176,7 @@ class read_dataset_list_json(object):
 			self.name_county_shp = default_dataset.name_county_shp
 			self.name_field_shp = default_dataset.name_field_shp
 			self.shapefile_country_dic = default_dataset.shapefile_country_dic
-			self.shapefile_county_dic = default_dataset.shapefile_county_dic
+			self.shapefile_level_1_dic = default_dataset.shapefile_level_1_dic
 			self.shapefile_wards_dic = default_dataset.shapefile_wards_dic 
 			self.fname_places_list_file = default_dataset.fname_places_list_file
 			self.rivers_shape_path = default_dataset.rivers_shape_path

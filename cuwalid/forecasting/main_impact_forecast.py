@@ -105,7 +105,7 @@ def plot_maps_json(config_file):
 	#print(dataset_parameter_list)
 	if dataset_parameter_list is not None:
 		dataset_parameters = paths.read_dataset_list_json(dataset_parameter_list)
-		#print(dataset_parameters.code_county_shp,dataset_parameters.shapefile_county_dic,
+		#print(dataset_parameters.code_county_shp,dataset_parameters.shapefile_level_1_dic,
 		#						dataset_parameters.name_county_shp)
 
 
@@ -139,13 +139,13 @@ def plot_maps_json(config_file):
 		#for iplace in place_name:
 		place_name, place_code, iname_short_country = get_list_places(
 							icountry,
-							dataset_parameters.shapefile_county_dic,
+							dataset_parameters.shapefile_level_1_dic,
 							dataset_parameters.name_county_shp,
 							dataset_parameters.code_county_shp,
 							dataset_parameters.name_short_country
 							#place_name=place_name
 							)
-		#print(dataset_parameters.shapefile_county_dic[icountry])
+		#print(dataset_parameters.shapefile_level_1_dic[icountry])
 		if create_map is True:	
 			print("Plot Impact forecasting maps")
 			call_plot_maps(
@@ -163,7 +163,7 @@ def plot_maps_json(config_file):
 				threshold_path=threshold_path,
 				mask_path=mask_path,
 				river_path=river_path,
-				shape_path=dataset_parameters.shapefile_county_dic[icountry]
+				shape_path=dataset_parameters.shapefile_level_1_dic[icountry]
 				)
 		# function to get netcdf files from regional files at each selected place
        	#forecast.extract_forecasting_variable(model_path, forecast_model_name, season, variables, postpp_path)
@@ -186,14 +186,14 @@ def plot_maps_json(config_file):
 							variables=water_status,
 							postpp_path=pp_path,
 							netcdf_path=netcdf_path,
-							shapefile_path=dataset_parameters.shapefile_county_dic[icountry],
+							shapefile_path=dataset_parameters.shapefile_level_1_dic[icountry],
 							place_name=place_name,
 							place_code=place_code,
 							iname_field_shp=dataset_parameters.code_county_shp[icountry],
 							save_nc=create_dataset
 							)
 				
-def get_list_places(country, shapefile_county_dic, name_county_shp,
+def get_list_places(country, shapefile_level_1_dic, name_county_shp,
 					code_county_shp, name_short_country):#, place_name=None):
 	"""Function to get list of countries and places to print and plot
 	
@@ -209,7 +209,7 @@ def get_list_places(country, shapefile_county_dic, name_county_shp,
 	
 	"""
 
-	shapefile_county = shapefile_county_dic[country.lower()]
+	shapefile_county = shapefile_level_1_dic[country.lower()]
 	name_short_country = name_short_country[country.lower()]
 	gdf = gpd.read_file(shapefile_county)
 	place_name = gdf[name_county_shp[country.lower()]].tolist()

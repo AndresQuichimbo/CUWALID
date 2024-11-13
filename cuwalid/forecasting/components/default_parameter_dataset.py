@@ -41,7 +41,13 @@ shapefile_country_dic = {
 	"region": "forecasting_dataset/HAD/gis/Horn_Africa/Horn_africa_contry.shp"
 	}
 
-shapefile_county_dic = {
+shapefile_level_1_dic = {
+	"kenya": 'forecasting_dataset/kenya/kenya-county/ke_county.shp',
+	"ethiopia": 'forecasting_dataset/ethiopia/Export_admin2.shp',
+	"somalia": 'forecasting_dataset/somalia/somalia_regions.shp',
+	}
+
+shapefile_level_2_dic = {
 	"kenya": 'forecasting_dataset/kenya/kenya-county/ke_county.shp',
 	"ethiopia": 'forecasting_dataset/ethiopia/Export_admin2.shp',
 	"somalia": 'forecasting_dataset/somalia/somalia_regions.shp',

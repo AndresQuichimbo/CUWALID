@@ -130,10 +130,10 @@ def create_raster_river_network(fname, threshold, fname_out,
 		file can be created by get_watershed_area() funtion
 	threshold : float
 		number of cells otr area (if cell_area is False)
-	fname_out : stra
+	fname_out : str
 		filename of the output file
 	cell_area : Bool
-		True when area is provided, False when number of cell is
+		False when area is provided, True when number of cell is
 		provided
 	fill_value : float
 		river lenght [meters]
@@ -616,7 +616,7 @@ def clapp_horner_retention_curve(ipsi, porosity, psi, lambdas):
 		water content at the 
 	"""
 	
-	return porosity*np.power(ipsi/psi, -lambdas)
+	return porosity*np.power(np.abs(ipsi)/np.abs(psi), -lambdas)
 
 def calculate_soil_paramters(porosity, psi, lambdas, psi_fc=336.506, psi_wp=15295.743):
 	"""This function calculate the water content at
@@ -652,7 +652,7 @@ def calculate_soil_paramters(porosity, psi, lambdas, psi_fc=336.506, psi_wp=1529
 	field_capacity = clapp_horner_retention_curve(psi_fc, porosity, psi, lambdas)
 
 	# calculate water content at wilting point
-	wilting_point = clapp_horner_retention_curve(psi_fc, porosity, psi, lambdas)
+	wilting_point = clapp_horner_retention_curve(psi_wp, porosity, psi, lambdas)
 	
 	# calculate availble water content
 	available_water_content = field_capacity - wilting_point
