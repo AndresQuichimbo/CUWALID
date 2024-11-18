@@ -35,7 +35,8 @@ class get_model_settings(object):
 		
 		with open(filename_simpar, 'r') as f:
 			settings_config = json.load(f)
-
+		
+		print(settings_config)
 		print()
 		print("Reading settings file...")
 		print()

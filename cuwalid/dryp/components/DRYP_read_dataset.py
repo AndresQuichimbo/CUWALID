@@ -218,6 +218,17 @@ class read_dataset_interp(object):
 		self.read_before = 1
 		self.fill_value = 1
 		self.file_format = file_format
+		
+		if file_format > 4:
+			print("Provide a valid data type to enable reading")
+			print("Use: 0 for csv files")
+			print("Use: 1 for netCDF files")
+			print("Use: 2 for YEARLY netCDF files")
+			print("Use: 3 for MONTHLY netCDF files")
+			print("Use: 4 for DAILY netCDF files")
+			raise Exception("Change 'data_reading' options in settings file")
+			
+			
 		self.reproject_ds = reproject
 		self.interpolate_ds = interpolate
 		self.read_before_ds = True
@@ -389,9 +400,26 @@ class read_dataset_interp(object):
 					fname_ds = fname_ds.replace("MM", str_month)
 					fname_ds = fname_ds.replace("DD", str_day)
 
-				#print(fname_ds)
 				# read dataset
-				self.ds = xr.open_dataset(fname_ds)
+				if self.file_format == 5:
+					meta = xr.open_dataset(fname_ds)
+					meta = meta.assign_coords({
+					    'y': meta['projection_y_coordinate'].load(),
+					    'x': meta['projection_x_coordinate'].load()
+					    })
+					#mask = meta['regions']
+					#mask.plot(cmap='turbo', levels=5)
+
+					self.ds = xr.open_dataset(fname_ds, group=idate_ds.year)
+					self.ds = self.ds.sum(dim=('time'), skipna=True)
+					self.ds = self.ds.assign_coords({
+					    'y': meta['projection_y_coordinate'].load(),
+					    'x': meta['projection_x_coordinate'].load()
+					    })
+					del(meta)
+
+				else:
+					self.ds = xr.open_dataset(fname_ds)
 				# check if dimension names are compatible with DRYP names
 				if 'latitude' in list(self.ds.coords):
 					self.ds = self.ds.rename({'longitude':'lon', 'latitude':'lat'})
