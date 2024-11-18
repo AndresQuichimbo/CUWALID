@@ -5,8 +5,8 @@ import matplotlib.patches as mpatches
 import numpy as np
 import rasterio
 import xarray as xr
-
-
+from bidi import algorithm as bidialg
+import arabic_reshaper
 """
 A file containing helper functions to assist with the forecasting element
 
@@ -191,6 +191,9 @@ def add_label_features(geodata, fontsize=6, boundbox=None, offset=0,
 		#print(x_mid, y_mid, boundbox)
 		#print(iname)
 		if iname is not None:
+			#print(iname)
+			#iname = bidialg.get_display(iname)
+			#print(iname)
 			plt.text(x_mid+offset, y_mid+offset, s=iname,
 				fontsize=fontsize, fontstyle=fontstyle,
 				horizontalalignment=halignament, alpha=alpha,

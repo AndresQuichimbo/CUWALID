@@ -18,6 +18,8 @@ from cuwalid.forecasting.components.helper_functions import add_label_features, 
 from cuwalid.forecasting.components.map_properties import *
 from cuwalid.forecasting.components.read_paths import *
 import cuwalid.tools.CUWALID_view_tool as cuwalidplt
+import arabic_reshaper
+from bidi import algorithm as bidialg
 #import pandas as pd
 #from cmcrameri import cm
 #sys.path.append('C:/Users/Edisson/Documents/GitHub/DRYPv2.0.1')
@@ -59,7 +61,7 @@ def plot_map(plot_scale="Zoom",
 			river_path=None,
 			fname_output=None,
 			place_code_field=False,
-			shape_path=None):
+			shape_path_list=None):
 	"""Plot maps
 	
 	Parameters:
@@ -92,7 +94,7 @@ def plot_map(plot_scale="Zoom",
 	# use this function to cleam some variables and names in the code
 	paths = get_paths(plot_scale, region, country_name,
 				   	iwater_status, iyear, iseason,
-					shape_path=shape_path,
+					shape_path_list=shape_path_list,
 					place_code_field=place_code_field,
 					netcdf_path=netcdf_path,
 					threshold_path=threshold_path,
@@ -337,6 +339,10 @@ def plot_map(plot_scale="Zoom",
 					  drop=False
 					  )
 
+	level_2_region = None
+	if paths.shapefile_level_2 is not None:
+		level_2_region = gpd.read_file(paths.shapefile_level_2)
+		level_2_region = gpd.clip(level_2_region, polygon)
 		## Clip data thresholds
 		#ds_threshold = ds_thrshold.rio.clip(
 		#			wards.geometry.values, wards.crs,
@@ -422,6 +428,9 @@ def plot_map(plot_scale="Zoom",
 	#			add_colorbar=False
 	#			)
 
+	# Add sublevels for padmin boudaries
+	if level_2_region is not None:
+		level_2_region.plot(ax=ax, color="lightgray", label='Admin Boundaries')
 	# Add river layers from other datasets
 	#rivers.plot(ax=ax, color='#0099ff', label='Rivers')
 
@@ -678,6 +687,8 @@ def plot_map(plot_scale="Zoom",
 	plt.xlabel("")
 	plt.tight_layout()
 
+	# ADD LOCATION PLOT ===========================================
+
 	# Get the position of the axes in the figure (as a Bbox)
 	axes_position = ax.get_position().bounds
 
@@ -694,28 +705,34 @@ def plot_map(plot_scale="Zoom",
 	width_ax2 = axes_position[2]*0.25*0.9
 	height_ax2 = (1-axes_position[3])*0.9
 
+	# read map location
+	country = gpd.read_file(paths.fname_place)
+	country.crs = mapPP
+	country = country.to_crs(netcdfPP)#ds.rio.crs)
+	extend_lc = country.total_bounds
+
+	# calulate ration of figure heigth/width
+	ratio_lc = np.abs((extend_lc[1]-extend_lc[3])/
+				   (extend_lc[0]-extend_lc[2]))
+
+	if ratio_lc > 1.2:
+		height_ax2 = height_ax2*0.85
+		y_ax2 = y_ax2*0.25
 
 	ax_scale = 0.9
+	
 	#reduce soze when length is lower than 1.0
 	if ratio_bw < 1.2:
 		#ax_scale = 0.95
 		if ratio_bw < 0.90:
 			ax_scale = ratio_bw
-		height_ax2 = height_ax2*ax_scale
+		height_ax2 = height_ax2*ax_scale#*0.9
 		width_ax2 = width_ax2*ax_scale
 		y_ax2 = y_ax2*ax_scale*0.70
 
-	# ADD LOCATION PLOT ===========================================
 	ax2 = fig.add_axes([x_ax2, y_ax2, width_ax2, height_ax2]#location: x, y
-	#	0.4*0.5,# axes width,
-	#	0.4*0.7*ratio_bw # axes height
-	#	]
 		)
-	ax2.set_title("Location")
-	#country = gpd.read_file(paths.shapefile_country)
-	country = gpd.read_file(shape_path)
-	country.crs = mapPP
-	country = country.to_crs(netcdfPP)#ds.rio.crs)
+	#ax2.set_title("Location")
 	
 	country.plot(ax=ax2, facecolor="none",
 			edgecolor="silver",

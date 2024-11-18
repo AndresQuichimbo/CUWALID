@@ -96,11 +96,12 @@ def plot_maps_json(config_file):
 	netcdf_path = config.get("netcdf_path", None)
 	threshold_path = config.get("threshold_path", None)
 	mask_path = config["mask_path"]
-	river_path = config["river_path"]
+	river_path = config.get("river_path", None)
 	shape_path = config.get("shape_path", None)
 	prev_output_path = config.get("prev_output_path", None)
 	pp_path = config.get("pp_path", None)
 	model_name = config.get("model_name", None)
+	#print(river_path)
 	dataset_parameter_list = config.get("parameter_dataset_list", None)
 	#print(dataset_parameter_list)
 	if dataset_parameter_list is not None:
@@ -163,7 +164,8 @@ def plot_maps_json(config_file):
 				threshold_path=threshold_path,
 				mask_path=mask_path,
 				river_path=river_path,
-				shape_path=dataset_parameters.shapefile_level_1_dic[icountry]
+				#shape_path=dataset_parameters.shapefile_level_1_dic[icountry]
+				shape_path=dataset_parameter_list
 				)
 		# function to get netcdf files from regional files at each selected place
        	#forecast.extract_forecasting_variable(model_path, forecast_model_name, season, variables, postpp_path)
@@ -350,7 +352,7 @@ def call_plot_maps(plot_scales=["Zoom"],
 								iyear=year,
 								iseason=iiseason,
 								ilanguage=language,
-								shape_path=shape_path,
+								shape_path_list=shape_path,
 								output_dir=output_dir,
 								netcdf_path=netcdf_path,
 								threshold_path=threshold_path,

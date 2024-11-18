@@ -7,41 +7,86 @@ import cuwalid.forecasting.components.default_parameter_dataset as default_datas
 
 class get_paths(object):
 	"""Function to read all variables and path required for running the 
-	impact based forecascasting component"""
+	impact based forecascasting component. This fuction first check if
+	a set of datasets has been provided, otherwise it look at the default
+	dataset (Africa region). All paths and variables available for the specied
+	place are uploaded. The output python object is used in the impact_forecasting.py
+	function"""
 	
 	def __init__(self, plot_scale, region, country_name, iwater_status,
-			  iyear, iseason, shape_path=None, place_code_field=False,
+			  iyear, iseason, shape_path_list=None, place_code_field=False,
 			  netcdf_path=None, threshold_path=None, mask_path=None,
-			  river_path=None,# output_path=None,
+			  river_shapefile_path=None, river_path=None,# output_path=None,
 			  ):
 		"""Initialize paths and variables name
+
+		Parameters
+		----------
+		plot_scale : str
+		    The scale factor for plotting. Determines the zoom level or extent of the plot.
+		region : str
+		    The name of the geographical region to analyze or plot (e.g., "Europe", "Asia").
+		country_name : str
+		    The name of the specific country within the region to focus on (e.g., "France", "Kenya").
+		iwater_status : str
+		    A status indicator related to water, where the meaning of values is defined by the dataset.
+		iyear : int
+		    The year of the data to be processed or analyzed (e.g., 2023).
+		iseason : str
+		    The season of the data to be analyzed (e.g., "MAM", "OND").
+		shape_path : str, optional
+		    Path to the shapefile for geographical boundaries. Default is None.
+		place_code_field : bool, optional
+		    Indicates whether a place code field or name should be used for place names. Default is False.
+		netcdf_path : str, optional
+		    Path to the NetCDF file containing relevant data. Default is None.
+		threshold_path : str, optional
+		    Path to a file containing threshold values, used in analysis or visualization. Default is None.
+		mask_path : str, optional
+		    Path to the mask file to apply for filtering data or restricting the region. Default is None.
+		river_path : str, optional
+		    Path to the file containing river data, if applicable. Default is None.
 		"""
-		if shape_path == None:
+		# read dataset from json file provided as shape_path
+		dataset_list = read_dataset_list_json(shape_path_list)
+		if shape_path_list is None:
 			shapefile_country = os.path.abspath(
 				os.path.join(os.path.dirname(__file__), '..', default_dataset.shapefile_country_dic[region]))
 			shapefile_county = os.path.abspath(
 				os.path.join(
 					os.path.dirname(__file__), '..', default_dataset.shapefile_level_1_dic[country_name.lower()]))
+			
+			shapefile_level_2 = os.path.abspath(
+				os.path.join(
+					os.path.dirname(__file__), '..', default_dataset.shapefile_level_2_dic[country_name.lower()]))
+			
 			# rewrite
 			if plot_scale == "Wards":
 				shapefile_wards = os.path.abspath(
 					os.path.join(
 						os.path.dirname(__file__), '..', default_dataset.shapefile_wards_dic[country_name.lower()]))
 		else:
+			shapefile_country = default_dataset.shapefile_country_dic[region]
+			
 			if plot_scale == "County":
-				shapefile_county = shape_path
+				#shapefile_county = shape_path
+				shapefile_county = dataset_list.shapefile_level_1_dic[country_name.lower()]
+			
 			elif plot_scale == "Wards":
-				shapefile_wards = shape_path
-				
+				#shapefile_wards = shape_path
+				shapefile_wards = dataset_list.shapefile_wards_dic[country_name.lower()]
+			
+			shapefile_level_2 = dataset_list.shapefile_level_2_dic[country_name.lower()]
+	
 		# river shape file
-		self.rivers_shapefile = os.path.abspath(
+		if river_shapefile_path is None:
+			self.rivers_shapefile = os.path.abspath(
 			os.path.join(os.path.dirname(__file__), '..', default_dataset.rivers_shape_path))
-		
+		else:
+			self.rivers_shapefile = dataset_list.rivers_shape_path
+		#print(self.rivers_shapefile)
 		# load dataset of model outputs
-		#netcdf_path = "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_"+ str(iyear)+"_grid.nc"
-		#netcdf_path = 'forecasting_dataset/HAD/output/HAD_IMERG_sim_ini_grid.nc'
-		#print(netcdf_path)
-		if netcdf_path == None:
+		if netcdf_path is None:
 			netcdf_path = default_dataset.default_netcdf.replace("YYYY", str(iyear))
 		else:
 			if "YYYY" in netcdf_path:
@@ -51,6 +96,7 @@ class get_paths(object):
 			#	sys.exit(1)
 		#print(netcdf_path)
 		
+		# read water status
 		if iwater_status == "Groundwater":
 			var = "twsc"
 			# If netcdf path is None use the default
@@ -62,10 +108,8 @@ class get_paths(object):
 
 			if "YYYY" in netcdf_path:
 				netcdf_path = netcdf_path.replace("YYYY", str(iyear))
-		#print(threshold_path)
-		#print(nc_path_threshold)
+		
 		# load dataset for thresholds
-		#nc_path_threshold = "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_" + iseason + "_quantiles.nc"
 		if threshold_path == None:
 			print("Using default threshold path")
 			nc_path_threshold = "forecasting_dataset/HAD/postpp/HAD_IMERGb_D2E_sim_SSS".replace("SSS", iseason)
@@ -80,14 +124,16 @@ class get_paths(object):
 			nc_path_threshold = nc_path_threshold + "_flow_quantiles.nc"
 		else:
 			nc_path_threshold = nc_path_threshold + "_quantiles.nc"
-		#print(nc_path_threshold)
+		
+		# Read mask
 		if mask_path == None:
 			print("Using default mask path")
 			mask_path = "forecasting_dataset\HAD\input_model\HAD_mask_utm_m.asc"
 		#else:
 		#	fmask = mask_path
 		
-		if river_path == None:
+		# read river mask
+		if river_path is None:
 			print("Using default river path")
 			river_path =  "forecasting_dataset\HAD\input_model\HAD_riv_length_utm.asc"
 		#else:
@@ -131,14 +177,17 @@ class get_paths(object):
 		# Select the ward that is requiested to plot
 		if (plot_scale == "Zoom") or (plot_scale == "Ward"):
 			self.fname_place = shapefile_wards
+			self.shapefile_level_2 = None
 			#wards = gpd.read_file(shapefile_wards)
 			#wards = wards[(wards["IEBC_WARDS"] == place_name)]
 		elif plot_scale == "County":
 			self.fname_place = shapefile_county
+			self.shapefile_level_2 = shapefile_level_2
 			#wards = gpd.read_file(shapefile_county)
 			#wards = wards[(wards["county"] == place_name)]
 		elif plot_scale == "Country":
 			self.fname_place = shapefile_county
+			self.shapefile_level_2 = shapefile_level_2
 			#wards = gpd.read_file(shapefile_county)
 			#wards = wards[(wards["NAME"] == place_name)]
 
@@ -151,7 +200,9 @@ class get_paths(object):
 		#self.shapefile_country = shapefile_country
 
 class read_dataset_list_json(object):
-	"""parameter_dataset_list"""
+	"""This function read the parameter_dataset_list from a json file, if json
+	file not provided, default values from default_parameter_dataset.py are used
+	"""
 	def __init__(self, parameter_dataset_list_file):
 
 		if parameter_dataset_list_file is not None:
@@ -165,6 +216,7 @@ class read_dataset_list_json(object):
 			self.name_field_shp = dataset_list.get("name_field_shp")
 			self.shapefile_country_dic = dataset_list.get("shapefile_country_dic")
 			self.shapefile_level_1_dic = dataset_list.get("shapefile_level_1_dic")
+			self.shapefile_level_2_dic = dataset_list.get("shapefile_level_2_dic")
 			self.shapefile_wards_dic = dataset_list.get("shapefile_wards_dic")
 			self.fname_places_list_file = dataset_list.get("fname_places_list_file")
 			self.rivers_shape_path = dataset_list.get("rivers_shape_path")
@@ -177,6 +229,7 @@ class read_dataset_list_json(object):
 			self.name_field_shp = default_dataset.name_field_shp
 			self.shapefile_country_dic = default_dataset.shapefile_country_dic
 			self.shapefile_level_1_dic = default_dataset.shapefile_level_1_dic
+			self.shapefile_level_2_dic = default_dataset.shapefile_level_2_dic
 			self.shapefile_wards_dic = default_dataset.shapefile_wards_dic 
 			self.fname_places_list_file = default_dataset.fname_places_list_file
 			self.rivers_shape_path = default_dataset.rivers_shape_path
