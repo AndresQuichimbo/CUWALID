@@ -36,7 +36,6 @@ class get_model_settings(object):
 		with open(filename_simpar, 'r') as f:
 			settings_config = json.load(f)
 		
-		print(settings_config)
 		print()
 		print("Reading settings file...")
 		print()
@@ -287,10 +286,11 @@ class get_list_of_surface_files(object):
         #    #self.fname_TSOF = fbc.OFBC[1]
         #    #self.filename_OF_points = fbc.OFBC[3]
 
-        self.fname_bathymetry = None
-        if dryp_config["OUTPUT"].get("path_gw_settings") is not None and os.path.exists(dryp_config["OUTPUT"]["path_gw_settings"]):
-            fgw = pd.read_csv(dryp_config["OUTPUT"]["path_gw_settings"])
-            self.fname_bathymetry = fgw.GROUNDWATER[18]  # Constant flux boundary
+        self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depth"]
+        #self.fname_bathymetry = None
+        #if dryp_config["OUTPUT"].get("path_gw_settings") is not None and os.path.exists(dryp_config["OUTPUT"]["path_gw_settings"]):
+        #    fgw = pd.read_csv(dryp_config["OUTPUT"]["path_gw_settings"])
+        #    self.fname_bathymetry = fgw.GROUNDWATER[18]  # Constant flux boundary
 
         # TODO: Check this if statement
         if len(dryp_config.get("drylandmodel", {})) == 94:

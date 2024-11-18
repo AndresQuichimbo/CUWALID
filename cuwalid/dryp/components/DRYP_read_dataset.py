@@ -219,13 +219,14 @@ class read_dataset_interp(object):
 		self.fill_value = 1
 		self.file_format = file_format
 		
-		if file_format > 4:
+		if file_format > 5:
 			print("Provide a valid data type to enable reading")
 			print("Use: 0 for csv files")
 			print("Use: 1 for netCDF files")
 			print("Use: 2 for YEARLY netCDF files")
 			print("Use: 3 for MONTHLY netCDF files")
 			print("Use: 4 for DAILY netCDF files")
+			print("Use: 5 for ensamble netCDF files")
 			raise Exception("Change 'data_reading' options in settings file")
 			
 			
@@ -410,8 +411,8 @@ class read_dataset_interp(object):
 					#mask = meta['regions']
 					#mask.plot(cmap='turbo', levels=5)
 
-					self.ds = xr.open_dataset(fname_ds, group=idate_ds.year)
-					self.ds = self.ds.sum(dim=('time'), skipna=True)
+					self.ds = xr.open_dataset(fname_ds, group=str(idate_ds.year))
+					#self.ds = self.ds.sum(dim=('time'), skipna=True)
 					self.ds = self.ds.assign_coords({
 					    'y': meta['projection_y_coordinate'].load(),
 					    'x': meta['projection_x_coordinate'].load()
@@ -425,6 +426,9 @@ class read_dataset_interp(object):
 					self.ds = self.ds.rename({'longitude':'lon', 'latitude':'lat'})
 				if 'X' in list(self.ds.coords):
 					self.ds = self.ds.rename({'X':'lon', 'Y':'lat'})
+				if 'x' in list(self.ds.coords):
+					self.ds = self.ds.rename({'x':'lon', 'y':'lat'})
+
 
 				if field == 'pet':					
 					# THIS IS ONLY FOR HPET DATA AT HOURLY TIME STEPS
