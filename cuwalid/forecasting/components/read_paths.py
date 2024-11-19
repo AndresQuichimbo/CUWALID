@@ -52,6 +52,7 @@ class get_paths(object):
 		if shape_path_list is None:
 			shapefile_country = os.path.abspath(
 				os.path.join(os.path.dirname(__file__), '..', default_dataset.shapefile_country_dic[region]))
+			
 			shapefile_county = os.path.abspath(
 				os.path.join(
 					os.path.dirname(__file__), '..', default_dataset.shapefile_level_1_dic[country_name.lower()]))
@@ -65,6 +66,12 @@ class get_paths(object):
 				shapefile_wards = os.path.abspath(
 					os.path.join(
 						os.path.dirname(__file__), '..', default_dataset.shapefile_wards_dic[country_name.lower()]))
+				
+			if mask_path is not None:
+				mask_path = os.path.abspath(
+				os.path.join(
+					os.path.dirname(__file__), '..', default_dataset.fname_mask_dic[iwater_status]))
+				
 		else:
 			shapefile_country = default_dataset.shapefile_country_dic[region]
 			
@@ -77,6 +84,9 @@ class get_paths(object):
 				shapefile_wards = dataset_list.shapefile_wards_dic[country_name.lower()]
 			
 			shapefile_level_2 = dataset_list.shapefile_level_2_dic[country_name.lower()]
+
+			if mask_path is not None:
+				mask_path = dataset_list.fname_mask_dic[iwater_status]
 	
 		# river shape file
 		if river_shapefile_path is None:
@@ -125,19 +135,12 @@ class get_paths(object):
 		else:
 			nc_path_threshold = nc_path_threshold + "_quantiles.nc"
 		
-		# Read mask
-		if mask_path == None:
-			print("Using default mask path")
-			mask_path = "forecasting_dataset\HAD\input_model\HAD_mask_utm_m.asc"
-		#else:
-		#	fmask = mask_path
-		
-		# read river mask
-		if river_path is None:
-			print("Using default river path")
-			river_path =  "forecasting_dataset\HAD\input_model\HAD_riv_length_utm.asc"
-		#else:
-		#	friver = river_path
+		## read river mask
+		#if river_path is None:
+		#	print("Using default river path")
+		#	river_path =  "forecasting_dataset\HAD\input_model\HAD_riv_length_utm.asc"
+		##else:
+		##	friver = river_path
 		
 		## Changing the country name depending on the country plotting. e.g. "kenya": "county"
 		#name_field_shp["County"] = name_field_county_shp[country_name.lower()]
@@ -193,7 +196,7 @@ class get_paths(object):
 
 		# store all variables in python object
 		self.mask_path = mask_path
-		self.river_path = river_path
+		#self.river_path = river_path
 		self.nc_path_threshold = nc_path_threshold
 		self.netcdf_path = netcdf_path
 		#print(shapefile_country)
@@ -221,6 +224,7 @@ class read_dataset_list_json(object):
 			self.fname_places_list_file = dataset_list.get("fname_places_list_file")
 			self.rivers_shape_path = dataset_list.get("rivers_shape_path")
 			self.default_netcdf = dataset_list.get("default_netcdf")
+			self.fname_mask_dic = dataset_list.get("fname_mask_dic")
 		else:
 			self.name_short_country = default_dataset.name_short_country
 			self.name_field_county_shp = default_dataset.name_field_county_shp
@@ -234,3 +238,4 @@ class read_dataset_list_json(object):
 			self.fname_places_list_file = default_dataset.fname_places_list_file
 			self.rivers_shape_path = default_dataset.rivers_shape_path
 			self.default_netcdf = default_dataset.default_netcdf
+			self.fname_mask_dic = default_dataset.fname_mask_dic

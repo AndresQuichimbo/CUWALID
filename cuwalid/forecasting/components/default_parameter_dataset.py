@@ -63,6 +63,16 @@ fname_places_list_file = {
 	"somalia": 'forecasting_dataset/somalia/SO_Somalia_region.csv',
 	}
 
+fname_mask_dic = {
+    "Soil": None,
+	"Evaporation": None,
+	"Groundwater": None,
+	"Surface": None,
+	"Flood": None,
+	"Crop": None,
+	"Pasture": None,
+	}
+
 # Rivers shape path
 rivers_shape_path = 'forecasting_dataset/NaturalEarth/ne_10m_rivers_lake_centerlines.shp'
 
