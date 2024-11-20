@@ -270,7 +270,9 @@ language_labels = {
         "Geography":"Geography",
         'Boundary':'Boundary',
         'Location': 'Location',
-        },
+        "Crop": "Crop Status",
+		"Pasture": "Pasture Status",
+		},
 "Swahili":{"Administrative Boundary": "Mpaka",
 		"Natural Reserve": "Natural Reserve",
 		"River": "River",
@@ -293,6 +295,8 @@ language_labels = {
 		"Geography":"Vipengele vya kijiografia",
         'Boundary':'Mpaka',
         'Location': 'Location',
+		"Crop": "Crop Status",
+		"Pasture": "Pasture Status",
 		}
 }
 # season labels
