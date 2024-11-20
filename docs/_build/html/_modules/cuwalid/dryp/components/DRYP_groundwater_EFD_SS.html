@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../../">
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.dryp.components.DRYP_groundwater_EFD_SS &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -52,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -99,9 +96,7 @@
 <span class="c1"># ratio between vertical and horizontal Ksat</span>
 <span class="n">fkxy</span> <span class="o">=</span> <span class="mf">0.1</span>
 <span class="n">lakes_is_active</span> <span class="o">=</span> <span class="mi">0</span>
-<div class="viewcode-block" id="gwflow_EFD">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.gwflow_EFD">[docs]</a>
-<span class="k">class</span> <span class="nc">gwflow_EFD</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="gwflow_EFD"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.gwflow_EFD">[docs]</a><span class="k">class</span> <span class="nc">gwflow_EFD</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 		
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">,</span> <span class="n">area_river</span><span class="p">,</span>
 	      <span class="n">bc</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">fparameter</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -185,9 +180,7 @@
 		
 		
 	<span class="c1"># run model under steady state</span>
-<div class="viewcode-block" id="gwflow_EFD.run_one_step_gw_SS">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.gwflow_EFD.run_one_step_gw_SS">[docs]</a>
-	<span class="k">def</span> <span class="nf">run_one_step_gw_SS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">thickness</span><span class="p">,</span>
+<div class="viewcode-block" id="gwflow_EFD.run_one_step_gw_SS"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.gwflow_EFD.run_one_step_gw_SS">[docs]</a>	<span class="k">def</span> <span class="nf">run_one_step_gw_SS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">thickness</span><span class="p">,</span>
 		     <span class="n">Droot</span><span class="p">,</span> <span class="n">riv_elevation</span><span class="p">,</span> <span class="n">riv_nodes</span><span class="p">,</span> <span class="n">conductivity</span><span class="p">,</span> <span class="n">inodetype</span><span class="p">,</span>
 			 <span class="n">head</span><span class="p">,</span> <span class="n">recharge</span><span class="p">,</span> <span class="n">stage</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;Function to update water table depending on the</span>
@@ -376,9 +369,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">T</span>
 
 		<span class="c1"># calculate fluxes</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">fluxes</span> <span class="o">=</span> <span class="n">fluxes</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span></div>
-</div>
-
+		<span class="bp">self</span><span class="o">.</span><span class="n">fluxes</span> <span class="o">=</span> <span class="n">fluxes</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span></div></div>
 		
 		<span class="c1"># adjusting head at the surface of the model domain</span>
 		<span class="c1"># WARNING! this could lead to increases in mass balance errors</span>
@@ -388,9 +379,7 @@
 		<span class="c1">#print(head)#self.head = hea</span>
 
  
-<div class="viewcode-block" id="regularization">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.regularization">[docs]</a>
-<span class="k">def</span> <span class="nf">regularization</span><span class="p">(</span><span class="n">zm</span><span class="p">,</span> <span class="n">hm</span><span class="p">,</span> <span class="n">bm</span><span class="p">,</span> <span class="n">dq</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+<div class="viewcode-block" id="regularization"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.regularization">[docs]</a><span class="k">def</span> <span class="nf">regularization</span><span class="p">(</span><span class="n">zm</span><span class="p">,</span> <span class="n">hm</span><span class="p">,</span> <span class="n">bm</span><span class="p">,</span> <span class="n">dq</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;regularization function for unconfined</span>
 
 <span class="sd">	Parameters</span>
@@ -416,10 +405,7 @@
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">aux</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">r</span><span class="p">)</span><span class="o">*</span><span class="n">dq</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dq</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
 
 
-
-<div class="viewcode-block" id="regularization_T">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.regularization_T">[docs]</a>
-<span class="k">def</span> <span class="nf">regularization_T</span><span class="p">(</span><span class="n">zm</span><span class="p">,</span> <span class="n">hm</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">dq</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+<div class="viewcode-block" id="regularization_T"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.regularization_T">[docs]</a><span class="k">def</span> <span class="nf">regularization_T</span><span class="p">(</span><span class="n">zm</span><span class="p">,</span> <span class="n">hm</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">dq</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;regularization function for confined aquifers</span>
 
 <span class="sd">	Parameters</span>
@@ -443,11 +429,8 @@
 	<span class="n">aux</span> <span class="o">=</span> <span class="p">(</span><span class="n">hm</span><span class="o">-</span><span class="n">zm</span><span class="p">)</span><span class="o">/</span><span class="n">f</span><span class="o">+</span><span class="mi">1</span>	
 	<span class="n">aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">aux</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span><span class="n">aux</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">aux</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">r</span><span class="p">)</span><span class="o">*</span><span class="n">dq</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dq</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span></div>
-
 	
-<div class="viewcode-block" id="exponential_T">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.exponential_T">[docs]</a>
-<span class="k">def</span> <span class="nf">exponential_T</span><span class="p">(</span><span class="n">Ksat</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+<div class="viewcode-block" id="exponential_T"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.exponential_T">[docs]</a><span class="k">def</span> <span class="nf">exponential_T</span><span class="p">(</span><span class="n">Ksat</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Calculate aquifer transmissivity following</span>
 <span class="sd">	Fan et. al. (2013)</span>
 <span class="sd">	</span>
@@ -466,10 +449,7 @@
 	
 	<span class="k">return</span> <span class="n">Ksat</span><span class="o">*</span><span class="n">f</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="n">f</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="exponential">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.exponential">[docs]</a>
-<span class="k">def</span> <span class="nf">exponential</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+<div class="viewcode-block" id="exponential"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.exponential">[docs]</a><span class="k">def</span> <span class="nf">exponential</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Calculate aquifer transmissivity following</span>
 <span class="sd">	Fan et. al. (2013)</span>
 <span class="sd">	</span>
@@ -486,7 +466,6 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1">#print(f*np.exp(-np.maximum(z-h, 0)/f))</span>
 	<span class="k">return</span> <span class="n">f</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="n">f</span><span class="p">)</span></div>
-
 </pre></div>
 
            </div>

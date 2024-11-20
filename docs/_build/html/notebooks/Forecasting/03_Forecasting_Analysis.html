@@ -1,24 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contents &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
-
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -74,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -103,14 +100,14 @@
            <div itemprop="articleBody">
              
   <section id="Contents">
-<h1>Contents<a class="headerlink" href="#Contents" title="Link to this heading"></a></h1>
+<h1>Contents<a class="headerlink" href="#Contents" title="Permalink to this heading"></a></h1>
 <p>The following course cover the following content:</p>
 <ul class="simple">
 <li><p>Convert climate seasonal forecasting into model forcing datasets</p></li>
 <li><p><strong>Translate climate forecasting into hydrological forecasting</strong></p></li>
 </ul>
 <section id="3.-Translate-climate-forecasting-into-hydrological-forecasting">
-<h2>3. Translate climate forecasting into hydrological forecasting<a class="headerlink" href="#3.-Translate-climate-forecasting-into-hydrological-forecasting" title="Link to this heading"></a></h2>
+<h2>3. Translate climate forecasting into hydrological forecasting<a class="headerlink" href="#3.-Translate-climate-forecasting-into-hydrological-forecasting" title="Permalink to this heading"></a></h2>
 <ol class="arabic simple">
 <li><p>Preparing tercile forecasting</p></li>
 </ol>
@@ -160,7 +157,7 @@ Local_directory
 </div>
 </section>
 <section id="3.1-Forcast:-Preparation">
-<h2>3.1 Forcast: Preparation<a class="headerlink" href="#3.1-Forcast:-Preparation" title="Link to this heading"></a></h2>
+<h2>3.1 Forcast: Preparation<a class="headerlink" href="#3.1-Forcast:-Preparation" title="Permalink to this heading"></a></h2>
 <p>The first stage of the forecasting analysis consist of preprocesing the historical simulations (“hindcast”). It includes preprocessing, temporal aggregation, and estimation of historical thresholds for all analysed variables.</p>
 <p>All model simulations for both historical and forecasting outputs are located in the corresponding directories.</p>
 <p>In order to quickly access all model files during the entire historical analysis, a “config_hindcast.py” file has been created. This file contain all paths required to store variables as well as additional parameters used in the analysis. A similar file was created for the forecasting, “config_forecasting.py”, which will be used for all files and directories during the forecasting analysis.</p>
@@ -201,7 +198,7 @@ config_forecasting.py
 "10a_cuwalid_HAD_get_probabilistic_tercile_forecast_ensamble.py"
 "10b_cuwalid_HAD_get_deterministic_forecast_ensamble.py"</section>
 <section id="Prepare-Historical-simulation">
-<h2>Prepare Historical simulation<a class="headerlink" href="#Prepare-Historical-simulation" title="Link to this heading"></a></h2>
+<h2>Prepare Historical simulation<a class="headerlink" href="#Prepare-Historical-simulation" title="Permalink to this heading"></a></h2>
 <p>Preprocessing historical values</p>
 <p>Understanding and modifying config hindcast file</p>
 <div class="nbinput nblast docutils container">
@@ -264,7 +261,7 @@ config_forecasting.py
 </div>
 </section>
 <section id="Forecast-analysis">
-<h2>Forecast analysis<a class="headerlink" href="#Forecast-analysis" title="Link to this heading"></a></h2>
+<h2>Forecast analysis<a class="headerlink" href="#Forecast-analysis" title="Permalink to this heading"></a></h2>
 <p>Understanding and modifying the config forecasting file</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[57]:
@@ -324,7 +321,7 @@ config_forecasting.py
 </div>
 </section>
 <section id="3.2-Understanding-seasonal-hydrological-forecast">
-<h2>3.2 Understanding seasonal hydrological forecast<a class="headerlink" href="#3.2-Understanding-seasonal-hydrological-forecast" title="Link to this heading"></a></h2>
+<h2>3.2 Understanding seasonal hydrological forecast<a class="headerlink" href="#3.2-Understanding-seasonal-hydrological-forecast" title="Permalink to this heading"></a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -344,7 +341,7 @@ config_forecasting.py
 </div>
 </section>
 <section id="Working-with-historical-total-averages">
-<h2>Working with historical total averages<a class="headerlink" href="#Working-with-historical-total-averages" title="Link to this heading"></a></h2>
+<h2>Working with historical total averages<a class="headerlink" href="#Working-with-historical-total-averages" title="Permalink to this heading"></a></h2>
 <p><strong>WARNING</strong>! This section needs to donwload files from the server, so before move to the following section, download all csv files from the forecastin outputs</p>
 <ul class="simple">
 <li><p>Assesing the temporal variability of water balance components</p></li>
@@ -660,7 +657,7 @@ Text(0, 0.5, &#39;Actual Evapotranspiration\n[mm/year]&#39;)
 </section>
 </section>
 <section id="Working-with-historical-grided-datasets">
-<h1>Working with historical grided datasets<a class="headerlink" href="#Working-with-historical-grided-datasets" title="Link to this heading"></a></h1>
+<h1>Working with historical grided datasets<a class="headerlink" href="#Working-with-historical-grided-datasets" title="Permalink to this heading"></a></h1>
 <p>Plot mean of historical values</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
@@ -1186,7 +1183,7 @@ Dimensions without coordinates: time</pre><div class='xr-wrap' style='display:no
 </div>
 </section>
 <section id="Visualizing-anomalies">
-<h1>Visualizing anomalies<a class="headerlink" href="#Visualizing-anomalies" title="Link to this heading"></a></h1>
+<h1>Visualizing anomalies<a class="headerlink" href="#Visualizing-anomalies" title="Permalink to this heading"></a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
@@ -1956,7 +1953,7 @@ Index([3, 4, 5], dtype=&#39;int32&#39;, name=&#39;Date&#39;)
 </div>
 </div>
 <section id="Visualizing-deterministic-and-probabilistic-forecast">
-<h2>Visualizing deterministic and probabilistic forecast<a class="headerlink" href="#Visualizing-deterministic-and-probabilistic-forecast" title="Link to this heading"></a></h2>
+<h2>Visualizing deterministic and probabilistic forecast<a class="headerlink" href="#Visualizing-deterministic-and-probabilistic-forecast" title="Permalink to this heading"></a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>

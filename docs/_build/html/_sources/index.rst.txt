@@ -18,6 +18,7 @@ Welcome to CUWALID's documentation!
    processing
    modules
    maintenance
+   dryp_developers
    
 
 Indices and tables

@@ -1,23 +1,19 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Storm Tutorial &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -65,6 +61,7 @@
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -93,9 +90,9 @@
            <div itemprop="articleBody">
              
   <section id="storm-tutorial">
-<h1>Storm Tutorial<a class="headerlink" href="#storm-tutorial" title="Link to this heading"></a></h1>
+<h1>Storm Tutorial<a class="headerlink" href="#storm-tutorial" title="Permalink to this heading"></a></h1>
 <section id="running-the-model">
-<h2>Running the model<a class="headerlink" href="#running-the-model" title="Link to this heading"></a></h2>
+<h2>Running the model<a class="headerlink" href="#running-the-model" title="Permalink to this heading"></a></h2>
 <p>IMPORTANT: GDAL is needed to be able to run storm, this cannot be added to the package because it does not work with the windows operating system,
 you will need to install this yourself, it is recommended if you are using a conda environment you can run this:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>gdal
@@ -115,78 +112,8 @@ python<span class="w"> </span>-m<span class="w"> </span>cuwalid.storm.main_storm
 <p>the files required to do the forecasting.</p>
 </section>
 <section id="input-parameters">
-<h2>Input Parameters<a class="headerlink" href="#input-parameters" title="Link to this heading"></a></h2>
+<h2>Input Parameters<a class="headerlink" href="#input-parameters" title="Permalink to this heading"></a></h2>
 <p>The input JSON shown above will look something like this:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">{</span>
-<span class="linenos"> 2</span>
-<span class="linenos"> 3</span><span class="w">    </span><span class="nt">&quot;NUMSIMS&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="linenos"> 4</span><span class="w">    </span><span class="nt">&quot;NUMSIMYRS&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
-<span class="linenos"> 5</span><span class="w">    </span><span class="nt">&quot;PTOT_SC&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.00</span><span class="p">],</span>
-<span class="linenos"> 6</span><span class="w">    </span><span class="nt">&quot;PTOT_SF&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
-<span class="linenos"> 7</span><span class="w">    </span><span class="nt">&quot;STORMINESS_SC&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">-0.0</span><span class="p">],</span>
-<span class="linenos"> 8</span><span class="w">    </span><span class="nt">&quot;STORMINESS_SF&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
-<span class="linenos"> 9</span>
-<span class="linenos">10</span>
-<span class="linenos">11</span><span class="w">    </span><span class="nt">&quot;PDF_FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/ProbabilityDensityFunctions.csv&quot;</span><span class="p">,</span>
-<span class="linenos">12</span><span class="w">    </span><span class="nt">&quot;SHP_FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/HAD_basin.shp&quot;</span><span class="p">,</span>
-<span class="linenos">13</span><span class="w">    </span><span class="nt">&quot;DEM_FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/HAD_wgs84.tif&quot;</span><span class="p">,</span>
-<span class="linenos">14</span><span class="w">    </span><span class="nt">&quot;ZON_FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/regions.shp&quot;</span><span class="p">,</span>
-<span class="linenos">15</span><span class="w">    </span><span class="nt">&quot;OUT_PATH&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./storm_output&quot;</span><span class="p">,</span>
-<span class="linenos">16</span><span class="w">    </span><span class="nt">&quot;RAIN_MAP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/rainfall_OND.nc&quot;</span><span class="p">,</span>
-<span class="linenos">17</span><span class="w">    </span><span class="nt">&quot;NREGIONS&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
-<span class="linenos">18</span><span class="w">    </span><span class="nt">&quot;Z_STAT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mean&quot;</span><span class="p">,</span>
-<span class="linenos">19</span><span class="w">    </span><span class="nt">&quot;Z_CUTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">300</span><span class="p">,</span><span class="w"> </span><span class="mi">600</span><span class="p">,</span><span class="w"> </span><span class="mi">1200</span><span class="p">],</span>
-<span class="linenos">20</span><span class="w">    </span><span class="nt">&quot;TACTIC&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="linenos">21</span><span class="w">    </span><span class="nt">&quot;WKT_OGC&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="linenos">22</span><span class="w">        </span><span class="s2">&quot;PROJCS[\&quot;WGS84_/_Lambert_Azim_Mozambique\&quot;,&quot;</span><span class="p">,</span>
-<span class="linenos">23</span><span class="w">        </span><span class="s2">&quot;    GEOGCS[\&quot;unknown\&quot;,&quot;</span><span class="p">,</span>
-<span class="linenos">24</span><span class="w">        </span><span class="s2">&quot;        DATUM[\&quot;unknown\&quot;,&quot;</span><span class="p">,</span>
-<span class="linenos">25</span><span class="w">        </span><span class="s2">&quot;            SPHEROID[\&quot;Normal Sphere (r=6370997)\&quot;,6370997,0]],&quot;</span><span class="p">,</span>
-<span class="linenos">26</span><span class="w">        </span><span class="s2">&quot;        PRIMEM[\&quot;Greenwich\&quot;,0,&quot;</span><span class="p">,</span>
-<span class="linenos">27</span><span class="w">        </span><span class="s2">&quot;            AUTHORITY[\&quot;EPSG\&quot;,\&quot;8901\&quot;]],&quot;</span><span class="p">,</span>
-<span class="linenos">28</span><span class="w">        </span><span class="s2">&quot;        UNIT[\&quot;degree\&quot;,0.0174532925199433,&quot;</span><span class="p">,</span>
-<span class="linenos">29</span><span class="w">        </span><span class="s2">&quot;            AUTHORITY[\&quot;EPSG\&quot;,\&quot;9122\&quot;]]],&quot;</span><span class="p">,</span>
-<span class="linenos">30</span><span class="w">        </span><span class="s2">&quot;    PROJECTION[\&quot;Lambert_Azimuthal_Equal_Area\&quot;],&quot;</span><span class="p">,</span>
-<span class="linenos">31</span><span class="w">        </span><span class="s2">&quot;    PARAMETER[\&quot;latitude_of_center\&quot;,5],&quot;</span><span class="p">,</span>
-<span class="linenos">32</span><span class="w">        </span><span class="s2">&quot;    PARAMETER[\&quot;longitude_of_center\&quot;,20],&quot;</span><span class="p">,</span>
-<span class="linenos">33</span><span class="w">        </span><span class="s2">&quot;    PARAMETER[\&quot;false_easting\&quot;,0],&quot;</span><span class="p">,</span>
-<span class="linenos">34</span><span class="w">        </span><span class="s2">&quot;    PARAMETER[\&quot;false_northing\&quot;,0],&quot;</span><span class="p">,</span>
-<span class="linenos">35</span><span class="w">        </span><span class="s2">&quot;    UNIT[\&quot;metre\&quot;,1,&quot;</span><span class="p">,</span>
-<span class="linenos">36</span><span class="w">        </span><span class="s2">&quot;        AUTHORITY[\&quot;EPSG\&quot;,\&quot;9001\&quot;]],&quot;</span><span class="p">,</span>
-<span class="linenos">37</span><span class="w">        </span><span class="s2">&quot;    AXIS[\&quot;Easting\&quot;,EAST],&quot;</span><span class="p">,</span>
-<span class="linenos">38</span><span class="w">        </span><span class="s2">&quot;    AXIS[\&quot;Northing\&quot;,NORTH],&quot;</span><span class="p">,</span>
-<span class="linenos">39</span><span class="w">        </span><span class="s2">&quot;    AUTHORITY[\&quot;EPSG\&quot;,\&quot;42106\&quot;]]&quot;</span>
-<span class="linenos">40</span><span class="w">      </span><span class="p">],</span>
-<span class="linenos">41</span><span class="w">    </span><span class="nt">&quot;BUFFER&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">7000.0</span><span class="p">,</span>
-<span class="linenos">42</span><span class="w">    </span><span class="nt">&quot;X_RES&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5000.0</span><span class="p">,</span>
-<span class="linenos">43</span><span class="w">    </span><span class="nt">&quot;Y_RES&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5000.0</span><span class="p">,</span>
-<span class="linenos">44</span><span class="w">    </span><span class="nt">&quot;T_RES&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span>
-<span class="linenos">45</span><span class="w">    </span><span class="nt">&quot;NO_RAIN&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span>
-<span class="linenos">46</span><span class="w">    </span><span class="nt">&quot;MIN_DUR&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span>
-<span class="linenos">47</span><span class="w">    </span><span class="nt">&quot;MAX_DUR&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5760</span><span class="p">,</span>
-<span class="linenos">48</span><span class="w">    </span><span class="nt">&quot;MAXD_RAIN&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">120</span><span class="p">,</span>
-<span class="linenos">49</span><span class="w">    </span><span class="nt">&quot;DISPERSE_&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.2</span><span class="p">,</span>
-<span class="linenos">50</span><span class="w">    </span><span class="nt">&quot;SEASON_TAG&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OND&quot;</span><span class="p">,</span>
-<span class="linenos">51</span><span class="w">    </span><span class="nt">&quot;SEED_YEAR&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2024</span><span class="p">,</span>
-<span class="linenos">52</span><span class="w">    </span><span class="nt">&quot;TIME_ZONE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Africa/Addis_Ababa&quot;</span><span class="p">,</span>
-<span class="linenos">53</span><span class="w">    </span><span class="nt">&quot;DATE_ORIGIN&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1970-01-01&quot;</span><span class="p">,</span>
-<span class="linenos">54</span><span class="w">    </span><span class="nt">&quot;RAINFMT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;u2&quot;</span><span class="p">,</span>
-<span class="linenos">55</span><span class="w">    </span><span class="nt">&quot;PRECISION&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.002</span><span class="p">,</span>
-<span class="linenos">56</span><span class="w">    </span><span class="nt">&quot;TIMEINT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;u4&quot;</span><span class="p">,</span>
-<span class="linenos">57</span><span class="w">    </span><span class="nt">&quot;TIMEFIL&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4294967295</span><span class="p">,</span>
-<span class="linenos">58</span><span class="w">    </span><span class="nt">&quot;TIME_OUTNC&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;minutes&quot;</span><span class="p">,</span>
-<span class="linenos">59</span><span class="w">    </span><span class="nt">&quot;TIME_DICT_&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">60</span><span class="w">      </span><span class="nt">&quot;seconds&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="linenos">61</span><span class="w">      </span><span class="nt">&quot;minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.016666666666666666</span><span class="p">,</span>
-<span class="linenos">62</span><span class="w">      </span><span class="nt">&quot;hours&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0002777777777777778</span><span class="p">,</span>
-<span class="linenos">63</span><span class="w">      </span><span class="nt">&quot;days&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.1574074074074073e-05</span>
-<span class="linenos">64</span><span class="w">    </span><span class="p">},</span>
-<span class="linenos">65</span><span class="w">    </span><span class="nt">&quot;RAIN_NAME&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;rain&quot;</span>
-<span class="linenos">66</span>
-<span class="linenos">67</span><span class="w">  </span><span class="p">}</span>
-<span class="linenos">68</span><span class="w">  </span>
-</pre></div>
-</div>
 <p>Here is an explanation of what each parameter does:</p>
 <ul>
 <li><p><strong>NUMSIMS</strong>: <cite>1</cite></p>

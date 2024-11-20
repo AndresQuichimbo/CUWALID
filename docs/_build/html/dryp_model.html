@@ -1,23 +1,19 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DRYP: Dryland Water Partitioning model &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -74,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -102,13 +99,13 @@
            <div itemprop="articleBody">
              
   <section id="dryp-dryland-water-partitioning-model">
-<span id="dryp-model"></span><h1>DRYP: Dryland Water Partitioning model<a class="headerlink" href="#dryp-dryland-water-partitioning-model" title="Link to this heading"></a></h1>
+<span id="dryp-model"></span><h1>DRYP: Dryland Water Partitioning model<a class="headerlink" href="#dryp-dryland-water-partitioning-model" title="Permalink to this heading"></a></h1>
 <section id="model-description-and-structure">
-<h2>Model description and structure<a class="headerlink" href="#model-description-and-structure" title="Link to this heading"></a></h2>
+<h2>Model description and structure<a class="headerlink" href="#model-description-and-structure" title="Permalink to this heading"></a></h2>
 <p>The parsimounius water partitioning model is a process-based distributed hydrological model.</p>
 <img alt="_images/Model_Structure_conceptual_GMD.png" src="_images/Model_Structure_conceptual_GMD.png" />
 <section id="model-hydrological-parameters">
-<h3>Model Hydrological Parameters<a class="headerlink" href="#model-hydrological-parameters" title="Link to this heading"></a></h3>
+<h3>Model Hydrological Parameters<a class="headerlink" href="#model-hydrological-parameters" title="Permalink to this heading"></a></h3>
 <p>The model uses as input parameter files spatially distributed maps in raster format. If parameter file is not provided, the model will use spatially uniform default values.</p>
 <p>A list of parameters required for each component is presented below:</p>
 <p>For the <strong>surface component</strong>:</p>
@@ -157,13 +154,13 @@
 </ul>
 </section>
 <section id="forcing-datasets">
-<h3>Forcing datasets<a class="headerlink" href="#forcing-datasets" title="Link to this heading"></a></h3>
+<h3>Forcing datasets<a class="headerlink" href="#forcing-datasets" title="Permalink to this heading"></a></h3>
 <p>DRYP requires time series as model forcing datasets. Precipitation and potential evpotranspiration must be provided
 in order to run the model, otherwise it will throw an error. Dataset can be spatially variable data
 as netCDF files, or uniform values over the whole model domain by providing a csv file.</p>
 </section>
 <section id="model-outputs">
-<h3>Model outputs<a class="headerlink" href="#model-outputs" title="Link to this heading"></a></h3>
+<h3>Model outputs<a class="headerlink" href="#model-outputs" title="Permalink to this heading"></a></h3>
 <p>Output variables for each model component are summarised below, the name of the variable is in brackets.
 Units of time depends on model settings, for example months.</p>
 <p><strong>Surface component</strong>:</p>
@@ -190,10 +187,10 @@ Units of time depends on model settings, for example months.</p>
 </section>
 </section>
 <section id="model-parameters-and-setting-files">
-<span id="dryp-parameters"></span><h2>Model parameters and setting files<a class="headerlink" href="#model-parameters-and-setting-files" title="Link to this heading"></a></h2>
+<span id="dryp-parameters"></span><h2>Model parameters and setting files<a class="headerlink" href="#model-parameters-and-setting-files" title="Permalink to this heading"></a></h2>
 <p>Model input files are json, which can be created by using a text editor like notepad or code editor like Visual Studio Code.</p>
 <section id="input-parameter-file">
-<h3>Input parameter file<a class="headerlink" href="#input-parameter-file" title="Link to this heading"></a></h3>
+<h3>Input parameter file<a class="headerlink" href="#input-parameter-file" title="Permalink to this heading"></a></h3>
 <p>All filename’s parameters must be listed in model parameters file, which is further explained below, However,
 if a parameter filename is not provided, the default values will be used as model parameters.</p>
 <p>The model is under development therefore some components are still not available (e.g. abstractions and
@@ -385,19 +382,19 @@ create a nuew model.</p>
 </pre></div>
 </div>
 <section id="simulation-parameter-file">
-<h4>Simulation parameter file<a class="headerlink" href="#simulation-parameter-file" title="Link to this heading"></a></h4>
+<h4>Simulation parameter file<a class="headerlink" href="#simulation-parameter-file" title="Permalink to this heading"></a></h4>
 <p>Information about simulation parameters such as period or time step must be provided in a json.
 This file contains parameters that control the simulations such as simulation period, format of input
 files as well as the activation of model components such as groundwater flow.</p>
 </section>
 <section id="simulation-period">
-<h4><em>Simulation period</em><a class="headerlink" href="#simulation-period" title="Link to this heading"></a></h4>
+<h4><em>Simulation period</em><a class="headerlink" href="#simulation-period" title="Permalink to this heading"></a></h4>
 <p>Information related to simulation period should be specified as the initial and final date of the simulation.
 Date must be specified as integers separated by spaces (e.g. 2001 1 9),
 zeros on the left side are not allowed (e.g 2001 01 19, will raise an error).</p>
 </section>
 <section id="simulation-time-step">
-<h4><em>Simulation time step</em><a class="headerlink" href="#simulation-time-step" title="Link to this heading"></a></h4>
+<h4><em>Simulation time step</em><a class="headerlink" href="#simulation-time-step" title="Permalink to this heading"></a></h4>
 <p>Time has to be specified in minutes, with a maximum time step of one day (1440 min).
 Time step must be an integer, and values must be rational fraction of the hour
 (e.g 20 min is allowed but 25 will stop the simulation) when sub-hourly time step is set.
@@ -406,7 +403,7 @@ allowed but 300 min (5h) will result in errors). The time step of the groundwate
 than the surface component.</p>
 </section>
 <section id="forcing-data-format">
-<h4><em>Forcing data format</em><a class="headerlink" href="#forcing-data-format" title="Link to this heading"></a></h4>
+<h4><em>Forcing data format</em><a class="headerlink" href="#forcing-data-format" title="Permalink to this heading"></a></h4>
 <p>The format of precipitation, evapotranspiration, vegetation, boundary conditions are shown below respectively:</p>
 <ol class="arabic simple">
 <li><p>csv file (only one file, that will be applied to the whole model domain)</p></li>
@@ -470,7 +467,7 @@ options.</p>
 </div>
 </section>
 <section id="infiltration-method-selection">
-<h4>Infiltration method selection<a class="headerlink" href="#infiltration-method-selection" title="Link to this heading"></a></h4>
+<h4>Infiltration method selection<a class="headerlink" href="#infiltration-method-selection" title="Permalink to this heading"></a></h4>
 <p>DRYP has four types of infiltration methods implemented.
 The following codes can be chosen depending on the infiltration approach adopted:</p>
 <ol class="arabic simple">
@@ -481,7 +478,7 @@ The following codes can be chosen depending on the infiltration approach adopted
 </ol>
 </section>
 <section id="groundwater-component-selection">
-<h4>Groundwater component selection<a class="headerlink" href="#groundwater-component-selection" title="Link to this heading"></a></h4>
+<h4>Groundwater component selection<a class="headerlink" href="#groundwater-component-selection" title="Permalink to this heading"></a></h4>
 <p>For the groundwater component, three different approaches for groundwater flow conditions are available:</p>
 <ol class="arabic simple" start="0">
 <li><p>Constant transmissivity,</p></li>
@@ -502,7 +499,7 @@ shown in the example below (not required for the two-layer model):</p>
 approach.</p>
 </section>
 <section id="setting-storage-of-model-outputs">
-<h4>Setting storage of model outputs<a class="headerlink" href="#setting-storage-of-model-outputs" title="Link to this heading"></a></h4>
+<h4>Setting storage of model outputs<a class="headerlink" href="#setting-storage-of-model-outputs" title="Permalink to this heading"></a></h4>
 <p>To save model results as netCDF files change the boolean (true/false) under ‘OUTPUT’.
 Line “output_dt” is used to specify the aggregation
 frequency. Frequency should be specified as integer and a string character. Accepted character are D for
@@ -513,7 +510,7 @@ days, M for months and Y for years, an example is specified below:</p>
 </div>
 </section>
 <section id="calibration-factors">
-<h4>Calibration factors<a class="headerlink" href="#calibration-factors" title="Link to this heading"></a></h4>
+<h4>Calibration factors<a class="headerlink" href="#calibration-factors" title="Permalink to this heading"></a></h4>
 <p>A set of parameters that globally modify the model parameters are also specified in the simulation settings
 file. Values are scale factors of the following parameters, this values are unitless:</p>
 <ul class="simple">
@@ -614,7 +611,7 @@ file. Values are scale factors of the following parameters, this values are unit
 </section>
 </section>
 <section id="projection-system-file">
-<h3>Projection system file<a class="headerlink" href="#projection-system-file" title="Link to this heading"></a></h3>
+<h3>Projection system file<a class="headerlink" href="#projection-system-file" title="Permalink to this heading"></a></h3>
 <p>When datasets are not in the same projection system thatn the model domain (UTM),
 a projection settings file should ne provided. It should contain the projection
 system of model, and the projection system of each dataset. An example is presented below:</p>
@@ -630,11 +627,11 @@ system of model, and the projection system of each dataset. An example is presen
 </div>
 </section>
 <section id="vegetation-parameters-file">
-<h3>Vegetation parameters file<a class="headerlink" href="#vegetation-parameters-file" title="Link to this heading"></a></h3>
+<h3>Vegetation parameters file<a class="headerlink" href="#vegetation-parameters-file" title="Permalink to this heading"></a></h3>
 <p>This component is still under development</p>
 </section>
 <section id="overland-flow-boundary-condition-file">
-<h3>Overland flow boundary condition file<a class="headerlink" href="#overland-flow-boundary-condition-file" title="Link to this heading"></a></h3>
+<h3>Overland flow boundary condition file<a class="headerlink" href="#overland-flow-boundary-condition-file" title="Permalink to this heading"></a></h3>
 <p>This component is still under development:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>OFBC
 <span class="linenos">2</span>Flux data for time variable boundary conditions ----(1)
@@ -648,7 +645,7 @@ system of model, and the projection system of each dataset. An example is presen
 </div>
 </section>
 <section id="store-variables-settings-file">
-<h3>Store variables settings file<a class="headerlink" href="#store-variables-settings-file" title="Link to this heading"></a></h3>
+<h3>Store variables settings file<a class="headerlink" href="#store-variables-settings-file" title="Permalink to this heading"></a></h3>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{&quot;store_var_grid&quot;:{
 &#39;pre&#39;: True,
 &#39;pet&#39;: True,

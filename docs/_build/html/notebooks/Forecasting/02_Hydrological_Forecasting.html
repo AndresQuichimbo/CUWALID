@@ -1,24 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contents &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
-
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -73,6 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -102,14 +99,14 @@
            <div itemprop="articleBody">
              
   <section id="Contents">
-<h1>Contents<a class="headerlink" href="#Contents" title="Link to this heading"></a></h1>
+<h1>Contents<a class="headerlink" href="#Contents" title="Permalink to this heading"></a></h1>
 <p>The following course cover the following content:</p>
 <ul class="simple">
 <li><p>Convert climate seasonal forecasting into model forcing datasets</p></li>
 <li><p><strong>Translate climate forecasting into hydrological forecasting</strong></p></li>
 </ul>
 <section id="4.-Translate-climate-forecasting-into-hydrological-forecasting">
-<h2>4. Translate climate forecasting into hydrological forecasting<a class="headerlink" href="#4.-Translate-climate-forecasting-into-hydrological-forecasting" title="Link to this heading"></a></h2>
+<h2>4. Translate climate forecasting into hydrological forecasting<a class="headerlink" href="#4.-Translate-climate-forecasting-into-hydrological-forecasting" title="Permalink to this heading"></a></h2>
 <ol class="arabic simple">
 <li><p>Creating an ensamble of model simulation files</p></li>
 </ol>
@@ -159,7 +156,7 @@ Local_directory
 </div>
 </section>
 <section id="4.1.-Create-an-ensamble-of-model-simulation-files">
-<h2>4.1. Create an ensamble of model simulation files<a class="headerlink" href="#4.1.-Create-an-ensamble-of-model-simulation-files" title="Link to this heading"></a></h2>
+<h2>4.1. Create an ensamble of model simulation files<a class="headerlink" href="#4.1.-Create-an-ensamble-of-model-simulation-files" title="Permalink to this heading"></a></h2>
 <p>The first step for runing the hydrological model is the creation on all input and setting files for each of the realizations. All model files can be created using creating simple text editors (e.g. notepad in windows). Example of model files are found on the folder training/historical/regional/model/.</p>
 <p>A detailed description of all model files can be found in DRYP documentation as well as in the DRYP folder of the present tranining material.</p>
 <p>For running all simulations, we have preparing all the input files by copying and changing the required fields on the each file. The script below can be used to create all simulation model files.</p>
@@ -1634,7 +1631,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 </section>
 <section id="4.2.-Prepare-multiple-simulation-on-HPC">
-<h2>4.2. Prepare multiple simulation on HPC<a class="headerlink" href="#4.2.-Prepare-multiple-simulation-on-HPC" title="Link to this heading"></a></h2>
+<h2>4.2. Prepare multiple simulation on HPC<a class="headerlink" href="#4.2.-Prepare-multiple-simulation-on-HPC" title="Permalink to this heading"></a></h2>
 <p>Run simulation on the backgound in linux. Uncoment lines to show results.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -1719,7 +1716,7 @@ nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/mode
 </div>
 </section>
 <section id="4.3.-Understanding-hydrological-outputs">
-<h2>4.3. Understanding hydrological outputs<a class="headerlink" href="#4.3.-Understanding-hydrological-outputs" title="Link to this heading"></a></h2>
+<h2>4.3. Understanding hydrological outputs<a class="headerlink" href="#4.3.-Understanding-hydrological-outputs" title="Permalink to this heading"></a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -1748,7 +1745,7 @@ nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/mode
 </section>
 </section>
 <section id="Please,-download-one-simulation-from-the-ICPAC-server-for-the-following-examples">
-<h1>Please, download one simulation from the ICPAC server for the following examples<a class="headerlink" href="#Please,-download-one-simulation-from-the-ICPAC-server-for-the-following-examples" title="Link to this heading"></a></h1>
+<h1>Please, download one simulation from the ICPAC server for the following examples<a class="headerlink" href="#Please,-download-one-simulation-from-the-ICPAC-server-for-the-following-examples" title="Permalink to this heading"></a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>

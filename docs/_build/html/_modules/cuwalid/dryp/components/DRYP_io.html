@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../../">
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.dryp.components.DRYP_io &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -52,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -93,9 +90,7 @@
 <span class="c1"># Global parameters</span>
 <span class="n">ABC_RIVER</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="c1"># River abstraction parameter</span>
 		
-<div class="viewcode-block" id="surface_parameters">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.surface_parameters">[docs]</a>
-<span class="k">class</span> <span class="nc">surface_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="surface_parameters"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.surface_parameters">[docs]</a><span class="k">class</span> <span class="nc">surface_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Setting model input varables and environmental states</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
@@ -105,7 +100,7 @@
 		<span class="c1"># build the data classes</span>
 		<span class="c1"># ================ Reading surface water model inputs ==============</span>
 		
-		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;******************* Reading Input Files ********************&#39;</span><span class="p">)</span>
+		<span class="c1">#print(&#39;******************* Reading Input Files ********************&#39;)</span>
 		
 		<span class="c1"># Reading digital elevation model</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_DEM</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_DEM</span><span class="p">):</span>
@@ -151,7 +146,7 @@
 			<span class="n">mask</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_nrows</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_ncols</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Basin boundary................ not provided&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Basin boundary...................not provided&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Mask</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="c1">#print(self.mask)</span>
@@ -164,7 +159,7 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">riv_length</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_River</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">riv_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_cellsize</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="c1">#</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;River network................. not provided as raster&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;River network....................not provided&#39;</span><span class="p">)</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;All cells are considered rivers with length of grid size&#39;</span><span class="p">)</span>
 		
 		<span class="bp">self</span><span class="o">.</span><span class="n">river_cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
@@ -174,14 +169,14 @@
 		<span class="c1"># Reading the raster file of river width		</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_RiverWidth</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_RiverWidth</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">riv_width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;River width................... not provided as raster. Global default applied of W = 10 m&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;River width......................not provided. Global default applied of W = 10 m&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">riv_width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_RiverWidth</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			
 		<span class="c1"># Reading the raster file of river elevation		</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_RiverElev</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_RiverElev</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">riv_elevation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">[:]</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;River bottom.................. not provided as raster&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;River bottom......................not provided&#39;</span><span class="p">)</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;River bottom elevation: surface elevation&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">riv_elevation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_RiverElev</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -191,7 +186,7 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">FlowDir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_FlowDir</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">FlowDir</span> <span class="o">=</span> <span class="kc">None</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Flow direction................ not provided as raster&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Flow direction...................not provided&#39;</span><span class="p">)</span>
 			<span class="c1">#self.act_update_flow_director = True</span>
 
 		<span class="c1"># LAKES COMPONENT ========================================================================</span>
@@ -201,7 +196,7 @@
 			<span class="n">z_lakes</span><span class="p">[</span><span class="n">z_lakes</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">bathymetry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span> <span class="o">-</span> <span class="n">z_lakes</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Maximum water elevation lakes..not provided as raster. Global default z&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Lake bathymetry..................not provided. Global default z&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">bathymetry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">[:]</span>
 	
 		<span class="c1"># CHANNEL ===============================================================================</span>
@@ -209,7 +204,7 @@
 		<span class="c1"># Assuming a flow velocity of 1 m/s =&gt; 3600 m/h</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_kTchannel</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_kTchannel</span><span class="p">):</span>			
 			<span class="bp">self</span><span class="o">.</span><span class="n">decay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">kTch</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_cellsize</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Channel decay parameter.................. not provided&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Channel decay parameter..........not provided&#39;</span><span class="p">)</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Assumed value equivalent to a velocity of 1m/s&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>		
 			<span class="bp">self</span><span class="o">.</span><span class="n">decay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_kTchannel</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -221,7 +216,7 @@
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Ksat</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Ksat</span><span class="p">):</span>			
 			<span class="c1">#self.Ksat = np.flip(rasterio.open(inputfile.fname_ksat).read(1), 0).flatten()</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">Ksat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Channel Ksat.................. not provided&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Channel Ksat.....................not provided&#39;</span><span class="p">)</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Assumed equal to soil Ksat&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>		
 			<span class="bp">self</span><span class="o">.</span><span class="n">Ksat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Ksat</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -249,7 +244,7 @@
 		<span class="c1"># read initial conditions of channel flow: in m3/h</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Qo</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Qo</span><span class="p">):</span>			
 			<span class="bp">self</span><span class="o">.</span><span class="n">Qo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initial channel storage.................. not provided, assumed 0.0 m3&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initial channel storage..........not provided, assumed 0.0 m3&#39;</span><span class="p">)</span>
 			<span class="c1">#print(&#39;Assumed value equivalent to a velocity of 1m/s&#39;)</span>
 		<span class="k">else</span><span class="p">:</span>		
 			<span class="bp">self</span><span class="o">.</span><span class="n">Qo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Qo</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -307,9 +302,7 @@
 		
 		<span class="k">pass</span>
 	<span class="c1"># Find coordinates of points in model components</span>
-<div class="viewcode-block" id="surface_parameters.points_output">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.surface_parameters.points_output">[docs]</a>
-	<span class="k">def</span> <span class="nf">points_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
+<div class="viewcode-block" id="surface_parameters.points_output"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.surface_parameters.points_output">[docs]</a>	<span class="k">def</span> <span class="nf">points_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot; This function reads data points to report model results</span>
 <span class="sd">		Values at each point will be extracted for all components depending</span>
 <span class="sd">		on the specified points:</span>
@@ -328,14 +321,10 @@
 		<span class="n">gaugeid</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
 			<span class="n">inputfile</span><span class="p">)</span>
 		
-		<span class="k">return</span> <span class="n">gaugeid</span></div>
-</div>
+		<span class="k">return</span> <span class="n">gaugeid</span></div></div>
 
 
-
-<div class="viewcode-block" id="grid_environment">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.grid_environment">[docs]</a>
-<span class="k">class</span> <span class="nc">grid_environment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="grid_environment"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.grid_environment">[docs]</a><span class="k">class</span> <span class="nc">grid_environment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;grid elements and state variables required for running the model&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;this function create a grid landlab object, this function can be</span>
@@ -343,9 +332,7 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">pass</span>
 
-<div class="viewcode-block" id="grid_environment.create_grid">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.grid_environment.create_grid">[docs]</a>
-	<span class="k">def</span> <span class="nf">create_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ncol</span><span class="p">,</span> <span class="n">nrow</span><span class="p">,</span> <span class="n">xllcorner</span><span class="p">,</span> <span class="n">yllcorner</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
+<div class="viewcode-block" id="grid_environment.create_grid"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.grid_environment.create_grid">[docs]</a>	<span class="k">def</span> <span class="nf">create_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ncol</span><span class="p">,</span> <span class="n">nrow</span><span class="p">,</span> <span class="n">xllcorner</span><span class="p">,</span> <span class="n">yllcorner</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;this function create a grid landlab object, this function can be</span>
 <span class="sd">		used directly from landlab rastergrid function</span>
 <span class="sd">		</span>
@@ -375,23 +362,16 @@
 			<span class="n">idomain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">domain</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 			<span class="n">grid</span><span class="o">.</span><span class="n">status_at_node</span><span class="p">[</span><span class="n">idomain</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">BC_NODE_IS_CLOSED</span>
 		
-		<span class="k">return</span> <span class="n">grid</span></div>
-</div>
+		<span class="k">return</span> <span class="n">grid</span></div></div>
 
-
-<div class="viewcode-block" id="model_environment_status">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.model_environment_status">[docs]</a>
-<span class="k">class</span> <span class="nc">model_environment_status</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="model_environment_status"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.model_environment_status">[docs]</a><span class="k">class</span> <span class="nc">model_environment_status</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;grid elements and state variables required for running the model&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;ininitalize model variables which are common for all components&quot;&quot;&quot;</span>
 		
 		<span class="k">pass</span></div>
 
-
-<div class="viewcode-block" id="set_initial_conditions">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.set_initial_conditions">[docs]</a>
-<span class="k">def</span> <span class="nf">set_initial_conditions</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> 
+<div class="viewcode-block" id="set_initial_conditions"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.set_initial_conditions">[docs]</a><span class="k">def</span> <span class="nf">set_initial_conditions</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> 
 		    <span class="n">bathymetry</span><span class="p">,</span> <span class="n">extintion_depth</span><span class="p">,</span> <span class="n">cell_size</span><span class="p">,</span> <span class="n">gw_activated</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function check for initial condition</span>
 <span class="sd">	</span>
@@ -452,10 +432,7 @@
 	
 	<span class="k">return</span> <span class="n">head</span><span class="p">,</span> <span class="n">Duz</span><span class="p">,</span> <span class="n">z_extintion</span><span class="p">,</span> <span class="n">river_sat_deficit</span><span class="p">,</span> <span class="n">Ft0</span><span class="p">,</span> <span class="n">SORP0</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">dry_day</span></div>
 
-
-<div class="viewcode-block" id="soil_parameters">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.soil_parameters">[docs]</a>
-<span class="k">class</span> <span class="nc">soil_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="soil_parameters"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.soil_parameters">[docs]</a><span class="k">class</span> <span class="nc">soil_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Setting model input varables and environmental states</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
@@ -473,7 +450,7 @@
 		<span class="c1"># Reading Soil saturated hydraulic conductivity</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Ksat</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Ksat</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">Ksat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hydraulic conductivity........ not provided as raster. Global default applied of 1.0 mm/h&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hydraulic conductivity...........not provided. Global default applied of 1.0 mm/h&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">Ksat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Ksat</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 					
@@ -492,21 +469,21 @@
 		<span class="c1"># Reading Wilting point field</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_theta_wp</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_theta_wp</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">theta_wp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Wilting point................. not provided as raster. Global default applied of 0.05&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Wilting point....................not provided. Global default applied of 0.05&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">theta_wp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_theta_wp</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 				
 		<span class="c1"># Read Saturated water content (porosity)</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_n</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_n</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">theta_sat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">0.40</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Porosity...................... not provided as raster. Global default applied of 0.4&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Porosity.........................not provided. Global default applied of 0.4&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">theta_sat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_n</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			
 		<span class="c1"># Reading available water content: raster file		</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_theta_AWC</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_theta_AWC</span><span class="p">):</span>
 			<span class="n">theta_AWC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Available Water Content....... not provided as raster. Global default applied of 0.10&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Available Water Content..........not provided. Global default applied of 0.10&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">theta_AWC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_theta_AWC</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
@@ -516,14 +493,14 @@
 		<span class="c1"># Rawls (1982), and Clapp and Hornberger (1978)</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_b_SOIL</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_b_SOIL</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">10.05</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Soil particle distribution par. not provided as raster. Global default applied of 10.5&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Soil particle distribution par...not provided. Global default applied of 10.5&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">lambdas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_b_SOIL</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			
 		<span class="c1"># air-entry/saturated capillary potential, [mm]</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_PSI</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_PSI</span><span class="p">):</span>
 			<span class="n">psi_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">153.0</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Suction head.................. not provided as raster. Global default applied of 153 mm&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Suction head.....................not provided. Global default applied of 153 mm&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">psi_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_PSI</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			
@@ -539,7 +516,7 @@
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_SoilDepth</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_SoilDepth</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">Droot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 			<span class="c1">#self.depth_uz *= 1000.0	# default value 1000 mm</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rooting depth................. not provided as raster. Global default applied of 1000mm&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rooting depth....................not provided. Global default applied of 1000mm&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">Droot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_SoilDepth</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">Droot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Droot</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -550,16 +527,13 @@
 		<span class="c1"># Reading initial available water content: raster file		</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_theta</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_theta</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta_wp</span><span class="o">+</span><span class="mf">0.01</span><span class="o">*</span><span class="n">theta_AWC</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Not available initail water content....... dry condition assumed (wiltinf point)&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initial water content............not provided, dry condition assumed (wiltinf point)&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_theta</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">theta_fc</span> <span class="o">=</span> <span class="n">theta_AWC</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta_wp</span></div>
 
-
-<div class="viewcode-block" id="groundwater_parameters">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.groundwater_parameters">[docs]</a>
-<span class="k">class</span> <span class="nc">groundwater_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="groundwater_parameters"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.groundwater_parameters">[docs]</a><span class="k">class</span> <span class="nc">groundwater_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function reads all aquifer paramters required to run the saturated component</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
@@ -575,7 +549,7 @@
 <span class="sd">		Returns</span>
 <span class="sd">		-------</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading aquifer parameters&quot;</span><span class="p">)</span>
+		<span class="c1">#print(&quot;Reading aquifer parameters&quot;)</span>
 		<span class="c1">#print(&quot;Running Groundwater component&quot;)</span>
 
 		<span class="c1"># read aquifer type</span>
@@ -585,7 +559,7 @@
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_aquifertype</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_aquifertype</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">gwtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_aquifertype</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No transmissivity model type provided&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Transmissivity model type .......not provided&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">gwtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
 		<span class="c1"># Reading specific yield</span>
@@ -593,7 +567,7 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">Sy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 			<span class="c1">#gw.add_zeros(&#39;node&#39;, &#39;SZ_Sy&#39;, dtype=float) # Water table elevation</span>
 			<span class="c1">#gw.at_node[&#39;SZ_Sy&#39;] += 0.01</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Specific yield................ not provided as raster. Global default applied of 0.01&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Specific yield...................not provided. Global default applied of 0.01&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">Sy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_SZ_Sy</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			<span class="c1">#read_esri_ascii(inputfile.fname_SZ_Sy,</span>
@@ -605,14 +579,14 @@
 		<span class="c1"># Aquifer bottom</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_SZ_bot</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_SZ_bot</span><span class="p">):</span> 
 			<span class="bp">self</span><span class="o">.</span><span class="n">bottom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aquifer bottom elevation...... not provided as raster. Global default applied of 0.0 m&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aquifer bottom elevation.........not provided. Global default applied of 0.0 m&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">bottom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_SZ_bot</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			
 		<span class="c1"># Aquifer Saturated hydraulic conductivity</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_SZ_Ksat</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_SZ_Ksat</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">Ksat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aquifer Ksat.................. not provided as raster. Global default applied of 1.0 m/h&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aquifer Ksat.....................not provided. Global default applied of 1.0 m/h&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">Ksat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_SZ_Ksat</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			
@@ -624,7 +598,7 @@
 		<span class="c1"># Check if flux boundary is provided m/h</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_FHB</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_FHB</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">FHB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Flux boundary conditions. not provided as raster&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Flux boundary conditions. .......not provided&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">FHB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_FHB</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			<span class="c1">#SZ_CHBa = read_esri_ascii(inputfile.fname_FHB,</span>
@@ -637,7 +611,7 @@
 		<span class="c1"># Check if constant head boundary is provided</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_CHB</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_CHB</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">CHB</span> <span class="o">=</span> <span class="kc">None</span>			
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Constant head boundary conditions not provided as raster&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Constant head boundary conditions not provided&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">CHB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_CHB</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			<span class="c1">#read_esri_ascii(inputfile.fname_CHB,</span>
@@ -653,7 +627,7 @@
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_thickness</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_thickness</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">thickness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 			<span class="c1">#gw.at_node[&#39;SZ_a_aq&#39;][:] = 50.0</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Not available aquifer effective depth... assumed value of 50m&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aquifer effective depth..........not provided, aassumed value of 50m&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">thickness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_thickness</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			<span class="c1">#SZ_CHBa = read_esri_ascii(inputfile.fname_a_aq,</span>
@@ -670,22 +644,19 @@
 		<span class="c1">#		name=&#39;SZ_b_aq&#39;, grid=gw)[1]</span>
 					
 		<span class="c1"># Initial water table depth</span>
-		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;reading initial water table elevation...&quot;</span><span class="p">)</span>
+		<span class="c1">#print(&quot;reading initial water table elevation...&quot;)</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_GWini</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_GWini</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_DEM</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 			<span class="c1">#h = gw.add_zeros(&#39;node&#39;, &#39;water_table__elevation&#39;, dtype=float)</span>
 			<span class="c1">#gw.at_node[&#39;water_table__elevation&#39;] = z - rg.at_node[&#39;Soil_depth&#39;]*0.001</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initial water table elevation not provided assumed equal to surface&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initial water table elevation... not provided assumed equal to surface&#39;</span><span class="p">)</span>
 			<span class="c1">#print(&#39;Initial water table elevation assumed equal to root depth elevation&#39;)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_GWini</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span></div>
-
 			<span class="c1">#h = read_esri_ascii(inputfile.fname_GWini,</span>
 			<span class="c1">#	name=&#39;water_table__elevation&#39;, grid=gw)[1]</span>
 		
-<div class="viewcode-block" id="interception_parameters">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.interception_parameters">[docs]</a>
-<span class="k">class</span> <span class="nc">interception_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="interception_parameters"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.interception_parameters">[docs]</a><span class="k">class</span> <span class="nc">interception_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function reads all aquifer paramters required to run the saturated component</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
@@ -729,34 +700,34 @@
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_av</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_av</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">av</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_av</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fraction of vegetation cover..not provided as raster. Global default 1&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fraction of vegetation cover.....not provided. Global default 1&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">av</span> <span class="o">=</span> <span class="kc">None</span>
 		<span class="c1"># read Coeficient of exponential function: default 0</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_laia</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_laia</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">lai_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_laia</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Vegetation exponential coeficient..not provided as raster. Global default 1&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Vegetation exponential coef......not provided. Global default 1&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">lai_a</span> <span class="o">=</span> <span class="mi">0</span>
 
 		<span class="c1"># read Power value for exponential function: default 0</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_laib</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_laib</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">lai_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_laib</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Vegetation exponential coeficient..not provided as raster. Global default 1&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Vegetation exponential coef......not provided. Global default 1&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">lai_b</span> <span class="o">=</span> <span class="mi">0</span>
 
 		<span class="c1"># read Min Soil-Adjusted Vegetation Index: default 0</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_savi_min</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_savi_min</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">savi_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_savi_min</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fraction of vegetation cover..not provided as raster. Global default 1&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fraction of vegetation cover.....not provided. Global default 1&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">savi_min</span> <span class="o">=</span> <span class="mi">0</span>
 
 		<span class="c1"># Max Soil-Adjusted Vegetation Index: defgault 1</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_savi_max</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_savi_max</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">savi_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_savi_max</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fraction of vegetation cover..not provided as raster. Global default 1&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fraction of vegetation cover.....not provided. Global default 1&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">savi_max</span> <span class="o">=</span> <span class="mf">1.0</span>
 		
 		<span class="c1">#------Modification for Dyna-Veg---------------------------------------------------</span>
@@ -764,21 +735,21 @@
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_fcw_canopy</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_fcw_canopy</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">fcw_cn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_fcw_canopy</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Biome-dependent coefficient, not provided. Global 1 []&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Biome-dependent coefficient......not provided. Global 1 [-]&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">fcw_cn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 		
 		<span class="c1"># inital water content of the canopy storage</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Sc0_canopy</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Sc0_canopy</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">Sc0_cn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Sc0_canopy</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initial canopy storage, not provided. Global 0 []&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initial canopy storage...........not provided. Global 0 [-]&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">Sc0_cn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 		
 		<span class="c1"># inital water content of the canopy storage, riparian zone</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Sc0_canopy</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Sc0_canopy</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">Sc0_cnrp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_Sc0_canopy</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initial riparian canopy storage, not provided. Global 0 []&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initial riparian canopy storage, not provided. Global 0 [-]&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">Sc0_cnrp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 		
 		<span class="c1"># Tap water threshold for evaporation uptake</span>
@@ -786,7 +757,7 @@
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_tap_depth</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_tap_depth</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">tap_depth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_tap_depth</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tap water level, not provided. Global 0 [mm]&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tap water level..................not provided. Global 0 [mm]&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">tap_depth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 		
 		<span class="c1">#self.ztap = z - self.tap_depth*0.001</span>
@@ -803,7 +774,7 @@
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_extintion_depth</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_extintion_depth</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">extintion_depth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_extintion_depth</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extinction depth, not provided. Default is rooting depth [mm]&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extinction depth.................not provided. Default is rooting depth [mm]&#39;</span><span class="p">)</span>
 			<span class="c1">#final_depth = np.flip(rasterio.open(inputfile.fname_SoilDepth).read(1), 0).flatten()</span>
 			<span class="c1">#self.extintion_depth = final_depth[:]</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">extintion_depth</span> <span class="o">=</span> <span class="n">Droot</span><span class="p">[:]</span>
@@ -816,10 +787,7 @@
 
 		<span class="k">pass</span></div>
 
-
-<div class="viewcode-block" id="water_body_parameters">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.water_body_parameters">[docs]</a>
-<span class="k">class</span> <span class="nc">water_body_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="water_body_parameters"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.water_body_parameters">[docs]</a><span class="k">class</span> <span class="nc">water_body_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function reads all aquifer paramters required to run the saturated component</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">,</span> <span class="n">id_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -839,12 +807,17 @@
 
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_pnd_Amax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_pnd_hmax</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">pnds_Amax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_pnd_Amax</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">pnds_hmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_pnd_hmax</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+			
+			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_pnd_hmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_pnd_hmax</span><span class="p">):</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">pnds_hmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_pnd_hmax</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Water body max. depth............not provided. Global value 1 [m]&#39;</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">pnds_hmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
 			<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_pnd_Vo</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_pnd_Vo</span><span class="p">):</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">pnds_Vo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_pnd_Vo</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-				
 			<span class="k">else</span><span class="p">:</span>
-				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;initial watr body volume not provided. Global value 0 [m3]&#39;</span><span class="p">)</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initial water body volume........not provided. Global value 0 [m3]&#39;</span><span class="p">)</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">pnds_Vo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
 			<span class="c1"># add function to reduce the size of arrays</span>
@@ -861,17 +834,14 @@
 					<span class="bp">self</span><span class="o">.</span><span class="n">pnds_Vo</span> <span class="o">=</span> <span class="kc">None</span>
 
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Water body parameters not provided&#39;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Water body parameters is not active&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">pnds_Amax</span> <span class="o">=</span> <span class="kc">None</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">pnds_hmax</span> <span class="o">=</span> <span class="kc">None</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">pnds_Vo</span> <span class="o">=</span> <span class="kc">None</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">id_nodes</span> <span class="o">=</span> <span class="n">id_nodes</span></div>
 
-
-<div class="viewcode-block" id="extract_id_from_coords">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.extract_id_from_coords">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_id_from_coords</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="extract_id_from_coords"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.extract_id_from_coords">[docs]</a><span class="k">def</span> <span class="nf">extract_id_from_coords</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot; extract nodes from a csv file</span>
 <span class="sd">	this component uses the landlab funtion &quot;find_nearest_node</span>
 
@@ -922,11 +892,8 @@
 		   		<span class="s1">&#39;Please check the file of sample points&#39;</span><span class="p">)</span>
 	
 	<span class="k">return</span> <span class="n">idpoint</span><span class="p">,</span> <span class="n">idpoint_active</span></div>
-
 	
-<div class="viewcode-block" id="extract_id_from_raster">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.extract_id_from_raster">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_id_from_raster</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="extract_id_from_raster"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.extract_id_from_raster">[docs]</a><span class="k">def</span> <span class="nf">extract_id_from_raster</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot; find id location of boundary conditions from raster</span>
 <span class="sd">	this component uses the landlab funtion &quot;find_nearest_node</span>
 
@@ -955,10 +922,7 @@
 	
 	<span class="k">return</span> <span class="n">id_location</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-
-<div class="viewcode-block" id="create_coordinate_array">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.create_coordinate_array">[docs]</a>
-<span class="k">def</span> <span class="nf">create_coordinate_array</span><span class="p">(</span><span class="n">xllcorner</span><span class="p">,</span> <span class="n">yllcorner</span><span class="p">,</span> <span class="n">grid_nrows</span><span class="p">,</span> <span class="n">grid_ncols</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">):</span>
+<div class="viewcode-block" id="create_coordinate_array"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.create_coordinate_array">[docs]</a><span class="k">def</span> <span class="nf">create_coordinate_array</span><span class="p">(</span><span class="n">xllcorner</span><span class="p">,</span> <span class="n">yllcorner</span><span class="p">,</span> <span class="n">grid_nrows</span><span class="p">,</span> <span class="n">grid_ncols</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function create two arrays representing:</span>
 <span class="sd">	the x-axis (lon: longitud) and y-axis (lat: latitude)</span>
 <span class="sd">	WARNING: this axis have to be flipped to match landlab grid, so be carful when</span>
@@ -981,7 +945,6 @@
 	<span class="n">lon_end</span> <span class="o">=</span> <span class="n">yllcorner</span> <span class="o">+</span> <span class="n">cellsize</span><span class="o">*</span><span class="n">grid_ncols</span>
 	<span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">yllcorner</span><span class="p">,</span> <span class="n">lon_end</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span></div>
-
 		
 </pre></div>
 

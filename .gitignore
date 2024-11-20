@@ -24,8 +24,13 @@ output_somalia/
 test.py
 stopet_input.json
 storm_input.json
+dryp_input.json
+dryp_settings.json
 run_stopet.py
 run_impact.py
 run_storm.py
+run_dryp.py
 ICPAC_TempF_OND2022_HAD.nc
 model_output/
+input_files/
+dryp_output/

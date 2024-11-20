@@ -1,24 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contents &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
-
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -74,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -103,14 +100,14 @@
            <div itemprop="articleBody">
              
   <section id="Contents">
-<h1>Contents<a class="headerlink" href="#Contents" title="Link to this heading"></a></h1>
+<h1>Contents<a class="headerlink" href="#Contents" title="Permalink to this heading"></a></h1>
 <p>The following course cover the following content:</p>
 <ul class="simple">
 <li><p><strong>Convert climate seasonal forecasting into model forcing datasets</strong></p></li>
 <li><p>Translate climate forecasting into hydrological forecasting</p></li>
 </ul>
 <section id="4.-Convert-climate-seasonal-forecasting-into-model-forcing-datasets">
-<h2>4. Convert climate seasonal forecasting into model forcing datasets<a class="headerlink" href="#4.-Convert-climate-seasonal-forecasting-into-model-forcing-datasets" title="Link to this heading"></a></h2>
+<h2>4. Convert climate seasonal forecasting into model forcing datasets<a class="headerlink" href="#4.-Convert-climate-seasonal-forecasting-into-model-forcing-datasets" title="Permalink to this heading"></a></h2>
 <ol class="arabic simple">
 <li><p>Create an ensamble of precipitation for the Tana basin</p></li>
 </ol>
@@ -120,13 +117,13 @@
 </section>
 </section>
 <section id="4.1.-Create-an-ensamble-of-precipitation-for-the-Tana-basin">
-<h1>4.1. Create an ensamble of precipitation for the Tana basin<a class="headerlink" href="#4.1.-Create-an-ensamble-of-precipitation-for-the-Tana-basin" title="Link to this heading"></a></h1>
+<h1>4.1. Create an ensamble of precipitation for the Tana basin<a class="headerlink" href="#4.1.-Create-an-ensamble-of-precipitation-for-the-Tana-basin" title="Permalink to this heading"></a></h1>
 <ul class="simple">
 <li><p>Create stochastic realizations of precipitation for the MAM season using STORM</p></li>
 </ul>
 </section>
 <section id="4.2.-Create-ensamble-of-potential-evapotranspiration-for-the-Tana-basin">
-<h1>4.2. Create ensamble of potential evapotranspiration for the Tana basin<a class="headerlink" href="#4.2.-Create-ensamble-of-potential-evapotranspiration-for-the-Tana-basin" title="Link to this heading"></a></h1>
+<h1>4.2. Create ensamble of potential evapotranspiration for the Tana basin<a class="headerlink" href="#4.2.-Create-ensamble-of-potential-evapotranspiration-for-the-Tana-basin" title="Permalink to this heading"></a></h1>
 <ul class="simple">
 <li><p>Create stochastic realizations of potential evapotranspiration for the MAM season using stoPET. Forecasting the seasonal Potential Evapotranspiration (PET) values uses the stoPET model and the ICPAC seasonal temperature forecast (ICPAC seasonal forecast).</p></li>
 </ul>
@@ -250,7 +247,7 @@ d. stopet_parameters.nc
 <p>Once you make all the required changes to the <strong>config_stoPET.py</strong> file, you can run the <strong>run_stoPET_4dryp.py</strong> script, which will generate the PET ensembles to be used as a pool. Here, you have to repeat the process by changing the <strong>deltat</strong> variable to 1.5 for Above, 0.0 for Normal, and -1.5 for Below categories.</p>
 <p>This means you modify the <strong>config_stoPET.py</strong> file and run <strong>run_stoPET_4dryp.py</strong>, and when one is finished, you repeat the process by modifying the <strong>deltat</strong> accordingly.</p>
 <section id="Please-restart-the-Kernel-before-running-the-code,-as-it-saves-all-the-variables-from-the-previous-run.">
-<h2>Please restart the Kernel before running the code, as it saves all the variables from the previous run.<a class="headerlink" href="#Please-restart-the-Kernel-before-running-the-code,-as-it-saves-all-the-variables-from-the-previous-run." title="Link to this heading"></a></h2>
+<h2>Please restart the Kernel before running the code, as it saves all the variables from the previous run.<a class="headerlink" href="#Please-restart-the-Kernel-before-running-the-code,-as-it-saves-all-the-variables-from-the-previous-run." title="Permalink to this heading"></a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -316,7 +313,7 @@ d. stopet_parameters.nc
 </div>
 </div>
 <section id="Visualization-(Plotting-PET-output)">
-<h3>Visualization (Plotting PET output)<a class="headerlink" href="#Visualization-(Plotting-PET-output)" title="Link to this heading"></a></h3>
+<h3>Visualization (Plotting PET output)<a class="headerlink" href="#Visualization-(Plotting-PET-output)" title="Permalink to this heading"></a></h3>
 <p>Let’s plot the values of the PET for visualization.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:

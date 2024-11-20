@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../../">
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.dryp.components.DRYP_infiltration &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -52,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -89,9 +86,7 @@
 <span class="c1">#from landlab.io import read_esri_ascii</span>
 
 
-<div class="viewcode-block" id="infiltration">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.infiltration">[docs]</a>
-<span class="k">class</span> <span class="nc">infiltration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="infiltration"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.infiltration">[docs]</a><span class="k">class</span> <span class="nc">infiltration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>	
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;Initializa the infiltration component.</span>
 <span class="sd">		An infiltration aproach has to bu provided, defauil approach is Philips</span>
@@ -111,7 +106,7 @@
 
 <span class="sd">		&quot;&quot;&quot;</span>	
 		<span class="c1"># create all initial states and model funtion variables</span>
-		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;************************************************************&#39;</span><span class="p">)</span>
+		<span class="c1">#print(&#39;************************************************************&#39;)</span>
 		<span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Infiltration approach: Philips&#39;</span><span class="p">)</span>			
 		<span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -125,9 +120,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
 				
 	
-<div class="viewcode-block" id="infiltration.run_infiltration_one_step">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.infiltration.run_infiltration_one_step">[docs]</a>
-	<span class="k">def</span> <span class="nf">run_infiltration_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">,</span> <span class="n">theta_sat</span><span class="p">,</span> <span class="n">PSI</span><span class="p">,</span>
+<div class="viewcode-block" id="infiltration.run_infiltration_one_step"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.infiltration.run_infiltration_one_step">[docs]</a>	<span class="k">def</span> <span class="nf">run_infiltration_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">,</span> <span class="n">theta_sat</span><span class="p">,</span> <span class="n">PSI</span><span class="p">,</span>
 			    <span class="n">Droot</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">rain</span><span class="p">,</span> <span class="n">Ft0</span><span class="p">,</span> <span class="n">SORP0</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">rain_day_before</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
 <span class="w">		</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
@@ -221,13 +214,9 @@
 			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Infiltration Water balance Error: &#39;</span>
 		   		<span class="s1">&#39;Please check units and non-data values&#39;</span><span class="p">)</span>
 
-		<span class="k">return</span> <span class="n">infiltration</span><span class="p">,</span> <span class="n">excess</span><span class="p">,</span> <span class="n">Ft</span><span class="p">,</span> <span class="n">SORP</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">rain_day_before</span></div>
-</div>
+		<span class="k">return</span> <span class="n">infiltration</span><span class="p">,</span> <span class="n">excess</span><span class="p">,</span> <span class="n">Ft</span><span class="p">,</span> <span class="n">SORP</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">rain_day_before</span></div></div>
 
-
-<div class="viewcode-block" id="infiltration_model">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.infiltration_model">[docs]</a>
-<span class="k">def</span> <span class="nf">infiltration_model</span><span class="p">(</span><span class="n">rainfall</span><span class="p">,</span> <span class="n">K_sat</span><span class="p">,</span> <span class="n">PSI_f</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span> <span class="n">SORP0</span><span class="p">,</span> <span class="n">L_0</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">Ft0</span><span class="p">,</span> <span class="n">rain_day_before</span><span class="p">,</span> <span class="n">inf_method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="infiltration_model"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.infiltration_model">[docs]</a><span class="k">def</span> <span class="nf">infiltration_model</span><span class="p">(</span><span class="n">rainfall</span><span class="p">,</span> <span class="n">K_sat</span><span class="p">,</span> <span class="n">PSI_f</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span> <span class="n">SORP0</span><span class="p">,</span> <span class="n">L_0</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">Ft0</span><span class="p">,</span> <span class="n">rain_day_before</span><span class="p">,</span> <span class="n">inf_method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Incorporate the variable saturated conditions make zero precipitation for cell with saturated</span>
 <span class="sd">	and zero depth of UZ zone	</span>
 <span class="sd">	</span>
@@ -283,7 +272,7 @@
 	<span class="n">sat_excess_dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Droot</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rainfall</span><span class="p">,</span> <span class="n">sat_excess_dt</span><span class="p">)</span>
 	<span class="n">rainfall</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Droot</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rainfall</span><span class="p">)</span>
 	<span class="n">inode_inf_aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rainfall</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-	
+
 	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inode_inf_aux</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 		<span class="n">t_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)</span>
 		<span class="k">if</span> <span class="n">inf_method</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># SCHAAKE METHOD</span>
@@ -365,11 +354,8 @@
 	<span class="n">excess_dt</span> <span class="o">+=</span> <span class="n">sat_excess_dt</span>
 	<span class="k">return</span> <span class="n">Ft</span><span class="p">,</span> <span class="n">SORP</span><span class="p">,</span> <span class="n">inf_dt</span><span class="p">,</span> <span class="n">excess_dt</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">rain_day_before</span></div>
 
-
  
-<div class="viewcode-block" id="SCHAAKE">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.SCHAAKE">[docs]</a>
-<span class="k">def</span> <span class="nf">SCHAAKE</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">ga_kdt</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">L</span><span class="p">):</span>
+<div class="viewcode-block" id="SCHAAKE"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.SCHAAKE">[docs]</a><span class="k">def</span> <span class="nf">SCHAAKE</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">ga_kdt</span><span class="p">,</span> <span class="n">Lsat</span><span class="p">,</span> <span class="n">L</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Schaake infiltration approach, Schaake et. al. (1996)</span>
 
 <span class="sd">	Parameters</span>
@@ -393,10 +379,7 @@
 	<span class="n">RO</span> <span class="o">=</span> <span class="n">P</span><span class="o">-</span><span class="n">I</span>
 	<span class="k">return</span> <span class="n">I</span><span class="p">,</span> <span class="n">RO</span></div>
 
-
-<div class="viewcode-block" id="Philip">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Philip">[docs]</a>
-<span class="k">def</span> <span class="nf">Philip</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<div class="viewcode-block" id="Philip"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Philip">[docs]</a><span class="k">def</span> <span class="nf">Philip</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Philips Infiltration function</span>
 
 <span class="sd">	Parameters</span>
@@ -425,7 +408,7 @@
 		
 	<span class="n">Fp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">Sp</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">P</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">ks</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="n">P</span><span class="o">-</span><span class="n">ks</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)),</span> <span class="mi">0</span><span class="p">)</span>
 	<span class="n">Fp_aux</span> <span class="o">=</span> <span class="n">Fp</span><span class="o">-</span><span class="n">F</span>
-	<span class="c1">#print(Fp, P, ks, Sp)	</span>
+	<span class="c1">#print(np.where(np.isnan(F)), np.where(np.isnan(Fp)), np.where(np.isnan(P)))#, np.where(np.isnan(ks)), np.where(np.isnan(Sp)))	</span>
 	<span class="n">dtp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">P</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">Fp_aux</span><span class="o">/</span><span class="n">P</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
 	
 	<span class="n">ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dtp</span> <span class="o">&gt;</span> <span class="n">dt</span><span class="p">,</span> <span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="p">,</span> <span class="n">t</span><span class="o">+</span><span class="n">dtp</span><span class="p">)</span>
@@ -446,10 +429,7 @@
 	<span class="n">RO</span> <span class="o">=</span> <span class="n">P</span> <span class="o">-</span> <span class="n">I</span>
 	<span class="k">return</span> <span class="n">Ft</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">RO</span></div>
 
-
-<div class="viewcode-block" id="Upscaled_GA">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Upscaled_GA">[docs]</a>
-<span class="k">def</span> <span class="nf">Upscaled_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">mu_Y</span><span class="p">,</span> <span class="n">sigma_Y</span><span class="p">):</span>
+<div class="viewcode-block" id="Upscaled_GA"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Upscaled_GA">[docs]</a><span class="k">def</span> <span class="nf">Upscaled_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">ks</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">mu_Y</span><span class="p">,</span> <span class="n">sigma_Y</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Upscaled Green &amp; Ampt infiltration approach - Craig et. al. 2010</span>
 <span class="sd">	Required Gauss2p, epsilon, and getX</span>
 
@@ -482,11 +462,8 @@
 	<span class="n">RO</span> <span class="o">=</span> <span class="n">P</span><span class="o">-</span><span class="n">I</span>
 	<span class="k">return</span> <span class="n">I</span><span class="p">,</span> <span class="n">RO</span></div>
 
-
 <span class="c1"># 2-point Gauss-Legrenge integrator	</span>
-<div class="viewcode-block" id="Gauss2p">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Gauss2p">[docs]</a>
-<span class="k">def</span> <span class="nf">Gauss2p</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">mu_Y</span><span class="p">,</span> <span class="n">sigma_Y</span><span class="p">,</span> <span class="n">ks</span><span class="p">):</span>
+<div class="viewcode-block" id="Gauss2p"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Gauss2p">[docs]</a><span class="k">def</span> <span class="nf">Gauss2p</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">mu_Y</span><span class="p">,</span> <span class="n">sigma_Y</span><span class="p">,</span> <span class="n">ks</span><span class="p">):</span>
 	<span class="n">X</span> <span class="o">=</span> <span class="n">getX</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
 	<span class="n">dk</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">X</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">mu_Y</span><span class="o">-</span><span class="mf">3.0</span><span class="o">*</span><span class="n">sigma_Y</span><span class="p">))</span>
 	<span class="n">km</span> <span class="o">=</span> <span class="n">P</span><span class="o">*</span><span class="n">X</span><span class="o">-</span><span class="n">dk</span>
@@ -494,11 +471,8 @@
 	<span class="n">k2</span> <span class="o">=</span> <span class="n">km</span><span class="o">+</span><span class="mf">0.57735</span><span class="o">*</span><span class="n">dk</span>
 	<span class="k">return</span> <span class="n">dk</span><span class="o">*</span><span class="n">P</span><span class="o">*</span><span class="p">(</span><span class="n">epsilon_fks</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">mu_Y</span><span class="p">,</span><span class="n">sigma_Y</span><span class="p">,</span><span class="n">ks</span><span class="p">)</span><span class="o">+</span><span class="n">epsilon_fks</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">mu_Y</span><span class="p">,</span><span class="n">sigma_Y</span><span class="p">,</span><span class="n">ks</span><span class="p">))</span></div>
 
-
 <span class="c1"># Epsilon funtion for upscaled GA infiltration	</span>
-<div class="viewcode-block" id="epsilon_fks">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.epsilon_fks">[docs]</a>
-<span class="k">def</span> <span class="nf">epsilon_fks</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">mu_Y</span><span class="p">,</span><span class="n">sigma_Y</span><span class="p">,</span><span class="n">ks</span><span class="p">):</span>
+<div class="viewcode-block" id="epsilon_fks"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.epsilon_fks">[docs]</a><span class="k">def</span> <span class="nf">epsilon_fks</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">mu_Y</span><span class="p">,</span><span class="n">sigma_Y</span><span class="p">,</span><span class="n">ks</span><span class="p">):</span>
 	<span class="n">X</span> <span class="o">=</span> <span class="n">getX</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">P</span><span class="p">)</span>
 	<span class="n">kp</span> <span class="o">=</span> <span class="n">ks</span><span class="o">/</span><span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">X</span><span class="p">)</span>
 	<span class="n">fks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">k</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,(</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">sigma_Y</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">-</span><span class="n">mu_Y</span><span class="p">)</span><span class="o">/</span><span class="n">sigma_Y</span><span class="p">,</span><span class="mi">2</span><span class="p">))))</span>
@@ -507,19 +481,13 @@
 	<span class="n">epsilon</span><span class="p">[</span><span class="n">kp</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 	<span class="k">return</span> <span class="n">epsilon</span><span class="o">*</span><span class="n">fks</span></div>
 
-
 <span class="c1"># Dimentionless time parameter	</span>
-<div class="viewcode-block" id="getX">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.getX">[docs]</a>
-<span class="k">def</span> <span class="nf">getX</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+<div class="viewcode-block" id="getX"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.getX">[docs]</a><span class="k">def</span> <span class="nf">getX</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
 	<span class="n">X_aux</span> <span class="o">=</span> <span class="n">P</span><span class="o">*</span><span class="n">t</span><span class="o">/</span><span class="n">Sp</span>
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">X_aux</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="n">X_aux</span><span class="p">))</span></div>
 
 
-
-<div class="viewcode-block" id="Mod_GA">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Mod_GA">[docs]</a>
-<span class="k">def</span> <span class="nf">Mod_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">F</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">):</span>
+<div class="viewcode-block" id="Mod_GA"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Mod_GA">[docs]</a><span class="k">def</span> <span class="nf">Mod_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">F</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Modified Green &amp; Ampt infiltration approach</span>
 <span class="sd">	Requires solver (Newthon_Rap_Mod_GA) and F (f_GA) and F&#39; (dF_GA)</span>
 <span class="sd">	</span>
@@ -555,11 +523,8 @@
 	<span class="n">I</span> <span class="o">=</span> <span class="n">F_tf</span> <span class="o">-</span> <span class="n">F</span>
 	<span class="n">RO</span> <span class="o">=</span> <span class="n">P</span><span class="o">-</span><span class="n">I</span>
 	<span class="k">return</span> <span class="n">F_tf</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">RO</span></div>
-
 	
-<div class="viewcode-block" id="Newthon_Rap_Mod_GA">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Newthon_Rap_Mod_GA">[docs]</a>
-<span class="k">def</span> <span class="nf">Newthon_Rap_Mod_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">F</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">tp</span><span class="p">,</span><span class="n">to_0</span><span class="p">):</span>
+<div class="viewcode-block" id="Newthon_Rap_Mod_GA"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Newthon_Rap_Mod_GA">[docs]</a><span class="k">def</span> <span class="nf">Newthon_Rap_Mod_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">F</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">tp</span><span class="p">,</span><span class="n">to_0</span><span class="p">):</span>
 	<span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
 	<span class="n">aux_1</span> <span class="o">=</span> <span class="n">tp</span><span class="o">-</span><span class="n">t</span>
 	<span class="n">aux_2</span> <span class="o">=</span> <span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="n">tp</span>
@@ -575,21 +540,14 @@
 		<span class="n">len_error</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">error</span> <span class="o">&gt;=</span> <span class="mf">0.001</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 		<span class="n">to_0</span> <span class="o">=</span> <span class="n">to</span>	
 	<span class="k">return</span> <span class="n">to</span></div>
-
 	
 <span class="c1"># Implicit solution of Green and Ampt equation	</span>
-<div class="viewcode-block" id="f_GA">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.f_GA">[docs]</a>
-<span class="k">def</span> <span class="nf">f_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">F</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">tp</span><span class="p">,</span><span class="n">to</span><span class="p">):</span>	
+<div class="viewcode-block" id="f_GA"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.f_GA">[docs]</a><span class="k">def</span> <span class="nf">f_GA</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">F</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">tp</span><span class="p">,</span><span class="n">to</span><span class="p">):</span>	
 	<span class="k">return</span> <span class="n">ks</span><span class="o">*</span><span class="p">(</span><span class="n">tp</span><span class="o">-</span><span class="n">to</span><span class="p">)</span><span class="o">+</span><span class="n">Sp</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tp</span><span class="o">/</span><span class="n">to</span><span class="p">)</span><span class="o">-</span><span class="n">F</span><span class="o">-</span><span class="n">P</span><span class="o">*</span><span class="p">(</span><span class="n">tp</span><span class="o">-</span><span class="n">t</span><span class="p">)</span></div>
 
-
 <span class="c1"># Derivative of the implicit GA equation</span>
-<div class="viewcode-block" id="dF_GA">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.dF_GA">[docs]</a>
-<span class="k">def</span> <span class="nf">dF_GA</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">to</span><span class="p">):</span>
+<div class="viewcode-block" id="dF_GA"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.dF_GA">[docs]</a><span class="k">def</span> <span class="nf">dF_GA</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">to</span><span class="p">):</span>
 	<span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">ks</span><span class="o">+</span><span class="n">Sp</span><span class="o">/</span><span class="n">to</span><span class="p">)</span></div>
-
 	
 <span class="c1">## Modified Green &amp; Ampt infiltration approach</span>
 <span class="c1">#def Mod_GA_Sim(P,ks,Sp,t,dt):</span>

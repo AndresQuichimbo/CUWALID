@@ -1,24 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EVALUATING STORM’S PERFORMANCE &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
-
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -76,6 +72,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -105,9 +102,9 @@
            <div itemprop="articleBody">
              
   <section id="EVALUATING-STORM'S-PERFORMANCE">
-<h1><strong>EVALUATING STORM’S PERFORMANCE</strong><a class="headerlink" href="#EVALUATING-STORM'S-PERFORMANCE" title="Link to this heading"></a></h1>
+<h1><strong>EVALUATING STORM’S PERFORMANCE</strong><a class="headerlink" href="#EVALUATING-STORM'S-PERFORMANCE" title="Permalink to this heading"></a></h1>
 <section id="Objectives:">
-<h2>Objectives:<a class="headerlink" href="#Objectives:" title="Link to this heading"></a></h2>
+<h2>Objectives:<a class="headerlink" href="#Objectives:" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Evaluate the performance of STORM rainfall fields</p></li>
 <li><p>More recipes for awesome spatial plotting via <a class="reference external" href="https://docs.xarray.dev/en/stable/">Xarray</a></p></li>
@@ -116,7 +113,7 @@
 <p>Let’s see how well/bad STORM captures/simulates seasonal rainfall; and how far off the current parameterization is.</p>
 <hr class="docutils" />
 <section id="ONE-SIMULATED-SEASON-\to-CLUSTERS-\equiv-1">
-<h3>ONE SIMULATED-SEASON <span class="math notranslate nohighlight">\(\to\)</span> CLUSTERS <span class="math notranslate nohighlight">\(\equiv\)</span> 1<a class="headerlink" href="#ONE-SIMULATED-SEASON-\to-CLUSTERS-\equiv-1" title="Link to this heading"></a></h3>
+<h3>ONE SIMULATED-SEASON <span class="math notranslate nohighlight">\(\to\)</span> CLUSTERS <span class="math notranslate nohighlight">\(\equiv\)</span> 1<a class="headerlink" href="#ONE-SIMULATED-SEASON-\to-CLUSTERS-\equiv-1" title="Permalink to this heading"></a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -2150,7 +2147,7 @@ Coordinates:
 </section>
 </section>
 <section id="MAM-SEASON-(FOR-1-CLUSTER)">
-<h2>MAM SEASON (FOR 1 CLUSTER)<a class="headerlink" href="#MAM-SEASON-(FOR-1-CLUSTER)" title="Link to this heading"></a></h2>
+<h2>MAM SEASON (FOR 1 CLUSTER)<a class="headerlink" href="#MAM-SEASON-(FOR-1-CLUSTER)" title="Permalink to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
@@ -2318,7 +2315,7 @@ Coordinates:
 </div>
 </div>
 <section id="ONE-SIMULATED-SEASON-\to-CLUSTERS-\equiv-4">
-<h3>ONE SIMULATED-SEASON <span class="math notranslate nohighlight">\(\to\)</span> CLUSTERS <span class="math notranslate nohighlight">\(\equiv\)</span> 4<a class="headerlink" href="#ONE-SIMULATED-SEASON-\to-CLUSTERS-\equiv-4" title="Link to this heading"></a></h3>
+<h3>ONE SIMULATED-SEASON <span class="math notranslate nohighlight">\(\to\)</span> CLUSTERS <span class="math notranslate nohighlight">\(\equiv\)</span> 4<a class="headerlink" href="#ONE-SIMULATED-SEASON-\to-CLUSTERS-\equiv-4" title="Permalink to this heading"></a></h3>
 <p>Bear in mind that computation of the following block is somewhat “time-consuming”</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
@@ -2357,7 +2354,7 @@ Coordinates:
 </section>
 </section>
 <section id="MAM-SEASON-(FOR-4-CLUSTERS)">
-<h2>MAM SEASON (FOR 4 CLUSTERS)<a class="headerlink" href="#MAM-SEASON-(FOR-4-CLUSTERS)" title="Link to this heading"></a></h2>
+<h2>MAM SEASON (FOR 4 CLUSTERS)<a class="headerlink" href="#MAM-SEASON-(FOR-4-CLUSTERS)" title="Permalink to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
@@ -2685,7 +2682,7 @@ Coordinates:
 </div>
 </div>
 <section id="QUANTITATIVE-COMPARISONS">
-<h3>QUANTITATIVE COMPARISONS<a class="headerlink" href="#QUANTITATIVE-COMPARISONS" title="Link to this heading"></a></h3>
+<h3>QUANTITATIVE COMPARISONS<a class="headerlink" href="#QUANTITATIVE-COMPARISONS" title="Permalink to this heading"></a></h3>
 <div class="line-block">
 <div class="line">We have visually examined STORM’s output… and for better or worse, it does something… even though its stochastic framework hasn’t been parameterized yet.</div>
 <div class="line">But is it possible to somehow quantify the/that/those error(s)?</div>
@@ -3290,7 +3287,7 @@ Data variables:
 </div>
 </div>
 <section id="RELATIVE-BIAS-\to-CLUSTERS-\equiv-4">
-<h4>RELATIVE BIAS <span class="math notranslate nohighlight">\(\to\)</span> CLUSTERS <span class="math notranslate nohighlight">\(\equiv\)</span> 4<a class="headerlink" href="#RELATIVE-BIAS-\to-CLUSTERS-\equiv-4" title="Link to this heading"></a></h4>
+<h4>RELATIVE BIAS <span class="math notranslate nohighlight">\(\to\)</span> CLUSTERS <span class="math notranslate nohighlight">\(\equiv\)</span> 4<a class="headerlink" href="#RELATIVE-BIAS-\to-CLUSTERS-\equiv-4" title="Permalink to this heading"></a></h4>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
@@ -3324,7 +3321,7 @@ Data variables:
 </div>
 </section>
 <section id="RELATIVE-BIAS-\to-CLUSTERS-\equiv-1">
-<h4>RELATIVE BIAS <span class="math notranslate nohighlight">\(\to\)</span> CLUSTERS <span class="math notranslate nohighlight">\(\equiv\)</span> 1<a class="headerlink" href="#RELATIVE-BIAS-\to-CLUSTERS-\equiv-1" title="Link to this heading"></a></h4>
+<h4>RELATIVE BIAS <span class="math notranslate nohighlight">\(\to\)</span> CLUSTERS <span class="math notranslate nohighlight">\(\equiv\)</span> 1<a class="headerlink" href="#RELATIVE-BIAS-\to-CLUSTERS-\equiv-1" title="Permalink to this heading"></a></h4>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
@@ -3358,7 +3355,7 @@ Data variables:
 </div>
 </section>
 <section id="SEASONAL-[MAM]-RAINFALL-SIDE-BY-SIDE">
-<h4>SEASONAL [MAM] RAINFALL SIDE-BY-SIDE<a class="headerlink" href="#SEASONAL-[MAM]-RAINFALL-SIDE-BY-SIDE" title="Link to this heading"></a></h4>
+<h4>SEASONAL [MAM] RAINFALL SIDE-BY-SIDE<a class="headerlink" href="#SEASONAL-[MAM]-RAINFALL-SIDE-BY-SIDE" title="Permalink to this heading"></a></h4>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
@@ -3428,7 +3425,7 @@ Data variables:
 </div>
 </section>
 <section id="[MAM]-RELATIVE-BIAS-SIDE-BY-SIDE">
-<h4>[MAM] RELATIVE BIAS SIDE-BY-SIDE<a class="headerlink" href="#[MAM]-RELATIVE-BIAS-SIDE-BY-SIDE" title="Link to this heading"></a></h4>
+<h4>[MAM] RELATIVE BIAS SIDE-BY-SIDE<a class="headerlink" href="#[MAM]-RELATIVE-BIAS-SIDE-BY-SIDE" title="Permalink to this heading"></a></h4>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
@@ -3491,7 +3488,7 @@ Data variables:
 </section>
 <hr class="docutils" />
 <section id="30-RUNS">
-<h3>30 RUNS<a class="headerlink" href="#30-RUNS" title="Link to this heading"></a></h3>
+<h3>30 RUNS<a class="headerlink" href="#30-RUNS" title="Permalink to this heading"></a></h3>
 <p><img alt="rains" src="../../_images/six_rain.jpg" /></p>
 <p><img alt="diffs" src="../../_images/six_diff.jpg" /></p>
 <p>You’re encouraged to: 1) run 30 simulations on STORM; and 2) re-do this notebook for the <a class="reference external" href="../realisation_OND_crs-OK.nc">OND</a> realization

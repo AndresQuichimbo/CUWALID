@@ -1,24 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content: &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
-
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -73,6 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -102,7 +99,7 @@
            <div itemprop="articleBody">
              
   <section id="Content:">
-<h1>Content:<a class="headerlink" href="#Content:" title="Link to this heading"></a></h1>
+<h1>Content:<a class="headerlink" href="#Content:" title="Permalink to this heading"></a></h1>
 <ul class="simple">
 <li><p>Installation</p></li>
 <li><p><strong>Preparing model input parameters and dataset</strong></p></li>
@@ -111,7 +108,7 @@
 </ul>
 </section>
 <section id="Preprocessing-datasets">
-<h1>Preprocessing datasets<a class="headerlink" href="#Preprocessing-datasets" title="Link to this heading"></a></h1>
+<h1>Preprocessing datasets<a class="headerlink" href="#Preprocessing-datasets" title="Permalink to this heading"></a></h1>
 <p>This section will help you to create dataset required as model parameters for runing DRYP. This section uses simple raster operations to store and save variables (scripts can be accessed at <a class="reference external" href="https://github.com/AndresQuichimbo/DRYPv2.0.1.git">https://github.com/AndresQuichimbo/DRYPv2.0.1.git</a>.). More complex operations can be performed using any GIS software (e.g ArcMap, QGis) o python libraries such as rasterio.</p>
 <p>For this section we will use ready-to-use datasets created for running the regional model. Raw data can be found in different repositories such as Hydrosheds, SoilGrids, etc.</p>
 <p>The following steps will be carried out in order to produce the set of model paramter datasets for a subbasin of the HAD region.</p>
@@ -162,7 +159,7 @@
 </div>
 </div>
 <section id="1.-Delineate-a-watershed-(getting-a-basin-mask)">
-<h2>1. Delineate a watershed (getting a basin mask)<a class="headerlink" href="#1.-Delineate-a-watershed-(getting-a-basin-mask)" title="Link to this heading"></a></h2>
+<h2>1. Delineate a watershed (getting a basin mask)<a class="headerlink" href="#1.-Delineate-a-watershed-(getting-a-basin-mask)" title="Permalink to this heading"></a></h2>
 <p>For basin delineation, you will need to provide a Digital Elevation Map (DEM), the flow direction, and the basin outlet as csv file</p>
 <p>First, specify path of parameter files and create maps for each one of them.</p>
 <div class="nbinput nblast docutils container">
@@ -270,7 +267,7 @@
 <p><strong>TASK</strong>: Visualize the created datasets</p>
 </section>
 <section id="2.-Clip-basin-extent-by-mask">
-<h2>2. Clip basin extent by mask<a class="headerlink" href="#2.-Clip-basin-extent-by-mask" title="Link to this heading"></a></h2>
+<h2>2. Clip basin extent by mask<a class="headerlink" href="#2.-Clip-basin-extent-by-mask" title="Permalink to this heading"></a></h2>
 <p>We are planing to run a subbasin of the regional model, so we are going to create input files for the new model. We create this files by clipling the datasets of the regional model by the extent of the subbasin.</p>
 <p>This following step will clip the raster files by identifiying the extend of the basin (positive values) provided as mask.</p>
 <p>2.1. Clip flow accumulation file</p>
@@ -316,7 +313,7 @@
 <p><strong>TASK</strong>: Visualize the created datasets</p>
 </section>
 <section id="3.-Create-a-flow-direction-map">
-<h2>3. Create a flow direction map<a class="headerlink" href="#3.-Create-a-flow-direction-map" title="Link to this heading"></a></h2>
+<h2>3. Create a flow direction map<a class="headerlink" href="#3.-Create-a-flow-direction-map" title="Permalink to this heading"></a></h2>
 <p>DRYP uses a flow direction map (optional, but recomended!) based on LandLab based notation (<a class="reference external" href="https://landlab.readthedocs.io/en/latest/reference/components/flow_director.html">https://landlab.readthedocs.io/en/latest/reference/components/flow_director.html</a>), so in order to use flow direction maps from other source that are generally in D8 format (e.g. Hydrosheds) it has to be transformed into LandLab format. The following function will help with this:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -338,7 +335,7 @@
 <p><strong>TASK</strong>: Visualize the created datasets</p>
 </section>
 <section id="4.-Creating-river-network">
-<h2>4. Creating river network<a class="headerlink" href="#4.-Creating-river-network" title="Link to this heading"></a></h2>
+<h2>4. Creating river network<a class="headerlink" href="#4.-Creating-river-network" title="Permalink to this heading"></a></h2>
 <p>River networks can be created form the flow accumulation map. Here, we use the flow accumalation map created in the previous step to build the river network. The river network can be created based on a minimum number of cells or the minimun area.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -362,7 +359,7 @@
 <p><strong>TASK</strong>: Visualize the created datasets</p>
 </section>
 <section id="5.-Create-constant-head-boundary-condition">
-<h2>5. Create constant head boundary condition<a class="headerlink" href="#5.-Create-constant-head-boundary-condition" title="Link to this heading"></a></h2>
+<h2>5. Create constant head boundary condition<a class="headerlink" href="#5.-Create-constant-head-boundary-condition" title="Permalink to this heading"></a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>

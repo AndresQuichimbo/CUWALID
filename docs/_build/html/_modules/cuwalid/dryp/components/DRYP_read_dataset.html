@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../../">
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.dryp.components.DRYP_read_dataset &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -52,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -85,7 +82,7 @@
 <span class="c1">#  slope = (y_hi - y_lo) / (x_hi - x_lo)[:, None]</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;invalid value encountered in add&quot;</span><span class="p">)</span>
 <span class="c1">#  y_new = slope*(x_new - x_lo)[:, None] + y_lo</span>
-
+<span class="c1">#import matplotlib.pyplot as plt</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -96,9 +93,7 @@
 <span class="kn">from</span> <span class="nn">cuwalid.dryp.components.DRYP_projection</span> <span class="kn">import</span> <span class="n">reproject_dataset</span>
 
 <span class="c1">#@profile</span>
-<div class="viewcode-block" id="read_temporal_dataset">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset">[docs]</a>
-<span class="k">class</span> <span class="nc">read_temporal_dataset</span><span class="p">():</span>
+<div class="viewcode-block" id="read_temporal_dataset"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset">[docs]</a><span class="k">class</span> <span class="nc">read_temporal_dataset</span><span class="p">():</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Read all input dataset</span>
 
 <span class="sd">	Parameters</span>
@@ -184,12 +179,11 @@
 		<span class="k">else</span><span class="p">:</span>
 			
 			<span class="bp">self</span><span class="o">.</span><span class="n">data_set</span> <span class="o">=</span> <span class="kc">None</span>
-			<span class="nb">print</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;Flux data not provided&#39;</span><span class="p">)</span>
-				
+			<span class="c1">#print(filename, &#39;Flux data not provided&#39;)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Flux dataset.....................not provided&#39;</span><span class="p">)</span>
+
 		<span class="c1"># find precipitation and PET for an specific time step</span>
-<div class="viewcode-block" id="read_temporal_dataset.get_dataset_one_step">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset.get_dataset_one_step">[docs]</a>
-	<span class="k">def</span> <span class="nf">get_dataset_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">env_state</span><span class="p">,</span> <span class="n">file_type</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span><span class="c1">#, filename):</span>
+<div class="viewcode-block" id="read_temporal_dataset.get_dataset_one_step"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset.get_dataset_one_step">[docs]</a>	<span class="k">def</span> <span class="nf">get_dataset_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">env_state</span><span class="p">,</span> <span class="n">file_type</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span><span class="c1">#, filename):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Call this to execute a step in the model.</span>
 
@@ -217,11 +211,8 @@
 				<span class="n">dataset_at_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">env_state</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">data_set</span><span class="p">[</span><span class="n">field</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="n">t</span><span class="p">]]</span>
 		
 		<span class="k">return</span> <span class="n">dataset_at_t</span></div>
-
 		
-<div class="viewcode-block" id="read_temporal_dataset.get_point_dataset_one_step">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset.get_point_dataset_one_step">[docs]</a>
-	<span class="k">def</span> <span class="nf">get_point_dataset_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<div class="viewcode-block" id="read_temporal_dataset.get_point_dataset_one_step"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset.get_point_dataset_one_step">[docs]</a>	<span class="k">def</span> <span class="nf">get_point_dataset_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Call this to read forcing data at time step t</span>
 
@@ -241,20 +232,16 @@
 		<span class="c1">#print(type(head), t)</span>
 		<span class="n">dataset_at_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_set</span><span class="p">[</span><span class="n">head</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
 	
-		<span class="k">return</span> <span class="n">dataset_at_t</span></div>
-</div>
+		<span class="k">return</span> <span class="n">dataset_at_t</span></div></div>
 
-
-<div class="viewcode-block" id="read_dataset_interp">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset_interp">[docs]</a>
-<span class="k">class</span> <span class="nc">read_dataset_interp</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="read_dataset_interp"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset_interp">[docs]</a><span class="k">class</span> <span class="nc">read_dataset_interp</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Read netcdf files as input datasets</span>
 <span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1">#@profile</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">dt_ds</span><span class="p">,</span> <span class="n">ini_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">file_format</span><span class="p">,</span>
 		<span class="n">reproject</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">grid_length</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-		<span class="n">projm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_func</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="n">proj_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_func</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;set model grid time series and model files</span>
 
 <span class="sd">		Parameters</span>
@@ -309,9 +296,21 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">read_before</span> <span class="o">=</span> <span class="mi">1</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="mi">1</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">=</span> <span class="n">file_format</span>
+		
+		<span class="k">if</span> <span class="n">file_format</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Provide a valid data type to enable reading&quot;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Use: 0 for csv files&quot;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Use: 1 for netCDF files&quot;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Use: 2 for YEARLY netCDF files&quot;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Use: 3 for MONTHLY netCDF files&quot;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Use: 4 for DAILY netCDF files&quot;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Use: 5 for ensamble netCDF files&quot;</span><span class="p">)</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Change &#39;data_reading&#39; options in settings file&quot;</span><span class="p">)</span>
+			
+			
 		<span class="bp">self</span><span class="o">.</span><span class="n">reproject_ds</span> <span class="o">=</span> <span class="n">reproject</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">interpolate_ds</span> <span class="o">=</span> <span class="n">interpolate</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">=</span> <span class="kc">True</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">grid_length</span> <span class="o">=</span> <span class="n">grid_length</span>
 		
 		<span class="c1"># rainfall component time step</span>
@@ -340,17 +339,15 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="s2">&quot;EPSG:4326&quot;</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="n">proj</span>
-		<span class="k">if</span> <span class="n">projm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">projm</span> <span class="o">=</span> <span class="s2">&quot;EPSG:4326&quot;</span>
+		<span class="k">if</span> <span class="n">proj_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">proj_model</span> <span class="o">=</span> <span class="s2">&quot;EPSG:4326&quot;</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">projm</span> <span class="o">=</span> <span class="n">projm</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">proj_model</span> <span class="o">=</span> <span class="n">proj_model</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">step_func</span> <span class="o">=</span> <span class="n">step_func</span>
 
 	<span class="c1">#@profile</span>
-<div class="viewcode-block" id="read_dataset_interp.get_one_step_dataset">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset_interp.get_one_step_dataset">[docs]</a>
-	<span class="k">def</span> <span class="nf">get_one_step_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">j_step</span><span class="p">,</span> <span class="n">fname_ds</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+<div class="viewcode-block" id="read_dataset_interp.get_one_step_dataset"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset_interp.get_one_step_dataset">[docs]</a>	<span class="k">def</span> <span class="nf">get_one_step_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">j_step</span><span class="p">,</span> <span class="n">fname_ds</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Call this to execute a step in the model.</span>
 
@@ -402,7 +399,7 @@
 			<span class="n">day</span> <span class="o">=</span> <span class="n">idate_ds</span><span class="o">.</span><span class="n">day</span>
 			<span class="c1">#hour = idate_ds.hour</span>
 
-			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">):</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">step_0</span> <span class="o">=</span> <span class="mi">0</span>
 			
 			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">3</span><span class="p">):</span><span class="c1"># and (self.read_before_ds == 0):</span>
@@ -415,17 +412,17 @@
 			<span class="k">else</span><span class="p">:</span>
 				<span class="n">id_ini_month</span> <span class="o">=</span> <span class="mi">0</span>
 						
-			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>			
+			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">):</span>			
 				<span class="n">j_step</span> <span class="o">=</span> <span class="n">aux_time_j</span> <span class="o">-</span> <span class="n">id_ini_month</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">j_step</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">j_step</span><span class="p">)</span>
 			
 			<span class="c1"># modified to read giraf, MONTHLY -----------------------</span>
-			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">3</span><span class="p">):</span>
+			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">3</span><span class="p">):</span>
 				<span class="k">if</span> <span class="n">j_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">=</span> <span class="mi">1</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">=</span> <span class="kc">True</span>
 				
 			<span class="c1">#---------------------------------------------------------</span>
-			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
 				<span class="k">if</span> <span class="n">aux_time_j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">j_step</span> <span class="o">=</span> <span class="mi">0</span>
 						
@@ -433,20 +430,20 @@
 
 			<span class="c1"># THIS IS A PARTIAL SOLUTION, SO IT WILL BE MODIFIED LATER</span>
 			<span class="c1"># this will allow the model to read datasets fstarting from any time step</span>
-			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">step_0</span> <span class="o">=</span> <span class="n">aux_time_j</span> <span class="o">+</span> <span class="mi">0</span>
 			
-			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
 				<span class="n">j_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">j_step</span>
 			
 			<span class="c1">#print(idate_ds, aux_time_j, j_step, self.j_step, self.file_format, id_ini_month)</span>
 			<span class="c1">#if field == &#39;pet&#39;:</span>
 			<span class="c1">#	keys = [&#39;longitude&#39;, &#39;latitude&#39;]</span>
 			<span class="c1">#else:</span>
-			<span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+			<span class="c1">#keys = [&#39;lon&#39;, &#39;lat&#39;]</span>
 			
 			<span class="c1"># Read data at the begining of the simulation or if a new dataset starts</span>
-			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">j_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">j_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
 				
 				<span class="c1"># Filename of the current year</span>
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -482,14 +479,34 @@
 					<span class="n">fname_ds</span> <span class="o">=</span> <span class="n">fname_ds</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;MM&quot;</span><span class="p">,</span> <span class="n">str_month</span><span class="p">)</span>
 					<span class="n">fname_ds</span> <span class="o">=</span> <span class="n">fname_ds</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;DD&quot;</span><span class="p">,</span> <span class="n">str_day</span><span class="p">)</span>
 
-				<span class="c1">#print(fname_ds)</span>
 				<span class="c1"># read dataset</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname_ds</span><span class="p">)</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+					<span class="n">meta</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname_ds</span><span class="p">)</span>
+					<span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">({</span>
+					    <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;projection_y_coordinate&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">load</span><span class="p">(),</span>
+					    <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;projection_x_coordinate&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+					    <span class="p">})</span>
+					<span class="c1">#mask = meta[&#39;regions&#39;]</span>
+					<span class="c1">#mask.plot(cmap=&#39;turbo&#39;, levels=5)</span>
+
+					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname_ds</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">idate_ds</span><span class="o">.</span><span class="n">year</span><span class="p">))</span>
+					<span class="c1">#self.ds = self.ds.sum(dim=(&#39;time&#39;), skipna=True)</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">({</span>
+					    <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;projection_y_coordinate&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">load</span><span class="p">(),</span>
+					    <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;projection_x_coordinate&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+					    <span class="p">})</span>
+					<span class="k">del</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+
+				<span class="k">else</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname_ds</span><span class="p">)</span>
 				<span class="c1"># check if dimension names are compatible with DRYP names</span>
 				<span class="k">if</span> <span class="s1">&#39;latitude&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">coords</span><span class="p">):</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;longitude&#39;</span><span class="p">:</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">:</span><span class="s1">&#39;lat&#39;</span><span class="p">})</span>
 				<span class="k">if</span> <span class="s1">&#39;X&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">coords</span><span class="p">):</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;X&#39;</span><span class="p">:</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span><span class="s1">&#39;lat&#39;</span><span class="p">})</span>
+				<span class="k">if</span> <span class="s1">&#39;x&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">coords</span><span class="p">):</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span><span class="s1">&#39;lat&#39;</span><span class="p">})</span>
+
 
 				<span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s1">&#39;pet&#39;</span><span class="p">:</span>					
 					<span class="c1"># THIS IS ONLY FOR HPET DATA AT HOURLY TIME STEPS</span>
@@ -514,46 +531,54 @@
 				<span class="c1">#if self.file_format == 1:</span>
 				<span class="c1">#	self.ds = self.ds.sel(time=slice(self.ini_date, self.end_date))</span>
 				<span class="c1">#print(self.ds, self.ds[&#39;time&#39;], self.ini_date, self.end_date)</span>
-				<span class="c1"># reproject dataset</span>
-				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reproject_ds</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">reproject_dataset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">proj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">projm</span><span class="p">)</span><span class="c1">#, keys)</span>
-					
+
+				<span class="c1"># temporal resampling</span>
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_ds</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">:</span>
 					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_func</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
 						<span class="c1"># temporal resampling</span>
 						<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">freq_dt</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-					<span class="c1">#print(self.ds)		</span>
+					<span class="c1">#print(&quot;resample&quot;, self.ds)		</span>
+				
+				<span class="c1"># reproject dataset</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reproject_ds</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">reproject_dataset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">proj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">proj_model</span><span class="p">)</span><span class="c1">#, keys)</span>
+					<span class="c1">#print(&quot;repro&quot;, self.ds, self.proj, self.proj_model)</span>
 				<span class="c1"># flag to no read every time the whole dataset</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">=</span> <span class="mi">0</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">=</span> <span class="kc">False</span>
 			
 			<span class="c1">#print(self.ds, self.dt_ds, self.dt)</span>
 			<span class="c1"># set index</span>
 			<span class="n">iindex</span> <span class="o">=</span> <span class="n">j_step</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">step_0</span>
-
+			<span class="c1">#print(iindex)</span>
 			<span class="c1"># select data step</span>
 			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_func</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
 				<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">iindex</span><span class="p">])</span>
 			<span class="k">else</span><span class="p">:</span>
 				<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">day</span><span class="p">])</span>
 			<span class="c1">#print(ds)</span>
-			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolate_ds</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolate_ds</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
 				<span class="c1"># Spatial interpolation</span>
 				<span class="c1">#ds = self.ds.isel(time=[j_step-self.step_0]).interp(</span>
 				<span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
 					<span class="n">lat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
 					<span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+				<span class="c1">#print(&quot;interpolate&quot;, ds)</span>
 			<span class="c1">#else:</span>
 			<span class="c1">#	ds = self.ds.isel(time=[j_step-self.step_0])</span>
-			
+			<span class="c1">#print(ds)</span>
 			<span class="c1"># get data at time step t</span>
+			<span class="n">ds</span><span class="p">[</span><span class="n">field</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;lat&#39;</span><span class="p">)</span>
+			<span class="c1">#plt.imshow(np.array(ds.variables[field][0][:]))</span>
+			<span class="c1">#plt.savefig(&#39;precipitation&#39;+field+str(self.j_step)+&#39;.png&#39;)</span>
+			<span class="c1">#plt.close()</span>
 			<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">field</span><span class="p">][</span><span class="mi">0</span><span class="p">][:])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-			<span class="c1">#print(ds)			</span>
+			<span class="c1">#print(np.where(np.isnan(data)))	</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">j_step</span> <span class="o">+=</span> <span class="mi">1</span>
 			
 		<span class="k">else</span><span class="p">:</span>
 			
 			<span class="c1"># Read time series of precipitation	csv</span>
-			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">j_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">j_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname_ds</span><span class="p">)</span>
 				<span class="c1">#print(self.ds)</span>
 				<span class="c1"># change to txt to datetime</span>
@@ -575,18 +600,14 @@
 					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[[</span><span class="n">field</span><span class="p">]]</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq_dt</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="c1">#.reset_index()</span>
 					
 				<span class="c1">#time_pre = fpre[&quot;Date&quot;]</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">=</span> <span class="mi">0</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">=</span> <span class="kc">False</span>
 				
 			<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="n">field</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">j_step</span><span class="p">])</span>
 		
-		<span class="k">return</span> <span class="n">data</span></div>
-</div>
-
+		<span class="k">return</span> <span class="n">data</span></div></div>
 		
 <span class="c1"># new read data for savi</span>
-<div class="viewcode-block" id="read_dataset">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset">[docs]</a>
-<span class="k">class</span> <span class="nc">read_dataset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="read_dataset"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset">[docs]</a><span class="k">class</span> <span class="nc">read_dataset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Read input datasets from different sequential files</span>
 <span class="sd">	Parameters</span>
 <span class="sd">	Returns</span>
@@ -646,9 +667,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="o">=</span> <span class="mi">1</span>
 	
 	<span class="c1"># find precipitation and PET for an specific time step</span>
-<div class="viewcode-block" id="read_dataset.get_one_step_dataset">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset.get_one_step_dataset">[docs]</a>
-	<span class="k">def</span> <span class="nf">get_one_step_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">j_step</span><span class="p">,</span> <span class="n">fname_ds</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+<div class="viewcode-block" id="read_dataset.get_one_step_dataset"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset.get_one_step_dataset">[docs]</a>	<span class="k">def</span> <span class="nf">get_one_step_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">j_step</span><span class="p">,</span> <span class="n">fname_ds</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Call this to execute one step in the model.</span>
 
@@ -743,9 +762,7 @@
 			<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="n">field</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">j_step</span><span class="p">])</span>
 		
 		
-		<span class="k">return</span> <span class="n">data</span></div>
-</div>
-
+		<span class="k">return</span> <span class="n">data</span></div></div>
 </pre></div>
 
            </div>

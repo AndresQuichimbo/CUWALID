@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../">
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.dryp.main_DRYP &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -52,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -164,19 +161,20 @@
 <span class="c1"># gw:		Groundwater flow</span>
 
 <span class="c1">#@profile</span>
-<div class="viewcode-block" id="run_DRYP">
-<a class="viewcode-back" href="../../../cuwalid.dryp.html#cuwalid.dryp.main_DRYP.run_DRYP">[docs]</a>
-<span class="k">def</span> <span class="nf">run_DRYP</span><span class="p">(</span><span class="n">filename_input</span><span class="p">):</span>
+<div class="viewcode-block" id="run_DRYP"><a class="viewcode-back" href="../../../cuwalid.dryp.html#cuwalid.dryp.main_DRYP.run_DRYP">[docs]</a><span class="k">def</span> <span class="nf">run_DRYP</span><span class="p">(</span><span class="n">filename_input</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function integrates all components of the model, with</span>
 <span class="sd">	all model parameters and component settings being specified in</span>
 <span class="sd">	the -filename_input- file.</span>
 <span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-
+	
 	<span class="c1"># read model paramters and model setting file</span>
 	<span class="n">data_in</span> <span class="o">=</span> <span class="n">get_model_settings</span><span class="p">(</span><span class="n">filename_input</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;***************************** READING MODEL PARAMETERS *****************************&quot;</span><span class="p">)</span>
 	
 	<span class="c1"># read topography and channel characteristics</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading surface and river network parameters&quot;</span><span class="p">)</span>
 	<span class="n">topo</span> <span class="o">=</span> <span class="n">surface_parameters</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">fname_surface</span><span class="p">)</span>
 
 	<span class="c1"># read soil paramters</span>
@@ -208,6 +206,8 @@
 	
 	<span class="c1"># READING FORCING DATASET -------------------------------------------</span>
 	<span class="c1"># Read precipitation</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;***************************** READING TEMPORAL DATASETS ****************************&quot;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading precipitation&quot;</span><span class="p">)</span>
 	<span class="n">PRE</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
@@ -216,10 +216,10 @@
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
-		<span class="n">proj</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">proj_data</span><span class="p">,</span>
-		<span class="n">projm</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">proj_model</span><span class="p">,</span>
+		<span class="n">proj</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">data_projection</span><span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">],</span>
+		<span class="n">proj_model</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">PROJECTION</span><span class="p">,</span>
 		<span class="p">)</span>
-	
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading evapoptranspiration&quot;</span><span class="p">)</span>
 	<span class="c1"># Read reference potential evapotranspiration</span>
 	<span class="n">ET0</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
@@ -229,11 +229,12 @@
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
-		<span class="n">proj</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">proj_data</span><span class="p">,</span>
-		<span class="n">projm</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">proj_model</span><span class="p">,</span>
+		<span class="n">proj</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">data_projection</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">],</span>
+		<span class="n">proj_model</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">PROJECTION</span><span class="p">,</span>
 		<span class="p">)</span>
 	
 	<span class="c1"># Read SAVI</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading vegetation SAVI&quot;</span><span class="p">)</span>
 	<span class="n">SAVI</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
@@ -242,10 +243,13 @@
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
+		<span class="n">proj</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">data_projection</span><span class="p">[</span><span class="s1">&#39;savi&#39;</span><span class="p">],</span>
+		<span class="n">proj_model</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">PROJECTION</span><span class="p">,</span>
 		<span class="n">step_func</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 		<span class="p">)</span>
 	
 	<span class="c1"># Read LAI (Leaf Area Index)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading vegetation LAI&quot;</span><span class="p">)</span>
 	<span class="n">LAI</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;lai&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;lai&#39;</span><span class="p">],</span>
@@ -254,10 +258,13 @@
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
+		<span class="n">proj</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">data_projection</span><span class="p">[</span><span class="s1">&#39;lai&#39;</span><span class="p">],</span>
+		<span class="n">proj_model</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">PROJECTION</span><span class="p">,</span>
 		<span class="n">step_func</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 		<span class="p">)</span>
 	
 	<span class="c1"># Read Kc: Crop coeficient factor</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading vegetation Kc&quot;</span><span class="p">)</span>
 	<span class="n">Kc</span> <span class="o">=</span> <span class="n">read_dataset_interp</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_step</span><span class="p">[</span><span class="s1">&#39;kc&#39;</span><span class="p">],</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
 		<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;kc&#39;</span><span class="p">],</span>
@@ -266,6 +273,8 @@
 		<span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
 		<span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
+		<span class="n">proj</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">data_projection</span><span class="p">[</span><span class="s1">&#39;kc&#39;</span><span class="p">],</span>
+		<span class="n">proj_model</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">PROJECTION</span><span class="p">,</span>
 		<span class="n">step_func</span><span class="o">=</span><span class="kc">True</span>
 		<span class="p">)</span>
 		
@@ -287,14 +296,35 @@
 	
 	
 	<span class="c1"># read overland flow boundary condition</span>
-	<span class="n">dataFlux</span> <span class="o">=</span> <span class="n">read_temporal_dataset</span><span class="p">(</span>
-			<span class="n">data_in</span><span class="o">.</span><span class="n">fname_surface</span><span class="o">.</span><span class="n">fname_TSOF</span><span class="p">,</span>
-			<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">],</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading surface flux boundary conditions&quot;</span><span class="p">)</span>
+	<span class="n">fluxOF</span> <span class="o">=</span> <span class="n">read_temporal_dataset</span><span class="p">(</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">fname_TSOF</span><span class="p">,</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;fluxOF&#39;</span><span class="p">],</span>
 			<span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span>
 			<span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
 			<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
 			<span class="p">)</span>
 
+	<span class="c1"># read overland flow boundary condition</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading unsaturated flux boundary conditions&quot;</span><span class="p">)</span>
+	<span class="n">fluxUZ</span> <span class="o">=</span> <span class="n">read_temporal_dataset</span><span class="p">(</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">fname_TSUZ</span><span class="p">,</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;fluxUZ&#39;</span><span class="p">],</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
+			<span class="p">)</span>
+	
+	<span class="c1"># read overland flow boundary condition units should be in m3 s-1</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading saturated flux boundary conditions&quot;</span><span class="p">)</span>
+	<span class="n">fluxSZ</span> <span class="o">=</span> <span class="n">read_temporal_dataset</span><span class="p">(</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">fname_TSSZ</span><span class="p">,</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;fluxSZ&#39;</span><span class="p">],</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
+			<span class="p">)</span>
+	
 	<span class="c1"># add variable saturated component</span>
 	<span class="n">Qusz</span> <span class="o">=</span> <span class="n">recharge_routing</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
 
@@ -313,6 +343,7 @@
 	<span class="c1">#env_state = model_environment_status(data_in)</span>
 
 	<span class="c1"># MODEL COMPONENTS ------------------------------------------------------</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*************************** ASSEMBLING MODEL COMPONENTS ****************************&quot;</span><span class="p">)</span>
 	<span class="n">abc</span> <span class="o">=</span> <span class="n">ABMconnector</span><span class="p">()</span>
 	<span class="n">inf</span> <span class="o">=</span> <span class="n">infiltration</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">inf_method</span><span class="p">)</span>
 	<span class="n">cnp</span> <span class="o">=</span> <span class="n">interception</span><span class="p">()</span>
@@ -336,19 +367,28 @@
 	
 	<span class="k">if</span> <span class="n">water_bodies</span><span class="o">.</span><span class="n">id_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 		<span class="n">pnds</span> <span class="o">=</span> <span class="n">ponds</span><span class="p">(</span><span class="n">water_bodies</span><span class="o">.</span><span class="n">pnds_Amax</span><span class="p">,</span> <span class="n">water_bodies</span><span class="o">.</span><span class="n">pnds_hmax</span><span class="p">)</span> <span class="c1"># ponds	</span>
+	
 	<span class="c1"># read location of point boundary conditions</span>
-	<span class="c1">#if dataFlux.data_set is not None:</span>
-	<span class="c1">#	if data_in.data_reading[&#39;abs&#39;] == 0:</span>
-	<span class="c1">#		idFluxOF = extract_id_from_coords(</span>
-	<span class="c1">#			env_state.grid,</span>
-	<span class="c1">#			data_in.filename_OF_points</span>
-	<span class="c1">#			)</span>
-	<span class="c1">#	</span>
-	<span class="c1">#	elif data_in.data_reading[&#39;abs&#39;] == 2:</span>
-	<span class="c1">#		idFluxOF = extract_id_from_raster(</span>
-	<span class="c1">#			env_state.grid,</span>
-	<span class="c1">#			data_in.filename_OF_points</span>
-	<span class="c1">#			)</span>
+	<span class="k">if</span> <span class="n">fluxOF</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;fluxOF&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="n">idFluxOF</span><span class="p">,</span> <span class="n">idFluxOF_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span>
+				<span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_surface</span><span class="o">.</span><span class="n">path_of_bc_flux</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">fluxUZ</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;fluxUZ&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="n">idFluxUZ</span><span class="p">,</span> <span class="n">idFluxUZ_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span>
+				<span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_soil</span><span class="o">.</span><span class="n">path_uz_bc_flux</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">fluxSZ</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;fluxSZ&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="n">idFluxSZ</span><span class="p">,</span> <span class="n">idFluxSZ_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span>
+				<span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_aquifer</span><span class="o">.</span><span class="n">path_sz_bc_flux</span><span class="p">)</span>
+			
+		<span class="c1">#elif data_in.data_reading[&#39;abs&#39;] == 2:</span>
+		<span class="c1">#	idFluxOF = extract_id_from_raster(</span>
+		<span class="c1">#		env_state.grid,</span>
+		<span class="c1">#		data_in.filename_OF_points</span>
+		<span class="c1">#		)</span>
 	
 	<span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>	
 	<span class="n">t_eto</span> <span class="o">=</span> <span class="mi">0</span>	
@@ -434,7 +474,7 @@
 			   <span class="n">data_in</span><span class="o">.</span><span class="n">dt_results</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">save_results</span><span class="p">,</span>
 			   <span class="n">data_in</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">var_avg</span><span class="p">)</span>
 	
-	<span class="c1"># grid and average results from the riparian area</span>
+	<span class="c1"># create grid and average results from the riparian area</span>
 	<span class="k">if</span> <span class="n">riv_nodes</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 		<span class="n">grid_rpvar</span> <span class="o">=</span> <span class="n">GlobalGridVar</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
 			   <span class="n">data_in</span><span class="o">.</span><span class="n">dt_results</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">save_netcdf</span><span class="p">,</span>
@@ -443,7 +483,7 @@
 			   <span class="n">data_in</span><span class="o">.</span><span class="n">dt_results</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">save_results</span><span class="p">,</span>
 			   <span class="n">data_in</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">var_grid_rp</span><span class="p">)</span>
 
-	<span class="c1"># grid and average results from the water bodies (ponds)</span>
+	<span class="c1"># create grid and average results from the water bodies (ponds)</span>
 	<span class="k">if</span> <span class="n">water_bodies</span><span class="o">.</span><span class="n">id_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 		<span class="n">grid_pndvar</span> <span class="o">=</span> <span class="n">GlobalGridVar</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
 			   <span class="n">data_in</span><span class="o">.</span><span class="n">dt_results</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">save_netcdf</span><span class="p">,</span>
@@ -453,8 +493,8 @@
 			   <span class="n">data_in</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">var_grid_pnd</span><span class="p">)</span>
 
 	<span class="c1"># Initialize the progress bar</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;****************************** SIMULATION IN PROGRESS ******************************&quot;</span><span class="p">)</span>
 	<span class="n">progress_bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">ndays</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;days&#39;</span><span class="p">)</span>
-	
 	<span class="k">while</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">data_in</span><span class="o">.</span><span class="n">ndays</span><span class="p">:</span>
 	
 		<span class="k">for</span> <span class="n">UZ_ti</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">dt_hourly</span><span class="p">):</span>
@@ -463,13 +503,20 @@
 				
 				<span class="c1"># get rainfall</span>
 				<span class="n">rain</span> <span class="o">=</span> <span class="n">PRE</span><span class="o">.</span><span class="n">get_one_step_dataset</span><span class="p">(</span><span class="n">t_pre</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_TSPre</span><span class="p">,</span> <span class="s1">&#39;pre&#39;</span><span class="p">)</span>
-				<span class="c1">#rain = rain*0.5 # This is specific for IMERG 30 min resolution only</span>
+				<span class="n">rain</span> <span class="o">=</span> <span class="n">rain</span><span class="o">*</span><span class="mf">0.5</span> <span class="c1"># This is specific for IMERG 30 min resolution only</span>
 				<span class="c1"># for the forcast TRAINING.</span>
 				<span class="c1">#rain[rain&gt;300] = 300.</span>
+				<span class="c1">#print(&quot;rain&quot;, np.where(np.isnan(rain[act_nodes])))</span>
 				
 				<span class="c1"># get potential evapotranspiration</span>
 				<span class="n">PET</span> <span class="o">=</span> <span class="n">ET0</span><span class="o">.</span><span class="n">get_one_step_dataset</span><span class="p">(</span><span class="n">t_eto</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_TSMeteo</span><span class="p">,</span> <span class="s1">&#39;pet&#39;</span><span class="p">)</span>
 				<span class="c1">#PET[PET&gt;1] = 1.0</span>
+				
+				<span class="c1"># read flux boundary conditions for all components</span>
+				<span class="c1"># add data abstractions/sink/source points</span>
+				<span class="c1"># select row from dataframe and add to the excess component</span>
+				<span class="k">if</span> <span class="n">fluxUZ</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>					
+					<span class="n">rain</span><span class="p">[</span><span class="n">idFluxUZ</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fluxUZ</span><span class="o">.</span><span class="n">get_point_dataset_one_step</span><span class="p">(</span><span class="n">t_abs</span><span class="p">)</span>
 				
 				<span class="c1"># not in used, NOT DELETE</span>
 				<span class="c1"># estimate abstractions</span>
@@ -480,6 +527,7 @@
 					<span class="n">head</span><span class="p">,</span>
 					<span class="p">)</span>				
 				
+				<span class="c1">#print(&quot;pet&quot;, PET[act_nodes])</span>
 				<span class="c1"># check if interception is activated</span>
 				<span class="k">if</span> <span class="n">vegetation</span><span class="o">.</span><span class="n">av</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 					<span class="n">SAVIdt</span> <span class="o">=</span> <span class="kc">None</span>
@@ -494,6 +542,18 @@
 					<span class="n">LAIdt</span> <span class="o">=</span> <span class="n">LAI</span><span class="o">.</span><span class="n">get_one_step_dataset</span><span class="p">(</span><span class="n">t_savi</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_TSlai</span><span class="p">,</span> <span class="s1">&#39;lai&#39;</span><span class="p">)</span>
 					<span class="n">Kcdt</span> <span class="o">=</span> <span class="n">Kc</span><span class="o">.</span><span class="n">get_one_step_dataset</span><span class="p">(</span><span class="n">t_savi</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_TSkc</span><span class="p">,</span> <span class="s1">&#39;kc&#39;</span><span class="p">)</span>
 					
+				<span class="c1"># PONDS: Add ponds here ------------------------------------------</span>
+				<span class="c1"># first check that ponds is active</span>
+				<span class="k">if</span> <span class="n">water_bodies</span><span class="o">.</span><span class="n">id_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="n">water_bodies</span><span class="o">.</span><span class="n">pnds_Vo</span><span class="p">,</span> <span class="n">et_pnds</span><span class="p">,</span> <span class="n">aoz_pnds</span><span class="p">,</span> <span class="n">Ppnds</span> <span class="o">=</span> <span class="n">pnds</span><span class="o">.</span><span class="n">run_ponds_one_step</span><span class="p">(</span>
+				 							<span class="n">water_bodies</span><span class="o">.</span><span class="n">pnds_Vo</span><span class="p">,</span>
+											<span class="n">rain</span><span class="p">[</span><span class="n">water_bodies</span><span class="o">.</span><span class="n">id_nodes</span><span class="p">],</span>
+											<span class="n">PET</span><span class="p">[</span><span class="n">water_bodies</span><span class="o">.</span><span class="n">id_nodes</span><span class="p">],</span> <span class="c1">#aoz,</span>
+											<span class="n">topo</span><span class="o">.</span><span class="n">area_cells</span><span class="p">,</span>
+											<span class="p">)</span>
+					<span class="c1"># transfer data to the entire model domain</span>
+					<span class="n">rain</span><span class="p">[</span><span class="n">water_bodies</span><span class="o">.</span><span class="n">id_nodes</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ppnds</span>
+				
 				<span class="c1"># calculate AV</span>
 				<span class="k">if</span> <span class="n">vegetation</span><span class="o">.</span><span class="n">av</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 					<span class="n">av</span> <span class="o">=</span> <span class="p">(</span><span class="n">SAVIdt</span> <span class="o">-</span> <span class="n">SAVIdt_min</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">SAVIdt_max</span> <span class="o">-</span> <span class="n">SAVIdt_min</span><span class="p">)</span>
@@ -511,16 +571,16 @@
 						<span class="n">vegetation</span><span class="o">.</span><span class="n">Sc0_cn</span><span class="p">,</span>
 						<span class="n">Kcdt</span><span class="p">)</span>
 				
-				<span class="c1"># Estimate Kc for the riparian area</span>
-				<span class="n">Pthr</span><span class="p">,</span> <span class="n">Ecar</span><span class="p">,</span> <span class="n">PETr</span><span class="p">,</span> <span class="n">LAIr</span><span class="p">,</span> <span class="n">Kcr</span><span class="p">,</span> <span class="n">Sc0_cnrp</span> <span class="o">=</span> <span class="n">cnp</span><span class="o">.</span><span class="n">run_interception_one_step</span><span class="p">(</span>
-						<span class="n">rain</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">vegetation</span><span class="o">.</span><span class="n">av</span><span class="p">,</span>
-						<span class="n">SAVIdt</span><span class="p">,</span> <span class="n">SAVIdt_max</span><span class="p">,</span> <span class="n">SAVIdt_min</span><span class="p">,</span>
-						<span class="kc">None</span><span class="p">,</span>
-						<span class="n">vegetation</span><span class="o">.</span><span class="n">lai_a</span><span class="p">,</span>
-						<span class="n">vegetation</span><span class="o">.</span><span class="n">lai_b</span><span class="p">,</span>
-						<span class="n">vegetation</span><span class="o">.</span><span class="n">fcw_cn</span><span class="p">,</span>
-						<span class="n">vegetation</span><span class="o">.</span><span class="n">Sc0_cnrp</span><span class="p">,</span>
-						<span class="n">Kcdt</span><span class="p">)</span>
+				<span class="c1">## Estimate Kc for the riparian area</span>
+				<span class="c1">#Pthr, Ecar, PETr, LAIr, Kcr, Sc0_cnrp = cnp.run_interception_one_step(</span>
+				<span class="c1">#		rain, PET, vegetation.av,</span>
+				<span class="c1">#		SAVIdt, SAVIdt_max, SAVIdt_min,</span>
+				<span class="c1">#		None,</span>
+				<span class="c1">#		vegetation.lai_a,</span>
+				<span class="c1">#		vegetation.lai_b,</span>
+				<span class="c1">#		vegetation.fcw_cn,</span>
+				<span class="c1">#		vegetation.Sc0_cnrp,</span>
+				<span class="c1">#		Kcdt)</span>
 						
 				<span class="c1">##### NOT IN USE, NOT DELETE</span>
 				<span class="c1">##### estimate precipitation over the soil</span>
@@ -532,19 +592,7 @@
 				<span class="c1">#### NOT IN USE, NOT DELETE												</span>
 				<span class="c1">#### add irrigation as rain, still under development</span>
 				<span class="c1">####Pth = Pth[:] + abc.auz[:]</span>
-				
-				<span class="c1"># PONDS: Add ponds here ------------------------------------------</span>
-				<span class="c1"># first check that ponds is active</span>
-				<span class="c1">#if water_bodies.id_nodes is not None:</span>
-				<span class="c1">#	water_bodies.pnds_Vo, et_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(</span>
-				<span class="c1"># 							water_bodies.pnds_Vo,</span>
-				<span class="c1">#							rain[water_bodies.id_nodes],</span>
-				<span class="c1">#							PET[water_bodies.id_nodes], #aoz,</span>
-				<span class="c1">#							topo.area_cells,</span>
-				<span class="c1">#							)</span>
-				<span class="c1">#	# transfer data to the entire model domain</span>
-				<span class="c1">#	rain[water_bodies.id_nodes] = Ppnds</span>
-				
+								
 				<span class="c1"># INFILTRATION: estimate infiltration --------------------</span>
 				<span class="c1">#inf.run_infiltration_one_step(Pth, env_state, data_in)</span>
 				<span class="n">INF</span><span class="p">,</span> <span class="n">EXS</span><span class="p">,</span> <span class="n">Ft0</span><span class="p">,</span> <span class="n">SORP0</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">dry_day</span> <span class="o">=</span> <span class="n">inf</span><span class="o">.</span><span class="n">run_infiltration_one_step</span><span class="p">(</span>
@@ -553,7 +601,8 @@
 						<span class="n">soil</span><span class="o">.</span><span class="n">PSI</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span>
 						<span class="n">soil</span><span class="o">.</span><span class="n">Droot</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span>
 						<span class="n">theta</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span>
-						<span class="n">rain</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span>
+						<span class="c1">#rain[act_nodes],</span>
+						<span class="n">Pth</span><span class="p">,</span>
 						<span class="n">Ft0</span><span class="p">,</span> <span class="n">SORP0</span><span class="p">,</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">dry_day</span><span class="p">,</span>
 						<span class="p">)</span>
 				
@@ -584,14 +633,14 @@
 				<span class="n">ratio_etp</span><span class="p">[</span><span class="n">ratio_etp</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 				
 				<span class="c1"># potention evapotranspiration ONLY over model domain</span>
-				<span class="k">if</span> <span class="n">Kc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-					<span class="n">PETh</span> <span class="o">=</span> <span class="n">Kc</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span><span class="o">*</span><span class="n">PETh</span><span class="c1">#[act_nodes]</span>
+				<span class="k">if</span> <span class="n">Kcdt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="n">PETh</span> <span class="o">=</span> <span class="n">Kcdt</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span><span class="o">*</span><span class="n">PETh</span><span class="c1">#[act_nodes]</span>
 				<span class="c1"># potential evapotranspiration for saturated zone</span>
 				<span class="c1">#PETsz = PETh*ratio_etp</span>
 				<span class="c1"># potential evapotranspiration for unsaturated zone</span>
 				<span class="c1">#PETuz = PETh - PETsz</span>
 				<span class="n">PETuz</span> <span class="o">=</span> <span class="n">PETh</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="c1"># - PETsz</span>
-				
+				<span class="c1">#print(PETuz)</span>
 				<span class="c1"># SOIL WATER BALANCE: Mestimate soil water balance-------</span>
 				<span class="c1"># Units for fluxes are in mm, units of soil moisture [--]</span>
 				<span class="n">AET</span><span class="p">,</span> <span class="n">PCR</span><span class="p">,</span> <span class="n">theta</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span> <span class="n">ROF</span><span class="o">=</span> <span class="n">swb</span><span class="o">.</span><span class="n">run_swbm_one_step</span><span class="p">(</span>
@@ -656,8 +705,8 @@
 				
 				<span class="c1"># add data abstractions/sink/source points</span>
 				<span class="c1"># select row from dataframe and add to the excess component</span>
-				<span class="c1">#if dataFlux.data_set is not None:					</span>
-				<span class="c1">#	runoff[idFluxOF] += dataFlux.get_point_dataset_one_step(t_abs)</span>
+				<span class="k">if</span> <span class="n">fluxOF</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>					
+					<span class="n">runoff</span><span class="p">[</span><span class="n">idFluxOF</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fluxOF</span><span class="o">.</span><span class="n">get_point_dataset_one_step</span><span class="p">(</span><span class="n">t_abs</span><span class="p">)</span>
 				
 				<span class="c1"># RUNOFF: estimate runoff---------------------------------------</span>
 				<span class="c1"># all variables with containing length must be changed to meters [m]</span>
@@ -746,7 +795,11 @@
 				<span class="c1">#	lai_mb.append(0)</span>
 				<span class="c1">#	kc_mb.append(0)</span>
 				<span class="c1">#	kcrip_mb.append(0)</span>
-												
+				<span class="c1"># add data abstractions/sink/source points</span>
+				<span class="c1"># select row from dataframe and add to the excess component</span>
+				<span class="k">if</span> <span class="n">fluxSZ</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>					
+					<span class="n">rch_agg</span><span class="p">[</span><span class="n">idFluxSZ</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fluxSZ</span><span class="o">.</span><span class="n">get_point_dataset_one_step</span><span class="p">(</span><span class="n">t_abs</span><span class="p">)</span>
+				
 				<span class="c1"># GROUNDWATER --------------------------------------------------</span>
 				<span class="c1"># activate groundwater component (gw)</span>
 				<span class="k">if</span> <span class="n">data_in</span><span class="o">.</span><span class="n">run_GW</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -872,14 +925,14 @@
 					<span class="n">total_pndvar</span><span class="o">.</span><span class="n">store_variables</span><span class="p">(</span><span class="n">PRE</span><span class="o">.</span><span class="n">date_sim_dt</span><span class="p">,</span> <span class="n">t_pre</span><span class="p">,</span>
 			    	  	<span class="p">{</span><span class="s2">&quot;epd&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">et_pnds</span><span class="p">)],</span>
 	    				<span class="s2">&quot;vpd&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">water_bodies</span><span class="o">.</span><span class="n">pnds_Vo</span><span class="p">)],</span>
-	    				<span class="s2">&quot;aoz&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">aoz_pnds</span><span class="p">)],</span>
+	    				<span class="s2">&quot;apd&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">aoz_pnds</span><span class="p">)],</span>
 						<span class="p">}</span>
 						<span class="p">)</span>
 					
 					<span class="n">grid_pndvar</span><span class="o">.</span><span class="n">store_variables</span><span class="p">(</span><span class="n">PRE</span><span class="o">.</span><span class="n">date_sim_dt</span><span class="p">,</span> <span class="n">t_pre</span><span class="p">,</span>
 			      		<span class="p">{</span><span class="s2">&quot;epd&quot;</span><span class="p">:</span> <span class="n">et_pnds</span><span class="p">,</span>
 	    				<span class="s2">&quot;vpd&quot;</span><span class="p">:</span> <span class="n">water_bodies</span><span class="o">.</span><span class="n">pnds_Vo</span><span class="p">,</span>
-						<span class="s2">&quot;aoz&quot;</span><span class="p">:</span> <span class="n">aoz_pnds</span><span class="p">,</span>
+						<span class="s2">&quot;apd&quot;</span><span class="p">:</span> <span class="n">aoz_pnds</span><span class="p">,</span>
 						<span class="p">}</span>
 						<span class="p">)</span>
 
@@ -915,7 +968,7 @@
 	<span class="c1"># Close the progress bar</span>
 	<span class="n">progress_bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 	
-	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*** SAVING RESULTS ***&quot;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;********************************** SAVING RESULTS **********************************&quot;</span><span class="p">)</span>
 	<span class="c1"># SAVE AVERAGE VALUES OF VARIABLES: CSV-FILES</span>
 	<span class="c1">#var_name = [&#39;pre&#39;, &#39;pet&#39;, &#39;run&#39;, &#39;aet&#39;, &#39;inf&#39;, &#39;tht&#39;,</span>
 	<span class="c1">#    &#39;rch&#39;, &#39;egw&#39;, &#39;wte&#39;, &#39;gdh&#39;, &#39;twsc&#39;, &#39;chb&#39;, &#39;tls&#39;]</span>
@@ -924,6 +977,7 @@
 			<span class="c1">#length_var,</span>
 			<span class="n">multi_files</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&lt;==== saving model temporal outputs&quot;</span><span class="p">)</span>
 	<span class="c1"># SAVE VARIABLES AT POINT LOCATION: CSV-FILES</span>
 	<span class="c1"># name of variables to store</span>
 	<span class="c1">#var_name = [&#39;aet&#39;, &#39;inf&#39;, &#39;dis&#39;, &#39;tht&#39;, &#39;rch&#39;, &#39;wte&#39;, &#39;gdh&#39;, &#39;ssz&#39;]</span>
@@ -943,6 +997,7 @@
 		
 	<span class="c1"># SAVE VARIABLES FROM THE RIPARIAN ZONE</span>
 	<span class="c1"># save average riparian zone variables in a csv file</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&lt;==== saving riparian zone temporal outputs&quot;</span><span class="p">)</span>
 	<span class="k">if</span> <span class="n">riv_nodes</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 		<span class="c1"># variables names</span>
 		<span class="c1">#var_name = [&#39;aet&#39;, &#39;fch&#39;, &#39;tls&#39;, &#39;tht&#39;, &#39;ssz&#39;]</span>
@@ -960,10 +1015,11 @@
 
 	<span class="c1"># SAVE VARIABLES FROM PONDS</span>
 	<span class="c1"># save average riparian zone variables in a csv file</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&lt;==== saving water bodies temporal outputs&quot;</span><span class="p">)</span>
 	<span class="k">if</span> <span class="n">water_bodies</span><span class="o">.</span><span class="n">id_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 		<span class="c1"># variables names</span>
 		<span class="c1">#var_name = [&#39;aet&#39;, &#39;fch&#39;, &#39;tls&#39;, &#39;tht&#39;, &#39;ssz&#39;]</span>
-		
+		<span class="c1">#print(grid_pndvar)</span>
 		<span class="c1"># save grided model result datasets </span>
 		<span class="n">grid_pndvar</span><span class="o">.</span><span class="n">save_netCDF_var</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">fnameTS_grid</span><span class="o">+</span><span class="s1">&#39;pnd.nc&#39;</span><span class="p">,</span>
 			   <span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span> <span class="n">water_bodies</span><span class="o">.</span><span class="n">id_nodes</span><span class="p">,</span><span class="c1"># var_name</span>
@@ -977,6 +1033,7 @@
 		
 	<span class="c1"># SAVE RASTER FILES FOR INITIAL CONDITIONS</span>
 	<span class="c1"># Save water table for initial conditions</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&lt;==== saving raster files for initial conditions&quot;</span><span class="p">)</span>
 	<span class="n">save_map_to_rastergrid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span>
 			<span class="n">data_in</span><span class="o">.</span><span class="n">fnameTS_avg</span> <span class="o">+</span> <span class="s1">&#39;_wte_ini.asc&#39;</span><span class="p">)</span>
 	
@@ -998,9 +1055,8 @@
 		<span class="n">theta</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
 		<span class="n">theta</span><span class="p">[</span><span class="n">water_bodies</span><span class="o">.</span><span class="n">id_nodes</span><span class="p">]</span> <span class="o">=</span> <span class="n">water_bodies</span><span class="o">.</span><span class="n">pnds_Vo</span>
 		<span class="n">save_map_to_rastergrid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span>
-				<span class="n">data_in</span><span class="o">.</span><span class="n">fnameTS_avg</span> <span class="o">+</span> <span class="s1">&#39;_V_pnd_ini.asc&#39;</span><span class="p">)</span></div>
-
-
+				<span class="n">data_in</span><span class="o">.</span><span class="n">fnameTS_avg</span> <span class="o">+</span> <span class="s1">&#39;_V_pnd_ini.asc&#39;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;======================= ALL PROCESSES COMPLETED SUCCESSFULLY =======================&quot;</span><span class="p">)</span></div>
 <span class="c1"># ---------------------------------------------------------------------</span>
 <span class="c1"># Call script from external library	</span>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>

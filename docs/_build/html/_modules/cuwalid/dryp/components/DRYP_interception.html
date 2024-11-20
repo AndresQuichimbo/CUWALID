@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../../">
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.dryp.components.DRYP_interception &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -52,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -81,18 +78,14 @@
   <h1>Source code for cuwalid.dryp.components.DRYP_interception</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<div class="viewcode-block" id="interception">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.interception">[docs]</a>
-<span class="k">class</span> <span class="nc">interception</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="interception"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.interception">[docs]</a><span class="k">class</span> <span class="nc">interception</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
 		
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Run Interception component&quot;</span><span class="p">)</span>
 		<span class="k">pass</span>
 		
-<div class="viewcode-block" id="interception.run_interception_one_step">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.interception.run_interception_one_step">[docs]</a>
-	<span class="k">def</span> <span class="nf">run_interception_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rain</span><span class="p">,</span> <span class="n">ETo</span><span class="p">,</span> <span class="n">av</span><span class="p">,</span>
+<div class="viewcode-block" id="interception.run_interception_one_step"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.interception.run_interception_one_step">[docs]</a>	<span class="k">def</span> <span class="nf">run_interception_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rain</span><span class="p">,</span> <span class="n">ETo</span><span class="p">,</span> <span class="n">av</span><span class="p">,</span>
 		<span class="n">SAVI</span><span class="p">,</span> <span class="n">savi_max</span><span class="p">,</span> <span class="n">savi_min</span><span class="p">,</span> <span class="n">LAI</span><span class="p">,</span> <span class="n">lai_a</span><span class="p">,</span> <span class="n">lai_b</span><span class="p">,</span> <span class="n">fcw</span><span class="p">,</span> <span class="n">Sc0</span><span class="p">,</span> <span class="n">Kc</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;	Canopy compartment, calculates interception and</span>
 <span class="sd">		evaporation from canopy.</span>
@@ -196,14 +189,10 @@
 			<span class="n">PET</span> <span class="o">=</span> <span class="n">ETo</span>
 			<span class="n">Sc</span> <span class="o">=</span> <span class="kc">None</span>
 			
-		<span class="k">return</span> <span class="n">Pth</span><span class="p">,</span> <span class="n">Eca</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">LAI</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">Sc</span></div>
-</div>
-
+		<span class="k">return</span> <span class="n">Pth</span><span class="p">,</span> <span class="n">Eca</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">LAI</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">Sc</span></div></div>
 		
 	
-<div class="viewcode-block" id="get_vegetation_factor">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.get_vegetation_factor">[docs]</a>
-<span class="k">def</span> <span class="nf">get_vegetation_factor</span><span class="p">(</span><span class="n">savi</span><span class="p">,</span> <span class="n">savi_min</span><span class="p">,</span> <span class="n">savi_max</span><span class="p">):</span>
+<div class="viewcode-block" id="get_vegetation_factor"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.get_vegetation_factor">[docs]</a><span class="k">def</span> <span class="nf">get_vegetation_factor</span><span class="p">(</span><span class="n">savi</span><span class="p">,</span> <span class="n">savi_min</span><span class="p">,</span> <span class="n">savi_max</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Crop factor calculation kc for ETo</span>
 <span class="sd">	</span>
 <span class="sd">	Parameters</span>
@@ -224,12 +213,9 @@
 	<span class="c1">#kc = kc**nu</span>
 	
 	<span class="k">return</span> <span class="n">kc</span></div>
-
 		
 
-<div class="viewcode-block" id="get_LAI_from_SAVI">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.get_LAI_from_SAVI">[docs]</a>
-<span class="k">def</span> <span class="nf">get_LAI_from_SAVI</span><span class="p">(</span><span class="n">SAVI</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<div class="viewcode-block" id="get_LAI_from_SAVI"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.get_LAI_from_SAVI">[docs]</a><span class="k">def</span> <span class="nf">get_LAI_from_SAVI</span><span class="p">(</span><span class="n">SAVI</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Calculate LAI from SAVI</span>
 <span class="sd">	</span>
 <span class="sd">	Parameters</span>
@@ -246,12 +232,9 @@
 	<span class="n">LAI</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">b</span><span class="o">*</span><span class="n">SAVI</span><span class="p">)</span> 
 	
 	<span class="k">return</span> <span class="n">LAI</span></div>
-
 	
 
-<div class="viewcode-block" id="get_Scmax_from_LAI">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.get_Scmax_from_LAI">[docs]</a>
-<span class="k">def</span> <span class="nf">get_Scmax_from_LAI</span><span class="p">(</span><span class="n">LAI</span><span class="p">):</span>
+<div class="viewcode-block" id="get_Scmax_from_LAI"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.get_Scmax_from_LAI">[docs]</a><span class="k">def</span> <span class="nf">get_Scmax_from_LAI</span><span class="p">(</span><span class="n">LAI</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Calculate maximum amount of water store by canopy</span>
 <span class="sd">	</span>
 <span class="sd">	Parameters</span>
@@ -266,11 +249,8 @@
 	<span class="n">Sca_max</span> <span class="o">=</span> <span class="mf">0.935</span> <span class="o">+</span> <span class="mf">0.498</span><span class="o">*</span><span class="n">LAI</span> <span class="o">-</span> <span class="mf">0.00575</span><span class="o">*</span><span class="p">(</span><span class="n">LAI</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 	
 	<span class="k">return</span> <span class="n">Sca_max</span></div>
-
 	
-<div class="viewcode-block" id="get_Scmax_from_LAI_and_fcw">
-<a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.get_Scmax_from_LAI_and_fcw">[docs]</a>
-<span class="k">def</span> <span class="nf">get_Scmax_from_LAI_and_fcw</span><span class="p">(</span><span class="n">fcw</span><span class="p">,</span> <span class="n">LAI</span><span class="p">):</span>
+<div class="viewcode-block" id="get_Scmax_from_LAI_and_fcw"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.get_Scmax_from_LAI_and_fcw">[docs]</a><span class="k">def</span> <span class="nf">get_Scmax_from_LAI_and_fcw</span><span class="p">(</span><span class="n">fcw</span><span class="p">,</span> <span class="n">LAI</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Calculate maximum amount of water store by canopy</span>
 <span class="sd">	exponential approach</span>
 <span class="sd">	http://refhub.elsevier.com/S0022-1694(19)30648-1/h0170</span>
@@ -288,7 +268,6 @@
 	<span class="n">Sca_max</span> <span class="o">=</span> <span class="n">fcw</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">LAI</span><span class="p">)</span>
 	
 	<span class="k">return</span> <span class="n">Sca_max</span></div>
-
 </pre></div>
 
            </div>

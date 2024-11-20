@@ -11,4 +11,4 @@ The project contains 3 models:
 
 These models work together to produce outputs at monthly, seasonal, annual or decadal assessments. CUWALID is underpinned by DRYP, a calibrated regional hysdrological model for the Horn of Africa drylands (HAD) that includes key processes occuring in drylands which other models fail to capture.
 
-Currently only the DRYP model is available.
+.. image:: ../fig/AQ_ICPAC_forecasting.png

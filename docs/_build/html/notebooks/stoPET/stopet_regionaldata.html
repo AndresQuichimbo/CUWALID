@@ -1,24 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Learning objective: &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
-
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -73,6 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -101,11 +98,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <table><tr><td><p><img alt="e133baa05dca43fab33d2bf3602d0dd9" class="no-scaled-link" src="../../_images/CardiffUniversity.PNG" style="width: 250px;" /></p>
-</td><td><p><img alt="031e15e9a93e4d2581f24e69685466b8" class="no-scaled-link" src="../../_images/Down2Earth.PNG" style="width: 250px;" /></p>
-</td><td><p><img alt="d41bfb9009ef4be1940bd31d116f6cfd" class="no-scaled-link" src="../../_images/UniversityOfBristol.PNG" style="width: 250px;" /></p>
+  <table><tr><td><p><img alt="c40a9b2c05c6489ba03bec2b3c1f0668" class="no-scaled-link" src="../../_images/CardiffUniversity.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="ab57203e14d74f8d9b5bf63684c92aeb" class="no-scaled-link" src="../../_images/Down2Earth.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="b13f999e785646aa9ca86478345bc338" class="no-scaled-link" src="../../_images/UniversityOfBristol.PNG" style="width: 250px;" /></p>
 </td></tr></table><section id="Learning-objective:">
-<h1>Learning objective:<a class="headerlink" href="#Learning-objective:" title="Link to this heading"></a></h1>
+<h1>Learning objective:<a class="headerlink" href="#Learning-objective:" title="Permalink to this heading"></a></h1>
 <ul class="simple">
 <li><p>generating regional PET data</p></li>
 <li><p>understand the output format from the model</p></li>
@@ -113,7 +110,7 @@
 </ul>
 <p>est. time 2 hour</p>
 <section id="Generating-regional-data">
-<h2>Generating regional data<a class="headerlink" href="#Generating-regional-data" title="Link to this heading"></a></h2>
+<h2>Generating regional data<a class="headerlink" href="#Generating-regional-data" title="Permalink to this heading"></a></h2>
 <p>Here we will generate the data for <strong>Kenya</strong> and use some plotting functions to visualize the data. Notice regional data takes more space so make sure there is enough storage for the data.</p>
 <p>To generate the regional data please adjust the input values in the <strong>run_stoPET()</strong> function and generate 5 years data for Kenya using Method 2 as temperature adjustment with a 1.5 degree increase.</p>
 <blockquote>
@@ -232,7 +229,7 @@
 </div>
 </div>
 <section id="plot_spatial-function-doesn't-exist">
-<h3>plot_spatial function doesn’t exist<a class="headerlink" href="#plot_spatial-function-doesn't-exist" title="Link to this heading"></a></h3>
+<h3>plot_spatial function doesn’t exist<a class="headerlink" href="#plot_spatial-function-doesn't-exist" title="Permalink to this heading"></a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>

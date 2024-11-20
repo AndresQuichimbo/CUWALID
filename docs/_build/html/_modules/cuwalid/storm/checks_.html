@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../../">
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.storm.checks_ &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -52,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -98,9 +95,7 @@
 
 <span class="c1"># %% parsing</span>
 
-<div class="viewcode-block" id="parse">
-<a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.parse">[docs]</a>
-<span class="k">class</span> <span class="nc">parse</span><span class="p">:</span>
+<div class="viewcode-block" id="parse"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.parse">[docs]</a><span class="k">class</span> <span class="nc">parse</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">NUMSIMS</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">PTOT_SC</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">PTOT_SF</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">STORMINESS_SC</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">STORMINESS_SF</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -132,9 +127,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">storm_sf</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;storm_sf&#39;</span><span class="p">,</span> <span class="n">STORMINESS_SF</span><span class="p">)</span>
         <span class="c1"># self.parsing()</span>
 
-<div class="viewcode-block" id="parse.none_too">
-<a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.parse.none_too">[docs]</a>
-    <span class="k">def</span> <span class="nf">none_too</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<div class="viewcode-block" id="parse.none_too"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.parse.none_too">[docs]</a>    <span class="k">def</span> <span class="nf">none_too</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        assimilates NONE inputs from the command line.\n</span>
 <span class="sd">        Parameters</span>
@@ -148,10 +141,7 @@
         <span class="c1"># https://stackoverflow.com/a/48295546/5885810  (None in argparse)</span>
         <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="parse.update_arg">
-<a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.parse.update_arg">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="p">):</span>
+<div class="viewcode-block" id="parse.update_arg"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.parse.update_arg">[docs]</a>    <span class="k">def</span> <span class="nf">update_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        redefines variables by their names, instead of relative to &#39;arguments&#39;.\n</span>
 <span class="sd">        Parameters</span>
@@ -169,13 +159,10 @@
         <span class="c1"># https://stackoverflow.com/a/2083375/5885810   (exec global... weird)</span>
         <span class="k">return</span> <span class="n">arguments</span></div>
 
-
     <span class="c1"># https://www.geeksforgeeks.org/command-line-arguments-in-python/</span>
     <span class="c1"># https://docs.python.org/3/library/argparse.html#the-add-argument-method</span>
     <span class="c1"># https://stackoverflow.com/a/27616814/5885810  (parser case insensitive)</span>
-<div class="viewcode-block" id="parse.parsing">
-<a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.parse.parsing">[docs]</a>
-    <span class="k">def</span> <span class="nf">parsing</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+<div class="viewcode-block" id="parse.parsing"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.parse.parsing">[docs]</a>    <span class="k">def</span> <span class="nf">parsing</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        reads parameters from the command line.\n</span>
 <span class="sd">        Parameters</span>
@@ -222,16 +209,12 @@
         <span class="c1"># Read arguments from command line</span>
         <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
         <span class="c1"># print(args)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_arg</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></div>
-</div>
-
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_arg</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></div></div>
 
 
 <span class="c1"># %% file-naming</span>
 
-<div class="viewcode-block" id="welcome">
-<a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.welcome">[docs]</a>
-<span class="k">class</span> <span class="nc">welcome</span><span class="p">:</span>
+<div class="viewcode-block" id="welcome"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.welcome">[docs]</a><span class="k">class</span> <span class="nc">welcome</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NUMSIMS</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">PTOT_SC</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">PTOT_SF</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">STORMINESS_SC</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">STORMINESS_SF</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">OUT_PATH</span><span class="o">=</span><span class="s2">&quot;storm_output&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -286,9 +269,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">replicate</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ncs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">()</span>
 
-<div class="viewcode-block" id="welcome.replicate">
-<a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.welcome.replicate">[docs]</a>
-    <span class="k">def</span> <span class="nf">replicate</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+<div class="viewcode-block" id="welcome.replicate"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.welcome.replicate">[docs]</a>    <span class="k">def</span> <span class="nf">replicate</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        replicates scalars for NUMSIMS (if only one was passed).\n</span>
 <span class="sd">        Input: none.\n</span>
@@ -312,10 +293,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">storm_sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storm_sc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storm_sf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storm_sf</span></div>
 
-
-<div class="viewcode-block" id="welcome.output_path">
-<a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.welcome.output_path">[docs]</a>
-    <span class="k">def</span> <span class="nf">output_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="welcome.output_path"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.welcome.output_path">[docs]</a>    <span class="k">def</span> <span class="nf">output_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        generates the names of the output nc-files.\n</span>
 <span class="sd">        Input: none.\n</span>
@@ -354,10 +332,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">nc_paths</span></div>
 
-
-<div class="viewcode-block" id="welcome.infer_scenario">
-<a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.welcome.infer_scenario">[docs]</a>
-    <span class="k">def</span> <span class="nf">infer_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stepchange</span><span class="p">,</span> <span class="n">scaling_factor</span><span class="p">,</span> <span class="n">tab_x</span><span class="p">,</span> <span class="n">tab_sign</span><span class="p">):</span>
+<div class="viewcode-block" id="welcome.infer_scenario"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.welcome.infer_scenario">[docs]</a>    <span class="k">def</span> <span class="nf">infer_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stepchange</span><span class="p">,</span> <span class="n">scaling_factor</span><span class="p">,</span> <span class="n">tab_x</span><span class="p">,</span> <span class="n">tab_sign</span><span class="p">):</span>
     <span class="c1"># stepchange=PTOT_SC; scaling_factor=PTOT_SF; tab_x=tab_ptot</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        transforms the numerical input of sc/sf factors into &#39;readable&#39; labels.\n</span>
@@ -385,16 +360,12 @@
             <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">tab_sign</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">tab_sign</span><span class="o">.</span><span class="n">Var2</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">x</span><span class="p">]),</span> <span class="s1">&#39;Var1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
                             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sign_ar</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sign_ar</span><span class="p">)]])</span>
             <span class="p">))</span>
-        <span class="k">return</span> <span class="n">str_vec</span></div>
-</div>
-
+        <span class="k">return</span> <span class="n">str_vec</span></div></div>
 
 
 <span class="c1"># %% assert</span>
 
-<div class="viewcode-block" id="assertion">
-<a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.assertion">[docs]</a>
-<span class="k">def</span> <span class="nf">assertion</span><span class="p">(</span><span class="n">wet_hash</span><span class="p">,</span> <span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">,</span> <span class="n">Z_CUTS</span><span class="p">,</span> <span class="n">DEM_FILE</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">):</span>
+<div class="viewcode-block" id="assertion"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.assertion">[docs]</a><span class="k">def</span> <span class="nf">assertion</span><span class="p">(</span><span class="n">wet_hash</span><span class="p">,</span> <span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">,</span> <span class="n">Z_CUTS</span><span class="p">,</span> <span class="n">DEM_FILE</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    performs some assertions to test the validity of input parameters.\n</span>
 <span class="sd">    Input -&gt;</span>
@@ -455,7 +426,6 @@
         <span class="s1">&#39;file exists in the correct path.&#39;</span>
     <span class="k">if</span> <span class="n">SHP_FILE</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">parent_d</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">))):</span>
         <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">assertshp</span><span class="p">)</span></div>
-
 
 </pre></div>
 

@@ -1,23 +1,19 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.storm package &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -53,6 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -80,15 +77,15 @@
            <div itemprop="articleBody">
              
   <section id="cuwalid-storm-package">
-<h1>cuwalid.storm package<a class="headerlink" href="#cuwalid-storm-package" title="Link to this heading"></a></h1>
+<h1>cuwalid.storm package<a class="headerlink" href="#cuwalid-storm-package" title="Permalink to this heading"></a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-cuwalid.storm.checks_">
-<span id="cuwalid-storm-checks-module"></span><h2>cuwalid.storm.checks_ module<a class="headerlink" href="#module-cuwalid.storm.checks_" title="Link to this heading"></a></h2>
+<span id="cuwalid-storm-checks-module"></span><h2>cuwalid.storm.checks_ module<a class="headerlink" href="#module-cuwalid.storm.checks_" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.storm.checks_.assertion">
-<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.checks_.</span></span><span class="sig-name descname"><span class="pre">assertion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wet_hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NUMSIMS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NUMSIMYRS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_CUTS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DEM_FILE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SHP_FILE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#assertion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.assertion" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.checks_.</span></span><span class="sig-name descname"><span class="pre">assertion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wet_hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NUMSIMS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NUMSIMYRS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_CUTS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DEM_FILE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SHP_FILE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#assertion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.assertion" title="Permalink to this definition"></a></dt>
 <dd><p>performs some assertions to test the validity of input parameters.</p>
 <p>Input -&gt;
 <em>wet_hash</em> : pandas.DataFrame; var-names (Var2) related to outputs (Var3).</p>
@@ -97,11 +94,11 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="cuwalid.storm.checks_.parse">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.checks_.</span></span><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NUMSIMS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NUMSIMYRS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PTOT_SC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PTOT_SF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">STORMINESS_SC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">STORMINESS_SF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.parse" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.checks_.</span></span><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NUMSIMS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NUMSIMYRS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PTOT_SC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PTOT_SF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">STORMINESS_SC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">STORMINESS_SF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.parse" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="cuwalid.storm.checks_.parse.none_too">
-<span class="sig-name descname"><span class="pre">none_too</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#parse.none_too"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.parse.none_too" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">none_too</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#parse.none_too"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.parse.none_too" title="Permalink to this definition"></a></dt>
 <dd><p>assimilates NONE inputs from the command line.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -115,11 +112,11 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuwalid.storm.checks_.parse.parsing">
-<span class="sig-name descname"><span class="pre">parsing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#parse.parsing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.parse.parsing" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">parsing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#parse.parsing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.parse.parsing" title="Permalink to this definition"></a></dt>
 <dd><p>reads parameters from the command line.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>None.</strong></p>
+<dd class="field-odd"><p><strong>None.</strong> – </p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>argparse.Namespace; updated global parameters.</p>
@@ -129,7 +126,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuwalid.storm.checks_.parse.update_arg">
-<span class="sig-name descname"><span class="pre">update_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arguments</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#parse.update_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.parse.update_arg" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">update_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arguments</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#parse.update_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.parse.update_arg" title="Permalink to this definition"></a></dt>
 <dd><p>redefines variables by their names, instead of relative to ‘arguments’.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -145,11 +142,11 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="cuwalid.storm.checks_.welcome">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.checks_.</span></span><span class="sig-name descname"><span class="pre">welcome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NUMSIMS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NUMSIMYRS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PTOT_SC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PTOT_SF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">STORMINESS_SC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">STORMINESS_SF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OUT_PATH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'storm_output'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#welcome"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.welcome" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.checks_.</span></span><span class="sig-name descname"><span class="pre">welcome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NUMSIMS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NUMSIMYRS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PTOT_SC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PTOT_SF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">STORMINESS_SC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">STORMINESS_SF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OUT_PATH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'storm_output'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#welcome"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.welcome" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="cuwalid.storm.checks_.welcome.infer_scenario">
-<span class="sig-name descname"><span class="pre">infer_scenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stepchange</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaling_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_sign</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#welcome.infer_scenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.welcome.infer_scenario" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">infer_scenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stepchange</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaling_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_sign</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#welcome.infer_scenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.welcome.infer_scenario" title="Permalink to this definition"></a></dt>
 <dd><p>transforms the numerical input of sc/sf factors into ‘readable’ labels.</p>
 <p>Input -&gt;
 <em>stepchange</em> : list; list of floats with step_change factors/coeffs.
@@ -160,7 +157,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuwalid.storm.checks_.welcome.output_path">
-<span class="sig-name descname"><span class="pre">output_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#welcome.output_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.welcome.output_path" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">output_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#welcome.output_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.welcome.output_path" title="Permalink to this definition"></a></dt>
 <dd><p>generates the names of the output nc-files.</p>
 <p>Input: none.</p>
 <p>Output -&gt; list; containing output file-paths/names.</p>
@@ -168,7 +165,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cuwalid.storm.checks_.welcome.replicate">
-<span class="sig-name descname"><span class="pre">replicate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#welcome.replicate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.welcome.replicate" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">replicate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#welcome.replicate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.welcome.replicate" title="Permalink to this definition"></a></dt>
 <dd><p>replicates scalars for NUMSIMS (if only one was passed).</p>
 <p>Input: none.</p>
 <p>Output -&gt; none; updated instances/globals of scaling parameters.</p>
@@ -176,7 +173,7 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="cuwalid.storm.checks_.welcome.tab_storm">
-<span class="sig-name descname"><span class="pre">tab_storm</span></span><a class="headerlink" href="#cuwalid.storm.checks_.welcome.tab_storm" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">tab_storm</span></span><a class="headerlink" href="#cuwalid.storm.checks_.welcome.tab_storm" title="Permalink to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>‘ptotC’ = Stationary conditions / Control Climate</dt><dd><p>‘ptotS’ = Step Change (increase/decrese) in observed wetness
 ‘ptotT’ = Progressive Trend (positive/negative) in observed wetness</p>
@@ -194,10 +191,10 @@
 
 </section>
 <section id="module-cuwalid.storm.chunking">
-<span id="cuwalid-storm-chunking-module"></span><h2>cuwalid.storm.chunking module<a class="headerlink" href="#module-cuwalid.storm.chunking" title="Link to this heading"></a></h2>
+<span id="cuwalid-storm-chunking-module"></span><h2>cuwalid.storm.chunking module<a class="headerlink" href="#module-cuwalid.storm.chunking" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.storm.chunking.BINLIST">
-<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.chunking.</span></span><span class="sig-name descname"><span class="pre">BINLIST</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/chunking.html#BINLIST"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.chunking.BINLIST" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.chunking.</span></span><span class="sig-name descname"><span class="pre">BINLIST</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/chunking.html#BINLIST"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.chunking.BINLIST" title="Permalink to this definition"></a></dt>
 <dd><p>Returns list of bits that represent a non-negative integer
 n      -&gt; non-negative integer
 width  -&gt; number of bits in returned zero-filled list (default 0)</p>
@@ -205,14 +202,14 @@ width  -&gt; number of bits in returned zero-filled list (default 0)</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.storm.chunking.CHUNK_3D">
-<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.chunking.</span></span><span class="sig-name descname"><span class="pre">CHUNK_3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vorShape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunkSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4096</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/chunking.html#CHUNK_3D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.chunking.CHUNK_3D" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.chunking.</span></span><span class="sig-name descname"><span class="pre">CHUNK_3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vorShape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunkSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4096</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/chunking.html#CHUNK_3D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.chunking.CHUNK_3D" title="Permalink to this definition"></a></dt>
 <dd><p>FIRST OF ALL: find the Physical Sector Size (of your partition)
 chunkSize == [4096 Bytes] -&gt; WOS (in this case)</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.storm.chunking.PERTURB_SHAPE">
-<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.chunking.</span></span><span class="sig-name descname"><span class="pre">PERTURB_SHAPE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onbits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/chunking.html#PERTURB_SHAPE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.chunking.PERTURB_SHAPE" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.chunking.</span></span><span class="sig-name descname"><span class="pre">PERTURB_SHAPE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onbits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/chunking.html#PERTURB_SHAPE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.chunking.PERTURB_SHAPE" title="Permalink to this definition"></a></dt>
 <dd><p>Returns shape perturbed by adding 1 to elements corresponding to 1 bits in onbits
 shape  -&gt; list of variable dimension sizes
 onbits -&gt; non-negative integer less than 2**len(shape)</p>
@@ -220,16 +217,16 @@ onbits -&gt; non-negative integer less than 2**len(shape)</p>
 
 </section>
 <section id="cuwalid-storm-main-storm-module">
-<h2>cuwalid.storm.main_storm module<a class="headerlink" href="#cuwalid-storm-main-storm-module" title="Link to this heading"></a></h2>
+<h2>cuwalid.storm.main_storm module<a class="headerlink" href="#cuwalid-storm-main-storm-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="cuwalid-storm-pdfs-module">
-<h2>cuwalid.storm.pdfs_ module<a class="headerlink" href="#cuwalid-storm-pdfs-module" title="Link to this heading"></a></h2>
+<h2>cuwalid.storm.pdfs_ module<a class="headerlink" href="#cuwalid-storm-pdfs-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="cuwalid-storm-rainfall-module">
-<h2>cuwalid.storm.rainfall module<a class="headerlink" href="#cuwalid-storm-rainfall-module" title="Link to this heading"></a></h2>
+<h2>cuwalid.storm.rainfall module<a class="headerlink" href="#cuwalid-storm-rainfall-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-cuwalid.storm">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cuwalid.storm" title="Link to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cuwalid.storm" title="Permalink to this heading"></a></h2>
 </section>
 </section>
 

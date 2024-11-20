@@ -1,24 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>1. stoPET &mdash; CUWALID 0.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
-
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/nbsphinx-code-cells.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -74,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dryp_developers.html">CUWALID: Developers</a></li>
 </ul>
 
         </div>
@@ -102,13 +99,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <table><tr><td><p><img alt="b33a9e41c32e4c06b0e644145aaa69f9" class="no-scaled-link" src="../../_images/CardiffUniversity.PNG" style="width: 250px;" /></p>
-</td><td><p><img alt="417477d5968f49798b3a047ef5e6bdb1" class="no-scaled-link" src="../../_images/Down2Earth.PNG" style="width: 250px;" /></p>
-</td><td><p><img alt="0adde19f10944fbeb4d0c27eb30e09d4" class="no-scaled-link" src="../../_images/UniversityOfBristol.PNG" style="width: 250px;" /></p>
+  <table><tr><td><p><img alt="7fbebad4c6174d15a4748e24161d3bd2" class="no-scaled-link" src="../../_images/CardiffUniversity.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="a56647d43e6643aab486d220abc3ef77" class="no-scaled-link" src="../../_images/Down2Earth.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="388ec084ec8c401db44220c7cafb41d8" class="no-scaled-link" src="../../_images/UniversityOfBristol.PNG" style="width: 250px;" /></p>
 </td></tr></table><p>CUWALID is an integrated model used to obtain actionable forecasts for hydrological components in drylands. It consists of a main hydrological model (DRYP) which allows to estimate the partioning of the water balance. This hydrological model is driven by two major climate inputs <strong>precipitation</strong> and <strong>potential evapotranspiration (PET)</strong>. The driving climate variables are obtained based on stochastic models integrated in the system. <strong>STORM</strong> is the precipitation model and <strong>stoPET</strong> is the PET
 model that generates the required driving climate variables. Here, we disscuss the stoPET model and how it works in the CUWALID system.</p>
 <section id="1.-stoPET">
-<h1>1. stoPET<a class="headerlink" href="#1.-stoPET" title="Link to this heading"></a></h1>
+<h1>1. stoPET<a class="headerlink" href="#1.-stoPET" title="Permalink to this heading"></a></h1>
 <p>stoPET is a stochastic PET generator over the globe (55N - 55S). The model consists of two scripts <strong>run_stoPET.py</strong> and <strong>stoPET_v1.py</strong> where the first one is used to provide the necessary inputs and run the model. The second one is the script containing the functions to generate the PET values. For training purposes, the function in the run_stoPET.py is provided below. Details of the model description can be found in the following paper stoPET paper and you can download the model from this
 link.</p>
 <div class="nbinput nblast docutils container">
@@ -182,12 +179,12 @@ link.</p>
 </div>
 </div>
 <section id="1.1-Changing-input-parameters">
-<h2>1.1 Changing input parameters<a class="headerlink" href="#1.1-Changing-input-parameters" title="Link to this heading"></a></h2>
+<h2>1.1 Changing input parameters<a class="headerlink" href="#1.1-Changing-input-parameters" title="Permalink to this heading"></a></h2>
 <p>The above function is used to run the stoPET model and generate the required PET values. There are input parameters that are required to run it. The user can change these parameters in this function. stoPET can run in two types: one is a <strong>single point run</strong> and two is a <strong>regional run</strong>. If a single point run is selected, the user will need to provide the <strong>lat/lon</strong> of the specific location and the model will choose the nearest grid point to generate the PET value. If a regional run is
 selected, the user will need to provide the <strong>four corners of a rectangle</strong> that contain the region of interest. The user also needs to provide the <strong>start year</strong> and <strong>end year</strong> for the data and a <strong>local name</strong> to differentiate the region or location.</p>
 </section>
 <section id="1.2-Adjusting-for-temperature-increase">
-<h2>1.2 Adjusting for temperature increase<a class="headerlink" href="#1.2-Adjusting-for-temperature-increase" title="Link to this heading"></a></h2>
+<h2>1.2 Adjusting for temperature increase<a class="headerlink" href="#1.2-Adjusting-for-temperature-increase" title="Permalink to this heading"></a></h2>
 <p>If the user wants to adjust the PET values to account for increasing temperature, they can provide one of the three mothods included in the model <strong>(tempAdj)</strong>. This is an integer number with values 1, 2, or 3. Each of these numbers represents what method to use for the model to account for temperature adjustment on future PET. Method 1 = 1, Method 2 = 2, Method 3 = 3 (Refer to the stoPET paper for the description of each method).</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1. Method 1: user-defined percentage step change in annual PET
 2. Method 2: step change in PET based on a user-defined change in atmospheric temperature
@@ -240,14 +237,14 @@ stoPET finished successfully.
 <p>As seen in the output value the model generated eleven years (2000 - 2010) single point PET. stoPET ran twice as the number of ensembles given is two.</p>
 </section>
 <section id="1.3-Output">
-<h2>1.3 Output<a class="headerlink" href="#1.3-Output" title="Link to this heading"></a></h2>
+<h2>1.3 Output<a class="headerlink" href="#1.3-Output" title="Permalink to this heading"></a></h2>
 <p>Once we run the model, the outputs will be saved in the output folder user provided. The output of these functions will be written in the output directory provided, where the model creates a new named directory <code class="docutils literal notranslate"><span class="pre">outputpath+locname+_E</span> <span class="pre">+</span> <span class="pre">number_ensm</span> <span class="pre">+_stoPET/</span></code>.</p>
 <p>For the single point run, stoPET generates text files <code class="docutils literal notranslate"><span class="pre">year_latval+_+lonval+_+tempAdj+stoPET.txt</span></code> and <code class="docutils literal notranslate"><span class="pre">year_latval+_+lonval+_+tempAdj+AdjstoPET.txt</span></code>. The first file is the PET generated without accounting for any adjustment for temperature. The second file is the adjusted PET based on the user’s choice (tempAdj). If one just wants to avoid any temperature change adjustment in the model, just use the first file output and ignore the second file.</p>
 <p><strong>Example: 1994_3.8_36.6_3_stoPET.txt and 1994_3.8_36.6_3_AdjstoPET.txt</strong></p>
 <p>stoPET output are hourly PET values of the year has 8760 hours for normal years and 8784 for leap years. Hence, in procesing the values, notice these array length for each year.</p>
 </section>
 <section id="1.4-Post-processing-and-visualization">
-<h2>1.4 Post processing and visualization<a class="headerlink" href="#1.4-Post-processing-and-visualization" title="Link to this heading"></a></h2>
+<h2>1.4 Post processing and visualization<a class="headerlink" href="#1.4-Post-processing-and-visualization" title="Permalink to this heading"></a></h2>
 <p>Here we have a basic script to analyse the generated PET data and visulize it through simple plots. The script is named as <strong>post_processing_stopet.py</strong> and it consists of functions that helps to process the hourly data and plot the values. The following functions are available currently but you can add any additional functions you would like to have.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1. leap_remove(timeseries)
 2. running_mean(timeseries, n)
@@ -286,7 +283,7 @@ leap_remove(timeseries)
 </pre></div></div>
 </div>
 <section id="Kenya-1996-data-doesn't-exist">
-<h3>Kenya 1996 data doesn’t exist<a class="headerlink" href="#Kenya-1996-data-doesn't-exist" title="Link to this heading"></a></h3>
+<h3>Kenya 1996 data doesn’t exist<a class="headerlink" href="#Kenya-1996-data-doesn't-exist" title="Permalink to this heading"></a></h3>
 <p><strong>Example:</strong> let us remove the leap year data from 1996 timeseries first read the 1996 PET data and check the array length</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
@@ -768,7 +765,7 @@ adjusted PET.</p></td>
 </section>
 </section>
 <section id="1.5-Generating-regional-data">
-<h2>1.5 Generating regional data<a class="headerlink" href="#1.5-Generating-regional-data" title="Link to this heading"></a></h2>
+<h2>1.5 Generating regional data<a class="headerlink" href="#1.5-Generating-regional-data" title="Permalink to this heading"></a></h2>
 <p>Here we will generate the data for <strong>Kenya</strong> and use some plotting functions to visualize the data. Notice regional data takes more space so make sure there is enough storage for the data.</p>
 <p>To generate the regional data please adjust the input values in the <strong>run_stoPET()</strong> function and generate 5 years data for Kenya using Method 2 as temperature adjustment with a 1.5 degree increase.</p>
 <blockquote>
@@ -1041,11 +1038,11 @@ adjusted PET.</p></td>
 </section>
 </section>
 <section id="2.-Batch-job-submission">
-<h1>2. Batch job submission<a class="headerlink" href="#2.-Batch-job-submission" title="Link to this heading"></a></h1>
+<h1>2. Batch job submission<a class="headerlink" href="#2.-Batch-job-submission" title="Permalink to this heading"></a></h1>
 <p>In order to run the CUWALID model, we use the High Performance Computers (HPC) provided by institutes. These HPC’s are better for running multiple jobs at the same time. This will save time and allow us to run models that use large data.</p>
 <p>Here, we discuss on how you can submit multiple jobs to HPC. <strong>Please notice that this is not the only way to do the work but just to share one way of doing it</strong>.</p>
 <section id="2.1-creating-directories-to-hold-necessary-files">
-<h2>2.1 creating directories to hold necessary files<a class="headerlink" href="#2.1-creating-directories-to-hold-necessary-files" title="Link to this heading"></a></h2>
+<h2>2.1 creating directories to hold necessary files<a class="headerlink" href="#2.1-creating-directories-to-hold-necessary-files" title="Permalink to this heading"></a></h2>
 <p>The first step we need to do is create three important directories in our home directory. These are:</p>
 <ul class="simple">
 <li><p>bSub_runME</p></li>
@@ -1060,7 +1057,7 @@ adjusted PET.</p></td>
 <p>The <strong>bSub_doneME</strong> directory is used to save our bash files (e.g <strong>myjob.bash</strong>) after the job is submitted. Hence, if there is an error and you have to run the job again you can easily move the bash files from this directory to the bSub_runME directory without creating them again.</p>
 </section>
 <section id="2.2-Creating-the-bash-files">
-<h2>2.2 Creating the bash files<a class="headerlink" href="#2.2-Creating-the-bash-files" title="Link to this heading"></a></h2>
+<h2>2.2 Creating the bash files<a class="headerlink" href="#2.2-Creating-the-bash-files" title="Permalink to this heading"></a></h2>
 <p>In order to submit multiple jobs to HPC, we need to follow certain commands that are set by the institute. Hence, we can prepare a python script to write these bash files so that we save time to write each file mannually. The following python script <strong>write_bash_files.py</strong> is provided to prepare the bash files used in the job sumbission. Below, we will discuss how it works using one example function in the script.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
@@ -1109,15 +1106,15 @@ adjusted PET.</p></td>
 </div>
 </div>
 <p>The above function helps us write the bash files with the necessary commands for the HPC job submission. As you can see, most of the lines are common and similar required by the HPC, hence, we can use this function to write any bash file we need with little modification. An example of the bash file produced using this function is shown below.</p>
-<table><tr><td><p><img alt="a23ed8108f294f1e9e2553f6d1bbe9d1" class="no-scaled-link" src="../../_images/bashfile.png" style="width: 800px;" /></p>
+<table><tr><td><p><img alt="e2c7aa5465724bccb914840716acbcb1" class="no-scaled-link" src="../../_images/bashfile.png" style="width: 800px;" /></p>
 </td></tr></table><p>This will be what is written in the imerg_download_2012.bash according to the example.</p>
 <p>If there are multiple jobs that use similar python scripts, then what you have to do is run above function to write the bash files with same <strong>suffix</strong> and a differetiating <strong>prefix</strong> so that we can submit it at the same time. In the above example we can see the file name is <strong>imerg_download_year.bash</strong> here the imerg_download is the prefix while the year is suffix. Now we can write any number of years we want to download (e.g imerg_download_2018.bash, imerg_download_2019.bash, …). Once we
 prepare these files, then we are ready to submit multiple jobs to the HPC.</p>
 </section>
 <section id="1.3-Submitting-multiple-jobs">
-<h2>1.3 Submitting multiple jobs<a class="headerlink" href="#1.3-Submitting-multiple-jobs" title="Link to this heading"></a></h2>
+<h2>1.3 Submitting multiple jobs<a class="headerlink" href="#1.3-Submitting-multiple-jobs" title="Permalink to this heading"></a></h2>
 <p>Once we prepare the bash files containing the jobs we want to run on HPC next is to use a little shell script to submit the jobs. The shell script is given as <strong>runBashFiles.sh</strong>. The file contains a few lines of code that allows to read all the bash files we prepare and sumbit it to the HPC. Here is an example file looks like</p>
-<table><tr><td><p><img alt="9224f7d014914173bc549969ee73e22c" class="no-scaled-link" src="../../_images/shellfile.png" style="width: 800px;" /></p>
+<table><tr><td><p><img alt="d08c0a2c6196419ba9869ab7c16c065d" class="no-scaled-link" src="../../_images/shellfile.png" style="width: 800px;" /></p>
 </td></tr></table><p>In the above image as you can see from line 5, all the files that start with <strong>imerg_download_</strong> will be submited to the HPC and the files will be moved to the <strong>bSub_doneME</strong> directory we create earlier (Line 7).</p>
 <p>Line 6 is where you see the <strong>.error</strong> and <strong>.out</strong> files that we discussed above to put any error message and output message from the job will be printed and svaed in the <strong>bSub_logME</strong> directory.</p>
 <table class="docutils align-default">
