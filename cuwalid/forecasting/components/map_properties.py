@@ -363,12 +363,12 @@ aux_var_colour = {
 
 status_labels = {
 "English":{
-    "Flood": ["Low", "NN", "High"],
-	"Groundwater": ["Good","NN", "Bad"],#"Bad", "Good"
-	"Surface": ["Good","NN", "Bad"],
-	"Soil": ["Good","NN", "Bad"],
-	"Evaporation": ["Good", "NN", "Bad"],
-	"Crop": ["Good", "NN", "Bad"],
+    "Flood": ["Low", "Normal", "High"],
+	"Groundwater": ["Above Normal","Normal", "Below Normal"],#"Bad", "Good"
+	"Surface": ["Above Normal","Normal", "Below Normal"],
+	"Soil": ["Above Normal","Normal", "Below Normal"],
+	"Evaporation": ["Above Normal","Normal", "Below Normal"],
+	"Crop": ["Above Normal","Normal", "Below Normal"],
 },
 "Swahili": {
     "Flood": ["Low\nSio sana", "High\nNi sana"],

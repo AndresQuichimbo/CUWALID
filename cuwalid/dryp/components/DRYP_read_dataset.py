@@ -489,7 +489,7 @@ class read_dataset_interp(object):
 			#	ds = self.ds.isel(time=[j_step-self.step_0])
 			#print(ds)
 			# get data at time step t
-			ds[field].plot(x='lon', y='lat')
+			#ds[field].plot(x='lon', y='lat')
 			#plt.imshow(np.array(ds.variables[field][0][:]))
 			#plt.savefig('precipitation'+field+str(self.j_step)+'.png')
 			#plt.close()
