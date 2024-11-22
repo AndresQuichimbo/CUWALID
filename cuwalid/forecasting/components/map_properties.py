@@ -132,7 +132,7 @@ water_color = {
 
 # this dictionary modify line widths of rivers
 water_lw = {
-"River": 2.0,
+"River": 1.2,
 "Stream": 0.1,
 }
 
@@ -363,7 +363,7 @@ aux_var_colour = {
 
 status_labels = {
 "English":{
-    "Flood": ["Low", "Normal", "High"],
+    "Flood": ["High", "Normal", "Low"],
 	"Groundwater": ["Above Normal","Normal", "Below Normal"],#"Bad", "Good"
 	"Surface": ["Above Normal","Normal", "Below Normal"],
 	"Soil": ["Above Normal","Normal", "Below Normal"],

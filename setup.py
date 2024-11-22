@@ -47,6 +47,8 @@ setup(
         'fitter',
         'rasterstats',
         'lmfit',
+        'python-bidi',
+        'mpcabd arabic-reshaper',
         ],
     include_package_data=True,
 )
