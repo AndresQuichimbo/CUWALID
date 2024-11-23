@@ -403,6 +403,7 @@ class read_dataset_interp(object):
 
 				# read dataset
 				if self.file_format == 5:
+					groupds = list(Dataset(fname_ds).groups.keys())[0]
 					meta = xr.open_dataset(fname_ds)
 					meta = meta.assign_coords({
 					    'y': meta['projection_y_coordinate'].load(),
@@ -411,7 +412,8 @@ class read_dataset_interp(object):
 					#mask = meta['regions']
 					#mask.plot(cmap='turbo', levels=5)
 
-					self.ds = xr.open_dataset(fname_ds, group=str(idate_ds.year))
+					#self.ds = xr.open_dataset(fname_ds, group=str(idate_ds.year))
+					self.ds = xr.open_dataset(fname_ds, group=groupds)
 					#self.ds = self.ds.sum(dim=('time'), skipna=True)
 					self.ds = self.ds.assign_coords({
 					    'y': meta['projection_y_coordinate'].load(),
