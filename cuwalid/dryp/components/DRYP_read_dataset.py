@@ -357,7 +357,15 @@ class read_dataset_interp(object):
 			
 			if (self.read_before_ds is False) and (self.file_format == 1):
 				j_step = self.j_step
+
+			# THIS IS A PARTIAL SOLUTION TO READ STORM, SO IT WILL BE MODIFIED LATER
+			if (self.read_before_ds is True) and (self.file_format == 5):
+				self.step_0 = aux_time_j + 0
 			
+			if (self.read_before_ds is False) and (self.file_format == 5):
+				j_step = self.j_step
+			
+
 			#print(idate_ds, aux_time_j, j_step, self.j_step, self.file_format, id_ini_month)
 			#if field == 'pet':
 			#	keys = ['longitude', 'latitude']
@@ -414,12 +422,21 @@ class read_dataset_interp(object):
 
 					#self.ds = xr.open_dataset(fname_ds, group=str(idate_ds.year))
 					self.ds = xr.open_dataset(fname_ds, group=groupds)
+					# Replace all years with 2025
+					new_time = self.ds["time"].dt.strftime(str(idate_ds.year)+"-%m-%d %H:%M:%S")
+					self.ds = self.ds.assign_coords(time=pd.to_datetime(new_time))
+					#delta_year = int(groupds) - idate_ds.year
+					#new_time = self.ds["time"] + pd.DateOffset(years=-delta_year)
+					#new_time = self.ds.time + pd.Timedelta(years=delta_year)  # Shift by 5 years
 					#self.ds = self.ds.sum(dim=('time'), skipna=True)
+					# Assign the new time dimension to the dataset
+					#self.ds['time'] = new_time
 					self.ds = self.ds.assign_coords({
 					    'y': meta['projection_y_coordinate'].load(),
 					    'x': meta['projection_x_coordinate'].load()
 					    })
 					del(meta)
+					#print(self.ds)
 
 				else:
 					self.ds = xr.open_dataset(fname_ds)
@@ -473,7 +490,7 @@ class read_dataset_interp(object):
 			#print(self.ds, self.dt_ds, self.dt)
 			# set index
 			iindex = j_step-self.step_0
-			#print(iindex)
+			#print(iindex,j_step,self.step_0)
 			# select data step
 			if self.step_func is False:
 				ds = self.ds.isel(time=[iindex])
