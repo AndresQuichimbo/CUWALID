@@ -173,20 +173,20 @@ plot_scale_id = {
 "Country": 2.0,
 }
 
-# do not change this
-name_field_shp = {
-"Zoom": "IEBC_WARDS",
-"Ward": "IEBC_WARDS",
-"County": None,
-"Country": "NAME",	
-}
-
-# Set the correct name field dependent on the country inputed
-name_field_county_shp = {
-	"kenya":'county',
-	"ethiopia":'NAME_2',
-	"somalia":'NAME',
-}
+## do not change this
+#name_field_shp = {
+#"Zoom": "IEBC_WARDS",
+#"Ward": "IEBC_WARDS",
+#"County": None,
+#"Country": "NAME",	
+#}
+#
+## Set the correct name field dependent on the country inputed
+#name_field_county_shp = {
+#	"kenya":'county',
+#	"ethiopia":'NAME_2',
+#	"somalia":'NAME',
+#}
 
 #name_field_shp["County"] = name_field_county_shp[country_name.lower()]
 
