@@ -89,7 +89,7 @@ def run_hydro_forecast(config_path):
 
     if include_forecast:
 
-        print("|=========== Running forecasting ==========|")
+        print("|=============== Running forecasting =============|")
 
         # Getting forecast config
         #forecast_model_name = config['forecast_model_name']
