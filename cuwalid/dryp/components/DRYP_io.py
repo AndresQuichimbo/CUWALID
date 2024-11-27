@@ -619,34 +619,34 @@ class interception_parameters(object):
 
 		# read crop vegetation factor: default 1
 
-		if inputfile.fname_av != None and os.path.exists(inputfile.fname_av):
+		if inputfile.fname_av is not None and os.path.exists(inputfile.fname_av):
 			self.av = np.flip(rasterio.open(inputfile.fname_av).read(1), 0).flatten()
 		else:
 			print('Fraction of vegetation cover.....not provided. Global default 1')
 			self.av = None
 		# read Coeficient of exponential function: default 0
-		if inputfile.fname_laia != None and os.path.exists(inputfile.fname_laia):
+		if inputfile.fname_laia is not None and os.path.exists(inputfile.fname_laia):
 			self.lai_a = np.flip(rasterio.open(inputfile.fname_laia).read(1), 0).flatten()
 		else:
 			print('Vegetation exponential coef......not provided. Global default 1')
 			self.lai_a = 0
 
 		# read Power value for exponential function: default 0
-		if inputfile.fname_laib != None and os.path.exists(inputfile.fname_laib):
+		if inputfile.fname_laib is not None and os.path.exists(inputfile.fname_laib):
 			self.lai_b = np.flip(rasterio.open(inputfile.fname_laib).read(1), 0).flatten()
 		else:
 			print('Vegetation exponential coef......not provided. Global default 1')
 			self.lai_b = 0
 
 		# read Min Soil-Adjusted Vegetation Index: default 0
-		if inputfile.fname_savi_min != None and os.path.exists(inputfile.fname_savi_min):
+		if inputfile.fname_savi_min is not None and os.path.exists(inputfile.fname_savi_min):
 			self.savi_min = np.flip(rasterio.open(inputfile.fname_savi_min).read(1), 0).flatten()
 		else:
 			print('Fraction of vegetation cover.....not provided. Global default 1')
 			self.savi_min = 0
 
 		# Max Soil-Adjusted Vegetation Index: defgault 1
-		if inputfile.fname_savi_max != None and os.path.exists(inputfile.fname_savi_max):
+		if inputfile.fname_savi_max is not None and os.path.exists(inputfile.fname_savi_max):
 			self.savi_max = np.flip(rasterio.open(inputfile.fname_savi_max).read(1), 0).flatten()
 		else:
 			print('Fraction of vegetation cover.....not provided. Global default 1')
@@ -654,21 +654,21 @@ class interception_parameters(object):
 		
 		#------Modification for Dyna-Veg---------------------------------------------------
 		# bioma-dependent coefficient
-		if inputfile.fname_fcw_canopy != None and os.path.exists(inputfile.fname_fcw_canopy):
+		if inputfile.fname_fcw_canopy is not None and os.path.exists(inputfile.fname_fcw_canopy):
 			self.fcw_cn = np.flip(rasterio.open(inputfile.fname_fcw_canopy).read(1), 0).flatten()
 		else:
 			print('Biome-dependent coefficient......not provided. Global 1 [-]')
 			self.fcw_cn = np.ones(grid_size, dtype=float)
 		
 		# inital water content of the canopy storage
-		if inputfile.fname_Sc0_canopy != None and os.path.exists(inputfile.fname_Sc0_canopy):
+		if inputfile.fname_Sc0_canopy is not None and os.path.exists(inputfile.fname_Sc0_canopy):
 			self.Sc0_cn = np.flip(rasterio.open(inputfile.fname_Sc0_canopy).read(1), 0).flatten()
 		else:
 			print('Initial canopy storage...........not provided. Global 0 [-]')
 			self.Sc0_cn = np.zeros(grid_size, dtype=float)
 		
 		# inital water content of the canopy storage, riparian zone
-		if inputfile.fname_Sc0_canopy != None and os.path.exists(inputfile.fname_Sc0_canopy):
+		if inputfile.fname_Sc0_canopy is not None and os.path.exists(inputfile.fname_Sc0_canopy):
 			self.Sc0_cnrp = np.flip(rasterio.open(inputfile.fname_Sc0_canopy).read(1), 0).flatten()
 		else:
 			print('Initial riparian canopy storage, not provided. Global 0 [-]')
@@ -676,7 +676,7 @@ class interception_parameters(object):
 		
 		# Tap water threshold for evaporation uptake
 		# tap needs to be equal or higher than the soil depth [mm]
-		if inputfile.fname_tap_depth != None and os.path.exists(inputfile.fname_tap_depth):
+		if inputfile.fname_tap_depth is not None and os.path.exists(inputfile.fname_tap_depth):
 			self.tap_depth = np.flip(rasterio.open(inputfile.fname_tap_depth).read(1), 0).flatten()
 		else:
 			print('Tap water level..................not provided. Global 0 [mm]')
@@ -685,7 +685,7 @@ class interception_parameters(object):
 		#self.ztap = z - self.tap_depth*0.001
 		
 		# read soil depth, it is the same as the hillslope soil
-		if inputfile.fname_SoilDepth != None and os.path.exists(inputfile.fname_SoilDepth):
+		if inputfile.fname_SoilDepth is not None and os.path.exists(inputfile.fname_SoilDepth):
 			Droot = np.flip(rasterio.open(inputfile.fname_SoilDepth).read(1), 0).flatten()
 		else:
 			Droot = np.full(grid_size, 1000.0, dtype=float)
@@ -693,7 +693,7 @@ class interception_parameters(object):
 		Droot = Droot*inputfile.kDroot
 		
 		# Final plant water uptake threshold for evaporation uptake [mm]
-		if inputfile.fname_extintion_depth != None and os.path.exists(inputfile.fname_extintion_depth):
+		if inputfile.fname_extintion_depth is not None and os.path.exists(inputfile.fname_extintion_depth):
 			self.extintion_depth = np.flip(rasterio.open(inputfile.fname_extintion_depth).read(1), 0).flatten()
 		else:
 			print('Extinction depth.................not provided. Default is rooting depth [mm]')

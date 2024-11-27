@@ -292,16 +292,16 @@ class get_list_of_surface_files(object):
         #    fgw = pd.read_csv(dryp_config["OUTPUT"]["path_gw_settings"])
         #    self.fname_bathymetry = fgw.GROUNDWATER[18]  # Constant flux boundary
 
-        # TODO: Check this if statement
-        if len(dryp_config.get("drylandmodel", {})) == 94:
-            self.fname_riparian_zone = dryp_config["OUTPUT"]["path_rp_settings"]
-        else:
-            self.fname_riparian_zone = None
+        ## TODO: Check this if statement
+        #if len(dryp_config.get("drylandmodel", {})) == 94:
+        #    self.fname_riparian_zone = dryp_config["OUTPUT"]["path_rp_settings"]
+        #else:
+        #    self.fname_riparian_zone = None
 
         self.fname_ripwidth = None
-        if self.fname_riparian_zone is not None and os.path.exists(self.fname_riparian_zone):
-            frz = pd.read_csv(self.fname_riparian_zone)
-            self.fname_ripwidth = frz.RIPARIAN[21]  # riparian width [-]
+        #if self.fname_riparian_zone is not None and os.path.exists(self.fname_riparian_zone):
+        #    frz = pd.read_csv(self.fname_riparian_zone)
+        #    self.fname_ripwidth = frz.RIPARIAN[21]  # riparian width [-]
 
         self.kKch = float(factors["GLOBAL_FACTORS"]["riv_kksat"])
         self.kTch = float(factors["GLOBAL_FACTORS"]["riv_kdecay"])

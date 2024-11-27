@@ -12,11 +12,11 @@ name_short_country = {
 		"somalia":'SO',
 	}
 
-name_field_county_shp = {
-		"kenya":'county',
-		"ethiopia":'NAME_2',
-		"somalia":'NAME',
-	}
+#name_field_county_shp = {
+#		"kenya":'county',
+#		"ethiopia":'NAME_2',
+#		"somalia":'NAME',
+#	}
 
 code_county_shp = {
 		"kenya":'gid',
@@ -30,12 +30,12 @@ name_county_shp = {
 		"somalia":'NAME',
 	}
 
-name_field_shp = {
-	"Zoom": "IEBC_WARDS",
-	"Ward": "IEBC_WARDS",
-	"County": None,
-	"Country": "NAME",	
-	}
+#name_field_shp = {
+#	"Zoom": "IEBC_WARDS",
+#	"Ward": "IEBC_WARDS",
+#	"County": None,
+#	"Country": "NAME",	
+#	}
 
 shapefile_country_dic = {
 	"region": "forecasting_dataset/HAD/gis/Horn_Africa/Horn_africa_contry.shp"

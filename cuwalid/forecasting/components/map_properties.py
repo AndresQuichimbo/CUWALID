@@ -132,7 +132,7 @@ water_color = {
 
 # this dictionary modify line widths of rivers
 water_lw = {
-"River": 2.0,
+"River": 1.2,
 "Stream": 0.1,
 }
 
@@ -173,20 +173,20 @@ plot_scale_id = {
 "Country": 2.0,
 }
 
-# do not change this
-name_field_shp = {
-"Zoom": "IEBC_WARDS",
-"Ward": "IEBC_WARDS",
-"County": None,
-"Country": "NAME",	
-}
-
-# Set the correct name field dependent on the country inputed
-name_field_county_shp = {
-	"kenya":'county',
-	"ethiopia":'NAME_2',
-	"somalia":'NAME',
-}
+## do not change this
+#name_field_shp = {
+#"Zoom": "IEBC_WARDS",
+#"Ward": "IEBC_WARDS",
+#"County": None,
+#"Country": "NAME",	
+#}
+#
+## Set the correct name field dependent on the country inputed
+#name_field_county_shp = {
+#	"kenya":'county',
+#	"ethiopia":'NAME_2',
+#	"somalia":'NAME',
+#}
 
 #name_field_shp["County"] = name_field_county_shp[country_name.lower()]
 
@@ -363,12 +363,12 @@ aux_var_colour = {
 
 status_labels = {
 "English":{
-    "Flood": ["Low", "NN", "High"],
-	"Groundwater": ["Good","NN", "Bad"],#"Bad", "Good"
-	"Surface": ["Good","NN", "Bad"],
-	"Soil": ["Good","NN", "Bad"],
-	"Evaporation": ["Good", "NN", "Bad"],
-	"Crop": ["Good", "NN", "Bad"],
+    "Flood": ["High", "Normal", "Low"],
+	"Groundwater": ["Above Normal","Normal", "Below Normal"],#"Bad", "Good"
+	"Surface": ["Above Normal","Normal", "Below Normal"],
+	"Soil": ["Above Normal","Normal", "Below Normal"],
+	"Evaporation": ["Above Normal","Normal", "Below Normal"],
+	"Crop": ["Above Normal","Normal", "Below Normal"],
 },
 "Swahili": {
     "Flood": ["Low\nSio sana", "High\nNi sana"],

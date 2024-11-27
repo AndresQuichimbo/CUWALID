@@ -5,7 +5,7 @@ import xarray as xr
 import pandas as pd
 
 
-def get_tercile_hindcast_fluxes(model_path, model_name, season, variables,postpp_path):
+def get_tercile_hindcast_fluxes(model_path, model_name, season, variables, postpp_path):
 	"""This function calculates the probabilistic forecasting using the tercile approach
 	"""
 	iyear = 2022
@@ -307,7 +307,7 @@ def extract_forecasting_variable(model_name,
 						fname_nc = (postpp_path + "netcdf/" +
 								model_name + "_" +
 								iseason +"_"+iplace_name+"_"+ivar+
-								"_2022_probabilistic_tercile_forecast_region.nc"
+								"_probabilistic_tercile_forecast_region.nc"
 								)
 						#fname = "D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_" + iseason + "_probabilistic_tercile_forecast_region.nc"
 
@@ -430,7 +430,7 @@ def get_areas_terciles(model_path, model_name, season, variables, postpp_path):
 				fname.append(postpp_path + "netcdf/" +
 						model_name + "_" +
 						iseason +"_"+iplace_name+"_"+ivar+
-						"_2022_probabilistic_tercile_forecast_region.nc"
+						"_probabilistic_tercile_forecast_region.nc"
 						)
 				# store season
 				season_list.append(iseason)

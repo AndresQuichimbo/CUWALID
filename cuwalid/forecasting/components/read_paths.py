@@ -216,7 +216,7 @@ class read_dataset_list_json(object):
 			self.name_field_county_shp = dataset_list.get("name_field_county_shp")
 			self.code_county_shp = dataset_list.get("code_county_shp")
 			self.name_county_shp = dataset_list.get("name_county_shp")
-			self.name_field_shp = dataset_list.get("name_field_shp")
+			#self.name_field_shp = dataset_list.get("name_field_shp")
 			self.shapefile_country_dic = dataset_list.get("shapefile_country_dic")
 			self.shapefile_level_1_dic = dataset_list.get("shapefile_level_1_dic")
 			self.shapefile_level_2_dic = dataset_list.get("shapefile_level_2_dic")
@@ -230,7 +230,7 @@ class read_dataset_list_json(object):
 			self.name_field_county_shp = default_dataset.name_field_county_shp
 			self.code_county_shp = default_dataset.code_county_shp
 			self.name_county_shp = default_dataset.name_county_shp
-			self.name_field_shp = default_dataset.name_field_shp
+			#self.name_field_shp = default_dataset.name_field_shp
 			self.shapefile_country_dic = default_dataset.shapefile_country_dic
 			self.shapefile_level_1_dic = default_dataset.shapefile_level_1_dic
 			self.shapefile_level_2_dic = default_dataset.shapefile_level_2_dic

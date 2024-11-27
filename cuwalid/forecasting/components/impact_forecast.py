@@ -294,10 +294,10 @@ def plot_map(plot_scale="Zoom",
 	ds = xr.open_dataset(paths.netcdf_path)
 	#print(netcdf_path)
 	#print(ds)
-	##### Apply mask to datasets
-	####if var == "dis":
-	####	mask = np.flip(get_mask(paths.mask_path), 0)*np.flip(get_mask(paths.river_path), 0)
-	####	#ds = ds*mask	
+	# Apply mask to datasets
+	if paths.mask_path is not None:
+		mask = np.flip(get_mask(paths.mask_path), 0)
+		ds = ds*mask	
 
 	##### Write projection on dataset
 	ds = ds.rio.write_crs(netcdfPP)
