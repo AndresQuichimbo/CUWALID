@@ -8,28 +8,31 @@ from cuwalid.stopet.main_stoPET import run_stoPET
 from cuwalid.dryp.main_DRYP import run_DRYP
 from cuwalid.tools.DRYP_json_builder import create_ensamble, write_JSON_dryp_file
 
-def run_cuwalid(json_input):
+def run_cuwalid(cuwalid_input, forecasting_input):
 
 	# Get input file as dictionary
-	with open(json_input, 'r') as file:
-		config = json.load(file)
+	with open(cuwalid_input, 'r') as file:
+		cuwalid_config = json.load(file)
 		
 	# Run storm
-	storm_input = config["storm"]
+	storm_input = cuwalid_config["storm"]
 	run_storm(storm_input)
 
 	# Run StoPET
-	stopet_input = config["stopet"]
+	stopet_input = cuwalid_config["stopet"]
 	run_stoPET(stopet_input)
 
 	# Prepare Dryp files
-	nsim = 30
-	season = "OND"
-	iyear = 2022
 
-	mname = config["dryp"]["model_name"]
-	start_date = config["dryp_settings"]["SIMULATION_PERIOD"]["start_date"]
-	end_date = config["dryp_settings"]["SIMULATION_PERIOD"]["end_date"]
+	mname = cuwalid_config["dryp"]["model_name"]
+	start_date = cuwalid_config["dryp_settings"]["SIMULATION_PERIOD"]["start_date"]
+	end_date = cuwalid_config["dryp_settings"]["SIMULATION_PERIOD"]["end_date"]
+
+	# TODO:
+	nsim = 30
+
+	season = get_season(start_date)
+	iyear = int(start_date.split()[0])
 
 	fname_setting_file = "/home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_"+season+"_"+str(iyear)+".json"
 	fsim_forecasting = ["/home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_"+season+"_"+str(iyear)+"_forecast_"+str(isim)+".json" for isim in range(30)]
@@ -65,12 +68,25 @@ def run_cuwalid(json_input):
 		command = f"python -m cuwalid.dryp.main_DRYP /home/cuwalid/training/forecast/regional/model/{ifsim_forecasting}"
 		subprocess.Popen(command, shell=True)
 
+def get_season(date_string):
+    # Parse the date string into year, month, day
+    year, month, day = map(int, date_string.split())
+    
+    # Define the season mapping for MAM and OND
+    if month in (3, 4, 5):
+        return "MAM"  # March, April, May
+    elif month in (10, 11, 12):
+        return "OND"  # October, November, December
+    else:
+        return "Other"  # If not in MAM or OND
+
 
 if __name__ == '__main__':
 	if len(sys.argv) != 2:
 		print("Usage: python <script_name.py> <path_to_config.json>")
 		sys.exit(1)
 
-	config_file = sys.argv[1]
+	cuwalid_path = sys.argv[1]
+	forecasting_path = sys.argv[2]
 
-	run_cuwalid(config_file)
+	run_cuwalid(cuwalid_path, forecasting_path)
