@@ -34,3 +34,7 @@ ICPAC_TempF_OND2022_HAD.nc
 model_output/
 input_files/
 dryp_output/
+storm_output/
+parameters_dataset_list.json
+cuwalid_input.json
+stopet_output/

@@ -103,6 +103,8 @@ def plot_maps_json(config_file):
 	model_name = config.get("model_name", None)
 	#print(river_path)
 	dataset_parameter_list = config.get("parameter_dataset_list", None)
+
+	print(f"testing {dataset_parameter_list}")
 	#print(dataset_parameter_list)
 	if dataset_parameter_list is not None:
 		dataset_parameters = paths.read_dataset_list_json(dataset_parameter_list)
