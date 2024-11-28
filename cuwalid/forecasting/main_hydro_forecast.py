@@ -2,7 +2,7 @@ import argparse
 import json
 from cuwalid.forecasting.components.hindcast import *
 from cuwalid.forecasting.components.forecast import *
-from cuwalid.forecasting.components.hydrological_forecast import *
+from cuwalid.forecasting.components.plot_hydro_forecast import *
 
 def run_hydro_forecast(config_path):
     """
@@ -30,17 +30,30 @@ def run_hydro_forecast(config_path):
     forecast_model_path = config["forecasting"]['model_path']
     forecast_postpp_path = config["forecasting"]['postpp_path']
     
+    #/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGcv_sim83_MAM_extremes_quantiles.nc
+    #/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGcv_sim83_OND_mean.nc
+    #/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGcv_sim83_OND_quantiles.nc
+
+    #threshold_path = config["threshold_path"]
+    threshold_path = historical_postpp_path + "netcdf/"+ historical_model_name+ "_SSS_extremes_quantiles.nc"
     season = config['season']
     start_year = config['start_year']
     end_year = config['end_year']
     variables = config['variables']
-    year = config["year"]
+    iyear = config["year"]
+    nsim = 30
+
 
     # ----------------------HINDCAST-----------------------
 
     if include_hincast:
 
-        print("Running hindcast")
+        print("========================== Processing historical simulation ==========================")
+        print("WARNING: A new folder will '/netcdf/' will be created inside '/postpp/'")
+        print("to store new variables if it does not exist")
+              
+        # check if folder exist postpp/netcdf
+        # print("to store new variables if it does not exist")
 
         # Getting hindcast configuration
         #hindcast_model_name = config['run_historical']
@@ -78,18 +91,21 @@ def run_hydro_forecast(config_path):
                                      start_year, end_year, season, variables,
                                      historical_postpp_path)
 
-            print("Step 7: Getting anomalies from historical simulations")
-            get_anomalies_multi_netcdf(historical_model_path,
-                                       historical_model_name,
-                                       start_year, end_year, season, variables,
-                                       historical_postpp_path)
+            #print("Step 7: Getting anomalies from historical simulations")
+            #get_anomalies_multi_netcdf(historical_model_path,
+            #                           historical_model_name,
+            #                           start_year, end_year, season, variables,
+            #                           historical_postpp_path)
 
 
     # ----------------------FORECASTING-----------------------    
 
     if include_forecast:
 
-        print("|=============== Running forecasting =============|")
+        print("================================ Running forecasting ================================")
+
+        # check if folder exist postpp/netcdf
+        # print("to store new variables if it does not exist")
 
         # Getting forecast config
         #forecast_model_name = config['forecast_model_name']
@@ -111,32 +127,36 @@ def run_hydro_forecast(config_path):
         #get_areas_terciles(model_path, forecast_model_name, season, variables, postpp_path)
 
         print("Step 1: Update TWSA") 
-        get_update_TWSA(forecast_model_path, forecast_model_name)
+        get_update_TWSA(historical_model_path, historical_model_name, iyear=iyear)
 
         print("Step 2: Update TWSA of hydrological realizations") 
-        get_updated_TWSA_ensamble(forecast_model_path, forecast_model_name)
-
+        get_updated_TWSA_ensamble(forecast_model_path, forecast_model_name,
+                                  historical_model_name,
+                                  historical_model_path)
         print("Step 3: Creating ensamble of hydrological realizations")   
         get_ensamble_forecasting(forecast_model_path,
-                                 forecast_model_name, variables,
+                                 forecast_model_name, variables, season,
                                  forecast_postpp_path)
 
-        print("Step 4: Calculating the probabilistic forecasting")  
+        # Forecasting estimation
+        print("Step 4: Processing probabilistic forecasting")  
         get_probabilistic_tercile_forecast_ensamble(forecast_model_path,
                                                     forecast_model_name, season, variables,
-                                                    forecast_postpp_path)
+                                                    forecast_postpp_path,
+                                                    threshold_path)
 
-        print("Step 5: Calculating the deterministic forecasting")
+        print("Step 5: Processing deterministic forecasting")
         get_deterministic_forecast_ensamble(forecast_model_path,
                                             forecast_model_name, season, variables,
-                                            forecast_postpp_path)
+                                            forecast_postpp_path,
+                                            threshold_path)
 
 
     # ----------------------PLOTTING-----------------------
 
     if include_plotting:
 
-        print("Running plotting")
+        print("============================== Ploting forecasting outputs ==============================")
 
         print("Step 1: Plot probabilistic tercile forecasting")
         plot_tercile_probability_forecast(forecast_model_path,

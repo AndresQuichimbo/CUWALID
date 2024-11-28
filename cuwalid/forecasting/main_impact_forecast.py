@@ -2,7 +2,7 @@ import argparse
 import json
 import os
 import geopandas as gpd
-from cuwalid.forecasting.components.impact_forecast import plot_map
+from cuwalid.forecasting.components.plot_impact_forecast import plot_map
 import cuwalid.forecasting.components.forecast as forecast
 import cuwalid.forecasting.components.read_paths as paths
 #from aux_HAD_plot_probabilistic_forecasting_map import plot_map
@@ -140,7 +140,8 @@ def plot_maps_json(config_file):
 		# Create maps
 	for icountry in country_names:
 		#for iplace in place_name:
-		place_name, place_code, iname_short_country = get_list_places(
+		if place_name is None:
+			place_name, place_code, iname_short_country = get_list_places(
 							icountry,
 							dataset_parameters.shapefile_level_1_dic,
 							dataset_parameters.name_county_shp,
@@ -148,6 +149,17 @@ def plot_maps_json(config_file):
 							dataset_parameters.name_short_country
 							#place_name=place_name
 							)
+		else:
+			place_code = [None]
+			iname_short_country = get_list_places(
+							icountry,
+							dataset_parameters.shapefile_level_1_dic,
+							dataset_parameters.name_county_shp,
+							dataset_parameters.code_county_shp,
+							dataset_parameters.name_short_country
+							#place_name=place_name
+							)[2]
+			
 		#print(dataset_parameters.shapefile_level_1_dic[icountry])
 		if create_map is True:	
 			print("Plot Impact forecasting maps")
@@ -339,12 +351,21 @@ def call_plot_maps(plot_scales=["Zoom"],
 			print(f"Place name {iplace_name}")
 			for iiseason in seasons:
 				for iiwater_status in water_status:
-					ifname_fig = (
+					if iplace_code is not None:
+						ifname_fig = (
+							country_code+ "_" +
+							str(iplace_code)+ "_" +
+							iiwater_status+ "_" +
+							iiseason + "_" +
+							str(year)# + "_"
+							)
+					else:
+						ifname_fig = (
 						country_code+ "_" +
-						str(iplace_code)+ "_" +
+						iplace_name+ "_" +
 						iiwater_status+ "_" +
 						iiseason + "_" +
-						str(year)# + "_"
+						str(year)#+".png"# + "_"
 						)
 					#try:
 					plot_map(plot_scale=iplot_scale,

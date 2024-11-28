@@ -3,7 +3,7 @@ import geopandas as gpd
 import numpy as np
 import xarray as xr
 import pandas as pd
-
+import os
 
 def get_tercile_hindcast_fluxes(model_path, model_name, season, variables, postpp_path):
 	"""This function calculates the probabilistic forecasting using the tercile approach
@@ -475,7 +475,7 @@ def get_areas_terciles(model_path, model_name, season, variables, postpp_path):
 	#print(area)
 	
 
-def get_update_TWSA(model_path, model_name):
+def get_update_TWSA(model_path, model_name, iyear=2022):
 
     # Path of model output files
     #model_path = "D:\HAD\training\forecast\regional\outputs/"
@@ -493,13 +493,13 @@ def get_update_TWSA(model_path, model_name):
     #postpp_path = "/home/c1755103/HAD/HAD_postpp/"
     #postpp_path = "/home/cuwalid/training/historical/regional/postpp/"
 
-    iyear = 2022
+    #iyear = 2022
 
     ifield = "twsc"
 
     # specify current simulation path
-    fname_current = model_path+model_name+'_grid.nc'# comment this line for yearly data
-    #fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc' # imcomment this line for yealy data
+    #fname_current = model_path+model_name+'_grid.nc'# comment this line for yearly data
+    fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc' # imcomment this line for yealy data
 
     # specify previous TWSC accumulated
     fname_previous = model_path+model_name+"_"+ str(iyear-1) +'_grid_twsc.nc'
@@ -518,19 +518,64 @@ def get_update_TWSA(model_path, model_name):
     data.to_netcdf(fname_current)
 	
 
-def get_updated_TWSA_ensamble(model_path, model_name):
+def get_updated_TWSA_ensamble(model_path, model_name, model_name_historical, model_path_historical, iyear=2022, nsim=30):
+	"""This function
+	
+	Parameters
+    ----------
+    model_path : str
+        Path to the directory containing the model data.
+    model_name : str
+        Name of the model to retrieve forecasts from.
+    season : str
+        Season for which the forecasts are required (e.g., 'OND', 'MAM').
+    variables : list of str
+        List of variable names to include in the forecast (e.g., ['pet', 'pre']).
+    postpp_path : str
+        Path to the post-processing configuration or scripts.
+    threshold_path : str
+        Path to the file containing threshold values for the variables.
+
+    Returns
+    -------
+    xarray
+        A dictionary containing processed deterministic forecasts for each ensemble member. The structure 
+        typically includes ensemble members, their corresponding forecasts, and any additional post-processed 
+        data.
+
+    Notes
+    -----
+    - Ensure that the `model_path` contains the necessary data files for the specified `model_name`.
+    - The `postpp_path` should point to valid configurations or scripts for applying post-processing methods.
+    - Thresholds provided in `threshold_path` should match the variables specified.
+
+    Examples
+    --------
+    >>> forecasts = get_deterministic_forecast_ensemble(
+    ...     model_path="/data/models/",
+    ...     model_name="GFS",
+    ...     season="OND",
+    ...     variables=["pre", "pet"],
+    ...     postpp_path="/config/postprocessing/",
+    ...     threshold_path="/config/thresholds/"
+    ... )
+    >>> print(forecasts["mean"])
+    [0.5, 0.2, 0.8]
+	
+	
+	"""
 	# Specify model name, This will be the root name for the forecasting
 	#model_name = "HAD_IMERGba_sim0"
 
 	# model name previous step
-	model_name_previous = "HAD_IMERGba_sim0_2022_ini_MAM"
+	#model_name_historical = "HAD_IMERGba_sim0_2022_ini_MAM"
 
 
 	# Path of model output files
 	#model_path = "D:\HAD\training\forecast\regional\outputs/"
 	#model_path = "/home/c1755103/HAD/HAD_output/"
 	#model_path = "/home/cuwalid/training/historical/regional/outputs/"#_13_grid.nc
-	model_path_previous = "/home/cuwalid/training/historical/regional/outputs/"#_13_grid.nc
+	#model_path_previous = "/home/cuwalid/training/historical/regional/outputs/"#_13_grid.nc
 
 	# path for post processing files, i.g. forecasting
 	# Specific folders will be created inside this paht to store different
@@ -543,14 +588,15 @@ def get_updated_TWSA_ensamble(model_path, model_name):
 	#postpp_path = "/home/c1755103/HAD/HAD_postpp/"
 	#postpp_path = "/home/cuwalid/training/historical/regional/postpp/"
 
-	iyear = 2022
+	#iyear = 2022
 
-	nsim = 30
+	#nsim = 30
 	nini = 0
 	ifield = "twsc"
 	# specify previous TWSC accumulated
 	#fname_previous = model_path+model_name+"_"+ str(iyear-1) +'_grid_twsc.nc'
-	fname_previous = model_path_previous+model_name_previous+'_grid_twsc.nc'
+	#fname_previous = model_path_historical+model_name_historical+'_grid_twsc.nc'
+	fname_previous = model_path_historical+model_name_historical+"_"+ str(iyear-1) +'_grid_twsc.nc'
 	#fname_current = fname_current.split('.')[0]+'_'+ifield+'.nc'
 
 	fname  = [
@@ -560,29 +606,70 @@ def get_updated_TWSA_ensamble(model_path, model_name):
 	data_previous = cuwalid.read_dataset(fname_previous, var_name='twsc')
 
 	for ifname_ensamble in fname:#for isim in range(nsim):
+		# test if file exist
+		if os.path.exists(ifname_ensamble):
+			# specify current simulation path
+			#fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc'
 
-		# specify current simulation path
-		#fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc'
-			
-		# read dataset
-		data_current = cuwalid.read_dataset(ifname_ensamble, var_name='twsc')
-		
-		
-		# Update datasets
-		data = cuwalid.update_TWSA(data_current, data_previous)
-		
-		# save dataset as netcdf file
-		fname_current = ifname_ensamble.split('.')[0]+'_'+ifield+'.nc'
-		
-		data.to_netcdf(fname_current)
+			# read dataset
+			data_current = cuwalid.read_dataset(ifname_ensamble, var_name='twsc')
 
+			# Update datasets
+			data = cuwalid.update_TWSA(data_current, data_previous)
+
+			# save dataset as netcdf file
+			fname_current = ifname_ensamble.split('.')[0]+'_'+ifield+'.nc'
+
+			data.to_netcdf(fname_current)
+		else:
+			print(ifname_ensamble+" File does not found, skip this file from the analysis")
 # ==============================================================
-def get_ensamble_forecasting(model_path, model_name, variables, postpp_path):
+def get_ensamble_forecasting(model_path, model_name, variables, season, postpp_path, nsim=30):
 	"""This funtion create an ensamble of model simulation for each
 	variable especify in the 'config_forecasting.py' file.
 
 	WARNING! Values of total water storage needs to be updated for
 	all the simulations
+
+	Parameters
+    ----------
+    model_path : str
+        Path to the directory containing the model data.
+    model_name : str
+        Name of the model to retrieve forecasts from.
+    season : str
+        Season for which the forecasts are required (e.g., 'OND', 'MAM').
+    variables : list of str
+        List of variable names to include in the forecast (e.g., ['pet', 'pre']).
+    postpp_path : str
+        Path to the post-processing configuration or scripts.
+
+    Returns
+    -------
+    xarray
+        A dictionary containing processed deterministic forecasts for each ensemble member. The structure 
+        typically includes ensemble members, their corresponding forecasts, and any additional post-processed 
+        data.
+
+    Notes
+    -----
+    - Ensure that the `model_path` contains the necessary data files for the specified `model_name`.
+    - The `postpp_path` should point to valid configurations or scripts for applying post-processing methods.
+    - Thresholds provided in `threshold_path` should match the variables specified.
+
+    Examples
+    --------
+    >>> forecasts = get_deterministic_forecast_ensemble(
+    ...     model_path="/data/models/",
+    ...     model_name="GFS",
+    ...     season="OND",
+    ...     variables=["pre", "pet"],
+    ...     postpp_path="/config/postprocessing/",
+    ...     threshold_path="/config/thresholds/"
+    ... )
+    >>> print(forecasts["mean"])
+    [0.5, 0.2, 0.8]
+
 	"""
 
 	#model_name = "MAM_2022_realization"
@@ -591,9 +678,9 @@ def get_ensamble_forecasting(model_path, model_name, variables, postpp_path):
 
 	#postpp_path = "/home/cuwalid/training/forecast/regional/postpp/"
 
-	nsim = 30
+	#nsim = 30
 	# get and save mean average values from netcdf
-	nini = 1
+	nini = 0
 
 	fname  = [
 	model_path+model_name+"_"+ str(isim) +'_grid.nc' for isim in range(nini, nsim)
@@ -601,7 +688,7 @@ def get_ensamble_forecasting(model_path, model_name, variables, postpp_path):
 	#'/user/work/km19051/HAD_output/HAD_1k_10y_gw_ch_ksat_1_v2_IMERG_sim_28_grid.nc',
 	]
 
-	season = ["MAM"]#, "OND"]
+	#season = ["MAM"]#, "OND"]
 
 	# specified fields
 	field = cuwalid.drop_false_keys(variables)
@@ -651,8 +738,50 @@ def get_ensamble_forecasting(model_path, model_name, variables, postpp_path):
 			dataset.to_netcdf(fname_out)
 
 
-def get_probabilistic_tercile_forecast_ensamble(model_path, model_name, season, variables, postpp_path):
+def get_probabilistic_tercile_forecast_ensamble(model_path, model_name, season, variables, postpp_path, threshold_path):
 	"""This function calculates the probabilistic forecasting using the tercile approach
+
+	Parameters
+    ----------
+    model_path : str
+        Path to the directory containing the model data.
+    model_name : str
+        Name of the model to retrieve forecasts from.
+    season : str
+        Season for which the forecasts are required (e.g., 'OND', 'MAM').
+    variables : list of str
+        List of variable names to include in the forecast (e.g., ['pet', 'pre']).
+    postpp_path : str
+        Path to the post-processing configuration or scripts.
+    threshold_path : str
+        Path to the file containing threshold values for the variables.
+
+    Returns
+    -------
+    xarray
+        A dictionary containing processed deterministic forecasts for each ensemble member. The structure 
+        typically includes ensemble members, their corresponding forecasts, and any additional post-processed 
+        data.
+
+    Notes
+    -----
+    - Ensure that the `model_path` contains the necessary data files for the specified `model_name`.
+    - The `postpp_path` should point to valid configurations or scripts for applying post-processing methods.
+    - Thresholds provided in `threshold_path` should match the variables specified.
+
+    Examples
+    --------
+    >>> forecasts = get_deterministic_forecast_ensemble(
+    ...     model_path="/data/models/",
+    ...     model_name="GFS",
+    ...     season="OND",
+    ...     variables=["pre", "pet"],
+    ...     postpp_path="/config/postprocessing/",
+    ...     threshold_path="/config/thresholds/"
+    ... )
+    >>> print(forecasts["mean"])
+    [0.5, 0.2, 0.8]
+
 	"""
 	#model_name = "MAM_2022_realization"
 
@@ -674,7 +803,8 @@ def get_probabilistic_tercile_forecast_ensamble(model_path, model_name, season, 
 	fname_ensamble = postpp_path+"netcdf/" + model_name + "_SSS_VVV_ensamble.nc"
 
 	# filename path of threshold
-	threshold_path = "/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGba_sim0_MAM_extremes_quantiles.nc"
+	#threshold_path = "/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGba_sim0_MAM_extremes_quantiles.nc"
+	#threshold_path = threshold_path+"HAD_IMERGba_sim0_MAM_extremes_quantiles.nc"
 
 
 	#fname_var = fname_var.replace("YYYY", str(iyear))
@@ -721,9 +851,51 @@ def get_probabilistic_tercile_forecast_ensamble(model_path, model_name, season, 
 			tercile.to_netcdf(fname_out)
 			
 
-def get_deterministic_forecast_ensamble(model_path, model_name, season, variables, postpp_path):
+def get_deterministic_forecast_ensamble(model_path, model_name, season, variables, postpp_path, threshold_path):
 	"""This function calculates the probabilistic forecasting using the tercile approach
 	from the ensamble dataset. It will create a file for each analised variable
+
+	Parameters
+    ----------
+    model_path : str
+        Path to the directory containing the model data.
+    model_name : str
+        Name of the model to retrieve forecasts from.
+    season : str
+        Season for which the forecasts are required (e.g., 'OND', 'MAM').
+    variables : list of str
+        List of variable names to include in the forecast (e.g., ['pet', 'pre']).
+    postpp_path : str
+        Path to the post-processing configuration or scripts.
+    threshold_path : str
+        Path to the file containing threshold values for the variables.
+
+    Returns
+    -------
+    xarray
+        A dictionary containing processed deterministic forecasts for each ensemble member. The structure 
+        typically includes ensemble members, their corresponding forecasts, and any additional post-processed 
+        data.
+
+    Notes
+    -----
+    - Ensure that the `model_path` contains the necessary data files for the specified `model_name`.
+    - The `postpp_path` should point to valid configurations or scripts for applying post-processing methods.
+    - Thresholds provided in `threshold_path` should match the variables specified.
+
+    Examples
+    --------
+    >>> forecasts = get_deterministic_forecast_ensemble(
+    ...     model_path="/data/models/",
+    ...     model_name="GFS",
+    ...     season="OND",
+    ...     variables=["pre", "pet"],
+    ...     postpp_path="/config/postprocessing/",
+    ...     threshold_path="/config/thresholds/"
+    ... )
+    >>> print(forecasts["mean"])
+    [0.5, 0.2, 0.8]
+
 	"""
 
 	iyear = 2022
@@ -752,7 +924,7 @@ def get_deterministic_forecast_ensamble(model_path, model_name, season, variable
 	fname_ensamble = postpp_path+"netcdf/" + model_name + "_SSS_VVV_ensamble.nc"
 
 	# filename path of threshold
-	threshold_path = "/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGba_sim0_SSS_mean.nc"
+	#threshold_path = "/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGba_sim0_SSS_mean.nc"
 
 	# replace year
 	#postpp_path = postpp_path.replace("YYYY", str(iyear))

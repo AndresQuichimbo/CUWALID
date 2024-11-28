@@ -341,25 +341,48 @@ def reproject_dataset(data, oldPP=None, newPP=None):
 	
 	return data
 
-def get_label_variable(var):
+def get_label_variable(var, units=False):
 	field_labels = {
-		"pre" : 'Precipitation [mm/month]',
-		"pet" : 'Potential ET. [mm/month]',
-		"aet" : 'Actual ET. [mm/month]',
-		"tht" : 'Soil moisture [--]',
-		"inf" : 'Infiltration [mm/month]',
-		"run" : 'Overland Flow [mm/month]',
-		"tls" : 'Trans. Losses [mm/month]',
-		"fch" : 'Focused Rch. [mm/month]',
-		"rch" : 'Diffuse Rch. [mm/month]',
-		"ghd" : 'GW Discharge [mm/month]',
-		"dis" : 'Flow channel [m3/month]',
-		"twsc": "Total Water storage \n Anomalies [mm/month]",
-		"wrsi": "Water Requirement Satisfaction \n Index [-]",
+		"pre" : 'Precipitation',
+		"pet" : 'Potential ET.',
+		"aet" : 'Actual ET.',
+		"tht" : 'Soil moisture',
+		"inf" : 'Infiltration' ,
+		"run" : 'Overland Flow',
+		"tls" : 'Trans. Losses',
+		"fch" : 'Focused Rch.',
+		"rch" : 'Diffuse Rch.',
+		"ghd" : 'GW Discharge',
+		"dis" : 'Flow channel',
+		"twsc": "Total Water storage",
+		"wrsi": "Water Requirement Satisfaction",
+		"egw":  "Groundwater Evaporation",
 		
 		}
-	return field_labels[var]
-	
+
+	units_labels = {
+		"pre" : ' [mm/month]',
+		"pet" : ' [mm/month]',
+		"aet" : ' [mm/month]',
+		"tht" : ' [--]',
+		"inf" : ' [mm/month]',
+		"run" : ' [mm/month]',
+		"tls" : ' [mm/month]',
+		"fch" : ' [mm/month]',
+		"rch" : ' [mm/month]',
+		"ghd" : ' [mm/month]',
+		"dis" : ' [m3/month]',
+		"twsc": " \n Anomalies [mm/month]",
+		"wrsi": " \n Index [-]",
+		"egw":  " \n [mm/month]",
+		
+		}
+
+	if units is False:
+		return field_labels[var]
+	else:
+		return field_labels[var] + units_labels[var]
+
 def get_mask(fmask):
 	# output an array
 	# get a mask
