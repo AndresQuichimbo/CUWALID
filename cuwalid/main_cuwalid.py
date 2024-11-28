@@ -15,27 +15,28 @@ def run_cuwalid(cuwalid_input, forecasting_input):
 		cuwalid_config = json.load(file)
 		
 	# Run storm
-	storm_input = cuwalid_config["storm"]
-	run_storm(storm_input)
+	# storm_input = cuwalid_config["storm"]
+	# run_storm(storm_input)
 
 	# Run StoPET
-	stopet_input = cuwalid_config["stopet"]
-	run_stoPET(stopet_input)
+	# stopet_input = cuwalid_config["stopet"]
+	# run_stoPET(stopet_input)
 
 	# Prepare Dryp files
 
-	mname = cuwalid_config["dryp"]["model_name"]
+	# TODO:
+	nsim = cuwalid_config["storm"]["NUMSIMS"]
+
 	start_date = cuwalid_config["dryp_settings"]["SIMULATION_PERIOD"]["start_date"]
 	end_date = cuwalid_config["dryp_settings"]["SIMULATION_PERIOD"]["end_date"]
-
-	# TODO:
-	nsim = 30
 
 	season = get_season(start_date)
 	iyear = int(start_date.split()[0])
 
+	mname = [cuwalid_config["dryp"]["model_name"] + season + "_" + str(iyear) + "_realization_" + str(isim) for isim in range(nsim)]
+
 	fname_setting_file = "/home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_"+season+"_"+str(iyear)+".json"
-	fsim_forecasting = ["/home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_"+season+"_"+str(iyear)+"_forecast_"+str(isim)+".json" for isim in range(30)]
+	fsim_forecasting = ["/home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_"+season+"_"+str(iyear)+"_forecast_"+str(isim)+".json" for isim in range(nsim)]
 	
 	folder_datasets_pet = "/home/cuwalid/training/forecast/regional/dataset/pet/"+season+"_"+str(iyear)+"_PET_forecast/"#Forecast_PET_HAD_ens_0_MAM_2024.nc"
 	folder_datasets_pre = "/home/cuwalid/training/forecast/regional/dataset/pre/"+season+"_"+str(iyear)+"/"#Forecast_PET_HAD_ens_0_MAM_2024.nc"
@@ -46,26 +47,25 @@ def run_cuwalid(cuwalid_input, forecasting_input):
 	fname_pet = [folder_datasets_pet+"Forecast_PET_HAD_ens_"+str(isim)+"_"+season+"_"+str(iyear)+".nc" for isim in range(nsim)]
 	fname_pre = [folder_datasets_pre+"Forecast_PRE_HAD_ens_"+str(isim)+"_"+season+"_"+str(iyear)+".nc" for isim in range(nsim)]
 
-	forcing_list = np.array(create_ensamble([fname_pet, fname_pre], nsamples=30))
+	forcing_list = np.array(create_ensamble([fname_pet, fname_pre], nsamples=nsim))
 
 	for ifsim_forecasting, imname, ifname_pre, ifname_pet in zip(fsim_forecasting, mname, forcing_list[:,1], forcing_list[:,0]):
 		write_JSON_dryp_file(
-			json_template=fsim_input_file,
+			json_template=cuwalid_config,
 			model_name= imname,
 			path_pre= ifname_pre,
 			path_pet= ifname_pet,
+			destination = ifsim_forecasting,
 			start_date= start_date,
 			end_date=end_date,
-			destination = ifsim_forecasting,
-			save_fname=fname_setting_file
 		)
 
 	# Get dryp input file list
-	fsim_forecasting_list = ["HAD_IMERG_input_"+season+"_"+str(iyear)+"_forecast_"+str(isim)+".json" for isim in range(30)]
+	fsim_forecasting_list = ["HAD_IMERG_input_"+season+"_"+str(iyear)+"_forecast_"+str(isim)+".json" for isim in range(nsim)]
 
 	# Run dryp as parralel process
 	for ifsim_forecasting in fsim_forecasting_list:
-		command = f"python -m cuwalid.dryp.main_DRYP /home/cuwalid/training/forecast/regional/model/{ifsim_forecasting}"
+		command = f"python -m cuwalid.dryp.main_DRYP /home/cuwalid/leo_test/CUWALID/json_testing/{ifsim_forecasting}"
 		subprocess.Popen(command, shell=True)
 
 def get_season(date_string):
@@ -78,7 +78,7 @@ def get_season(date_string):
     elif month in (10, 11, 12):
         return "OND"  # October, November, December
     else:
-        return "Other"  # If not in MAM or OND
+        return "INVALID_SEASON"  # If not in MAM or OND
 
 
 if __name__ == '__main__':
