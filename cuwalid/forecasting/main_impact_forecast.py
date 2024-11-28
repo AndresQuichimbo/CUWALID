@@ -2,7 +2,7 @@ import argparse
 import json
 import os
 import geopandas as gpd
-from cuwalid.forecasting.components.impact_forecast import plot_map
+from cuwalid.forecasting.components.plot_impact_forecast import plot_map
 import cuwalid.forecasting.components.forecast as forecast
 import cuwalid.forecasting.components.read_paths as paths
 #from aux_HAD_plot_probabilistic_forecasting_map import plot_map

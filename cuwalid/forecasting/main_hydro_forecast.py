@@ -2,7 +2,7 @@ import argparse
 import json
 from cuwalid.forecasting.components.hindcast import *
 from cuwalid.forecasting.components.forecast import *
-from cuwalid.forecasting.components.hydrological_forecast import *
+from cuwalid.forecasting.components.plot_hydro_forecast import *
 
 def run_hydro_forecast(config_path):
     """
@@ -48,7 +48,7 @@ def run_hydro_forecast(config_path):
 
     if include_hincast:
 
-        print("Processing historical simulation")
+        print("========================== Processing historical simulation ==========================")
         print("WARNING: A new folder will '/netcdf/' will be created inside '/postpp/'")
         print("to store new variables if it does not exist")
               
@@ -102,7 +102,7 @@ def run_hydro_forecast(config_path):
 
     if include_forecast:
 
-        print("|=============== Running forecasting =============|")
+        print("================================ Running forecasting ================================")
 
         # check if folder exist postpp/netcdf
         # print("to store new variables if it does not exist")
@@ -156,7 +156,7 @@ def run_hydro_forecast(config_path):
 
     if include_plotting:
 
-        print("Running plotting")
+        print("============================== Ploting forecasting outputs ==============================")
 
         print("Step 1: Plot probabilistic tercile forecasting")
         plot_tercile_probability_forecast(forecast_model_path,
