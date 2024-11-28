@@ -3,7 +3,7 @@ import geopandas as gpd
 import numpy as np
 import xarray as xr
 import pandas as pd
-
+import os
 
 def get_tercile_hindcast_fluxes(model_path, model_name, season, variables, postpp_path):
 	"""This function calculates the probabilistic forecasting using the tercile approach
@@ -498,8 +498,8 @@ def get_update_TWSA(model_path, model_name, iyear=2022):
     ifield = "twsc"
 
     # specify current simulation path
-    fname_current = model_path+model_name+'_grid.nc'# comment this line for yearly data
-    #fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc' # imcomment this line for yealy data
+    #fname_current = model_path+model_name+'_grid.nc'# comment this line for yearly data
+    fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc' # imcomment this line for yealy data
 
     # specify previous TWSC accumulated
     fname_previous = model_path+model_name+"_"+ str(iyear-1) +'_grid_twsc.nc'
@@ -606,24 +606,25 @@ def get_updated_TWSA_ensamble(model_path, model_name, model_name_historical, mod
 	data_previous = cuwalid.read_dataset(fname_previous, var_name='twsc')
 
 	for ifname_ensamble in fname:#for isim in range(nsim):
+		# test if file exist
+		if os.path.exists(ifname_ensamble):
+			# specify current simulation path
+			#fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc'
 
-		# specify current simulation path
-		#fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc'
-			
-		# read dataset
-		data_current = cuwalid.read_dataset(ifname_ensamble, var_name='twsc')
-		
-		
-		# Update datasets
-		data = cuwalid.update_TWSA(data_current, data_previous)
-		
-		# save dataset as netcdf file
-		fname_current = ifname_ensamble.split('.')[0]+'_'+ifield+'.nc'
-		
-		data.to_netcdf(fname_current)
+			# read dataset
+			data_current = cuwalid.read_dataset(ifname_ensamble, var_name='twsc')
 
+			# Update datasets
+			data = cuwalid.update_TWSA(data_current, data_previous)
+
+			# save dataset as netcdf file
+			fname_current = ifname_ensamble.split('.')[0]+'_'+ifield+'.nc'
+
+			data.to_netcdf(fname_current)
+		else:
+			print(ifname_ensamble+" File does not found, skip this file from the analysis")
 # ==============================================================
-def get_ensamble_forecasting(model_path, model_name, variables, postpp_path, nsim=30):
+def get_ensamble_forecasting(model_path, model_name, variables, season, postpp_path, nsim=30):
 	"""This funtion create an ensamble of model simulation for each
 	variable especify in the 'config_forecasting.py' file.
 
@@ -687,7 +688,7 @@ def get_ensamble_forecasting(model_path, model_name, variables, postpp_path, nsi
 	#'/user/work/km19051/HAD_output/HAD_1k_10y_gw_ch_ksat_1_v2_IMERG_sim_28_grid.nc',
 	]
 
-	season = ["MAM"]#, "OND"]
+	#season = ["MAM"]#, "OND"]
 
 	# specified fields
 	field = cuwalid.drop_false_keys(variables)

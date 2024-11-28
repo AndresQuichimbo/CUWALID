@@ -30,8 +30,12 @@ def run_hydro_forecast(config_path):
     forecast_model_path = config["forecasting"]['model_path']
     forecast_postpp_path = config["forecasting"]['postpp_path']
     
-    threshold_path = config["threshold_path"]
+    #/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGcv_sim83_MAM_extremes_quantiles.nc
+    #/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGcv_sim83_OND_mean.nc
+    #/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGcv_sim83_OND_quantiles.nc
 
+    #threshold_path = config["threshold_path"]
+    threshold_path = historical_postpp_path + "netcdf/"+ historical_model_name+ "_SSS_extremes_quantiles.nc"
     season = config['season']
     start_year = config['start_year']
     end_year = config['end_year']
@@ -44,7 +48,7 @@ def run_hydro_forecast(config_path):
 
     if include_hincast:
 
-        print("Running hindcast")
+        print("Processing historical simulation")
         print("WARNING: A new folder will '/netcdf/' will be created inside '/postpp/'")
         print("to store new variables if it does not exist")
               
@@ -123,18 +127,18 @@ def run_hydro_forecast(config_path):
         #get_areas_terciles(model_path, forecast_model_name, season, variables, postpp_path)
 
         print("Step 1: Update TWSA") 
-        get_update_TWSA(forecast_model_path, forecast_model_name, iyear=iyear)
+        get_update_TWSA(historical_model_path, historical_model_name, iyear=iyear)
 
         print("Step 2: Update TWSA of hydrological realizations") 
         get_updated_TWSA_ensamble(forecast_model_path, forecast_model_name,
                                   historical_model_name,
                                   historical_model_path)
-
         print("Step 3: Creating ensamble of hydrological realizations")   
         get_ensamble_forecasting(forecast_model_path,
-                                 forecast_model_name, variables,
+                                 forecast_model_name, variables, season,
                                  forecast_postpp_path)
 
+        # Forecasting estimation
         print("Step 4: Processing probabilistic forecasting")  
         get_probabilistic_tercile_forecast_ensamble(forecast_model_path,
                                                     forecast_model_name, season, variables,
