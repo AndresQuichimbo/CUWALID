@@ -312,8 +312,8 @@ def get_extremes_quantiles_multi_netcdf(model_path, model_name, start_year, end_
 	q4 = 0.05
 	q5 = 0.95
 
-	season = [None, 'MAM', 'OND']
-	season = ['MAM']#, 'OND']
+	#season = [None, 'MAM', 'OND']
+	#season = ['MAM']#, 'OND']
 
 	for iseason in season:
 		

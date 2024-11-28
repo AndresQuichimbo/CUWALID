@@ -123,12 +123,13 @@ def plot_map(plot_scale="Zoom",
 	# READ DATA FROM REGIONAL DATASET FROM LOCAL REPO
 	# ----------------------------------------------------------
 	wards = gpd.read_file(paths.fname_place)
+	#print(place_code_field, paths.iname_field_shp)
 
 	if place_code_field is False:
 		wards = wards[(wards[paths.iname_field_shp[country_name.lower()]] == place_name)]
 	else:
 		wards = wards[(wards[paths.iname_field_shp] == place_code)]
-
+	
 	# select polygon to use as mask
 	polygon = wards["geometry"].iloc[0]
 
@@ -767,12 +768,13 @@ def plot_map(plot_scale="Zoom",
 			fname_fig = fname_output
 		else:
 			fname_fig = str(place_code) + "_" + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png'
-
+	
 	plt.savefig(fname_fig, dpi=100)
 	print("**************")
 	print(fname_fig)
 	print("**************")
 	print(ratio_bw)
+	#plt.show()
 
 def get_labels_by_lenguage(dictionary, language, iterm):
 	"""Funciton to create labels with different languages

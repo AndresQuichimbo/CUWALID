@@ -12,20 +12,20 @@ name_short_country = {
 		"somalia":'SO',
 	}
 
-#name_field_county_shp = {
-#		"kenya":'county',
-#		"ethiopia":'NAME_2',
-#		"somalia":'NAME',
-#	}
+name_field_county_shp = {
+		"kenya":'ADM1_EN',
+		"ethiopia":'NAME_2',
+		"somalia":'NAME',
+	}
 
 code_county_shp = {
-		"kenya":'gid',
+		"kenya":'CODE',
 		"ethiopia":'OBJECTID',
 		"somalia":'REGN_NO',
 	}
 
 name_county_shp = {
-		"kenya":'county',
+		"kenya":'ADM1_EN',
 		"ethiopia":'NAME_2',
 		"somalia":'NAME',
 	}

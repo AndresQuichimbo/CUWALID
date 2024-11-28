@@ -381,12 +381,16 @@ status_labels = {
 }
 
 var_colour = {
-"Groundwater": ["#009E73", "#E69F00", "#E41A1C"],
-"Surface": ["#009E73", "#E69F00", "#E41A1C"],
-"Soil": ["#009E73", "#E69F00", "#E41A1C"],
+"Groundwater": ["#57C4AD", "#EDA247", "#DB4325"],
+"Surface": ["#9BBF85", "#E7F7D5", "#B3589A"],
+#"Groundwater": ["#009E73", "#E69F00", "#E41A1C"],
+#"Surface": ["#009E73", "#E69F00", "#E41A1C"],
+#"Soil": ["#009E73", "#E69F00", "#E41A1C"],
+"Soil": ["#9BBF85", "#E7F7D5", "#B3589A"],
 "Evaporation": ["#009E73", "#E69F00", "#E41A1C"],
-"Flood": ["#E41A1C", "#E69F00", "#009E73"],
-"Crop": ["#009E73", "#E69F00", "#E41A1C"],
+#"Flood": ["#E41A1C", "#E69F00", "#009E73"],
+"Crop": ["#57C4AD", "#EDA247", "#DB4325"],
+"Flood": ["#B3589A", "#E7F7D5", "#9BBF85"],
 }
 
 # ward name and center (lat, lon)
