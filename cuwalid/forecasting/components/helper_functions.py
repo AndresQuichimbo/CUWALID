@@ -5,8 +5,8 @@ import matplotlib.patches as mpatches
 import numpy as np
 import rasterio
 import xarray as xr
-from bidi import algorithm as bidialg
-import arabic_reshaper
+#from bidi import algorithm as bidialg
+#import arabic_reshaper
 """
 A file containing helper functions to assist with the forecasting element
 

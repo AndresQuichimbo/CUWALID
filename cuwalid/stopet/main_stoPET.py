@@ -27,7 +27,10 @@ def run_stoPET(config_file):
         sys.exit(1)
 
     # Load configuration file
-    config = load_config(config_file)
+    if type(config_file) == str:
+        config = load_config(config_file)
+    else:
+        config = config_file
 
     execution_type = config['execution_type']
 

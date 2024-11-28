@@ -18,8 +18,8 @@ from cuwalid.forecasting.components.helper_functions import add_label_features, 
 from cuwalid.forecasting.components.map_properties import *
 from cuwalid.forecasting.components.read_paths import *
 import cuwalid.tools.CUWALID_view_tool as cuwalidplt
-import arabic_reshaper
-from bidi import algorithm as bidialg
+#import arabic_reshaper
+#from bidi import algorithm as bidialg
 #import pandas as pd
 #from cmcrameri import cm
 #sys.path.append('C:/Users/Edisson/Documents/GitHub/DRYPv2.0.1')
@@ -292,7 +292,7 @@ def plot_map(plot_scale="Zoom",
 	# Open dataset of model outputs
 	#print(netcdf_path)
 	#ds = read_dataset(netcdf_path, var_name=var)
-	ds = xr.open_dataset(netcdf_path)
+	ds = xr.open_dataset(paths.netcdf_path)
 	#print(netcdf_path)
 	#print(ds)
 	# Apply mask to datasets

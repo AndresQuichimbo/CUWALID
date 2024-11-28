@@ -5,9 +5,12 @@ from cuwalid.storm.checks_ import welcome
 
 def run_storm(json_input):
 
-    # Load JSON data
-    with open(json_input, 'r') as file:
-        config = json.load(file)
+    if type(json_input) == str:
+        # Load JSON data
+        with open(json_input, 'r') as file:
+            config = json.load(file)
+    else:
+        config = json_input
 
     willkommen = welcome(config["NUMSIMS"], config["NUMSIMYRS"], config["PTOT_SC"], config["PTOT_SF"], config["STORMINESS_SC"], config["STORMINESS_SF"], config["OUT_PATH"], )
     NC_NAMES = willkommen.ncs
