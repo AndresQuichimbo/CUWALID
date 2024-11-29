@@ -204,10 +204,10 @@ def plot_deterministic_forecast(data,
 	
 	"""
 	# apply mask
-	if fmask is not None:
-		mask = np.flip(get_mask(fmask), 0)#*np.flip(get_mask(friver), 0)
-		data = data*mask
-	
+	#if fmask is not None:
+	#	mask = np.flip(get_mask(fmask), 0)#*np.flip(get_mask(friver), 0)
+	#	data = data*mask
+	#print(data)
 	# reproject dataset
 	if reproject is True:
 		data = reproject_dataset(data, oldPP=None, newPP=None)
@@ -357,6 +357,7 @@ def get_label_variable(var, units=False):
 		"twsc": "Total Water storage",
 		"wrsi": "Water Requirement Satisfaction",
 		"egw":  "Groundwater Evaporation",
+		"wte":  "Water table elevation",
 		
 		}
 
@@ -375,7 +376,7 @@ def get_label_variable(var, units=False):
 		"twsc": " \n Anomalies [mm/month]",
 		"wrsi": " \n Index [-]",
 		"egw":  " \n [mm/month]",
-		
+		"wte":  " [m]",
 		}
 
 	if units is False:
