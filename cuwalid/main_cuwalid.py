@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import sys
 
@@ -23,8 +24,7 @@ def run_cuwalid(cuwalid_input, forecasting_input):
 	# run_stoPET(stopet_input)
 
 	# Prepare Dryp files
-
-	# TODO:
+      
 	nsim = cuwalid_config["storm"]["NUMSIMS"]
 
 	start_date = cuwalid_config["dryp_settings"]["SIMULATION_PERIOD"]["start_date"]
@@ -63,9 +63,21 @@ def run_cuwalid(cuwalid_input, forecasting_input):
 	# Get dryp input file list
 	fsim_forecasting_list = ["HAD_IMERG_input_"+season+"_"+str(iyear)+"_forecast_"+str(isim)+".json" for isim in range(nsim)]
 
-	# Run dryp as parralel process
+	log_dir = "/home/cuwalid/leo_test/CUWALID/logs"  # Adjust to your desired log directory
+
+	# Make sure the log directory exists
+	os.makedirs(log_dir, exist_ok=True)
+
 	for ifsim_forecasting in fsim_forecasting_list:
-		command = f"python -m cuwalid.dryp.main_DRYP /home/cuwalid/leo_test/CUWALID/json_testing/{ifsim_forecasting}"
+		# Remove the .json extension for the log file name
+		base_name = os.path.splitext(ifsim_forecasting)[0]
+		
+		# Generate a unique log file name for each process
+		log_file = os.path.join(log_dir, f"{base_name}_output.log")
+		# Build the command to run the simulation and redirect both stdout and stderr to the log file
+		command = f"nohup python -m cuwalid.dryp.main_DRYP /home/cuwalid/training/forecast/regional/model/{ifsim_forecasting} > {log_file} 2>&1 &"
+		
+		# Run the command as a background process using subprocess
 		subprocess.Popen(command, shell=True)
 
 def get_season(date_string):
