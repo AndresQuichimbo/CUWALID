@@ -496,10 +496,22 @@ def get_update_TWSA(model_path, model_name, iyear=2022):
     #iyear = 2022
 
     ifield = "twsc"
-
+	
     # specify current simulation path
     #fname_current = model_path+model_name+'_grid.nc'# comment this line for yearly data
-    fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc' # imcomment this line for yealy data
+    #fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc' # imcomment this line for yealy data
+
+	# check the most current year
+    current_year = 0
+    available_year = False
+    while (current_year < 3) or (available_year is False):
+        fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc' # imcomment this line for yealy data
+        if os.path.exists(fname_current):
+            available_year = True
+        else:
+            current_year += 1
+            iyear = iyear-1
+
 
     # specify previous TWSC accumulated
     fname_previous = model_path+model_name+"_"+ str(iyear-1) +'_grid_twsc.nc'
@@ -598,7 +610,18 @@ def get_updated_TWSA_ensamble(model_path, model_name, model_name_historical, mod
 	#fname_previous = model_path_historical+model_name_historical+'_grid_twsc.nc'
 	fname_previous = model_path_historical+model_name_historical+"_"+ str(iyear-1) +'_grid_twsc.nc'
 	#fname_current = fname_current.split('.')[0]+'_'+ifield+'.nc'
-
+	# check the most current year
+	current_year = 0
+	available_year = False
+	while (current_year < 3) or (available_year is False):
+		fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc' # imcomment this line for yealy data
+		if os.path.exists(fname_current):
+			available_year = True
+		else:
+			current_year += 1
+			iyear = iyear-1
+	
+	
 	fname  = [
 	model_path+model_name+"_"+ str(isim) +'_grid.nc' for isim in range(nini, nsim)
 	]

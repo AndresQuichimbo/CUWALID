@@ -316,9 +316,9 @@ class gwflow_EFD(object):
 			lake_nodes = head - bathymetry # find lake with water
 			lake_nodes = np.where(lake_nodes > 0) # select lake nodes with water 
 			links_at_lake = grid.links_at_node[lake_nodes] # select lake links
-			T[links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.05 # reduce transmissivity
-			Sy_aux = Sy[act_nodes]
-			Sy_aux[lake_nodes] = 1.0
+			T[links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.01 # reduce transmissivity
+			#Sy_aux = Sy[act_nodes]
+			#Sy_aux[lake_nodes] = 1.0
 			# --------------------------------------------------------------
 
 			# Calculate the hydraulic gradients
@@ -478,8 +478,8 @@ class gwflow_EFD(object):
 			discharge[act_nodes] += dqs[act_nodes]*dtsp
 			#print('discharge',env_state.SZgrid.at_node['discharge'][219])
 			# Calculate maximum time step
-			#dtsp = time_step_confined(COURANT_2D, Sy[act_nodes],
-			dtsp = time_step_confined(COURANT_2D, Sy_aux,
+			dtsp = time_step_confined(COURANT_2D, Sy[act_nodes],
+			#dtsp = time_step_confined(COURANT_2D, Sy_aux,
 				map_max_of_node_links_to_node(grid, T)[act_nodes], grid.dx
 				)
 			

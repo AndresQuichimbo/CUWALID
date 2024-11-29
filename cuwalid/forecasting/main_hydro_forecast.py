@@ -132,7 +132,7 @@ def run_hydro_forecast(config_path):
         print("Step 2: Update TWSA of hydrological realizations") 
         get_updated_TWSA_ensamble(forecast_model_path, forecast_model_name,
                                   historical_model_name,
-                                  historical_model_path)
+                                  historical_model_path, iyear=iyear)
         print("Step 3: Creating ensamble of hydrological realizations")   
         get_ensamble_forecasting(forecast_model_path,
                                  forecast_model_name, variables, season,
@@ -164,11 +164,11 @@ def run_hydro_forecast(config_path):
                                           forecast_postpp_path
                                           )
 
-        print("Step 2: Plot deterministic forecasting")
-        plot_deterministic_forecast(forecast_model_path,
-                                    forecast_model_name, season, variables,
-                                    forecast_postpp_path
-                                    )
+        #print("Step 2: Plot deterministic forecasting")
+        #plot_deterministic_forecast(forecast_model_path,
+        #                            forecast_model_name, season, variables,
+        #                            forecast_postpp_path
+        #                            )
 
 
 # Main function to handle command-line arguments
