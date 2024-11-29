@@ -3,7 +3,30 @@ import json
 import numpy as np
 
 
-def write_JSON_dryp_file(json_template, model_name, path_pre, path_pet, start_date="2024 03 01", end_date="2024 05 31", destination=None, new_setting_file=None):
+def write_JSON_dryp_file(json_template, model_name, path_pre, path_pet, destination, start_date="2024 03 01", end_date="2024 05 31", new_setting_file=None):
+	""" This function create the simulation and setting file for running DRYP. New
+	files are created  based on files provided as original files, this function
+	changes the model name, precipitation and potential evapotranspiration
+	paths.
+	WARNING: if no new filename is provided it will replace the original file
+	
+	Parameters:
+	-----------
+	json_template : string
+			model input, as a dictionary
+	model_name : string
+			model name for the new file
+	path_pre : string
+			precipitation dataset name, including path
+	path_pet : string
+			potential evapotranspiration dataset name, including path
+	start_date : string
+			date in the following format "YYYY-MM-DD" (e.g. 2002-01-01)
+	end_date : string
+			date in the following format "YYYY-MM-DD" (e.g. 2002-03-01)
+	new_setting_file : bool
+			If True it create the setting dryp file
+	"""
 
 	# Change necesarry variables in template
 	json_template["dryp"]["model_name"] = model_name
@@ -20,10 +43,9 @@ def write_JSON_dryp_file(json_template, model_name, path_pre, path_pet, start_da
 		json_template["dryp_settings"]["SIMULATION_PERIOD"]["end_date"] = end_date
 
 	# Save the `dryp` part to the destination file
-	if destination is not None:
-		dryp_data = json_template["dryp"]
-		with open(destination, "w") as dest_file:
-			json.dump(dryp_data, dest_file, indent=4)
+	dryp_data = json_template["dryp"]
+	with open(destination, "w") as dest_file:
+		json.dump(dryp_data, dest_file, indent=4)
 
 	# Save the `dryp_settings` part to the new settings file
 	if new_setting_file is not None:
