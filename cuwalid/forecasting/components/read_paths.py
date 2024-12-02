@@ -67,7 +67,7 @@ class get_paths(object):
 					os.path.join(
 						os.path.dirname(__file__), '..', default_dataset.shapefile_wards_dic[country_name.lower()]))
 				
-			if mask_path is not None:
+			if mask_path is None:
 				mask_path = os.path.abspath(
 				os.path.join(
 					os.path.dirname(__file__), '..', default_dataset.fname_mask_dic[iwater_status]))
@@ -85,7 +85,7 @@ class get_paths(object):
 			
 			shapefile_level_2 = dataset_list.shapefile_level_2_dic[country_name.lower()]
 
-			if mask_path is not None:
+			if mask_path is None:
 				mask_path = dataset_list.fname_mask_dic[iwater_status]
 	
 		# river shape file

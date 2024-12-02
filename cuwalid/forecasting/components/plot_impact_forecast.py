@@ -294,9 +294,11 @@ def plot_map(plot_scale="Zoom",
 	#ds = read_dataset(netcdf_path, var_name=var)
 	ds = xr.open_dataset(paths.netcdf_path)
 	#print(netcdf_path)
+	#print(paths.mask_path)
 	#print(ds)
 	# Apply mask to datasets
 	if paths.mask_path is not None:
+		#print(paths.mask_path)
 		mask = np.flip(get_mask(paths.mask_path), 0)
 		ds = ds*mask	
 

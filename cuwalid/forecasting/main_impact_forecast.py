@@ -5,6 +5,7 @@ import geopandas as gpd
 from cuwalid.forecasting.components.plot_impact_forecast import plot_map
 import cuwalid.forecasting.components.forecast as forecast
 import cuwalid.forecasting.components.read_paths as paths
+from cuwalid.forecasting.components.map_properties import water_var
 #from aux_HAD_plot_probabilistic_forecasting_map import plot_map
 
 # Function to plot maps based on the configuration in the JSON file
@@ -74,7 +75,8 @@ def plot_maps_json(config_file):
 			return
 
 	# Check for required keys and provide feedback if missing
-	required_keys = ["plot_scales", "seasons", "water_status", "year", "mask_path", "river_path"]
+#	required_keys = ["plot_scales", "seasons", "water_status", "year", "mask_path", "river_path"]
+	required_keys = ["plot_scales", "seasons", "water_status", "year"]
 	for key in required_keys:
 		if key not in config:
 			print(f"Missing required key: {key} in the configuration file.")
@@ -94,12 +96,12 @@ def plot_maps_json(config_file):
 	language = config.get("language", "English")
 	output_dir = config.get("output_dir", "output")
 	netcdf_path = config.get("netcdf_path", None)
-	threshold_path = config.get("threshold_path", None)
-	mask_path = config["mask_path"]
-	river_path = config.get("river_path", None)
-	shape_path = config.get("shape_path", None)
-	prev_output_path = config.get("prev_output_path", None)
-	pp_path = config.get("pp_path", None)
+	#threshold_path = config.get("threshold_path", None)
+	#mask_path = config["mask_path"]
+	#river_path = config.get("river_path", None)
+	#shape_path = config.get("shape_path", None)
+	#prev_output_path = config.get("prev_output_path", None)
+	#pp_path = config.get("pp_path", None)
 	model_name = config.get("model_name", None)
 	#print(river_path)
 	dataset_parameter_list = config.get("parameter_dataset_list", None)
@@ -111,17 +113,30 @@ def plot_maps_json(config_file):
 		#print(dataset_parameters.code_county_shp,dataset_parameters.shapefile_level_1_dic,
 		#						dataset_parameters.name_county_shp)
 
+	# check model variable names are available
+	# fname_out = postpp_path+"netcdf/" + model_name + "_" +ivar+"_"+iseason+"_"+str(iyear)+"_probabilistic_tercile_forecast.nc" 
+	#if netcdf_path is None:
+	# get list of variables names form water status
+	netcdf_path_list = []
+	for iwater_status in water_status:
+		if netcdf_path is None:	
+			ivar = water_var[iwater_status]
+			netcdf_path_aux = output_dir+"netcdf/" + model_name + "_" +ivar+"_"+season[0]+"_"+str(year)+"_probabilistic_tercile_forecast.nc"
+			netcdf_path_list.append(netcdf_path_aux)
+		else:
+			netcdf_path_list.append(netcdf_path)
+	##### Ensure the user provides either netcdf_path/threshold_path
+	#####  or prev_output_path/pp_path/model_name
+	####if netcdf_path is None or threshold_path is None:
+	####	if prev_output_path is None or pp_path is None or model_name is None:
+	####		raise ValueError("You must provide either 'netcdf_path' and 'threshold_path', "
+	####						"or 'prev_output_path', 'pp_path', and 'model_name'.")
 
-	# Ensure the user provides either netcdf_path/threshold_path or prev_output_path/pp_path/model_name
-	if netcdf_path is None or threshold_path is None:
-		if prev_output_path is None or pp_path is None or model_name is None:
-			raise ValueError("You must provide either 'netcdf_path' and 'threshold_path', "
-							"or 'prev_output_path', 'pp_path', and 'model_name'.")
-
-	# If netcdf_path and threshold_path are not provided, generate them using prev_output_path, pp_path, and model_name
-	if netcdf_path is None and threshold_path is None:
-		netcdf_path = os.path.join(prev_output_path, model_name + "_YYYY_grid.nc")
-		threshold_path = os.path.join(pp_path, model_name + "_SSS")
+	##### If netcdf_path and threshold_path are not provided, 
+	##### generate them using prev_output_path, pp_path, and model_name
+	####if netcdf_path is None and threshold_path is None:
+	####	netcdf_path = os.path.join(prev_output_path, model_name + "_YYYY_grid.nc")
+	####	threshold_path = os.path.join(pp_path, model_name + "_SSS")
 
 
 	if (place_name is not None) and (len(country_names) > 1):
@@ -174,10 +189,10 @@ def plot_maps_json(config_file):
 				year=year, 
 				output_dir=output_dir, 
 				language=language,
-				netcdf_path=netcdf_path,
-				threshold_path=threshold_path,
-				mask_path=mask_path,
-				river_path=river_path,
+				netcdf_path_list=netcdf_path_list,
+				#threshold_path=threshold_path,
+				#mask_path=mask_path,
+				#river_path=river_path,
 				#shape_path=dataset_parameters.shapefile_level_1_dic[icountry]
 				shape_path=dataset_parameter_list
 				)
@@ -200,8 +215,8 @@ def plot_maps_json(config_file):
 							plot_scales[0],#=plot_scales,
 							season=season,
 							variables=water_status,
-							postpp_path=pp_path,
-							netcdf_path=netcdf_path,
+							postpp_path=output_dir,
+							netcdf_path_list=netcdf_path_list,
 							shapefile_path=dataset_parameters.shapefile_level_1_dic[icountry],
 							place_name=place_name,
 							place_code=place_code,
@@ -250,7 +265,7 @@ def call_plot_maps(plot_scales=["Zoom"],
 		year=2010,
 		output_dir="output",
 		language=["English",],
-		netcdf_path=None,
+		netcdf_path_list=None,
 		threshold_path=None,
 		mask_path=None,
 		river_path=None,
@@ -350,7 +365,7 @@ def call_plot_maps(plot_scales=["Zoom"],
 		for iplace_name, iplace_code in zip(place_names, place_codes):
 			print(f"Place name {iplace_name}")
 			for iiseason in seasons:
-				for iiwater_status in water_status:
+				for iiwater_status, inetcdf_path in zip(water_status, netcdf_path_list):
 					if iplace_code is not None:
 						ifname_fig = (
 							country_code+ "_" +
@@ -377,7 +392,7 @@ def call_plot_maps(plot_scales=["Zoom"],
 								ilanguage=language,
 								shape_path_list=shape_path,
 								output_dir=output_dir,
-								netcdf_path=netcdf_path,
+								netcdf_path=inetcdf_path,
 								threshold_path=threshold_path,
 								mask_path=mask_path,
 								river_path=river_path,
