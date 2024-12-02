@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="CUWALID",
-    version="1.0.85", 
+    version="1.0.86", 
     author="Andrés Quichimbo, Manuel Rios Gaona, Dagmawi Teklu Asfaw, Leo Coote",
     author_email="cootelf@cardiff.ac.uk",
     description="CUWALID (Climate into Useful Water And Land Information in Drylands)",
@@ -48,7 +48,7 @@ setup(
         'rasterstats',
         'lmfit',
         'python-bidi',
-        'mpcabd arabic-reshaper',
+        'arabic-reshaper',
         ],
     include_package_data=True,
 )
