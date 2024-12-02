@@ -40,12 +40,14 @@ def run_cuwalid(cuwalid_input, forecasting_input):
 	
 	folder_datasets_pet = "/home/cuwalid/training/forecast/regional/dataset/pet/"+season+"_"+str(iyear)+"_PET_forecast/"#Forecast_PET_HAD_ens_0_MAM_2024.nc"
 	folder_datasets_pre = "/home/cuwalid/training/forecast/regional/dataset/pre/"+season+"_"+str(iyear)+"/"#Forecast_PET_HAD_ens_0_MAM_2024.nc"
+	folder_datasets_pre = "/home/cuwalid/leo_test/CUWALID/storm_output/"+season+"_"+str(iyear)+"/"#Forecast_PET_HAD_ens_0_MAM_2024.nc"
 
 	local_directory = "/home/cuwalid/training/forecast/regional/model/" #D:/HAD/training/regional/model/"
 	fsim_input_file = local_directory + "HAD_IMERGcv_input_sim85.json"#"HAD_IMERG_input_sim_cuwalid.dmp"
 
+	# TODO: Change pet to the same order naming as pre
 	fname_pet = [folder_datasets_pet+"Forecast_PET_HAD_ens_"+str(isim)+"_"+season+"_"+str(iyear)+".nc" for isim in range(nsim)]
-	fname_pre = [folder_datasets_pre+"Forecast_PRE_HAD_ens_"+str(isim)+"_"+season+"_"+str(iyear)+".nc" for isim in range(nsim)]
+	fname_pre = [folder_datasets_pre + "Forecast_PRE_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
 
 	forcing_list = np.array(create_ensamble([fname_pet, fname_pre], nsamples=nsim))
 

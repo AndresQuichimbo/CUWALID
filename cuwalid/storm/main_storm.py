@@ -12,7 +12,7 @@ def run_storm(json_input):
     else:
         config = json_input
 
-    willkommen = welcome(config["NUMSIMS"], config["NUMSIMYRS"], config["PTOT_SC"], config["PTOT_SF"], config["STORMINESS_SC"], config["STORMINESS_SF"], config["OUT_PATH"], )
+    willkommen = welcome(config["NUMSIMS"], config["NUMSIMYRS"], config["PTOT_SC"], config["PTOT_SF"], config["STORMINESS_SC"], config["STORMINESS_SF"], config["OUT_PATH"], config["SEASON_TAG"], config["SEED_YEAR"], )
     NC_NAMES = willkommen.ncs
     
     wrapper(

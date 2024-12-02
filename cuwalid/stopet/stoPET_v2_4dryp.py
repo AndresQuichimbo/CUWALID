@@ -7,7 +7,7 @@ import datetime as dt
 from scipy import stats
 from itertools import product
 #import metpy.calc as mpcalc
-from numba import njit, prange
+from numba import jit, njit, prange
 import xarray as xr
 
 ##np.random.seed(seed=369)
@@ -35,15 +35,15 @@ def stoPET_wrapper_regional(startyear, endyear, latval_min, latval_max, lonval_m
     scale=data.variables['scale_estimate'][:,:,:]
     
     # Fill 5 grid s of the ocean to be used for boundary condiction if needed
-    ampl = fill_masked_ocean_3d(ampl)
-    omega = fill_masked_ocean_3d(omega)
-    phase = fill_masked_ocean_3d(phase)
-    shift = fill_masked_ocean_3d(shift)
-    sr = fill_masked_ocean_3d(sr)
-    ss = fill_masked_ocean_3d(ss)
-    skew = fill_masked_ocean_3d(skew)
-    loc = fill_masked_ocean_3d(loc)
-    scale = fill_masked_ocean_3d(scale)
+    ampl = fill_masked_ocean_3d(ampl, 99)
+    omega = fill_masked_ocean_3d(omega, 99)
+    phase = fill_masked_ocean_3d(phase, 99)
+    shift = fill_masked_ocean_3d(shift, 99)
+    sr = fill_masked_ocean_3d(sr, 99)
+    ss = fill_masked_ocean_3d(ss, 99)
+    skew = fill_masked_ocean_3d(skew, 99)
+    loc = fill_masked_ocean_3d(loc, 99)
+    scale = fill_masked_ocean_3d(scale, 99)
     
     # deltaT parameters
     if tempAdj == 1: # method 1: user defined percentage increase
@@ -51,36 +51,36 @@ def stoPET_wrapper_regional(startyear, endyear, latval_min, latval_max, lonval_m
         # to mainain the array dimentions in the code we replicate these values
         # to the same dimentinon as the rest of the input data
         slope_vals=np.ones((ampl.shape[1],ampl.shape[2])) * udpi_pet
-        slope_vals = fill_masked_ocean_2d(slope_vals)
+        slope_vals = fill_masked_ocean_2d(slope_vals, 99)
 
         dpetbydt=Dataset(os.path.join(datapath, 'dpetdt.nc'))
         dpetdt = dpetbydt.variables['dpetdt'][:,:]
-        dpetdt = fill_masked_ocean_2d(dpetdt)
+        dpetdt = fill_masked_ocean_2d(dpetdt, 99)
         
     elif tempAdj == 2: # method 3: user defined temperature increase 
         deltat_slope=Dataset(os.path.join(datapath, 'hpet_slope.nc')) 
         slope_vals = deltat_slope.variables['slope'][:,:]
-        slope_vals = fill_masked_ocean_2d(slope_vals)
+        slope_vals = fill_masked_ocean_2d(slope_vals, 99)
 
         dpetbydt=Dataset(os.path.join(datapath, 'dpetdt.nc'))
         dpetdt = dpetbydt.variables['dpetdt'][:,:]
-        dpetdt = fill_masked_ocean_2d(dpetdt)
+        dpetdt = fill_masked_ocean_2d(dpetdt, 99)
 
     elif tempAdj == 3: # progressive change based on hPET trend 
         deltat_slope=Dataset(os.path.join(datapath, 'hpet_slope.nc')) 
         slope_vals = deltat_slope.variables['slope'][:,:]
-        slope_vals = fill_masked_ocean_2d(slope_vals)
+        slope_vals = fill_masked_ocean_2d(slope_vals, 99)
 
         dpetbydt=Dataset(os.path.join(datapath, 'dpetdt.nc'))
         dpetdt = dpetbydt.variables['dpetdt'][:,:]
-        dpetdt = fill_masked_ocean_2d(dpetdt)
+        dpetdt = fill_masked_ocean_2d(dpetdt, 99)
         
     else:
         raise ValueError('tempAdj only takes values 1,2,3 please check!')
     # monthly contribution percentage
     mpercent=Dataset(os.path.join(datapath, 'monthly_cont_percentage.nc')) 
     mcont_vals = mpercent.variables['mcontper'][:,:,:]
-    mcont_vals = fill_masked_ocean_3d(mcont_vals)
+    mcont_vals = fill_masked_ocean_3d(mcont_vals, 99)
 
     # generate stoPET PET values (hourly values for each year)
     stopet = future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, lonval_min,lonval_max,
@@ -667,7 +667,7 @@ def stopet4dryp(filepath, fname, seasonswitch, startdate, enddate, i):
     method = x[1]
     suffix = x[2]
     if seasonswitch == 1:
-      filename = filepath + '%s_%s_%s_%s_%s.nc'%(suffix, method, startdate, enddate, year)#i,
+      filename = filepath + 'E_%s_%s_%s_%s_%s_%s.nc'%(i, suffix, method, startdate, enddate, year)
     elif seasonswitch == 0:
       filename = filepath + 'E_%s_%s_%s_%s_%s_%s.nc'%(i, suffix, method, startdate, enddate, year)
     else:
@@ -737,8 +737,6 @@ def seasonal_nc_write(data, lat, lon, varname, tunits, filename, startdate, year
         longitude.units='degrees_east'
     
     elif len(data.shape) == 2: # 2D array
-        print("Data shape:", data.shape)
-        print("Variable shape:", pet_val.shape)
         pet_val = ds.createVariable(varname, 'f4', ('latitude','longitude'), zlib=True)
         latitude[:] = lat
         longitude [:] = lon
@@ -921,13 +919,13 @@ def mean_shift_rand_values(datapath, number_ensm, startyear, endyear):
     for i in range(0,len(years)):
       for j in range(0,mean.shape[0]):
         mean_val = mean[j, :,:]
-        std_val = std[j, :,:] 
+        std_val = std[j, :,:] * 0.85  # reduce the std by 15%
         extra_noise = np.random.normal(loc=mean_val, scale=std_val, size=(number_ensm,mean.shape[1],mean.shape[2]))
         array[i,:,j,:,:] = extra_noise
     return array
 
-    
-def fill_masked_ocean_3d(data):
+
+def fill_masked_ocean_3d(data, fillvalue):
     # fill ocean values with the nearest value
     # fill the masked part with nearest grid upto 5 grid in each direction
     # the order must be maintained to account for the way the coast is shaped
@@ -942,11 +940,11 @@ def fill_masked_ocean_3d(data):
     masked_data = np.ma.masked_invalid(masked_data)
 
     # Replace the masked values (NaN) with a specific number, e.g., 99
-    filled_data = masked_data.filled(99)
+    filled_data = masked_data.filled(fillvalue)
     return filled_data    
 
 
-def fill_masked_ocean_2d(data):
+def fill_masked_ocean_2d(data, fillvalue):
     # fill ocean values with the nearest value
     # fill the masked part with nearest grid upto 5 grid in each direction
     # the order must be maintained to account for the way the coast is shaped
@@ -961,8 +959,8 @@ def fill_masked_ocean_2d(data):
     masked_data = np.ma.masked_invalid(masked_data)
 
     # Replace the masked values (NaN) with a specific number, e.g., 99
-    filled_data = masked_data.filled(99)
-    return filled_data    
+    filled_data = masked_data.filled(fillvalue)
+    return filled_data  
 
 ## ------------------ END OF SCRIPT ------------------------------##
 

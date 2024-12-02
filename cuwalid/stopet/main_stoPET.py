@@ -39,9 +39,8 @@ def run_stoPET(config_file):
         sys.exit(1)
 
     # Extract parameters from the config
-    trial_number = config.get('trial_number', 1)
-    trial = int(config.get('trial')) if 'trial' in config else None
-    outputpath = config['root_outputpath']
+    slice_only = config.get('slice_only', 1)
+    outputpath = config['outputpath']
     runtype = config['runtype']
     startyear = config['startyear']
     endyear = config['endyear']
@@ -81,13 +80,12 @@ def run_stoPET(config_file):
             tempAdj=tempAdj,
             deltat=deltat,
             udpi_pet=udpi_pet,
-            trial_number=trial_number
+            slice_only=slice_only
         )
     elif execution_type == 'hpc':
         run_stoPET_in_hpc(
-            trial=trial,
             datapath=datapath,
-            root_outputpath=outputpath,
+            outputpath=outputpath,
             runtype=runtype,
             startyear=startyear,
             endyear=endyear,
@@ -105,7 +103,7 @@ def run_stoPET(config_file):
             tempAdj=tempAdj,
             deltat=deltat,
             udpi_pet=udpi_pet,
-            trial_number=trial_number
+            slice_only=slice_only
         )
 
     print('Seasonal PET extraction finished successfully.')
