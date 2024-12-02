@@ -138,7 +138,7 @@ class parse:
 
 class welcome:
 
-    def __init__(self, NUMSIMS=None, NUMSIMYRS=None, PTOT_SC=None, PTOT_SF=None, STORMINESS_SC=None, STORMINESS_SF=None, OUT_PATH="storm_output", **kwargs):
+    def __init__(self, NUMSIMS=None, NUMSIMYRS=None, PTOT_SC=None, PTOT_SF=None, STORMINESS_SC=None, STORMINESS_SF=None, OUT_PATH="storm_output", SEASON=None, YEAR=None, **kwargs):
         """
         generates and prints the names of the output nc-files.\n
         Input: none.\n
@@ -160,6 +160,8 @@ class welcome:
         self.storm_sc = kwargs.get('storm_sc', STORMINESS_SC)
         self.storm_sf = kwargs.get('storm_sf', STORMINESS_SF)
         self.out_path = kwargs.get('out_path', OUT_PATH)
+        self.season = kwargs.get('season', SEASON)
+        self.year = kwargs.get('year', YEAR)
         # table relating core variables (Var2) to understandable meanings (Var3)
         self.wet_hash = DataFrame({
             'Var2':['PTOT', 'STORMINESS'],
@@ -217,43 +219,60 @@ class welcome:
 
     def output_path(self):
         """
-        generates the names of the output nc-files.\n
-        Input: none.\n
-        Output -> list; containing output file-paths/names.
+        Generates the names of the output NC files.
+        Input: none.
+        Output -> list; containing output file paths/names.
         """
-        # infer scenarios
+        # Infer scenarios
         PTOT_scene = self.infer_scenario(
             self.ptot_sc, self.ptot_sf, self.tab_ptot, self.tab_sign
-            )
+        )
         STORMINESS_scene = self.infer_scenario(
             self.storm_sc, self.storm_sf, self.tab_storm, self.tab_sign
-            )
+        )
 
         # Use the current working directory instead of parent_d
         abs_path = abspath(join(os.getcwd(), self.out_path))
-        Path(abs_path).mkdir(parents=True, exist_ok=True)
-        
-        # define NC.output file.names
-        nc_paths = list(map(
-            lambda a, b, c: f'{Path(abs_path)}/'
-            f'{datetime.now(tzlocal()).strftime("%y%m%dT%H%M")}_sim{"{:02d}".format(a+1)}_{b.strip()}_'
-            f'{c.strip()}.nc', range(self.numsims), PTOT_scene, STORMINESS_scene))
 
-        # print the CORE INFO
-        print('\nRUN SETTINGS')
-        print('************\n')
-        print(f'number of simulations: {self.numsims}')
-        print(f'years per simulation : {self.numsimyrs}')
+        # Create the subfolder with the season_year format
+        subfolder_name = f"{self.season}_{self.year}"
+        subfolder_path = join(abs_path, subfolder_name)
+        Path(subfolder_path).mkdir(parents=True, exist_ok=True)
+
+        # Determine the base file format
+        base_name_format = "Forecast_PRE_HAD_ens_{year}_{season}_{sim_id}.nc"
+
+        # Define NC output file names
+        nc_paths = [
+            f"{Path(subfolder_path)}/" +
+            base_name_format.format(
+                year=self.year,
+                season=self.season,
+                sim_id=sim_id
+            )
+            for sim_id in range(self.numsims)
+        ]
+
+        # Print the core info
+        print("\nRUN SETTINGS")
+        print("************\n")
+        print(f"Number of simulations: {self.numsims}")
+        print(f"Years per simulation: {self.numsimyrs}")
+
         for j in self.wet_hash.Var2:
-            print(f'{self.wet_hash[self.wet_hash.Var2.isin([j])].Var3.iloc[0]} scenarios '
+            print(
+                f'{self.wet_hash[self.wet_hash.Var2.isin([j])].Var3.iloc[0]} scenarios '
                 f'({" | ".join([f"sim{x+1}" for x in range(self.numsims)])}):  '
-                f'{ " | ".join(map(eval, [f"{j}_scene[{x}].center(8," ")" for x in range(self.numsims)]))}')
-        print('\nOutput paths:')
-        print(*[(k.ljust(max(map(len, nc_paths)), ' ')).rjust(
-            max(map(len, nc_paths)) + 4, ' ') for k in nc_paths], sep='\n',)
+                f'{" | ".join(map(eval, [f"{j}_scene[{x}].center(8," ")" for x in range(self.numsims)]))}'
+            )
+        print("\nOutput paths:")
+        print(*[
+            (k.ljust(max(map(len, nc_paths)), ' ')).rjust(
+                max(map(len, nc_paths)) + 4, ' ') for k in nc_paths
+        ], sep='\n',)
         print('')
         return nc_paths
-
+    
     def infer_scenario(self, stepchange, scaling_factor, tab_x, tab_sign):
     # stepchange=PTOT_SC; scaling_factor=PTOT_SF; tab_x=tab_ptot
         """
@@ -283,6 +302,7 @@ class welcome:
                             for x in sign_ar[~np.isnan(sign_ar)]])
             ))
         return str_vec
+
 
 
 # %% assert
