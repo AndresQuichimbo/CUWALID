@@ -530,7 +530,7 @@ def get_update_TWSA(model_path, model_name, iyear=2022):
     data.to_netcdf(fname_current)
 	
 
-def get_updated_TWSA_ensamble(model_path, model_name, model_name_historical, model_path_historical, iyear=2022, nsim=30):
+def get_updated_TWSA_ensamble(model_path, model_name, model_name_historical, postpp_path_historical, season=None, iyear=2022, nsim=30):
 	"""This function
 	
 	Parameters
@@ -576,6 +576,10 @@ def get_updated_TWSA_ensamble(model_path, model_name, model_name_historical, mod
 	
 	
 	"""
+	# get initial initial conditions for TWSA
+	imonth = cuwalid.season_name_to_number(season)[0]-1
+	if imonth == 0:
+		imonth = 12
 	# Specify model name, This will be the root name for the forecasting
 	#model_name = "HAD_IMERGba_sim0"
 
@@ -608,20 +612,11 @@ def get_updated_TWSA_ensamble(model_path, model_name, model_name_historical, mod
 	# specify previous TWSC accumulated
 	#fname_previous = model_path+model_name+"_"+ str(iyear-1) +'_grid_twsc.nc'
 	#fname_previous = model_path_historical+model_name_historical+'_grid_twsc.nc'
-	fname_previous = model_path_historical+model_name_historical+"_"+ str(iyear-1) +'_grid_twsc.nc'
+	#fname_previous = model_path_historical+model_name_historical+"_"+ str(iyear-1) +'_grid_twsc.nc'
 	#fname_current = fname_current.split('.')[0]+'_'+ifield+'.nc'
+	fname_previous = postpp_path_historical+"netcdf/" + model_name_historical + "_" + str(imonth) + "_monthly_mean.nc"
+
 	# check the most current year
-	#current_year = 0
-	#available_year = False
-	#while (current_year < 3) or (available_year is False):
-	#	fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc' # imcomment this line for yealy data
-	#	if os.path.exists(fname_current):
-	#		available_year = True
-	#	else:
-	#		current_year += 1
-	#		iyear = iyear-1
-	
-	
 	fname  = [
 	model_path+model_name+"_"+ str(isim) +'_grid.nc' for isim in range(nini, nsim)
 	]

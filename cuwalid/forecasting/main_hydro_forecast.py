@@ -73,25 +73,25 @@ def run_hydro_forecast(config_path):
             get_additional_variables_multi_netcdf(historical_model_path,
                                                   historical_model_name, start_year, end_year)
 
-            print("Step 3: Getting montly mean values for all variables")
+            print("Step 4: Getting monthly mean values for all variables")
             get_monthly_average_multi_netcdf(historical_model_path,
                                              historical_model_name,
                                              start_year, end_year, variables,
                                              historical_postpp_path)
 
-            print("Step 4: Getting terciles from historical simulations")
+            print("Step 5: Getting terciles from historical simulations")
             get_percentiles_multi_files(historical_model_path,
                                         historical_model_name,
                                         start_year, end_year, season, variables,
                                         historical_postpp_path)
 
-            print("Step 5: Getting quatiles 05, 33, 50, 66, 95 form historical simulations")
+            print("Step 6: Getting quatiles 05, 33, 50, 66, 95 form historical simulations")
             get_extremes_quantiles_multi_netcdf(historical_model_path,
                                                 historical_model_name,
                                                 start_year, end_year, season, variables,
                                                 historical_postpp_path)
 
-            print("Step 6: Getting average values form historical simualations")
+            print("Step 7: Getting average values form historical simualations")
             get_average_multi_netcdf(historical_model_path,
                                      historical_model_name,
                                      start_year, end_year, season, variables,
@@ -109,7 +109,9 @@ def run_hydro_forecast(config_path):
     if include_forecast:
 
         print("================================ Running forecasting ================================")
-
+        print("WARINING! before runing the forecast make sure the historical analysis has been")
+        print("performed before. There is no need to perform the historical analysis if there ")
+        print("is not updates on the historical simulations")
         # check if folder exist postpp/netcdf
         # print("to store new variables if it does not exist")
 
@@ -132,13 +134,16 @@ def run_hydro_forecast(config_path):
         # funtion to calculate areas for county provided in the list
         #get_areas_terciles(model_path, forecast_model_name, season, variables, postpp_path)
 
-        print("Step 1: Update TWSA") 
-        get_update_TWSA(historical_model_path, historical_model_name, iyear=iyear)
+        #print("Step 1: Update TWSA") 
+        #get_update_TWSA(historical_model_path, historical_model_name, iyear=iyear)
 
         print("Step 2: Update TWSA of hydrological realizations") 
-        get_updated_TWSA_ensamble(forecast_model_path, forecast_model_name,
+        for iseason in season:
+            get_updated_TWSA_ensamble(forecast_model_path, forecast_model_name,
                                   historical_model_name,
-                                  historical_model_path, iyear=iyear)
+                                  historical_postpp_path,
+                                  season=iseason, iyear=iyear)
+        
         print("Step 3: Creating ensamble of hydrological realizations")   
         get_ensamble_forecasting(forecast_model_path,
                                  forecast_model_name, variables, season,

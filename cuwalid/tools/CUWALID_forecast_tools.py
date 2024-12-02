@@ -552,10 +552,10 @@ def get_average_from_list(fname_list, var="pre", mean=True, season=None,
 	# loop over all continues simulation files
 	concat_first_read = True
 	for ifname in fname_list:
-		
+		print(ifname, var)
 		# read datasets
 		data = read_dataset(ifname, var_name=var)
-		
+		print(data)
 		# if seasonal average, select months
 		if season is not None:
 			data = data.where(data.time.dt.month.isin(
