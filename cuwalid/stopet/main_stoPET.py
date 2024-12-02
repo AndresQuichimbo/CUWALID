@@ -40,8 +40,7 @@ def run_stoPET(config_file):
 
     # Extract parameters from the config
     slice_only = config.get('slice_only', 1)
-    trial = int(config.get('trial')) if 'trial' in config else None
-    outputpath = config['root_outputpath']
+    outputpath = config['outputpath']
     runtype = config['runtype']
     startyear = config['startyear']
     endyear = config['endyear']
