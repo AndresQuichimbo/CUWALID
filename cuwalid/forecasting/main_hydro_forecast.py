@@ -73,6 +73,12 @@ def run_hydro_forecast(config_path):
             get_additional_variables_multi_netcdf(historical_model_path,
                                                   historical_model_name, start_year, end_year)
 
+            print("Step 3: Getting montly mean values for all variables")
+            get_monthly_average_multi_netcdf(historical_model_path,
+                                             historical_model_name,
+                                             start_year, end_year, variables,
+                                             historical_postpp_path)
+
             print("Step 4: Getting terciles from historical simulations")
             get_percentiles_multi_files(historical_model_path,
                                         historical_model_name,

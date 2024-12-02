@@ -610,26 +610,61 @@ def check_if_field_available_in_netCDF(fname, var_name):
 	return var_available
 
 def season_name_to_number(season):
-	"""This function read a string representing seasons and return a
-	list of numbers indicating months
-	
-	Parameters
-	----------
-	season : str
-		season represented by three capital letters (e.g. "OND")
-
-	Returns
-	-------
-	list
-		list of months
 	"""
+    Converts a string representing a season to a list of numbers indicating corresponding months.
 
-	if season == "MAM":
-		season = [3,4,5]
-	elif season == "OND":
-		season = [10,11,12]
+    Parameters
+    ----------
+    season : str or list or int
+        The season represented by three capital letters (e.g., "OND") or a list of month numbers.
 
-	return season
+    Returns
+    -------
+    list
+        A list of integers representing the months for the given season. If the input is already 
+        a list of months, it is returned as is. If the input is not recognized, it returns 
+        the input wrapped in a list.
+
+    Notes
+    -----
+    Supported season codes:
+    - "MAM" : March, April, May [3, 4, 5]
+    - "OND" : October, November, December [10, 11, 12]
+    - "JJS" : June, July, August [6, 7, 8]
+    - "JF"  : January, February [1, 2]
+    - "JJSA": June, July, August, September [6, 7, 8, 9]
+
+    If the input is not a string or a list, the function wraps the input in a list.
+
+    Examples
+    --------
+    >>> season_name_to_number("MAM")
+    [3, 4, 5]
+
+    >>> season_name_to_number([1, 2, 3])
+    [1, 2, 3]
+
+    >>> season_name_to_number(2)
+    [2]
+    """
+
+	if isinstance(season, str):
+		if season == "MAM":
+			season = [3,4,5]
+		elif season == "OND":
+			season = [10,11,12]
+		elif season == "JJS":
+			season = [6,7,8]
+		elif season == "JF":
+			season = [1,2]
+		elif season == "JJSA":
+			season = [6,7,8,9]
+		return season
+	else:
+		if isinstance(season, list):
+			return season
+		else:
+			return [season]
 
 def get_month_first_letter(month_number):
     if 1 <= month_number <= 12:

@@ -118,8 +118,9 @@ def get_additional_variables_multi_netcdf(model_path, model_name, start_year, en
 	-------
 
 	"""
+	# get list of name
 	fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)
-	
+		
 	#fname  = [
 	#'/home/c1755103/HAD/HAD_output/HAD_IMERG_sim_28b_'+ str(iyear) +'_grid.nc' for iyear in range(2003, 2022)
 	#'/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_'+ str(iyear) +'_grid.nc' for iyear in range(2001, 2023)
@@ -528,7 +529,7 @@ def get_anomalies_multi_netcdf(model_path, model_name, start_year, end_year, sea
 				# if seasonal average, select months
 				if iseason is not None:
 					data = data.where(data.time.dt.month.isin(
-							season_name_to_number(iseason))
+							cuwalid.season_name_to_number(iseason))
 							)
 				# calculate annual average to reduce the use of memory
 				data = resample_dataset(data, mean=mean, delt='Y')
@@ -552,6 +553,46 @@ def get_anomalies_multi_netcdf(model_path, model_name, start_year, end_year, sea
 				fname_out = "/home/c1755103/HAD/HAD_postpp/netcdf/HAD_" + model_name + "_" + iseason + "_" + ifield +"_anomalies.nc"
 			#print(fname_out)
 			save_xarray_dataset_as_netcdf(fname_out, dataconcatenat, [ifield])
+
+def get_monthly_average_multi_netcdf(model_path, model_name, start_year, end_year, variables, postpp_path):
+	"""Function to ger files with monthly average values of each variable from
+	multi-files model simulation
+	Parameter
+	---------
+	
+	Returns
+	-------
+
+		
+	"""
+	# get list of files
+	fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)
+	
+	# specified fields
+	field = cuwalid.drop_false_keys(variables)
+
+	# loop through all months
+	for imonth in range(1, 13):
+		# Open the NetCDF file
+		variables_file = list(xr.open_dataset(fname[0]).variables.keys())
+		
+		# get average values for all variables from a list of netcdf files
+		dataset = cuwalid.get_average_all_variables_from_list(fname, variables_file, imonth)
+		
+		# get average of additional files
+		if variables["wrsi"] is True:
+			fname_aux = get_name_list_historical_netcdf_files(model_path, model_name,
+												 start_year, end_year, ifield="wrsi")
+			
+			# get average values for all variables from a list of netcdf files
+			dataset_aux = cuwalid.get_average_all_variables_from_list(fname_aux, ["wrsi"], imonth)
+			
+			dataset = xr.merge([dataset, dataset_aux])
+		# save results
+		fname_out = postpp_path+"netcdf/" + model_name + "_" + str(imonth) + "_monthly_mean.nc"
+		cuwalid.save_xarray_dataset_as_netcdf(fname_out, dataset, field)
+
+	return
 
 def save_xarray_dataset_as_netcdf(fname, data, var_name):
 	# data has to be in the same dimentions
@@ -582,29 +623,7 @@ def resample_dataset(data, mean=True, delt='Y'):
 		data = data.resample(time=delt, skipna=True).sum()
 	return data
 
-def season_name_to_number(season):
-	"""This function read a string representing seasons and return a
-	list of numbers indicating months
-	
-	Parameters
-	----------
-	season : str
-		season represented by three capital letters (e.g. "OND")
-
-	Returns
-	-------
-	list
-		list of months
-	"""
-
-	if season == "MAM":
-		season = [3,4,5]
-	elif season == "OND":
-		season = [10,11,12]
-
-	return season
-
-def get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year):
+def get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year, ifield=None):
 	""" Get list of name of historical files when multiple files are
 	are analysed
 
@@ -629,4 +648,7 @@ def get_name_list_historical_netcdf_files(model_path, model_name, start_year, en
 	model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
 	]
 
+	if ifield is not None:
+		fname = [ifname.split('.')[0]+'_'+ifield+'.nc' for ifname in fname]
+		
 	return fname
