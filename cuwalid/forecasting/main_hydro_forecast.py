@@ -59,25 +59,25 @@ def run_hydro_forecast(config_path):
         #hindcast_model_name = config['run_historical']
         
         if multi_files is True:
-#            print("******Processing yearly-files of model outputs******")
-#
-#            print("Step 1: Concatenate multiple csv historical files")
-#            get_csv_TS_files_from_multi_CSV(historical_model_path,
-#                                            historical_model_name, start_year, end_year)
-#
-#            print("Step 2: Processing TWSA from storage change")
-#            get_TWSA_from_mult_files(historical_model_path,
-#                                     historical_model_name, start_year, end_year)
-#
-#            print("Step 3: Processing WRSI")
-#            get_additional_variables_multi_netcdf(historical_model_path,
-#                                                  historical_model_name, start_year, end_year)
-#
-#            print("Step 3: Getting montly mean values for all variables")
-#            get_monthly_average_multi_netcdf(historical_model_path,
-#                                             historical_model_name,
-#                                             start_year, end_year, variables,
-#                                             historical_postpp_path)
+            print("******Processing yearly-files of model outputs******")
+
+            print("Step 1: Concatenate multiple csv historical files")
+            get_csv_TS_files_from_multi_CSV(historical_model_path,
+                                            historical_model_name, start_year, end_year)
+
+            print("Step 2: Processing TWSA from storage change")
+            get_TWSA_from_mult_files(historical_model_path,
+                                     historical_model_name, start_year, end_year)
+
+            print("Step 3: Processing WRSI")
+            get_additional_variables_multi_netcdf(historical_model_path,
+                                                  historical_model_name, start_year, end_year)
+
+            print("Step 3: Getting montly mean values for all variables")
+            get_monthly_average_multi_netcdf(historical_model_path,
+                                             historical_model_name,
+                                             start_year, end_year, variables,
+                                             historical_postpp_path)
 
             print("Step 4: Getting terciles from historical simulations")
             get_percentiles_multi_files(historical_model_path,
@@ -85,23 +85,23 @@ def run_hydro_forecast(config_path):
                                         start_year, end_year, season, variables,
                                         historical_postpp_path)
 
-#            print("Step 5: Getting quatiles 05, 33, 50, 66, 95 form historical simulations")
-#            get_extremes_quantiles_multi_netcdf(historical_model_path,
-#                                                historical_model_name,
-#                                                start_year, end_year, season, variables,
-#                                                historical_postpp_path)
-#
-#            print("Step 6: Getting average values form historical simualations")
-#            get_average_multi_netcdf(historical_model_path,
-#                                     historical_model_name,
-#                                     start_year, end_year, season, variables,
-#                                     historical_postpp_path)
-#
-#            #print("Step 7: Getting anomalies from historical simulations")
-#            #get_anomalies_multi_netcdf(historical_model_path,
-#            #                           historical_model_name,
-#            #                           start_year, end_year, season, variables,
-#            #                           historical_postpp_path)
+            print("Step 5: Getting quatiles 05, 33, 50, 66, 95 form historical simulations")
+            get_extremes_quantiles_multi_netcdf(historical_model_path,
+                                                historical_model_name,
+                                                start_year, end_year, season, variables,
+                                                historical_postpp_path)
+
+            print("Step 6: Getting average values form historical simualations")
+            get_average_multi_netcdf(historical_model_path,
+                                     historical_model_name,
+                                     start_year, end_year, season, variables,
+                                     historical_postpp_path)
+
+            #print("Step 7: Getting anomalies from historical simulations")
+            #get_anomalies_multi_netcdf(historical_model_path,
+            #                           historical_model_name,
+            #                           start_year, end_year, season, variables,
+            #                           historical_postpp_path)
 
 
     # ----------------------FORECASTING-----------------------    
