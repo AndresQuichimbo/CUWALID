@@ -5,30 +5,30 @@ from cuwalid.stopet.stoPET_v2_4dryp import *
 
 
 # this run_stoPET() function will generate the PET 
-def run_stoPET_4_dryp(datapath, root_outputpath, runtype, startyear, endyear, seasonswitch, startdate, enddate, 
-                 latval, lonval, latval_min, latval_max, lonval_min, lonval_max,locname, number_ensm, 
-                 tempAdj, deltat, udpi_pet, trial_number):
-  # This will create the output folders where all the ensembles will be saved.
-  for i in range(0,trial_number): 
-    # create a folder to save the data
-    if not os.path.isdir(os.path.join(root_outputpath, 'result_R%s/'%i)):
-      os.makedirs(os.path.join(root_outputpath, 'result_R%s/'%i))    
-    # this folder will be used to save the ensembles generated on each realization
-    # here the root output pass given will be changed to a new result folder
-    # called result_R* where the * is the realization number.
-    outputpath = os.path.join(root_outputpath, 'result_R%s/'%i)
-    # this will run stoPET in a loop (This will take more time to finishe the job)
-    stoPET_model_main(datapath, outputpath, runtype, startyear, endyear, seasonswitch, startdate, enddate, 
-                      latval, lonval, latval_min, latval_max, lonval_min, lonval_max,locname, number_ensm, 
-                      tempAdj, deltat, udpi_pet)
+def run_stoPET_4_dryp(datapath, outputpath, runtype, startyear, endyear, seasonswitch, startdate, enddate, 
+		 latval, lonval, latval_min, latval_max, lonval_min, lonval_max,locname, number_ensm, 
+		 tempAdj, deltat, udpi_pet, slice_only):
+
+	# here we need to duble the number of ensembles to generate more values for 
+	# the pool.
+	number_ensm = int(number_ensm * 2)
+
+	# create a folder to save the data
+	if not os.path.isdir(outputpath + 'result/'):
+		os.mkdir(outputpath + 'result/')    
+
+	# this will run stoPET in a loop (This will take more time to finishe the job)
+	stoPET_model_main(datapath, outputpath, runtype, startyear, endyear, seasonswitch, startdate, enddate, 
+			latval, lonval, latval_min, latval_max, lonval_min, lonval_max,locname, number_ensm, 
+			tempAdj, deltat, udpi_pet, slice_only)
 
 
 def stoPET_model_main(datapath, outputpath, runtype, startyear, endyear, 
-    seasonswitch, startdate, enddate, latval, lonval, 
-    latval_min, latval_max, lonval_min, lonval_max,
-    locname, number_ensm, tempAdj, deltat, udpi_pet):
-    
-    # Here we generate the random normal distribution values based on
+	seasonswitch, startdate, enddate, latval, lonval, 
+	latval_min, latval_max, lonval_min, lonval_max,
+	locname, number_ensm, tempAdj, deltat, udpi_pet, slice_only):
+		
+# Here we generate the random normal distribution values based on
     # mean shif and the between (hpet and stopetv1) and we use the variabbility
     # from hpet to produce values distribution is similar to the distribution of hpet (2000 - 2023)
     # currently this only works for african continet only.
@@ -55,29 +55,24 @@ def stoPET_model_main(datapath, outputpath, runtype, startyear, endyear,
                     stoPET_wrapper_singlepoint(startyear, endyear, latval, lonval, locname,
                             ens_num,datapath, outputpath, tempAdj, deltat, udpi_pet)  #, seasonswitch, startdate, enddate
       elif runtype == 'regional':
-            for ens_num in np.arange(0,number_ensm):
+            if slice_only == 0:
+              for ens_num in np.arange(0,number_ensm):
                     # select the gererated mean shift for the ensemble
                     randnoise = extra_noise[:, ens_num, :, :, :]
                     stoPET_wrapper_regional(startyear, endyear, latval_min, latval_max, lonval_min, lonval_max,
                             locname, ens_num, datapath, outputpath, tempAdj, deltat, udpi_pet, seasonswitch, randnoise)
-            # extract seasonal value and remove the annual files
-            # prepare the files for the DRYP model input format
-            # this only works for regional data as DRYP requires a catchment to run 
-            seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, endyear, startdate, enddate, seasonswitch)
+              # extract seasonal value and remove the annual files
+              # prepare the files for the DRYP model input format
+              # this only works for regional data as DRYP requires a catchment to run 
+              seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, endyear, startdate, enddate, seasonswitch)
+            else:
+              # extract seasonal value and remove the annual files
+              # prepare the files for the DRYP model input format
+              # this only works for regional data as DRYP requires a catchment to run 
+              seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, endyear, startdate, enddate, seasonswitch)
             
       else:
             raise ValueError('runtype only takes single and regional ... please check!')
-##-----------------------------------------------------------------------##
-if __name__ == '__main__':
-    start = dt.datetime.now()
 
-    run_stoPET(datapath, root_outputpath, runtype, startyear, endyear, 
-    seasonswitch, startdate, enddate, latval, lonval, 
-    latval_min, latval_max, lonval_min, lonval_max,
-    locname, number_ensm, tempAdj, deltat, udpi_pet, trial_number)
-    print('Seasonal PET extraction finished successfully.')
-    
-    end=dt.datetime.now()
-    print('Time of run: %s'%(end - start))
 
 
