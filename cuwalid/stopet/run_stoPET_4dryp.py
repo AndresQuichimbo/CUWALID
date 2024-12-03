@@ -14,8 +14,8 @@ def run_stoPET_4_dryp(datapath, outputpath, runtype, startyear, endyear, seasons
 	number_ensm = int(number_ensm * 2)
 
 	# create a folder to save the data
-	if not os.path.isdir(outputpath + 'result/'):
-		os.mkdir(outputpath + 'result/')    
+	if not os.path.isdir(os.path.join(outputpath, 'result/')):
+		os.mkdir(os.path.join(outputpath, 'result/'))    
 
 	# this will run stoPET in a loop (This will take more time to finishe the job)
 	stoPET_model_main(datapath, outputpath, runtype, startyear, endyear, seasonswitch, startdate, enddate, 
