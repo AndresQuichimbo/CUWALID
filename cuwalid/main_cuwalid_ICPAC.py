@@ -4,16 +4,16 @@ import subprocess
 import sys
 sys.path.append("/home/cuwalid/CUWALID")
 import numpy as np
-from cuwalid.storm.main_storm import run_storm
-from cuwalid.stopet.main_stoPET import run_stoPET
+#from cuwalid.storm.main_storm import run_storm
+#from cuwalid.stopet.main_stoPET import run_stoPET
 from cuwalid.dryp.main_DRYP import run_DRYP
 from cuwalid.forecasting.main_hydro_forecast import run_hydro_forecast
-from cuwalid.forecasting.main_impact_forecast import run_impact_forecast
+import cuwalid.forecasting.main_impact_forecast as fcast
 from cuwalid.tools.DRYP_json_builder import create_ensamble, write_JSON_dryp_file
-import cuwalid.tools.DRYP_json_builder as JSON_builder
+import cuwalid.tools.CUWALID_json_builder as JSON_builder
 import cuwalid.tools.CUWALID_forecast_tools as cuwalid_mtools
 
-def run_cuwalid(cuwalid_input, forecasting_input):
+def run_cuwalid(cuwalid_input):#, forecasting_input):
 	
 	# Get input file as dictionary
 	with open(cuwalid_input, 'r') as file:
@@ -32,13 +32,13 @@ def run_cuwalid(cuwalid_input, forecasting_input):
 
 	#threshold_path = historical_postpp_path + "netcdf/"+ historical_model_name+ "_SSS_extremes_quantiles.nc"
 
-	season = cuwalid_config['season']
+	season = cuwalid_config['season'][0]
 	#start_year = cuwalid_config['start_year']
 	#end_year = cuwalid_config['end_year']
 	#variables = cuwalid_config['variables']
 	iyear = cuwalid_config["year"]
 	nsim = cuwalid_config["NSIM"]
-	
+	#print(season)
 	start_date, end_date = cuwalid_mtools.get_dates_season(season, iyear)
 
 	# SET UP MODEL AND PATHS
@@ -104,10 +104,10 @@ def run_cuwalid(cuwalid_input, forecasting_input):
 	# TODO: Change pet to the same order naming as pre
 	fname_pet = [folder_datasets_pet+"Forecast_PET_HAD_ens_"+str(isim)+"_"+season+"_"+str(iyear)+".nc" for isim in range(nsim)]
 	fname_pre = [folder_datasets_pre + "Forecast_PRE_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
-	forcing_list = np.array(create_ensamble([fname_pet, fname_pre], nsamples=nsim))
+	forcing_list = np.array(JSON_builder.create_ensamble([fname_pet, fname_pre], nsamples=nsim))
 	for ifsim_forecasting, imname, ifname_pre, ifname_pet in zip(fsim_forecasting, mname, forcing_list[:,1], forcing_list[:,0]):
 		#write_JSON_dryp_file(
-		JSON_builder.write_JSON_dryp_file_1(
+		JSON_builder.write_JSON_dryp_files(
 			json_template=dryp_input,
 			model_name=imname,
 			path_pre=ifname_pre,
@@ -146,7 +146,7 @@ def run_cuwalid(cuwalid_input, forecasting_input):
 		# modify season and year
 
 		run_hydro_forecast(HyCast_input_path)
-		run_impact_forecast(ImCast_input_path)
+		fcast.plot_maps_json(ImCast_input_path)
 
 if __name__ == '__main__':
 	if len(sys.argv) != 2:
