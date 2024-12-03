@@ -132,26 +132,26 @@ def get_additional_variables_multi_netcdf(model_path, model_name, start_year, en
 	field = ["wrsi", "aet"]
 
 	# DO NOT MODIFY FROM HERE ---------------------------------------
+	cuwalid.get_postprocessed_hydro_variables_mfiles(fname)
+	#for ifield in field:
+	#	
+	#	for ifname in fname:
+	#		if ifield == "wrsi":
+	#			# Calculate WRSI 
+	#			data = cuwalid.read_dataset(ifname, "aet")/cuwalid.read_dataset(ifname, "pet")
+	#			data = data.rename("wrsi")
+	#		else:
+	#			# Calculate total evaporation
+	#			data = cuwalid.read_dataset(ifname, "aet")+cuwalid.read_dataset(ifname, "egw")
+	#			data = data.rename("aet")
 
-	for ifield in field:
-		
-		for ifname in fname:
-			if ifield == "wrsi":
-				# Calculate WRSI 
-				data = cuwalid.read_dataset(ifname, "aet")/cuwalid.read_dataset(ifname, "pet")
-				data = data.rename("wrsi")
-			else:
-				# Calculate total evaporation
-				data = cuwalid.read_dataset(ifname, "aet")+cuwalid.read_dataset(ifname, "egw")
-				data = data.rename("aet")
-
-			# Define the path for the yearly NetCDF file
-			fname_output = ifname.split('.')[0]+'_'+ifield+'.nc'
-			
-			# Group by year and create a new dataset for each year
-			
-			# loop over years
-			data.to_netcdf(fname_output)
+	#		# Define the path for the yearly NetCDF file
+	#		fname_output = ifname.split('.')[0]+'_'+ifield+'.nc'
+	#		
+	#		# Group by year and create a new dataset for each year
+	#		
+	#		# loop over years
+	#		data.to_netcdf(fname_output)
 			
 
 def get_percentiles_multi_files(model_path, model_name, start_year, end_year, season, variables, postpp_path):

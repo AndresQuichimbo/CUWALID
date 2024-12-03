@@ -136,6 +136,8 @@ def run_hydro_forecast(config_path):
 
         #print("Step 1: Update TWSA") 
         #get_update_TWSA(historical_model_path, historical_model_name, iyear=iyear)
+        print("Step 1: Processing hydrological realizations") 
+        get_postprocessed_variables_forecast(forecast_model_path, forecast_model_name)
 
         print("Step 2: Update TWSA of hydrological realizations") 
         for iseason in season:
@@ -154,13 +156,13 @@ def run_hydro_forecast(config_path):
         get_probabilistic_tercile_forecast_ensamble(forecast_model_path,
                                                     forecast_model_name, season, variables,
                                                     forecast_postpp_path,
-                                                    threshold_path)
+                                                    threshold_path, iyear=iyear)
 
         print("Step 5: Processing deterministic forecasting")
         get_deterministic_forecast_ensamble(forecast_model_path,
                                             forecast_model_name, season, variables,
                                             forecast_postpp_path,
-                                            threshold_path)
+                                            threshold_path, iyear=iyear)
 
 
     # ----------------------PLOTTING-----------------------
@@ -172,7 +174,8 @@ def run_hydro_forecast(config_path):
         print("Step 1: Plot probabilistic tercile forecasting")
         plot_tercile_probability_forecast(forecast_model_path,
                                           forecast_model_name, season, variables,
-                                          forecast_postpp_path
+                                          forecast_postpp_path,
+                                          iyear=iyear
                                           )
 
         #print("Step 2: Plot deterministic forecasting")
