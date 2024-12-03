@@ -1,6 +1,6 @@
 import os
 import time
-from cuwalid.stopet.main_stoPET import run_stoPET
+from cuwalid.stopet.main_stopet import run_stoPET
 
 if __name__ == '__main__':
     start = time.time()
