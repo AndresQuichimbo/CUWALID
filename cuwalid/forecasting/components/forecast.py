@@ -530,7 +530,7 @@ def get_update_TWSA(model_path, model_name, iyear=2022):
     data.to_netcdf(fname_current)
 	
 
-def get_updated_TWSA_ensamble(model_path, model_name, model_name_historical, model_path_historical, iyear=2022, nsim=30):
+def get_updated_TWSA_ensamble(model_path, model_name, model_name_historical, postpp_path_historical, season=None, iyear=2022, nsim=30):
 	"""This function
 	
 	Parameters
@@ -576,6 +576,10 @@ def get_updated_TWSA_ensamble(model_path, model_name, model_name_historical, mod
 	
 	
 	"""
+	# get initial initial conditions for TWSA
+	imonth = cuwalid.season_name_to_number(season)[0]-1
+	if imonth == 0:
+		imonth = 12
 	# Specify model name, This will be the root name for the forecasting
 	#model_name = "HAD_IMERGba_sim0"
 
@@ -608,20 +612,11 @@ def get_updated_TWSA_ensamble(model_path, model_name, model_name_historical, mod
 	# specify previous TWSC accumulated
 	#fname_previous = model_path+model_name+"_"+ str(iyear-1) +'_grid_twsc.nc'
 	#fname_previous = model_path_historical+model_name_historical+'_grid_twsc.nc'
-	fname_previous = model_path_historical+model_name_historical+"_"+ str(iyear-1) +'_grid_twsc.nc'
+	#fname_previous = model_path_historical+model_name_historical+"_"+ str(iyear-1) +'_grid_twsc.nc'
 	#fname_current = fname_current.split('.')[0]+'_'+ifield+'.nc'
+	fname_previous = postpp_path_historical+"netcdf/" + model_name_historical + "_" + str(imonth) + "_monthly_mean.nc"
+
 	# check the most current year
-	#current_year = 0
-	#available_year = False
-	#while (current_year < 3) or (available_year is False):
-	#	fname_current = model_path+model_name+"_"+ str(iyear-1) +'_grid.nc' # imcomment this line for yealy data
-	#	if os.path.exists(fname_current):
-	#		available_year = True
-	#	else:
-	#		current_year += 1
-	#		iyear = iyear-1
-	
-	
 	fname  = [
 	model_path+model_name+"_"+ str(isim) +'_grid.nc' for isim in range(nini, nsim)
 	]
@@ -727,7 +722,6 @@ def get_ensamble_forecasting(model_path, model_name, variables, season, postpp_p
 
 	for iseason in season:
 		for ivar in field:
-			fname_list = fname.copy()
 			
 			fname_list = fname.copy()
 			# check if is the riparian area
@@ -760,8 +754,53 @@ def get_ensamble_forecasting(model_path, model_name, variables, season, postpp_p
 			#cuwalid.save_xarray_dataset_as_netcdf(fname_out, dataset, field)
 			dataset.to_netcdf(fname_out)
 
+def get_postprocessed_variables_forecast(model_path, model_name, nsim=30):
+	""" Get WRSI water satisfaction index and total evapotranspiration
+	
 
-def get_probabilistic_tercile_forecast_ensamble(model_path, model_name, season, variables, postpp_path, threshold_path):
+	Parameters:
+	-----------
+	model_path: path (str)
+		folder path of model outputs files
+	model_name: str
+		model name
+	start_year: int
+		starting year of the analysis
+	end_year: int
+		starting year of the analysis
+
+	Returns
+	-------
+
+	"""
+	nini = 0
+
+	fname  = [
+	model_path+model_name+"_"+ str(isim) +'_grid.nc' for isim in range(nini, nsim)
+	]
+
+	# specified fields
+	#field = cuwalid.drop_false_keys(variables)
+	field = ["wrsi", "aet"]
+	for ivar in field:
+		
+		fname_list = fname.copy()
+		# check if is the riparian area
+		if (ivar == 'fch') or (ivar == 'tls') or (ivar == 'ssz'):
+			fname_list = [
+				ifname.split('.')[0]+'rp.nc' for ifname in fname_list
+				]
+				
+		if (ivar == 'twsc') or (ivar == 'wrsi'):# or (ivar == 'ssz'):
+			fname_list = [
+				ifname.split('.')[0]+'_'+ivar+'.nc' for ifname in fname_list
+				]
+
+	# DO NOT MODIFY FROM HERE ---------------------------------------
+	cuwalid.get_postprocessed_hydro_variables_mfiles(fname)
+
+
+def get_probabilistic_tercile_forecast_ensamble(model_path, model_name, season, variables, postpp_path, threshold_path, iyear=2022):
 	"""This function calculates the probabilistic forecasting using the tercile approach
 
 	Parameters
@@ -808,7 +847,7 @@ def get_probabilistic_tercile_forecast_ensamble(model_path, model_name, season, 
 	"""
 	#model_name = "MAM_2022_realization"
 
-	iyear = 2022
+	#iyear = 2022
 	#ivar = "dis"
 	#iseason = "MAM"
 	#iseason = "OND"
@@ -874,7 +913,7 @@ def get_probabilistic_tercile_forecast_ensamble(model_path, model_name, season, 
 			tercile.to_netcdf(fname_out)
 			
 
-def get_deterministic_forecast_ensamble(model_path, model_name, season, variables, postpp_path, threshold_path):
+def get_deterministic_forecast_ensamble(model_path, model_name, season, variables, postpp_path, threshold_path, iyear=2022):
 	"""This function calculates the probabilistic forecasting using the tercile approach
 	from the ensamble dataset. It will create a file for each analised variable
 
@@ -921,7 +960,7 @@ def get_deterministic_forecast_ensamble(model_path, model_name, season, variable
 
 	"""
 
-	iyear = 2022
+	#iyear = 2022
 
 	#season = ["MAM", "OND"]
 	#ivar = "dis"

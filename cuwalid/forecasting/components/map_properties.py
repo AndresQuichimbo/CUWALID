@@ -313,6 +313,7 @@ water_var = {
 "Soil": "tht",
 "Evaporation": "aet",
 "Crop": "wrsi",
+"Pasture": "wrsi",
 }
 variable = {
 "Soil": "Soil Moisture Status",
@@ -324,43 +325,6 @@ variable = {
 "Pasture": "Potential pasture/browse health",
 }
 
-status = {
-"Flood": ["Low\nSio sana", "High\nNi sana"],
-"Groundwater": ["Bad\nHali mbaya", "Good\nHali mzuri"],
-"Surface": ["Bad\nHali mbaya", "Good\nHali mzuri"],
-"Soil": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-"Evaporation": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-"Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-}
-
-aux_status_labels = {
-"English":{
-    "Flood": ["Low", "High"],
-	"Groundwater": ["Bad", "Good"],
-	"Surface": ["Bad", "Good"],
-	"Soil": ["Good", "Bad"],
-	"Evaporation": ["Good", "Bad"],
-	"Crop": ["Good", "Bad"],
-},
-"Swahili": {
-    "Flood": ["Low\nSio sana", "High\nNi sana"],
-	"Groundwater": ["Bad\nHali mbaya", "Good\nHali mzuri"],
-	"Surface": ["Bad\nHali mbaya", "Good\nHali mzuri"],
-	"Soil": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-	"Evaporation": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-	"Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-}
-}
-
-aux_var_colour = {
-"Groundwater": ["#E69F00", "#009E73"],
-"Surface": ["#E69F00", "#009E73"],
-"Soil": ["darkviolet", "seagreen"],
-"Evaporation": ["darkviolet", "seagreen"],
-"Flood": ["#009E73", "#E69F00"],
-"Crop": ["#E69F00", "#009E73"],
-}
-
 status_labels = {
 "English":{
     "Flood": ["High", "Normal", "Low"],
@@ -369,6 +333,7 @@ status_labels = {
 	"Soil": ["Above Normal","Normal", "Below Normal"],
 	"Evaporation": ["Above Normal","Normal", "Below Normal"],
 	"Crop": ["Above Normal","Normal", "Below Normal"],
+	"Pasture": ["Above Normal","Normal", "Below Normal"],
 },
 "Swahili": {
     "Flood": ["Low\nSio sana", "High\nNi sana"],
@@ -382,16 +347,57 @@ status_labels = {
 
 var_colour = {
 "Groundwater": ["#57C4AD", "#EDA247", "#DB4325"],
-"Surface": ["#9BBF85", "#E7F7D5", "#B3589A"],
-#"Groundwater": ["#009E73", "#E69F00", "#E41A1C"],
-#"Surface": ["#009E73", "#E69F00", "#E41A1C"],
-#"Soil": ["#009E73", "#E69F00", "#E41A1C"],
-"Soil": ["#9BBF85", "#E7F7D5", "#B3589A"],
-"Evaporation": ["#009E73", "#E69F00", "#E41A1C"],
-#"Flood": ["#E41A1C", "#E69F00", "#009E73"],
+"Surface": ["#57C4AD", "#EDA247", "#DB4325"],
+"Soil": ["#57C4AD", "#EDA247", "#DB4325"],
+"Evaporation": ["#DB4325", "#EDA247", "#57C4AD"],
 "Crop": ["#57C4AD", "#EDA247", "#DB4325"],
-"Flood": ["#B3589A", "#E7F7D5", "#9BBF85"],
+"Pasture": ["#57C4AD", "#EDA247", "#DB4325"],
+"Flood": ["#DB4325", "#EDA247", "#57C4AD"],
 }
+
+#status = {
+#"Flood": ["Low\nSio sana", "High\nNi sana"],
+#"Groundwater": ["Bad\nHali mbaya", "Good\nHali mzuri"],
+#"Surface": ["Bad\nHali mbaya", "Good\nHali mzuri"],
+#"Soil": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+#"Evaporation": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+#"Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+#}
+
+#aux_status_labels = {
+#"English":{
+#    "Flood": ["Low", "High"],
+#	"Groundwater": ["Bad", "Good"],
+#	"Surface": ["Bad", "Good"],
+#	"Soil": ["Good", "Bad"],
+#	"Evaporation": ["Good", "Bad"],
+#	"Crop": ["Good", "Bad"],
+#},
+#"Swahili": {
+#    "Flood": ["Low\nSio sana", "High\nNi sana"],
+#	"Groundwater": ["Bad\nHali mbaya", "Good\nHali mzuri"],
+#	"Surface": ["Bad\nHali mbaya", "Good\nHali mzuri"],
+#	"Soil": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+#	"Evaporation": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+#	"Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
+#}
+#}
+#
+#aux_var_colour = {
+#"Groundwater": ["#E69F00", "#009E73"],
+#"Surface": ["#E69F00", "#009E73"],
+#"Soil": ["darkviolet", "seagreen"],
+#"Evaporation": ["darkviolet", "seagreen"],
+#"Flood": ["#009E73", "#E69F00"],
+#"Crop": ["#E69F00", "#009E73"],
+#}
+#var_colour = {
+##"Groundwater": ["#009E73", "#E69F00", "#E41A1C"],
+##"Surface": ["#009E73", "#E69F00", "#E41A1C"],
+##"Soil": ["#009E73", "#E69F00", "#E41A1C"],
+##"Flood": ["#E41A1C", "#E69F00", "#009E73"],
+#}
+
 
 # ward name and center (lat, lon)
 wards_data = {

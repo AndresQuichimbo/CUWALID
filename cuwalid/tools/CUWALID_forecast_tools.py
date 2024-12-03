@@ -495,7 +495,32 @@ def get_ensamble_from_netcdf_list(fname_list, var_name, mean=True,
 		return None
 	else:
 		return dataset
+
+def get_postprocessed_hydro_variables_mfiles(fname, field=["wrsi", "aet"]):
+	"""Function for post processing hydrological variables such as WRSI"""
+	for ifield in field:
 		
+		for ifname in fname:
+			# test if file exist
+			if os.path.exists(ifname):
+				if ifield == "wrsi":
+					# Calculate WRSI 
+					data = read_dataset(ifname, "aet")/read_dataset(ifname, "pet")
+					data = data.rename("wrsi")
+				else:
+					# Calculate total evaporation
+					data = read_dataset(ifname, "aet") + read_dataset(ifname, "egw")
+					data = data.rename("aet")
+
+				# Define the path for the yearly NetCDF file
+				fname_output = ifname.split('.')[0]+'_'+ifield+'.nc'
+
+				# Group by year and create a new dataset for each year
+
+				# loop over years
+				data.to_netcdf(fname_output)
+			else:
+				print(ifname+" File does not found, skip this file from the analysis")
 
 def save_xarray_dataset_as_netcdf(fname, data, var_name):
 	# data has to be in the same dimentions
@@ -552,10 +577,10 @@ def get_average_from_list(fname_list, var="pre", mean=True, season=None,
 	# loop over all continues simulation files
 	concat_first_read = True
 	for ifname in fname_list:
-		
+		print(ifname, var)
 		# read datasets
 		data = read_dataset(ifname, var_name=var)
-		
+		print(data)
 		# if seasonal average, select months
 		if season is not None:
 			data = data.where(data.time.dt.month.isin(

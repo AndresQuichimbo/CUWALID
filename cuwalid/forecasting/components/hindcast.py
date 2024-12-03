@@ -132,26 +132,26 @@ def get_additional_variables_multi_netcdf(model_path, model_name, start_year, en
 	field = ["wrsi", "aet"]
 
 	# DO NOT MODIFY FROM HERE ---------------------------------------
+	cuwalid.get_postprocessed_hydro_variables_mfiles(fname)
+	#for ifield in field:
+	#	
+	#	for ifname in fname:
+	#		if ifield == "wrsi":
+	#			# Calculate WRSI 
+	#			data = cuwalid.read_dataset(ifname, "aet")/cuwalid.read_dataset(ifname, "pet")
+	#			data = data.rename("wrsi")
+	#		else:
+	#			# Calculate total evaporation
+	#			data = cuwalid.read_dataset(ifname, "aet")+cuwalid.read_dataset(ifname, "egw")
+	#			data = data.rename("aet")
 
-	for ifield in field:
-		
-		for ifname in fname:
-			if ifield == "wrsi":
-				# Calculate WRSI 
-				data = cuwalid.read_dataset(ifname, "aet")/cuwalid.read_dataset(ifname, "pet")
-				data = data.rename("wrsi")
-			else:
-				# Calculate total evaporation
-				data = cuwalid.read_dataset(ifname, "aet")+cuwalid.read_dataset(ifname, "egw")
-				data = data.rename("aet")
-
-			# Define the path for the yearly NetCDF file
-			fname_output = ifname.split('.')[0]+'_'+ifield+'.nc'
-			
-			# Group by year and create a new dataset for each year
-			
-			# loop over years
-			data.to_netcdf(fname_output)
+	#		# Define the path for the yearly NetCDF file
+	#		fname_output = ifname.split('.')[0]+'_'+ifield+'.nc'
+	#		
+	#		# Group by year and create a new dataset for each year
+	#		
+	#		# loop over years
+	#		data.to_netcdf(fname_output)
 			
 
 def get_percentiles_multi_files(model_path, model_name, start_year, end_year, season, variables, postpp_path):
@@ -172,7 +172,7 @@ def get_percentiles_multi_files(model_path, model_name, start_year, end_year, se
 	-------
 
 	"""
-	fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)
+	#fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)
 	
 	# ==============================================================
 	# DO NOT MODIFY FROM HERE -------------------------------------
@@ -211,14 +211,28 @@ def get_percentiles_multi_files(model_path, model_name, start_year, end_year, se
 			# CHANGE NAMES TO ADD MORE VARIABLES
 			# using anomalies
 			if (ifield == "twsc") or (ifield == "wrsi"):
-				fname_list = [
-					ifname.split('.')[0]+'_'+ifield+'.nc' for ifname in fname
-					]
-			
-			# concatenate dataset at selected fields
+				fname = get_name_list_historical_netcdf_files(model_path, model_name,
+												  start_year, end_year,
+												  ifield=ifield
+												  )
+
+				#fname_list = [
+				#	ifname.split('.')[0]+'_'+ifield+'.nc' for ifname in fname
+				#	]
+
+				# concatenate dataset at selected fields
+				#data_concat = cuwalid.concatenate_netCDF(
+				#	fname_list, ifield, agg="M", dim='time'
+				#	)
+			else:
+				fname = get_name_list_historical_netcdf_files(model_path, model_name,
+												  start_year, end_year)
+	
+				# concatenate dataset at selected fields
+
 			data_concat = cuwalid.concatenate_netCDF(
-				fname, ifield, agg="M", dim='time'
-				)
+					fname, ifield, agg="M", dim='time'
+					)
 			
 			# accummulate dataset, just in case of TWSA
 			if ifield == 'twsc':
@@ -281,7 +295,7 @@ def get_extremes_quantiles_multi_netcdf(model_path, model_name, start_year, end_
 	-------
 
 	"""
-	fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)
+	#fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)
 	
 			
 	# ==============================================================
@@ -320,18 +334,26 @@ def get_extremes_quantiles_multi_netcdf(model_path, model_name, start_year, end_
 		
 		first_read = True
 		for ifield in field:
-			
 			# CHANGE NAMES TO ADD MORE VARIABLES
 			# using anomalies
-			fname_list = fname.copy()
+			#fname_list = fname.copy()
+
 			if (ifield == "twsc") or (ifield == "wrsi"):
-				fname_list = [
-					ifname.split('.')[0]+'_'+ifield+'.nc' for ifname in fname
-					]
+				fname = get_name_list_historical_netcdf_files(model_path, model_name,
+												  start_year, end_year,
+												  ifield=ifield
+												  )
+			else:
+				fname = get_name_list_historical_netcdf_files(model_path, model_name,
+												  start_year, end_year)	
+
+				#fname_list = [
+				#	ifname.split('.')[0]+'_'+ifield+'.nc' for ifname in fname
+				#	]
 			
 			# concatenate dataset at selected fields
 			data_concat = cuwalid.concatenate_netCDF(
-				fname_list, ifield, agg="M", dim='time'
+				fname, ifield, agg="M", dim='time'
 				)
 			
 			## accummulate dataset, just in case of TWSA
@@ -577,17 +599,18 @@ def get_monthly_average_multi_netcdf(model_path, model_name, start_year, end_yea
 		variables_file = list(xr.open_dataset(fname[0]).variables.keys())
 		
 		# get average values for all variables from a list of netcdf files
-		dataset = cuwalid.get_average_all_variables_from_list(fname, variables_file, imonth)
+		#dataset = cuwalid.get_average_all_variables_from_list(fname, variables_file, imonth)
+		dataset = cuwalid.get_average_all_variables_from_list(fname, field, imonth)
 		
-		# get average of additional files
-		if variables["wrsi"] is True:
-			fname_aux = get_name_list_historical_netcdf_files(model_path, model_name,
-												 start_year, end_year, ifield="wrsi")
-			
-			# get average values for all variables from a list of netcdf files
-			dataset_aux = cuwalid.get_average_all_variables_from_list(fname_aux, ["wrsi"], imonth)
-			
-			dataset = xr.merge([dataset, dataset_aux])
+		## get average of additional files
+		#if variables["wrsi"] is True:
+		#	fname_aux = get_name_list_historical_netcdf_files(model_path, model_name,
+		#										 start_year, end_year, ifield="wrsi")
+		#	
+		#	# get average values for all variables from a list of netcdf files
+		#	dataset_aux = cuwalid.get_average_all_variables_from_list(fname_aux, ["wrsi"], imonth)
+		#	
+		#	dataset = xr.merge([dataset, dataset_aux])
 		# save results
 		fname_out = postpp_path+"netcdf/" + model_name + "_" + str(imonth) + "_monthly_mean.nc"
 		cuwalid.save_xarray_dataset_as_netcdf(fname_out, dataset, field)
