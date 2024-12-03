@@ -142,8 +142,8 @@ def future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, l
                                     datapath, outputpath, tempAdj,deltat, dpetdt, randnoise):
 
     # create a folder to save the data
-    if not os.path.isdir(outputpath+locname+'_E'+str(ens_num)+'_StoPET/'):
-        os.makedirs(outputpath+locname+'_E'+str(ens_num)+'_StoPET/')
+    if not os.path.isdir(os.path.join(outputpath, locname+'_E'+str(ens_num)+'_StoPET/')):
+        os.makedirs(os.path.join(outputpath, locname+'_E'+str(ens_num)+'_StoPET/'))
 
     # generate the hourly time series period
     years = np.arange(startyear,endyear+1)
@@ -610,7 +610,7 @@ def increase_temp_singlepoint(slope, mcont, annual_pet, tempAdj, deltat, yr,
 def seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, endyear, startdate, enddate, seasonswitch):
     years = np.arange(startyear,endyear+1)  
     for i in range(0,number_ensm):
-      filepath = outputpath+locname+'_E'+str(i)+'_StoPET/'  
+      filepath = os.path.join(outputpath, locname+'_E'+str(i)+'_StoPET/')
       for j in range(0,len(years)):
         year = years[j]                   
         fname1 = '%s_%s_stoPET.nc'%(year, tempAdj)
@@ -640,7 +640,7 @@ def stopet4dryp(filepath, fname, seasonswitch, startdate, enddate, i):
     # here we need to cut out row from top and botom 
     # and one column from left and right
     # this is done because the smoothing don't work on thos grid cells.
-    nc = Dataset(filepath + fname)  
+    nc = Dataset(os.path.join(filepath, fname))  
     lats = nc.variables['latitude'][1:-1]
     lons = nc.variables['longitude'][1:-1]
     pet = nc.variables['pet'][:,:,1:-1,1:-1] 

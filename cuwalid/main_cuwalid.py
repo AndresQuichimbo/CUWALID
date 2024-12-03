@@ -5,7 +5,7 @@ import sys
 
 import numpy as np
 from cuwalid.storm.main_storm import run_storm
-from cuwalid.stopet.main_stoPET import run_stoPET
+from cuwalid.stopet.main_stopet import run_stoPET
 from cuwalid.dryp.main_DRYP import run_DRYP
 from cuwalid.tools.DRYP_json_builder import create_ensamble, write_JSON_dryp_file
 
@@ -20,8 +20,8 @@ def run_cuwalid(cuwalid_input, forecasting_input):
 	# run_storm(storm_input)
 
 	# Run StoPET
-	# stopet_input = cuwalid_config["stopet"]
-	# run_stoPET(stopet_input)
+	stopet_input = cuwalid_config["stopet"]
+	run_stoPET(stopet_input)
 
 	# Prepare Dryp files
       
@@ -51,36 +51,36 @@ def run_cuwalid(cuwalid_input, forecasting_input):
 
 	forcing_list = np.array(create_ensamble([fname_pet, fname_pre], nsamples=nsim))
 
-	for ifsim_forecasting, imname, ifname_pre, ifname_pet in zip(fsim_forecasting, mname, forcing_list[:,1], forcing_list[:,0]):
-		write_JSON_dryp_file(
-			json_template=cuwalid_config,
-			model_name= imname,
-			path_pre= ifname_pre,
-			path_pet= ifname_pet,
-			destination = ifsim_forecasting,
-			start_date= start_date,
-			end_date=end_date,
-		)
+	# for ifsim_forecasting, imname, ifname_pre, ifname_pet in zip(fsim_forecasting, mname, forcing_list[:,1], forcing_list[:,0]):
+	# 	write_JSON_dryp_file(
+	# 		json_template=cuwalid_config,
+	# 		model_name= imname,
+	# 		path_pre= ifname_pre,
+	# 		path_pet= ifname_pet,
+	# 		destination = ifsim_forecasting,
+	# 		start_date= start_date,
+	# 		end_date=end_date,
+	# 	)
 
-	# Get dryp input file list
-	fsim_forecasting_list = ["HAD_IMERG_input_"+season+"_"+str(iyear)+"_forecast_"+str(isim)+".json" for isim in range(nsim)]
+	# # Get dryp input file list
+	# fsim_forecasting_list = ["HAD_IMERG_input_"+season+"_"+str(iyear)+"_forecast_"+str(isim)+".json" for isim in range(nsim)]
 
-	log_dir = "/home/cuwalid/leo_test/CUWALID/logs"  # Adjust to your desired log directory
+	# log_dir = "/home/cuwalid/leo_test/CUWALID/logs"  # Adjust to your desired log directory
 
-	# Make sure the log directory exists
-	os.makedirs(log_dir, exist_ok=True)
+	# # Make sure the log directory exists
+	# os.makedirs(log_dir, exist_ok=True)
 
-	for ifsim_forecasting in fsim_forecasting_list:
-		# Remove the .json extension for the log file name
-		base_name = os.path.splitext(ifsim_forecasting)[0]
+	# for ifsim_forecasting in fsim_forecasting_list:
+	# 	# Remove the .json extension for the log file name
+	# 	base_name = os.path.splitext(ifsim_forecasting)[0]
 		
-		# Generate a unique log file name for each process
-		log_file = os.path.join(log_dir, f"{base_name}_output.log")
-		# Build the command to run the simulation and redirect both stdout and stderr to the log file
-		command = f"nohup python -m cuwalid.dryp.main_DRYP /home/cuwalid/training/forecast/regional/model/{ifsim_forecasting} > {log_file} 2>&1 &"
+	# 	# Generate a unique log file name for each process
+	# 	log_file = os.path.join(log_dir, f"{base_name}_output.log")
+	# 	# Build the command to run the simulation and redirect both stdout and stderr to the log file
+	# 	command = f"nohup python -m cuwalid.dryp.main_DRYP /home/cuwalid/training/forecast/regional/model/{ifsim_forecasting} > {log_file} 2>&1 &"
 		
-		# Run the command as a background process using subprocess
-		subprocess.Popen(command, shell=True)
+	# 	# Run the command as a background process using subprocess
+	# 	subprocess.Popen(command, shell=True)
 
 def get_season(date_string):
     # Parse the date string into year, month, day

@@ -54,6 +54,7 @@ def run_stoPET(config_file):
     lonval_min = config['lonval_min']
     lonval_max = config['lonval_max']
     locname = config['locname']
+    print(f'locname={locname}')
     number_ensm = config['number_ensm']
     tempAdj = config['tempAdj']
     deltat = config['deltat']
@@ -62,7 +63,7 @@ def run_stoPET(config_file):
     if execution_type == 'dryp':
         run_stoPET_4_dryp(
             datapath=datapath,
-            root_outputpath=outputpath,
+            outputpath=outputpath,
             runtype=runtype,
             startyear=startyear,
             endyear=endyear,
