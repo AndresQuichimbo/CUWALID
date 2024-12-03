@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import rioxarray
 from itertools import compress
 import operator
+import calendar
 
 def read_dataset(fname, var_name='tht'):
 	# Open the first netCDF file
@@ -89,6 +90,13 @@ def season_name_to_number(season):
 			return season
 		else:
 			return [season]
+
+def get_dates_season(season, year):
+	imonths = season_name_to_number(season)
+	last_day = calendar.monthrange(year, imonths[-1])[1]
+	start_date = str(year) + " " + str(imonths[0]) + " " + str(1)
+	end_date = str(year) + " " + str(imonths[-1]) + " " + str(last_day)
+	return start_date, end_date
 
 def concatenate_netCDF(fname_list, var, agg="M", dim='time', season=None):
 	""" Get a xarray from a list of netcdf files
