@@ -47,6 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models_info.html">Models Information</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cuwalid_tutorial.html">CUWALID Tutorial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dryp_tutorial.html">DRYP Tutorial</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">StoPET Tutorial</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#running-the-model">Running the model</a></li>
@@ -94,14 +95,14 @@
 <section id="running-the-model">
 <h2>Running the model<a class="headerlink" href="#running-the-model" title="Permalink to this heading"></a></h2>
 <p>To run the StoPET model you can use the code below:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cuwalid.stopet.main_stoPET</span> <span class="kn">import</span> <span class="n">run_stoPET</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cuwalid.stopet.main_stopet</span> <span class="kn">import</span> <span class="n">run_stoPET</span>
 
 <span class="n">run_stoPET</span><span class="p">(</span><span class="s2">&quot;input.json&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Or run from the terminal using this command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># replace &quot;input.json&quot; with the path to your input json</span>
-python<span class="w"> </span>-m<span class="w"> </span>cuwalid.stopet.main_stoPET<span class="w"> </span>input.json
+python<span class="w"> </span>-m<span class="w"> </span>cuwalid.stopet.main_stopet<span class="w"> </span>input.json
 </pre></div>
 </div>
 <p>Once this script runs it will produce all the required folders in the root_outputpath
@@ -124,8 +125,8 @@ python<span class="w"> </span>-m<span class="w"> </span>cuwalid.stopet.forecast_
 <h2>Input Parameters<a class="headerlink" href="#input-parameters" title="Permalink to this heading"></a></h2>
 <p>The input JSON shown above will look something like this:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">{</span>
-<span class="linenos"> 2</span><span class="w">  </span><span class="nt">&quot;execution_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dryp&quot;</span><span class="p">,</span>
-<span class="linenos"> 3</span><span class="w">  </span><span class="nt">&quot;root_outputpath&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;output/path&quot;</span><span class="p">,</span>
+<span class="linenos"> 2</span><span class="w">  </span><span class="nt">&quot;execution_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hpc&quot;</span><span class="p">,</span>
+<span class="linenos"> 3</span><span class="w">  </span><span class="nt">&quot;outputpath&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;output/path&quot;</span><span class="p">,</span>
 <span class="linenos"> 4</span><span class="w">  </span><span class="nt">&quot;runtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;regional&quot;</span><span class="p">,</span>
 <span class="linenos"> 5</span><span class="w">  </span><span class="nt">&quot;startyear&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1944</span><span class="p">,</span>
 <span class="linenos"> 6</span><span class="w">  </span><span class="nt">&quot;endyear&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1945</span><span class="p">,</span>
@@ -144,26 +145,26 @@ python<span class="w"> </span>-m<span class="w"> </span>cuwalid.stopet.forecast_
 <span class="linenos">19</span><span class="w">  </span><span class="nt">&quot;tempAdj&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
 <span class="linenos">20</span><span class="w">  </span><span class="nt">&quot;deltat&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
 <span class="linenos">21</span><span class="w">  </span><span class="nt">&quot;udpi_pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
-<span class="linenos">22</span><span class="w">  </span><span class="nt">&quot;trial_number&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span>
+<span class="linenos">22</span><span class="w">  </span><span class="nt">&quot;slice_only&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
 <span class="linenos">23</span><span class="w">  </span><span class="nt">&quot;tercile_forecast_file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ICPAC_TempF_OND2022_HAD.nc&quot;</span>
 <span class="linenos">24</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>Here is an explanation of what each parameter does:</p>
 <ul>
-<li><p><strong>execution_type</strong>: <cite>“dryp”</cite></p>
+<li><p><strong>execution_type</strong>: <cite>“hpc”</cite></p>
 <p>Can be set to “dryp” or “hpc”. The standard choice is “dryp” and it will complete the trials in a loop. “hpc” can be used if you would like the trials to completed one at a time, good for a batch job submission.</p>
 </li>
-<li><p><strong>root_outputpath</strong>: <cite>“stopet_output”</cite></p>
+<li><p><strong>outputpath</strong>: <cite>“stopet_output”</cite></p>
 <p>The directory where the output of the model will be placed.</p>
 </li>
 <li><p><strong>runtype</strong>: <cite>“regional”</cite></p>
 <p>This is a string input with two options. ‘regional’ or ‘single’. It will tell the model whether the PET is generated for a single point or an area of a specified region (or rectangle).</p>
 </li>
-<li><p><strong>startyear</strong>: <cite>1994</cite></p>
+<li><p><strong>startyear</strong>: <cite>2024</cite></p>
 <p>The year from which the user wants to start the PET time series to start.</p>
 </li>
-<li><p><strong>endyear</strong>: <cite>1996</cite></p>
+<li><p><strong>endyear</strong>: <cite>2024</cite></p>
 <p>The last year requested by the user for the PET time series.</p>
 </li>
 <li><p><strong>seasonswitch</strong>: <cite>1</cite></p>
@@ -197,10 +198,10 @@ The minimum latitude of the region.</p>
 <li><p><strong>lonval_max</strong>: <cite>34.5</cite></p>
 <p>The maximum longitude of the region.</p>
 </li>
-<li><p><strong>locname</strong>: <cite>“Kenya”</cite></p>
+<li><p><strong>locname</strong>: <cite>“HAD”</cite></p>
 <p>Any name to be given as a string which will be used in the file name of the final PET outcome of the location.</p>
 </li>
-<li><p><strong>number_ensm</strong>: <cite>2</cite></p>
+<li><p><strong>number_ensm</strong>: <cite>3</cite></p>
 <p>This is the number of ensembles the user wishes to run with each realization. It is kept 1 by default but if the user wants to have multiple runs the number should be given by this variable. HERE THE NUMBER SHOULD BE DIVISIBLE BY 3</p>
 </li>
 <li><p><strong>tempAdj</strong>: <cite>3</cite></p>
@@ -214,8 +215,12 @@ Refer to the paper for the description of each method.</p>
 <li><p><strong>udpi_pet</strong>: <cite>5</cite></p>
 <p>This variable is the user-defined percentage increase of PET. The value should be from 0 to 100. This will be used to adjust the estimated PET by the user-provided percentage if Method 1 (tempAdj = 1). Otherwise, this value will be ignored by the model.</p>
 </li>
-<li><p><strong>trial_number</strong>: <cite>6</cite></p>
-<p>this is the final number of ensembles you will have. This is how many times the model will run to generate a weighted PET value by ICPAC forecast.</p>
+<li><p><strong>slice_only</strong>: <cite>6</cite></p>
+<p>This is a variable that telss wheather to run a
+full yearly PET and slice the given season or
+just slice the season since you already run the yearly PET extimate
+slice_only = 0 (run all the PET yearly first and then slice the season)
+slice_only = 1 (run the slicing only)</p>
 </li>
 <li><p><strong>tercile_forecast_file</strong>: <cite>“ICPAC_TempF_OND2022_HAD.nc”</cite></p>
 <p>This is the file containing the ICPAC seasonal tercile temperature forecast. provide the full path where it is located.</p>

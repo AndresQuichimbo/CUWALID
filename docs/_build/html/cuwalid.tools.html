@@ -64,9 +64,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.CUWALID_forecast_tools.extract_dataset"><code class="docutils literal notranslate"><span class="pre">extract_dataset()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.CUWALID_forecast_tools.get_average_all_variables_from_list"><code class="docutils literal notranslate"><span class="pre">get_average_all_variables_from_list()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.CUWALID_forecast_tools.get_average_from_list"><code class="docutils literal notranslate"><span class="pre">get_average_from_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.CUWALID_forecast_tools.get_dates_season"><code class="docutils literal notranslate"><span class="pre">get_dates_season()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.CUWALID_forecast_tools.get_ensamble_from_netcdf_list"><code class="docutils literal notranslate"><span class="pre">get_ensamble_from_netcdf_list()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.CUWALID_forecast_tools.get_percentile_probabilities"><code class="docutils literal notranslate"><span class="pre">get_percentile_probabilities()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.CUWALID_forecast_tools.get_percentiles_probabilities_from_netcdf"><code class="docutils literal notranslate"><span class="pre">get_percentiles_probabilities_from_netcdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.CUWALID_forecast_tools.get_postprocessed_hydro_variables_mfiles"><code class="docutils literal notranslate"><span class="pre">get_postprocessed_hydro_variables_mfiles()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.CUWALID_forecast_tools.get_season_dataset"><code class="docutils literal notranslate"><span class="pre">get_season_dataset()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.CUWALID_forecast_tools.get_tercile_probabilities"><code class="docutils literal notranslate"><span class="pre">get_tercile_probabilities()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cuwalid.tools.CUWALID_forecast_tools.get_tercile_probabilities_from_ensamble_netcdf"><code class="docutils literal notranslate"><span class="pre">get_tercile_probabilities_from_ensamble_netcdf()</span></code></a></li>
@@ -322,6 +324,11 @@ end othe concatenation.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.tools.CUWALID_forecast_tools.get_dates_season">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.tools.CUWALID_forecast_tools.</span></span><span class="sig-name descname"><span class="pre">get_dates_season</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/CUWALID_forecast_tools.html#get_dates_season"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.CUWALID_forecast_tools.get_dates_season" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.tools.CUWALID_forecast_tools.get_ensamble_from_netcdf_list">
 <span class="sig-prename descclassname"><span class="pre">cuwalid.tools.CUWALID_forecast_tools.</span></span><span class="sig-name descname"><span class="pre">get_ensamble_from_netcdf_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/CUWALID_forecast_tools.html#get_ensamble_from_netcdf_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.CUWALID_forecast_tools.get_ensamble_from_netcdf_list" title="Permalink to this definition"></a></dt>
 <dd><p>This function read a list of netcdf paths and return a dataset
@@ -374,6 +381,12 @@ grid size of the dataset</p></li>
 <dt class="sig sig-object py" id="cuwalid.tools.CUWALID_forecast_tools.get_percentiles_probabilities_from_netcdf">
 <span class="sig-prename descclassname"><span class="pre">cuwalid.tools.CUWALID_forecast_tools.</span></span><span class="sig-name descname"><span class="pre">get_percentiles_probabilities_from_netcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/CUWALID_forecast_tools.html#get_percentiles_probabilities_from_netcdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.CUWALID_forecast_tools.get_percentiles_probabilities_from_netcdf" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.tools.CUWALID_forecast_tools.get_postprocessed_hydro_variables_mfiles">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.tools.CUWALID_forecast_tools.</span></span><span class="sig-name descname"><span class="pre">get_postprocessed_hydro_variables_mfiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['wrsi',</span> <span class="pre">'aet']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/CUWALID_forecast_tools.html#get_postprocessed_hydro_variables_mfiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.CUWALID_forecast_tools.get_postprocessed_hydro_variables_mfiles" title="Permalink to this definition"></a></dt>
+<dd><p>Function for post processing hydrological variables such as WRSI</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.tools.CUWALID_forecast_tools.get_season_dataset">
@@ -477,19 +490,41 @@ oldPP and newPP have to be defined first</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.tools.CUWALID_forecast_tools.season_name_to_number">
 <span class="sig-prename descclassname"><span class="pre">cuwalid.tools.CUWALID_forecast_tools.</span></span><span class="sig-name descname"><span class="pre">season_name_to_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">season</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/CUWALID_forecast_tools.html#season_name_to_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.CUWALID_forecast_tools.season_name_to_number" title="Permalink to this definition"></a></dt>
-<dd><p>This function read a string representing seasons and return a
-list of numbers indicating months</p>
+<dd><p>Converts a string representing a season to a list of numbers indicating corresponding months.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>season</strong> (<em>str</em>) – season represented by three capital letters (e.g. “OND”)</p>
+<dd class="field-odd"><p><strong>season</strong> (<em>str</em><em> or </em><em>list</em><em> or </em><em>int</em>) – The season represented by three capital letters (e.g., “OND”) or a list of month numbers.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of months</p>
+<dd class="field-even"><p>A list of integers representing the months for the given season. If the input is already
+a list of months, it is returned as is. If the input is not recognized, it returns
+the input wrapped in a list.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Supported season codes:
+- “MAM” : March, April, May [3, 4, 5]
+- “OND” : October, November, December [10, 11, 12]
+- “JJS” : June, July, August [6, 7, 8]
+- “JF”  : January, February [1, 2]
+- “JJSA”: June, July, August, September [6, 7, 8, 9]</p>
+<p>If the input is not a string or a list, the function wraps the input in a list.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">season_name_to_number</span><span class="p">(</span><span class="s2">&quot;MAM&quot;</span><span class="p">)</span>
+<span class="go">[3, 4, 5]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">season_name_to_number</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">[1, 2, 3]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">season_name_to_number</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">[2]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -522,7 +557,7 @@ previous simulution is added.</p>
 <span id="cuwalid-tools-cuwalid-view-tool-module"></span><h2>cuwalid.tools.CUWALID_view_tool module<a class="headerlink" href="#module-cuwalid.tools.CUWALID_view_tool" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.tools.CUWALID_view_tool.get_label_variable">
-<span class="sig-prename descclassname"><span class="pre">cuwalid.tools.CUWALID_view_tool.</span></span><span class="sig-name descname"><span class="pre">get_label_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/CUWALID_view_tool.html#get_label_variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.CUWALID_view_tool.get_label_variable" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">cuwalid.tools.CUWALID_view_tool.</span></span><span class="sig-name descname"><span class="pre">get_label_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/CUWALID_view_tool.html#get_label_variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.CUWALID_view_tool.get_label_variable" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -1049,19 +1084,41 @@ This function save proccessed variables as netCDF files.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.tools.DRYP_pptools.season_name_to_number">
 <span class="sig-prename descclassname"><span class="pre">cuwalid.tools.DRYP_pptools.</span></span><span class="sig-name descname"><span class="pre">season_name_to_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">season</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tools/DRYP_pptools.html#season_name_to_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tools.DRYP_pptools.season_name_to_number" title="Permalink to this definition"></a></dt>
-<dd><p>This function read a string representing seasons and return a
-list of numbers indicating months</p>
+<dd><p>Converts a string representing a season to a list of numbers indicating corresponding months.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>season</strong> (<em>str</em>) – season represented by three capital letters (e.g. “OND”)</p>
+<dd class="field-odd"><p><strong>season</strong> (<em>str</em><em> or </em><em>list</em><em> or </em><em>int</em>) – The season represented by three capital letters (e.g., “OND”) or a list of month numbers.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of months</p>
+<dd class="field-even"><p>A list of integers representing the months for the given season. If the input is already
+a list of months, it is returned as is. If the input is not recognized, it returns
+the input wrapped in a list.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Supported season codes:
+- “MAM” : March, April, May [3, 4, 5]
+- “OND” : October, November, December [10, 11, 12]
+- “JJS” : June, July, August [6, 7, 8]
+- “JF”  : January, February [1, 2]
+- “JJSA”: June, July, August, September [6, 7, 8, 9]</p>
+<p>If the input is not a string or a list, the function wraps the input in a list.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">season_name_to_number</span><span class="p">(</span><span class="s2">&quot;MAM&quot;</span><span class="p">)</span>
+<span class="go">[3, 4, 5]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">season_name_to_number</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">[1, 2, 3]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">season_name_to_number</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">[2]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">

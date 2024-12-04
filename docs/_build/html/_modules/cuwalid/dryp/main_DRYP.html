@@ -503,7 +503,7 @@
 				
 				<span class="c1"># get rainfall</span>
 				<span class="n">rain</span> <span class="o">=</span> <span class="n">PRE</span><span class="o">.</span><span class="n">get_one_step_dataset</span><span class="p">(</span><span class="n">t_pre</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_TSPre</span><span class="p">,</span> <span class="s1">&#39;pre&#39;</span><span class="p">)</span>
-				<span class="n">rain</span> <span class="o">=</span> <span class="n">rain</span><span class="o">*</span><span class="mf">0.5</span> <span class="c1"># This is specific for IMERG 30 min resolution only</span>
+				<span class="c1">#rain = rain*0.5 # This is specific for IMERG 30 min resolution only</span>
 				<span class="c1"># for the forcast TRAINING.</span>
 				<span class="c1">#rain[rain&gt;300] = 300.</span>
 				<span class="c1">#print(&quot;rain&quot;, np.where(np.isnan(rain[act_nodes])))</span>

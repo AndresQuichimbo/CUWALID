@@ -1,6 +1,6 @@
 {
-  "execution_type": "dryp",
-  "root_outputpath": "output/path",
+  "execution_type": "hpc",
+  "outputpath": "output/path",
   "runtype": "regional",
   "startyear": 1944,
   "endyear": 1945,
@@ -19,6 +19,6 @@
   "tempAdj": 2,
   "deltat": 0.0,
   "udpi_pet": 5,
-  "trial_number": 6,
+  "slice_only": 0,
   "tercile_forecast_file": "ICPAC_TempF_OND2022_HAD.nc"
 }

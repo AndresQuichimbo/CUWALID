@@ -435,7 +435,15 @@
 			
 			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
 				<span class="n">j_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">j_step</span>
+
+			<span class="c1"># THIS IS A PARTIAL SOLUTION TO READ STORM, SO IT WILL BE MODIFIED LATER</span>
+			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">5</span><span class="p">):</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">step_0</span> <span class="o">=</span> <span class="n">aux_time_j</span> <span class="o">+</span> <span class="mi">0</span>
 			
+			<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_before_ds</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">5</span><span class="p">):</span>
+				<span class="n">j_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">j_step</span>
+			
+
 			<span class="c1">#print(idate_ds, aux_time_j, j_step, self.j_step, self.file_format, id_ini_month)</span>
 			<span class="c1">#if field == &#39;pet&#39;:</span>
 			<span class="c1">#	keys = [&#39;longitude&#39;, &#39;latitude&#39;]</span>
@@ -481,6 +489,7 @@
 
 				<span class="c1"># read dataset</span>
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_format</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+					<span class="n">groupds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Dataset</span><span class="p">(</span><span class="n">fname_ds</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
 					<span class="n">meta</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname_ds</span><span class="p">)</span>
 					<span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">({</span>
 					    <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;projection_y_coordinate&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">load</span><span class="p">(),</span>
@@ -489,13 +498,23 @@
 					<span class="c1">#mask = meta[&#39;regions&#39;]</span>
 					<span class="c1">#mask.plot(cmap=&#39;turbo&#39;, levels=5)</span>
 
-					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname_ds</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">idate_ds</span><span class="o">.</span><span class="n">year</span><span class="p">))</span>
+					<span class="c1">#self.ds = xr.open_dataset(fname_ds, group=str(idate_ds.year))</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname_ds</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">groupds</span><span class="p">)</span>
+					<span class="c1"># Replace all years with 2025</span>
+					<span class="n">new_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">idate_ds</span><span class="o">.</span><span class="n">year</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">new_time</span><span class="p">))</span>
+					<span class="c1">#delta_year = int(groupds) - idate_ds.year</span>
+					<span class="c1">#new_time = self.ds[&quot;time&quot;] + pd.DateOffset(years=-delta_year)</span>
+					<span class="c1">#new_time = self.ds.time + pd.Timedelta(years=delta_year)  # Shift by 5 years</span>
 					<span class="c1">#self.ds = self.ds.sum(dim=(&#39;time&#39;), skipna=True)</span>
+					<span class="c1"># Assign the new time dimension to the dataset</span>
+					<span class="c1">#self.ds[&#39;time&#39;] = new_time</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">({</span>
 					    <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;projection_y_coordinate&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">load</span><span class="p">(),</span>
 					    <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;projection_x_coordinate&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 					    <span class="p">})</span>
 					<span class="k">del</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+					<span class="c1">#print(self.ds)</span>
 
 				<span class="k">else</span><span class="p">:</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname_ds</span><span class="p">)</span>
@@ -549,7 +568,7 @@
 			<span class="c1">#print(self.ds, self.dt_ds, self.dt)</span>
 			<span class="c1"># set index</span>
 			<span class="n">iindex</span> <span class="o">=</span> <span class="n">j_step</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">step_0</span>
-			<span class="c1">#print(iindex)</span>
+			<span class="c1">#print(iindex,j_step,self.step_0)</span>
 			<span class="c1"># select data step</span>
 			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_func</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
 				<span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">iindex</span><span class="p">])</span>
@@ -567,7 +586,7 @@
 			<span class="c1">#	ds = self.ds.isel(time=[j_step-self.step_0])</span>
 			<span class="c1">#print(ds)</span>
 			<span class="c1"># get data at time step t</span>
-			<span class="n">ds</span><span class="p">[</span><span class="n">field</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;lat&#39;</span><span class="p">)</span>
+			<span class="c1">#ds[field].plot(x=&#39;lon&#39;, y=&#39;lat&#39;)</span>
 			<span class="c1">#plt.imshow(np.array(ds.variables[field][0][:]))</span>
 			<span class="c1">#plt.savefig(&#39;precipitation&#39;+field+str(self.j_step)+&#39;.png&#39;)</span>
 			<span class="c1">#plt.close()</span>

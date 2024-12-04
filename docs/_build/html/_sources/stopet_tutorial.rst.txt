@@ -9,7 +9,7 @@ To run the StoPET model you can use the code below:
 
 .. code-block:: python
 
-    from cuwalid.stopet.main_stoPET import run_stoPET
+    from cuwalid.stopet.main_stopet import run_stoPET
 
     run_stoPET("input.json")
 
@@ -18,7 +18,7 @@ Or run from the terminal using this command:
 .. code-block:: bash
 
     # replace "input.json" with the path to your input json
-    python -m cuwalid.stopet.main_stoPET input.json
+    python -m cuwalid.stopet.main_stopet input.json
 
 
 Once this script runs it will produce all the required folders in the root_outputpath
@@ -53,11 +53,11 @@ The input JSON shown above will look something like this:
 
 Here is an explanation of what each parameter does:
 
-- **execution_type**: `"dryp"`
+- **execution_type**: `"hpc"`
 
   Can be set to "dryp" or "hpc". The standard choice is "dryp" and it will complete the trials in a loop. "hpc" can be used if you would like the trials to completed one at a time, good for a batch job submission.
 
-- **root_outputpath**: `"stopet_output"`
+- **outputpath**: `"stopet_output"`
   
   The directory where the output of the model will be placed.
 
@@ -65,11 +65,11 @@ Here is an explanation of what each parameter does:
   
   This is a string input with two options. 'regional' or 'single'. It will tell the model whether the PET is generated for a single point or an area of a specified region (or rectangle).
 
-- **startyear**: `1994`
+- **startyear**: `2024`
   
   The year from which the user wants to start the PET time series to start.
 
-- **endyear**: `1996`
+- **endyear**: `2024`
   
   The last year requested by the user for the PET time series.
 
@@ -114,11 +114,11 @@ Here is an explanation of what each parameter does:
   
   The maximum longitude of the region. 
 
-- **locname**: `"Kenya"`
+- **locname**: `"HAD"`
   
   Any name to be given as a string which will be used in the file name of the final PET outcome of the location.
 
-- **number_ensm**: `2`
+- **number_ensm**: `3`
   
   This is the number of ensembles the user wishes to run with each realization. It is kept 1 by default but if the user wants to have multiple runs the number should be given by this variable. HERE THE NUMBER SHOULD BE DIVISIBLE BY 3
 
@@ -137,10 +137,14 @@ Here is an explanation of what each parameter does:
   
   This variable is the user-defined percentage increase of PET. The value should be from 0 to 100. This will be used to adjust the estimated PET by the user-provided percentage if Method 1 (tempAdj = 1). Otherwise, this value will be ignored by the model.
 
-- **trial_number**: `6`
+- **slice_only**: `6`
 
-  this is the final number of ensembles you will have. This is how many times the model will run to generate a weighted PET value by ICPAC forecast.
-
+  This is a variable that telss wheather to run a 
+  full yearly PET and slice the given season or 
+  just slice the season since you already run the yearly PET extimate
+  slice_only = 0 (run all the PET yearly first and then slice the season)
+  slice_only = 1 (run the slicing only)
+  
 - **tercile_forecast_file**: `"ICPAC_TempF_OND2022_HAD.nc"`
 
   This is the file containing the ICPAC seasonal tercile temperature forecast. provide the full path where it is located.

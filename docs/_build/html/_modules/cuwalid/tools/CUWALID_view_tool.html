@@ -282,10 +282,10 @@
 <span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># apply mask</span>
-	<span class="k">if</span> <span class="n">fmask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-		<span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">get_mask</span><span class="p">(</span><span class="n">fmask</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="c1">#*np.flip(get_mask(friver), 0)</span>
-		<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">*</span><span class="n">mask</span>
-	
+	<span class="c1">#if fmask is not None:</span>
+	<span class="c1">#	mask = np.flip(get_mask(fmask), 0)#*np.flip(get_mask(friver), 0)</span>
+	<span class="c1">#	data = data*mask</span>
+	<span class="c1">#print(data)</span>
 	<span class="c1"># reproject dataset</span>
 	<span class="k">if</span> <span class="n">reproject</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
 		<span class="n">data</span> <span class="o">=</span> <span class="n">reproject_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">oldPP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">newPP</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -419,25 +419,49 @@
 	
 	<span class="k">return</span> <span class="n">data</span></div>
 
-<div class="viewcode-block" id="get_label_variable"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.get_label_variable">[docs]</a><span class="k">def</span> <span class="nf">get_label_variable</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+<div class="viewcode-block" id="get_label_variable"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.get_label_variable">[docs]</a><span class="k">def</span> <span class="nf">get_label_variable</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 	<span class="n">field_labels</span> <span class="o">=</span> <span class="p">{</span>
-		<span class="s2">&quot;pre&quot;</span> <span class="p">:</span> <span class="s1">&#39;Precipitation [mm/month]&#39;</span><span class="p">,</span>
-		<span class="s2">&quot;pet&quot;</span> <span class="p">:</span> <span class="s1">&#39;Potential ET. [mm/month]&#39;</span><span class="p">,</span>
-		<span class="s2">&quot;aet&quot;</span> <span class="p">:</span> <span class="s1">&#39;Actual ET. [mm/month]&#39;</span><span class="p">,</span>
-		<span class="s2">&quot;tht&quot;</span> <span class="p">:</span> <span class="s1">&#39;Soil moisture [--]&#39;</span><span class="p">,</span>
-		<span class="s2">&quot;inf&quot;</span> <span class="p">:</span> <span class="s1">&#39;Infiltration [mm/month]&#39;</span><span class="p">,</span>
-		<span class="s2">&quot;run&quot;</span> <span class="p">:</span> <span class="s1">&#39;Overland Flow [mm/month]&#39;</span><span class="p">,</span>
-		<span class="s2">&quot;tls&quot;</span> <span class="p">:</span> <span class="s1">&#39;Trans. Losses [mm/month]&#39;</span><span class="p">,</span>
-		<span class="s2">&quot;fch&quot;</span> <span class="p">:</span> <span class="s1">&#39;Focused Rch. [mm/month]&#39;</span><span class="p">,</span>
-		<span class="s2">&quot;rch&quot;</span> <span class="p">:</span> <span class="s1">&#39;Diffuse Rch. [mm/month]&#39;</span><span class="p">,</span>
-		<span class="s2">&quot;ghd&quot;</span> <span class="p">:</span> <span class="s1">&#39;GW Discharge [mm/month]&#39;</span><span class="p">,</span>
-		<span class="s2">&quot;dis&quot;</span> <span class="p">:</span> <span class="s1">&#39;Flow channel [m3/month]&#39;</span><span class="p">,</span>
-		<span class="s2">&quot;twsc&quot;</span><span class="p">:</span> <span class="s2">&quot;Total Water storage </span><span class="se">\n</span><span class="s2"> Anomalies [mm/month]&quot;</span><span class="p">,</span>
-		<span class="s2">&quot;wrsi&quot;</span><span class="p">:</span> <span class="s2">&quot;Water Requirement Satisfaction </span><span class="se">\n</span><span class="s2"> Index [-]&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;pre&quot;</span> <span class="p">:</span> <span class="s1">&#39;Precipitation&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;pet&quot;</span> <span class="p">:</span> <span class="s1">&#39;Potential ET.&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;aet&quot;</span> <span class="p">:</span> <span class="s1">&#39;Actual ET.&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;tht&quot;</span> <span class="p">:</span> <span class="s1">&#39;Soil moisture&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;inf&quot;</span> <span class="p">:</span> <span class="s1">&#39;Infiltration&#39;</span> <span class="p">,</span>
+		<span class="s2">&quot;run&quot;</span> <span class="p">:</span> <span class="s1">&#39;Overland Flow&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;tls&quot;</span> <span class="p">:</span> <span class="s1">&#39;Trans. Losses&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;fch&quot;</span> <span class="p">:</span> <span class="s1">&#39;Focused Rch.&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;rch&quot;</span> <span class="p">:</span> <span class="s1">&#39;Diffuse Rch.&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;gdh&quot;</span> <span class="p">:</span> <span class="s1">&#39;GW Discharge&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;dis&quot;</span> <span class="p">:</span> <span class="s1">&#39;Flow channel&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;twsc&quot;</span><span class="p">:</span> <span class="s2">&quot;Total Water storage&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;wrsi&quot;</span><span class="p">:</span> <span class="s2">&quot;Water Requirement Satisfaction&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;egw&quot;</span><span class="p">:</span>  <span class="s2">&quot;Groundwater Evaporation&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;wte&quot;</span><span class="p">:</span>  <span class="s2">&quot;Water table elevation&quot;</span><span class="p">,</span>
 		
 		<span class="p">}</span>
-	<span class="k">return</span> <span class="n">field_labels</span><span class="p">[</span><span class="n">var</span><span class="p">]</span></div>
-	
+
+	<span class="n">units_labels</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s2">&quot;pre&quot;</span> <span class="p">:</span> <span class="s1">&#39; [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;pet&quot;</span> <span class="p">:</span> <span class="s1">&#39; [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;aet&quot;</span> <span class="p">:</span> <span class="s1">&#39; [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;tht&quot;</span> <span class="p">:</span> <span class="s1">&#39; [--]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;inf&quot;</span> <span class="p">:</span> <span class="s1">&#39; [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;run&quot;</span> <span class="p">:</span> <span class="s1">&#39; [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;tls&quot;</span> <span class="p">:</span> <span class="s1">&#39; [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;fch&quot;</span> <span class="p">:</span> <span class="s1">&#39; [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;rch&quot;</span> <span class="p">:</span> <span class="s1">&#39; [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;gdh&quot;</span> <span class="p">:</span> <span class="s1">&#39; [mm/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;dis&quot;</span> <span class="p">:</span> <span class="s1">&#39; [m3/month]&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;twsc&quot;</span><span class="p">:</span> <span class="s2">&quot; </span><span class="se">\n</span><span class="s2"> Anomalies [mm/month]&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;wrsi&quot;</span><span class="p">:</span> <span class="s2">&quot; </span><span class="se">\n</span><span class="s2"> Index [-]&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;egw&quot;</span><span class="p">:</span>  <span class="s2">&quot; </span><span class="se">\n</span><span class="s2"> [mm/month]&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;wte&quot;</span><span class="p">:</span>  <span class="s2">&quot; [m]&quot;</span><span class="p">,</span>
+		<span class="p">}</span>
+
+	<span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">field_labels</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">field_labels</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">+</span> <span class="n">units_labels</span><span class="p">[</span><span class="n">var</span><span class="p">]</span></div>
+
 <div class="viewcode-block" id="get_mask"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.get_mask">[docs]</a><span class="k">def</span> <span class="nf">get_mask</span><span class="p">(</span><span class="n">fmask</span><span class="p">):</span>
 	<span class="c1"># output an array</span>
 	<span class="c1"># get a mask</span>

@@ -85,6 +85,7 @@
 <span class="kn">import</span> <span class="nn">rioxarray</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">compress</span>
 <span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">import</span> <span class="nn">calendar</span>
 
 <div class="viewcode-block" id="read_dataset"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.read_dataset">[docs]</a><span class="k">def</span> <span class="nf">read_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;tht&#39;</span><span class="p">):</span>
 	<span class="c1"># Open the first netCDF file</span>
@@ -112,26 +113,68 @@
 	<span class="k">return</span> <span class="n">data</span></div>
 
 <div class="viewcode-block" id="season_name_to_number"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.season_name_to_number">[docs]</a><span class="k">def</span> <span class="nf">season_name_to_number</span><span class="p">(</span><span class="n">season</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function read a string representing seasons and return a</span>
-<span class="sd">	list of numbers indicating months</span>
-<span class="sd">	</span>
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-<span class="sd">	season : str</span>
-<span class="sd">		season represented by three capital letters (e.g. &quot;OND&quot;)</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a string representing a season to a list of numbers indicating corresponding months.</span>
 
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	list</span>
-<span class="sd">		list of months</span>
-<span class="sd">	&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    season : str or list or int</span>
+<span class="sd">        The season represented by three capital letters (e.g., &quot;OND&quot;) or a list of month numbers.</span>
 
-	<span class="k">if</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;MAM&quot;</span><span class="p">:</span>
-		<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
-	<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;OND&quot;</span><span class="p">:</span>
-		<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">]</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        A list of integers representing the months for the given season. If the input is already </span>
+<span class="sd">        a list of months, it is returned as is. If the input is not recognized, it returns </span>
+<span class="sd">        the input wrapped in a list.</span>
 
-	<span class="k">return</span> <span class="n">season</span></div>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Supported season codes:</span>
+<span class="sd">    - &quot;MAM&quot; : March, April, May [3, 4, 5]</span>
+<span class="sd">    - &quot;OND&quot; : October, November, December [10, 11, 12]</span>
+<span class="sd">    - &quot;JJS&quot; : June, July, August [6, 7, 8]</span>
+<span class="sd">    - &quot;JF&quot;  : January, February [1, 2]</span>
+<span class="sd">    - &quot;JJSA&quot;: June, July, August, September [6, 7, 8, 9]</span>
+
+<span class="sd">    If the input is not a string or a list, the function wraps the input in a list.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; season_name_to_number(&quot;MAM&quot;)</span>
+<span class="sd">    [3, 4, 5]</span>
+
+<span class="sd">    &gt;&gt;&gt; season_name_to_number([1, 2, 3])</span>
+<span class="sd">    [1, 2, 3]</span>
+
+<span class="sd">    &gt;&gt;&gt; season_name_to_number(2)</span>
+<span class="sd">    [2]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+	<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">season</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;MAM&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;OND&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;JJS&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;JF&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;JJSA&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">season</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">season</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+			<span class="k">return</span> <span class="n">season</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">[</span><span class="n">season</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="get_dates_season"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.get_dates_season">[docs]</a><span class="k">def</span> <span class="nf">get_dates_season</span><span class="p">(</span><span class="n">season</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span>
+	<span class="n">imonths</span> <span class="o">=</span> <span class="n">season_name_to_number</span><span class="p">(</span><span class="n">season</span><span class="p">)</span>
+	<span class="n">last_day</span> <span class="o">=</span> <span class="n">calendar</span><span class="o">.</span><span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">imonths</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="n">start_date</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">imonths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">end_date</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">imonths</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">last_day</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span></div>
 
 <div class="viewcode-block" id="concatenate_netCDF"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.concatenate_netCDF">[docs]</a><span class="k">def</span> <span class="nf">concatenate_netCDF</span><span class="p">(</span><span class="n">fname_list</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot; Get a xarray from a list of netcdf files</span>
@@ -538,7 +581,32 @@
 		<span class="k">return</span> <span class="kc">None</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">return</span> <span class="n">dataset</span></div>
+
+<div class="viewcode-block" id="get_postprocessed_hydro_variables_mfiles"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.get_postprocessed_hydro_variables_mfiles">[docs]</a><span class="k">def</span> <span class="nf">get_postprocessed_hydro_variables_mfiles</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;wrsi&quot;</span><span class="p">,</span> <span class="s2">&quot;aet&quot;</span><span class="p">]):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Function for post processing hydrological variables such as WRSI&quot;&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">ifield</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
 		
+		<span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname</span><span class="p">:</span>
+			<span class="c1"># test if file exist</span>
+			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ifname</span><span class="p">):</span>
+				<span class="k">if</span> <span class="n">ifield</span> <span class="o">==</span> <span class="s2">&quot;wrsi&quot;</span><span class="p">:</span>
+					<span class="c1"># Calculate WRSI </span>
+					<span class="n">data</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="s2">&quot;aet&quot;</span><span class="p">)</span><span class="o">/</span><span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="s2">&quot;pet&quot;</span><span class="p">)</span>
+					<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;wrsi&quot;</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="c1"># Calculate total evaporation</span>
+					<span class="n">data</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="s2">&quot;aet&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="s2">&quot;egw&quot;</span><span class="p">)</span>
+					<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;aet&quot;</span><span class="p">)</span>
+
+				<span class="c1"># Define the path for the yearly NetCDF file</span>
+				<span class="n">fname_output</span> <span class="o">=</span> <span class="n">ifname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">ifield</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span>
+
+				<span class="c1"># Group by year and create a new dataset for each year</span>
+
+				<span class="c1"># loop over years</span>
+				<span class="n">data</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fname_output</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="n">ifname</span><span class="o">+</span><span class="s2">&quot; File does not found, skip this file from the analysis&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="save_xarray_dataset_as_netcdf"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_forecast_tools.save_xarray_dataset_as_netcdf">[docs]</a><span class="k">def</span> <span class="nf">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">var_name</span><span class="p">):</span>
 	<span class="c1"># data has to be in the same dimentions</span>
@@ -595,10 +663,10 @@
 	<span class="c1"># loop over all continues simulation files</span>
 	<span class="n">concat_first_read</span> <span class="o">=</span> <span class="kc">True</span>
 	<span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname_list</span><span class="p">:</span>
-		
+		<span class="nb">print</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
 		<span class="c1"># read datasets</span>
 		<span class="n">data</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">var</span><span class="p">)</span>
-		
+		<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 		<span class="c1"># if seasonal average, select months</span>
 		<span class="k">if</span> <span class="n">season</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 			<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>

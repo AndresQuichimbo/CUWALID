@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CUWALID Tutorial &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="DRYP Tutorial" href="dryp_tutorial.html" />
+    <link rel="prev" title="Tutorials" href="tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models_info.html">Models Information</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">CUWALID Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#preparing-your-system-for-running-cuwalid">Preparing your system for running CUWALID</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-models">Running the models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#input-for-cuwalid">Input for CUWALID</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dryp_tutorial.html">DRYP Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stopet_tutorial.html">StoPET Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storm_tutorial.html">Storm Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forecast_tutorial.html">Forecast</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dryp_developers.html">CUWALID: Developers</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tutorial.html">Tutorials</a></li>
+      <li class="breadcrumb-item active">CUWALID Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/cuwalid_tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cuwalid-tutorial">
+<h1>CUWALID Tutorial<a class="headerlink" href="#cuwalid-tutorial" title="Permalink to this heading"></a></h1>
+<section id="preparing-your-system-for-running-cuwalid">
+<h2>Preparing your system for running CUWALID<a class="headerlink" href="#preparing-your-system-for-running-cuwalid" title="Permalink to this heading"></a></h2>
+<p>IMPORTANT: GDAL is needed to be able to run the storm, this cannot be added to the package because it does not work with the windows operating system,
+you will need to install this yourself, it is recommended if you are using a conda environment you can run this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>gdal
+</pre></div>
+</div>
+<p>IMPORTANT: For running stoPET you need to download some pararmeter files, the system will give you a warning if you try to run it without the files,
+The command for downloading these files if using cuwalid as a package is:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>cuwalid.tools.download_data
+</pre></div>
+</div>
+<p>or if using cuwalid with downloading from github, you can use this command in the root of the directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>cuwalid/tools/download_data.py
+</pre></div>
+</div>
+</section>
+<section id="running-the-models">
+<h2>Running the models<a class="headerlink" href="#running-the-models" title="Permalink to this heading"></a></h2>
+<p>To run the models in CUWALID you can use the code below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cuwalid.main_cuwalid</span> <span class="kn">import</span> <span class="n">run_cuwalid</span>
+
+<span class="n">run_cuwalid</span><span class="p">(</span><span class="s2">&quot;cuwalid_input.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or run from the terminal using this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># replace &quot;input.json&quot; with the path to your input json</span>
+python<span class="w"> </span>-m<span class="w"> </span>cuwalid.main_cuwalid<span class="w"> </span>cuwalid_input.json
+</pre></div>
+</div>
+</section>
+<section id="input-for-cuwalid">
+<h2>Input for CUWALID<a class="headerlink" href="#input-for-cuwalid" title="Permalink to this heading"></a></h2>
+<p>The input of CUWALID is a combined version of all the json files used for the models (e.g. dryp, stopet, storm)
+For finding the meaning of each parameter, I would look at the tutorials for each of the models for an example and description.</p>
+<p>It will look something like this:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span><span class="p">{</span>
+<span class="linenos">  2</span><span class="w">  </span><span class="nt">&quot;storm&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">  3</span><span class="w">      </span><span class="nt">&quot;NUMSIMS&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="linenos">  4</span><span class="w">      </span><span class="nt">&quot;NUMSIMYRS&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="linenos">  5</span><span class="w">      </span><span class="nt">&quot;PTOT_SC&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.00</span><span class="p">],</span>
+<span class="linenos">  6</span><span class="w">      </span><span class="nt">&quot;PTOT_SF&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+<span class="linenos">  7</span><span class="w">      </span><span class="nt">&quot;STORMINESS_SC&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">-0.0</span><span class="p">],</span>
+<span class="linenos">  8</span><span class="w">      </span><span class="nt">&quot;STORMINESS_SF&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+<span class="linenos">  9</span><span class="w">  </span>
+<span class="linenos"> 10</span><span class="w">      </span><span class="nt">&quot;PDF_FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/ProbabilityDensityFunctions.csv&quot;</span><span class="p">,</span>
+<span class="linenos"> 11</span><span class="w">      </span><span class="nt">&quot;SHP_FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/HAD_basin.shp&quot;</span><span class="p">,</span>
+<span class="linenos"> 12</span><span class="w">      </span><span class="nt">&quot;DEM_FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/HAD_wgs84.tif&quot;</span><span class="p">,</span>
+<span class="linenos"> 13</span><span class="w">      </span><span class="nt">&quot;ZON_FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/regions.shp&quot;</span><span class="p">,</span>
+<span class="linenos"> 14</span><span class="w">      </span><span class="nt">&quot;OUT_PATH&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/forecast/regional/dataset/pre/&quot;</span><span class="p">,</span>
+<span class="linenos"> 15</span><span class="w">      </span><span class="nt">&quot;RAIN_MAP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/rainfall_OND.nc&quot;</span><span class="p">,</span>
+<span class="linenos"> 16</span><span class="w">      </span><span class="nt">&quot;NREGIONS&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="linenos"> 17</span><span class="w">      </span><span class="nt">&quot;Z_STAT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+<span class="linenos"> 18</span><span class="w">      </span><span class="nt">&quot;Z_CUTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">300</span><span class="p">,</span><span class="w"> </span><span class="mi">600</span><span class="p">,</span><span class="w"> </span><span class="mi">1200</span><span class="p">],</span>
+<span class="linenos"> 19</span><span class="w">      </span><span class="nt">&quot;TACTIC&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="linenos"> 20</span><span class="w">      </span><span class="nt">&quot;WKT_OGC&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="linenos"> 21</span><span class="w">          </span><span class="s2">&quot;PROJCS[\&quot;WGS84_/_Lambert_Azim_Mozambique\&quot;,&quot;</span><span class="p">,</span>
+<span class="linenos"> 22</span><span class="w">          </span><span class="s2">&quot;    GEOGCS[\&quot;unknown\&quot;,&quot;</span><span class="p">,</span>
+<span class="linenos"> 23</span><span class="w">          </span><span class="s2">&quot;        DATUM[\&quot;unknown\&quot;,&quot;</span><span class="p">,</span>
+<span class="linenos"> 24</span><span class="w">          </span><span class="s2">&quot;            SPHEROID[\&quot;Normal Sphere (r=6370997)\&quot;,6370997,0]],&quot;</span><span class="p">,</span>
+<span class="linenos"> 25</span><span class="w">          </span><span class="s2">&quot;        PRIMEM[\&quot;Greenwich\&quot;,0,&quot;</span><span class="p">,</span>
+<span class="linenos"> 26</span><span class="w">          </span><span class="s2">&quot;            AUTHORITY[\&quot;EPSG\&quot;,\&quot;8901\&quot;]],&quot;</span><span class="p">,</span>
+<span class="linenos"> 27</span><span class="w">          </span><span class="s2">&quot;        UNIT[\&quot;degree\&quot;,0.0174532925199433,&quot;</span><span class="p">,</span>
+<span class="linenos"> 28</span><span class="w">          </span><span class="s2">&quot;            AUTHORITY[\&quot;EPSG\&quot;,\&quot;9122\&quot;]]],&quot;</span><span class="p">,</span>
+<span class="linenos"> 29</span><span class="w">          </span><span class="s2">&quot;    PROJECTION[\&quot;Lambert_Azimuthal_Equal_Area\&quot;],&quot;</span><span class="p">,</span>
+<span class="linenos"> 30</span><span class="w">          </span><span class="s2">&quot;    PARAMETER[\&quot;latitude_of_center\&quot;,5],&quot;</span><span class="p">,</span>
+<span class="linenos"> 31</span><span class="w">          </span><span class="s2">&quot;    PARAMETER[\&quot;longitude_of_center\&quot;,20],&quot;</span><span class="p">,</span>
+<span class="linenos"> 32</span><span class="w">          </span><span class="s2">&quot;    PARAMETER[\&quot;false_easting\&quot;,0],&quot;</span><span class="p">,</span>
+<span class="linenos"> 33</span><span class="w">          </span><span class="s2">&quot;    PARAMETER[\&quot;false_northing\&quot;,0],&quot;</span><span class="p">,</span>
+<span class="linenos"> 34</span><span class="w">          </span><span class="s2">&quot;    UNIT[\&quot;metre\&quot;,1,&quot;</span><span class="p">,</span>
+<span class="linenos"> 35</span><span class="w">          </span><span class="s2">&quot;        AUTHORITY[\&quot;EPSG\&quot;,\&quot;9001\&quot;]],&quot;</span><span class="p">,</span>
+<span class="linenos"> 36</span><span class="w">          </span><span class="s2">&quot;    AXIS[\&quot;Easting\&quot;,EAST],&quot;</span><span class="p">,</span>
+<span class="linenos"> 37</span><span class="w">          </span><span class="s2">&quot;    AXIS[\&quot;Northing\&quot;,NORTH],&quot;</span><span class="p">,</span>
+<span class="linenos"> 38</span><span class="w">          </span><span class="s2">&quot;    AUTHORITY[\&quot;EPSG\&quot;,\&quot;42106\&quot;]]&quot;</span>
+<span class="linenos"> 39</span><span class="w">        </span><span class="p">],</span>
+<span class="linenos"> 40</span><span class="w">      </span><span class="nt">&quot;BUFFER&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">7000.0</span><span class="p">,</span>
+<span class="linenos"> 41</span><span class="w">      </span><span class="nt">&quot;X_RES&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5000.0</span><span class="p">,</span>
+<span class="linenos"> 42</span><span class="w">      </span><span class="nt">&quot;Y_RES&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5000.0</span><span class="p">,</span>
+<span class="linenos"> 43</span><span class="w">      </span><span class="nt">&quot;T_RES&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span>
+<span class="linenos"> 44</span><span class="w">      </span><span class="nt">&quot;NO_RAIN&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span>
+<span class="linenos"> 45</span><span class="w">      </span><span class="nt">&quot;MIN_DUR&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span>
+<span class="linenos"> 46</span><span class="w">      </span><span class="nt">&quot;MAX_DUR&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5760</span><span class="p">,</span>
+<span class="linenos"> 47</span><span class="w">      </span><span class="nt">&quot;MAXD_RAIN&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">120</span><span class="p">,</span>
+<span class="linenos"> 48</span><span class="w">      </span><span class="nt">&quot;DISPERSE_&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.2</span><span class="p">,</span>
+<span class="linenos"> 49</span><span class="w">      </span><span class="nt">&quot;SEASON_TAG&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OND&quot;</span><span class="p">,</span>
+<span class="linenos"> 50</span><span class="w">      </span><span class="nt">&quot;SEED_YEAR&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2024</span><span class="p">,</span>
+<span class="linenos"> 51</span><span class="w">      </span><span class="nt">&quot;TIME_ZONE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Africa/Addis_Ababa&quot;</span><span class="p">,</span>
+<span class="linenos"> 52</span><span class="w">      </span><span class="nt">&quot;DATE_ORIGIN&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1970-01-01&quot;</span><span class="p">,</span>
+<span class="linenos"> 53</span><span class="w">      </span><span class="nt">&quot;RAINFMT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;u2&quot;</span><span class="p">,</span>
+<span class="linenos"> 54</span><span class="w">      </span><span class="nt">&quot;PRECISION&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.002</span><span class="p">,</span>
+<span class="linenos"> 55</span><span class="w">      </span><span class="nt">&quot;TIMEINT&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;u4&quot;</span><span class="p">,</span>
+<span class="linenos"> 56</span><span class="w">      </span><span class="nt">&quot;TIMEFIL&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4294967295</span><span class="p">,</span>
+<span class="linenos"> 57</span><span class="w">      </span><span class="nt">&quot;TIME_OUTNC&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;minutes&quot;</span><span class="p">,</span>
+<span class="linenos"> 58</span><span class="w">      </span><span class="nt">&quot;TIME_DICT_&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 59</span><span class="w">        </span><span class="nt">&quot;seconds&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="linenos"> 60</span><span class="w">        </span><span class="nt">&quot;minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.016666666666666666</span><span class="p">,</span>
+<span class="linenos"> 61</span><span class="w">        </span><span class="nt">&quot;hours&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0002777777777777778</span><span class="p">,</span>
+<span class="linenos"> 62</span><span class="w">        </span><span class="nt">&quot;days&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.1574074074074073e-05</span>
+<span class="linenos"> 63</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos"> 64</span><span class="w">      </span><span class="nt">&quot;RAIN_NAME&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;rain&quot;</span>
+<span class="linenos"> 65</span><span class="w">  </span><span class="p">},</span>
+<span class="linenos"> 66</span><span class="w">  </span><span class="nt">&quot;stopet&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 67</span><span class="w">      </span><span class="nt">&quot;execution_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hpc&quot;</span><span class="p">,</span>
+<span class="linenos"> 68</span><span class="w">      </span><span class="nt">&quot;outputpath&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/forecast/regional/dataset/pet/&quot;</span><span class="p">,</span>
+<span class="linenos"> 69</span><span class="w">      </span><span class="nt">&quot;runtype&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;regional&quot;</span><span class="p">,</span>
+<span class="linenos"> 70</span><span class="w">      </span><span class="nt">&quot;startyear&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2024</span><span class="p">,</span>
+<span class="linenos"> 71</span><span class="w">      </span><span class="nt">&quot;endyear&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2024</span><span class="p">,</span>
+<span class="linenos"> 72</span><span class="w">      </span><span class="nt">&quot;seasonswitch&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="linenos"> 73</span><span class="w">      </span><span class="nt">&quot;startdate&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">274</span><span class="p">,</span>
+<span class="linenos"> 74</span><span class="w">      </span><span class="nt">&quot;enddate&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">365</span><span class="p">,</span>
+<span class="linenos"> 75</span><span class="w">      </span><span class="nt">&quot;seasonName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OND&quot;</span><span class="p">,</span>
+<span class="linenos"> 76</span><span class="w">      </span><span class="nt">&quot;latval&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="linenos"> 77</span><span class="w">      </span><span class="nt">&quot;lonval&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">35.0</span><span class="p">,</span>
+<span class="linenos"> 78</span><span class="w">      </span><span class="nt">&quot;latval_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">-7.0</span><span class="p">,</span>
+<span class="linenos"> 79</span><span class="w">      </span><span class="nt">&quot;latval_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">16.0</span><span class="p">,</span>
+<span class="linenos"> 80</span><span class="w">      </span><span class="nt">&quot;lonval_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">31.0</span><span class="p">,</span>
+<span class="linenos"> 81</span><span class="w">      </span><span class="nt">&quot;lonval_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">52.1</span><span class="p">,</span>
+<span class="linenos"> 82</span><span class="w">      </span><span class="nt">&quot;number_ensm&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="linenos"> 83</span><span class="w">      </span><span class="nt">&quot;tempAdj&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="linenos"> 84</span><span class="w">      </span><span class="nt">&quot;deltat&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="linenos"> 85</span><span class="w">      </span><span class="nt">&quot;locname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HAD&quot;</span><span class="p">,</span>
+<span class="linenos"> 86</span><span class="w">      </span><span class="nt">&quot;udpi_pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="linenos"> 87</span><span class="w">      </span><span class="nt">&quot;slice_only&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="linenos"> 88</span><span class="w">      </span><span class="nt">&quot;tercile_forecast_file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/user/home/fp20123/v2_stopet/ICPAC_TempF_OND2022_HAD.nc&quot;</span>
+<span class="linenos"> 89</span><span class="w">  </span><span class="p">},</span>
+<span class="linenos"> 90</span><span class="w">  </span><span class="nt">&quot;dryp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 91</span><span class="w">      </span><span class="nt">&quot;model_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OND_2024_realization_test&quot;</span><span class="p">,</span>
+<span class="linenos"> 92</span><span class="w">      </span><span class="nt">&quot;path_input&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="linenos"> 93</span><span class="w">      </span><span class="nt">&quot;TERRAIN&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 94</span><span class="w">          </span><span class="nt">&quot;path_dem&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_DEM_utm_mm.asc&quot;</span><span class="p">,</span>
+<span class="linenos"> 95</span><span class="w">          </span><span class="nt">&quot;path_Qo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/outputs/HAD_IMERGcv_sim83_2022_avg_Q_ini.asc&quot;</span><span class="p">,</span>
+<span class="linenos"> 96</span><span class="w">          </span><span class="nt">&quot;path_fdl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_flowdir_land_utm.asc&quot;</span><span class="p">,</span>
+<span class="linenos"> 97</span><span class="w">          </span><span class="nt">&quot;path_riv_decay&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_decay_utm_v2.asc&quot;</span><span class="p">,</span>
+<span class="linenos"> 98</span><span class="w">          </span><span class="nt">&quot;path_mask&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_mask_utm_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos"> 99</span><span class="w">          </span><span class="nt">&quot;path_riv_len&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_riv_length_utm_v2.asc&quot;</span><span class="p">,</span>
+<span class="linenos">100</span><span class="w">          </span><span class="nt">&quot;path_riv_width&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_width_utm_v2.asc&quot;</span><span class="p">,</span>
+<span class="linenos">101</span><span class="w">          </span><span class="nt">&quot;path_riv_elev&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_riv_elev_15pc_utm_m_sm_v3.asc&quot;</span>
+<span class="linenos">102</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos">103</span><span class="w">      </span><span class="nt">&quot;VEGETATION&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">104</span><span class="w">          </span><span class="nt">&quot;path_veg_kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos">105</span><span class="w">          </span><span class="nt">&quot;path_veg_lulc&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos">106</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos">107</span><span class="w">      </span><span class="nt">&quot;UNSATURATED&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">108</span><span class="w">          </span><span class="nt">&quot;path_uz_theta_sat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_theta_sat_utm_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos">109</span><span class="w">          </span><span class="nt">&quot;path_uz_theta_awc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_theta_awc_utm.asc&quot;</span><span class="p">,</span>
+<span class="linenos">110</span><span class="w">          </span><span class="nt">&quot;path_uz_theta_wp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_theta_wp_utm.asc&quot;</span><span class="p">,</span>
+<span class="linenos">111</span><span class="w">          </span><span class="nt">&quot;path_uz_rootdepth&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_rootdepth_stocker_2023_filled_factor.asc&quot;</span><span class="p">,</span>
+<span class="linenos">112</span><span class="w">          </span><span class="nt">&quot;path_uz_lambda&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_lambdas_utm_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos">113</span><span class="w">          </span><span class="nt">&quot;path_uz_psi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_psi_utm_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos">114</span><span class="w">          </span><span class="nt">&quot;path_uz_ksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_ksat_utm_zhung.asc&quot;</span><span class="p">,</span>
+<span class="linenos">115</span><span class="w">          </span><span class="nt">&quot;path_uz_theta&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/outputs/HAD_IMERGcv_sim83_2022_avg_tht_ini.asc&quot;</span>
+<span class="linenos">116</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos">117</span><span class="w">      </span><span class="nt">&quot;RIPARIAN&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">118</span><span class="w">          </span><span class="nt">&quot;path_rp_theta_sat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_theta_sat_utm_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos">119</span><span class="w">          </span><span class="nt">&quot;path_rp_theta_awc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_theta_awc_utm.asc&quot;</span><span class="p">,</span>
+<span class="linenos">120</span><span class="w">          </span><span class="nt">&quot;path_rp_theta_wp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_theta_wp_utm.asc&quot;</span><span class="p">,</span>
+<span class="linenos">121</span><span class="w">          </span><span class="nt">&quot;path_rp_rootdepth&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_rootdepth_utm_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos">122</span><span class="w">          </span><span class="nt">&quot;path_rp_lambda&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_lambdas_utm_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos">123</span><span class="w">          </span><span class="nt">&quot;path_rp_psi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_psi_utm_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos">124</span><span class="w">          </span><span class="nt">&quot;path_rp_ksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_ksat_utm_m.asc&quot;</span><span class="p">,</span>
+<span class="linenos">125</span><span class="w">          </span><span class="nt">&quot;path_rp_theta&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/outputs/HAD_IMERGcv_sim83_2022_avg_tht_rp_ini.asc&quot;</span>
+<span class="linenos">126</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos">127</span><span class="w">      </span><span class="nt">&quot;SATURATED&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">128</span><span class="w">          </span><span class="nt">&quot;path_sz_ksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_ksat_D2E_ksat_sim_85_utm.asc&quot;</span><span class="p">,</span>
+<span class="linenos">129</span><span class="w">          </span><span class="nt">&quot;path_sz_sy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_D2E_sy_ghlymps_utm_mmm.asc&quot;</span><span class="p">,</span>
+<span class="linenos">130</span><span class="w">          </span><span class="nt">&quot;path_sz_wte&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/outputs/HAD_IMERGcv_sim83_2022_avg_wte_ini.asc&quot;</span><span class="p">,</span>
+<span class="linenos">131</span><span class="w">          </span><span class="nt">&quot;path_sz_bc_head&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_CHBm_utm.asc&quot;</span><span class="p">,</span>
+<span class="linenos">132</span><span class="w">          </span><span class="nt">&quot;path_sz_bottom&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_botb.asc&quot;</span><span class="p">,</span>
+<span class="linenos">133</span><span class="w">          </span><span class="nt">&quot;path_sz_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_BDdepth_utm_m_sm_v2.asc&quot;</span><span class="p">,</span>
+<span class="linenos">134</span><span class="w">          </span><span class="nt">&quot;path_sz_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_globathymetry_utm.asc&quot;</span>
+<span class="linenos">135</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos">136</span><span class="w">      </span><span class="nt">&quot;METEO&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">137</span><span class="w">          </span><span class="nt">&quot;path_pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/forecast/regional/dataset/pre/OND_2024/Forecast_PRE_HAD_ens_12_OND_2024.nc&quot;</span><span class="p">,</span>
+<span class="linenos">138</span><span class="w">          </span><span class="nt">&quot;path_pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/forecast/regional/dataset/pet/OND_2024_PET_forecast/Forecast_PET_HAD_ens_22_OND_2024.nc&quot;</span><span class="p">,</span>
+<span class="linenos">139</span><span class="w">          </span><span class="nt">&quot;path_lai&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos">140</span><span class="w">          </span><span class="nt">&quot;path_savi&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="linenos">141</span><span class="w">          </span><span class="nt">&quot;path_kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="linenos">142</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos">143</span><span class="w">      </span><span class="nt">&quot;WATER_BODIES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">144</span><span class="w">          </span><span class="nt">&quot;path_lake_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_globathymetry_utm.asc&quot;</span><span class="p">,</span>
+<span class="linenos">145</span><span class="w">          </span><span class="nt">&quot;path_pnd_hmax&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_ali2024_ponds_max_depth_utm_no_lakes.asc&quot;</span><span class="p">,</span>
+<span class="linenos">146</span><span class="w">          </span><span class="nt">&quot;path_pnd_Amax&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_ali2024_ponds_max_area_utm_no_lakes.asc&quot;</span>
+<span class="linenos">147</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos">148</span><span class="w">      </span><span class="nt">&quot;INTERCEPTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">149</span><span class="w">          </span><span class="nt">&quot;path_veg_rp_extinction_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_rootdepth_stocker_2023_filled.asc&quot;</span>
+<span class="linenos">150</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos">151</span><span class="w">      </span><span class="nt">&quot;OUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">152</span><span class="w">          </span><span class="nt">&quot;path_out_sz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_dryp_station_utm.csv&quot;</span><span class="p">,</span>
+<span class="linenos">153</span><span class="w">          </span><span class="nt">&quot;path_out_uz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_dryp_station_utm.csv&quot;</span><span class="p">,</span>
+<span class="linenos">154</span><span class="w">          </span><span class="nt">&quot;path_out_oz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_dryp_station_utm.csv&quot;</span><span class="p">,</span>
+<span class="linenos">155</span><span class="w">          </span><span class="nt">&quot;path_output&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/leo_test/CUWALID/dryp_output&quot;</span><span class="p">,</span>
+<span class="linenos">156</span><span class="w">          </span><span class="nt">&quot;path_setting&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2024.json&quot;</span><span class="p">,</span>
+<span class="linenos">157</span><span class="w">          </span><span class="nt">&quot;path_projection&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/home/cuwalid/training/historical/regional/model/HAD_projection.dwapm&quot;</span>
+<span class="linenos">158</span><span class="w">      </span><span class="p">}</span>
+<span class="linenos">159</span><span class="w">  </span><span class="p">},</span>
+<span class="linenos">160</span><span class="w">  </span><span class="nt">&quot;dryp_settings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">161</span><span class="w">      </span><span class="nt">&quot;SIMULATION_PERIOD&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">162</span><span class="w">          </span><span class="nt">&quot;start_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024 10 1&quot;</span><span class="p">,</span>
+<span class="linenos">163</span><span class="w">          </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024 12 31&quot;</span>
+<span class="linenos">164</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos">165</span><span class="w">      </span><span class="nt">&quot;PROJECTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs&quot;</span><span class="p">,</span>
+<span class="linenos">166</span><span class="w">      </span><span class="nt">&quot;TIMESTEP_SETTINGS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">167</span><span class="w">          </span><span class="nt">&quot;dt_of&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="linenos">168</span><span class="w">          </span><span class="nt">&quot;dt_uz&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="linenos">169</span><span class="w">          </span><span class="nt">&quot;dt_gw&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span>
+<span class="linenos">170</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos">171</span><span class="w">      </span><span class="nt">&quot;READING&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">172</span><span class="w">          </span><span class="nt">&quot;data_reading&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">173</span><span class="w">              </span><span class="nt">&quot;pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="linenos">174</span><span class="w">              </span><span class="nt">&quot;pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="linenos">175</span><span class="w">              </span><span class="nt">&quot;kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="linenos">176</span><span class="w">              </span><span class="nt">&quot;savi&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="linenos">177</span><span class="w">              </span><span class="nt">&quot;lai&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span>
+<span class="linenos">178</span><span class="w">          </span><span class="p">},</span>
+<span class="linenos">179</span><span class="w">          </span><span class="nt">&quot;data_step&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">180</span><span class="w">              </span><span class="nt">&quot;pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span>
+<span class="linenos">181</span><span class="w">              </span><span class="nt">&quot;pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="linenos">182</span><span class="w">              </span><span class="nt">&quot;kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1440</span><span class="p">,</span>
+<span class="linenos">183</span><span class="w">              </span><span class="nt">&quot;savi&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1440</span><span class="p">,</span>
+<span class="linenos">184</span><span class="w">              </span><span class="nt">&quot;lai&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1440</span>
+<span class="linenos">185</span><span class="w">          </span><span class="p">},</span>
+<span class="linenos">186</span><span class="w">          </span><span class="nt">&quot;data_reproject&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">187</span><span class="w">              </span><span class="nt">&quot;pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="linenos">188</span><span class="w">              </span><span class="nt">&quot;pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">189</span><span class="w">              </span><span class="nt">&quot;kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="linenos">190</span><span class="w">              </span><span class="nt">&quot;savi&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="linenos">191</span><span class="w">              </span><span class="nt">&quot;lai&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="linenos">192</span><span class="w">          </span><span class="p">},</span>
+<span class="linenos">193</span><span class="w">          </span><span class="nt">&quot;data_interp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">194</span><span class="w">              </span><span class="nt">&quot;pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">195</span><span class="w">              </span><span class="nt">&quot;pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">196</span><span class="w">              </span><span class="nt">&quot;kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="linenos">197</span><span class="w">              </span><span class="nt">&quot;savi&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="linenos">198</span><span class="w">              </span><span class="nt">&quot;lai&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="linenos">199</span><span class="w">          </span><span class="p">},</span>
+<span class="linenos">200</span><span class="w">          </span><span class="nt">&quot;data_projection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">201</span><span class="w">              </span><span class="nt">&quot;pre&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EPSG:42106&quot;</span><span class="p">,</span>
+<span class="linenos">202</span><span class="w">              </span><span class="nt">&quot;pet&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
+<span class="linenos">203</span><span class="w">              </span><span class="nt">&quot;kc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
+<span class="linenos">204</span><span class="w">              </span><span class="nt">&quot;savi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EPSG:4326&quot;</span><span class="p">,</span>
+<span class="linenos">205</span><span class="w">              </span><span class="nt">&quot;lai&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EPSG:4326&quot;</span>
+<span class="linenos">206</span><span class="w">          </span><span class="p">}</span>
+<span class="linenos">207</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos">208</span><span class="w">      </span><span class="nt">&quot;COMPONENTS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">209</span><span class="w">          </span><span class="nt">&quot;method_inf&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="linenos">210</span><span class="w">          </span><span class="nt">&quot;run_gw&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">211</span><span class="w">          </span><span class="nt">&quot;method_gw&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="linenos">212</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos">213</span><span class="w">      </span><span class="nt">&quot;OUTPUT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">214</span><span class="w">          </span><span class="nt">&quot;output_csv&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">215</span><span class="w">          </span><span class="nt">&quot;output_grid&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="linenos">216</span><span class="w">          </span><span class="nt">&quot;output_dt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1M&quot;</span>
+<span class="linenos">217</span><span class="w">      </span><span class="p">},</span>
+<span class="linenos">218</span><span class="w">      </span><span class="nt">&quot;GLOBAL_FACTORS&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">219</span><span class="w">          </span><span class="nt">&quot;uz_kdt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="linenos">220</span><span class="w">          </span><span class="nt">&quot;uz_kdroot&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.5&quot;</span><span class="p">,</span>
+<span class="linenos">221</span><span class="w">          </span><span class="nt">&quot;uz_kawc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="linenos">222</span><span class="w">          </span><span class="nt">&quot;uz_kkast&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.7&quot;</span><span class="p">,</span>
+<span class="linenos">223</span><span class="w">          </span><span class="nt">&quot;uz_ksigma&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="linenos">224</span><span class="w">          </span><span class="nt">&quot;riv_kksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.87&quot;</span><span class="p">,</span>
+<span class="linenos">225</span><span class="w">          </span><span class="nt">&quot;riv_kdecay&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;20.3&quot;</span><span class="p">,</span>
+<span class="linenos">226</span><span class="w">          </span><span class="nt">&quot;riv_kwidth&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+<span class="linenos">227</span><span class="w">          </span><span class="nt">&quot;sz_kksat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.10&quot;</span><span class="p">,</span>
+<span class="linenos">228</span><span class="w">          </span><span class="nt">&quot;sz_ksy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.82&quot;</span>
+<span class="linenos">229</span><span class="w">      </span><span class="p">}</span>
+<span class="linenos">230</span><span class="w">  </span><span class="p">}</span><span class="w">   </span>
+<span class="linenos">231</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorial.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dryp_tutorial.html" class="btn btn-neutral float-right" title="DRYP Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

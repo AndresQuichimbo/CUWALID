@@ -142,7 +142,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="cuwalid.storm.checks_.welcome">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.checks_.</span></span><span class="sig-name descname"><span class="pre">welcome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NUMSIMS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NUMSIMYRS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PTOT_SC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PTOT_SF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">STORMINESS_SC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">STORMINESS_SF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OUT_PATH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'storm_output'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#welcome"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.welcome" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.checks_.</span></span><span class="sig-name descname"><span class="pre">welcome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NUMSIMS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NUMSIMYRS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PTOT_SC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PTOT_SF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">STORMINESS_SC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">STORMINESS_SF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OUT_PATH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'storm_output'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SEASON</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">YEAR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#welcome"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.welcome" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="cuwalid.storm.checks_.welcome.infer_scenario">
@@ -158,9 +158,9 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="cuwalid.storm.checks_.welcome.output_path">
 <span class="sig-name descname"><span class="pre">output_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/checks_.html#welcome.output_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.checks_.welcome.output_path" title="Permalink to this definition"></a></dt>
-<dd><p>generates the names of the output nc-files.</p>
-<p>Input: none.</p>
-<p>Output -&gt; list; containing output file-paths/names.</p>
+<dd><p>Generates the names of the output NC files.
+Input: none.
+Output -&gt; list; containing output file paths/names.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -216,14 +216,724 @@ onbits -&gt; non-negative integer less than 2**len(shape)</p>
 </dd></dl>
 
 </section>
-<section id="cuwalid-storm-main-storm-module">
-<h2>cuwalid.storm.main_storm module<a class="headerlink" href="#cuwalid-storm-main-storm-module" title="Permalink to this heading"></a></h2>
+<section id="module-cuwalid.storm.main_storm">
+<span id="cuwalid-storm-main-storm-module"></span><h2>cuwalid.storm.main_storm module<a class="headerlink" href="#module-cuwalid.storm.main_storm" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.main_storm.run_storm">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.main_storm.</span></span><span class="sig-name descname"><span class="pre">run_storm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/main_storm.html#run_storm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.main_storm.run_storm" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="cuwalid-storm-pdfs-module">
-<h2>cuwalid.storm.pdfs_ module<a class="headerlink" href="#cuwalid-storm-pdfs-module" title="Permalink to this heading"></a></h2>
+<section id="module-cuwalid.storm.pdfs_">
+<span id="cuwalid-storm-pdfs-module"></span><h2>cuwalid.storm.pdfs_ module<a class="headerlink" href="#module-cuwalid.storm.pdfs_" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.betas">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">betas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#betas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.betas" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.betas.beta_calc">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">beta_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iseed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#betas.beta_calc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.betas.beta_calc" title="Permalink to this definition"></a></dt>
+<dd><p>finds roots for the passed <em>equation</em>.</p>
+<p>Input -&gt;
+<em>base_df</em> : pd.DataFrame; with ‘pf_maxrainrate’ &amp; ‘radii’&amp; ‘volume’.
+<em>equation</em> : function; lambda-function representing the model to fit.
+<em>iseed</em> : float; starting estimate for the roots.</p>
+<p>Output -&gt; tuple with the found roots (left) and their flags (right).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.betas.find_beta">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_flag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#betas.find_beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.betas.find_beta" title="Permalink to this definition"></a></dt>
+<dd><p>appends the retrieved betas to the passed data.frame.</p>
+<p>Input -&gt;
+<em>base</em> : pd.DataFrame; storm-tracking data.
+<em>decay_model</em> : function; lambda-function representing the model to fit.
+<em>seed</em> : float; starting estimate for the roots.
+<em>use_flag</em> : bool; use only ‘converging’[1] values (True); or all (F).</p>
+<p>Output -&gt; updated and trimmed pd.DataFrame with ‘beta’ &amp; ‘flag’ fields.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.betas.pd_base">
+<span class="sig-name descname"><span class="pre">pd_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#betas.pd_base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.betas.pd_base" title="Permalink to this definition"></a></dt>
+<dd><p>add estra variables to enable model fitting/optimization/solving.</p>
+<p>Input -&gt;
+<em>cset</em> : pd.DataFrame; with fields            ‘pf_maxrainrate’ &amp; ‘radii’-or-‘area’ &amp; ‘avgrainrate’-or-‘rratio’.</p>
+<p>Output -&gt; pd.DataFrame with extra variables (suited for model-fitting).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.betas.pf_base">
+<span class="sig-name descname"><span class="pre">pf_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#betas.pf_base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.betas.pf_base" title="Permalink to this definition"></a></dt>
+<dd><p>computes variables based on ‘precipitation-feature’ tracking.</p>
+<p>Input -&gt;
+<em>cset</em> : xarray; storm-tracking data.</p>
+<p>Output -&gt; pd.DataFrame with computed/augmented/more variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.betas.tt_base">
+<span class="sig-name descname"><span class="pre">tt_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#betas.tt_base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.betas.tt_base" title="Permalink to this definition"></a></dt>
+<dd><p>computes variables based on ‘totals-feature’ tracking.</p>
+<p>Input -&gt;
+<em>cset</em> : xarray; storm-tracking data.</p>
+<p>Output -&gt; pd.DataFrame with computed/augmented/more variables.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.circular">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">circular</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#circular"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.circular" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.circular.compute_probs">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_probs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M_best</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#circular.compute_probs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.circular.compute_probs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.circular.find_best_parameters">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_best_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#circular.find_best_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.circular.find_best_parameters" title="Permalink to this definition"></a></dt>
+<dd><p>estimates the optima parameters for a von Mises model of n-mixtures.</p>
+<p>Input: np.array.</p>
+<p><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs -&gt;
+best_model : <em>sklearn.mixture._gaussian_mixture.GaussianMixture</em>.
+n_mix      : int; must be provided if <em>best_model</em> is not.
+<a href="#id47"><span class="problematic" id="id48">phi_</span></a>       : np.float; parameter phi (or mu) of each von Mises.
+<a href="#id49"><span class="problematic" id="id50">kappa_</span></a>     : np.float; parameter kappa of each von Mises.
+<a href="#id51"><span class="problematic" id="id52">alpha_</span></a>     : np.float [0-1]; relative probability of each von Mises.</p>
+<p>Output -&gt; list with pd.DataFrame (optima pars) and str.model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.circular.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#circular.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.circular.fit" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.circular.model_str">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_mix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#circular.model_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.circular.model_str" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.circular.plot_bic">
+<span class="sig-name descname"><span class="pre">plot_bic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#circular.plot_bic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.circular.plot_bic" title="Permalink to this definition"></a></dt>
+<dd><p>3-plot panel with the optimum von Mises-mix and AIC/BIC analysis.</p>
+<p><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs -&gt;
+file : str; name of the output-plot.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.circular.plot_samples">
+<span class="sig-name descname"><span class="pre">plot_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#circular.plot_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.circular.plot_samples" title="Permalink to this definition"></a></dt>
+<dd><p>plot a histogram with the optimal von Mises-mix model.</p>
+<p><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs -&gt;
+n : int; number of samples.
+data : np.array; vector of random samples.
+data_type : str; ‘tod’ or ‘doy’ or ‘dir’ or ‘rad’.
+bins : int; bins for histogram.
+file : str; name of the output-plot.</p>
+<p>Output -&gt; plot (matplotlib.figure or exported file).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.circular.samples">
+<span class="sig-name descname"><span class="pre">samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">629</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#circular.samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.circular.samples" title="Permalink to this definition"></a></dt>
+<dd><p>generates a random sample for the mixture of von Mises distributions.</p>
+<p>Input -&gt;
+<em>N_</em> : int; number of points in the random sample.</p>
+<p><a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs -&gt;
+<a href="#id53"><span class="problematic" id="id54">phi_</span></a> : np.float; parameter phi (or mu) of each von Mises.
+<a href="#id55"><span class="problematic" id="id56">kappa_</span></a> : np.float; parameter kappa of each von Mises.
+<a href="#id57"><span class="problematic" id="id58">alpha_</span></a> : np.float [0-1]; relative probability of each von Mises.
+data_type : char; type of output (i.e., ‘tod’, ‘doy’ or ‘dir’).</p>
+<p>Output -&gt; array of size ‘<a href="#id59"><span class="problematic" id="id60">N_</span></a>’.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.circular.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#circular.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.circular.save" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.clipping">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">clipping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#clipping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.clipping" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.clipping.clip_trac">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clip_trac</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#clipping.clip_trac"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.clipping.clip_trac" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.clipping.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#clipping.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.clipping.plot" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.compute">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">RAIN_MAP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SHP_FILE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NREGIONS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WKT_OGC</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ZON_FILE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SEASON_TAG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PDF_FILE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BUFFER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_RES</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y_RES</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#compute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.compute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.copulas">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">copulas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pair</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_STAT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_CUTS</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#copulas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.copulas" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.copulas.compress">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xset_var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#copulas.compress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.copulas.compress" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.copulas.pairing">
+<span class="sig-name descname"><span class="pre">pairing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pair</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#copulas.pairing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.copulas.pairing" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.copulas.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#copulas.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.copulas.plot" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.copulas.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#copulas.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.copulas.save" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.copulas.z_frame">
+<span class="sig-name descname"><span class="pre">z_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pair</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#copulas.z_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.copulas.z_frame" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.discrete">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">discrete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#discrete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.discrete" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.discrete.best">
+<span class="sig-name descname"><span class="pre">best</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">brief_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#discrete.best"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.discrete.best" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.discrete.e_group">
+<span class="sig-name descname"><span class="pre">e_group</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#discrete.e_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.discrete.e_group" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.discrete.pmf_fit">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pmf_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distro</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#discrete.pmf_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.discrete.pmf_fit" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.discrete.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#discrete.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.discrete.save" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.elevation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">elevation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WKT_OGC</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DEM_FILE</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#elevation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.elevation" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.elevation.reproj">
+<span class="sig-name descname"><span class="pre">reproj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#elevation.reproj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.elevation.reproj" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.elevation.retrieve_z">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">retrieve_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_STAT</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#elevation.retrieve_z"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.elevation.retrieve_z" title="Permalink to this definition"></a></dt>
+<dd><p>retrieves the elevation (from <em>raster</em>) for a set of geo_features.</p>
+<p>Input -&gt;
+<em>geo_</em>   : gpd.Geoseries.
+<em>raster</em> : path-to-TIFF.</p>
+<p><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs</p>
+<p>z_stat  : str (from <em>rasterstats</em>) to compute metrics on raster (count,             min, max, mean, sum, std, median, majority, minority, unique,             range, nodata, nan).</p>
+<p>zones   : list; specifying the limits of the elevation bands.</p>
+<p>dem_crs : DEM’s WKT.</p>
+<p>batch_size : int; amount of centers to process at a time.</p>
+<p>Output -&gt; tuple; pd.DataFrame containing summary.stats (first), and             elevations tied to an elevation band (last).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.elevation.rings">
+<span class="sig-name descname"><span class="pre">rings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#elevation.rings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.elevation.rings" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.field">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rain_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_prj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_prj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WKT_OGC</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.field" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.field.empty_map">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">empty_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WKT_OGC</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#field.empty_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.field.empty_map" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.field.reproject">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reproject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src_xr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_xr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resampling_method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#field.reproject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.field.reproject" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.fit_pdf">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">fit_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">family</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#fit_pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.fit_pdf" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.fit_pdf.e_group">
+<span class="sig-name descname"><span class="pre">e_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#fit_pdf.e_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.fit_pdf.e_group" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.fit_pdf.pdf_fit">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pdf_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">family</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_sel</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#fit_pdf.pdf_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.fit_pdf.pdf_fit" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.fit_pdf.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#fit_pdf.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.fit_pdf.plot" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.fit_pdf.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#fit_pdf.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.fit_pdf.save" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.masking">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">masking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SHP_FILE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WKT_OGC</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BUFFER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_RES</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y_RES</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#masking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.masking" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.masking.coords">
+<span class="sig-name descname"><span class="pre">coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbox</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#masking.coords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.masking.coords" title="Permalink to this definition"></a></dt>
+<dd><p>define coordinates of the X and Y axes.</p>
+<p>Input -&gt;
+<em>bbox</em> : dict; dictionary wiht the bounding.box limits {l, r, b, t}.</p>
+<p>Output -&gt; tuple; 1D-numpy with local coordinates.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.masking.masks">
+<span class="sig-name descname"><span class="pre">masks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#masking.masks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.masking.masks" title="Permalink to this definition"></a></dt>
+<dd><p>define coordinates of the X and Y axes.</p>
+<p>Input: none.</p>
+<p>Output -&gt; tuple; 2D-numpy(s) having the buffer &amp; catchment rasters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.masking.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#masking.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.masking.plot" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.masking.shapsterize">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shapsterize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jeometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_res</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_res</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burn_tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_crs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#masking.shapsterize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.masking.shapsterize" title="Permalink to this definition"></a></dt>
+<dd><p>burn a shp/geopandas.GeoDataFrame into a raster/2D-numpy.</p>
+<p>Input -&gt;
+<em>jeometry</em> : str; representing a JSON (from geopandas.GeoDataFrame).
+<em>x_res</em> : float; spatial resolution (in meters) along the X-dimension.
+<em>y_res</em> : float; spatial resolution (in meters) along the Y-dimension.
+<em>zero</em> : int/float; default value to pre-empt the raster (with).
+<em>burn_tag</em> : char; geoPandas.GeoDataFrame column used as burning values.
+<em>limits</em> : list; float limits in the order: ‘l’, ‘b’, ‘r’, ‘t’
+<em>out_crs</em> : char; PROJ4 string of output’s CRS.</p>
+<p><a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs -&gt;
+name : char; the path to raster’s location (ending in “.tif”).
+format : char; output format (‘MEM’ for inMemory; ‘GTiff’…).
+out_type : int?; gdal.object specifying the output bit-size.
+add : bool; aggregate geometry.values in case of overlapping?.</p>
+<p>Output -&gt; numpy; 2D-numpy (or ‘.tif’ file).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.mode_">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">mode_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#mode_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.mode_" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.one_vm">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">one_vm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trac</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#one_vm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.one_vm" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.region">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SHP_FILE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.region" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.regional">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">regional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_prj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bfr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WKT_OGC</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ZON_FILE</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#regional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.regional" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.regional.k_regions">
+<span class="sig-name descname"><span class="pre">k_regions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r_eal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#regional.k_regions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.regional.k_regions" title="Permalink to this definition"></a></dt>
+<dd><p>split the field into <em>n_c</em> k-means.</p>
+<p>Input:</p>
+<p>r_eal : 2D.np; rainfall.field [realization].
+catch : 2D.np; catchment/region.
+n_c : int; number of clusters.</p>
+<p>Output -&gt; 2D.numpy with splitted regions; and dic with k_means.per.region.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.regional.morphopen">
+<span class="sig-name descname"><span class="pre">morphopen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">LAB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#regional.morphopen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.regional.morphopen" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.regional.n_regions">
+<span class="sig-name descname"><span class="pre">n_regions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r_eal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statistic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#regional.n_regions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.regional.n_regions" title="Permalink to this definition"></a></dt>
+<dd><p>computes the n-statistic over the field.</p>
+<p>Input -&gt;
+<em>r_eal</em> : 2D.numpy; rainfall.field [realization].
+<em>catch</em> : 2D.numpy; catchment/region.
+<em>buff</em> : 2D.numpy; catchment/region [previously regionalized].
+<em>statistic</em>: str; nan.statistic to compute (default ‘mean’).</p>
+<p><a href="#id13"><span class="problematic" id="id14">**</span></a>kwargs</p>
+<p>Output -&gt; 2D.numpy with splitted regions; and dic with n_means.per.region.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.regional.sort_kmeans">
+<span class="sig-name descname"><span class="pre">sort_kmeans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k_means</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#regional.sort_kmeans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.regional.sort_kmeans" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.regional.to_shp">
+<span class="sig-name descname"><span class="pre">to_shp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mopen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realization</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catchm_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wkt_prj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#regional.to_shp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.regional.to_shp" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.regional.xport_shp">
+<span class="sig-name descname"><span class="pre">xport_shp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#regional.xport_shp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.regional.xport_shp" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.pdfs_.totals">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.pdfs_.</span></span><span class="sig-name descname"><span class="pre">totals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">set_tot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_km</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_RES</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y_RES</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/pdfs_.html#totals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.pdfs_.totals" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="cuwalid-storm-rainfall-module">
-<h2>cuwalid.storm.rainfall module<a class="headerlink" href="#cuwalid-storm-rainfall-module" title="Permalink to this heading"></a></h2>
+<section id="module-cuwalid.storm.rainfall">
+<span id="cuwalid-storm-rainfall-module"></span><h2>cuwalid.storm.rainfall module<a class="headerlink" href="#module-cuwalid.storm.rainfall" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.base_round">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">base_round</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stamps</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#base_round"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.base_round" title="Permalink to this definition"></a></dt>
+<dd><p>rounds numbers or time.stamps to either floor or nearest specific T_RES/base.</p>
+<p>Input -&gt;
+<em>stamps</em> : np.array; float numpy (also representing seconds since some origin).</p>
+<p><a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs -&gt;
+base : int; rounding (temporal) resolution.
+time_tag : char; string indicating the base resolution.
+time_dic : dic; dictionary containing the equivalences of ‘tags’ in base 60.
+base_system: int; conversion constant for the time_dic-system (default: 60).
+method : char; rounding method (either ‘floor’ or ‘nearest’).
+round : int; significative digits/places for rounding.</p>
+<p>Output -&gt; rounded numpy (to custom resolution/base, i.e., T_RES).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.construct_pdfs">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">construct_pdfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdframe</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#construct_pdfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.construct_pdfs" title="Permalink to this definition"></a></dt>
+<dd><p>sets up and fills the global key pdf-parameters for STORM to work.</p>
+<p>Input -&gt;
+<em>pdframe</em> : pd.DataFrame; dataframe with tabulated pdf-parameters.</p>
+<p><a href="#id17"><span class="problematic" id="id18">**</span></a>kwargs -&gt;
+tactic : int; strategy to compute STORM (1 via BETPAR; else via COPxxx).</p>
+<p>Output: None.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.copula_sampling">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">copula_sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">copula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_one</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_two</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#copula_sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.copula_sampling" title="Permalink to this definition"></a></dt>
+<dd><p>samples randomly (n-size) from a copula, conditional to two distros.</p>
+<p>Input -&gt;
+<em>copula</em> : dict; contains a np.float (i.e., rho) per elevation band
+<em>dist_one</em> : dict; contains a scipy.stats (pdf) frozen infrastructure
+<em>dist_two</em> : dict; contains a scipy.stats (pdf) frozen infrastructure.</p>
+<p><a href="#id19"><span class="problematic" id="id20">**</span></a>kwargs -&gt;
+band : char; key (of the ‘qant’ dictionary) addressing the frozen pdf.
+n : int; numbers of (random) samples.</p>
+<p>Output -&gt; tuple; containing np.floats for dist_one-samples (first) and         dist_two-samples (last).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.faster_sampling">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">faster_sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distro</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#faster_sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.faster_sampling" title="Permalink to this definition"></a></dt>
+<dd><p>faster sampling (truncated or not) preserving the n-requested.</p>
+<p>Input -&gt;
+<em>distro</em> : dict; contains a scipy.stats (pdf) frozen infrastructure.</p>
+<p><a href="#id21"><span class="problematic" id="id22">**</span></a>kwargs -&gt;
+limits : tuple; variable limits to sample within.
+band : char; key (of the ‘distro’ dictionary) addressing the frozen pdf.
+n : int; numbers of (random) samples.</p>
+<p>Output -&gt; np.array of floats with n-samples.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.last_ring">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">last_ring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radii</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centres</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#last_ring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.last_ring" title="Permalink to this definition"></a></dt>
+<dd><p>creates a circular polygon of given radius and center.</p>
+<p>Input -&gt;
+<em>radii</em> : numpy; float numpy of storm-radius (in km).
+<em>centres</em> : numpy; 2D-numpy with the X-Y’s of storm centers.</p>
+<p><a href="#id23"><span class="problematic" id="id24">**</span></a>kwargs -&gt;
+scaling_dis : float; scaling factor between radius-units and m (1000m==1km).
+base_radius : float; minimum (base) radius (in km).
+nonsense : int; factor to tailor-suit the segment resolution.</p>
+<p>Output -&gt; geopandas.GeoDataFrame with circular polygons of storm-max-radii.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.loop">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">loop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">np_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nreg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upd_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxima</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_pool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#loop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.loop" title="Permalink to this definition"></a></dt>
+<dd><p>calls children-functions to compute storms until seasonal rain is reached.</p>
+<p>Input -&gt;
+<em>train</em> : float; total seasonal rainfall to reach.
+<em>mask_shp</em> : pd.Series; pandas series with GEOMETRY.
+<em>np_mask</em> : numpy; 2D-numpy with 1’s representing the rain-region.
+<em>nreg</em> : int; rain-region index.
+<em>nsim</em> : int; index/ordinal indicating the simulation.
+<em>simy</em> : int; index/ordinal indicating the year under simulation.
+<em>mlen</em> : int; number of months in the season
+<em>upd_max</em> : float; maximum rainfall intensity (mm/h) allowed.
+<em>maxima</em> : int; maximum value (in RAINFMT) (to clip uX-integers).
+<em>date_pool</em> : list of start &amp; end ‘datetime.datetime(s)’ of the season.</p>
+<p><a href="#id25"><span class="problematic" id="id26">**</span></a>kwargs -&gt;
+Output -&gt; tuple; xarray with seasonal rainfal for a region (first);         xarray with total rainfall per time-step (second);             float indicating the seasonal total reached (third).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.lotr">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">lotr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lapse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centre</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#lotr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.lotr" title="Permalink to this definition"></a></dt>
+<dd><p>creates circular rain.rings evenly spaced from the storm.centre outwards.</p>
+<p>Input -&gt;
+<em>radius</em> : numpy; float numpy of storm-radius (in km).
+<em>decay</em> : numpy; float numpy of radial-decay (in 1/km).
+<em>i0</em> : numpy; float numpy of maximum storm intesity (in mm/h).
+<em>lapse</em> : numpy; float numpy of the actual raining time-lapse (in h).
+<em>centre</em> : numpy; 2D-numpy with the X-Y of storm center.</p>
+<p><a href="#id27"><span class="problematic" id="id28">**</span></a>kwargs -&gt;
+scaling_dis : float; scaling factor between radius-units and m (1000m==1km).
+res : int; number of segments in which a circle.quadrant is divided into.
+dot_size : float; circle’s radius emulating the storm centre’s point/dot.
+sep_ring : float; separation (in km) between rainfall rings.</p>
+<p>Output -&gt; geopandas.GeoDataFrame with linestings of circular.rain from centre.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.moving_storm">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">moving_storm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_par</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vel_par</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stridin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centres</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#moving_storm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.moving_storm" title="Permalink to this definition"></a></dt>
+<dd><p>samples storm direction and velocity; and moves storm initial centres along.</p>
+<p>Input -&gt;
+<em>dir_par</em> : dic; vonMises-Fisher mixture-parameters for storm-direction.
+<em>vel_par</em> : dict; contains a scipy.stats (pdf) frozen infrastructure.
+<em>stridin</em> : list; numpys list with time-quantization per storm.
+<em>centres</em> : numpy; 2D-numpy with the X-Y’s of storm initial centers.</p>
+<p><a href="#id29"><span class="problematic" id="id30">**</span></a>kwargs -&gt;
+speed_lim : tuple; variable limits to sample within.
+speed_stat : char; numpy stat to apply to an array.</p>
+<p>Output -&gt; (list of?) 2D-numpy array of X-Y’s displaced/moved storm centres.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.nc_bytes">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">nc_bytes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#nc_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.nc_bytes" title="Permalink to this definition"></a></dt>
+<dd><p>scales ‘down’ floats to integers.</p>
+<p>Input: none.</p>
+<p>Output (sets up the following globals) -&gt;
+SCL : float; multiplicative scaling factor.
+ADD : float; additive scaling factor.
+MINIMUM : int; minimum integer allowed.
+iMAX: float; maximum allowed float (for rainfall).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.nc_file_iv">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">nc_file_iv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#nc_file_iv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.nc_file_iv" title="Permalink to this definition"></a></dt>
+<dd><p>skeletons the common variables/dimensions of the (output) nc-file.</p>
+<p>Input -&gt;
+<em>nc</em> : char; output path of nc-file.
+<a href="#id31"><span class="problematic" id="id32">**</span></a>kwargs -&gt;
+space : class; class where spatial variables are defined.
+sref_name : char; name of the variable storing the CRS.
+Output -&gt; tuple; nc.group storing the nsim-run + xy_tags-dim_indexers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.nc_file_v">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">nc_file_v</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ytag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xtag</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#nc_file_v"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.nc_file_v" title="Permalink to this definition"></a></dt>
+<dd><p>skeletons the unique sub-group vars/dims of the (output) nc-file.</p>
+<p>Input -&gt;
+<em>nc</em> : char; output path of nc-file.
+<em>iyear</em> : int; subgroup name representing the simulated year
+<em>times</em> : np.array; integer array with times (in minutes) since some origin.
+<em>tag_y</em> : char; coords-attribute in the Y-axis.
+<em>tag_x</em> : dict; coords-attribute in the X-axis.</p>
+<p><a href="#id33"><span class="problematic" id="id34">**</span></a>kwargs -&gt;
+date_origin : datetime.datetime; DATE_ORIGIN + TIME_ZONE in datetime format
+space : class; class where spatial variables are defined.
+rain_var_n : char; nc-variable name for the rainfall (variable).</p>
+<p>Output -&gt; nc.sub_group; nc variable storing the simulated-year.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.quantum_time">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">quantum_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doy_par</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tod_par</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DUR_S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_pool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#quantum_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.quantum_time" title="Permalink to this definition"></a></dt>
+<dd><p>samples datetimes and quatize them into packs of storm duration(s).</p>
+<p>Input -&gt;
+<em>doy_par</em> : dic; vonMises-Fisher mixture-parameters for Day-of-Year.
+<em>tod_par</em> : dic; vonMises-Fisher mixture-parameters for Time-of-Day.
+<em>DUR_S</em> : np.array; float numpy of storm durations (in hours).
+<em>date_pool</em> : list of start &amp; end ‘datetime.datetime(s)’ of the season.
+<em>n</em> : int; sample size.</p>
+<p>Output -&gt; tuple; list-quatized hourly resolutions &amp; their xploded equivalent (date)times.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.rain_cube">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">rain_cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_ring</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_stamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">np_mask</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#rain_cube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.rain_cube" title="Permalink to this definition"></a></dt>
+<dd><p>creates a rainfall cube (potentially) with regional rain already achieved.</p>
+<p>Input -&gt;
+<em>c_ring</em> : tuple; geopandas.GeoDataFrame linerings geometry with rain.
+<em>last_r</em> : tuple; pandas.Series; polygon geometry with outermost (rain) ring.
+<em>t_stamp</em> : list; numpy integers representing time-steps since origin.
+<em>np_mask</em> : numpy; 2D-numpy with 1’s representing the rain-region.</p>
+<p><a href="#id35"><span class="problematic" id="id36">**</span></a>kwargs -&gt;
+space : class; class where spatial variables are defined.
+max_val : float; maximum value for rainfall allowed.</p>
+<p>Output -&gt; tuple; xarray.DataArray(s) with rounded rainfall (first) and         total rainfall (within n-region) for every time-stamp (last).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.rasterize">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">rasterize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ring_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outer_ring</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#rasterize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.rasterize" title="Permalink to this definition"></a></dt>
+<dd><p>rasterize linerings/polygons and interpolate rainfall (between rings).</p>
+<p>Input -&gt;
+<em>ring_set</em> : geopandas.GeoDataFrame; linerings geometry with rain.
+<em>outer_ring</em> : pandas.Series; polygon geometry with outermost (rain) ring.
+<a href="#id37"><span class="problematic" id="id38">**</span></a>kwargs -&gt;
+space : class; class where spatial variables are defined.</p>
+<p>Output -&gt; 2D-numpy of floats representing a circular storm.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.read_pdfs">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">read_pdfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#read_pdfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.read_pdfs" title="Permalink to this definition"></a></dt>
+<dd><p>reads the CSV-file (where PDF’s parameters are stored).</p>
+<p>Input: optional.</p>
+<p><a href="#id39"><span class="problematic" id="id40">*</span></a>args -&gt;
+char; path to the csv-file.
+Output -&gt; pd.DataFrame with tabulated pdf-parameters.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.regionalisation">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">regionalisation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_zon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xpace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#regionalisation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.regionalisation" title="Permalink to this definition"></a></dt>
+<dd><p>arrange into a dictionary shp-regions.</p>
+<p>Input -&gt;
+<em>file_zon</em> : char; path to rain-regions shapefile.
+<em>tag</em> : char; geoPandas.GeoDataFrame column used as burning values.
+<em>xpace</em> : class; class where spatial variables are defined.</p>
+<p>Output -&gt; dict; …</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.retrieve_pdf">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">retrieve_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pd_fs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#retrieve_pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.retrieve_pdf" title="Permalink to this definition"></a></dt>
+<dd><p>constructs PDFs from parameters.</p>
+<p>Input -&gt;
+<em>tag</em> : char; label to construct the pdf on (‘DATIME_VMF’, ‘TOTALP_PDF’…).
+<em>pd_fs</em> : pd.DataFrame; dataframe with tabulated pdf-parameters.</p>
+<p>Output -&gt; REGIONS-list with either constructed scipy-distros or MvMF or rhos.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.scentres">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">scentres</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#scentres"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.scentres" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.scentres.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#scentres.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.scentres.plot" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.scentres.rvs">
+<span class="sig-name descname"><span class="pre">rvs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#scentres.rvs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.scentres.rvs" title="Permalink to this definition"></a></dt>
+<dd><p>random sampling.</p>
+<p>Input: none.</p>
+<p>Output -&gt; np.array; 2D-numpy with X-Y (column) coordinates.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.scentros">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">scentros</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#scentros"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.scentros" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.slice_time">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">slice_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_rnd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_dur</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#slice_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.slice_time" title="Permalink to this definition"></a></dt>
+<dd><p>splits storm duration into discrete/regular time slices.</p>
+<p>Input -&gt;
+<em>time_raw</em> : np.array; float numpy representing seconds since some origin.
+<em>time_rnd</em> : np.array; float numpy of base-rounded seconds since some origin.
+<em>s_dur</em> : np.array; float numpy of storm durations (in hours).</p>
+<p><a href="#id41"><span class="problematic" id="id42">**</span></a>kwargs -&gt;
+time_tag : char; string indicating the time-resolution of storm durations.</p>
+<p>Output -&gt; list of np.arrays containing time-slices of storm durations.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.truncated_sampling">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">truncated_sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distro</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#truncated_sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.truncated_sampling" title="Permalink to this definition"></a></dt>
+<dd><p>sampling (truncated or not) preserving the n-requested.</p>
+<p>Input -&gt;
+<em>distro</em> : dict; contains a scipy.stats (pdf) frozen infrastructure.</p>
+<p><a href="#id43"><span class="problematic" id="id44">**</span></a>kwargs -&gt;
+limits : tuple; variable limits to sample within.
+band : char; key (of the ‘distro’ dictionary) addressing the frozen pdf.
+n : int; numbers of (random) samples.</p>
+<p>Output -&gt; np.array of floats with n-samples.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.update_par">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">update_par</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#update_par"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.update_par" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.wet_days">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">wet_days</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#wet_days"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.wet_days" title="Permalink to this definition"></a></dt>
+<dd><p>defines the days of the (wet)-season to sample from (given a “seed” year).</p>
+<p>Input -&gt;
+<em>year</em> : int; modified (or not) SEED_YEAR.</p>
+<p><a href="#id45"><span class="problematic" id="id46">**</span></a>kwargs -&gt;
+season_tag : char; three-letter season tag (‘MAM’, ‘JJAS’ or ‘OND’).</p>
+<p>Output -&gt; tuple; number of months in the season (first) &amp; list of         start &amp; end ‘datetime.datetime(s)’ of the season (last).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.storm.rainfall.wrapper">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.storm.rainfall.</span></span><span class="sig-name descname"><span class="pre">wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NC_NAMES</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/storm/rainfall.html#wrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.storm.rainfall.wrapper" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="module-cuwalid.storm">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cuwalid.storm" title="Permalink to this heading"></a></h2>

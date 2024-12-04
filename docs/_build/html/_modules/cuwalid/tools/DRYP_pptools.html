@@ -688,26 +688,61 @@
 	<span class="k">return</span> <span class="n">var_available</span></div>
 
 <div class="viewcode-block" id="season_name_to_number"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.season_name_to_number">[docs]</a><span class="k">def</span> <span class="nf">season_name_to_number</span><span class="p">(</span><span class="n">season</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function read a string representing seasons and return a</span>
-<span class="sd">	list of numbers indicating months</span>
-<span class="sd">	</span>
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-<span class="sd">	season : str</span>
-<span class="sd">		season represented by three capital letters (e.g. &quot;OND&quot;)</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a string representing a season to a list of numbers indicating corresponding months.</span>
 
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	list</span>
-<span class="sd">		list of months</span>
-<span class="sd">	&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    season : str or list or int</span>
+<span class="sd">        The season represented by three capital letters (e.g., &quot;OND&quot;) or a list of month numbers.</span>
 
-	<span class="k">if</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;MAM&quot;</span><span class="p">:</span>
-		<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
-	<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;OND&quot;</span><span class="p">:</span>
-		<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">]</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        A list of integers representing the months for the given season. If the input is already </span>
+<span class="sd">        a list of months, it is returned as is. If the input is not recognized, it returns </span>
+<span class="sd">        the input wrapped in a list.</span>
 
-	<span class="k">return</span> <span class="n">season</span></div>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Supported season codes:</span>
+<span class="sd">    - &quot;MAM&quot; : March, April, May [3, 4, 5]</span>
+<span class="sd">    - &quot;OND&quot; : October, November, December [10, 11, 12]</span>
+<span class="sd">    - &quot;JJS&quot; : June, July, August [6, 7, 8]</span>
+<span class="sd">    - &quot;JF&quot;  : January, February [1, 2]</span>
+<span class="sd">    - &quot;JJSA&quot;: June, July, August, September [6, 7, 8, 9]</span>
+
+<span class="sd">    If the input is not a string or a list, the function wraps the input in a list.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; season_name_to_number(&quot;MAM&quot;)</span>
+<span class="sd">    [3, 4, 5]</span>
+
+<span class="sd">    &gt;&gt;&gt; season_name_to_number([1, 2, 3])</span>
+<span class="sd">    [1, 2, 3]</span>
+
+<span class="sd">    &gt;&gt;&gt; season_name_to_number(2)</span>
+<span class="sd">    [2]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+	<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">season</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;MAM&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;OND&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;JJS&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;JF&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;JJSA&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">season</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">season</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+			<span class="k">return</span> <span class="n">season</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">[</span><span class="n">season</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="get_month_first_letter"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.get_month_first_letter">[docs]</a><span class="k">def</span> <span class="nf">get_month_first_letter</span><span class="p">(</span><span class="n">month_number</span><span class="p">):</span>
     <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">month_number</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">:</span>

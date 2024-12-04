@@ -395,6 +395,8 @@
 			<span class="n">lake_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lake_nodes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># select lake nodes with water </span>
 			<span class="n">links_at_lake</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">links_at_node</span><span class="p">[</span><span class="n">lake_nodes</span><span class="p">]</span> <span class="c1"># select lake links</span>
 			<span class="n">T</span><span class="p">[</span><span class="n">links_at_lake</span><span class="p">]</span> <span class="o">=</span> <span class="n">COURANT_2D</span><span class="o">*</span><span class="n">grid</span><span class="o">.</span><span class="n">dx</span><span class="o">*</span><span class="n">grid</span><span class="o">.</span><span class="n">dx</span><span class="o">*</span><span class="mf">0.01</span> <span class="c1"># reduce transmissivity</span>
+			<span class="c1">#Sy_aux = Sy[act_nodes]</span>
+			<span class="c1">#Sy_aux[lake_nodes] = 1.0</span>
 			<span class="c1"># --------------------------------------------------------------</span>
 
 			<span class="c1"># Calculate the hydraulic gradients</span>
@@ -555,6 +557,7 @@
 			<span class="c1">#print(&#39;discharge&#39;,env_state.SZgrid.at_node[&#39;discharge&#39;][219])</span>
 			<span class="c1"># Calculate maximum time step</span>
 			<span class="n">dtsp</span> <span class="o">=</span> <span class="n">time_step_confined</span><span class="p">(</span><span class="n">COURANT_2D</span><span class="p">,</span> <span class="n">Sy</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span>
+			<span class="c1">#dtsp = time_step_confined(COURANT_2D, Sy_aux,</span>
 				<span class="n">map_max_of_node_links_to_node</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">T</span><span class="p">)[</span><span class="n">act_nodes</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">dx</span>
 				<span class="p">)</span>
 			

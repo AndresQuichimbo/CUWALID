@@ -116,7 +116,7 @@
 </ul>
 <p><strong>WARNING!</strong>. Before you start the analyis, please make sure that you directories have the following structure.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Local_directory</span><span class="se">\n</span><span class="s2">|__training</span><span class="se">\n</span><span class="s2">      |___forecast</span><span class="se">\n</span><span class="s2">      |      |__regional</span><span class="se">\n</span><span class="s2">      |      |     |__datasets</span><span class="se">\n</span><span class="s2">      |      |     |    |__csv</span><span class="se">\n</span><span class="s2">      |      |     |    |__shp</span><span class="se">\n</span><span class="s2">      |      |     |__model</span><span class="se">\n</span><span class="s2">      |      |     |    |__inputs</span><span class="se">\n</span><span class="s2">      |      |     |__outputs</span><span class="se">\n</span><span class="s2">      |      |     |__postpp</span><span class="se">\n</span><span class="s2">      |      |          |__csv</span><span class="se">\n</span><span class="s2">      |      |          |__netcdf</span><span class="se">\n</span><span class="s2">      |      |          |__raster</span><span class="se">\n</span><span class="s2">      |      |          |__fig</span><span class="se">\n</span><span class="s2">      |            |__basin</span><span class="se">\n</span><span class="s2">      |___historical</span><span class="se">\n</span><span class="s2">             |__regional</span><span class="se">\n</span><span class="s2">             |     |__datasets</span><span class="se">\n</span><span class="s2">             |     |__model</span><span class="se">\n</span><span class="s2">             |     |__outputs</span><span class="se">\n</span><span class="s2">             |     |__postpp</span><span class="se">\n</span><span class="s2">                    |__basin</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -161,7 +161,7 @@ Local_directory
 <p>A detailed description of all model files can be found in DRYP documentation as well as in the DRYP folder of the present tranining material.</p>
 <p>For running all simulations, we have preparing all the input files by copying and changing the required fields on the each file. The script below can be used to create all simulation model files.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
@@ -262,7 +262,7 @@ Local_directory
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_ensamble</span><span class="p">(</span><span class="n">pools</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
@@ -286,7 +286,7 @@ Local_directory
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -308,8 +308,282 @@ Local_directory
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
+<span class="k">def</span> <span class="nf">write_JSON_dryp_file</span><span class="p">(</span><span class="n">source_file</span><span class="p">,</span> <span class="n">destination_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">mname</span><span class="o">=</span><span class="s2">&quot;sim&quot;</span><span class="p">,</span> <span class="n">dataset_pre</span><span class="o">=</span><span class="s2">&quot;YYYYMM&quot;</span><span class="p">,</span> <span class="n">dataset_pet</span><span class="o">=</span><span class="s2">&quot;YYYYMM&quot;</span><span class="p">,</span>
+    <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2024 03 01&quot;</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;2024 05 31&quot;</span><span class="p">,</span>
+    <span class="n">create_setting_file</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; This function create the simulation and setting file for runnig DRYP. New</span>
+<span class="sd">    files are created  based on files provided as original files, this function</span>
+<span class="sd">    changes the model name, precipitation and potential evapotranspiration</span>
+<span class="sd">    paths.</span>
+<span class="sd">    WARNING: if no new filename is provided it will replace the original file</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    fname_input : string</span>
+<span class="sd">                    model inputfile, including path</span>
+<span class="sd">    newfname : string</span>
+<span class="sd">                    new model inputfile, including path</span>
+<span class="sd">    mname : string</span>
+<span class="sd">                    model name for the new file</span>
+<span class="sd">    dataset_pre : string</span>
+<span class="sd">                    precipitation dataset name, including path</span>
+<span class="sd">    dataset_pet : string</span>
+<span class="sd">                    potential evapotranspiration dataset name, including path</span>
+<span class="sd">    start_date : string</span>
+<span class="sd">                    date in the following format &quot;YYYY-MM-DD&quot; (e.g. 2002-01-01)</span>
+<span class="sd">    end_date : string</span>
+<span class="sd">                    date in the following format &quot;YYYY-MM-DD&quot; (e.g. 2002-03-01)</span>
+<span class="sd">    create_setting_file : bool</span>
+<span class="sd">                    If True it create the setting dryp file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Step 1: Define file paths</span>
+    <span class="c1">#source_file = &quot;source.json&quot;</span>
+    <span class="c1">#destination_file = &quot;destination.json&quot;</span>
+
+    <span class="c1"># Step 2: Copy the file</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">source_file</span><span class="p">,</span> <span class="n">destination_file</span><span class="p">)</span>
+
+    <span class="c1"># Step 3: Load the copied file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">destination_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="c1"># Step 4: Replace specific values</span>
+    <span class="c1"># Example: Replace values based on specific keys</span>
+    <span class="n">keys_to_replace</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="n">mname</span><span class="p">,</span>
+            <span class="s2">&quot;path_pre&quot;</span><span class="p">:</span> <span class="n">dataset_pre</span><span class="p">,</span>
+            <span class="s2">&quot;path_pet&quot;</span><span class="p">:</span> <span class="n">dataset_pet</span><span class="p">,</span>
+            <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">new_value</span> <span class="ow">in</span> <span class="n">keys_to_replace</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_value</span>
+
+    <span class="c1"># Step 5: Save the modified data back to the file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">destination_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values updated in </span><span class="si">{</span><span class="n">destination_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">gen_array_input_JSON_files</span><span class="p">(</span><span class="n">fname_input</span><span class="p">,</span> <span class="n">fname_parameter_sets</span><span class="p">):</span>
+    <span class="c1"># read parameter sets</span>
+    <span class="n">parameter</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fname_parameter_sets</span><span class="p">)</span>
+
+    <span class="c1">#Create a copy of inputfile</span>
+    <span class="n">fname_root</span> <span class="o">=</span> <span class="n">fname_input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">fname_ext</span> <span class="o">=</span> <span class="n">fname_input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">npar</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
+            <span class="c1"># new input file name</span>
+            <span class="n">newfname_input</span> <span class="o">=</span> <span class="n">fname_root</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">npar</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">fname_ext</span>
+            <span class="c1"># replace all new values in dataset</span>
+            <span class="n">write_JSON_dryp_file</span><span class="p">(</span><span class="n">fname_input</span><span class="p">,</span> <span class="n">newfname_input</span><span class="p">,</span> <span class="n">parameter</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">npar</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">update_json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">updates</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recursively update values in nested JSON data.</span>
+
+<span class="sd">    :param data: The JSON object (dict or list).</span>
+<span class="sd">    :param updates: A dictionary where keys are dot-separated paths to values and values are the new values.</span>
+<span class="sd">    :return: Updated JSON object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">full_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="n">full_path</span> <span class="ow">in</span> <span class="n">updates</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">updates</span><span class="p">[</span><span class="n">full_path</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_json</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">updates</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_json</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">updates</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">apply_updates</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">updates</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert dot-separated paths into nested updates for a recursive update.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">new_value</span> <span class="ow">in</span> <span class="n">updates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="n">sub_data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">sub_data</span> <span class="o">=</span> <span class="n">sub_data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">sub_data</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">new_value</span>
+    <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 4: Recursive function to update nested JSON</span>
+<span class="k">def</span> <span class="nf">update_json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">updates</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recursively update values in nested JSON data.</span>
+
+<span class="sd">    :param data: The JSON object (dict or list).</span>
+<span class="sd">    :param updates: A dictionary where keys are dot-separated paths to values and values are the new values.</span>
+<span class="sd">    :return: Updated JSON object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">full_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="n">full_path</span> <span class="ow">in</span> <span class="n">updates</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">updates</span><span class="p">[</span><span class="n">full_path</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_json</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">updates</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_json</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">updates</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+<span class="c1"># Step 5: Define keys to update</span>
+
+
+<span class="c1"># Step 6: Apply the updates to the JSON data</span>
+<span class="k">def</span> <span class="nf">apply_updates</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">updates</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert dot-separated paths into nested updates for a recursive update.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">new_value</span> <span class="ow">in</span> <span class="n">updates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="n">sub_data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">sub_data</span> <span class="o">=</span> <span class="n">sub_data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">sub_data</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">new_value</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+<span class="k">def</span> <span class="nf">write_JSON_dryp_file</span><span class="p">(</span><span class="n">source_file</span><span class="p">,</span> <span class="n">destination_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">mname</span><span class="o">=</span><span class="s2">&quot;sim&quot;</span><span class="p">,</span> <span class="n">dataset_pre</span><span class="o">=</span><span class="s2">&quot;YYYYMM&quot;</span><span class="p">,</span> <span class="n">dataset_pet</span><span class="o">=</span><span class="s2">&quot;YYYYMM&quot;</span><span class="p">,</span>
+    <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2024 03 01&quot;</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;2024 05 31&quot;</span><span class="p">,</span>
+    <span class="n">new_setting_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="c1"># Step 1: Define file paths</span>
+    <span class="c1">#source_file = &quot;source.json&quot;</span>
+    <span class="c1">#destination_file = &quot;destination.json&quot;</span>
+
+    <span class="c1"># Step 2: Copy the file</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">source_file</span><span class="p">,</span> <span class="n">destination_file</span><span class="p">)</span>
+
+    <span class="c1"># Step 3: Load the copied file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">destination_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="c1"># set changes on input file</span>
+    <span class="n">updates</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="n">mname</span><span class="p">,</span>
+            <span class="s2">&quot;METEO.path_pre&quot;</span><span class="p">:</span> <span class="n">dataset_pre</span><span class="p">,</span>
+            <span class="s2">&quot;METEO.path_pet&quot;</span><span class="p">:</span> <span class="n">dataset_pet</span><span class="p">,</span>
+            <span class="p">}</span>
+
+    <span class="c1"># update imput file</span>
+    <span class="n">updated_data</span> <span class="o">=</span> <span class="n">apply_updates</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">updates</span><span class="p">)</span>
+
+    <span class="c1"># create new settings file</span>
+    <span class="k">if</span> <span class="n">new_setting_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># get setting file name</span>
+            <span class="n">setting_file</span> <span class="o">=</span> <span class="n">updated_data</span><span class="p">[</span><span class="s2">&quot;OUTPUT&quot;</span><span class="p">][</span><span class="s2">&quot;path_setting&quot;</span><span class="p">]</span>
+
+            <span class="c1"># set changes on input file</span>
+            <span class="n">updates</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;OUTPUT.path_setting&quot;</span><span class="p">:</span> <span class="n">new_setting_file</span><span class="p">,</span>
+                    <span class="p">}</span>
+
+            <span class="c1"># update imput file</span>
+            <span class="n">updated_data</span> <span class="o">=</span> <span class="n">apply_updates</span><span class="p">(</span><span class="n">updated_data</span><span class="p">,</span> <span class="n">updates</span><span class="p">)</span>
+
+
+    <span class="c1"># Step 7: Save the updated JSON data back to the file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">destination_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">updated_data</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values updated in </span><span class="si">{</span><span class="n">destination_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># create new settings file</span>
+    <span class="k">if</span> <span class="n">new_setting_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Step 1a: copy setting file</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">setting_file</span><span class="p">,</span> <span class="n">new_setting_file</span><span class="p">)</span>
+
+            <span class="c1"># Step 2a: Load the copied file</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">setting_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                    <span class="n">data_settings</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+            <span class="c1"># Step 3a:set changes in settings file</span>
+            <span class="n">update_settings</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;SIMULATION_PERIOD.start_date&quot;</span><span class="p">:</span> <span class="n">start_date</span><span class="p">,</span>
+                    <span class="s2">&quot;SIMULATION_PERIOD.end_date&quot;</span><span class="p">:</span> <span class="n">end_date</span><span class="p">,</span>
+                    <span class="p">}</span>
+
+            <span class="c1"># Step 4a: create filename</span>
+            <span class="n">updated_settings</span> <span class="o">=</span> <span class="n">apply_updates</span><span class="p">(</span>
+                            <span class="n">data_settings</span><span class="p">,</span>
+                            <span class="n">update_settings</span>
+                            <span class="p">)</span>
+
+            <span class="c1"># Step 5a: Save the updated JSON data back to the file</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">new_setting_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">updated_settings</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values updated in </span><span class="si">{</span><span class="n">new_setting_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">season_name_to_number</span><span class="p">(</span><span class="n">season</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function read a string representing seasons and return a</span>
+<span class="sd">    list of numbers indicating months</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    season : str</span>
+<span class="sd">            season represented by three capital letters (e.g. &quot;OND&quot;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">            list of months</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;MAM&quot;</span><span class="p">:</span>
+            <span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;OND&quot;</span><span class="p">:</span>
+            <span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">season</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fname_parameter</span> <span class="o">=</span> <span class="s2">&quot;/home/cuwalid/training/historical/regional/model/input/HAD_flowdir_D8.asc&quot;</span>
@@ -322,24 +596,24 @@ Local_directory
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/tmp/ipykernel_1899156/94300322.py:8: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+/tmp/ipykernel_161122/94300322.py:8: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
   cmap = plt.cm.get_cmap(&#39;coolwarm_r&#39;, 12)
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.image.AxesImage at 0x7f747b2891d0&gt;
+&lt;matplotlib.image.AxesImage at 0x7f7ffb0d37d0&gt;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_12_2.png" src="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_12_2.png" />
+<img alt="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_18_2.png" src="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_18_2.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -373,7 +647,7 @@ Local_directory
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_13_2.png" src="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_13_2.png" />
+<img alt="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_19_2.png" src="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_19_2.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -414,7 +688,7 @@ Local_directory
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_15_2.png" src="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_15_2.png" />
+<img alt="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_21_2.png" src="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_21_2.png" />
 </div>
 </div>
 <p>Function described above required some information the is listed below, how to obtain is also explain below:</p>
@@ -425,31 +699,60 @@ Local_directory
 </ul>
 <p>Number of simulations</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># list of number of files to process</span>
 <span class="c1">#list_pre = range(0, 30), list_pet = range(0, 30)</span>
 <span class="c1">#number of simulations</span>
 <span class="n">nsim</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">season</span> <span class="o">=</span> <span class="s2">&quot;OND&quot;</span>
+<span class="n">iyear</span> <span class="o">=</span> <span class="mi">2022</span>
 </pre></div>
 </div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">start_date</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">season_name_to_number</span><span class="p">(</span><span class="n">season</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; 1&quot;</span>
+<span class="n">end_date</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">season_name_to_number</span><span class="p">(</span><span class="n">season</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; 31&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(&#39;2022 10 1&#39;, &#39;2022 12 31&#39;)
+</pre></div></div>
 </div>
 <p>list of precipitation dataset</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># folder preipitation datasets</span>
-<span class="n">folder_datasets_pre</span> <span class="o">=</span> <span class="s2">&quot;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/&quot;</span><span class="c1">#Forecast_PRE_HAD_ens_29_MAM_2022.nc&quot;</span>
+<span class="n">folder_datasets_pre</span> <span class="o">=</span> <span class="s2">&quot;/home/cuwalid/training/forecast/regional/dataset/pre/&quot;</span><span class="o">+</span><span class="n">season</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="c1">#Forecast_PET_HAD_ens_0_MAM_2024.nc&quot;</span>
 <span class="c1">#folder_datasets_pre = &quot;D:/HAD/training/forecast/regional/datasets/pre/&quot;</span>
 <span class="c1">#fname_pre = [folder_datasets_pre+&quot;Forecast_PRE_HAD_ens_&quot;+str(isim)+&quot;_MAM_2022.nc&quot; for isim in range(nsim)]</span>
-<span class="n">fname_pre</span> <span class="o">=</span> <span class="p">[</span><span class="n">folder_datasets_pre</span><span class="o">+</span><span class="s2">&quot;2022_MAM_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.nc&quot;</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsim</span><span class="p">)]</span>
-<br/></pre></div>
+<span class="c1">#fname_pre = [folder_datasets_pre+&quot;2024_MAM_&quot;+str(isim)+&quot;.nc&quot; for isim in range(nsim)]</span>
+<span class="n">fname_pre</span> <span class="o">=</span> <span class="p">[</span><span class="n">folder_datasets_pre</span><span class="o">+</span><span class="s2">&quot;Forecast_PRE_HAD_ens_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="n">season</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.nc&quot;</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsim</span><span class="p">)]</span>
+</pre></div>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#fname_pre</span>
@@ -458,18 +761,19 @@ Local_directory
 </div>
 <p>List of potential evapotranspiration datasets</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># folder potential evapotranspiration datasets</span>
-<span class="n">folder_datasets_pet</span> <span class="o">=</span> <span class="s2">&quot;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/&quot;</span><span class="c1">#Forecast_PET_HAD_ens_29_MAM_2022.nc&quot;</span>
+<span class="c1">#folder_datasets_pet = &quot;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/&quot;#Forecast_PET_HAD_ens_29_MAM_2022.nc&quot;</span>
+<span class="n">folder_datasets_pet</span> <span class="o">=</span> <span class="s2">&quot;/home/cuwalid/training/forecast/regional/dataset/pet/&quot;</span><span class="o">+</span><span class="n">season</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_PET_forecast/&quot;</span><span class="c1">#Forecast_PET_HAD_ens_0_MAM_2024.nc&quot;</span>
 <span class="c1">#folder_datasets_pet = &quot;D:/HAD/training/forecast/regional/datasets/pet/&quot;</span>
-<span class="n">fname_pet</span> <span class="o">=</span> <span class="p">[</span><span class="n">folder_datasets_pet</span><span class="o">+</span><span class="s2">&quot;Forecast_PET_HAD_ens_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_MAM_2022.nc&quot;</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsim</span><span class="p">)]</span>
+<span class="n">fname_pet</span> <span class="o">=</span> <span class="p">[</span><span class="n">folder_datasets_pet</span><span class="o">+</span><span class="s2">&quot;Forecast_PET_HAD_ens_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="n">season</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.nc&quot;</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsim</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#fname_pet</span>
@@ -479,155 +783,85 @@ Local_directory
 <p>Depending on the number of datasets, the list of simulaitons required to cover all the posible combination of forcing datasets could be large, therfore, only a sample of all posibles scenarions are chosen for the hydrological forecast.</p>
 <p>selection of climate forecast</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">forcing_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">create_ensamble</span><span class="p">([</span><span class="n">fname_pet</span><span class="p">,</span> <span class="n">fname_pre</span><span class="p">],</span> <span class="n">nsamples</span><span class="o">=</span><span class="mi">30</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">forcing_list</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#forcing_list</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-array([[&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_19_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_6.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_15_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_13.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_12_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_18.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_25_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_2.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_2_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_17.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_2_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_22.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_5_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_13.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_24_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_18.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_23_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_6.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_20_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_12.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_3_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_23.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_5_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_27.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_28_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_20.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_15_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_5.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_24_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_26.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_23_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_9.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_11_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_0.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_21_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_19.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_12_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_0.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_12_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_23.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_13_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_9.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_16_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_10.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_13_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_10.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_14_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_25.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_22_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_14.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_27_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_18.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_21_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_4.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_19_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_1.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_2_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_15.nc&#39;,
-        &#39;&#39;],
-       [&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Forecast_PET_HAD_ens_22_MAM_2022.nc&#39;,
-        &#39;/home/cuwalid/training/forecast/regional/dataset/pre/new_forecast/2022_MAM_12.nc&#39;,
-        &#39;&#39;]], dtype=&#39;&lt;U96&#39;)
-</pre></div></div>
 </div>
 <p>Model list simulations:</p>
 <p>Specifiy the list of model names and the name of model simulatio files</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Model file names</span>
 <span class="c1">#local_directory = &quot;/home/&lt;username&gt;/training/forecast/regional/model/&quot; #D:/HAD/training/regional/model/&quot;</span>
-<span class="n">local_directory</span> <span class="o">=</span> <span class="s2">&quot;/home/aquichimbo/training/forecast/regional/model/&quot;</span> <span class="c1">#D:/HAD/training/regional/model/&quot;</span>
+<span class="c1">#local_directory = &quot;/home/aquichimbo/training/forecast/regional/model/&quot; #D:/HAD/training/regional/model/&quot;</span>
+<span class="n">local_directory</span> <span class="o">=</span> <span class="s2">&quot;/home/cuwalid/training/forecast/regional/model/&quot;</span> <span class="c1">#D:/HAD/training/regional/model/&quot;</span>
 <span class="c1">#local_directory = &quot;/home/cuwalid/training/forecast/regional/&quot; #D:/HAD/training/regional/model/&quot;</span>
 <span class="c1">#local_directory = &quot;D:/HAD/model/icpac/&quot; #D:/HAD/training/regional/model/&quot;</span>
-<span class="n">fsim_input_file</span> <span class="o">=</span> <span class="n">local_directory</span> <span class="o">+</span> <span class="s2">&quot;HAD_IMERGba_input_MAM_forecast_0_2022.dmp&quot;</span><span class="c1">#&quot;HAD_IMERG_input_sim_cuwalid.dmp&quot;</span>
-<span class="n">fsim_setting_file</span> <span class="o">=</span> <span class="n">local_directory</span> <span class="o">+</span> <span class="s2">&quot;HAD_IMERGba_par_setting_0_2022.dwapm&quot;</span><span class="c1">#&quot;HAD_IMERG_par_setting.dwapm&quot;</span>
+<span class="n">fsim_input_file</span> <span class="o">=</span> <span class="n">local_directory</span> <span class="o">+</span> <span class="s2">&quot;HAD_IMERGcv_input_sim85.json&quot;</span><span class="c1">#&quot;HAD_IMERG_input_sim_cuwalid.dmp&quot;</span>
+<span class="n">fsim_setting_file</span> <span class="o">=</span> <span class="n">local_directory</span> <span class="o">+</span> <span class="s2">&quot;HAD_IMERGcv_par_setting_0.json&quot;</span><span class="c1">#&quot;HAD_IMERG_par_setting.dwapm&quot;</span>
 
 <span class="c1"># model name list of new simulation files</span>
-<span class="n">mname</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MAM_2022_realization_test_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">)]</span>
+<span class="n">mname</span> <span class="o">=</span> <span class="p">[</span><span class="n">season</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_realization_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">)]</span>
 <span class="c1">#fsim_forecasting = [&quot;D:/HAD/training/forecast/regional/HAD_IMERG_input_sim_&quot;+str(isim)+&quot;.dmp&quot; for isim in range(30)]</span>
 <span class="c1">#fsim_forecasting = [&quot;D:\HAD\model\icpac\HAD_IMERGba_input_MAM_forecast_tests_&quot;+str(isim)+&quot;_2022.dmp&quot; for isim in range(30)]</span>
 <span class="c1">#fsim_forecasting = [&quot;/home/cuwalid/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_tests_&quot;+str(isim)+&quot;_2022.dmp&quot; for isim in range(30)]</span>
 <span class="c1">#fsim_forecasting = [&quot;/home/&lt;username&gt;/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_&quot;+str(isim)+&quot;_2022.dmp&quot; for isim in range(30)]</span>
-<span class="n">fsim_forecasting</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;/home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_2022.dmp&quot;</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">)]</span>
+<span class="c1">#fsim_forecasting = [&quot;/home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_&quot;+str(isim)+&quot;_2022.dmp&quot; for isim in range(30)]</span>
+<span class="n">fsim_forecasting</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;/home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_&quot;</span><span class="o">+</span><span class="n">season</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_forecast_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.json&quot;</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fname_setting_file</span> <span class="o">=</span> <span class="s2">&quot;/home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_&quot;</span><span class="o">+</span><span class="n">season</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.json&quot;</span>
+<span class="n">fname_setting_file</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;/home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json&#39;
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#fsim_forecasting</span>
 </pre></div>
 </div>
 </div>
 <p>Generate simulation files</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ifsim_forecasting</span><span class="p">,</span> <span class="n">imname</span><span class="p">,</span> <span class="n">ifname_pre</span><span class="p">,</span> <span class="n">ifname_pet</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fsim_forecasting</span><span class="p">,</span> <span class="n">mname</span><span class="p">,</span> <span class="n">forcing_list</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">forcing_list</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]):</span>
-    <span class="n">write_dryp_sim_file_forecasting</span><span class="p">(</span><span class="n">fsim_input_file</span><span class="p">,</span>
-                                    <span class="n">newfname_input</span><span class="o">=</span><span class="n">ifsim_forecasting</span><span class="p">,</span>
+    <span class="n">write_JSON_dryp_file</span><span class="p">(</span><span class="n">fsim_input_file</span><span class="p">,</span>
+                                    <span class="n">destination_file</span><span class="o">=</span><span class="n">ifsim_forecasting</span><span class="p">,</span>
                                     <span class="n">mname</span><span class="o">=</span><span class="n">imname</span><span class="p">,</span>
                                     <span class="n">dataset_pre</span><span class="o">=</span><span class="n">ifname_pre</span><span class="p">,</span> <span class="n">dataset_pet</span><span class="o">=</span><span class="n">ifname_pet</span><span class="p">,</span>
-                                    <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2022 03 01&quot;</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;2022 05 31&quot;</span><span class="p">,</span>
-                                    <span class="n">create_setting_file</span><span class="o">=</span><span class="kc">False</span>
+                                    <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span>
+                                    <span class="n">new_setting_file</span><span class="o">=</span><span class="n">fname_setting_file</span>
                                    <span class="p">)</span>
 </pre></div>
 </div>
@@ -635,998 +869,68 @@ array([[&#39;/home/cuwalid/training/forecast/regional/dataset/pet/trial_5/Foreca
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area stderr docutils container">
+<div class="output_area docutils container">
 <div class="highlight"><pre>
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
-/tmp/ipykernel_1821555/2269932685.py:43: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[1] = mname
-/tmp/ipykernel_1821555/2269932685.py:46: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[66] = dataset_pre      # Precipitation file
-/tmp/ipykernel_1821555/2269932685.py:47: FutureWarning: ChainedAssignmentError: behaviour will change in pandas 3.0!
-You are setting values through chained assignment. Currently this works in certain cases, but when using Copy-on-Write (which will become the default behaviour in pandas 3.0) this will never work to update the original DataFrame or Series, because the intermediate object on which we are setting values will behave as a copy.
-A typical example is when you are setting values in a column of a DataFrame, like:
-
-df[&#34;col&#34;][row_indexer] = value
-
-Use `df.loc[row_indexer, &#34;col&#34;] = values` instead, to perform the assignment in a single step and ensure this keeps updating the original `df`.
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-  f.drylandmodel[68] = dataset_pet      # Evapotranspiration file
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_0.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_1.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_2.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_3.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_4.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_5.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_6.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_7.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_8.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_9.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_10.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_11.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_12.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_13.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_14.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_15.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_16.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_17.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_18.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_19.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_20.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_21.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_22.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_23.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_24.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_25.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_26.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_27.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_28.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_29.json
+Values updated in /home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2022.json
 </pre></div></div>
 </div>
 </section>
@@ -1634,28 +938,28 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <h2>4.2. Prepare multiple simulation on HPC<a class="headerlink" href="#4.2.-Prepare-multiple-simulation-on-HPC" title="Permalink to this heading"></a></h2>
 <p>Run simulation on the backgound in linux. Uncoment lines to show results.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fsim_forecasting_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;HAD_IMERGba_input_MAM_forecast_test_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_2022.dmp&quot;</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">)]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fsim_forecasting_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;HAD_IMERG_input_&quot;</span><span class="o">+</span><span class="n">season</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_forecast_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.json&quot;</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fsim_forecasting_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;HAD_IMERGba_input_MAM_forecast_test_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_2022.dmp&quot;</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#fsim_forecasting_list = [&quot;HAD_IMERGba_input_MAM_forecast_test_&quot;+str(isim)+&quot;_2022.dmp&quot; for isim in [0,3]]</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ifsim_forecasting</span> <span class="ow">in</span> <span class="n">fsim_forecasting_list</span><span class="p">:</span>
-    <span class="c1">#print(&quot;nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/&quot;+ifsim_forecasting+&quot; &amp;&quot;)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/&quot;</span><span class="o">+</span><span class="n">ifsim_forecasting</span><span class="o">+</span><span class="s2">&quot; &amp;&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/&quot;</span><span class="o">+</span><span class="n">ifsim_forecasting</span><span class="o">+</span><span class="s2">&quot; &amp;&quot;</span><span class="p">)</span>
+    <span class="c1">#print(&quot;nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/&quot;+ifsim_forecasting+&quot; &amp;&quot;)</span>
 </pre></div>
 </div>
 </div>
@@ -1664,36 +968,36 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_0_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_1_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_2_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_3_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_4_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_5_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_6_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_7_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_8_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_9_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_10_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_11_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_12_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_13_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_14_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_15_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_16_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_17_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_18_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_19_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_20_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_21_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_22_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_23_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_24_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_25_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_26_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_27_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_28_2022.dmp &amp;
-nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/model/HAD_IMERGba_input_MAM_forecast_test_29_2022.dmp &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_0.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_1.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_2.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_3.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_4.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_5.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_6.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_7.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_8.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_9.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_10.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_11.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_12.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_13.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_14.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_15.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_16.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_17.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_18.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_19.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_20.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_21.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_22.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_23.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_24.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_25.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_26.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_27.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_28.json &amp;
+nohup python run_model_input.py /home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_OND_2022_forecast_29.json &amp;
 </pre></div></div>
 </div>
 <p>Create slurm files for each simulations</p>
@@ -1806,7 +1110,7 @@ nohup python run_model_input.py /home/aquichimbo/training/forecast/regional/mode
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_51_1.png" src="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_51_1.png" />
+<img alt="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_61_1.png" src="../../_images/notebooks_Forecasting_02_Hydrological_Forecasting_61_1.png" />
 </div>
 </div>
 <p><strong>TASK</strong>: Plot other variables available on the model outputs:</p>
