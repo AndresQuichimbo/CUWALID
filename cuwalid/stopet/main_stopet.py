@@ -54,11 +54,11 @@ def run_stoPET(config_file):
     lonval_min = config['lonval_min']
     lonval_max = config['lonval_max']
     locname = config['locname']
-    print(f'locname={locname}')
     number_ensm = config['number_ensm']
     tempAdj = config['tempAdj']
     deltat = config['deltat']
     udpi_pet = config['udpi_pet']
+    season_name = config['seasonName']
 
     if execution_type == 'dryp':
         run_stoPET_4_dryp(
@@ -104,7 +104,8 @@ def run_stoPET(config_file):
             tempAdj=tempAdj,
             deltat=deltat,
             udpi_pet=udpi_pet,
-            slice_only=slice_only
+            slice_only=slice_only,
+            season_name=season_name
         )
 
     print('Seasonal PET extraction finished successfully.')

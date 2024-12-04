@@ -16,7 +16,7 @@ import xarray as xr
 ## ----------------------------------------------------------##
 def stoPET_wrapper_regional(startyear, endyear, latval_min, latval_max, lonval_min, lonval_max,
                             locname, ens_num, datapath, outputpath, tempAdj, deltat, udpi_pet, 
-                            seasonswitch, randnoise):
+                            seasonswitch, randnoise, season_name):
     print('stoPET running ...')
 
     data=Dataset(os.path.join(datapath, 'stopet_parameters.nc')) #'month_1_params.nc'
@@ -86,7 +86,7 @@ def stoPET_wrapper_regional(startyear, endyear, latval_min, latval_max, lonval_m
     stopet = future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, lonval_min,lonval_max,
                                              lats, lons, locname, ampl, omega, phase, shift, sr, ss, skew, loc, scale,
                                              slope_vals, mcont_vals,ens_num, datapath, outputpath, tempAdj, deltat, 
-                                             dpetdt, randnoise)
+                                             dpetdt, randnoise, season_name)
 
 
     print('stoPET finished successfully.')
@@ -139,11 +139,11 @@ def adjust_pet(stoch_pet, stoch_pet_adj, slope_vals, dpetdt, mcont_vals, latind_
 
 def future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, lonval_min,lonval_max, lats, lons, locname,
                                     ampl, omega, phase, shift, sr, ss, skew, loc, scale, slope_vals, mcont_vals,ens_num,
-                                    datapath, outputpath, tempAdj,deltat, dpetdt, randnoise):
+                                    datapath, outputpath, tempAdj,deltat, dpetdt, randnoise, season_name):
 
     # create a folder to save the data
-    if not os.path.isdir(os.path.join(outputpath, locname+'_E'+str(ens_num)+'_StoPET/')):
-        os.makedirs(os.path.join(outputpath, locname+'_E'+str(ens_num)+'_StoPET/'))
+    if not os.path.isdir(os.path.join(outputpath, season_name + "_" + str(startyear) +'_PET_forecast')):
+        os.makedirs(os.path.join(outputpath, season_name + "_" + str(startyear) +'_PET_forecast'))
 
     # generate the hourly time series period
     years = np.arange(startyear,endyear+1)
@@ -254,7 +254,7 @@ def future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, l
         # save each year value separately (.nc)
         tunits = 'days since '+str(yr)+'-01-01' 
         # PET values jgenerated without any adjustment
-        filename1 = outputpath+locname+'_E'+str(ens_num)+'_StoPET/'+str(yr)+'_'+str(tempAdj)+'_stoPET.nc'              
+        filename1 = os.path.join(outputpath, season_name + "_" + str(startyear) + "_PET_forecast", str(yr)+'_'+str(tempAdj)+ '_ens_'+ str(ens_num) + '_stoPET.nc')      
         nc_write(stoch_pet, latlen, lonlen, 'pet', tunits, filename1)
         
         # Temperature adjusted PET (This is deactivated for ICPAC as we don't need the data) it will sve space.
@@ -607,14 +607,16 @@ def increase_temp_singlepoint(slope, mcont, annual_pet, tempAdj, deltat, yr,
     return adj_stopet
 
 ##-------------- SUPPLENENTARY FUNCTONS ----------------------------------##
-def seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, endyear, startdate, enddate, seasonswitch):
+def seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, endyear, startdate, enddate, seasonswitch, season_name):
     years = np.arange(startyear,endyear+1)  
     for i in range(0,number_ensm):
-      filepath = os.path.join(outputpath, locname+'_E'+str(i)+'_StoPET/')
+      filepath = os.path.join(outputpath, season_name + "_" + str(startyear) + "_PET_forecast")
       for j in range(0,len(years)):
         year = years[j]                   
-        fname1 = '%s_%s_stoPET.nc'%(year, tempAdj)
-        stopet4dryp(filepath, fname1, seasonswitch, startdate, enddate, i)
+        # old naming
+        # fname1 = '%s_%s_stoPET.nc'%(year, tempAdj)
+        fname1 = str(startyear)+'_'+str(tempAdj)+ '_ens_'+ str(i) + '_stoPET.nc'
+        stopet4dryp(filepath, fname1, seasonswitch, startdate, enddate, i, season_name)
         
 ##        fname2 = '%s_%s_AdjstoPET.nc'%(year, tempAdj)
 ##        stopet4dryp(filepath, fname2, seasonswitch, startdate, enddate, i)
@@ -623,7 +625,7 @@ def seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, 
  ##       os.remove(filepath+fname2)
 
 
-def stopet4dryp(filepath, fname, seasonswitch, startdate, enddate, i):
+def stopet4dryp(filepath, fname, seasonswitch, startdate, enddate, i, season_name):
     """
     This function reshape and rename the stoPET output to fit into the DRYP
     model input requirement of PET.
@@ -666,12 +668,21 @@ def stopet4dryp(filepath, fname, seasonswitch, startdate, enddate, i):
     year = x[0]
     method = x[1]
     suffix = x[2]
+
     if seasonswitch == 1:
-      filename = filepath + 'E_%s_%s_%s_%s_%s_%s.nc'%(i, suffix, method, startdate, enddate, year)
+      filename = os.path.join(filepath, "Forecast_PET_HAD_ens_"+str(i)+"_"+season_name+"_"+str(year)+".nc") 
     elif seasonswitch == 0:
-      filename = filepath + 'E_%s_%s_%s_%s_%s_%s.nc'%(i, suffix, method, startdate, enddate, year)
+      filename = os.path.join(filepath, "Forecast_PET_HAD_ens_"+str(i)+"_"+season_name+"_"+str(year)+".nc") 
     else:
-      filename = filepath + '%s_%s_%s.nc'%(suffix, method, year)
+      filename = os.path.join(filepath, "Forecast_PET_HAD_ens_"+str(i)+"_"+season_name+"_"+str(year)+".nc") 
+
+    # Previous file naming for reference
+    # if seasonswitch == 1:
+    #   filename = filepath + 'E_%s_%s_%s_%s_%s_%s.nc'%(i, suffix, method, startdate, enddate, year)
+    # elif seasonswitch == 0:
+    #   filename = filepath + 'E_%s_%s_%s_%s_%s_%s.nc'%(i, suffix, method, startdate, enddate, year)
+    # else:
+    #   filename = filepath + '%s_%s_%s.nc'%(suffix, method, year)
     tunits = 'hours since %s-01-01 00:00'%year    
     # mask values above 10 in the new_pet. This is the ocean
     data = np.ma.masked_where(new_pet > 10., new_pet)
