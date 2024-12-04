@@ -1,0 +1,231 @@
+{
+  "storm": {
+      "NUMSIMS": 1,
+      "NUMSIMYRS": 2,
+      "PTOT_SC": [0.00],
+      "PTOT_SF": [0.0],
+      "STORMINESS_SC": [-0.0],
+      "STORMINESS_SF": [0.0],
+  
+      "PDF_FILE": "./model_input/ProbabilityDensityFunctions.csv",
+      "SHP_FILE": "./model_input/HAD_basin.shp",
+      "DEM_FILE": "./model_input/HAD_wgs84.tif",
+      "ZON_FILE": "./model_input/regions.shp",
+      "OUT_PATH": "/home/cuwalid/training/forecast/regional/dataset/pre/",
+      "RAIN_MAP": "./model_input/rainfall_OND.nc",
+      "NREGIONS": 4,
+      "Z_STAT": "mean",
+      "Z_CUTS": [300, 600, 1200],
+      "TACTIC": 1,
+      "WKT_OGC": [
+          "PROJCS[\"WGS84_/_Lambert_Azim_Mozambique\",",
+          "    GEOGCS[\"unknown\",",
+          "        DATUM[\"unknown\",",
+          "            SPHEROID[\"Normal Sphere (r=6370997)\",6370997,0]],",
+          "        PRIMEM[\"Greenwich\",0,",
+          "            AUTHORITY[\"EPSG\",\"8901\"]],",
+          "        UNIT[\"degree\",0.0174532925199433,",
+          "            AUTHORITY[\"EPSG\",\"9122\"]]],",
+          "    PROJECTION[\"Lambert_Azimuthal_Equal_Area\"],",
+          "    PARAMETER[\"latitude_of_center\",5],",
+          "    PARAMETER[\"longitude_of_center\",20],",
+          "    PARAMETER[\"false_easting\",0],",
+          "    PARAMETER[\"false_northing\",0],",
+          "    UNIT[\"metre\",1,",
+          "        AUTHORITY[\"EPSG\",\"9001\"]],",
+          "    AXIS[\"Easting\",EAST],",
+          "    AXIS[\"Northing\",NORTH],",
+          "    AUTHORITY[\"EPSG\",\"42106\"]]"
+        ],
+      "BUFFER": 7000.0,
+      "X_RES": 5000.0,
+      "Y_RES": 5000.0,
+      "T_RES": 30,
+      "NO_RAIN": 0.01,
+      "MIN_DUR": 20,
+      "MAX_DUR": 5760,
+      "MAXD_RAIN": 120,
+      "DISPERSE_": 0.2,
+      "SEASON_TAG": "OND",
+      "SEED_YEAR": 2024,
+      "TIME_ZONE": "Africa/Addis_Ababa",
+      "DATE_ORIGIN": "1970-01-01",
+      "RAINFMT": "u2",
+      "PRECISION": 0.002,
+      "TIMEINT": "u4",
+      "TIMEFIL": 4294967295,
+      "TIME_OUTNC": "minutes",
+      "TIME_DICT_": {
+        "seconds": 1,
+        "minutes": 0.016666666666666666,
+        "hours": 0.0002777777777777778,
+        "days": 1.1574074074074073e-05
+      },
+      "RAIN_NAME": "rain"
+  },
+  "stopet": {
+      "execution_type": "hpc",
+      "outputpath": "/home/cuwalid/training/forecast/regional/dataset/pet/",
+      "runtype": "regional",
+      "startyear": 2024,
+      "endyear": 2024,
+      "seasonswitch": 1,
+      "startdate": 274,
+      "enddate": 365,
+      "seasonName": "OND",
+      "latval": 1.0,
+      "lonval": 35.0,
+      "latval_min": -7.0,
+      "latval_max": 16.0,
+      "lonval_min": 31.0,
+      "lonval_max": 52.1,
+      "number_ensm": 3,
+      "tempAdj": 2,
+      "deltat": 0.0,
+      "locname": "HAD",
+      "udpi_pet": 5,
+      "slice_only": 0,
+      "tercile_forecast_file": "/user/home/fp20123/v2_stopet/ICPAC_TempF_OND2022_HAD.nc"
+  },
+  "dryp": {
+      "model_name": "OND_2024_realization_test",
+      "path_input": "",
+      "TERRAIN": {
+          "path_dem": "/home/cuwalid/training/historical/regional/model/input/HAD_DEM_utm_mm.asc",
+          "path_Qo": "/home/cuwalid/training/historical/regional/outputs/HAD_IMERGcv_sim83_2022_avg_Q_ini.asc",
+          "path_fdl": "/home/cuwalid/training/historical/regional/model/input/HAD_flowdir_land_utm.asc",
+          "path_riv_decay": "/home/cuwalid/training/historical/regional/model/input/HAD_decay_utm_v2.asc",
+          "path_mask": "/home/cuwalid/training/historical/regional/model/input/HAD_mask_utm_m.asc",
+          "path_riv_len": "/home/cuwalid/training/historical/regional/model/input/HAD_riv_length_utm_v2.asc",
+          "path_riv_width": "/home/cuwalid/training/historical/regional/model/input/HAD_width_utm_v2.asc",
+          "path_riv_elev": "/home/cuwalid/training/historical/regional/model/input/HAD_riv_elev_15pc_utm_m_sm_v3.asc"
+      },
+      "VEGETATION": {
+          "path_veg_kc": null,
+          "path_veg_lulc": null
+      },
+      "UNSATURATED": {
+          "path_uz_theta_sat": "/home/cuwalid/training/historical/regional/model/input/HAD_theta_sat_utm_m.asc",
+          "path_uz_theta_awc": "/home/cuwalid/training/historical/regional/model/input/HAD_theta_awc_utm.asc",
+          "path_uz_theta_wp": "/home/cuwalid/training/historical/regional/model/input/HAD_theta_wp_utm.asc",
+          "path_uz_rootdepth": "/home/cuwalid/training/historical/regional/model/input/HAD_rootdepth_stocker_2023_filled_factor.asc",
+          "path_uz_lambda": "/home/cuwalid/training/historical/regional/model/input/HAD_lambdas_utm_m.asc",
+          "path_uz_psi": "/home/cuwalid/training/historical/regional/model/input/HAD_psi_utm_m.asc",
+          "path_uz_ksat": "/home/cuwalid/training/historical/regional/model/input/HAD_ksat_utm_zhung.asc",
+          "path_uz_theta": "/home/cuwalid/training/historical/regional/outputs/HAD_IMERGcv_sim83_2022_avg_tht_ini.asc"
+      },
+      "RIPARIAN": {
+          "path_rp_theta_sat": "/home/cuwalid/training/historical/regional/model/input/HAD_theta_sat_utm_m.asc",
+          "path_rp_theta_awc": "/home/cuwalid/training/historical/regional/model/input/HAD_theta_awc_utm.asc",
+          "path_rp_theta_wp": "/home/cuwalid/training/historical/regional/model/input/HAD_theta_wp_utm.asc",
+          "path_rp_rootdepth": "/home/cuwalid/training/historical/regional/model/input/HAD_rootdepth_utm_m.asc",
+          "path_rp_lambda": "/home/cuwalid/training/historical/regional/model/input/HAD_lambdas_utm_m.asc",
+          "path_rp_psi": "/home/cuwalid/training/historical/regional/model/input/HAD_psi_utm_m.asc",
+          "path_rp_ksat": "/home/cuwalid/training/historical/regional/model/input/HAD_ksat_utm_m.asc",
+          "path_rp_theta": "/home/cuwalid/training/historical/regional/outputs/HAD_IMERGcv_sim83_2022_avg_tht_rp_ini.asc"
+      },
+      "SATURATED": {
+          "path_sz_ksat": "/home/cuwalid/training/historical/regional/model/input/HAD_ksat_D2E_ksat_sim_85_utm.asc",
+          "path_sz_sy": "/home/cuwalid/training/historical/regional/model/input/HAD_D2E_sy_ghlymps_utm_mmm.asc",
+          "path_sz_wte": "/home/cuwalid/training/historical/regional/outputs/HAD_IMERGcv_sim83_2022_avg_wte_ini.asc",
+          "path_sz_bc_head": "/home/cuwalid/training/historical/regional/model/input/HAD_CHBm_utm.asc",
+          "path_sz_bottom": "/home/cuwalid/training/historical/regional/model/input/HAD_botb.asc",
+          "path_sz_depth": "/home/cuwalid/training/historical/regional/model/input/HAD_BDdepth_utm_m_sm_v2.asc",
+          "path_sz_type": "/home/cuwalid/training/historical/regional/model/input/HAD_globathymetry_utm.asc"
+      },
+      "METEO": {
+          "path_pre": "/home/cuwalid/training/forecast/regional/dataset/pre/OND_2024/Forecast_PRE_HAD_ens_12_OND_2024.nc",
+          "path_pet": "/home/cuwalid/training/forecast/regional/dataset/pet/OND_2024_PET_forecast/Forecast_PET_HAD_ens_22_OND_2024.nc",
+          "path_lai": null,
+          "path_savi": null,
+          "path_kc": null
+      },
+      "WATER_BODIES": {
+          "path_lake_depth": "/home/cuwalid/training/historical/regional/model/input/HAD_globathymetry_utm.asc",
+          "path_pnd_hmax": "/home/cuwalid/training/historical/regional/model/input/HAD_ali2024_ponds_max_depth_utm_no_lakes.asc",
+          "path_pnd_Amax": "/home/cuwalid/training/historical/regional/model/input/HAD_ali2024_ponds_max_area_utm_no_lakes.asc"
+      },
+      "INTERCEPTION": {
+          "path_veg_rp_extinction_depth": "/home/cuwalid/training/historical/regional/model/input/HAD_rootdepth_stocker_2023_filled.asc"
+      },
+      "OUTPUT": {
+          "path_out_sz": "/home/cuwalid/training/historical/regional/model/input/HAD_dryp_station_utm.csv",
+          "path_out_uz": "/home/cuwalid/training/historical/regional/model/input/HAD_dryp_station_utm.csv",
+          "path_out_oz": "/home/cuwalid/training/historical/regional/model/input/HAD_dryp_station_utm.csv",
+          "path_output": "/home/cuwalid/leo_test/CUWALID/dryp_output",
+          "path_setting": "/home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_OND_2024.json",
+          "path_projection": "/home/cuwalid/training/historical/regional/model/HAD_projection.dwapm"
+      }
+  },
+  "dryp_settings": {
+      "SIMULATION_PERIOD": {
+          "start_date": "2024 10 1",
+          "end_date": "2024 12 31"
+      },
+      "PROJECTION": "+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs",
+      "TIMESTEP_SETTINGS": {
+          "dt_of": 60,
+          "dt_uz": 60,
+          "dt_gw": 60
+      },
+      "READING": {
+          "data_reading": {
+              "pre": 5,
+              "pet": 1,
+              "kc": 3,
+              "savi": 3,
+              "lai": 3
+          },
+          "data_step": {
+              "pre": 30,
+              "pet": 60,
+              "kc": 1440,
+              "savi": 1440,
+              "lai": 1440
+          },
+          "data_reproject": {
+              "pre": false,
+              "pet": true,
+              "kc": false,
+              "savi": false,
+              "lai": false
+          },
+          "data_interp": {
+              "pre": true,
+              "pet": true,
+              "kc": false,
+              "savi": false,
+              "lai": false
+          },
+          "data_projection": {
+              "pre": "EPSG:42106",
+              "pet": "EPSG:4326",
+              "kc": "EPSG:4326",
+              "savi": "EPSG:4326",
+              "lai": "EPSG:4326"
+          }
+      },
+      "COMPONENTS": {
+          "method_inf": 1,
+          "run_gw": true,
+          "method_gw": 0
+      },
+      "OUTPUT": {
+          "output_csv": true,
+          "output_grid": true,
+          "output_dt": "1M"
+      },
+      "GLOBAL_FACTORS": {
+          "uz_kdt": "1.0",
+          "uz_kdroot": "1.5",
+          "uz_kawc": "1.0",
+          "uz_kkast": "0.7",
+          "uz_ksigma": "1.0",
+          "riv_kksat": "0.87",
+          "riv_kdecay": "20.3",
+          "riv_kwidth": "1",
+          "sz_kksat": "1.10",
+          "sz_ksy": "0.82"
+      }
+  }   
+}

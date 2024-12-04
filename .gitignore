@@ -17,15 +17,10 @@ cuwalid/stopet/stopet_parameters/meanshift_had.nc
 cuwalid/stopet/stopet_parameters/stdshift_had.nc
 forecasting_dataset/
 cache/
-forecast_plot_input.json
 run_forecast.py
 output/
 output_somalia/
 test.py
-stopet_input.json
-storm_input.json
-dryp_input.json
-dryp_settings.json
 run_stopet.py
 run_impact.py
 run_storm.py
@@ -37,7 +32,7 @@ input_files/
 dryp_output/
 storm_output/
 parameters_dataset_list.json
-cuwalid_input.json
 stopet_output/
 json_testing/
 logs/
+inputs/
