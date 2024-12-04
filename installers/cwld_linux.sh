@@ -44,7 +44,7 @@ conda create -y -n $SPY
 
 # Move into cuwalid environment and install packages
 conda activate $ENV
-conda install -y -c conda-forge python=$PYT geopandas rioxarray dask landlab pointpats scikit-image pip-tools chardet tqdm cartopy metpy numba cmaps cmcrameri nb_conda_kernels seaborn spyder-kernels ipykernel basemap bottleneck
+conda install -y -c conda-forge python=$PYT geopandas rioxarray dask landlab pointpats scikit-image pip-tools chardet tqdm cartopy metpy numba cmaps cmcrameri nb_conda_kernels seaborn spyder-kernels ipykernel basemap bottleneck osmnx geopy matplotlib-scalebar
 conda deactivate
 
 # Move into jupyter environment and install packages
