@@ -136,7 +136,7 @@ def run_cuwalid(cuwalid_input):#, forecasting_input):
 
 
 	# print add water forecasting entry
-	print("Run Water forecasting WaterCast")
+	print("Executing Water forecasting: WaterCast")
 	if cuwalid_config["run_WaterCast"] is True:
 		HyCast_input_path = cuwalid_config["MODELS"]["WaterCast"]["HyCast"]
 		ImCast_input_path = cuwalid_config["MODELS"]["WaterCast"]["ImCast"]
@@ -145,7 +145,10 @@ def run_cuwalid(cuwalid_input):#, forecasting_input):
 		# modify names
 		# modify season and year
 
+		print("Executing hydrological forecasting: HyCast")
 		run_hydro_forecast(HyCast_input_path)
+		
+		print("Executing Impact-based water forecasting: ImCast")
 		fcast.plot_maps_json(ImCast_input_path)
 
 if __name__ == '__main__':
