@@ -348,7 +348,10 @@ def extract_forecasting_variable(model_name,
 					area_list.append(area*1/np.sum(area))
 
 					# get status value
-					status_list.append(area.index(max(area)))
+					if ivar == "Flood":
+						status_list.append(2-area.index(max(area)))
+					else:
+						status_list.append(area.index(max(area)))
 
 				
 			# change to numpy array
@@ -367,7 +370,7 @@ def extract_forecasting_variable(model_name,
 			df[itercile] = area[:, i]
 
 		fname = postpp_path + "csv/" + model_name+"_"+iseason+"_"+str(iyear)+"_county_areas.csv"
-		df.to_csv(fname)
+		df.to_csv(fname, index=False)
 				
 
 def read_dataset(fname, var_name='tht'):
