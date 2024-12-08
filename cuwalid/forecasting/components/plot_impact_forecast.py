@@ -18,6 +18,7 @@ from cuwalid.forecasting.components.helper_functions import add_label_features, 
 from cuwalid.forecasting.components.map_properties import *
 from cuwalid.forecasting.components.read_paths import *
 import cuwalid.tools.CUWALID_view_tool as cuwalidplt
+import matplotlib.image as mpimg
 #import arabic_reshaper
 #from bidi import algorithm as bidialg
 #import pandas as pd
@@ -163,6 +164,8 @@ def plot_map(plot_scale="Zoom",
 		try:
 			# Query amenities using the latest OSMnx version (0.18.1 as of 2024-02-21)
 			highway = ox.features.features_from_polygon(polygon, tags={'highway': True})
+			# 4. Clip the OSM data to the polygon
+			highway = gpd.clip(highway, polygon)
 			highway.crs = mapPP
 			highway = highway.to_crs(netcdfPP)#ds.rio.crs)
 		except:
@@ -191,6 +194,8 @@ def plot_map(plot_scale="Zoom",
 			aeroway = ox.features.features_from_polygon(polygon, tags={'aeroway': True})
 			aeroway = aeroway[aeroway["name"].notnull()]
 			#aeroway = aeroway.loc["node"]
+			# 4. Clip the OSM data to the polygon
+			aeroway = gpd.clip(aeroway, polygon)
 			aeroway.crs = mapPP
 			aeroway = aeroway.to_crs(netcdfPP)
 			aeroway = aeroway.centroid
@@ -208,6 +213,8 @@ def plot_map(plot_scale="Zoom",
 	if read_oms is True:
 		try:
 			water = ox.features.features_from_polygon(polygon, tags={'waterway': True})
+			# 4. Clip the OSM data to the polygon
+			water = gpd.clip(water, polygon)
 			water.crs = mapPP
 			water = water.to_crs(netcdfPP)
 		except:
@@ -222,6 +229,8 @@ def plot_map(plot_scale="Zoom",
 	if read_oms is True:
 		try:
 			leisure = ox.features.features_from_polygon(polygon, tags={'leisure': True})
+			# 4. Clip the OSM data to the polygon
+			leisure = gpd.clip(leisure, polygon)
 			leisure.crs = mapPP
 			leisure = leisure.to_crs(netcdfPP)
 
@@ -235,29 +244,31 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
-		bbox = wards.total_bounds
-		bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
-		polygon_bnd = gpd.GeoDataFrame({'id': [1]},
-			geometry=[bbox], crs="EPSG:4326")["geometry"].iloc[0]
+		#bbox = wards.total_bounds
+		#bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
+		#polygon_bnd = gpd.GeoDataFrame({'id': [1]},
+		#	geometry=[bbox], crs="EPSG:4326")["geometry"].iloc[0]
 
-		places = ox.features.features_from_polygon(polygon_bnd, tags={'place': True})
-		#places = ox.features.features_from_polygon(polygon, tags={'place': True})
+		#places = ox.features.features_from_polygon(polygon_bnd, tags={'place': True})
+		places = ox.features.features_from_polygon(polygon, tags={'place': True})
 		places = places.loc['node']
 		places.crs = mapPP
-		places = gpd.clip(places, polygon_bnd)
+		#places = gpd.clip(places, polygon_bnd)
+		places = gpd.clip(places, polygon)
 		places = places.to_crs(netcdfPP)
 	
 	#places.plot()
 	
 	# admininstrative borders
 	if plot_obj_id[plot_scale]["Administrative Boundary"] is True:
-		bbox = wards.total_bounds
-		bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
-		polygon_bnd = gpd.GeoDataFrame({'id': [1]},
-			geometry=[bbox], crs="EPSG:4326")["geometry"].iloc[0]
-
-		bnd_admin = ox.features.features_from_polygon(polygon_bnd, tags={'boundary': True})
-		bnd_admin = gpd.clip(bnd_admin, polygon_bnd)
+		#bbox = wards.total_bounds
+		#bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
+		#polygon_bnd = gpd.GeoDataFrame({'id': [1]},
+		#	geometry=[bbox], crs="EPSG:4326")["geometry"].iloc[0]
+		#bnd_admin = ox.features.features_from_polygon(polygon_bnd, tags={'boundary': True})
+		#bnd_admin = gpd.clip(bnd_admin, polygon_bnd)
+		bnd_admin = ox.features.features_from_polygon(polygon, tags={'boundary': True})
+		bnd_admin = gpd.clip(bnd_admin, polygon)
 		bnd_admin = bnd_admin.loc['relation']
 		bnd_admin.crs = mapPP
 		bnd_admin = bnd_admin.to_crs(netcdfPP)
@@ -581,7 +592,7 @@ def plot_map(plot_scale="Zoom",
 			place_filter.plot(ax=ax,
 				color=place_color[iplaces],
 				marker=place_marker[iplaces],
-				edgecolor="none",
+				edgecolor=place_edgecolor[iplaces],
 				linewidths=0.1,
 				facecolor=place_color[iplaces],
 				markersize=place_size[iplaces],
@@ -603,9 +614,10 @@ def plot_map(plot_scale="Zoom",
 	plt.title(#"Map of "+ place_name + "" + ", Kenya\n"+
 		# English
 		get_labels_by_lenguage(language_labels, ilanguage, iwater_status) +
-		" - " + place_name +"\n"+
-		get_labels_by_lenguage(language_labels, ilanguage, iseason) +
-		"\n" + "YYYY"
+		" - " + place_name +#"\n"+
+		get_labels_by_lenguage(language_labels, ilanguage, iseason) + " " +
+		#"\n" +
+		"YYYY",
 
 		#variable[iwater_status]+ '\n OND - YYYY' #+
 		#variable[iwater_status] + " in " + place_name +"\n"+
@@ -616,7 +628,7 @@ def plot_map(plot_scale="Zoom",
 		#place_name +"\n"+
 		#language_labels["Swahili"][iseason] + " \n " + "YYYY"
 		#str(pd.to_datetime(rescaled.time.values[time_plot]).year)
-		)
+		fontweight="bold")
 
 	# MAP LEGEND ----------------------------------------------
 	# Prepare additional legend entry
@@ -754,6 +766,18 @@ def plot_map(plot_scale="Zoom",
 	#ax2.set_ylabel("")
 	#ax2.set_xlabel("")
 	ax2.axis('off')
+	
+	# Add logo ==================================================================
+	# Get the current script's directory
+	current_dir = os.path.dirname(os.path.abspath(__file__))
+	# Navigate two levels up
+	two_levels_up = os.path.abspath(os.path.join(current_dir, '..', '..','..'))
+	fname = os.path.join(two_levels_up,"docs/fig/CUWALID_Logo_LS_Tag_1.jpg")
+	logo = mpimg.imread(fname)
+	# print figure
+	ax_logo = fig.add_axes([0.02, 0.90, 0.20, 0.15])
+	ax_logo.imshow(logo)
+	ax_logo.axis('off')
 	
 	# Save figure as png
 	if output_dir is not None:	

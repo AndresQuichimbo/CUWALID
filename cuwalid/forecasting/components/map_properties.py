@@ -20,21 +20,23 @@ highways = {
 line_colors = {
 "Small Roads": "#333333",
 "Main Roads": "#000000",
-"Administrative Boundary": "k",
+"Administrative Boundary": "gray",
+#"Administrative Boundary": "k",
 }
 
 # specify line widths of streets and roads
 line_width = {
 "Small Roads": 0.50,
 "Main Roads": 2.0,
-"Administrative Boundary": 2.0,
+"Administrative Boundary": 2.5,
 }
 
 # specify lines styles
 line_ls = {
 "Small Roads": ":",
 "Main Roads": ":",
-"Administrative Boundary": "dashed",
+"Administrative Boundary": "-",
+#"Administrative Boundary": "dashed",
 }
 
 # dictionaries
@@ -107,6 +109,11 @@ place_ids = {
 place_color = {
 "Town": 'k',
 }
+
+place_edgecolor = {
+"Town": 'gray',
+}
+
 
 place_marker = {
 "Town": 'o',
@@ -259,13 +266,15 @@ language_labels = {
 		"Main Roads": "Main Roads",
 		"Small Roads": "Small Roads",
 		"Town": "Town",
-		"OND": "Short rains (Oct-Dec)",
-		"MAM": "Long rains (MAR-MAY)",
+		#"OND": "Short rains (Oct-Dec)",
+		#"MAM": "Long rains (MAR-MAY)",
+		"OND": "(Oct-Dec)",
+		"MAM": "(MAR-MAY)",
 		"Soil": "Soil Moisture Status",
 		"Evaporation": "Evapotranspiration",
 		"Groundwater": "Groundwater status",
 		"Surface": "Surface Water Status",
-		"Flood": "Flood Hazard Potential",
+		"Flood": "Flood Hazard",
 		"in": "in",
         "Geography":"Geography",
         'Boundary':'Boundary',
