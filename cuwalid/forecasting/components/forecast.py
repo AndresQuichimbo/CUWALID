@@ -134,12 +134,14 @@ def extract_forecasting_variable(model_name,
 								plot_scale,
 								season, variables,
 								postpp_path,
-								netcdf_path,
+								netcdf_path_list,
 								shapefile_path,
 								place_name,
 								place_code,
+								icode_field_shp,
 								iname_field_shp,
-								save_nc=False
+								save_nc=False,
+								iyear=2022
 								):
 
 	"""Function to get a set netCDF files for each place listed in place_name
@@ -260,44 +262,50 @@ def extract_forecasting_variable(model_name,
 	
 	# list of labels for of the terciles
 	tercile = ["AN", "NN", "BN"]
-	# create list to store data
-	# name list
-	#fname = []
-	# season list
-	season_list = []
-	# store variable
-	variable_list = []
-	# store place name
-	place_list = []
-	# store place name
-	code_list = []
-	# water status
-	status_list = []
-	# name code list
-	code_name_list = []
+	#print(season, place_code, place_name)
 
-	# loop over list of files
-	area_list = []
-	
 	for iseason in season:
+		# create list to store data
+		# name list
+		#fname = []
+		# season list
+		season_list = []
+		# store variable
+		variable_list = []
+		# store place name
+		place_list = []
+		# store place name
+		code_list = []
+		# water status
+		status_list = []
+		# name code list
+		code_name_list = []		
+		# loop over list of files
+		area_list = []
+	
 		for iplace_name, iplace_code in zip(place_name, place_code):
-			for ivar in field:
+			# field should match the list of netCDF files
+			for ivar, inetcdf_path in zip(field, netcdf_path_list):
 				# read shapefile and select area/region
 				if plot_scale == "County":
 					region = gpd.read_file(shapefile_path)
-				#print(shapefile_path, iname_field_shp)	
-				region = region[(region[iname_field_shp] == iplace_code)]
+				#print(shapefile_path, iname_field_shp)
+				#print(region)
+				if iplace_code is None:
+					region = region[(region[iname_field_shp] == iplace_name)]
+				else:
+					region = region[(region[icode_field_shp] == iplace_code)]
 				#print(region, iplace_code, iplace_name)
 				if len(region) > 0:
 					# chose path depending on the season
 					if iseason is None:
-						inetcdf_path = netcdf_path.replace("_SSS", "")
+						inetcdf_path = inetcdf_path.replace("_SSS", "")
 					else:
-						inetcdf_path = netcdf_path.replace("SSS", iseason)
+						inetcdf_path = inetcdf_path.replace("SSS", iseason)
 
 					#print(len(region.index), iplace_code)
 					#print(region, iplace_code)
-
+					#print(inetcdf_path)
 					inetcdf_path = inetcdf_path.replace("VVV", ivar)
 					dataset = cuwalid.extract_dataset(inetcdf_path, region)
 					#print(region, iplace_code)
@@ -325,10 +333,6 @@ def extract_forecasting_variable(model_name,
 					code_name_list.append(model_name+"_"+str(iplace_code))
 
 					# CALUCATE AREAS FOR EACH TERCILE
-					# loop over list of files
-					#area_list = []
-					#for ifname in fname:
-					# read dataset and extract selected tercile
 					area = []
 					for itercile in tercile:
 						# read tercile
@@ -352,18 +356,18 @@ def extract_forecasting_variable(model_name,
 			# save as dataframe
 
 
-	# create dataframe of contributin areas
-	df = pd.DataFrame()
-	df["name"] = code_name_list
-	df["place"] = place_list
-	df["season"] = season_list
-	df["variable"] = variable_list
-	df["status"] = status_list
-	for i, itercile in enumerate(tercile):
-		df[itercile] = area[:, i]
+		# create dataframe of contributin areas
+		df = pd.DataFrame()
+		df["name"] = code_name_list
+		df["place"] = place_list
+		df["season"] = season_list
+		df["variable"] = variable_list
+		df["status"] = status_list
+		for i, itercile in enumerate(tercile):
+			df[itercile] = area[:, i]
 
-	fname = postpp_path + "csv/" + model_name+"_county_areas.csv"
-	df.to_csv(fname)
+		fname = postpp_path + "csv/" + model_name+"_"+iseason+"_"+str(iyear)+"_county_areas.csv"
+		df.to_csv(fname)
 				
 
 def read_dataset(fname, var_name='tht'):

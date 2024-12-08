@@ -563,7 +563,7 @@ def plot_map(plot_scale="Zoom",
 				#label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
 				label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
 				)
-	# Add point attributes
+	# Add point attributes -----------------------------------------------------------------------
 	#if plot_scale != "Country":
 	for ipoint in aeroway_obj:
 		if plot_obj_id[plot_scale][ipoint] is True:
@@ -580,7 +580,7 @@ def plot_map(plot_scale="Zoom",
 					#label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
 					)
 
-	# Add point attributes
+	# Add point attributes ----------------------------------------------------------------------
 	#if plot_scale != "Country":
 	for iplaces in places_obj:
 		if plot_obj_id[plot_scale][iplaces] is True:
@@ -593,7 +593,8 @@ def plot_map(plot_scale="Zoom",
 				color=place_color[iplaces],
 				marker=place_marker[iplaces],
 				edgecolor=place_edgecolor[iplaces],
-				linewidths=0.1,
+				#markeredgecolor=place_edgecolor[iplaces],
+				linewidths=1.5,
 				facecolor=place_color[iplaces],
 				markersize=place_size[iplaces],
 				#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
@@ -609,8 +610,7 @@ def plot_map(plot_scale="Zoom",
 			except:
 				print("error with add_label_features")
 
-	# MAP TITLE ----------------------------------------
-	# Configure and display the map
+	# MAP TITLE ============================================================================
 	plt.title(#"Map of "+ place_name + "" + ", Kenya\n"+
 		# English
 		get_labels_by_lenguage(language_labels, ilanguage, iwater_status) +
@@ -619,18 +619,15 @@ def plot_map(plot_scale="Zoom",
 		#"\n" +
 		"YYYY",
 
-		#variable[iwater_status]+ '\n OND - YYYY' #+
-		#variable[iwater_status] + " in " + place_name +"\n"+
-		#season_name[iseason] + " - " + "YYYY" + "\n"+
-		
 		# Swahili
 		#language_labels["Swahili"][iwater_status] + "-" +
 		#place_name +"\n"+
 		#language_labels["Swahili"][iseason] + " \n " + "YYYY"
 		#str(pd.to_datetime(rescaled.time.values[time_plot]).year)
 		fontweight="bold")
+		
 
-	# MAP LEGEND ----------------------------------------------
+	# MAP LEGEND ============================================================================
 	# Prepare additional legend entry
 	boundary_line, = plt.plot([], [], # Invisible in plot, visible in legend
 				color=line_colors["Administrative Boundary"],
@@ -649,7 +646,7 @@ def plot_map(plot_scale="Zoom",
 			bbox_to_anchor=(0.0, 0),
 			loc=2,
 			frameon=False,
-			title=get_labels_by_lenguage(language_labels, ilanguage,"Geography"),
+			#title=get_labels_by_lenguage(language_labels, ilanguage,"Geography"),
 			ncols=ncol_legend
 			)
 
@@ -665,7 +662,6 @@ def plot_map(plot_scale="Zoom",
 	#for id_object in leisure_objects:
 	#	rect_patches.append(mpatches.Patch(color=leisure_color[id_object]))
 
-	#label_patches = status[iwater_status]# + leisure_objects
 	label_patches = status_labels[ilanguage][iwater_status]
 	# add legend
 	ax.legend(handles=rect_patches, labels=label_patches,
@@ -674,18 +670,21 @@ def plot_map(plot_scale="Zoom",
 			#title=variable[iwater_status]+ "\n" +
 			#			language_labels["Swahili"][iwater_status],
 			title=get_labels_by_lenguage(language_labels, ilanguage, iwater_status),
-			frameon=False)
+			frameon=False,
+			title_fontproperties={#'weight':'bold',
+						 "style": "italic"}
+			)
 
-
-	#add_scale_bar(ax, 0.1, location=(0.95, 0.95), linewidth=5, text='10 km')
-	scalebar = ScaleBar(1, length_fraction=0.0254) # 1 pixel = 0.2 meter
+	# ADD SCALE BAR TO FIGURE ======================================================
+	scalebar = ScaleBar(1, length_fraction=0.0254, location="lower right") # 1 pixel = 0.2 meter
 	plt.gca().add_artist(scalebar)
 
 	# add label to axis
 	#plt.xlabel("Longitude")
 	#plt.ylabel("Latitude")
 
-	# switch off axis		
+	# MODFIDY AXES AND MARGINS
+	# switch off axis ------------------------------------------------------		
 	if (plot_scale == "Zoom") or (plot_scale == "Ward"):
 		ax.set(yticklabels=[])
 		ax.tick_params(left=False)  # remove the ticks
@@ -700,7 +699,8 @@ def plot_map(plot_scale="Zoom",
 
 	plt.ylabel("")
 	plt.xlabel("")
-	plt.tight_layout()
+	plt.subplots_adjust(left=0.025, right=0.975, top=0.96)
+	#plt.tight_layout()
 
 	# ADD LOCATION PLOT ===========================================
 
@@ -779,7 +779,7 @@ def plot_map(plot_scale="Zoom",
 	ax_logo.imshow(logo)
 	ax_logo.axis('off')
 	
-	# Save figure as png
+	# Save figure as png ========================================================
 	if output_dir is not None:	
 		# Check if path exist
 		if not os.path.exists(output_dir):
