@@ -67,7 +67,6 @@ class get_model_settings(object):
 		#self.run_GW = int(aux_run_GW[0])
 
 		# Groundwater aquifer functions
-		#self.gw_func = int(aux_run_GW[1]) if len(aux_run_GW) > 1 else 0
 		self.gw_func = int(settings_config["COMPONENTS"]["method_gw"])
 
 		# Save netcdf files of model results
@@ -75,9 +74,6 @@ class get_model_settings(object):
 
 		# Save results
 		self.save_results = True
-
-		# Activate lakes
-		#self.lakes = settings_config["OUTPUT"]["not used 1"]
 
 		# Temporal aggregation of model outputs
 		self.dt_results = settings_config["OUTPUT"]["output_dt"]

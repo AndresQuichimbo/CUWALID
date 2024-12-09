@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import subprocess
@@ -13,7 +14,7 @@ from cuwalid.tools.DRYP_json_builder import create_ensamble, write_JSON_dryp_fil
 import cuwalid.tools.CUWALID_json_builder as JSON_builder
 import cuwalid.tools.CUWALID_forecast_tools as cuwalid_mtools
 
-def run_cuwalid(cuwalid_input):#, forecasting_input):
+def run_cuwalid(cuwalid_input):
 	
 	# Get input file as dictionary
 	with open(cuwalid_input, 'r') as file:
@@ -44,11 +45,11 @@ def run_cuwalid(cuwalid_input):#, forecasting_input):
 
 	# SET UP MODEL PATHS
 	# Leo make sure that this folder exist otherwise create new ones
-	forecast_path_storm_output = forecast_path + "/dataset/pre/"+season+"_"+str(iyear)+"/"
-	forecast_path_stopet_output = forecast_path + "/postpp/pet/"+season+"_"+str(iyear)+"/"
-	forecast_path_dryp_model = forecast_path + "/model/"
-	forecast_path_dryp_output = forecast_path + "/output/"
-	forecast_path_dryp_postpp = forecast_path + "/postpp/"
+	forecast_path_storm_output = forecast_path + "dataset/pre/"+season+"_"+str(iyear)+"/"
+	forecast_path_stopet_output = forecast_path + "postpp/pet/"+season+"_"+str(iyear)+"/"
+	forecast_path_dryp_model = forecast_path + "model/"
+	forecast_path_dryp_output = forecast_path + "output/"
+	forecast_path_dryp_postpp = forecast_path + "postpp/"
 	
 	
 	# RUN MODEL COMPONENTS AND ANY ADDITIONAL PROCESS
@@ -92,12 +93,12 @@ def run_cuwalid(cuwalid_input):#, forecasting_input):
 	# create model names
 #	mname = [forecast_model_name + season + "_" + str(iyear) + "_realization_" + str(isim) for isim in range(nsim)]
 	mname = [season + "_" + str(iyear) + "_realization_" + str(isim) for isim in range(nsim)]
-	# create model settings files names for realizations
-	fname_setting_file = "/home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_"+season+"_"+str(iyear)+".json"
+	# create model settings file names for realizations
+	#fname_setting_file = "/home/cuwalid/training/forecast/regional/model/HAD_IMERG_par_setting_"+season+"_"+str(iyear)+".json"
 	fname_setting_file = forecast_path_dryp_model+"Hydro_model_forecast_settings_"+season+"_"+str(iyear)+".json"
-	# create model parameters files names for realizations
-	fsim_forecasting = ["/home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_test_"+season+"_"+str(iyear)+"_forecast_"+str(isim)+".json" for isim in range(nsim)]
-	fsim_forecasting = [forecast_path_dryp_model+"Hydro_model_forecast_input_"+ season +"_"+str(iyear)+str(isim)+".json" for isim in range(nsim)]
+	# create model parameter file names for realizations
+	#fsim_forecasting = ["/home/cuwalid/training/forecast/regional/model/HAD_IMERG_input_test_"+season+"_"+str(iyear)+"_forecast_"+str(isim)+".json" for isim in range(nsim)]
+	fsim_forecasting = [forecast_path_dryp_model+"Hydro_model_forecast_input_"+ season +"_"+str(iyear)+ "_" +str(isim)+".json" for isim in range(nsim)]
 	
 	# set paths of forcing datasets and names
 	#forecast_path_stopet_output = "/home/cuwalid/training/forecast/regional/dataset/pet/"+season+"_"+str(iyear)+"_PET_forecast/"#Forecast_PET_HAD_ens_0_MAM_2024.nc"
@@ -132,21 +133,24 @@ def run_cuwalid(cuwalid_input):#, forecasting_input):
 				new_setting_file=fname_setting_file,
 			)
 		# Get dryp input file list
-		fsim_forecasting_list = ["HAD_IMERG_input_"+season+"_"+str(iyear)+"_forecast_"+str(isim)+".json" for isim in range(nsim)]
-		fsim_forecasting_list = ["Hydro_model_forecast_input_"+season+"_"+str(iyear)+str(isim)+".json" for isim in range(nsim)]
+		#fsim_forecasting_list = ["HAD_IMERG_input_"+season+"_"+str(iyear)+"_forecast_"+str(isim)+".json" for isim in range(nsim)]
+		#fsim_forecasting_list = ["Hydro_model_forecast_input_"+season+"_"+str(iyear)+ "_" +str(isim)+".json" for isim in range(nsim)]
 		
+		# LEO change this to a local directory automatically selected
 		log_dir = "/home/cuwalid/leo_test/CUWALID/logs"  # Adjust to your desired log directory
 		# Make sure the log directory exists
 		os.makedirs(log_dir, exist_ok=True)
-		for ifsim_forecasting in fsim_forecasting_list:
+		#for ifsim_forecasting in fsim_forecasting_list:
+		for ifsim_forecasting in fsim_forecasting:
 			# Remove the .json extension for the log file name
 			base_name = os.path.splitext(ifsim_forecasting)[0]
 
 			# Generate a unique log file name for each process
 			log_file = os.path.join(log_dir, f"{base_name}_output.log")
 			# Build the command to run the simulation and redirect both stdout and stderr to the log file
-			command = f"nohup python -m cuwalid.dryp.main_DRYP /home/cuwalid/training/forecast/regional/model/{ifsim_forecasting} > {log_file} 2>&1 &"
-			command = f"nohup python -m cuwalid.dryp.main_DRYP {forecast_path_dryp_model}/{ifsim_forecasting} > {log_file} 2>&1 &"
+			#command = f"nohup python -m cuwalid.dryp.main_DRYP /home/cuwalid/training/forecast/regional/model/{ifsim_forecasting} > {log_file} 2>&1 &"
+			#command = f"nohup python -m cuwalid.dryp.main_DRYP {forecast_path_dryp_model+ifsim_forecasting} > {log_file} 2>&1 &"
+			command = f"nohup python -m cuwalid.dryp.main_DRYP {ifsim_forecasting} > {log_file} 2>&1 &"
 			print(command)
 			# Run the command as a background process using subprocess
 			#subprocess.Popen(command, shell=True)
@@ -165,17 +169,18 @@ def run_cuwalid(cuwalid_input):#, forecasting_input):
 		# modify season and year
 
 		print("Executing hydrological forecasting: HyCast")
-		run_hydro_forecast(HyCast_input_path)
+		#run_hydro_forecast(HyCast_input_path)
 		
 		print("Executing Impact-based water forecasting: ImCast")
-		fcast.plot_maps_json(ImCast_input_path)
+		#fcast.plot_maps_json(ImCast_input_path)
 
 if __name__ == '__main__':
-	if len(sys.argv) != 2:
-		print("Usage: python <script_name.py> <path_to_config.json>")
-		sys.exit(1)
+	# Set up argument parser to get the JSON config file from command line
+	parser = argparse.ArgumentParser(description="Execute CUWALID based on JSON configuration.")
+	parser.add_argument('config_file', type=str, help='Path to the JSON configuration file')
 
-	cuwalid_path = sys.argv[1]
-	forecasting_path = sys.argv[2]
+	# Parse command line arguments
+	args = parser.parse_args()
 
-	run_cuwalid(cuwalid_path, forecasting_path)
+	# Run the cuwalid forecast function with the config file provided by the user
+	run_cuwalid(args.config_file)

@@ -88,7 +88,7 @@ class gwflow_EFD(object):
 			print('Groundwater settings: Constant transmissivity function')
 		elif method == 1:
 			print('Groundwater settings: Linear transmissivity function')
-		elif method == 3:
+		elif method == 2:
 			print('Groundwater settings: Exponential transmissivity function')
 		else:
 			print('Groundwater settings: Multi-transmissivity function')

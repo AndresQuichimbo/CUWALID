@@ -303,7 +303,8 @@ def extract_forecasting_variable(model_name,
 					else:
 						inetcdf_path = inetcdf_path.replace("SSS", iseason)
 
-					#print(len(region.index), iplace_code)
+					#print(iplace_code, iplace_name)
+					#print(len(region.index), iplace_code, iplace_name)
 					#print(region, iplace_code)
 					#print(inetcdf_path)
 					inetcdf_path = inetcdf_path.replace("VVV", ivar)
