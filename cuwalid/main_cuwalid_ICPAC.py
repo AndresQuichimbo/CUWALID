@@ -12,7 +12,7 @@ from cuwalid.forecasting.main_hydro_forecast import run_hydro_forecast
 import cuwalid.forecasting.main_impact_forecast as fcast
 from cuwalid.tools.DRYP_json_builder import create_ensamble, write_JSON_dryp_file
 import cuwalid.tools.CUWALID_json_builder as JSON_builder
-import cuwalid.tools.CUWALID_forecast_tools as cuwalid_mtools
+import cuwalid.tools.CUWALID_mfile_tools as cuwalid_mtools
 
 def run_cuwalid(cuwalid_input):
 	
@@ -45,6 +45,8 @@ def run_cuwalid(cuwalid_input):
 
 	# SET UP MODEL PATHS
 	# Leo make sure that this folder exist otherwise create new ones
+	# I guess ww should also ask if (using a boolead entry) if this paths need to 
+	# be updated in the dryp, storm, or stopet.
 	forecast_path_storm_output = forecast_path + "dataset/pre/"+season+"_"+str(iyear)+"/"
 	forecast_path_stopet_output = forecast_path + "postpp/pet/"+season+"_"+str(iyear)+"/"
 	forecast_path_dryp_model = forecast_path + "model/"
