@@ -9,4 +9,4 @@ Model description and structure
 
 Add description here.
 
-.. image:: ../fig/Model_Structure_conceptual_GMD.png
+.. image:: ../fig/stopet_ex1.png
