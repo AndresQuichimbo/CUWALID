@@ -561,7 +561,7 @@ def plot_map(plot_scale="Zoom",
 				points_filter = amenities[amenities['amenity'].isin(points_ids[ipoint])]
 
 				if len(points_filter) > 10:
-					points_filter = points_filter.sample(n=10)
+					points_filter = points_filter.sample(n=10, random_state=1)
 
 				points_filter.plot(ax=ax,
 					color=point_color[ipoint],
@@ -597,7 +597,7 @@ def plot_map(plot_scale="Zoom",
 				place_filter = places[places['place'].isin(place_ids[iplaces])]
 
 				if len(place_filter) > 10:
-					place_filter = place_filter.sample(n=10)
+					place_filter = place_filter.sample(n=10, random_state=1)
 
 				place_filter.plot(ax=ax,
 					color=place_color[iplaces],
