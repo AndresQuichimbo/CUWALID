@@ -149,21 +149,16 @@ class get_model_settings(object):
 		self.fname_TSOF = dryp_config["METEO"]["path_TSOF"]
 		self.fname_TSUZ = dryp_config["METEO"]["path_TSUZ"]
 		self.fname_TSSZ = dryp_config["METEO"]["path_TSSZ"]
-
+		self.fname_TSav = dryp_config["METEO"]["path_TSav"]
+		self.fname_savi_min = None
+		self.fname_savi_max = None
+		
 		# READ DATASETS PROJECTION
 		self.fname_proj = None
 		self.proj_model = None
 		self.proj_data = None
 
-		#if len(dryp_config.get("drylandmodel", {})) == 98:
-		#	self.fname_proj = dryp_config["OUTPUT"]["path_projection"]
-		#	if self.fname_proj is not None and os.path.exists(self.fname_proj):
-		#		dfproj = pd.read_csv(self.fname_proj)
-		#		self.proj_model = dfproj.PROJECTION[1]
-		#		self.proj_data = dfproj.PROJECTION[4]
-		#	else:
-		#		print("Projection system not provided")
-
+		# read store paramters
 		self.fname_store = None
 		if len(dryp_config.get("drylandmodel", {})) == 100:
 			self.fname_store = dryp_config["drylandmodel"][99]

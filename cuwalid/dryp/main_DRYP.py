@@ -168,6 +168,7 @@ def run_DRYP(filename_input):
 		proj=data_in.data_projection['savi'],
 		proj_model=data_in.PROJECTION,
 		step_func=True,
+		noskip=False
 		)
 	
 	# Read LAI (Leaf Area Index)
@@ -183,6 +184,7 @@ def run_DRYP(filename_input):
 		proj=data_in.data_projection['lai'],
 		proj_model=data_in.PROJECTION,
 		step_func=True,
+		noskip=False
 		)
 	
 	# Read Kc: Crop coeficient factor
@@ -197,7 +199,8 @@ def run_DRYP(filename_input):
 		topo.lon,
 		proj=data_in.data_projection['kc'],
 		proj_model=data_in.PROJECTION,
-		step_func=True
+		step_func=True,
+		noskip=False
 		)
 		
 	# Read SAVI minimum value
@@ -451,19 +454,34 @@ def run_DRYP(filename_input):
 				
 				#print("pet", PET[act_nodes])
 				# check if interception is activated
-				if vegetation.av is None:
-					SAVIdt = None
-					SAVIdt_min = None
-					SAVIdt_max = None
-					LAIdt = None
-					Kcdt = None
-				else:
-					SAVIdt = SAVI.get_one_step_dataset(t_savi, data_in.fname_savi, 'savi')
-					SAVIdt_min = SAVImin.get_one_step_dataset(t_savi, data_in.fname_savi_min, 'savi')
-					SAVIdt_max = SAVImax.get_one_step_dataset(t_savi, data_in.fname_savi_max, 'savi')
-					LAIdt = LAI.get_one_step_dataset(t_savi, data_in.fname_TSlai, 'lai')
-					Kcdt = Kc.get_one_step_dataset(t_savi, data_in.fname_TSkc, 'kc')
-					
+				#if vegetation.av is None:
+				#	SAVIdt = None
+				#	SAVIdt_min = None
+				#	SAVIdt_max = None
+				#	LAIdt = None
+				#	Kcdt = None
+				#else:
+				SAVIdt = SAVI.get_one_step_dataset(t_savi, data_in.fname_TSsavi, 'savi')
+				SAVIdt_min = SAVImin.get_one_step_dataset(t_savi, data_in.fname_savi_min, 'savi')
+				SAVIdt_max = SAVImax.get_one_step_dataset(t_savi, data_in.fname_savi_max, 'savi')
+				LAIdt = LAI.get_one_step_dataset(t_savi, data_in.fname_TSlai, 'LAI')
+				Kcdt = Kc.get_one_step_dataset(t_savi, data_in.fname_TSkc, 'kc')
+
+				if Kcdt is not None:
+					# remove the folowing line
+					Kcdt = np.flip(Kcdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
+					Kcdt = Kcdt[act_nodes]
+					Kcdt[Kcdt <= 0] = 1.0
+				if LAIdt is not None:
+					# remove the folowing line
+					LAIdt = np.flip(LAIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
+					LAIdt = LAIdt[act_nodes]
+					LAIdt[LAIdt <= 0] = 0.0
+				if SAVIdt is not None:
+					# remove the folowing line
+					SAVIdt = np.flip(SAVIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
+					SAVIdt = SAVIdt[act_nodes]
+				#print(vegetation.av, SAVIdt, SAVIdt_max, SAVIdt_max, LAIdt, Kcdt)
 				# PONDS: Add ponds here ------------------------------------------
 				# first check that ponds is active
 				if water_bodies.id_nodes is not None:
@@ -476,21 +494,21 @@ def run_DRYP(filename_input):
 					# transfer data to the entire model domain
 					rain[water_bodies.id_nodes] = Ppnds
 				
-				# calculate AV
-				if vegetation.av is not None:
-					av = (SAVIdt - SAVIdt_min)/(SAVIdt_max - SAVIdt_min)
-				else:
-					av = None
+				## calculate AV
+				#if vegetation.av is not None:
+				#	av = (SAVIdt - SAVIdt_min)/(SAVIdt_max - SAVIdt_min)
+				#else:
+				#	av = None
 				
 				# add interception component - UZ zone
 				Pth, Eca, PETh, LAIdt, Kcdt, Sc0_cn = cnp.run_interception_one_step(
-						rain[act_nodes], PET[act_nodes], vegetation.av,
+						rain[act_nodes], PET[act_nodes], vegetation.av[act_nodes],
 						SAVIdt, SAVIdt_max, SAVIdt_min,
 						LAIdt,
 						vegetation.lai_a,
 						vegetation.lai_b,
-						vegetation.fcw_cn,
-						vegetation.Sc0_cn,
+						vegetation.fcw_cn[act_nodes],
+						vegetation.Sc0_cn[act_nodes],
 						Kcdt)
 				
 				## Estimate Kc for the riparian area
@@ -556,7 +574,8 @@ def run_DRYP(filename_input):
 				
 				# potention evapotranspiration ONLY over model domain
 				if Kcdt is not None:
-					PETh = Kcdt[act_nodes]*PETh#[act_nodes]
+					PETh = Kcdt*PETh#[act_nodes]
+					#PETh = Kcdt[act_nodes]*PETh#[act_nodes]
 				# potential evapotranspiration for saturated zone
 				#PETsz = PETh*ratio_etp
 				# potential evapotranspiration for unsaturated zone

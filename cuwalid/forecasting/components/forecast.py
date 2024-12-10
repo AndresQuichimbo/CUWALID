@@ -1,4 +1,4 @@
-import cuwalid.tools.CUWALID_forecast_tools as cuwalid
+import cuwalid.tools.CUWALID_mfile_tools as cuwalid
 import geopandas as gpd
 import numpy as np
 import xarray as xr

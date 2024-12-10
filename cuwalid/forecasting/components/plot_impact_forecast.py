@@ -54,7 +54,7 @@ def plot_map(plot_scale="Zoom",
 			iseason="OND",
 			iwater_status="Groundwater",
 			iyear=2010,
-			ilanguage=["English","Swahili"],
+			language=["English","Swahili", "Amharic", "Oromo", "Somali"],
 			output_dir=None,
 			netcdf_path=None,
 			threshold_path=None,
@@ -411,396 +411,409 @@ def plot_map(plot_scale="Zoom",
 	if ratio_bw <= 1.5:
 		ratio_bw = ratio_bw*1.2
 	
-	# figure size
-	figure_width = 5.0*plot_scale_id[plot_scale]
-	figure_height = 6.2*ratio_bw*plot_scale_id[plot_scale]
+	# add loop for languages to avoid duplicate downloads
+	for ilanguage in language:
 	
-	# Create the base map
-	fig, ax = plt.subplots()
-	fig.set_size_inches(figure_width, figure_height)
-						#7.0*ratio_bw*plot_scale_id[plot_scale])
+		# figure size
+		figure_width = 5.0*plot_scale_id[plot_scale]
+		figure_height = 6.2*ratio_bw*plot_scale_id[plot_scale]
 
-	cuwalidplt.plot_impact_tercile_forecast(ds,
-		title="Impact based Forecast", reproject=False,
-		fshapefile=None, fmask=None, ax=ax,
-		color=var_colour[iwater_status])
-	# mask values outside the map extend
-	#time_plot = 0
-	#mask = rescaled.isel(time=time_plot).values
-	#mean_value = rescaled.isel(time=time_plot).mean()
+		# Create the base map
+		fig, ax = plt.subplots()
+		fig.set_size_inches(figure_width, figure_height)
+							#7.0*ratio_bw*plot_scale_id[plot_scale])
 
-	# aggregate data within the polygon (ward)
-	#rescaled.loc[rescaled.time[time_plot]] = mean_value.values*mask
+		cuwalidplt.plot_impact_tercile_forecast(ds,
+			title="Impact based Forecast", reproject=False,
+			fshapefile=None, fmask=None, ax=ax,
+			color=var_colour[iwater_status])
+		# mask values outside the map extend
+		#time_plot = 0
+		#mask = rescaled.isel(time=time_plot).values
+		#mean_value = rescaled.isel(time=time_plot).mean()
 
-	# select colors 
-	#cmap = ListedColormap(var_colour[iwater_status])
+		# aggregate data within the polygon (ward)
+		#rescaled.loc[rescaled.time[time_plot]] = mean_value.values*mask
 
-	# Example: plot the first time step
-	#im = rescaled.isel(time=time_plot).plot(ax=ax,
-	#			levels=[-2.0, -1.0, 1.0],#, 2.0],
-	#			cmap=cmap, alpha=0.8,
-	#			add_colorbar=False
-	#			)
+		# select colors 
+		#cmap = ListedColormap(var_colour[iwater_status])
 
-	# Add sublevels for padmin boudaries
-	if level_2_region is not None:
-		level_2_region.plot(ax=ax, color="lightgray", label='Admin Boundaries')
-	# Add river layers from other datasets
-	#rivers.plot(ax=ax, color='#0099ff', label='Rivers')
+		# Example: plot the first time step
+		#im = rescaled.isel(time=time_plot).plot(ax=ax,
+		#			levels=[-2.0, -1.0, 1.0],#, 2.0],
+		#			cmap=cmap, alpha=0.8,
+		#			add_colorbar=False
+		#			)
 
-	# plot water bodies and rivers
-	# plot only when discharge is ploted
-	if var != "dis":
-		for iwater in water_objects:
-			if plot_obj_id[plot_scale][iwater] is True:
-				if water is not None:
-					water_filter = water[water['waterway'].isin(water_body[iwater])]
-					water_filter.plot(ax=ax,
-						#marker=point_marker[ipoint],
+		# Add sublevels for padmin boudaries
+		if level_2_region is not None:
+			level_2_region.plot(ax=ax, color="lightgray", label='Admin Boundaries')
+		# Add river layers from other datasets
+		#rivers.plot(ax=ax, color='#0099ff', label='Rivers')
+
+		# plot water bodies and rivers
+		# plot only when discharge is ploted
+		if var != "dis":
+			for iwater in water_objects:
+				if plot_obj_id[plot_scale][iwater] is True:
+					if water is not None:
+						water_filter = water[water['waterway'].isin(water_body[iwater])]
+						water_filter.plot(ax=ax,
+							#marker=point_marker[ipoint],
+							#color=water_color[iwater],
+							edgecolor=water_color[iwater],
+							linewidths=water_lw[iwater],
+							facecolor='none',#water_color[iwater],
+							#markersize=0.0*marker_size[ipoint],
+							#label=iwater+ "\n" + language_labels["Swahili"][iwater],
+							label=get_labels_by_lenguage(language_labels, ilanguage, iwater),
+							path_effects=[path_effects.withStroke(
+									linewidth=water_lw[iwater]*1.5, foreground='w')]
+							)
+
+		# plot natural reserves
+		for ileisure in leisure_objects:
+			if plot_obj_id[plot_scale][ileisure] is True:
+				try:
+					leisure_filter = leisure[leisure['leisure'].isin(leisure_body[ileisure])]
+
+					leisure_filter.plot(ax=ax,
 						#color=water_color[iwater],
-						edgecolor=water_color[iwater],
-						linewidths=water_lw[iwater],
-						facecolor='none',#water_color[iwater],
-						#markersize=0.0*marker_size[ipoint],
-						#label=iwater+ "\n" + language_labels["Swahili"][iwater],
-						label=get_labels_by_lenguage(language_labels, ilanguage, iwater),
-						path_effects=[path_effects.withStroke(
-								linewidth=water_lw[iwater]*1.5, foreground='w')]
+						#marker=point_marker[ipoint],
+						edgecolor=leisure_color[ileisure],
+						linewidths=0.1,
+						facecolor='none',#leisure_color[ileisure],
+						#markersize=0.0*leisure_size[ipoint],
+						#label=ileisure+ "\n" + language_labels["Swahili"][ileisure],
+						label=get_labels_by_lenguage(language_labels, ilanguage, ileisure),
+						alpha=0.5,
 						)
 
-	# plot natural reserves
-	for ileisure in leisure_objects:
-		if plot_obj_id[plot_scale][ileisure] is True:
+
+					# add labels
+					# Filter edges to reduce the number of labels (optional)
+					leisure_filter = leisure_filter[leisure_filter["name"].notnull()]#.sample(n=50)
+
+					# Annotate the plot with street names
+					add_label_features(leisure_filter, boundbox=extend,
+						#language=language_map[ilanguage],
+						)
+				except:
+					print("error with leisure filter")
+
+		# plot layers from Open Street Map
+		if plot_obj_id[plot_scale]["Small Roads"] is True:		
 			try:
-				leisure_filter = leisure[leisure['leisure'].isin(leisure_body[ileisure])]
-			
-				leisure_filter.plot(ax=ax,
-					#color=water_color[iwater],
-					#marker=point_marker[ipoint],
-					edgecolor=leisure_color[ileisure],
-					linewidths=0.1,
-					facecolor='none',#leisure_color[ileisure],
-					#markersize=0.0*leisure_size[ipoint],
-					#label=ileisure+ "\n" + language_labels["Swahili"][ileisure],
-					label=get_labels_by_lenguage(language_labels, ilanguage, ileisure),
-					alpha=0.5,
-					)
-			
-
-				# add labels
-				# Filter edges to reduce the number of labels (optional)
-				leisure_filter = leisure_filter[leisure_filter["name"].notnull()]#.sample(n=50)
-
-				# Annotate the plot with street names
-				add_label_features(leisure_filter, boundbox=extend,
-					#language=language_map[ilanguage],
-					)
+				highway.plot(ax=ax,
+							linewidth=line_width["Small Roads"],
+							edgecolor=line_colors["Small Roads"],
+							facecolor='none',
+							label='Small Roads',
+							alpha=0.2)
 			except:
-				print("error with leisure filter")
+				print("error with highway")
 
-	# plot layers from Open Street Map
-	if plot_obj_id[plot_scale]["Small Roads"] is True:		
-		try:
-			highway.plot(ax=ax,
-						linewidth=line_width["Small Roads"],
-						edgecolor=line_colors["Small Roads"],
-						facecolor='none',
-						label='Small Roads',
-						alpha=0.2)
-		except:
-			print("error with highway")
-
-	# plot main roads			
-	if plot_obj_id[plot_scale]["Main Roads"] is True:
-		try:
-			highway[highway['highway'].isin(highway_filter)].plot(ax=ax,
-						linewidth=line_width["Main Roads"],
-						edgecolor=line_colors["Main Roads"],
-						facecolor='none',
-						#label='Main Roads'+ "\n" + language_labels["Swahili"]["Main Roads"],
-						label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
-						alpha=1.0,
-						)
-		except:
-			print("error with highway")
-
-	# print label of admin boundaries
-	if plot_obj_id[plot_scale]["Administrative Boundary"] is True:
-		#boundary_filter = bnd_admin[bnd_admin['admin_level'].notnull()]
-		boundary_filter = bnd_admin[bnd_admin['admin_level'].isin(["4"])]
-		# add labels
-		add_label_features(boundary_filter, boundbox=extend, #, offset=1000)
-			fontsize=12.5, fontstyle="italic", halignament="center", alpha=0.7,
-			language=language_map[ilanguage], #color="gray"
-			)
-	#print(boundary_filter)
-	#print(boundary_filter.info())	
-	# Plot the original polygon (boundaries)
-	wards.plot(ax=ax, facecolor='none',
-			edgecolor=line_colors["Administrative Boundary"],
-			linewidth=line_width["Administrative Boundary"],
-			ls=line_ls["Administrative Boundary"],
-			# legend=True, label='Boundaries',
-			alpha=1.0
-			)
-
-	# Add point attributes
-	#if plot_scale != "Country":
-	for ipoint in points:
-		if plot_obj_id[plot_scale][ipoint] is True:
-			points_filter = amenities[amenities['amenity'].isin(points_ids[ipoint])]
-
-			if len(points_filter) > 10:
-				points_filter = points_filter.sample(n=10)
-
-			points_filter.plot(ax=ax,
-				color=point_color[ipoint],
-				marker=point_marker[ipoint],
-				edgecolor='none',
-				#linewidths=0.1,
-				facecolor=point_color[ipoint],
-				markersize=marker_size[ipoint],
-				#label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
-				label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
-				)
-	# Add point attributes -----------------------------------------------------------------------
-	#if plot_scale != "Country":
-	for ipoint in aeroway_obj:
-		if plot_obj_id[plot_scale][ipoint] is True:
-			if len(aeroway) > 0:
-				aeroway.plot(ax=ax,
-					color=aeroway_color[ipoint],
-					marker=aeroway_marker[ipoint],
-					edgecolor="none",#aeroway_color[ipoint],
-					linewidths=0.1,
-					facecolor=aeroway_color[ipoint],
-					markersize=aeroway_size[ipoint],
-					#label=ipoint + "\n" + language_labels["Swahili"][ipoint],
-					label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
-					#label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
-					)
-
-	# Add point attributes ----------------------------------------------------------------------
-	#if plot_scale != "Country":
-	for iplaces in places_obj:
-		if plot_obj_id[plot_scale][iplaces] is True:
-			place_filter = places[places['place'].isin(place_ids[iplaces])]
-
-			if len(place_filter) > 10:
-				place_filter = place_filter.sample(n=10)
-
-			place_filter.plot(ax=ax,
-				color=place_color[iplaces],
-				marker=place_marker[iplaces],
-				edgecolor=place_edgecolor[iplaces],
-				#markeredgecolor=place_edgecolor[iplaces],
-				linewidths=1.5,
-				facecolor=place_color[iplaces],
-				markersize=place_size[iplaces],
-				#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
-				label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
-				)
-
+		# plot main roads			
+		if plot_obj_id[plot_scale]["Main Roads"] is True:
 			try:
-				add_label_features(place_filter, boundbox=extend, #, offset=1000)
-					fontsize=8, fontstyle="italic", offset=1000,
-					halignament="left", #alpha=0.7,
+				highway[highway['highway'].isin(highway_filter)].plot(ax=ax,
+							linewidth=line_width["Main Roads"],
+							edgecolor=line_colors["Main Roads"],
+							facecolor='none',
+							#label='Main Roads'+ "\n" + language_labels["Swahili"]["Main Roads"],
+							label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
+							alpha=1.0,
+							)
+			except:
+				print("error with highway")
+
+		# print label of admin boundaries
+		if plot_obj_id[plot_scale]["Administrative Boundary"] is True:
+			#boundary_filter = bnd_admin[bnd_admin['admin_level'].notnull()]
+			boundary_filter = bnd_admin[bnd_admin['admin_level'].isin(["4"])]
+			# add labels
+			try:
+				add_label_features(boundary_filter, boundbox=extend, #, offset=1000)
+					fontsize=12.5, fontstyle="italic", halignament="center", alpha=0.7,
 					language=language_map[ilanguage], #color="gray"
 					)
 			except:
-				print("error with add_label_features")
+				add_label_features(boundary_filter, boundbox=extend, #, offset=1000)
+					fontsize=12.5, fontstyle="italic", halignament="center", alpha=0.7,
+					language=language_map["English"], #color="gray"
+					)
 
-	# MAP TITLE ============================================================================
-	plt.title(#"Map of "+ place_name + "" + ", Kenya\n"+
-		# English
-		get_labels_by_lenguage(language_labels, ilanguage, iwater_status) +
-		" - " + place_name +#"\n"+
-		get_labels_by_lenguage(language_labels, ilanguage, iseason) + " " +
-		#"\n" +
-		"YYYY",
-
-		# Swahili
-		#language_labels["Swahili"][iwater_status] + "-" +
-		#place_name +"\n"+
-		#language_labels["Swahili"][iseason] + " \n " + "YYYY"
-		#str(pd.to_datetime(rescaled.time.values[time_plot]).year)
-		fontweight="bold")
-		
-
-	# MAP LEGEND ============================================================================
-	# Prepare additional legend entry
-	boundary_line, = plt.plot([], [], # Invisible in plot, visible in legend
-				color=line_colors["Administrative Boundary"],
+		#print(boundary_filter)
+		#print(boundary_filter.info())	
+		# Plot the original polygon (boundaries)
+		wards.plot(ax=ax, facecolor='none',
+				edgecolor=line_colors["Administrative Boundary"],
+				linewidth=line_width["Administrative Boundary"],
 				ls=line_ls["Administrative Boundary"],
-				label=get_labels_by_lenguage(language_labels, ilanguage,'Boundary'),
-				)  
+				# legend=True, label='Boundaries',
+				alpha=1.0
+				)
 
-	#rectangle_patch = mpatches.Patch(color='green', alpha=0.5, label='Rectangle patch')
+		# Add point attributes
+		#if plot_scale != "Country":
+		for ipoint in points:
+			if plot_obj_id[plot_scale][ipoint] is True:
+				points_filter = amenities[amenities['amenity'].isin(points_ids[ipoint])]
 
-	## Update legend
-	#legend.remove()  # Remove the old legend
-	ncol_legend = 2
-	if ratio_bw > 1.5:
-		ncol_legend = 1
-	first_legend = ax.legend(#all_lines, labels,
-			bbox_to_anchor=(0.0, 0),
-			loc=2,
-			frameon=False,
-			#title=get_labels_by_lenguage(language_labels, ilanguage,"Geography"),
-			ncols=ncol_legend
-			)
+				if len(points_filter) > 10:
+					points_filter = points_filter.sample(n=10)
 
-	# Add the legend manually to the Axes.
-	ax.add_artist(first_legend)
+				points_filter.plot(ax=ax,
+					color=point_color[ipoint],
+					marker=point_marker[ipoint],
+					edgecolor='none',
+					#linewidths=0.1,
+					facecolor=point_color[ipoint],
+					markersize=marker_size[ipoint],
+					#label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
+					label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
+					)
+		# Add point attributes -----------------------------------------------------------------------
+		#if plot_scale != "Country":
+		for ipoint in aeroway_obj:
+			if plot_obj_id[plot_scale][ipoint] is True:
+				if len(aeroway) > 0:
+					aeroway.plot(ax=ax,
+						color=aeroway_color[ipoint],
+						marker=aeroway_marker[ipoint],
+						edgecolor="none",#aeroway_color[ipoint],
+						linewidths=0.1,
+						facecolor=aeroway_color[ipoint],
+						markersize=aeroway_size[ipoint],
+						#label=ipoint + "\n" + language_labels["Swahili"][ipoint],
+						label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
+						#label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
+						)
 
-	# ADD SECOND LEGEND
-	# Add a patch to the plot
-	# Step 2: Create a patch for the legend
-	rect_patches = []
-	for icolor in var_colour[iwater_status]:
-		rect_patches.append(mpatches.Patch(color=icolor))
-	#for id_object in leisure_objects:
-	#	rect_patches.append(mpatches.Patch(color=leisure_color[id_object]))
+		# Add point attributes ----------------------------------------------------------------------
+		#if plot_scale != "Country":
+		for iplaces in places_obj:
+			if plot_obj_id[plot_scale][iplaces] is True:
+				place_filter = places[places['place'].isin(place_ids[iplaces])]
 
-	label_patches = status_labels[ilanguage][iwater_status]
-	# add legend
-	ax.legend(handles=rect_patches, labels=label_patches,
-			bbox_to_anchor=(1.0, 0),
-			loc=1, borderaxespad=0.,
-			#title=variable[iwater_status]+ "\n" +
-			#			language_labels["Swahili"][iwater_status],
-			title=get_labels_by_lenguage(language_labels, ilanguage, iwater_status),
-			frameon=False,
-			title_fontproperties={#'weight':'bold',
-						 "style": "italic"}
-			)
+				if len(place_filter) > 10:
+					place_filter = place_filter.sample(n=10)
 
-	# ADD SCALE BAR TO FIGURE ======================================================
-	scalebar = ScaleBar(1, length_fraction=0.0254, location="lower right") # 1 pixel = 0.2 meter
-	plt.gca().add_artist(scalebar)
+				place_filter.plot(ax=ax,
+					color=place_color[iplaces],
+					marker=place_marker[iplaces],
+					edgecolor=place_edgecolor[iplaces],
+					#markeredgecolor=place_edgecolor[iplaces],
+					linewidths=1.5,
+					facecolor=place_color[iplaces],
+					markersize=place_size[iplaces],
+					#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
+					label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
+					)
 
-	# add label to axis
-	#plt.xlabel("Longitude")
-	#plt.ylabel("Latitude")
+				try:
+					add_label_features(place_filter, boundbox=extend, #, offset=1000)
+						fontsize=8, fontstyle="italic", offset=1000,
+						halignament="left", #alpha=0.7,
+						language=language_map[ilanguage], #color="gray"
+						)
+				except:
+					print("error with add_label_features")
 
-	# MODFIDY AXES AND MARGINS
-	# switch off axis ------------------------------------------------------		
-	if (plot_scale == "Zoom") or (plot_scale == "Ward"):
-		ax.set(yticklabels=[])
-		ax.tick_params(left=False)  # remove the ticks
-		ax.set(xticklabels=[])
-		ax.tick_params(bottom=False)  # remove the ticks
-	else:
-		plt.axis('off')
+		# MAP TITLE ============================================================================
+		plt.title(#"Map of "+ place_name + "" + ", Kenya\n"+
+			# English
+			get_labels_by_lenguage(language_labels, ilanguage, iwater_status) +
+			" - " + place_name +#"\n"+
+			get_labels_by_lenguage(language_labels, ilanguage, iseason) + " " +
+			#"\n" +
+			"YYYY",
+
+			# Swahili
+			#language_labels["Swahili"][iwater_status] + "-" +
+			#place_name +"\n"+
+			#language_labels["Swahili"][iseason] + " \n " + "YYYY"
+			#str(pd.to_datetime(rescaled.time.values[time_plot]).year)
+			fontweight="bold")
 
 
-	plt.xlim([extend[0], extend[2]])
-	plt.ylim([extend[1], extend[3]])
+		# MAP LEGEND ============================================================================
+		# Prepare additional legend entry
+		boundary_line, = plt.plot([], [], # Invisible in plot, visible in legend
+					color=line_colors["Administrative Boundary"],
+					ls=line_ls["Administrative Boundary"],
+					label=get_labels_by_lenguage(language_labels, ilanguage,'Boundary'),
+					)  
 
-	plt.ylabel("")
-	plt.xlabel("")
-	plt.subplots_adjust(left=0.025, right=0.975, top=0.96)
-	#plt.tight_layout()
+		#rectangle_patch = mpatches.Patch(color='green', alpha=0.5, label='Rectangle patch')
 
-	# ADD LOCATION PLOT ===========================================
+		## Update legend
+		#legend.remove()  # Remove the old legend
+		ncol_legend = 2
+		if ratio_bw > 1.5:
+			ncol_legend = 1
+		first_legend = ax.legend(#all_lines, labels,
+				bbox_to_anchor=(0.0, 0),
+				loc=2,
+				frameon=False,
+				#title=get_labels_by_lenguage(language_labels, ilanguage,"Geography"),
+				ncols=ncol_legend
+				)
 
-	# Get the position of the axes in the figure (as a Bbox)
-	axes_position = ax.get_position().bounds
+		# Add the legend manually to the Axes.
+		ax.add_artist(first_legend)
 
-	# Print the location and size (left, bottom, width, height)
-	#print("Axes position (left, bottom, width, height):", axes_position)
+		# ADD SECOND LEGEND
+		# Add a patch to the plot
+		# Step 2: Create a patch for the legend
+		rect_patches = []
+		for icolor in var_colour[iwater_status]:
+			rect_patches.append(mpatches.Patch(color=icolor))
+		#for id_object in leisure_objects:
+		#	rect_patches.append(mpatches.Patch(color=leisure_color[id_object]))
 
-	# location plot x-location 
-	x_ax2 = 0.50 #+ axes_position[0]*0-axes_position[2]*0.25*0
-	
-	# location plot y-location 
-	y_ax2 = -axes_position[1]*0.475
+		label_patches = status_labels[ilanguage][iwater_status]
+		# add legend
+		ax.legend(handles=rect_patches, labels=label_patches,
+				bbox_to_anchor=(1.0, 0),
+				loc=1, borderaxespad=0.,
+				#title=variable[iwater_status]+ "\n" +
+				#			language_labels["Swahili"][iwater_status],
+				title=get_labels_by_lenguage(language_labels, ilanguage, iwater_status),
+				frameon=False,
+				title_fontproperties={#'weight':'bold',
+							 "style": "italic"}
+				)
 
-	# location plot, width and height
-	width_ax2 = axes_position[2]*0.25*0.9
-	height_ax2 = (1-axes_position[3])*0.9
+		# ADD SCALE BAR TO FIGURE ======================================================
+		scalebar = ScaleBar(1, length_fraction=0.0254, location="lower right") # 1 pixel = 0.2 meter
+		plt.gca().add_artist(scalebar)
 
-	# read map location
-	country = gpd.read_file(paths.fname_place)
-	country.crs = mapPP
-	country = country.to_crs(netcdfPP)#ds.rio.crs)
-	extend_lc = country.total_bounds
+		# add label to axis
+		#plt.xlabel("Longitude")
+		#plt.ylabel("Latitude")
 
-	# calulate ration of figure heigth/width
-	ratio_lc = np.abs((extend_lc[1]-extend_lc[3])/
-				   (extend_lc[0]-extend_lc[2]))
-
-	if ratio_lc > 1.2:
-		height_ax2 = height_ax2*0.85
-		y_ax2 = y_ax2*0.25
-
-	ax_scale = 0.9
-	
-	#reduce soze when length is lower than 1.0
-	if ratio_bw < 1.2:
-		#ax_scale = 0.95
-		if ratio_bw < 0.90:
-			ax_scale = ratio_bw
-		height_ax2 = height_ax2*ax_scale#*0.9
-		width_ax2 = width_ax2*ax_scale
-		y_ax2 = y_ax2*ax_scale*0.70
-
-	ax2 = fig.add_axes([x_ax2, y_ax2, width_ax2, height_ax2]#location: x, y
-		)
-	#ax2.set_title("Location")
-	
-	country.plot(ax=ax2, facecolor="none",
-			edgecolor="silver",
-			linewidth=0.5,#line_width["Administrative Boundary"],
-			#ls=line_ls["Administrative Boundary"],
-			# legend=True, label='Boundaries',
-			alpha=1.0
-			)
-	wards.plot(ax=ax2, facecolor='k',
-			edgecolor=None,
-			#linewidth=line_width["Administrative Boundary"],
-			#ls=line_ls["Administrative Boundary"],
-			# legend=True, label='Boundaries',
-			alpha=1.0
-			)
-	#ax2.set_ylabel("")
-	#ax2.set_xlabel("")
-	ax2.axis('off')
-	
-	# Add logo ==================================================================
-	# Get the current script's directory
-	current_dir = os.path.dirname(os.path.abspath(__file__))
-	# Navigate two levels up
-	two_levels_up = os.path.abspath(os.path.join(current_dir, '..', '..','..'))
-	fname = os.path.join(two_levels_up,"docs/fig/CUWALID_Logo_LS_Tag_1.jpg")
-	logo = mpimg.imread(fname)
-	# print figure
-	ax_logo = fig.add_axes([0.02, 0.90, 0.20, 0.15])
-	ax_logo.imshow(logo)
-	ax_logo.axis('off')
-	
-	# Save figure as png ========================================================
-	if output_dir is not None:	
-		# Check if path exist
-		if not os.path.exists(output_dir):
-			os.makedirs(output_dir)
-		if fname_output is not None:
-			fname_fig = os.path.join(output_dir, fname_output)
+		# MODFIDY AXES AND MARGINS
+		# switch off axis ------------------------------------------------------		
+		if (plot_scale == "Zoom") or (plot_scale == "Ward"):
+			ax.set(yticklabels=[])
+			ax.tick_params(left=False)  # remove the ticks
+			ax.set(xticklabels=[])
+			ax.tick_params(bottom=False)  # remove the ticks
 		else:
-			#fname_fig = os.path.join(output_dir, 'HAD_forecasting_map_m_' + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png')
-			fname_fig = os.path.join(output_dir, str(place_code) + "_" + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png')
-	else:
-		if fname_output is not None:
-			fname_fig = fname_output
+			plt.axis('off')
+
+
+		plt.xlim([extend[0], extend[2]])
+		plt.ylim([extend[1], extend[3]])
+
+		plt.ylabel("")
+		plt.xlabel("")
+		plt.subplots_adjust(left=0.025, right=0.975, top=0.96)
+		#plt.tight_layout()
+
+		# ADD LOCATION PLOT ===========================================
+
+		# Get the position of the axes in the figure (as a Bbox)
+		axes_position = ax.get_position().bounds
+
+		# Print the location and size (left, bottom, width, height)
+		#print("Axes position (left, bottom, width, height):", axes_position)
+
+		# location plot x-location 
+		x_ax2 = 0.50 #+ axes_position[0]*0-axes_position[2]*0.25*0
+
+		# location plot y-location 
+		y_ax2 = -axes_position[1]*0.475
+
+		# location plot, width and height
+		width_ax2 = axes_position[2]*0.25*0.9
+		height_ax2 = (1-axes_position[3])*0.9
+
+		# read map location
+		country = gpd.read_file(paths.fname_place)
+		country.crs = mapPP
+		country = country.to_crs(netcdfPP)#ds.rio.crs)
+		extend_lc = country.total_bounds
+
+		# calulate ration of figure heigth/width
+		ratio_lc = np.abs((extend_lc[1]-extend_lc[3])/
+					   (extend_lc[0]-extend_lc[2]))
+
+		if ratio_lc > 1.2:
+			height_ax2 = height_ax2*0.85
+			y_ax2 = y_ax2*0.25
+
+		ax_scale = 0.9
+
+		#reduce soze when length is lower than 1.0
+		if ratio_bw < 1.2:
+			#ax_scale = 0.95
+			if ratio_bw < 0.90:
+				ax_scale = ratio_bw
+			height_ax2 = height_ax2*ax_scale#*0.9
+			width_ax2 = width_ax2*ax_scale
+			y_ax2 = y_ax2*ax_scale*0.70
+
+		ax2 = fig.add_axes([x_ax2, y_ax2, width_ax2, height_ax2]#location: x, y
+			)
+		#ax2.set_title("Location")
+
+		country.plot(ax=ax2, facecolor="none",
+				edgecolor="silver",
+				linewidth=0.5,#line_width["Administrative Boundary"],
+				#ls=line_ls["Administrative Boundary"],
+				# legend=True, label='Boundaries',
+				alpha=1.0
+				)
+		wards.plot(ax=ax2, facecolor='k',
+				edgecolor=None,
+				#linewidth=line_width["Administrative Boundary"],
+				#ls=line_ls["Administrative Boundary"],
+				# legend=True, label='Boundaries',
+				alpha=1.0
+				)
+		#ax2.set_ylabel("")
+		#ax2.set_xlabel("")
+		ax2.axis('off')
+
+		# Add logo ==================================================================
+		# Get the current script's directory
+		current_dir = os.path.dirname(os.path.abspath(__file__))
+		# Navigate two levels up
+		two_levels_up = os.path.abspath(os.path.join(current_dir, '..', '..','..'))
+		fname = os.path.join(two_levels_up,"docs/fig/CUWALID_Logo_LS_Tag_1.jpg")
+		logo = mpimg.imread(fname)
+		# print figure
+		ax_logo = fig.add_axes([0.02, 0.90, 0.20, 0.15])
+		ax_logo.imshow(logo)
+		ax_logo.axis('off')
+
+		# Save figure as png ========================================================
+		if output_dir is not None:	
+			# Check if path exist
+			if not os.path.exists(output_dir):
+				os.makedirs(output_dir)
+			if fname_output is not None:
+				fname_fig = os.path.join(output_dir, fname_output)
+			else:
+				#fname_fig = os.path.join(output_dir, 'HAD_forecasting_map_m_' + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png')
+				fname_fig = os.path.join(output_dir, str(place_code) + "_" + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png')
 		else:
-			fname_fig = str(place_code) + "_" + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png'
-	
-	plt.savefig(fname_fig, dpi=100)
-	print("**************")
-	print(fname_fig)
-	print("**************")
-	print(ratio_bw)
-	#plt.show()
+			if fname_output is not None:
+				fname_fig = fname_output
+			else:
+				fname_fig = str(place_code) + "_" + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png'
+
+		# add language initial at maps names.
+		fname_fig = os.path.splitext(fname_fig)[0] + "_" + language_short_name[ilanguage] + ".png"
+
+		plt.savefig(fname_fig, dpi=100)
+		print("**************")
+		print(fname_fig)
+		print("**************")
+		print(ratio_bw)
+		#plt.show()
 
 def get_labels_by_lenguage(dictionary, language, iterm):
 	"""Funciton to create labels with different languages

@@ -621,6 +621,7 @@ class interception_parameters(object):
 
 		if inputfile.fname_av is not None and os.path.exists(inputfile.fname_av):
 			self.av = np.flip(rasterio.open(inputfile.fname_av).read(1), 0).flatten()
+			self.av[self.av < 0] = 0.0
 		else:
 			print('Fraction of vegetation cover.....not provided. Global default 1')
 			self.av = None

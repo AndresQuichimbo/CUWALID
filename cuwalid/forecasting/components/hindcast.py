@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import xarray as xr
 import numpy as np
-import cuwalid.tools.CUWALID_forecast_tools as cuwalid
+import cuwalid.tools.CUWALID_mfile_tools as cuwalid
 import matplotlib.pyplot as plt
 
 def get_csv_TS_files_from_multi_CSV(model_path, model_name, start_year, end_year):
