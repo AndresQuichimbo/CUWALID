@@ -13,7 +13,7 @@ The stoPET model is based on fitting a sine function (Figure. 1 solid red line) 
 
 .. math::
 
-   Y = A \sin(B \cdot t + C) + D
+   Y = A sin(B * t + C) + D
 
 Where:
 
