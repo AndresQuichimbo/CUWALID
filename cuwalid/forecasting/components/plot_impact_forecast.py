@@ -19,6 +19,7 @@ from cuwalid.forecasting.components.map_properties import *
 from cuwalid.forecasting.components.read_paths import *
 import cuwalid.tools.CUWALID_view_tool as cuwalidplt
 import matplotlib.image as mpimg
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 #import arabic_reshaper
 #from bidi import algorithm as bidialg
 #import pandas as pd
@@ -410,13 +411,18 @@ def plot_map(plot_scale="Zoom",
 	ratio_bw = np.abs((extend[1]-extend[3])/(extend[0]-extend[2]))
 	if ratio_bw <= 1.5:
 		ratio_bw = ratio_bw*1.2
+
+	# make sure that kanguage is a list
+	if isinstance(language, str):
+		language = [language]
 	
 	# add loop for languages to avoid duplicate downloads
 	for ilanguage in language:
 	
 		# figure size
 		figure_width = 5.0*plot_scale_id[plot_scale]
-		figure_height = 6.2*ratio_bw*plot_scale_id[plot_scale]
+		#figure_height = 6.2*ratio_bw*plot_scale_id[plot_scale]
+		figure_height = 5.2*ratio_bw*plot_scale_id[plot_scale]
 
 		# Create the base map
 		fig, ax = plt.subplots()
@@ -782,13 +788,27 @@ def plot_map(plot_scale="Zoom",
 		current_dir = os.path.dirname(os.path.abspath(__file__))
 		# Navigate two levels up
 		two_levels_up = os.path.abspath(os.path.join(current_dir, '..', '..','..'))
-		fname = os.path.join(two_levels_up,"docs/fig/CUWALID_Logo_LS_Tag_1.jpg")
-		logo = mpimg.imread(fname)
+		fname = os.path.join(two_levels_up,"docs/fig/CUWALID_Logo_LS_Tag.png")
+		#logo = mpimg.imread(fname)
+		logo = plt.imread(fname, format="png")
+		
+		#print(logo.shape)
 		# print figure
-		ax_logo = fig.add_axes([0.02, 0.90, 0.20, 0.15])
-		ax_logo.imshow(logo)
-		ax_logo.axis('off')
+		#ax_logo = fig.add_axes([0.02, 0.90, 0.20, 0.15])
+		#ax_logo.imshow(logo)
+		#ax_logo.axis('off')
+		# Create an OffsetImage object
+		imagebox = OffsetImage(logo, zoom=0.025)  # Adjust zoom as needed
 
+		# Create an AnnotationBbox to place the image
+		#ab = AnnotationBbox(imagebox, (5, 0.5), xycoords='data', frameon=False)
+		ab = AnnotationBbox(imagebox, (0.0, 0.0),
+					  xycoords='axes fraction',
+					  box_alignment=(0,0.0),
+					  frameon=False)
+		# Add the annotation to the plot
+		#ax_logo.add_artist(ab)
+		ax.add_artist(ab)
 		# Save figure as png ========================================================
 		if output_dir is not None:	
 			# Check if path exist
@@ -808,7 +828,7 @@ def plot_map(plot_scale="Zoom",
 		# add language initial at maps names.
 		fname_fig = os.path.splitext(fname_fig)[0] + "_" + language_short_name[ilanguage] + ".png"
 
-		plt.savefig(fname_fig, dpi=100)
+		plt.savefig(fname_fig, dpi=300)
 		print("**************")
 		print(fname_fig)
 		print("**************")

@@ -495,14 +495,15 @@ def run_DRYP(filename_input):
 					rain[water_bodies.id_nodes] = Ppnds
 				
 				## calculate AV
-				#if vegetation.av is not None:
+				if vegetation.av is not None:
 				#	av = (SAVIdt - SAVIdt_min)/(SAVIdt_max - SAVIdt_min)
+					vegetation.av = vegetation.av[act_nodes]
 				#else:
-				#	av = None
+					av = None
 				
 				# add interception component - UZ zone
 				Pth, Eca, PETh, LAIdt, Kcdt, Sc0_cn = cnp.run_interception_one_step(
-						rain[act_nodes], PET[act_nodes], vegetation.av[act_nodes],
+						rain[act_nodes], PET[act_nodes], vegetation.av,
 						SAVIdt, SAVIdt_max, SAVIdt_min,
 						LAIdt,
 						vegetation.lai_a,
