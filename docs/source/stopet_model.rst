@@ -7,7 +7,7 @@ stoPET: Stochastic Potential evapotranspiration generator
 Model description and structure
 --------------------------------
 
-stoPET is a stochastic potential evapotranspiration (PET) generator developed based on a global hourly PET dataset with a high spatial resolution (`hPET <https://doi.org/10.1038/s41597-021-01003-9>`__). stoPET is designed to simulate a realistic time series of PET that captures the diurnal and seasonal variability in hPET and supports the simulation of various climate change scenarios.
+stoPET is a stochastic potential evapotranspiration (PET) generator developed based on a global hourly PET dataset with a high spatial resolution (`hPET <https://doi.org/10.1038/s41597-021-01003-9>`__). ('stoPET<https://doi.org/10.5194/gmd-16-557-2023>'__) is designed to simulate a realistic time series of PET that captures the diurnal and seasonal variability in hPET and supports the simulation of various climate change scenarios.
 
 The stoPET model is based on fitting a sine function (Figure. 1 solid red line) to the average diurnal cycle calculated from hPET for each month and grid cell (Figure. 1 dotted line). The sine function, defined in Eq. (1), provides the following four parameters required to represent the characteristic of hourly PET for each month at each grid cell:
 
