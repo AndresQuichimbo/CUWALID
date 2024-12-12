@@ -19,7 +19,7 @@ Where:
 
 - **A** represents the diurnal amplitude (mm/h),
 - **B** is the frequency (1/h),
-- **C** is the phase shift (\u2013), and
+- **C** is the phase shift (-), and
 - **D** is the vertical shift (mm/h).
 - **t** is time (h)
 - **Y** is the new PET value (mm/h) generated from the sine function.
