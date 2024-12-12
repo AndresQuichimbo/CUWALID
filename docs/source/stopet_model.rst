@@ -32,3 +32,4 @@ Figure 1 below shows an example of a sine function curve fitted over the average
 
 
 .. image:: ../fig/stopet_ex1.png
+.. image:: ../fig/Oct_1.gif
