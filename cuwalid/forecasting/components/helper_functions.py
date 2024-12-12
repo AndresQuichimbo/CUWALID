@@ -5,6 +5,7 @@ import matplotlib.patches as mpatches
 import numpy as np
 import rasterio
 import xarray as xr
+from matplotlib import patheffects
 #from bidi import algorithm as bidialg
 #import arabic_reshaper
 """
@@ -232,4 +233,6 @@ def add_label_features(geodata, fontsize=6, boundbox=None, offset=0,
 			plt.text(x_mid+offset, y_mid+offset, s=iname,
 				fontsize=fontsize, fontstyle=fontstyle,
 				horizontalalignment=halignament, alpha=alpha,
-				color=color)
+				color=color,
+				path_effects=[patheffects.withStroke(linewidth=0.75,
+                                                        foreground="w")])

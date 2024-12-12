@@ -22,15 +22,6 @@ import matplotlib.image as mpimg
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 #import arabic_reshaper
 #from bidi import algorithm as bidialg
-#import pandas as pd
-#from cmcrameri import cm
-#sys.path.append('C:/Users/Edisson/Documents/GitHub/DRYPv2.0.1')
-#sys.path.append("/user/home/km19051/DRYPv2.0.1")
-#from cuwalid.forecasting.components.default_parameter_dataset import *
-#import sys
-#from geopy.distance import geodesic
-#from matplotlib.patches import Rectangle
-
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -104,11 +95,6 @@ def plot_map(plot_scale="Zoom",
 					river_path=river_path
 					)
 	
-	# Changing the country name depending on the country plotting. e.g. "kenya": "county"
-	#name_field_shp["County"] = name_field_county_shp[country_name.lower()]
-	#print(paths.nc_path_threshold)
-	#print(error)
-	
 	# =========================================================
 	# DO NOT CHANGE FROM THIS LINE
 	# =========================================================
@@ -125,7 +111,6 @@ def plot_map(plot_scale="Zoom",
 	# READ DATA FROM REGIONAL DATASET FROM LOCAL REPO
 	# ----------------------------------------------------------
 	wards = gpd.read_file(paths.fname_place)
-	#print(place_code_field, paths.iname_field_shp)
 
 	if place_code_field is False:
 		wards = wards[(wards[paths.iname_field_shp[country_name.lower()]] == place_name)]
@@ -146,7 +131,6 @@ def plot_map(plot_scale="Zoom",
 	rivers = gpd.clip(rivers, polygon)
 
 	#settlements = gpd.clip(settlements, polygon)
-
 
 	# ----------------------------------------------------------
 	# GET DATA FROM OPEN STREET MAP (osm) =====================
@@ -287,50 +271,25 @@ def plot_map(plot_scale="Zoom",
 		extend = extend.total_bounds
 	else:
 		extend = wards.total_bounds
-	#print(wards.info())
+
 	# =========================================================
 	# READ MODEL DATASETS AND THRSHOLDS
 	# =========================================================
 	# especify water variable to read and plot
 	var = water_var[iwater_status]
 
-	# READ THRESHOLDS DATASET ---------------------------------
-	# Open dataset of thrsholds
-	#ds_thrshold = read_dataset(paths.nc_path_threshold, var_name=var)
-	#ds_thrshold = ds_thrshold.rio.write_crs(netcdfPP)
-	#print(ds_threshold)
-	
 	# READ MODEL OUTPUTS ---------------------------------------
 	# Open dataset of model outputs
-	#print(netcdf_path)
-	#ds = read_dataset(netcdf_path, var_name=var)
 	ds = xr.open_dataset(paths.netcdf_path)
-	#print(netcdf_path)
-	#print(paths.mask_path)
-	#print(ds)
+
 	# Apply mask to datasets
 	if paths.mask_path is not None:
 		#print(paths.mask_path)
 		mask = np.flip(get_mask(paths.mask_path), 0)
 		ds = ds*mask	
 
-	##### Write projection on dataset
+	# Write projection on dataset
 	ds = ds.rio.write_crs(netcdfPP)
-	##### reprojec dataset
-	#####ds = reproject_dataset(ds, oldPP, newPP)
-
-	##### get season average
-	####if var == 'dis':
-	####	ds = get_season_dataset(ds, iseason)
-	####	if iwater_status == "Surface":
-	####		ds = xr.where(ds < ds_thrshold.time[1], 1, 0)
-	####		ds = ds.resample(time="Y").sum()*mask
-	####	else:
-	####		ds = ds.resample(time="Y").max()*mask
-	####else:
-	####	ds = resample_dataset(
-	####		get_season_dataset(ds, iseason),
-	####		)
 
 	# convert mask into xarray dataset
 	#mask = reproject_dataset(mask, oldPP, newPP)
@@ -354,54 +313,11 @@ def plot_map(plot_scale="Zoom",
 					  drop=False
 					  )
 
+	# clip raster
 	level_2_region = None
 	if paths.shapefile_level_2 is not None:
 		level_2_region = gpd.read_file(paths.shapefile_level_2)
 		level_2_region = gpd.clip(level_2_region, polygon)
-		## Clip data thresholds
-		#ds_threshold = ds_thrshold.rio.clip(
-		#			wards.geometry.values, wards.crs,
-		#			drop=False)
-
-		# Clip the mask
-		#mask1 = mask.rio.clip(wards.geometry.values, wards.crs,
-		#		drop=False)
-	#print("translated")
-	#print(ds)
-	### create mask
-	##mask = ds.values[0]
-	##mask[mask>0] = 1
-
-	##	## Calculate 1st and 3rd quantiles along the time dimension
-	##	#q1 = ds_clipped_threshold.time[0]#(0.25, dim='time')
-	##	#q3 = ds_clipped_threshold.time[2]#(0.75, dim='time')
-
-	##	##ds_clipped_threshold.plot(x="lon", y="lat", col="time")#, col_wrap=12)
-	##	##plt.show()
-	##	#
-	##	## FILTER DATA BETWEEN THRSHOLDS ---------------------------
-	##	## Reassign values based on quantile thresholds
-	##	##rescaled = xr.where(ds_clipped < q1, -1,
-	##	##	xr.where(ds_clipped > q3, 1, ds_clipped*0)
-	##	##	)
-	##	#if iwater_status == "Surface":
-	##	#	rescaled = xr.where(ds_clipped < 3, 0.0, -1.5)*mask
-	##	#elif iwater_status == "Flood":
-	##	#	rescaled = xr.where(ds_clipped < q3, -1.5, ds_clipped*0.0)#*mask
-	##	#else:
-	##	#	rescaled = xr.where(ds_clipped < q1, -1.5, ds_clipped*0.0)
-
-	###else: # for zoomed values
-	##q1 = ds_thrshold.time[0]
-	##q3 = ds_thrshold.time[2]
-
-	### Reassign values based on quantile thresholds
-	##if iwater_status == "Surface":
-	##	rescaled = xr.where(ds < 3, 0.0, -1.5)*mask
-	##elif iwater_status == "Flood":
-	##	rescaled = xr.where(ds < q3, -1.5, ds*0.0)*mask
-	##else:
-	##	rescaled = xr.where(ds < q1, -1.5, ds*0.0)#*mask
 
 	# =========================================================
 	# =========================================================
@@ -410,7 +326,7 @@ def plot_map(plot_scale="Zoom",
 	# calulate ration of figure heigth/width
 	ratio_bw = np.abs((extend[1]-extend[3])/(extend[0]-extend[2]))
 	if ratio_bw <= 1.5:
-		ratio_bw = ratio_bw*1.2
+		ratio_bw = ratio_bw*1.0
 
 	# make sure that kanguage is a list
 	if isinstance(language, str):
@@ -420,43 +336,37 @@ def plot_map(plot_scale="Zoom",
 	for ilanguage in language:
 	
 		# figure size
-		figure_width = 5.0*plot_scale_id[plot_scale]
-		#figure_height = 6.2*ratio_bw*plot_scale_id[plot_scale]
-		figure_height = 5.2*ratio_bw*plot_scale_id[plot_scale]
+		map_width = 5.0*plot_scale_id[plot_scale]
+		map_height = 5.2*ratio_bw*plot_scale_id[plot_scale]
+
+		#axis for location
+		ax_loc_width = map_width*0.25
+		ax_loc_height = map_width*0.25
+
+		figure_height = map_height + ax_loc_height
 
 		# Create the base map
 		fig, ax = plt.subplots()
-		fig.set_size_inches(figure_width, figure_height)
-							#7.0*ratio_bw*plot_scale_id[plot_scale])
+		fig.set_size_inches(map_width, figure_height,
+					  )
 
+		plt.subplots_adjust(top=0.96, bottom=ax_loc_height/figure_height,
+					  left=0.025, right=0.975)
+
+		# Add figure
 		cuwalidplt.plot_impact_tercile_forecast(ds,
 			title="Impact based Forecast", reproject=False,
 			fshapefile=None, fmask=None, ax=ax,
 			color=var_colour[iwater_status])
-		# mask values outside the map extend
-		#time_plot = 0
-		#mask = rescaled.isel(time=time_plot).values
-		#mean_value = rescaled.isel(time=time_plot).mean()
-
-		# aggregate data within the polygon (ward)
-		#rescaled.loc[rescaled.time[time_plot]] = mean_value.values*mask
-
-		# select colors 
-		#cmap = ListedColormap(var_colour[iwater_status])
-
-		# Example: plot the first time step
-		#im = rescaled.isel(time=time_plot).plot(ax=ax,
-		#			levels=[-2.0, -1.0, 1.0],#, 2.0],
-		#			cmap=cmap, alpha=0.8,
-		#			add_colorbar=False
-		#			)
 
 		# Add sublevels for padmin boudaries
 		if level_2_region is not None:
 			level_2_region.plot(ax=ax, color="lightgray", label='Admin Boundaries')
+
 		# Add river layers from other datasets
 		#rivers.plot(ax=ax, color='#0099ff', label='Rivers')
 
+		
 		# plot water bodies and rivers
 		# plot only when discharge is ploted
 		if var != "dis":
@@ -476,6 +386,32 @@ def plot_map(plot_scale="Zoom",
 							path_effects=[path_effects.withStroke(
 									linewidth=water_lw[iwater]*1.5, foreground='w')]
 							)
+
+		# plot layers from Open Street Map
+		if plot_obj_id[plot_scale]["Small Roads"] is True:		
+			try:
+				highway.plot(ax=ax,
+							linewidth=line_width["Small Roads"],
+							edgecolor=line_colors["Small Roads"],
+							facecolor='none',
+							label='Small Roads',
+							alpha=0.2)
+			except:
+				print("error with highway")
+
+		# plot main roads			
+		if plot_obj_id[plot_scale]["Main Roads"] is True:
+			try:
+				highway[highway['highway'].isin(highway_filter)].plot(ax=ax,
+							linewidth=line_width["Main Roads"],
+							edgecolor=line_colors["Main Roads"],
+							facecolor='none',
+							#label='Main Roads'+ "\n" + language_labels["Swahili"]["Main Roads"],
+							label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
+							alpha=1.0,
+							)
+			except:
+				print("error with highway")
 
 		# plot natural reserves
 		for ileisure in leisure_objects:
@@ -507,32 +443,6 @@ def plot_map(plot_scale="Zoom",
 				except:
 					print("error with leisure filter")
 
-		# plot layers from Open Street Map
-		if plot_obj_id[plot_scale]["Small Roads"] is True:		
-			try:
-				highway.plot(ax=ax,
-							linewidth=line_width["Small Roads"],
-							edgecolor=line_colors["Small Roads"],
-							facecolor='none',
-							label='Small Roads',
-							alpha=0.2)
-			except:
-				print("error with highway")
-
-		# plot main roads			
-		if plot_obj_id[plot_scale]["Main Roads"] is True:
-			try:
-				highway[highway['highway'].isin(highway_filter)].plot(ax=ax,
-							linewidth=line_width["Main Roads"],
-							edgecolor=line_colors["Main Roads"],
-							facecolor='none',
-							#label='Main Roads'+ "\n" + language_labels["Swahili"]["Main Roads"],
-							label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
-							alpha=1.0,
-							)
-			except:
-				print("error with highway")
-
 		# print label of admin boundaries
 		if plot_obj_id[plot_scale]["Administrative Boundary"] is True:
 			#boundary_filter = bnd_admin[bnd_admin['admin_level'].notnull()]
@@ -549,8 +459,6 @@ def plot_map(plot_scale="Zoom",
 					language=language_map["English"], #color="gray"
 					)
 
-		#print(boundary_filter)
-		#print(boundary_filter.info())	
 		# Plot the original polygon (boundaries)
 		wards.plot(ax=ax, facecolor='none',
 				edgecolor=line_colors["Administrative Boundary"],
@@ -561,7 +469,7 @@ def plot_map(plot_scale="Zoom",
 				)
 
 		# Add point attributes
-		#if plot_scale != "Country":
+		# if plot_scale != "Country":
 		for ipoint in points:
 			if plot_obj_id[plot_scale][ipoint] is True:
 				points_filter = amenities[amenities['amenity'].isin(points_ids[ipoint])]
@@ -579,6 +487,7 @@ def plot_map(plot_scale="Zoom",
 					#label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
 					label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
 					)
+		
 		# Add point attributes -----------------------------------------------------------------------
 		#if plot_scale != "Country":
 		for ipoint in aeroway_obj:
@@ -596,6 +505,15 @@ def plot_map(plot_scale="Zoom",
 						#label=get_labels_by_lenguage(language_labels, ilanguage,"Main Roads"),
 						)
 
+		# Prepare additional legend entry
+		boundary_line, = plt.plot([], [], # Invisible in plot, visible in legend
+					color=line_colors["Administrative Boundary"],
+					ls=line_ls["Administrative Boundary"],
+					label=get_labels_by_lenguage(language_labels, ilanguage,'Boundary'),
+					)  
+
+
+
 		# Add point attributes ----------------------------------------------------------------------
 		#if plot_scale != "Country":
 		for iplaces in places_obj:
@@ -604,6 +522,15 @@ def plot_map(plot_scale="Zoom",
 
 				if len(place_filter) > 10:
 					place_filter = place_filter.sample(n=10, random_state=1)
+
+				try:
+					add_label_features(place_filter, boundbox=extend, #, offset=1000)
+						fontsize=8, fontstyle="italic", offset=1000,
+						halignament="left", #alpha=0.7,
+						language=language_map[ilanguage], #color="gray"
+						)
+				except:
+					print("error with add_label_features")
 
 				place_filter.plot(ax=ax,
 					color=place_color[iplaces],
@@ -617,15 +544,7 @@ def plot_map(plot_scale="Zoom",
 					label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
 					)
 
-				try:
-					add_label_features(place_filter, boundbox=extend, #, offset=1000)
-						fontsize=8, fontstyle="italic", offset=1000,
-						halignament="left", #alpha=0.7,
-						language=language_map[ilanguage], #color="gray"
-						)
-				except:
-					print("error with add_label_features")
-
+				
 		# MAP TITLE ============================================================================
 		plt.title(#"Map of "+ place_name + "" + ", Kenya\n"+
 			# English
@@ -634,23 +553,12 @@ def plot_map(plot_scale="Zoom",
 			get_labels_by_lenguage(language_labels, ilanguage, iseason) + " " +
 			#"\n" +
 			"YYYY",
-
-			# Swahili
-			#language_labels["Swahili"][iwater_status] + "-" +
-			#place_name +"\n"+
-			#language_labels["Swahili"][iseason] + " \n " + "YYYY"
+#			str(iyear)
 			#str(pd.to_datetime(rescaled.time.values[time_plot]).year)
 			fontweight="bold")
 
 
 		# MAP LEGEND ============================================================================
-		# Prepare additional legend entry
-		boundary_line, = plt.plot([], [], # Invisible in plot, visible in legend
-					color=line_colors["Administrative Boundary"],
-					ls=line_ls["Administrative Boundary"],
-					label=get_labels_by_lenguage(language_labels, ilanguage,'Boundary'),
-					)  
-
 		#rectangle_patch = mpatches.Patch(color='green', alpha=0.5, label='Rectangle patch')
 
 		## Update legend
@@ -675,10 +583,12 @@ def plot_map(plot_scale="Zoom",
 		rect_patches = []
 		for icolor in var_colour[iwater_status]:
 			rect_patches.append(mpatches.Patch(color=icolor))
+
 		#for id_object in leisure_objects:
 		#	rect_patches.append(mpatches.Patch(color=leisure_color[id_object]))
 
 		label_patches = status_labels[ilanguage][iwater_status]
+
 		# add legend
 		ax.legend(handles=rect_patches, labels=label_patches,
 				bbox_to_anchor=(1.0, 0),
@@ -715,54 +625,18 @@ def plot_map(plot_scale="Zoom",
 
 		plt.ylabel("")
 		plt.xlabel("")
-		plt.subplots_adjust(left=0.025, right=0.975, top=0.96)
 		#plt.tight_layout()
 
 		# ADD LOCATION PLOT ===========================================
-
-		# Get the position of the axes in the figure (as a Bbox)
-		axes_position = ax.get_position().bounds
-
-		# Print the location and size (left, bottom, width, height)
-		#print("Axes position (left, bottom, width, height):", axes_position)
-
-		# location plot x-location 
-		x_ax2 = 0.50 #+ axes_position[0]*0-axes_position[2]*0.25*0
-
-		# location plot y-location 
-		y_ax2 = -axes_position[1]*0.475
-
-		# location plot, width and height
-		width_ax2 = axes_position[2]*0.25*0.9
-		height_ax2 = (1-axes_position[3])*0.9
+		ax2 = fig.add_axes([0.5, 0, 
+					  ax_loc_width/map_width,
+					  ax_loc_height/figure_height])
 
 		# read map location
 		country = gpd.read_file(paths.fname_place)
 		country.crs = mapPP
-		country = country.to_crs(netcdfPP)#ds.rio.crs)
-		extend_lc = country.total_bounds
+		country = country.to_crs(netcdfPP)
 
-		# calulate ration of figure heigth/width
-		ratio_lc = np.abs((extend_lc[1]-extend_lc[3])/
-					   (extend_lc[0]-extend_lc[2]))
-
-		if ratio_lc > 1.2:
-			height_ax2 = height_ax2*0.85
-			y_ax2 = y_ax2*0.25
-
-		ax_scale = 0.9
-
-		#reduce soze when length is lower than 1.0
-		if ratio_bw < 1.2:
-			#ax_scale = 0.95
-			if ratio_bw < 0.90:
-				ax_scale = ratio_bw
-			height_ax2 = height_ax2*ax_scale#*0.9
-			width_ax2 = width_ax2*ax_scale
-			y_ax2 = y_ax2*ax_scale*0.70
-
-		ax2 = fig.add_axes([x_ax2, y_ax2, width_ax2, height_ax2]#location: x, y
-			)
 		#ax2.set_title("Location")
 
 		country.plot(ax=ax2, facecolor="none",
@@ -779,36 +653,30 @@ def plot_map(plot_scale="Zoom",
 				# legend=True, label='Boundaries',
 				alpha=1.0
 				)
-		#ax2.set_ylabel("")
-		#ax2.set_xlabel("")
+		# hide axes
 		ax2.axis('off')
 
 		# Add logo ==================================================================
 		# Get the current script's directory
 		current_dir = os.path.dirname(os.path.abspath(__file__))
+
 		# Navigate two levels up
 		two_levels_up = os.path.abspath(os.path.join(current_dir, '..', '..','..'))
 		fname = os.path.join(two_levels_up,"docs/fig/CUWALID_Logo_LS_Tag.png")
-		#logo = mpimg.imread(fname)
 		logo = plt.imread(fname, format="png")
 		
-		#print(logo.shape)
-		# print figure
-		#ax_logo = fig.add_axes([0.02, 0.90, 0.20, 0.15])
-		#ax_logo.imshow(logo)
-		#ax_logo.axis('off')
 		# Create an OffsetImage object
 		imagebox = OffsetImage(logo, zoom=0.025)  # Adjust zoom as needed
 
 		# Create an AnnotationBbox to place the image
-		#ab = AnnotationBbox(imagebox, (5, 0.5), xycoords='data', frameon=False)
 		ab = AnnotationBbox(imagebox, (0.0, 0.0),
 					  xycoords='axes fraction',
 					  box_alignment=(0,0.0),
 					  frameon=False)
+
 		# Add the annotation to the plot
-		#ax_logo.add_artist(ab)
 		ax.add_artist(ab)
+
 		# Save figure as png ========================================================
 		if output_dir is not None:	
 			# Check if path exist
