@@ -30,6 +30,8 @@ For each day of the month, the model generates these random noise ratio values a
 
 Figure 1 below shows an example of a sine function curve fitted over the average hourly PET values for January at Wajir (Kenya). The black dotted line is the average from hPET, and the red solid line represents the fitted sine function. The grey shaded area ranges across all January days in the 40-year record for hPET. Average sunrise and sunset times are shown in green vertical dashed lines.
 
+The animation figure below shows that stoPET generates hourly values of PET for all of the Horn of Africa Drylands in a manner that respects the diurnal variations of solar radiation and heat build-up in the atmosphere throughout the day.
+
 
 .. image:: ../fig/stopet_ex1.png
 .. image:: ../fig/Oct_1.gif
