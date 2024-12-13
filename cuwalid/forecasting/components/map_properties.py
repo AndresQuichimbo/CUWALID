@@ -480,7 +480,8 @@ var_colour = {
 "Evaporation": ["#DB4325", "#EDA247", "#57C4AD"],
 #"Crop": ["#57C4AD", "#EDA247", "#DB4325"],
 #"Crop": ["#CC79A7", "#E69F00", "#D55E00"],
-"Crop": ["#CC79A7", "#E69F00", "#DB4325"],
+#"Crop": ["#CC79A7", "#E69F00", "#DB4325"],
+"Crop": ["#648FFF", "#E69F00", "#DB4325"],
 "Pasture": ["#57C4AD", "#EDA247", "#DB4325"],
 "Flood": ["#DB4325", "#EDA247", "#57C4AD"],
 }

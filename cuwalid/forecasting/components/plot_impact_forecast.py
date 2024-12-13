@@ -325,8 +325,8 @@ def plot_map(plot_scale="Zoom",
 	# =========================================================
 	# calulate ration of figure heigth/width
 	ratio_bw = np.abs((extend[1]-extend[3])/(extend[0]-extend[2]))
-	if ratio_bw <= 1.5:
-		ratio_bw = ratio_bw*1.0
+	if ratio_bw <= 0.5:
+		ratio_bw = ratio_bw*1.2
 
 	# make sure that kanguage is a list
 	if isinstance(language, str):
