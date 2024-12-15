@@ -77,6 +77,7 @@ class get_model_settings(object):
 
 		# Temporal aggregation of model outputs
 		self.dt_results = settings_config["OUTPUT"]["output_dt"]
+		self.dt_results_csv = settings_config["OUTPUT"]["output_dt_csv"]
 
 		# Save discharge units
 		#self.save_dis_depth = settings_config["OUTPUT"]["Save discharge in volumetric rate units"]

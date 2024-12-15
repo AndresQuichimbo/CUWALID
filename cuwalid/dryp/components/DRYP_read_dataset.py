@@ -546,7 +546,7 @@ class read_dataset_interp(object):
 			else:
 				data = None
 		else:
-			
+			#print(fname_ds)
 			# Read time series of precipitation	csv
 			if fname_ds is not None:
 				if (self.read_before_ds is True) or (j_step == 0):
@@ -554,7 +554,7 @@ class read_dataset_interp(object):
 						self.ds = None
 					else:
 						self.ds = pd.read_csv(fname_ds)
-
+					#print(pd.read_csv(fname_ds))
 					if self.ds is not None:
 						#self.ds = pd.read_csv(fname_ds)
 						#print(self.ds)

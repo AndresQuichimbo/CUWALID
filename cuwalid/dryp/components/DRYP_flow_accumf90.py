@@ -54,8 +54,8 @@ class runoff_routing(object):
 
 		"""
 		# Creates numpy arrays for passing model variables
-		#env_state.grid.add_zeros('node', "surface_water__discharge")#, dtype=float32)
 		Create_parameter_WV(self, Ksat, decay, riv_width, riv_length)
+		
 		#Create_parameter_WV(env_state.grid)#, data_in.Kloss)
 		self.discharge = np.zeros(grid_size)
 		self.SSZ = np.zeros(grid_size)
@@ -67,10 +67,10 @@ class runoff_routing(object):
 		# 1. Check if flow director is needed
 		if FlowDirection is None:
 			if 'aux_grid' not in grid.at_node:
-				grid.add_field("aux_grid", surface, at="node")
+				grid.add_field("aux_grid", np.array(surface[:]), at="node")
 			else:
 				grid.at_node['aux_grid'][:] = FlowDirection
-
+			#print(grid.at_node['aux_grid'])
 			fd = FlowDirectorD8(grid, 'aux_grid')
 			fd.run_one_step()
 		
@@ -88,8 +88,8 @@ class runoff_routing(object):
 		self.s = as_id_array(flow_accum_bw.make_ordered_node_array(self.r))
 		#self.carea = find_drainage_area(self.s, self.r,
 		#			env_state.area_cells,
-		#			env_state.grid.boundary_nodes)		
-
+		#			env_state.grid.boundary_nodes)
+		
 	#@profile
 	def run_runoff_one_step(self, runoff, AOF, AOF_threshold, conductivity,
 			 decay, river_cell, area_cells, area_river, river_sat_deficit,

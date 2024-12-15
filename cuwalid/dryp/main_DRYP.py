@@ -98,7 +98,7 @@ def run_DRYP(filename_input):
 	# read topography and channel characteristics
 	print("====== > Reading surface and river network parameters")
 	topo = surface_parameters(data_in.fname_surface)
-
+	
 	# read soil paramters
 	print("====== > Reading hillslope soil hydraulic parameters")
 	soil = soil_parameters(topo.grid_size, data_in.fname_soil)
@@ -272,18 +272,16 @@ def run_DRYP(filename_input):
 	abc = ABMconnector()
 	inf = infiltration(data_in.inf_method)
 	cnp = interception()
-	
 	swb = swbm(data_in.dt) # soil layer
 	swb_rip = swbm(data_in.dt) # riparian layer
 	ro = runoff_routing(grid,
 		 	topo.grid_size,
-			topo.surface, 
+			topo.surface[:], 
 			topo.FlowDir,
 			topo.Ksat,
 			topo.decay,
 			topo.riv_width,
 			topo.riv_length)
-
 	gw = gwflow_EFD(grid,
 			aquifer.Ksat,
 			topo.area_river,
@@ -390,7 +388,7 @@ def run_DRYP(filename_input):
 	
 	# initialize array to store model results
 	point_var = GlobalGridVar(data_in.ini_date,
-			   data_in.dt_results, data_in.save_results,
+			   data_in.dt_results_csv, data_in.save_results,
 			   data_in.store.var_point)
 	grid_var = GlobalGridVar(data_in.ini_date,
 			   data_in.dt_results, data_in.save_netcdf,
@@ -425,7 +423,7 @@ def run_DRYP(filename_input):
 		for UZ_ti in range(data_in.dt_hourly):
 			
 			for dt_pre_sub in range(data_in.dt_sub_hourly):
-				
+				#print(data_in.fname_TSPre)
 				# get rainfall
 				rain = PRE.get_one_step_dataset(t_pre, data_in.fname_TSPre, 'pre')
 				#rain = rain*0.5 # This is specific for IMERG 30 min resolution only
@@ -649,7 +647,7 @@ def run_DRYP(filename_input):
 				# select row from dataframe and add to the excess component
 				if fluxOF.data_set is not None:					
 					runoff[idFluxOF] += fluxOF.get_point_dataset_one_step(t_abs)
-				
+				#print(topo.surface,)
 				# RUNOFF: estimate runoff---------------------------------------
 				# all variables with containing length must be changed to meters [m]
 				ro.run_runoff_one_step(
@@ -741,7 +739,12 @@ def run_DRYP(filename_input):
 				# select row from dataframe and add to the excess component
 				if fluxSZ.data_set is not None:					
 					rch_agg[idFluxSZ] += fluxSZ.get_point_dataset_one_step(t_abs)
-				
+				#print(topo.surface,
+				#				aquifer.bottom,
+				#				aquifer.thickness,
+				#				topo.bathymetry,
+				#				)
+				#print(v)
 				# GROUNDWATER --------------------------------------------------
 				# activate groundwater component (gw)
 				if data_in.run_GW > 0:
@@ -756,7 +759,7 @@ def run_DRYP(filename_input):
 							#	swb.tht_dt,	env_state.Droot*0.001)
 						#else:
 						head, baseflow = gw.run_one_step_gw(grid,
-								topo.surface,
+								topo.surface[:],
 								aquifer.bottom,
 								aquifer.thickness,
 								topo.bathymetry,
