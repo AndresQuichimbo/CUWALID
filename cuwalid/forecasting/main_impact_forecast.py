@@ -144,18 +144,16 @@ def plot_maps_json(config_file):
 		return
 	print("WARNING!")
 	print("Run function only if hydrological forecasting has been performed")
-	#print(place_name)
 
-	# get list of names of places and countries
-	#place_name = get_list_places(country_names, place_name=place_name)
-	#print(country_names)
-	#print(place_name)
-	#print(error)
+	read_country_list = False	
+	if place_name is None:
+		read_country_list = True
 	
-		# Create maps
+	# Create maps
 	for icountry in country_names:
 		#for iplace in place_name:
-		if place_name is None:
+		#if place_name is None:
+		if read_country_list is True:
 			place_name, place_code, iname_short_country = get_list_places(
 							icountry,
 							dataset_parameters.shapefile_level_1_dic,
@@ -197,16 +195,16 @@ def plot_maps_json(config_file):
 				shape_path=dataset_parameter_list
 				)
 		# function to get netcdf files from regional files at each selected place
-       	#forecast.extract_forecasting_variable(model_path, forecast_model_name, season, variables, postpp_path)
 		if create_dataset is True or create_table is True:
 			if create_table is True:
-				print("Create CSV file for the entire country")
+				print("Create one CSV file for each country")
 			if create_dataset is True:
 				print("Create netCDF files for each selected place")
 			
     	    # funtion to calculate areas for county provided in the list
    		    #forecast.get_areas_terciles(model_path, forecast_model_name, season, variables, postpp_path)
 			#print(place_name, place_code)
+			#print(dataset_parameters.code_county_shp[icountry])
 			#print(dataset_parameters.code_county_shp[icountry])
 			forecast.extract_forecasting_variable(
 							dataset_parameters.name_short_country[icountry],
@@ -220,7 +218,8 @@ def plot_maps_json(config_file):
 							shapefile_path=dataset_parameters.shapefile_level_1_dic[icountry],
 							place_name=place_name,
 							place_code=place_code,
-							iname_field_shp=dataset_parameters.code_county_shp[icountry],
+							icode_field_shp=dataset_parameters.code_county_shp[icountry],
+							iname_field_shp=dataset_parameters.name_county_shp[icountry],
 							save_nc=create_dataset
 							)
 				
@@ -389,7 +388,7 @@ def call_plot_maps(plot_scales=["Zoom"],
 								iwater_status=iiwater_status,
 								iyear=year,
 								iseason=iiseason,
-								ilanguage=language,
+								language=language,
 								shape_path_list=shape_path,
 								output_dir=output_dir,
 								netcdf_path=inetcdf_path,

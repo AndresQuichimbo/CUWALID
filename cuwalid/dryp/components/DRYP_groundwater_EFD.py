@@ -88,7 +88,7 @@ class gwflow_EFD(object):
 			print('Groundwater settings: Constant transmissivity function')
 		elif method == 1:
 			print('Groundwater settings: Linear transmissivity function')
-		elif method == 3:
+		elif method == 2:
 			print('Groundwater settings: Exponential transmissivity function')
 		else:
 			print('Groundwater settings: Multi-transmissivity function')
@@ -313,14 +313,53 @@ class gwflow_EFD(object):
 			# identify links at lake nodes that have water table depth above
 			# the surface
 			aux_Tr = T.copy() # create a copy of transmissivity
+			
 			lake_nodes = head - bathymetry # find lake with water
+			
+			inner_lake_nodes = lake_nodes.reshape(
+					grid.number_of_node_rows,
+					grid.number_of_node_columns
+					)
+			
+			inner_lake_nodes = np.where(
+				shrink_region(inner_lake_nodes).reshape(-1) > 0)
+			#	expand_region(inner_lake_nodes).reshape(-1) > 0)
+			
+			outer_lake_nodes = np.where(
+			#	shrink_region(inner_lake_nodes).reshape(-1) > 0)
+				expand_region(inner_lake_nodes).reshape(-1) > 0)
+			
 			lake_nodes = np.where(lake_nodes > 0) # select lake nodes with water 
+			
 			links_at_lake = grid.links_at_node[lake_nodes] # select lake links
-			T[links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.01 # reduce transmissivity
+			inner_links_at_lake = grid.links_at_node[inner_lake_nodes] # select lake links
+			#outer_links_at_lake = grid.links_at_node[inner_lake_nodes] # select lake links
+			
+			#T[outer_links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.025 # reduce transmissivity
+			T[links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.025 # reduce transmissivity
+			T[inner_links_at_lake] = COURANT_2D*grid.dx*grid.dx # reduce transmissivity
+			
 			#Sy_aux = Sy[act_nodes]
-			#Sy_aux[lake_nodes] = 1.0
-			# --------------------------------------------------------------
+			Sy_aux = Sy.copy()
+			Sy_aux[lake_nodes] = 1.0
+			#Sy_aux[inner_lake_nodes] = 1.0
+			#Sy_aux[outer_lake_nodes] = 1.0
 
+
+			#try:
+			#	if inner_lake_nodes[0]:
+			#	#print("len", inner_lake_nodes)
+			#		print("time",
+		   	#			time_step_confined(1, Sy_aux[lake_nodes],
+			#			map_max_of_node_links_to_node(grid, T)[lake_nodes], grid.dx
+			#			#time_step_confined(1, Sy_aux[inner_lake_nodes],
+			#			#map_max_of_node_links_to_node(grid, T)[inner_lake_nodes], grid.dx
+			#		))
+			#		print(map_max_of_node_links_to_node(grid, T)[inner_lake_nodes])
+			#except:
+			#	a = 1
+
+			# --------------------------------------------------------------
 			# Calculate the hydraulic gradients
 			grid.at_node['aux_grid'][:] = head[:]
 			dhdl = grid.calc_grad_at_link(grid.at_node['aux_grid'])
@@ -478,8 +517,8 @@ class gwflow_EFD(object):
 			discharge[act_nodes] += dqs[act_nodes]*dtsp
 			#print('discharge',env_state.SZgrid.at_node['discharge'][219])
 			# Calculate maximum time step
-			dtsp = time_step_confined(COURANT_2D, Sy[act_nodes],
-			#dtsp = time_step_confined(COURANT_2D, Sy_aux,
+			#dtsp = time_step_confined(COURANT_2D, Sy[act_nodes],
+			dtsp = time_step_confined(COURANT_2D, Sy_aux[act_nodes],
 				map_max_of_node_links_to_node(grid, T)[act_nodes], grid.dx
 				)
 			
@@ -490,7 +529,7 @@ class gwflow_EFD(object):
 			# WARNING! this could lead to increases in mass balance errors
 			#grid.at_node['water_table__elevation'][:] = np.minimum(
 			head = np.minimum(surface, head) # time step could be very small
-			#print(dtsp)
+			#print("t", dtsp)
 			# Update time step
 			if dtsp <= 0:
 				raise Exception("invalid time step", dtsp)			
@@ -901,6 +940,68 @@ def time_step_confined(D, Sy, T, dx):
 	#dt = np.nanmin(dt[dt > 0])
 	#return dt
 	return np.nanmin(dt[dt > 0])
+
+def shrink_region(array):
+	"""
+    Shrinks a binary region in a 2D array by removing 
+    pixels around the regions.
+
+    Parameters
+	----------
+    array:numpy array
+		2D NumPy array of integers. 
+
+    Returns
+	-------
+    	2D NumPy array with the shrunk region.
+
+    This function first converts the input array to integers. 
+    Then, it identifies and removes single-pixel protrusions 
+    from the binary region represented by non-zero values 
+    in the array. 
+    """
+	array = np.array(array, dtype=int)
+	array[array < 0] = 0
+	array[array > 0] = 1
+	
+	aux = array.copy()
+	array[np.diff(aux, prepend=0, axis=1) == 1] = 0
+	array[np.diff(aux, prepend=0, axis=0) == 1] = 0
+	array[np.diff(aux, append=0, axis=0) == -1] = 0
+	array[np.diff(aux, append=0, axis=1) == -1] = 0
+	
+	return array
+
+def expand_region(array):
+	"""
+    Shrinks a binary region in a 2D array by removing 
+    pixels around the regions.
+
+    Parameters
+	----------
+    array:numpy array
+		2D NumPy array of integers. 
+
+    Returns
+	-------
+    	2D NumPy array with the shrunk region.
+
+    This function first converts the input array to integers. 
+    Then, it identifies and removes single-pixel protrusions 
+    from the binary region represented by non-zero values 
+    in the array. 
+    """
+	array = np.array(array, dtype=int)
+	array[array < 0] = 0
+	array[array > 0] = 1
+	
+	aux = array.copy()
+	array[np.diff(aux, append=0, axis=1) == 1] = 1
+	array[np.diff(aux, append=0, axis=0) == 1] = 1
+	array[np.diff(aux, prepend=0, axis=0) == -1] = 1
+	array[np.diff(aux, prepend=0, axis=1) == -1] = 1
+	
+	return array
 
 class recharge_routing(object):
 	def __init__(self, grid_size):

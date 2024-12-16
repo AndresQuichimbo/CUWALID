@@ -4,7 +4,7 @@ import xarray as xr
 import geopandas as gpd
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-import cuwalid.tools.CUWALID_forecast_tools as cuwalid
+import cuwalid.tools.CUWALID_mfile_tools as cuwalid
 import cuwalid.tools.CUWALID_view_tool as cuwalidplt
 
 def plot_tercile_probability_forecast(model_path, model_name, season, variables, postpp_path, iyear=2022):

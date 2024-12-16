@@ -20,21 +20,23 @@ highways = {
 line_colors = {
 "Small Roads": "#333333",
 "Main Roads": "#000000",
-"Administrative Boundary": "k",
+"Administrative Boundary": "gray",
+#"Administrative Boundary": "k",
 }
 
 # specify line widths of streets and roads
 line_width = {
 "Small Roads": 0.50,
 "Main Roads": 2.0,
-"Administrative Boundary": 2.0,
+"Administrative Boundary": 2.5,
 }
 
 # specify lines styles
 line_ls = {
 "Small Roads": ":",
 "Main Roads": ":",
-"Administrative Boundary": "dashed",
+"Administrative Boundary": "-",
+#"Administrative Boundary": "dashed",
 }
 
 # dictionaries
@@ -107,6 +109,11 @@ place_ids = {
 place_color = {
 "Town": 'k',
 }
+
+place_edgecolor = {
+"Town": 'gray',
+}
+
 
 place_marker = {
 "Town": 'o',
@@ -242,10 +249,23 @@ plot_obj_id = {
 		},
 }
 # do not change this
+# https://www.loc.gov/standards/iso639-2/php/code_list.php
 language_map = {
 "English": "name",
 "Swahili": "name:sw",
+"Somali": "name:so",
+"Amharic": "name:am",
+"Oromo": "name:om",
 }
+
+language_short_name = {
+"English": "EN",
+"Swahili": "SW",
+"Somali": "SO",
+"Amharic": "AM",
+"Oromo": "OM",
+}
+
 language_labels = {
 "English":{
     	"Administrative Boundary": "Boundary",
@@ -256,16 +276,20 @@ language_labels = {
 		"Church": "Church",
 		"School": "School",
 		"Health centre": "Health centre",
-		"Main Roads": "Main Roads",
-		"Small Roads": "Small Roads",
+		"Main Roads": "Main Road",
+		"Small Roads": "Small Road",
 		"Town": "Town",
-		"OND": "Short rains (Oct-Dec)",
-		"MAM": "Long rains (MAR-MAY)",
+		#"OND": "Short rains (Oct-Dec)",
+		#"MAM": "Long rains (MAR-MAY)",
+		"OND": "(October-December)",
+		"MAM": "(March-May)",
+		"JJAS": "(June-September)",
+		"JJA": "(June-August)",
 		"Soil": "Soil Moisture Status",
 		"Evaporation": "Evapotranspiration",
 		"Groundwater": "Groundwater status",
 		"Surface": "Surface Water Status",
-		"Flood": "Flood Hazard Potential",
+		"Flood": "Flood Hazard",
 		"in": "in",
         "Geography":"Geography",
         'Boundary':'Boundary',
@@ -297,7 +321,83 @@ language_labels = {
         'Location': 'Location',
 		"Crop": "Crop Status",
 		"Pasture": "Pasture Status",
+		},
+"Somali":{"Administrative Boundary": "Mpaka",
+		"Natural Reserve": "Natural Reserve",
+		"River": "River",
+		"Stream": "Stream",
+		"Airport": "Uwanja wa ndege",
+		"Church": "",
+		"School": "",
+		"Health centre": "Kituo cha afya na matibabu",
+		"Main Roads": "Barabara kuu",
+		"Small Roads": "Small Roads",
+		"Town": "Town",
+		"OND": "Mvua kidogo wa mda mfupi (Oktoba-Desemba)",
+		"MAM": "Mvua mingi wa masika (Machi - Mei)",
+		"Soil": "Soil Moisture Status",
+		"Evaporation": "Evapotranspiration",
+		"Groundwater": "Hali ya maji ya chini ya ardhi",
+		"Surface": "Hali ya maji ya juu ya ardhi",
+		"Flood": "Uwezekano wa hadhari\nza Mafuriko",
+		"in": "in",
+		"Geography":"Vipengele vya kijiografia",
+        'Boundary':'Mpaka',
+        'Location': 'Location',
+		"Crop": "Crop Status",
+		"Pasture": "Pasture Status",
+		},
+"Amharic":{"Administrative Boundary": "Mpaka",
+		"Natural Reserve": "Natural Reserve",
+		"River": "River",
+		"Stream": "Stream",
+		"Airport": "Uwanja wa ndege",
+		"Church": "",
+		"School": "",
+		"Health centre": "Kituo cha afya na matibabu",
+		"Main Roads": "Barabara kuu",
+		"Small Roads": "Small Roads",
+		"Town": "Town",
+		"OND": "Mvua kidogo wa mda mfupi (Oktoba-Desemba)",
+		"MAM": "Mvua mingi wa masika (Machi - Mei)",
+		"Soil": "Soil Moisture Status",
+		"Evaporation": "Evapotranspiration",
+		"Groundwater": "Hali ya maji ya chini ya ardhi",
+		"Surface": "Hali ya maji ya juu ya ardhi",
+		"Flood": "Uwezekano wa hadhari\nza Mafuriko",
+		"in": "in",
+		"Geography":"Vipengele vya kijiografia",
+        'Boundary':'Mpaka',
+        'Location': 'Location',
+		"Crop": "Crop Status",
+		"Pasture": "Pasture Status",
+		},
+"Oromo":{"Administrative Boundary": "Mpaka",
+		"Natural Reserve": "Natural Reserve",
+		"River": "River",
+		"Stream": "Stream",
+		"Airport": "Uwanja wa ndege",
+		"Church": "",
+		"School": "",
+		"Health centre": "Kituo cha afya na matibabu",
+		"Main Roads": "Barabara kuu",
+		"Small Roads": "Small Roads",
+		"Town": "Town",
+		"OND": "Mvua kidogo wa mda mfupi (Oktoba-Desemba)",
+		"MAM": "Mvua mingi wa masika (Machi - Mei)",
+		"Soil": "Soil Moisture Status",
+		"Evaporation": "Evapotranspiration",
+		"Groundwater": "Hali ya maji ya chini ya ardhi",
+		"Surface": "Hali ya maji ya juu ya ardhi",
+		"Flood": "Uwezekano wa hadhari\nza Mafuriko",
+		"in": "in",
+		"Geography":"Vipengele vya kijiografia",
+        'Boundary':'Mpaka',
+        'Location': 'Location',
+		"Crop": "Crop Status",
+		"Pasture": "Pasture Status",
 		}
+        
 }
 # season labels
 season_name = {
@@ -335,14 +435,42 @@ status_labels = {
 	"Crop": ["Above Normal","Normal", "Below Normal"],
 	"Pasture": ["Above Normal","Normal", "Below Normal"],
 },
-"Swahili": {
-    "Flood": ["Low\nSio sana", "High\nNi sana"],
-	"Groundwater": ["Bad\nHali mbaya", "Good\nHali mzuri"],
-	"Surface": ["Bad\nHali mbaya", "Good\nHali mzuri"],
-	"Soil": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-	"Evaporation": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-	"Crop": ["Good\nHali mzuri", "Bad\nHali mbaya"],
-}
+"Swahili":{
+    "Flood": ["High", "Normal", "Low"],
+	"Groundwater": ["Above Normal","Normal", "Below Normal"],#"Bad", "Good"
+	"Surface": ["Above Normal","Normal", "Below Normal"],
+	"Soil": ["Above Normal","Normal", "Below Normal"],
+	"Evaporation": ["Above Normal","Normal", "Below Normal"],
+	"Crop": ["Above Normal","Normal", "Below Normal"],
+	"Pasture": ["Above Normal","Normal", "Below Normal"],
+},
+"Somali":{
+    "Flood": ["High", "Normal", "Low"],
+	"Groundwater": ["Above Normal","Normal", "Below Normal"],#"Bad", "Good"
+	"Surface": ["Above Normal","Normal", "Below Normal"],
+	"Soil": ["Above Normal","Normal", "Below Normal"],
+	"Evaporation": ["Above Normal","Normal", "Below Normal"],
+	"Crop": ["Above Normal","Normal", "Below Normal"],
+	"Pasture": ["Above Normal","Normal", "Below Normal"],
+},
+"Oromo":{
+    "Flood": ["High", "Normal", "Low"],
+	"Groundwater": ["Above Normal","Normal", "Below Normal"],#"Bad", "Good"
+	"Surface": ["Above Normal","Normal", "Below Normal"],
+	"Soil": ["Above Normal","Normal", "Below Normal"],
+	"Evaporation": ["Above Normal","Normal", "Below Normal"],
+	"Crop": ["Above Normal","Normal", "Below Normal"],
+	"Pasture": ["Above Normal","Normal", "Below Normal"],
+},
+"Amharic":{
+    "Flood": ["High", "Normal", "Low"],
+	"Groundwater": ["Above Normal","Normal", "Below Normal"],#"Bad", "Good"
+	"Surface": ["Above Normal","Normal", "Below Normal"],
+	"Soil": ["Above Normal","Normal", "Below Normal"],
+	"Evaporation": ["Above Normal","Normal", "Below Normal"],
+	"Crop": ["Above Normal","Normal", "Below Normal"],
+	"Pasture": ["Above Normal","Normal", "Below Normal"],
+},
 }
 
 var_colour = {
@@ -350,7 +478,10 @@ var_colour = {
 "Surface": ["#57C4AD", "#EDA247", "#DB4325"],
 "Soil": ["#57C4AD", "#EDA247", "#DB4325"],
 "Evaporation": ["#DB4325", "#EDA247", "#57C4AD"],
-"Crop": ["#57C4AD", "#EDA247", "#DB4325"],
+#"Crop": ["#57C4AD", "#EDA247", "#DB4325"],
+#"Crop": ["#CC79A7", "#E69F00", "#D55E00"],
+#"Crop": ["#CC79A7", "#E69F00", "#DB4325"],
+"Crop": ["#648FFF", "#E69F00", "#DB4325"],
 "Pasture": ["#57C4AD", "#EDA247", "#DB4325"],
 "Flood": ["#DB4325", "#EDA247", "#57C4AD"],
 }

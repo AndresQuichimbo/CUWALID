@@ -64,6 +64,7 @@ default_input = {
    	"path_TSOF": None,
    	"path_TSUZ": None,
    	"path_TSSZ": None,
+   	"path_TSav": None, # vegetation cover fraction
    },
 
    "OUTPUT": {

@@ -47,7 +47,8 @@ class interception(object):
 					LAI = 0
 			
 			# Maximum amount of water store by canopy
-			Sca_max = get_Scmax_from_LAI_and_fcw(fcw, LAI)
+			#Sca_max = get_Scmax_from_LAI_and_fcw(fcw, LAI)
+			Sca_max = get_Scmax_from_LAI(LAI)
 			
 			# maximum canopy saturation
 			Sca = Sca_max*(1-np.exp(-rain/Sca_max))
@@ -102,6 +103,9 @@ class interception(object):
 			
 			# make throufall do not exced the precipitaiton
 			#Pth[Pth<0] = 0.0
+
+			# MASS BALANCE
+			#MB = rain - Eca - Pth + Sc
 					
 		else:
 			Eca = None
