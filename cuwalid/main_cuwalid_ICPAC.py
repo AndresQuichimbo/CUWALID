@@ -4,8 +4,8 @@ import subprocess
 import sys
 sys.path.append("/home/cuwalid/CUWALID")
 import numpy as np
-#from cuwalid.storm.main_storm import run_storm
-#from cuwalid.stopet.main_stoPET import run_stoPET
+from cuwalid.storm.main_storm import run_storm
+from cuwalid.stopet.main_stoPET import run_stoPET
 from cuwalid.dryp.main_DRYP import run_DRYP
 from cuwalid.forecasting.main_hydro_forecast import run_hydro_forecast
 import cuwalid.forecasting.main_impact_forecast as fcast
@@ -13,7 +13,7 @@ from cuwalid.tools.DRYP_json_builder import create_ensamble, write_JSON_dryp_fil
 import cuwalid.tools.CUWALID_json_builder as JSON_builder
 import cuwalid.tools.CUWALID_forecast_tools as cuwalid_mtools
 
-def run_cuwalid(cuwalid_input):#, forecasting_input):
+def run_cuwalid(cuwalid_input):
 	
 	# Get input file as dictionary
 	with open(cuwalid_input, 'r') as file:
@@ -48,6 +48,14 @@ def run_cuwalid(cuwalid_input):#, forecasting_input):
 		storm_input_path = cuwalid_config["MODELS"]["STORM"]["input"]
 		with open(storm_input_path, 'r') as file:
 			storm_input = json.load(file)
+
+		# Change storms input based on cuwalid inputs settings
+		storm_input["SEASON_TAG"] = season
+		storm_input["SEED_YEAR"] = iyear
+		storm_input["NUMSIMS"] = nsim
+
+
+		run_storm(storm_input)
 		# add code to modify input files
 		# set up path for model putputs
 		# set up model simulation name outputs
@@ -62,7 +70,7 @@ def run_cuwalid(cuwalid_input):#, forecasting_input):
 		# add code to modify input files
 		# set up path for model putputs
 		# set up model simulation name outputs
-		#run_stoPET(stoPET_input)
+		run_stoPET(stoPET_input)
 
 	# Prepare Dryp files
 	
