@@ -102,6 +102,7 @@ class get_model_settings(object):
 		self.kSy_gw = float(settings_config["GLOBAL_FACTORS"]["sz_ksy"])
 
 		# Read model time step conditions
+		# specified simulation time step
 		self.dt = np.min([self.dtOF, self.dtUZ, self.dtSZ])
 
 		if self.dt > 60:
@@ -117,6 +118,15 @@ class get_model_settings(object):
 			self.unit_sim_k = self.dt / 60
 			self.kT_units = self.dt / 60
 
+		# set sore time step
+		self.nstep_day = 1440/self.dt
+		
+		# specify if maximum values are stored
+		self.store_max = False
+		if self.nstep_day < 24:
+			self.store_max = True		
+
+		# set up units
 		self.unit_change_manning = (1 / (self.dt * 60)) ** (3 / 5)
 		self.Agg_method = str(self.dt) + 'T'
 		self.river_banks = 100.0

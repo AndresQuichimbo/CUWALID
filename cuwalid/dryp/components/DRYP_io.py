@@ -153,7 +153,6 @@ class surface_parameters(object):
 			 
 		# calculating cells area [m2]
 		self.area_cells = np.power(self.grid_cellsize, 2)#*self.area_catch_factor
-		#rg.at_node['cth_area_k']
 		
 		#self.area_cells_hills = rg.dx*rg.dy*rg.at_node['cth_area_k']
 		

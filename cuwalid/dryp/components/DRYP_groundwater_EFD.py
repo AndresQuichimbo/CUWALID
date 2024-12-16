@@ -332,8 +332,8 @@ class gwflow_EFD(object):
 			#outer_links_at_lake = grid.links_at_node[inner_lake_nodes] # select lake links
 			
 			#T[outer_links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.01 # reduce transmissivity
-			#T[links_at_lake] = COURANT_2D*grid.dx*grid.dx#*0.025 # reduce transmissivity
-			T[links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.025 # reduce transmissivity
+			T[links_at_lake] = T[links_at_lake]*0.025 # reduce transmissivity
+			#T[links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.025 # reduce transmissivity
 			T[inner_links_at_lake] = grid.dx*grid.dx # reduce transmissivity
 			
 			#Sy_aux = Sy[act_nodes]

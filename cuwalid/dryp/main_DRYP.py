@@ -393,6 +393,10 @@ def run_DRYP(filename_input):
 	grid_var = GlobalGridVar(data_in.ini_date,
 			   data_in.dt_results, data_in.save_netcdf,
 			   data_in.store.var_grid)
+	grid_max = GlobalGridVar(data_in.ini_date,
+			   data_in.dt_results, data_in.save_netcdf,
+			   data_in.store.var_grid,
+			   store_max=data_in.store_max, nstep_day=data_in.nstep_day)
 	total_var = GlobalGridVar(data_in.ini_date,
 			   data_in.dt_results, data_in.save_results,
 			   data_in.store.var_avg)
@@ -823,6 +827,11 @@ def run_DRYP(filename_input):
 					"gdh": baseflow[act_nodes], "twsc": twsc[act_nodes],
 					})
 				
+				# store maximum values
+				grid_max.store_variables(PRE.date_sim_dt, t_pre,
+			      	{"dis": rain[act_nodes]}
+					)
+
 				# get all fluxes and states at sampling points
 				point_var.store_variables(PRE.date_sim_dt, t_pre,
 			      	{"aet": AET[idOF_act], "inf": INF[idOF_act],
@@ -939,7 +948,12 @@ def run_DRYP(filename_input):
 	grid_var.save_netCDF_var(data_in.fnameTS_grid+'.nc',
 			   topo.lat, topo.lon, act_nodes,# var_name
 			   )
-		
+
+	# save grided model result datasets 
+	grid_max.save_netCDF_var(data_in.fnameTS_grid+'max.nc',
+			   topo.lat, topo.lon, act_nodes,# var_name
+			   )
+
 	# SAVE VARIABLES FROM THE RIPARIAN ZONE
 	# save average riparian zone variables in a csv file
 	print("<==== saving riparian zone temporal outputs")
