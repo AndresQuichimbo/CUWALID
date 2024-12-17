@@ -170,10 +170,10 @@ class get_model_settings(object):
 		self.proj_data = None
 
 		# read store paramters
-		self.fname_store = None
-		if len(dryp_config.get("drylandmodel", {})) == 100:
-			self.fname_store = dryp_config["drylandmodel"][99]
-		self.store = get_store_parameters(self.fname_store)
+		#self.fname_store = None
+		#if len(dryp_config.get("drylandmodel", {})) == 100:
+		#	self.fname_store = dryp_config["drylandmodel"][99]
+		#self.store = get_store_parameters(self.fname_store)
 
 		# Vegetation parameters
 		self.fname_TSKc = dryp_config["VEGETATION"]["path_veg_kc"]

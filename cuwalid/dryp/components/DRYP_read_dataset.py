@@ -177,11 +177,16 @@ class read_dataset_interp(object):
 		end_date:	datetime
 			final date for the simulation
 		file_format:integer
-			- 1: read multiple files
-		reproject:	integer
-			- 1: activate reprojection
-		interpolate: integer
-		 	 1: activate interpolation
+			0 for csv files
+			1 for netCDF files
+			2 for YEARLY netCDF files
+			3 for MONTHLY netCDF files
+			4 for DAILY netCDF files
+			5 for ensamble netCDF files
+		reproject:	bool
+			True default values
+		interpolate: bool
+		 	 True: activate interpolation
 		grid_length: int
 			size of the grid
 		proyection:	obj, string

@@ -73,7 +73,7 @@ default_input = {
       "path_out_oz": None,
       "path_output": None,
       "path_setting": None,
-      "path_projection": None
+      "path_store_settings": None
    },
 
    "RIPARIAN": {
@@ -93,11 +93,6 @@ default_input = {
    "INTERCEPTION": {
       "path_veg_lulc_frac": None,
       "path_veg_hs_savi": None,
-      "path_veg_hs_par_a": None,
-      "path_veg_hs_par_b": None,
-      "path_veg_hs_savi_min": None,
-      "path_veg_hs_savi_max": None,
-      "path_veg_hs_lai": None,
       "path_veg_hs_par_a": None,
       "path_veg_hs_par_b": None,
       "path_veg_hs_savi_min": None,

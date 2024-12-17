@@ -11,7 +11,8 @@
        "path_mask": null,
        "path_riv_len": null,
        "path_riv_width": null,
-       "path_riv_elev": null
+       "path_riv_elev": null,
+       "path_of_bc_flux": null
     },
  
     "VEGETATION": {
@@ -24,14 +25,15 @@
        "path_uz_theta_res": null,
        "path_uz_theta_awc": null,
        "path_uz_theta_wp": null,
-       "path_uz_root": null,
+       "path_uz_rootdepth": null,
        "path_uz_lambda": null,
        "path_uz_psi": null,
        "path_uz_ksat": null,
        "path_uz_sigmaksat": null,
        "path_uz_theta": null,
        "path_riv_ksat": null,
-       "path_uz_bottomksat": null
+       "path_uz_bottomksat": null,
+       "path_uz_bc_flux": null
     },
  
     "SATURATED": {
@@ -41,13 +43,23 @@
        "path_sz_wte": null,
        "path_sz_bc_flux": null,
        "path_sz_bc_head": null,
-       "path_sz_bottom": null
+       "path_sz_bottom": null,
+       "path_sz_depth": null,
+       "path_sz_bdd": null,
+       "path_sz_type": null
     },
  
     "METEO": {
        "path_pre": null,
        "path_pet": null,
-       "path_aof": null
+       "path_aof": null,
+       "path_lai": null,
+		 "path_savi": null,
+		 "path_kc": null,
+   	 "path_TSOF": null,
+   	 "path_TSUZ": null,
+   	 "path_TSSZ": null,
+   	 "path_TSav": null
     },
  
     "OUTPUT": {
@@ -55,9 +67,8 @@
        "path_out_uz": null,
        "path_out_oz": null,
        "path_output": null,
-       "Other": null,
        "path_setting": null,
-       "path_projection": null
+       "path_store_settings": null
     },
  
     "RIPARIAN": {
@@ -82,28 +93,22 @@
        "path_veg_hs_savi_min": null,
        "path_veg_hs_savi_max": null,
        "path_veg_hs_lai": null,
+       "path_veg_hs_tap_depth": null,
+       "path_veg_hs_extinction_depth": null,
        "path_veg_rp_par_a": null,
        "path_veg_rp_par_b": null,
        "path_veg_rp_savi_min": null,
        "path_veg_rp_savi_max": null,
        "path_veg_rp_lai": null,
        "path_veg_rp_tap_depth": null,
-       "path_veg_rp_final_depth": null,
+       "path_veg_rp_extinction_depth": null,
        "path_veg_rp_fcw": null,
        "path_veg_rp_sca": null
     },
- 
-    "GROUNDWATER": {
-       "path_gw_depth": null,
-       "path_gw_bdd": null,
-       "path_gw_2l_bottom": null,
-       "path_gw_2l_ksat": null,
-       "path_gw_2l_sy": null,
-       "path_gw_2l_ss": null,
-       "path_gw_2l_wte": null,
-       "path_gw_type": null,
-       "path_gw_lake_elev": null,
-       "path_pnds_vmax": null,
-       "path_pnds_shape_par": null
-    }
+    "WATER_BODIES": {
+      "path_lake_depth": null,
+      "path_pnd_hmax": null,
+      "path_pnd_Amax": null,
+      "path_pnd_Vo": null
+   }
  }
