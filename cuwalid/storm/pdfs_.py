@@ -2172,7 +2172,8 @@ class forecasting:
     def xport_shp(self, **kwargs):
         """
         exports as shp.file from a geopandas input.\n
-        Input: none.\n
+        Input: ->
+        PDF_FILE : str; path to PDF File
         **kwargs ->
         driver : char; output's driver (default: 'ESRI Shapefile').
         layer : char; output's layer name/title.
@@ -2188,7 +2189,7 @@ class forecasting:
 
 # %% call all
 
-def compute(space, RAIN_MAP, SEASON_TAG):  # space = masking()
+def compute(space, RAIN_MAP, SEASON_TAG, PDF_FILE, ZON_FILE):  # space = masking()
 
     EVENT_DATA = f'./model_input/0326_collect_{SEASON_TAG}_track_hadIMERG_.nc'
 
@@ -2382,7 +2383,7 @@ def compute(space, RAIN_MAP, SEASON_TAG):  # space = masking()
 
 # %% call pac
 
-def compute_icpac(space, TER_FILE, TER_YEAR):  # space = masking()
+def compute_icpac(space, TER_FILE, TER_YEAR, SEASON_TAG):  # space = masking()
     ifile = glob(f'./model_input/Ens_Prec_*{SEASON_TAG}*-avgRaw{TER_YEAR}.nc')
     # ifile should be a 1-element list!
     ifile = abspath(join(parent_d, ifile[0]))
@@ -2413,6 +2414,7 @@ if __name__ == '__main__':
     with open(config_file, 'r') as file:
         config = json.load(file)
 
-    space = masking(catchment=SHP_FILE)  # space.plot()
+
+    space = masking(catchment=config["SHP_FILE"])  # space.plot()
     
-    compute_icpac(space, config["TER_FILE"], config["TER_YEAR"]) if ICPAC_ONLY == 1 else compute(space, config["RAIN_MAP"], config["SEASON_TAG"])
+    compute_icpac(space, config["TER_FILE"], config["TER_YEAR"], config["SEASON_TAG"]) if ICPAC_ONLY == 1 else compute(space, config["RAIN_MAP"], config["SEASON_TAG"])

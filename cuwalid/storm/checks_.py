@@ -246,17 +246,14 @@ class welcome:
         # Use the current working directory instead of parent_d
         abs_path = abspath(join(os.getcwd(), self.out_path))
 
-        # Create the subfolder with the season_year format
-        subfolder_name = f"{self.season}_{self.seed_year}"
-        subfolder_path = join(abs_path, subfolder_name)
-        Path(subfolder_path).mkdir(parents=True, exist_ok=True)
+        Path(abs_path).mkdir(parents=True, exist_ok=True)
 
         # Determine the base file format
         base_name_format = "Forecast_PRE_HAD_ens_{year}_{season}_{sim_id}.nc"
 
         # Define NC output file names
         nc_paths = [
-            f"{Path(subfolder_path)}/" +
+            f"{Path(abs_path)}/" +
             base_name_format.format(
                 year=self.seed_year,
                 season=self.season,

@@ -610,7 +610,7 @@ def increase_temp_singlepoint(slope, mcont, annual_pet, tempAdj, deltat, yr,
 def seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, endyear, startdate, enddate, seasonswitch, season_name):
     years = np.arange(startyear,endyear+1)  
     for i in range(0,number_ensm):
-      filepath = os.path.join(outputpath, season_name + "_" + str(startyear) + "_PET_forecast")
+      filepath = os.path.join(outputpath, season_name + "_" + str(startyear))
       for j in range(0,len(years)):
         year = years[j]                   
         # old naming
@@ -670,11 +670,11 @@ def stopet4dryp(filepath, fname, seasonswitch, startdate, enddate, i, season_nam
     suffix = x[2]
 
     if seasonswitch == 1:
-      filename = os.path.join(filepath, "Forecast_PET_HAD_ens_"+str(i)+"_"+season_name+"_"+str(year)+".nc") 
+      filename = os.path.join(filepath, "Forecast_PET_HAD_ens_"+str(year)+"_"+season_name+"_"+str(i)+".nc") 
     elif seasonswitch == 0:
-      filename = os.path.join(filepath, "Forecast_PET_HAD_ens_"+str(i)+"_"+season_name+"_"+str(year)+".nc") 
+      filename = os.path.join(filepath, "Forecast_PET_HAD_ens_"+str(year)+"_"+season_name+"_"+str(i)+".nc") 
     else:
-      filename = os.path.join(filepath, "Forecast_PET_HAD_ens_"+str(i)+"_"+season_name+"_"+str(year)+".nc") 
+      filename = os.path.join(filepath, "Forecast_PET_HAD_ens_"+str(year)+"_"+season_name+"_"+str(i)+".nc") 
 
     # Previous file naming for reference
     # if seasonswitch == 1:

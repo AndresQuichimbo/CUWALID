@@ -5,7 +5,7 @@ from cuwalid.stopet.stoPET_v2_4dryp import *
 
 
 # this run_stoPET() function will generate the PET 
-def run_stoPET_4_dryp(datapath, outputpath, runtype, startyear, endyear, seasonswitch, startdate, enddate, 
+def run_stoPET_4_dryp(datapath, outputpath, runtype, startyear, endyear, seasonswitch, startdate, enddate, season_name,
 		 latval, lonval, latval_min, latval_max, lonval_min, lonval_max,locname, number_ensm, 
 		 tempAdj, deltat, udpi_pet, slice_only):
 
@@ -14,16 +14,15 @@ def run_stoPET_4_dryp(datapath, outputpath, runtype, startyear, endyear, seasons
 	number_ensm = int(number_ensm * 2)
 
 	# create a folder to save the data
-	if not os.path.isdir(os.path.join(outputpath, 'result/')):
-		os.mkdir(os.path.join(outputpath, 'result/'))    
+	os.makedirs(outputpath, exist_ok=True)    
 
 	# this will run stoPET in a loop (This will take more time to finishe the job)
-	stoPET_model_main(datapath, outputpath, runtype, startyear, endyear, seasonswitch, startdate, enddate, 
+	stoPET_model_main(datapath, outputpath, runtype, startyear, endyear, seasonswitch, startdate, enddate, season_name,
 			latval, lonval, latval_min, latval_max, lonval_min, lonval_max,locname, number_ensm, 
 			tempAdj, deltat, udpi_pet, slice_only)
 
 
-def stoPET_model_main(datapath, outputpath, runtype, startyear, endyear, 
+def stoPET_model_main(datapath, outputpath, runtype, startyear, endyear, season_name,  
 	seasonswitch, startdate, enddate, latval, lonval, 
 	latval_min, latval_max, lonval_min, lonval_max,
 	locname, number_ensm, tempAdj, deltat, udpi_pet, slice_only):
@@ -64,12 +63,12 @@ def stoPET_model_main(datapath, outputpath, runtype, startyear, endyear,
               # extract seasonal value and remove the annual files
               # prepare the files for the DRYP model input format
               # this only works for regional data as DRYP requires a catchment to run 
-              seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, endyear, startdate, enddate, seasonswitch)
+              seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, endyear, startdate, enddate, seasonswitch, season_name)
             else:
               # extract seasonal value and remove the annual files
               # prepare the files for the DRYP model input format
               # this only works for regional data as DRYP requires a catchment to run 
-              seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, endyear, startdate, enddate, seasonswitch)
+              seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, endyear, startdate, enddate, seasonswitch, season_name)
             
       else:
             raise ValueError('runtype only takes single and regional ... please check!')
