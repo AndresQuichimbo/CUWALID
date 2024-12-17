@@ -5,8 +5,8 @@ import subprocess
 import sys
 sys.path.append("/home/cuwalid/CUWALID")
 import numpy as np
-#from cuwalid.storm.main_storm import run_storm
-#from cuwalid.stopet.main_stoPET import run_stoPET
+from cuwalid.storm.main_storm import run_storm
+from cuwalid.stopet.main_stopet import run_stoPET
 from cuwalid.dryp.main_DRYP import run_DRYP
 from cuwalid.forecasting.main_hydro_forecast import run_hydro_forecast
 import cuwalid.forecasting.main_impact_forecast as fcast
@@ -32,6 +32,12 @@ def run_cuwalid(cuwalid_input):
 	forecast_path = cuwalid_config["forecasting"]['main_path']
 	forecast_model_path = cuwalid_config["forecasting"]['model_path']
 	forecast_postpp_path = cuwalid_config["forecasting"]['postpp_path']
+
+	# read storm input file path
+	storm_file = cuwalid_config["Tercile_Tem_path"]
+
+	# read stopet input file path
+	tercile_forecast_file = cuwalid_config["Tercile_Pre_path"]
 
 	#threshold_path = historical_postpp_path + "netcdf/"+ historical_model_name+ "_SSS_extremes_quantiles.nc"
 
@@ -61,10 +67,21 @@ def run_cuwalid(cuwalid_input):
 		storm_input_path = cuwalid_config["MODELS"]["STORM"]["input"]
 		with open(storm_input_path, 'r') as file:
 			storm_input = json.load(file)
+
+		# Change storms input based on cuwalid inputs settings
+		storm_input["SEASON_TAG"] = season
+		storm_input["SEED_YEAR"] = iyear
+		storm_input["NUMSIMS"] = nsim
+		storm_input["OUT_PATH"] = forecast_path_storm_output
+
+
+		run_storm(storm_input)
 		# add code to modify input files
 		# set up path for model putputs
 		# set up model simulation name outputs
-		#run_storm(storm_input)
+	else:
+		print("storm is not executed")
+
 	
 	# Run StoPET
 	if cuwalid_config["run_stoPET"] is True:
@@ -72,10 +89,18 @@ def run_cuwalid(cuwalid_input):
 		stopet_input_path = cuwalid_config["MODELS"]["stoPET"]["input"]
 		with open(stopet_input_path, 'r') as file:
 			stoPET_input = json.load(file)
-		# add code to modify input files
-		# set up path for model putputs
-		# set up model simulation name outputs
-		#run_stoPET(stoPET_input)
+
+		stoPET_input["outputpath"] = forecast_path_stopet_output
+		stoPET_input["startyear"] = iyear
+		stoPET_input["startyear"] = iyear
+		stoPET_input["startdate"] = start_date
+		stoPET_input["enddate"] = end_date
+		stoPET_input["trial_number"] = nsim
+		stoPET_input["seasonName"] =season
+		stoPET_input["tercile_forecast_file"] = tercile_forecast_file
+
+		run_stoPET(stoPET_input)
+
 	else:
 		print("stoPET is not executed")
 
@@ -106,6 +131,7 @@ def run_cuwalid(cuwalid_input):
 	#forecast_path_stopet_output = "/home/cuwalid/training/forecast/regional/dataset/pet/"+season+"_"+str(iyear)+"_PET_forecast/"#Forecast_PET_HAD_ens_0_MAM_2024.nc"
 	#forecast_path_storm_output = "/home/cuwalid/training/forecast/regional/dataset/pre/"+season+"_"+str(iyear)+"/"#Forecast_PET_HAD_ens_0_MAM_2024.nc"
 	#forecast_path_storm_output = "/home/cuwalid/leo_test/CUWALID/storm_output/"+season+"_"+str(iyear)+"/"#Forecast_PET_HAD_ens_0_MAM_2024.nc"
+
 	local_directory = "/home/cuwalid/training/forecast/regional/model/" #D:/HAD/training/regional/model/"
 	
 	# run DRYP multiple simulations
@@ -119,7 +145,7 @@ def run_cuwalid(cuwalid_input):
 		#fsim_input_file = local_directory + "HAD_IMERGcv_input_sim85.json"#"HAD_IMERG_input_sim_cuwalid.dmp"
 	
 		# TODO: Change pet to the same order naming as pre
-		fname_pet = [forecast_path_stopet_output+"Forecast_PET_HAD_ens_"+str(isim)+"_"+season+"_"+str(iyear)+".nc" for isim in range(nsim)]
+		fname_pet = [forecast_path_stopet_output+ "Forecast_PET_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
 		fname_pre = [forecast_path_storm_output + "Forecast_PRE_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
 		forcing_list = np.array(JSON_builder.create_ensamble([fname_pet, fname_pre], nsamples=nsim))
 		for ifsim_forecasting, imname, ifname_pre, ifname_pet in zip(fsim_forecasting, mname, forcing_list[:,1], forcing_list[:,0]):
@@ -139,7 +165,7 @@ def run_cuwalid(cuwalid_input):
 		#fsim_forecasting_list = ["Hydro_model_forecast_input_"+season+"_"+str(iyear)+ "_" +str(isim)+".json" for isim in range(nsim)]
 		
 		# LEO change this to a local directory automatically selected
-		log_dir = "/home/cuwalid/leo_test/CUWALID/logs"  # Adjust to your desired log directory
+		log_dir = "logs"  # Adjust to your desired log directory
 		# Make sure the log directory exists
 		os.makedirs(log_dir, exist_ok=True)
 		#for ifsim_forecasting in fsim_forecasting_list:

@@ -5,6 +5,8 @@ from pathlib import Path
 from datetime import datetime
 from argparse import ArgumentParser
 from warnings import warn
+from cuwalid.storm.parameters import PTOT_SC, PTOT_SF
+from cuwalid.storm.parameters import Z_CUTS, STORMINESS_SC, STORMINESS_SF
 from dateutil.tz import tzlocal
 # https://stackoverflow.com/a/248066/5885810
 from os.path import abspath, dirname, join, exists
@@ -19,7 +21,7 @@ np.seterr(divide='ignore', invalid='ignore')
 
 class parse:
 
-    def __init__(self, parser, NUMSIMS=None, NUMSIMYRS=None, PTOT_SC=None, PTOT_SF=None, STORMINESS_SC=None, STORMINESS_SF=None, **kwargs):
+    def __init__(self, parser, **kwargs):
         """
         preliminars before running STORM3.\n
         Parameters
@@ -30,6 +32,7 @@ class parse:
         --------
         n_sims : int; indicates the number of simulations/files to output.
         n_sims_y : int; indicates the number of years (per simulation) to run.
+        year : int; indicates the (date) year of the simulation.
         ptot_sc : list; Step Change factors in observed wetness.
         ptot_sf : list; Progressive Trend factors in observed wetness.
         storm_sc : list; Step Change factors in observed storminess.
@@ -43,6 +46,7 @@ class parse:
         # assign the global/default parameters (to inner variables)
         self.numsims = kwargs.get('n_sims', NUMSIMS)
         self.numsimyrs = kwargs.get('n_sims_y', NUMSIMYRS)
+        self.seed_year = kwargs.get('year', SEED_YEAR)
         self.ptot_sc = kwargs.get('ptot_sc', PTOT_SC)
         self.ptot_sf = kwargs.get('ptot_sf', PTOT_SF)
         self.storm_sc = kwargs.get('storm_sc', STORMINESS_SC)
@@ -104,6 +108,10 @@ class parse:
             help='Number of years per Simulation (default: %(default)s)'
             )
         self.input.add_argument(
+            '-a', '--SEED_YEAR', type=int, default=self.seed_year,
+            help='Year (XXXX) to pin-down the Simulation (default: %(default)s)'
+            )
+        self.input.add_argument(
             '-ps', '--PTOT_SC', default=self.ptot_sc, type=self.none_too,
             nargs='+',  # type=float,
             help='Relative change in the seasonal rain equally applied to '
@@ -138,30 +146,34 @@ class parse:
 
 class welcome:
 
-    def __init__(self, NUMSIMS=None, NUMSIMYRS=None, PTOT_SC=None, PTOT_SF=None, STORMINESS_SC=None, STORMINESS_SF=None, OUT_PATH="storm_output", SEASON=None, YEAR=None, **kwargs):
+    def __init__(self, n_sims, n_sims_y, seed_year, 
+                 season, out_path, ptot_sc=PTOT_SC, ptot_sf=PTOT_SF, 
+                 storm_sc=STORMINESS_SC, storm_sf=STORMINESS_SF):
         """
-        generates and prints the names of the output nc-files.\n
-        Input: none.\n
-        **kwargs ->
+        generates and prints the names of the output nc-files.
+
+        Input:
+        n_sims : int; indicates the number of simulations/files to output.
+        n_sims_y : int; indicates the number of years (per simulation) to run.
+        year : int; indicates the (date) year of the simulation.
         ptot_sc : list; Step Change factors in observed wetness.
         ptot_sf : list; Progressive Trend factors in observed wetness.
         storm_sc : list; Step Change factors in observed storminess.
         storm_sf : list; Progressive Trend factors in observed storminess.
-        n_sims : int; indicates the number of simulations/files to output.
-        n_sims_y : int; indicates the number of years (per simulation) to run.
-        out_path : char; where to store the simulations.\n
+        out_path : char; where to store the simulations.
+
         Output -> list; containing output file-paths/names.
         """
         # assign the global/default parameters (to inner variables)
-        self.numsims = kwargs.get('n_sims', NUMSIMS)
-        self.numsimyrs = kwargs.get('n_sims_y', NUMSIMYRS)
-        self.ptot_sc = kwargs.get('ptot_sc', PTOT_SC)
-        self.ptot_sf = kwargs.get('ptot_sf', PTOT_SF)
-        self.storm_sc = kwargs.get('storm_sc', STORMINESS_SC)
-        self.storm_sf = kwargs.get('storm_sf', STORMINESS_SF)
-        self.out_path = kwargs.get('out_path', OUT_PATH)
-        self.season = kwargs.get('season', SEASON)
-        self.year = kwargs.get('year', YEAR)
+        self.numsims = n_sims
+        self.numsimyrs = n_sims_y
+        self.seed_year = seed_year
+        self.season = season
+        self.ptot_sc = ptot_sc
+        self.ptot_sf = ptot_sf
+        self.storm_sc = storm_sc
+        self.storm_sf = storm_sf
+        self.out_path = out_path
         # table relating core variables (Var2) to understandable meanings (Var3)
         self.wet_hash = DataFrame({
             'Var2':['PTOT', 'STORMINESS'],
@@ -212,67 +224,64 @@ class welcome:
             for x in list(scalar.keys()):
                 exec(f'globals()["{x}"] = np.repeat(scalar[x], self.numsims)')
         # print(PTOT_SC, PTOT_SF)
-        self.ptot_sc = self.ptot_sc
-        self.ptot_sf = self.ptot_sf
-        self.storm_sc = self.storm_sc
-        self.storm_sf = self.storm_sf
+        self.ptot_sc = PTOT_SC
+        self.ptot_sf = PTOT_SF
+        self.storm_sc = STORMINESS_SC
+        self.storm_sf = STORMINESS_SF
 
-    def output_path(self):
+    def output_path(self,):
         """
-        Generates the names of the output NC files.
-        Input: none.
-        Output -> list; containing output file paths/names.
+        generates the names of the output nc-files.\n
+        Input: none.\n
+        Output -> list; containing output file-paths/names.
         """
-        # Infer scenarios
+        # infer scenarios
         PTOT_scene = self.infer_scenario(
             self.ptot_sc, self.ptot_sf, self.tab_ptot, self.tab_sign
-        )
+            )
         STORMINESS_scene = self.infer_scenario(
             self.storm_sc, self.storm_sf, self.tab_storm, self.tab_sign
-        )
+            )
 
         # Use the current working directory instead of parent_d
         abs_path = abspath(join(os.getcwd(), self.out_path))
 
-        # Create the subfolder with the season_year format
-        subfolder_name = f"{self.season}_{self.year}"
-        subfolder_path = join(abs_path, subfolder_name)
-        Path(subfolder_path).mkdir(parents=True, exist_ok=True)
+        Path(abs_path).mkdir(parents=True, exist_ok=True)
 
         # Determine the base file format
         base_name_format = "Forecast_PRE_HAD_ens_{year}_{season}_{sim_id}.nc"
 
         # Define NC output file names
         nc_paths = [
-            f"{Path(subfolder_path)}/" +
+            f"{Path(abs_path)}/" +
             base_name_format.format(
-                year=self.year,
+                year=self.seed_year,
                 season=self.season,
                 sim_id=sim_id
             )
             for sim_id in range(self.numsims)
         ]
 
-        # Print the core info
-        print("\nRUN SETTINGS")
-        print("************\n")
-        print(f"Number of simulations: {self.numsims}")
-        print(f"Years per simulation: {self.numsimyrs}")
-
+        # print the CORE INFO
+        print('\nRUN SETTINGS')
+        print('************\n')
+        print(f'number of simulations: {self.numsims}')
+        print(f'years per simulation : {self.numsimyrs}')
+        print(f'simulation seed year : {self.seed_year}')
         for j in self.wet_hash.Var2:
-            print(
-                f'{self.wet_hash[self.wet_hash.Var2.isin([j])].Var3.iloc[0]} scenarios '
-                f'({" | ".join([f"sim{x+1}" for x in range(self.numsims)])}):  '
-                f'{" | ".join(map(eval, [f"{j}_scene[{x}].center(8," ")" for x in range(self.numsims)]))}'
-            )
-        print("\nOutput paths:")
-        print(*[
-            (k.ljust(max(map(len, nc_paths)), ' ')).rjust(
-                max(map(len, nc_paths)) + 4, ' ') for k in nc_paths
-        ], sep='\n',)
+            print(f'{self.wet_hash[self.wet_hash.Var2.isin([j])].Var3.iloc[0]} scenarios '
+                  f'({" | ".join([f"sim{x+1}" for x in range(self.numsims)])}):  '
+                  f'{ " | ".join(map(eval, [f"{j}_scene[{x}].center(8," ")" for x in range(self.numsims)]))}')
+            # 8 because 'stormsT+' is the maximum length of these strings
+        # https://stackoverflow.com/a/25559140/5885810  (string no sign)
+        # https://www.delftstack.com/howto/python/python-pad-string-with-spaces/
+        # https://stackoverflow.com/a/45120812/5885810  (print/create string padding)
+        print('\nOutput paths:')
+        print(*[(k.ljust(max(map(len, nc_paths)), ' ')).rjust(
+            max(map(len, nc_paths)) + 4, ' ') for k in nc_paths], sep='\n',)
         print('')
         return nc_paths
-    
+
     def infer_scenario(self, stepchange, scaling_factor, tab_x, tab_sign):
     # stepchange=PTOT_SC; scaling_factor=PTOT_SF; tab_x=tab_ptot
         """
@@ -304,10 +313,9 @@ class welcome:
         return str_vec
 
 
-
 # %% assert
 
-def assertion(wet_hash, NUMSIMS, NUMSIMYRS, Z_CUTS, DEM_FILE, SHP_FILE):
+def assertion(wet_hash, NUMSIMS, NUMSIMYRS, DEM_FILE, SHP_FILE):
     """
     performs some assertions to test the validity of input parameters.\n
     Input ->
@@ -317,12 +325,12 @@ def assertion(wet_hash, NUMSIMS, NUMSIMYRS, Z_CUTS, DEM_FILE, SHP_FILE):
     for j in wet_hash.Var2:
         SC = f'{j}_SC'
         SF = f'{j}_SF'
-        # print(NUMSIMS)
         # does each dimension/season have the same length among them??
         if ~np.isin(np.unique([len(eval(x)) for x in [SC, SF]]), 1).all():
-            warn(f'\nIncompatible Sizes in {SC} and {SF}!\nSTORM will '
-                 'only use the values of the first Simulation, so they '
-                 f'can be passed to all {NUMSIMS} Simulations.')
+            warn(f'\nSizes of {SC} and {SF} do not match dimensions of NUMSIM '
+                 'or NUMSIMYRS!\nSTORM will only use the values of the first '
+                 f'Simulation, so they can be passed to all {NUMSIMS} '
+                 f'Simulations and/or {NUMSIMYRS} Years-per-Simulation.')
         # is each dimension/simulation as long as 1 or NUMSIMYRS??
         for i in range(NUMSIMS):
             # does the progression factor (SF) reduces below 0 rain?
@@ -369,3 +377,17 @@ def assertion(wet_hash, NUMSIMS, NUMSIMYRS, Z_CUTS, DEM_FILE, SHP_FILE):
     if SHP_FILE is None or not exists(abspath(join(parent_d, SHP_FILE))):
         raise AssertionError(assertshp)
 
+
+# %% run
+
+if __name__ == '__main__':
+
+    parser = ArgumentParser(description='STOchastic Rainstorm Model [STORM v3.0]')
+    # call class
+    update = parse(parser)
+    # run the parsing
+    update.parsing()
+
+    willkommen = welcome()
+    # willkommen.ncs
+    assertion(willkommen.wet_hash)
