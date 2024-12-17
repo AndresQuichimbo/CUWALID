@@ -828,9 +828,11 @@ def run_DRYP(filename_input):
 					})
 				
 				# store maximum values
-				grid_max.store_variables(PRE.date_sim_dt, t_pre,
-			      	{"dis": rain[act_nodes]}
-					)
+				if grid_max.store_max is True:
+					if riv_nodes.size > 0:
+						grid_max.store_variables(PRE.date_sim_dt, t_pre,
+			      			{"dis": ro.discharge[riv_nodes]}
+							)
 
 				# get all fluxes and states at sampling points
 				point_var.store_variables(PRE.date_sim_dt, t_pre,
@@ -948,16 +950,17 @@ def run_DRYP(filename_input):
 	grid_var.save_netCDF_var(data_in.fnameTS_grid+'.nc',
 			   topo.lat, topo.lon, act_nodes,# var_name
 			   )
-
 	# save grided model result datasets 
-	grid_max.save_netCDF_var(data_in.fnameTS_grid+'max.nc',
+	if grid_max.store_max is True:
+		print("<==== saving model temporal maximum values outputs")
+		grid_max.save_netCDF_var(data_in.fnameTS_grid+'max.nc',
 			   topo.lat, topo.lon, act_nodes,# var_name
 			   )
 
 	# SAVE VARIABLES FROM THE RIPARIAN ZONE
 	# save average riparian zone variables in a csv file
-	print("<==== saving riparian zone temporal outputs")
 	if riv_nodes.size > 0:
+		print("<==== saving riparian zone temporal outputs")
 		# variables names
 		#var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
 		

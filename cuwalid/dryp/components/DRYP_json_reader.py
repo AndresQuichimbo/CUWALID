@@ -123,7 +123,7 @@ class get_model_settings(object):
 		
 		# specify if maximum values are stored
 		self.store_max = False
-		if self.nstep_day < 24:
+		if self.nstep_day <= 24:
 			self.store_max = True		
 
 		# set up units
