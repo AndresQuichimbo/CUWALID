@@ -78,7 +78,7 @@ class get_model_settings(object):
 		# Temporal aggregation of model outputs
 		self.dt_results = settings_config["OUTPUT"]["output_dt"]
 		self.dt_results_csv = settings_config["OUTPUT"]["output_dt_csv"]
-
+		
 		# Save discharge units
 		#self.save_dis_depth = settings_config["OUTPUT"]["Save discharge in volumetric rate units"]
 
@@ -170,10 +170,12 @@ class get_model_settings(object):
 		self.proj_data = None
 
 		# read store paramters
+		self.path_store_settings = dryp_config["OUTPUT"]["path_store_settings"]
+		
 		#self.fname_store = None
 		#if len(dryp_config.get("drylandmodel", {})) == 100:
 		#	self.fname_store = dryp_config["drylandmodel"][99]
-		#self.store = get_store_parameters(self.fname_store)
+		self.store = get_store_parameters(self.path_store_settings)
 
 		# Vegetation parameters
 		self.fname_TSKc = dryp_config["VEGETATION"]["path_veg_kc"]

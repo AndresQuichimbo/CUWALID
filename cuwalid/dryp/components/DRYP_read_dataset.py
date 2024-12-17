@@ -526,7 +526,11 @@ class read_dataset_interp(object):
 					if self.step_func is False:
 						ds = self.ds.isel(time=[iindex])
 					else:
-						ds = self.ds.isel(time=[day])
+						if self.dt_ds > 1440:
+							#print(month)
+							ds = self.ds.isel(time=[month-1])
+						else:
+							ds = self.ds.isel(time=[day])
 					#print(ds)
 					if self.interpolate_ds is True:
 						# Spatial interpolation

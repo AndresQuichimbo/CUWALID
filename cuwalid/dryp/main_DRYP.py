@@ -202,7 +202,22 @@ def run_DRYP(filename_input):
 		step_func=True,
 		noskip=False
 		)
-		
+	
+	print("====== > Reading vegetation fraction")
+	av = read_dataset_interp(data_in.dt, data_in.data_step['av'],
+		data_in.ini_date, data_in.end_date,
+		data_in.data_reading['av'],
+		data_in.data_reproject['av'],
+		data_in.data_interpolate['av'],
+		topo.grid_size,
+		topo.lat,
+		topo.lon,
+		proj=data_in.data_projection['av'],
+		proj_model=data_in.PROJECTION,
+		step_func=True,
+		noskip=False
+		)
+
 	# Read SAVI minimum value
 	SAVImin = read_dataset(data_in.dt, data_in.data_step['savi_min'],
 		data_in.ini_date, data_in.end_date,
@@ -318,6 +333,7 @@ def run_DRYP(filename_input):
 	t_pre = 0
 	t_savi = 0
 	t_kc = 0
+	t_av = 0
 	t_abs = 0
 	
 	gws_mb = []
@@ -468,6 +484,7 @@ def run_DRYP(filename_input):
 				SAVIdt_max = SAVImax.get_one_step_dataset(t_savi, data_in.fname_savi_max, 'savi')
 				LAIdt = LAI.get_one_step_dataset(t_savi, data_in.fname_TSlai, 'LAI')
 				Kcdt = Kc.get_one_step_dataset(t_savi, data_in.fname_TSkc, 'kc')
+				avdt = av.get_one_step_dataset(t_av, data_in.fname_TSav, 'VegetationFraction')
 
 				if Kcdt is not None:
 					# remove the folowing line
@@ -483,6 +500,7 @@ def run_DRYP(filename_input):
 					# remove the folowing line
 					SAVIdt = np.flip(SAVIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
 					SAVIdt = SAVIdt[act_nodes]
+				
 				#print(vegetation.av, SAVIdt, SAVIdt_max, SAVIdt_max, LAIdt, Kcdt)
 				# PONDS: Add ponds here ------------------------------------------
 				# first check that ponds is active
@@ -497,11 +515,13 @@ def run_DRYP(filename_input):
 					rain[water_bodies.id_nodes] = Ppnds
 				
 				## calculate AV
-				if vegetation.av is not None:
-				#	av = (SAVIdt - SAVIdt_min)/(SAVIdt_max - SAVIdt_min)
-					vegetation.av = vegetation.av[act_nodes]
-				#else:
-					av = None
+				#av = None
+				if avdt is None:
+					if vegetation.av is not None:
+						#av = (SAVIdt - SAVIdt_min)/(SAVIdt_max - SAVIdt_min)
+						vegetation.av = vegetation.av[act_nodes]
+				else:
+					vegetation.av = avdt[act_nodes]
 				
 				# add interception component - UZ zone
 				Pth, Eca, PETh, LAIdt, Kcdt, Sc0_cn = cnp.run_interception_one_step(
@@ -651,7 +671,7 @@ def run_DRYP(filename_input):
 				# select row from dataframe and add to the excess component
 				if fluxOF.data_set is not None:					
 					runoff[idFluxOF] += fluxOF.get_point_dataset_one_step(t_abs)
-				#print(topo.surface,)
+				
 				# RUNOFF: estimate runoff---------------------------------------
 				# all variables with containing length must be changed to meters [m]
 				ro.run_runoff_one_step(
@@ -739,16 +759,12 @@ def run_DRYP(filename_input):
 				#	lai_mb.append(0)
 				#	kc_mb.append(0)
 				#	kcrip_mb.append(0)
+				
 				# add data abstractions/sink/source points
 				# select row from dataframe and add to the excess component
 				if fluxSZ.data_set is not None:					
 					rch_agg[idFluxSZ] += fluxSZ.get_point_dataset_one_step(t_abs)
-				#print(topo.surface,
-				#				aquifer.bottom,
-				#				aquifer.thickness,
-				#				topo.bathymetry,
-				#				)
-				#print(v)
+				
 				# GROUNDWATER --------------------------------------------------
 				# activate groundwater component (gw)
 				if data_in.run_GW > 0:
@@ -953,8 +969,9 @@ def run_DRYP(filename_input):
 	# save grided model result datasets 
 	if grid_max.store_max is True:
 		print("<==== saving model temporal maximum values outputs")
-		grid_max.save_netCDF_var(data_in.fnameTS_grid+'max.nc',
-			   topo.lat, topo.lon, act_nodes,# var_name
+		if riv_nodes.size > 0:
+			grid_max.save_netCDF_var(data_in.fnameTS_grid+'max.nc',
+			   topo.lat, topo.lon, riv_nodes,# var_name
 			   )
 
 	# SAVE VARIABLES FROM THE RIPARIAN ZONE
