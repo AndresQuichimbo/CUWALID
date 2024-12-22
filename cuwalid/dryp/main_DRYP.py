@@ -488,17 +488,17 @@ def run_DRYP(filename_input):
 
 				if Kcdt is not None:
 					# remove the folowing line
-					Kcdt = np.flip(Kcdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
+					#Kcdt = np.flip(Kcdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
 					Kcdt = Kcdt[act_nodes]
 					Kcdt[Kcdt <= 0] = 1.0
 				if LAIdt is not None:
 					# remove the folowing line
-					LAIdt = np.flip(LAIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
+					#LAIdt = np.flip(LAIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
 					LAIdt = LAIdt[act_nodes]
 					LAIdt[LAIdt <= 0] = 0.0
 				if SAVIdt is not None:
 					# remove the folowing line
-					SAVIdt = np.flip(SAVIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
+					#SAVIdt = np.flip(SAVIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
 					SAVIdt = SAVIdt[act_nodes]
 				
 				#print(vegetation.av, SAVIdt, SAVIdt_max, SAVIdt_max, LAIdt, Kcdt)
