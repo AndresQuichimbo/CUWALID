@@ -474,16 +474,16 @@ status_labels = {
 }
 
 var_colour = {
-"Groundwater": ["#57C4AD", "#EDA247", "#DB4325"],
-"Surface": ["#57C4AD", "#EDA247", "#DB4325"],
-"Soil": ["#57C4AD", "#EDA247", "#DB4325"],
-"Evaporation": ["#DB4325", "#EDA247", "#57C4AD"],
+"Groundwater": ["#648FFF", "#FFFF00", "#DB4325"],
+"Surface": ["#648FFF", "#FFFF00", "#DB4325"],
+"Soil": ["#648FFF", "##FFFF00", "#DB4325"],
+"Evaporation": ["#FFFF00", "#EDA247", "#57C4AD"],
 #"Crop": ["#57C4AD", "#EDA247", "#DB4325"],
 #"Crop": ["#CC79A7", "#E69F00", "#D55E00"],
 #"Crop": ["#CC79A7", "#E69F00", "#DB4325"],
-"Crop": ["#648FFF", "#E69F00", "#DB4325"],
-"Pasture": ["#57C4AD", "#EDA247", "#DB4325"],
-"Flood": ["#DB4325", "#EDA247", "#57C4AD"],
+"Crop": ["#648FFF", "#FFFF00", "#DB4325"],
+"Pasture": ["#648FFF", "#FFFF00", "#DB4325"],
+"Flood": ["#DB4325", "#FFFF00", "#648FFF"],
 }
 
 #status = {

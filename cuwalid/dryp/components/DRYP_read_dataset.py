@@ -457,7 +457,7 @@ class read_dataset_interp(object):
 								self.ds = xr.open_dataset(fname_ds)
 						else:
 							self.ds = xr.open_dataset(fname_ds)
-
+					#print(fname_ds)
 					if self.ds is not None:
 						# check if dimension names are compatible with DRYP names
 						if 'latitude' in list(self.ds.coords):
@@ -530,7 +530,8 @@ class read_dataset_interp(object):
 							#print(month)
 							ds = self.ds.isel(time=[month-1])
 						else:
-							ds = self.ds.isel(time=[day])
+							#print(self.ds)
+							ds = self.ds.isel(time=[day-1])
 					#print(ds)
 					if self.interpolate_ds is True:
 						# Spatial interpolation

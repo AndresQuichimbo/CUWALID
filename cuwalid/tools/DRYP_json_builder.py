@@ -56,7 +56,7 @@ def write_JSON_dryp_file(json_template, model_name, path_pre, path_pet, destinat
 def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, destination,
 						   start_date="2024 03 01", end_date="2024 05 31", new_setting_file=None,
 						   path_Qo=None, path_uz_theta=None, path_sz_wte=None, path_rp_theta=None,
-						   path_pnd_Vo=None):
+						   path_pnd_Vo=None, path_outputs=None):
 	""" This function create the simulation and setting file for running DRYP. New
 	files are created  based on files provided as original files, this function
 	changes the model name, precipitation and potential evapotranspiration
@@ -96,7 +96,10 @@ def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, destina
 		json_template["RIPARIAN"]["path_rp_theta"] = path_rp_theta
 	if path_pnd_Vo is not None:
 		json_template["WATER_BODIES"]["path_pnd_Vo"] = path_pnd_Vo
-		
+	if path_outputs is not None:
+		json_template["OUTPUT"]["path_output"] = path_outputs
+	
+
 	# create new settings file
 	if new_setting_file is not None:
 
