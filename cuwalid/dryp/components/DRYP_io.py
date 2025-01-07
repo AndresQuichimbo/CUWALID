@@ -23,7 +23,7 @@ class surface_parameters(object):
 		# ================ Reading surface water model inputs ==============
 		
 		#print('******************* Reading Input Files ********************')
-		
+		#print(inputfile.fname_DEM)
 		# Reading digital elevation model
 		if inputfile.fname_DEM != None and os.path.exists(inputfile.fname_DEM):
 			domain = rasterio.open(inputfile.fname_DEM)
@@ -41,7 +41,7 @@ class surface_parameters(object):
 		else:
 			raise Exception("A digital elevation model map must be supplied")
 		
-		
+		#print(self.surface)
 		# define grid size for model arrays
 		grid_size = len(self.surface)
 
@@ -120,7 +120,8 @@ class surface_parameters(object):
 		else:
 			print('Lake bathymetry..................not provided. Global default z')
 			self.bathymetry = self.surface[:]
-	
+		#print(self.bathymetry, self.surface)
+		#print(v)
 		# CHANNEL ===============================================================================
 		# Channel hydraulic parameters
 		# Assuming a flow velocity of 1 m/s => 3600 m/h
@@ -152,7 +153,6 @@ class surface_parameters(object):
 			 
 		# calculating cells area [m2]
 		self.area_cells = np.power(self.grid_cellsize, 2)#*self.area_catch_factor
-		#rg.at_node['cth_area_k']
 		
 		#self.area_cells_hills = rg.dx*rg.dy*rg.at_node['cth_area_k']
 		
@@ -221,7 +221,8 @@ class surface_parameters(object):
 		self.lat = np.arange(self.grid_xllcorner, lat_end, self.grid_cellsize)[:self.grid_nrows]
 		lon_end = self.grid_yllcorner + self.grid_cellsize*self.grid_ncols
 		self.lon = np.arange(self.grid_yllcorner, lon_end, self.grid_cellsize)[:self.grid_ncols]
-		
+		#print(self.surface)
+		#print(v)
 		pass
 	# Find coordinates of points in model components
 	def points_output(self, inputfile):
@@ -577,7 +578,7 @@ class groundwater_parameters(object):
 			self.head = np.flip(rasterio.open(inputfile.fname_GWini).read(1), 0).flatten()
 			#h = read_esri_ascii(inputfile.fname_GWini,
 			#	name='water_table__elevation', grid=gw)[1]
-		
+
 class interception_parameters(object):
 	"""This function reads all aquifer paramters required to run the saturated component
 	"""

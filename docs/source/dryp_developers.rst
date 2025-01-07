@@ -1,7 +1,7 @@
 .. _dryp_developers:
 
 ======================================
-CUWALID: Developers
+CUWALID: Workflow for contributions
 ======================================
 
 

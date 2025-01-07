@@ -28,6 +28,7 @@ default_settings = {
             "savi_min": 0,
             "savi_max": 0,
             "lai": 0,
+            "av": 0,
             },
         "data_step": {
             "pre": 60,
@@ -41,6 +42,7 @@ default_settings = {
             "savi_min": 60,
             "savi_max": 60,
             "lai": 60,
+            "av": 60,
             },
         "data_reproject": {
             "pre": True,
@@ -54,6 +56,7 @@ default_settings = {
             "savi_min": True,
             "savi_max": True,
             "lai": True,
+            "av": False,
             },
         "data_interp": {
             "pre": True,
@@ -67,6 +70,7 @@ default_settings = {
             "savi_min": True,
             "savi_max": True,
             "lai": True,
+            "av": True,
             },
         "data_projection" : {
 			"pre": "EPSG:4326",
@@ -80,6 +84,7 @@ default_settings = {
 			"savi_min": "EPSG:4326",
             "savi_max": "EPSG:4326",
             "lai": "EPSG:4326",
+            "av": "EPSG:4326",
             },
     },
 
@@ -92,6 +97,7 @@ default_settings = {
     "OUTPUT": {
         "output_csv": True, # activate save model outputs (only csv files)
         "output_grid": False, # activate save model outputs (grid files)
+        "output_dt_csv": "1M",
         "output_dt": "1M",
     },
 

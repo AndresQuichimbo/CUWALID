@@ -177,11 +177,16 @@ class read_dataset_interp(object):
 		end_date:	datetime
 			final date for the simulation
 		file_format:integer
-			- 1: read multiple files
-		reproject:	integer
-			- 1: activate reprojection
-		interpolate: integer
-		 	 1: activate interpolation
+			0 for csv files
+			1 for netCDF files
+			2 for YEARLY netCDF files
+			3 for MONTHLY netCDF files
+			4 for DAILY netCDF files
+			5 for ensamble netCDF files
+		reproject:	bool
+			True default values
+		interpolate: bool
+		 	 True: activate interpolation
 		grid_length: int
 			size of the grid
 		proyection:	obj, string
@@ -452,7 +457,7 @@ class read_dataset_interp(object):
 								self.ds = xr.open_dataset(fname_ds)
 						else:
 							self.ds = xr.open_dataset(fname_ds)
-
+					#print(fname_ds)
 					if self.ds is not None:
 						# check if dimension names are compatible with DRYP names
 						if 'latitude' in list(self.ds.coords):
@@ -521,7 +526,12 @@ class read_dataset_interp(object):
 					if self.step_func is False:
 						ds = self.ds.isel(time=[iindex])
 					else:
-						ds = self.ds.isel(time=[day])
+						if self.dt_ds > 1440:
+							#print(month)
+							ds = self.ds.isel(time=[month-1])
+						else:
+							#print(self.ds)
+							ds = self.ds.isel(time=[day-1])
 					#print(ds)
 					if self.interpolate_ds is True:
 						# Spatial interpolation
@@ -546,7 +556,7 @@ class read_dataset_interp(object):
 			else:
 				data = None
 		else:
-			
+			#print(fname_ds)
 			# Read time series of precipitation	csv
 			if fname_ds is not None:
 				if (self.read_before_ds is True) or (j_step == 0):
@@ -554,7 +564,7 @@ class read_dataset_interp(object):
 						self.ds = None
 					else:
 						self.ds = pd.read_csv(fname_ds)
-
+					#print(pd.read_csv(fname_ds))
 					if self.ds is not None:
 						#self.ds = pd.read_csv(fname_ds)
 						#print(self.ds)

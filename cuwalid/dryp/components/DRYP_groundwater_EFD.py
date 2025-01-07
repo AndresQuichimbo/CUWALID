@@ -56,6 +56,7 @@ class gwflow_EFD(object):
 		"""
 		# make boundaries close
 		grid.status_at_node[grid.status_at_node == 1] = grid.BC_NODE_IS_CLOSED
+		
 		# Initialize the gw component
 		if 'aux_grid' not in grid.at_node:
 			grid.add_zeros('node', 'aux_grid', dtype=float)
@@ -129,7 +130,7 @@ class gwflow_EFD(object):
 		#self.lakes_is_active = data_in.lakes
 		self.lakes_is_active = 1
 		self.flux_at_CHB = 0.0
-				
+		
 	#@profile
 	def run_one_step_gw(self, grid, surface, bottom, thickness,
 		     bathymetry, riv_elevation, riv_nodes, Sy, Droot,
@@ -253,7 +254,6 @@ class gwflow_EFD(object):
 			# adjusting heads at the bottom of the model domain
 			# WARNING! this could lead to increases in mass balance errors
 			head = np.minimum(surface, head)
-			
 			# adjusting head at the surface of the model domain
 			# WARNING! this could lead to increases in mass balance errors
 			#if env_state.func == 2:
@@ -266,11 +266,9 @@ class gwflow_EFD(object):
 			#self.hriv = np.minimum(self.hriv,
 			#	riv_elevation
 			#	)
-			
 			if self.id_CHB is not None:
 				#self.ch_boundaries = bc[self.id_CHB]
 				head[self.id_CHB] = self.ch_boundaries
-			
 			# calculate aquifer saturated thickness at nodes
 			# for models with exponential function assign effective depth
 			# skip this for first iiteration
@@ -312,7 +310,7 @@ class gwflow_EFD(object):
 			# change transmisivity at lakes nodes and links
 			# identify links at lake nodes that have water table depth above
 			# the surface
-			aux_Tr = T.copy() # create a copy of transmissivity
+			#aux_Tr = T.copy() # create a copy of transmissivity
 			
 			lake_nodes = head - bathymetry # find lake with water
 			
@@ -323,29 +321,28 @@ class gwflow_EFD(object):
 			
 			inner_lake_nodes = np.where(
 				shrink_region(inner_lake_nodes).reshape(-1) > 0)
+			
+			#outer_lake_nodes = np.where(
 			#	expand_region(inner_lake_nodes).reshape(-1) > 0)
 			
-			outer_lake_nodes = np.where(
-			#	shrink_region(inner_lake_nodes).reshape(-1) > 0)
-				expand_region(inner_lake_nodes).reshape(-1) > 0)
-			
 			lake_nodes = np.where(lake_nodes > 0) # select lake nodes with water 
-			
+			#print(lake_nodes,len(lake_nodes))
 			links_at_lake = grid.links_at_node[lake_nodes] # select lake links
 			inner_links_at_lake = grid.links_at_node[inner_lake_nodes] # select lake links
 			#outer_links_at_lake = grid.links_at_node[inner_lake_nodes] # select lake links
 			
-			#T[outer_links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.025 # reduce transmissivity
-			T[links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.025 # reduce transmissivity
-			T[inner_links_at_lake] = COURANT_2D*grid.dx*grid.dx # reduce transmissivity
+			#T[outer_links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.01 # reduce transmissivity
+			T[links_at_lake] = T[links_at_lake]*0.025 # reduce transmissivity
+			#T[links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.025 # reduce transmissivity
+			T[inner_links_at_lake] = grid.dx*grid.dx # reduce transmissivity
 			
 			#Sy_aux = Sy[act_nodes]
 			Sy_aux = Sy.copy()
 			Sy_aux[lake_nodes] = 1.0
 			#Sy_aux[inner_lake_nodes] = 1.0
 			#Sy_aux[outer_lake_nodes] = 1.0
-
-
+			#print(Sy, Sy_aux)
+			
 			#try:
 			#	if inner_lake_nodes[0]:
 			#	#print("len", inner_lake_nodes)
@@ -566,6 +563,8 @@ class gwflow_EFD(object):
 			raise Exception(MB,'Groundwater Water balance Error: '
 		   		'Please check units and non-data values')
 		#print(inner_iter)
+		#print(head)
+		#print(v)
 		return head, discharge
 
 def transmissivity_multi_aquifer(Ksat, head, surface, thickness, aqtype, method):

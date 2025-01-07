@@ -77,7 +77,8 @@ class get_model_settings(object):
 
 		# Temporal aggregation of model outputs
 		self.dt_results = settings_config["OUTPUT"]["output_dt"]
-
+		self.dt_results_csv = settings_config["OUTPUT"]["output_dt_csv"]
+		
 		# Save discharge units
 		#self.save_dis_depth = settings_config["OUTPUT"]["Save discharge in volumetric rate units"]
 
@@ -101,6 +102,7 @@ class get_model_settings(object):
 		self.kSy_gw = float(settings_config["GLOBAL_FACTORS"]["sz_ksy"])
 
 		# Read model time step conditions
+		# specified simulation time step
 		self.dt = np.min([self.dtOF, self.dtUZ, self.dtSZ])
 
 		if self.dt > 60:
@@ -116,6 +118,15 @@ class get_model_settings(object):
 			self.unit_sim_k = self.dt / 60
 			self.kT_units = self.dt / 60
 
+		# set sore time step
+		self.nstep_day = 1440/self.dt
+		
+		# specify if maximum values are stored
+		self.store_max = False
+		if self.nstep_day <= 24:
+			self.store_max = True		
+
+		# set up units
 		self.unit_change_manning = (1 / (self.dt * 60)) ** (3 / 5)
 		self.Agg_method = str(self.dt) + 'T'
 		self.river_banks = 100.0
@@ -159,10 +170,12 @@ class get_model_settings(object):
 		self.proj_data = None
 
 		# read store paramters
-		self.fname_store = None
-		if len(dryp_config.get("drylandmodel", {})) == 100:
-			self.fname_store = dryp_config["drylandmodel"][99]
-		self.store = get_store_parameters(self.fname_store)
+		self.path_store_settings = dryp_config["OUTPUT"]["path_store_settings"]
+		
+		#self.fname_store = None
+		#if len(dryp_config.get("drylandmodel", {})) == 100:
+		#	self.fname_store = dryp_config["drylandmodel"][99]
+		self.store = get_store_parameters(self.path_store_settings)
 
 		# Vegetation parameters
 		self.fname_TSKc = dryp_config["VEGETATION"]["path_veg_kc"]

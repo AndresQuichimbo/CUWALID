@@ -98,7 +98,7 @@ def run_DRYP(filename_input):
 	# read topography and channel characteristics
 	print("====== > Reading surface and river network parameters")
 	topo = surface_parameters(data_in.fname_surface)
-
+	
 	# read soil paramters
 	print("====== > Reading hillslope soil hydraulic parameters")
 	soil = soil_parameters(topo.grid_size, data_in.fname_soil)
@@ -202,7 +202,22 @@ def run_DRYP(filename_input):
 		step_func=True,
 		noskip=False
 		)
-		
+	
+	print("====== > Reading vegetation fraction")
+	av = read_dataset_interp(data_in.dt, data_in.data_step['av'],
+		data_in.ini_date, data_in.end_date,
+		data_in.data_reading['av'],
+		data_in.data_reproject['av'],
+		data_in.data_interpolate['av'],
+		topo.grid_size,
+		topo.lat,
+		topo.lon,
+		proj=data_in.data_projection['av'],
+		proj_model=data_in.PROJECTION,
+		step_func=True,
+		noskip=False
+		)
+
 	# Read SAVI minimum value
 	SAVImin = read_dataset(data_in.dt, data_in.data_step['savi_min'],
 		data_in.ini_date, data_in.end_date,
@@ -272,18 +287,16 @@ def run_DRYP(filename_input):
 	abc = ABMconnector()
 	inf = infiltration(data_in.inf_method)
 	cnp = interception()
-	
 	swb = swbm(data_in.dt) # soil layer
 	swb_rip = swbm(data_in.dt) # riparian layer
 	ro = runoff_routing(grid,
 		 	topo.grid_size,
-			topo.surface, 
+			topo.surface[:], 
 			topo.FlowDir,
 			topo.Ksat,
 			topo.decay,
 			topo.riv_width,
 			topo.riv_length)
-
 	gw = gwflow_EFD(grid,
 			aquifer.Ksat,
 			topo.area_river,
@@ -320,6 +333,7 @@ def run_DRYP(filename_input):
 	t_pre = 0
 	t_savi = 0
 	t_kc = 0
+	t_av = 0
 	t_abs = 0
 	
 	gws_mb = []
@@ -390,11 +404,15 @@ def run_DRYP(filename_input):
 	
 	# initialize array to store model results
 	point_var = GlobalGridVar(data_in.ini_date,
-			   data_in.dt_results, data_in.save_results,
+			   data_in.dt_results_csv, data_in.save_results,
 			   data_in.store.var_point)
 	grid_var = GlobalGridVar(data_in.ini_date,
 			   data_in.dt_results, data_in.save_netcdf,
 			   data_in.store.var_grid)
+	grid_max = GlobalGridVar(data_in.ini_date,
+			   data_in.dt_results, data_in.save_netcdf,
+			   data_in.store.var_grid,
+			   store_max=data_in.store_max, nstep_day=data_in.nstep_day)
 	total_var = GlobalGridVar(data_in.ini_date,
 			   data_in.dt_results, data_in.save_results,
 			   data_in.store.var_avg)
@@ -425,7 +443,7 @@ def run_DRYP(filename_input):
 		for UZ_ti in range(data_in.dt_hourly):
 			
 			for dt_pre_sub in range(data_in.dt_sub_hourly):
-				
+				#print(data_in.fname_TSPre)
 				# get rainfall
 				rain = PRE.get_one_step_dataset(t_pre, data_in.fname_TSPre, 'pre')
 				#rain = rain*0.5 # This is specific for IMERG 30 min resolution only
@@ -466,21 +484,23 @@ def run_DRYP(filename_input):
 				SAVIdt_max = SAVImax.get_one_step_dataset(t_savi, data_in.fname_savi_max, 'savi')
 				LAIdt = LAI.get_one_step_dataset(t_savi, data_in.fname_TSlai, 'LAI')
 				Kcdt = Kc.get_one_step_dataset(t_savi, data_in.fname_TSkc, 'kc')
+				avdt = av.get_one_step_dataset(t_av, data_in.fname_TSav, 'VegetationFraction')
 
 				if Kcdt is not None:
 					# remove the folowing line
-					Kcdt = np.flip(Kcdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
+					#Kcdt = np.flip(Kcdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
 					Kcdt = Kcdt[act_nodes]
 					Kcdt[Kcdt <= 0] = 1.0
 				if LAIdt is not None:
 					# remove the folowing line
-					LAIdt = np.flip(LAIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
+					#LAIdt = np.flip(LAIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
 					LAIdt = LAIdt[act_nodes]
 					LAIdt[LAIdt <= 0] = 0.0
 				if SAVIdt is not None:
 					# remove the folowing line
-					SAVIdt = np.flip(SAVIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
+					#SAVIdt = np.flip(SAVIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
 					SAVIdt = SAVIdt[act_nodes]
+				
 				#print(vegetation.av, SAVIdt, SAVIdt_max, SAVIdt_max, LAIdt, Kcdt)
 				# PONDS: Add ponds here ------------------------------------------
 				# first check that ponds is active
@@ -495,11 +515,13 @@ def run_DRYP(filename_input):
 					rain[water_bodies.id_nodes] = Ppnds
 				
 				## calculate AV
-				if vegetation.av is not None:
-				#	av = (SAVIdt - SAVIdt_min)/(SAVIdt_max - SAVIdt_min)
-					vegetation.av = vegetation.av[act_nodes]
-				#else:
-					av = None
+				#av = None
+				if avdt is None:
+					if vegetation.av is not None:
+						#av = (SAVIdt - SAVIdt_min)/(SAVIdt_max - SAVIdt_min)
+						vegetation.av = vegetation.av[act_nodes]
+				else:
+					vegetation.av = avdt[act_nodes]
 				
 				# add interception component - UZ zone
 				Pth, Eca, PETh, LAIdt, Kcdt, Sc0_cn = cnp.run_interception_one_step(
@@ -737,6 +759,7 @@ def run_DRYP(filename_input):
 				#	lai_mb.append(0)
 				#	kc_mb.append(0)
 				#	kcrip_mb.append(0)
+				
 				# add data abstractions/sink/source points
 				# select row from dataframe and add to the excess component
 				if fluxSZ.data_set is not None:					
@@ -756,7 +779,7 @@ def run_DRYP(filename_input):
 							#	swb.tht_dt,	env_state.Droot*0.001)
 						#else:
 						head, baseflow = gw.run_one_step_gw(grid,
-								topo.surface,
+								topo.surface[:],
 								aquifer.bottom,
 								aquifer.thickness,
 								topo.bathymetry,
@@ -820,6 +843,13 @@ def run_DRYP(filename_input):
 					"gdh": baseflow[act_nodes], "twsc": twsc[act_nodes],
 					})
 				
+				# store maximum values
+				if grid_max.store_max is True:
+					if riv_nodes.size > 0:
+						grid_max.store_variables(PRE.date_sim_dt, t_pre,
+			      			{"dis": ro.discharge[riv_nodes]}
+							)
+
 				# get all fluxes and states at sampling points
 				point_var.store_variables(PRE.date_sim_dt, t_pre,
 			      	{"aet": AET[idOF_act], "inf": INF[idOF_act],
@@ -936,11 +966,18 @@ def run_DRYP(filename_input):
 	grid_var.save_netCDF_var(data_in.fnameTS_grid+'.nc',
 			   topo.lat, topo.lon, act_nodes,# var_name
 			   )
-		
+	# save grided model result datasets 
+	if grid_max.store_max is True:
+		print("<==== saving model temporal maximum values outputs")
+		if riv_nodes.size > 0:
+			grid_max.save_netCDF_var(data_in.fnameTS_grid+'max.nc',
+			   topo.lat, topo.lon, riv_nodes,# var_name
+			   )
+
 	# SAVE VARIABLES FROM THE RIPARIAN ZONE
 	# save average riparian zone variables in a csv file
-	print("<==== saving riparian zone temporal outputs")
 	if riv_nodes.size > 0:
+		print("<==== saving riparian zone temporal outputs")
 		# variables names
 		#var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
 		
