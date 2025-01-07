@@ -142,8 +142,8 @@ def future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, l
                                     datapath, outputpath, tempAdj,deltat, dpetdt, randnoise, season_name):
 
     # create a folder to save the data
-    if not os.path.isdir(os.path.join(outputpath, season_name + "_" + str(startyear) +'_PET_forecast')):
-        os.makedirs(os.path.join(outputpath, season_name + "_" + str(startyear) +'_PET_forecast'))
+    if not os.path.isdir(os.path.join(outputpath, season_name + "_" + str(startyear))):
+        os.makedirs(os.path.join(outputpath, season_name + "_" + str(startyear)))
 
     # generate the hourly time series period
     years = np.arange(startyear,endyear+1)
@@ -254,7 +254,7 @@ def future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, l
         # save each year value separately (.nc)
         tunits = 'days since '+str(yr)+'-01-01' 
         # PET values jgenerated without any adjustment
-        filename1 = os.path.join(outputpath, season_name + "_" + str(startyear) + "_PET_forecast", str(yr)+'_'+str(tempAdj)+ '_ens_'+ str(ens_num) + '_stoPET.nc')      
+        filename1 = os.path.join(outputpath, season_name + "_" + str(startyear), str(yr)+'_'+str(tempAdj)+ '_ens_'+ str(ens_num) + '_stoPET.nc')      
         nc_write(stoch_pet, latlen, lonlen, 'pet', tunits, filename1)
         
         # Temperature adjusted PET (This is deactivated for ICPAC as we don't need the data) it will sve space.
