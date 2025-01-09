@@ -116,8 +116,25 @@ python<span class="w"> </span>-m<span class="w"> </span>cuwalid.storm.main_storm
 <p>the files required to do the forecasting.</p>
 </section>
 <section id="input-parameters">
-<h2>Input Parameters<a class="headerlink" href="#input-parameters" title="Permalink to this heading"></a></h2>
+<span id="storm-parameters"></span><h2>Input Parameters<a class="headerlink" href="#input-parameters" title="Permalink to this heading"></a></h2>
 <p>The input JSON shown above will look something like this:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">{</span>
+<span class="linenos"> 2</span><span class="w">    </span><span class="nt">&quot;NUMSIMS&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="linenos"> 3</span><span class="w">    </span><span class="nt">&quot;NUMSIMYRS&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="linenos"> 4</span><span class="w">    </span><span class="nt">&quot;SEASON_TAG&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OND&quot;</span><span class="p">,</span>
+<span class="linenos"> 5</span><span class="w">    </span><span class="nt">&quot;SEED_YEAR&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2024</span><span class="p">,</span>
+<span class="linenos"> 6</span><span class="w">    </span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="nt">&quot;PDF_FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/ProbabilityDensityFunctions.csv&quot;</span><span class="p">,</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="nt">&quot;SHP_FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/HAD_basin.shp&quot;</span><span class="p">,</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="nt">&quot;DEM_FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/HAD_wgs84.tif&quot;</span><span class="p">,</span>
+<span class="linenos">10</span><span class="w">    </span><span class="nt">&quot;ZON_FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/regions.shp&quot;</span><span class="p">,</span>
+<span class="linenos">11</span><span class="w">    </span><span class="nt">&quot;TER_FILE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/tercilesICPAC_OND_2024.shp&quot;</span><span class="p">,</span>
+<span class="linenos">12</span><span class="w">    </span><span class="nt">&quot;OUT_PATH&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./storm_output&quot;</span><span class="p">,</span>
+<span class="linenos">13</span><span class="w">    </span><span class="nt">&quot;RAIN_MAP&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;./model_input/rainfall_OND.nc&quot;</span>
+<span class="linenos">14</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">15</span><span class="w">  </span>
+</pre></div>
+</div>
 <p>Here is an explanation of what each parameter does:</p>
 <ul>
 <li><p><strong>NUMSIMS</strong>: <cite>1</cite></p>

@@ -30,6 +30,8 @@ Or run from the terminal using this command:
 
 the files required to do the forecasting.
 
+.. _storm_parameters:
+
 Input Parameters
 ================
 

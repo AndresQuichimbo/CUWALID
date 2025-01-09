@@ -42,6 +42,8 @@ Or from the command line using this command
     # replace "input.json" with the path to your input json
     python -m cuwalid.stopet.forecast_generation_v2 input.json
 
+.. _stopet_parameters:
+
 Input Parameters
 ================
 

@@ -1,0 +1,15 @@
+{
+    "NUMSIMS": 2,
+    "NUMSIMYRS": 1,
+    "SEASON_TAG": "OND",
+    "SEED_YEAR": 2024,
+    
+    "PDF_FILE": "./model_input/ProbabilityDensityFunctions.csv",
+    "SHP_FILE": "./model_input/HAD_basin.shp",
+    "DEM_FILE": "./model_input/HAD_wgs84.tif",
+    "ZON_FILE": "./model_input/regions.shp",
+    "TER_FILE": "./model_input/tercilesICPAC_OND_2024.shp",
+    "OUT_PATH": "./storm_output",
+    "RAIN_MAP": "./model_input/rainfall_OND.nc"
+  }
+  

@@ -86,6 +86,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">fitter</span> <span class="kn">import</span> <span class="n">Fitter</span>
 <span class="kn">from</span> <span class="nn">gc</span> <span class="kn">import</span> <span class="n">collect</span>
 <span class="kn">from</span> <span class="nn">geopandas</span> <span class="kn">import</span> <span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">GeoSeries</span><span class="p">,</span> <span class="n">points_from_xy</span><span class="p">,</span> <span class="n">read_file</span><span class="p">,</span> <span class="n">sjoin</span>
@@ -144,7 +145,7 @@
 
 
 <span class="n">ALTERNATIV</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># 1-for.simple.totals; 2-simple.totals+copula; 3-pf-based</span>
-<span class="n">ICPAC_ONLY</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 1-for.only.ICPAC.forecast.SHP; 0-for.only.preprocessing</span>
+<span class="c1"># ICPAC_ONLY = 0  # 1-for.only.ICPAC.forecast.SHP; 0-for.only.preprocessing</span>
 
 <span class="c1"># # OGC-WKT for HAD [taken from https://epsg.io/42106]</span>
 <span class="c1"># WKT_OGC = &#39;PROJCS[&quot;WGS84_/_Lambert_Azim_Mozambique&quot;,&#39;\</span>
@@ -675,6 +676,11 @@
 
 <div class="viewcode-block" id="regional.to_shp"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.regional.to_shp">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">to_shp</span><span class="p">(</span><span class="n">mopen</span><span class="p">,</span> <span class="n">realization</span><span class="p">,</span> <span class="n">buffer_mask</span><span class="p">,</span> <span class="n">catchm_mask</span><span class="p">,</span> <span class="n">wkt_prj</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">mopen</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;float64&quot;</span><span class="p">:</span>
+            <span class="n">mopen</span> <span class="o">=</span> <span class="n">mopen</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+
+
         <span class="c1"># np2shp [.rio.transform() IS QUITE OF THE ESSENCE HERE!]</span>
         <span class="n">lopen</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">shapes</span><span class="p">(</span><span class="n">mopen</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">buffer_mask</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
                             <span class="n">transform</span><span class="o">=</span><span class="n">realization</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">transform</span><span class="p">()))</span>
@@ -695,8 +701,8 @@
 
         <span class="c1"># grouping to retrieve just the CLUSTER.masks (the output is a Series)</span>
     <span class="c1"># nasks = feats.groupby(by=&#39;region&#39;).apply(lambda x: x.unary_union, include_groups=False)</span>
-        <span class="n">nasks</span> <span class="o">=</span> <span class="n">feats</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;region&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">union_all</span><span class="p">(),</span> <span class="n">include_groups</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">nasks</span> <span class="o">=</span> <span class="n">feats</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;region&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">unary_union</span><span class="p">)</span>
         <span class="c1"># nasks[0] ; nasks[1] ; nasks[2] ; nasks[3]</span>
 
         <span class="c1"># turn-back them into GeoPandas</span>
@@ -2152,7 +2158,7 @@
                             <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># pac = icpac.to_stacked_array(&#39;p&#39;, sample_dims=[&#39;LAT&#39;, &#39;LON&#39;], variable_dim=&#39;tercile&#39;)</span>
         <span class="c1"># pac.plot(x=&#39;LON&#39;, y=&#39;LAT&#39;, col=&#39;p&#39;, col_wrap=3, cmap=&#39;gist_ncar_r&#39;, robust=False,)</span>
-        <span class="n">icpac</span> <span class="o">=</span> <span class="n">icpac</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;LAT&#39;</span><span class="p">:</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;LON&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,})</span>
+        <span class="n">icpac</span> <span class="o">=</span> <span class="n">icpac</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,})</span>
 
         <span class="n">re_</span> <span class="o">=</span> <span class="n">icpac</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">reproject_match</span><span class="p">(</span><span class="n">blank</span><span class="p">,</span> <span class="n">resampling</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resam</span><span class="p">)</span>
         <span class="c1"># stack the reprojection (to have only one 3D-variable)</span>
@@ -2250,7 +2256,7 @@
         <span class="n">vals_</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">vals_</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">ter</span><span class="p">,</span> <span class="n">vals_</span></div>
 
-<div class="viewcode-block" id="forecasting.xport_shp"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting.xport_shp">[docs]</a>    <span class="k">def</span> <span class="nf">xport_shp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="forecasting.xport_shp"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting.xport_shp">[docs]</a>    <span class="k">def</span> <span class="nf">xport_shp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ZON_FILE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        exports as shp.file from a geopandas input.\n</span>
 <span class="sd">        Input: -&gt;</span>
@@ -2464,10 +2470,10 @@
 
 <span class="c1"># %% call pac</span>
 
-<div class="viewcode-block" id="compute_icpac"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.compute_icpac">[docs]</a><span class="k">def</span> <span class="nf">compute_icpac</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">TER_FILE</span><span class="p">,</span> <span class="n">TER_YEAR</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">):</span>  <span class="c1"># space = masking()</span>
-    <span class="n">ifile</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./model_input/Ens_Prec_*</span><span class="si">{</span><span class="n">SEASON_TAG</span><span class="si">}</span><span class="s1">*-avgRaw</span><span class="si">{</span><span class="n">TER_YEAR</span><span class="si">}</span><span class="s1">.nc&#39;</span><span class="p">)</span>
-    <span class="c1"># ifile should be a 1-element list!</span>
-    <span class="n">ifile</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">parent_d</span><span class="p">,</span> <span class="n">ifile</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<div class="viewcode-block" id="compute_icpac"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.compute_icpac">[docs]</a><span class="k">def</span> <span class="nf">compute_icpac</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">ZON_FILE</span><span class="p">):</span>  <span class="c1"># space = masking()</span>
+    <span class="c1"># ifile = glob(f&#39;./model_input/Ens_Prec_*{SEASON_TAG}*-avgRaw{TER_YEAR}.nc&#39;)</span>
+    <span class="n">ifile</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+
 
 <span class="c1"># 19. PRODUCE ICPAC FORECAST SHP</span>
     <span class="n">assertcast</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;NO ICPAC_CAST!</span><span class="se">\n</span><span class="s1">&#39;</span>\
@@ -2480,7 +2486,7 @@
 
     <span class="n">forecast</span> <span class="o">=</span> <span class="n">forecasting</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">ifile</span><span class="p">)</span>
     <span class="c1"># update xport.shp.file name &amp; xport it</span>
-    <span class="n">forecast</span><span class="o">.</span><span class="n">xport_shp</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">parent_d</span><span class="p">,</span> <span class="n">TER_FILE</span><span class="p">)))</span></div>
+    <span class="n">forecast</span><span class="o">.</span><span class="n">xport_shp</span><span class="p">(</span><span class="n">ZON_FILE</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">abspath</span><span class="p">(</span><span class="n">output_file</span><span class="p">))</span></div>
 
 
 <span class="c1"># %% main</span>
