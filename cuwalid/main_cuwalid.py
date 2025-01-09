@@ -5,6 +5,7 @@ import sys
 
 import numpy as np
 from cuwalid.storm.main_storm import run_storm
+from cuwalid.storm.pdfs_ import compute_icpac, masking
 from cuwalid.stopet.main_stopet import run_stoPET
 from cuwalid.dryp.main_DRYP import run_DRYP
 from cuwalid.tools.DRYP_json_builder import create_ensamble, write_JSON_dryp_file
@@ -17,6 +18,11 @@ def run_cuwalid(cuwalid_input, forecasting_input):
 		
 	# Run storm
 	storm_input = cuwalid_config["storm"]
+
+	# Convert .nc file into .shp
+	space = masking(catchment=stopet_input["SHP_FILE"])
+	compute_icpac(storm_input["TER_FILE"])
+
 	run_storm(storm_input)
 
 	# Run StoPET
