@@ -39,6 +39,12 @@ These steps should work correctly even if installing through PyPi within a conda
 
     This will install all other dependencies along with the CUWALID package.
 
+    If you need to update the package to the newest version of CUWALID, please use the command below:
+
+    .. code-block:: bash
+        
+        pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple CUWALID --upgrade
+
     Some of the parameter files for the StoPET model are too large to be installed with the package, so use the command below after installing the package if you want to use the StoPET model:
 
     .. code-block:: bash

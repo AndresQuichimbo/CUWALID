@@ -302,8 +302,8 @@ def writing_forecast_file(ensembleArray, seasonName, locname, startyear, outputp
       
   # write the final ensembles on a netcdf file
   # create a folder to save the data
-  if not os.path.isdir(outputpath + '%s_%s_PET_forecast/'%(seasonName,startyear)):
-    os.mkdir(outputpath + '%s_%s_PET_forecast/'%(seasonName,startyear))
+  if not os.path.isdir(outputpath + '%s_%s/'%(seasonName,startyear)):
+    os.mkdir(outputpath + '%s_%s/'%(seasonName,startyear))
   # file name of the adjusted PET from stopet 
   for f in range(ensembleArray.shape[0]):
     # read the each ensemble array
@@ -312,7 +312,7 @@ def writing_forecast_file(ensembleArray, seasonName, locname, startyear, outputp
     # the newar by grid should be with in 10% diffrence from  the surrounding average
     data = smooth_grid_numba_parallel(pet_data)
     # write the output files
-    outpath = outputpath + '%s_%s_PET_forecast/'%(seasonName,startyear)
+    outpath = outputpath + '%s_%s/'%(seasonName,startyear)
     filename = (outpath + 'Forecast_PET_%s_ens_%s_%s_%s.nc')%(locname,f,seasonName,startyear)
     varname = 'pet'
     timevals = time[:]

@@ -1,7 +1,6 @@
 DRYP Pre- and post-processing tools
 ===================================
 
-
 Preprocessing tools
 -------------------
 
@@ -14,6 +13,34 @@ python library available for raster processing (e.g rasterio <https://rasterio.r
 geopandas <https://geopandas.org/en/stable/index.html>, gdal <https://gdal.org/api/python_bindings.html>).
 A list of function s available can be found at :doc: 'DRYP_pptools:DRYP-pptools'.
 
+
+Pre-processing dataset
+----------------------
+
+
+To calculate the constributed areas (watersheds) at location specified in the outputs point files, the following the following code can be used:
+
+.. parsed-literal::
+
+	>>> from cuwalid.dryp.components.DRYP_watershed import get_area_watershed
+	>>> filename = "test_input.txt"
+	>>> get_area_watershed(filename)
+
+
+To find the extend of the contributing area for a specific location the following code can be used:
+
+.. parsed-literal::
+
+	>>> outlet = np.zeros_like(dem, dtype=int)
+	>>> outlet[ipoint] = 1
+
+	>>> ibasin = watershed(dem, outlet, nrows, ncols, flowDir=flowDir, cellsize=cellsize)
+	>>> ibasin = np.flip(ibasin.reshape(nrows, ncols), 0)
+	>>> data, profile, transform = open_raster(fname)
+	>>> fname_basin = "basin.asc"
+	>>> save_raster(fname_basin, ibasin, profile, transform)
+
+Generate soil parameters files required for DRYP.
 
 
 Postprocessing tools

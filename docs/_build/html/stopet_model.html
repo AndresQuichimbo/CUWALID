@@ -15,6 +15,8 @@
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -60,7 +62,10 @@
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dryp_developers.html">CUWALID: Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Licences.html">Licences</a></li>
 </ul>
 
         </div>
@@ -92,8 +97,25 @@
 <span id="stopet-model"></span><h1>stoPET: Stochastic Potential evapotranspiration generator<a class="headerlink" href="#stopet-stochastic-potential-evapotranspiration-generator" title="Permalink to this heading"></a></h1>
 <section id="model-description-and-structure">
 <h2>Model description and structure<a class="headerlink" href="#model-description-and-structure" title="Permalink to this heading"></a></h2>
-<p>Add description here.</p>
-<img alt="_images/Model_Structure_conceptual_GMD.png" src="_images/Model_Structure_conceptual_GMD.png" />
+<p>stoPET is a stochastic potential evapotranspiration (PET) generator developed based on a global hourly PET dataset with a high spatial resolution (<a class="reference external" href="https://doi.org/10.1038/s41597-021-01003-9">hPET</a>). <a class="reference external" href="https://doi.org/10.5194/gmd-16-557-2023">stoPET</a> is designed to simulate a realistic time series of PET that captures the diurnal and seasonal variability in hPET and supports the simulation of various climate change scenarios.</p>
+<p>The stoPET model is based on fitting a sine function (Figure. 1 solid red line) to the average diurnal cycle calculated from hPET for each month and grid cell (Figure. 1 dotted line). The sine function, defined in Eq. (1), provides the following four parameters required to represent the characteristic of hourly PET for each month at each grid cell:</p>
+<div class="math notranslate nohighlight">
+\[Y = A sin(B * t + C) + D\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><strong>A</strong> represents the diurnal amplitude (mm/h),</p></li>
+<li><p><strong>B</strong> is the frequency (1/h),</p></li>
+<li><p><strong>C</strong> is the phase shift (-), and</p></li>
+<li><p><strong>D</strong> is the vertical shift (mm/h).</p></li>
+<li><p><strong>t</strong> is time (h)</p></li>
+<li><p><strong>Y</strong> is the new PET value (mm/h) generated from the sine function.</p></li>
+</ul>
+<p>The sine fit is only done based on values for daylight hours (sunrise to sunset), and nighttime PET values are set to zero. To account for the PET variability within each month (Fig. 1 grey shade), stoPET uses a noise ratio parameter represented stochastically in the model. This noise ratio is randomly generated using parameters determined from 40 years of hPET data.</p>
+<p>For each day of the month, the model generates these random noise ratio values and multiplies them by the average PET values generated using the sine function (Y) to get a new timeseries that is unique every time.</p>
+<p>Figure 1 below shows an example of a sine function curve fitted over the average hourly PET values for January at Wajir (Kenya). The black dotted line is the average from hPET, and the red solid line represents the fitted sine function. The grey shaded area ranges across all January days in the 40-year record for hPET. Average sunrise and sunset times are shown in green vertical dashed lines.</p>
+<p>The animation figure below shows that stoPET generates hourly values of PET for all of the Horn of Africa Drylands in a manner that respects the diurnal variations of solar radiation and heat build-up in the atmosphere throughout the day.</p>
+<img alt="_images/stopet_ex1.png" src="_images/stopet_ex1.png" />
+<img alt="_images/Oct_1.gif" src="_images/Oct_1.gif" />
 </section>
 </section>
 

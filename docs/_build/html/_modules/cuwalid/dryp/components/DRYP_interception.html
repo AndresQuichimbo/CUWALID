@@ -48,7 +48,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Licences.html">Licences</a></li>
 </ul>
 
         </div>
@@ -125,7 +128,8 @@
 					<span class="n">LAI</span> <span class="o">=</span> <span class="mi">0</span>
 			
 			<span class="c1"># Maximum amount of water store by canopy</span>
-			<span class="n">Sca_max</span> <span class="o">=</span> <span class="n">get_Scmax_from_LAI_and_fcw</span><span class="p">(</span><span class="n">fcw</span><span class="p">,</span> <span class="n">LAI</span><span class="p">)</span>
+			<span class="c1">#Sca_max = get_Scmax_from_LAI_and_fcw(fcw, LAI)</span>
+			<span class="n">Sca_max</span> <span class="o">=</span> <span class="n">get_Scmax_from_LAI</span><span class="p">(</span><span class="n">LAI</span><span class="p">)</span>
 			
 			<span class="c1"># maximum canopy saturation</span>
 			<span class="n">Sca</span> <span class="o">=</span> <span class="n">Sca_max</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">rain</span><span class="o">/</span><span class="n">Sca_max</span><span class="p">))</span>
@@ -180,6 +184,9 @@
 			
 			<span class="c1"># make throufall do not exced the precipitaiton</span>
 			<span class="c1">#Pth[Pth&lt;0] = 0.0</span>
+
+			<span class="c1"># MASS BALANCE</span>
+			<span class="c1">#MB = rain - Eca - Pth + Sc</span>
 					
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">Eca</span> <span class="o">=</span> <span class="kc">None</span>

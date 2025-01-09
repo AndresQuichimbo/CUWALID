@@ -48,7 +48,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Licences.html">Licences</a></li>
 </ul>
 
         </div>
@@ -132,8 +135,8 @@
 
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="c1"># Creates numpy arrays for passing model variables</span>
-		<span class="c1">#env_state.grid.add_zeros(&#39;node&#39;, &quot;surface_water__discharge&quot;)#, dtype=float32)</span>
 		<span class="n">Create_parameter_WV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">riv_width</span><span class="p">,</span> <span class="n">riv_length</span><span class="p">)</span>
+		
 		<span class="c1">#Create_parameter_WV(env_state.grid)#, data_in.Kloss)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">discharge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">SSZ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid_size</span><span class="p">)</span>
@@ -145,10 +148,10 @@
 		<span class="c1"># 1. Check if flow director is needed</span>
 		<span class="k">if</span> <span class="n">FlowDirection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 			<span class="k">if</span> <span class="s1">&#39;aux_grid&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">at_node</span><span class="p">:</span>
-				<span class="n">grid</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="s2">&quot;aux_grid&quot;</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">at</span><span class="o">=</span><span class="s2">&quot;node&quot;</span><span class="p">)</span>
+				<span class="n">grid</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="s2">&quot;aux_grid&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">surface</span><span class="p">[:]),</span> <span class="n">at</span><span class="o">=</span><span class="s2">&quot;node&quot;</span><span class="p">)</span>
 			<span class="k">else</span><span class="p">:</span>
 				<span class="n">grid</span><span class="o">.</span><span class="n">at_node</span><span class="p">[</span><span class="s1">&#39;aux_grid&#39;</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">FlowDirection</span>
-
+			<span class="c1">#print(grid.at_node[&#39;aux_grid&#39;])</span>
 			<span class="n">fd</span> <span class="o">=</span> <span class="n">FlowDirectorD8</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="s1">&#39;aux_grid&#39;</span><span class="p">)</span>
 			<span class="n">fd</span><span class="o">.</span><span class="n">run_one_step</span><span class="p">()</span>
 		
@@ -166,8 +169,8 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">as_id_array</span><span class="p">(</span><span class="n">flow_accum_bw</span><span class="o">.</span><span class="n">make_ordered_node_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">))</span>
 		<span class="c1">#self.carea = find_drainage_area(self.s, self.r,</span>
 		<span class="c1">#			env_state.area_cells,</span>
-		<span class="c1">#			env_state.grid.boundary_nodes)		</span>
-
+		<span class="c1">#			env_state.grid.boundary_nodes)</span>
+		
 	<span class="c1">#@profile</span>
 <div class="viewcode-block" id="runoff_routing.run_runoff_one_step"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accumf90.runoff_routing.run_runoff_one_step">[docs]</a>	<span class="k">def</span> <span class="nf">run_runoff_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runoff</span><span class="p">,</span> <span class="n">AOF</span><span class="p">,</span> <span class="n">AOF_threshold</span><span class="p">,</span> <span class="n">conductivity</span><span class="p">,</span>
 			 <span class="n">decay</span><span class="p">,</span> <span class="n">river_cell</span><span class="p">,</span> <span class="n">area_cells</span><span class="p">,</span> <span class="n">area_river</span><span class="p">,</span> <span class="n">river_sat_deficit</span><span class="p">,</span>

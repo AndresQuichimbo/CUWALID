@@ -48,7 +48,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Licences.html">Licences</a></li>
 </ul>
 
         </div>
@@ -101,7 +104,7 @@
 		<span class="c1"># ================ Reading surface water model inputs ==============</span>
 		
 		<span class="c1">#print(&#39;******************* Reading Input Files ********************&#39;)</span>
-		
+		<span class="c1">#print(inputfile.fname_DEM)</span>
 		<span class="c1"># Reading digital elevation model</span>
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_DEM</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_DEM</span><span class="p">):</span>
 			<span class="n">domain</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_DEM</span><span class="p">)</span>
@@ -119,7 +122,7 @@
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;A digital elevation model map must be supplied&quot;</span><span class="p">)</span>
 		
-		
+		<span class="c1">#print(self.surface)</span>
 		<span class="c1"># define grid size for model arrays</span>
 		<span class="n">grid_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">)</span>
 
@@ -198,7 +201,8 @@
 		<span class="k">else</span><span class="p">:</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Lake bathymetry..................not provided. Global default z&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">bathymetry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">[:]</span>
-	
+		<span class="c1">#print(self.bathymetry, self.surface)</span>
+		<span class="c1">#print(v)</span>
 		<span class="c1"># CHANNEL ===============================================================================</span>
 		<span class="c1"># Channel hydraulic parameters</span>
 		<span class="c1"># Assuming a flow velocity of 1 m/s =&gt; 3600 m/h</span>
@@ -230,7 +234,6 @@
 			 
 		<span class="c1"># calculating cells area [m2]</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">area_cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_cellsize</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="c1">#*self.area_catch_factor</span>
-		<span class="c1">#rg.at_node[&#39;cth_area_k&#39;]</span>
 		
 		<span class="c1">#self.area_cells_hills = rg.dx*rg.dy*rg.at_node[&#39;cth_area_k&#39;]</span>
 		
@@ -299,7 +302,8 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_xllcorner</span><span class="p">,</span> <span class="n">lat_end</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_cellsize</span><span class="p">)[:</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_nrows</span><span class="p">]</span>
 		<span class="n">lon_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_yllcorner</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_cellsize</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_ncols</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_yllcorner</span><span class="p">,</span> <span class="n">lon_end</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_cellsize</span><span class="p">)[:</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_ncols</span><span class="p">]</span>
-		
+		<span class="c1">#print(self.surface)</span>
+		<span class="c1">#print(v)</span>
 		<span class="k">pass</span>
 	<span class="c1"># Find coordinates of points in model components</span>
 <div class="viewcode-block" id="surface_parameters.points_output"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.surface_parameters.points_output">[docs]</a>	<span class="k">def</span> <span class="nf">points_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">):</span>
@@ -655,7 +659,7 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_GWini</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span></div>
 			<span class="c1">#h = read_esri_ascii(inputfile.fname_GWini,</span>
 			<span class="c1">#	name=&#39;water_table__elevation&#39;, grid=gw)[1]</span>
-		
+
 <div class="viewcode-block" id="interception_parameters"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.interception_parameters">[docs]</a><span class="k">class</span> <span class="nc">interception_parameters</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;This function reads all aquifer paramters required to run the saturated component</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -699,6 +703,7 @@
 
 		<span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">fname_av</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_av</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">av</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputfile</span><span class="o">.</span><span class="n">fname_av</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">av</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">av</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fraction of vegetation cover.....not provided. Global default 1&#39;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">av</span> <span class="o">=</span> <span class="kc">None</span>

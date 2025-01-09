@@ -48,7 +48,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Licences.html">Licences</a></li>
 </ul>
 
         </div>
@@ -76,23 +79,22 @@
            <div itemprop="articleBody">
              
   <h1>Source code for cuwalid.storm.rainfall</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="c1"># https://stackoverflow.com/a/9134842/5885810     (supress warning by message)</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;You will likely lose important projection &#39;</span>\
-                        <span class="s1">&#39;information when converting to a PROJ string from another format&#39;</span><span class="p">)</span>
-<span class="c1"># WOS doesn&#39;t deal with &quot;ecCodes&quot;</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Failed to load cfgrib - most likely &#39;</span>\
-                        <span class="s1">&#39;there is a problem accessing the ecCodes library.&#39;</span><span class="p">)</span>
-<span class="c1"># because the &quot;EPSG_CODE = 42106&quot; is not a standard proj?</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;GeoDataFrame&#39;s CRS is not &quot;</span>\
-                        <span class="s2">&quot;representable in URN OGC format&quot;</span><span class="p">)</span>
-<span class="c1"># https://github.com/slundberg/shap/issues/2909    (suppresing the one from libpysal 4.7.0)</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;.*`Geometry` class will deprecated &#39;</span><span class="se">\</span>
-<span class="s2">                        &#39;and removed in a future version of libpysal*&quot;</span><span class="p">)</span>
-<span class="c1"># # https://github.com/slundberg/shap/issues/2909    (suppresing the one from numba 0.59.0)</span>
-<span class="c1"># warnings.filterwarnings(&#39;ignore&#39;, message=&quot;.*The &#39;nopython&#39; keyword.*&quot;)</span>
+<span class="c1"># # https://stackoverflow.com/a/9134842/5885810     (supress warning by message)</span>
+<span class="c1"># warnings.filterwarnings(&#39;ignore&#39;, message=&#39;You will likely lose important projection &#39;\</span>
+<span class="c1">#                         &#39;information when converting to a PROJ string from another format&#39;)</span>
+<span class="c1"># # WOS doesn&#39;t deal with &quot;ecCodes&quot;</span>
+<span class="c1"># warnings.filterwarnings(&#39;ignore&#39;, message=&#39;Failed to load cfgrib - most likely &#39;\</span>
+<span class="c1">#                         &#39;there is a problem accessing the ecCodes library.&#39;)</span>
+<span class="c1"># # because the &quot;EPSG_CODE = 42106&quot; is not a standard proj?</span>
+<span class="c1"># warnings.filterwarnings(&#39;ignore&#39;, message=&quot;GeoDataFrame&#39;s CRS is not &quot;\</span>
+<span class="c1">#                         &quot;representable in URN OGC format&quot;)</span>
+<span class="c1"># # https://github.com/slundberg/shap/issues/2909    (suppresing the one from libpysal 4.7.0)</span>
+<span class="c1"># warnings.filterwarnings(&#39;ignore&#39;, message=&quot;.*`Geometry` class will deprecated &#39;\</span>
+<span class="c1">#                         &#39;and removed in a future version of libpysal*&quot;)</span>
+<span class="c1"># # # https://github.com/slundberg/shap/issues/2909    (suppresing the one from numba 0.59.0)</span>
+<span class="c1"># # warnings.filterwarnings(&#39;ignore&#39;, message=&quot;.*The &#39;nopython&#39; keyword.*&quot;)</span>
 
 <span class="c1"># https://stackoverflow.com/a/248066/5885810</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">join</span>
@@ -104,6 +106,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="c1"># # https://stackoverflow.com/a/65562060/5885810  (ecCodes in WOS)</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">rioxarray</span> <span class="k">as</span> <span class="nn">rio</span>
 <span class="c1"># from pyproj import CRS</span>
 <span class="kn">import</span> <span class="nn">pyproj</span> <span class="k">as</span> <span class="nn">pp</span>
 <span class="kn">import</span> <span class="nn">netCDF4</span> <span class="k">as</span> <span class="nn">nc4</span>
@@ -113,13 +116,16 @@
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">random</span> <span class="k">as</span> <span class="n">npr</span>
 <span class="kn">from</span> <span class="nn">statsmodels.distributions.copula.api</span> <span class="kn">import</span> <span class="n">GaussianCopula</span>
 
+<span class="c1"># import dask.array as da</span>
+<span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">delayed</span>
+
 <span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal</span>
 <span class="c1"># https://gdal.org/api/python_gotchas.html#gotchas-that-are-by-design-or-per-history</span>
 <span class="c1"># https://github.com/OSGeo/gdal/blob/master/NEWS.md#ogr-370---overview-of-changes</span>
 <span class="k">if</span> <span class="n">gdal</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;3&#39;</span><span class="p">:</span><span class="c1"># enable exceptions for GDAL&lt;=4.0</span>
     <span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span>
     <span class="c1"># gdal.DontUseExceptions()</span>
-    <span class="c1"># gdal.__version__ # wos_ &#39;3.6.2&#39; # linux_ &#39;3.7.0&#39;</span>
+    <span class="c1"># gdal.__version__ # wos_ &#39;3.9.2&#39; # linux_ &#39;3.7.0&#39;</span>
 
 <span class="kn">from</span> <span class="nn">rasterio</span> <span class="kn">import</span> <span class="n">fill</span>
 <span class="c1"># from rasterio import crs as rcrs</span>
@@ -128,7 +134,6 @@
 <span class="kn">from</span> <span class="nn">dateutil.tz</span> <span class="kn">import</span> <span class="n">tzlocal</span>
 <span class="kn">from</span> <span class="nn">dateutil.relativedelta</span> <span class="kn">import</span> <span class="n">relativedelta</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">import</span> <span class="nn">rioxarray</span> <span class="k">as</span> <span class="nn">rio</span>
 
 <span class="kn">import</span> <span class="nn">libpysal</span> <span class="k">as</span> <span class="nn">ps</span>
 <span class="kn">from</span> <span class="nn">pointpats</span> <span class="kn">import</span> <span class="n">PoissonPointProcess</span><span class="p">,</span> <span class="n">random</span><span class="p">,</span> <span class="n">Window</span>  <span class="c1"># , PointPattern</span>
@@ -136,8 +141,8 @@
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
 <span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">iconcat</span><span class="p">,</span> <span class="n">itemgetter</span>
-<span class="kn">from</span> <span class="nn">cuwalid.storm.chunking</span> <span class="kn">import</span> <span class="n">CHUNK_3D</span>
-<span class="kn">from</span> <span class="nn">cuwalid.storm.pdfs_</span> <span class="kn">import</span> <span class="n">betas</span><span class="p">,</span> <span class="n">circular</span><span class="p">,</span> <span class="n">elevation</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">masking</span>
+<span class="kn">from</span> <span class="nn">cuwalid.storm.parameters</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">cuwalid.storm.pdfs_</span> <span class="kn">import</span> <span class="n">betas</span><span class="p">,</span> <span class="n">circular</span><span class="p">,</span> <span class="n">elevation</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">masking</span><span class="p">,</span> <span class="n">forecasting</span>
 
 
 <span class="c1"># np.set_printoptions(threshold = np.inf)</span>
@@ -175,95 +180,23 @@
 <span class="c1">#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#</span>
 
 
-<span class="c1">#%% INPUT PARAMETERS</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">NUMSIMS = 2#1#2         # Number of runs per Season</span>
-<span class="sd">NUMSIMYRS = 1#2         # Number of years per run (per Season)</span>
-
-<span class="sd"># # PARAMETER = [ S1 ]</span>
-<span class="sd">PTOT_SC       = [0.00]</span>
-<span class="sd">PTOT_SF       = [ 0.0]</span>
-<span class="sd">STORMINESS_SC = [-0.0]</span>
-<span class="sd">STORMINESS_SF = [+0.0]</span>
-
-<span class="sd"># PDF_FILE = &#39;./model_input/ProbabilityDensityFunctions_ONE--ANALOG.csv&#39;      # output from &#39;pre_processing.py&#39;</span>
-<span class="sd"># PDF_FILE = &#39;./model_input/ProbabilityDensityFunctions_ONE--ANALOG-pmf.csv&#39;  # output from &#39;pre_processing.py&#39;</span>
-<span class="sd">SHP_FILE = &#39;./model_input/HAD_basin.shp&#39;                # catchment shape-file in WGS84</span>
-<span class="sd"># DEM_FILE = &#39;./model_input/dem/WGdem_wgs84.tif&#39;        # aoi raster-file (optional**)</span>
-<span class="sd"># DEM_FILE = &#39;./model_input/dem/WGdem_26912.tif&#39;        # aoi raster-file in local CRS (***)</span>
-<span class="sd">DEM_FILE = None</span>
-<span class="sd">OUT_PATH = &#39;./model_output&#39;                             # output folder</span>
-
-<span class="sd">RAIN_MAP = &#39;./model_input/rainfall_MAM.nc&#39;  # yes.interpretable CRS</span>
-<span class="sd">RAIN_MAP = &#39;./model_input/rainfall_OND.nc&#39;  # yes.interpretable CRS</span>
-<span class="sd">NREGIONS = 4  # number of regions to split the whole.region into</span>
-
-<span class="sd">Z_STAT = &#39;mean&#39;#&#39;median&#39;    # statistic to retrieve from the DEM [&#39;median&#39;|&#39;mean&#39; or &#39;min&#39;|&#39;max&#39;?? not &#39;count&#39;]</span>
-<span class="sd"># Z_CUTS = [ 400, 1000]  # [34.2, 67.5]%</span>
-<span class="sd"># Z_CUTS = [1000, 2000, 3000]  # [67.53, 97.15, 99.87]%</span>
-<span class="sd">Z_CUTS = [300,  600, 1200]  # in meters! [28.13, 48.75, 78.57]%</span>
-<span class="sd"># Z_CUTS = None  # (or Z_CUTS = []) for INT-DUR copula modelling regardless altitude</span>
-
-<span class="sd">TACTIC = 1  # the &quot;way&quot; STORM must be run</span>
-
-<span class="sd"># OGC-WKT for HAD [taken from https://epsg.io/42106]</span>
-<span class="sd">WKT_OGC = &#39;PROJCS[&quot;WGS84_/_Lambert_Azim_Mozambique&quot;,&#39;\</span>
-<span class="sd">    &#39;GEOGCS[&quot;unknown&quot;,&#39;\</span>
-<span class="sd">        &#39;DATUM[&quot;unknown&quot;,&#39;\</span>
-<span class="sd">            &#39;SPHEROID[&quot;Normal Sphere (r=6370997)&quot;,6370997,0]],&#39;\</span>
-<span class="sd">        &#39;PRIMEM[&quot;Greenwich&quot;,0,&#39;\</span>
-<span class="sd">            &#39;AUTHORITY[&quot;EPSG&quot;,&quot;8901&quot;]],&#39;\</span>
-<span class="sd">        &#39;UNIT[&quot;degree&quot;,0.0174532925199433,&#39;\</span>
-<span class="sd">            &#39;AUTHORITY[&quot;EPSG&quot;,&quot;9122&quot;]]],&#39;\</span>
-<span class="sd">    &#39;PROJECTION[&quot;Lambert_Azimuthal_Equal_Area&quot;],&#39;\</span>
-<span class="sd">    &#39;PARAMETER[&quot;latitude_of_center&quot;,5],&#39;\</span>
-<span class="sd">    &#39;PARAMETER[&quot;longitude_of_center&quot;,20],&#39;\</span>
-<span class="sd">    &#39;PARAMETER[&quot;false_easting&quot;,0],&#39;\</span>
-<span class="sd">    &#39;PARAMETER[&quot;false_northing&quot;,0],&#39;\</span>
-<span class="sd">    &#39;UNIT[&quot;metre&quot;,1,&#39;\</span>
-<span class="sd">        &#39;AUTHORITY[&quot;EPSG&quot;,&quot;9001&quot;]],&#39;\</span>
-<span class="sd">    &#39;AXIS[&quot;Easting&quot;,EAST],&#39;\</span>
-<span class="sd">    &#39;AXIS[&quot;Northing&quot;,NORTH],&#39;\</span>
-<span class="sd">    &#39;AUTHORITY[&quot;EPSG&quot;,&quot;42106&quot;]]&#39;</span>
-
-<span class="sd">### GRID characterization</span>
-<span class="sd">BUFFER    =  7000.                      # in meters! -&gt; buffer distance (out of the HAD)</span>
-<span class="sd">X_RES     =  5000.                      # in meters! (pxl.resolution for the &#39;regular/local&#39; CRS)</span>
-<span class="sd">Y_RES     =  5000.                      # in meters! (pxl.resolution for the &#39;regular/local&#39; CRS)</span>
-
-<span class="sd">T_RES   =  30                           # in minutes! -&gt; TEMPORAL.RES of TIME.SLICES</span>
-<span class="sd">NO_RAIN =  0.01                         # in mm -&gt; minimum preceptible/measurable/meaningful RAIN in all AOI</span>
-<span class="sd">MIN_DUR =  20                            # in minutes!</span>
-<span class="sd">MAX_DUR =  60 * 24 * 4                  # in minutes! -&gt; 4 days (in this case)</span>
-
-<span class="sd">MAXD_RAIN = 60 * 2                      # in mm</span>
-<span class="sd">DISPERSE_ = .2                          # factor to split MAXD_RAIN into</span>
-<span class="sd">SEASON_TAG = &#39;OND&#39;</span>
-<span class="sd">SEED_YEAR = 2024                        # for your SIM/VAL to start in 2050</span>
-<span class="sd">TIME_ZONE      = &#39;Africa/Addis_Ababa&#39;               # Local Time Zone (see links below for more names)</span>
-<span class="sd">DATE_ORIGIN    = &#39;1970-01-01&#39;                       # to store dates as INT</span>
-
-<span class="sd">### only touch this parameter if you really know what you&#39;re doing!!)</span>
-<span class="sd"># RAINFMT = &#39;f4&#39;</span>
-<span class="sd">RAINFMT = &#39;u2&#39;                          # &#39;u&#39; for UNSIGNED.INT  ||  &#39;i&#39; for SIGNED.INT  ||  &#39;f&#39; for FLOAT</span>
-<span class="sd">                                        # number of Bytes (1, 2, 4 or 8) to store the RAINFALL variable (into)</span>
-<span class="sd">PRECISION = 0.002                       # output precision</span>
-<span class="sd"># TIME dimension</span>
-<span class="sd">TIMEINT = &#39;u4&#39;                          # format for integers in TIME dimension</span>
-<span class="sd">TIMEFIL = +(2**( int(TIMEINT[-1]) *8 )) -1</span>
-<span class="sd">TIME_OUTNC = &#39;minutes&#39;                  # UNITS (since DATE_ORIGIN) for NC.TIME dim</span>
-<span class="sd">TIME_DICT_ = dict(seconds=1, minutes=1/60, hours=1/60**2, days=1/(60**2*24))</span>
-<span class="sd">RAIN_NAME = &#39;rain&#39;</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-
 <span class="c1"># %% constants/switches</span>
 
 <span class="n">ptot_or_kmean</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># 1 if seasonal.rain sampled; 0 if taken from shp.kmeans</span>
 <span class="n">capmax_or_not</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 1 if using MAXD_RAIN as capping limit; 0 if using iMAX</span>
-<span class="n">output_stats_</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># 1 if willing to produce CSV.file; 0 saves some ram.mem</span>
+<span class="n">output_stats_</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 1 if willing to produce CSV.file; 0 saves some ram.mem</span>
+<span class="n">tunnin</span> <span class="o">=</span> <span class="mi">7</span>
 
+
+<span class="n">minmax_radius</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">X_RES</span><span class="p">,</span> <span class="n">Y_RES</span><span class="p">])</span> <span class="o">/</span> <span class="mf">1e3</span>  <span class="c1"># in km (function of resolution)</span>
+<span class="c1"># SEED_YEAR = SEED_YEAR if SEED_YEAR else datetime.now().year  # SEED_YEAR = []?</span>
+
+<span class="c1"># convert DATE_ORIGIN into &#39;datetime&#39;</span>
+<span class="c1"># https://stackoverflow.com/a/623312/5885810</span>
+<span class="c1"># https://stackoverflow.com/q/70460247/5885810  (timezone no pytz)</span>
+<span class="c1"># https://stackoverflow.com/a/65319240/5885810  (replace timezone)</span>
+<span class="n">date_origen</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">DATE_ORIGIN</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+    <span class="n">tzinfo</span><span class="o">=</span><span class="n">ZoneInfo</span><span class="p">(</span><span class="n">TIME_ZONE</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="update_par"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.update_par">[docs]</a><span class="k">def</span> <span class="nf">update_par</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -275,6 +208,22 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="n">exec</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;globals()[&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">&quot;] = args.</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="replicate_"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.replicate_">[docs]</a><span class="k">def</span> <span class="nf">replicate_</span><span class="p">(</span><span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">):</span>
+    <span class="c1"># replicate scalars for NUMSIMS (if only one was passed)</span>
+    <span class="n">scalar</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;PTOT_SC&#39;</span><span class="p">:</span> <span class="n">PTOT_SC</span><span class="p">,</span> <span class="s1">&#39;PTOT_SF&#39;</span><span class="p">:</span> <span class="n">PTOT_SF</span><span class="p">,</span>
+        <span class="s1">&#39;STORMINESS_SC&#39;</span><span class="p">:</span> <span class="n">STORMINESS_SC</span><span class="p">,</span> <span class="s1">&#39;STORMINESS_SF&#39;</span><span class="p">:</span> <span class="n">STORMINESS_SF</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="n">n_scal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">scalar</span><span class="o">.</span><span class="n">values</span><span class="p">()))))</span>
+    <span class="n">maxnum</span>  <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_scal</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">n_scal</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">maxnum</span><span class="p">:</span>
+        <span class="n">update_par</span><span class="p">(</span><span class="n">scalar</span><span class="p">,</span> <span class="n">fun</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;np.repeat(args[x], </span><span class="si">{</span><span class="n">maxnum</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="c1"># pick the counter to call &#39;the scalars&#39;</span>
+    <span class="n">n_sim_y</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;nsim&#39;</span><span class="p">,</span> <span class="s1">&#39;simy&#39;</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">((</span><span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">))]</span>
+    <span class="c1"># print(PTOT_SC, PTOT_SF)</span>
+    <span class="k">return</span> <span class="n">n_sim_y</span></div>
 
 
 
@@ -439,7 +388,6 @@
     <span class="c1"># storing local coordinates (Y-axis)</span>
     <span class="n">yy</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
         <span class="s1">&#39;projection_y_coordinate&#39;</span><span class="p">,</span> <span class="s1">&#39;i4&#39;</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">),</span>
-        <span class="n">chunksizes</span><span class="o">=</span><span class="n">CHUNK_3D</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">xpace</span><span class="o">.</span><span class="n">ys</span><span class="p">)],</span> <span class="n">valSize</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
         <span class="p">)</span>
     <span class="n">yy</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">xpace</span><span class="o">.</span><span class="n">ys</span>
     <span class="n">yy</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s1">&#39;projection_y_coordinate&#39;</span>
@@ -450,7 +398,6 @@
     <span class="c1"># storing local coordinates (X-axis)</span>
     <span class="n">xx</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
         <span class="s1">&#39;projection_x_coordinate&#39;</span><span class="p">,</span> <span class="s1">&#39;i4&#39;</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span>
-        <span class="n">chunksizes</span><span class="o">=</span><span class="n">CHUNK_3D</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">xpace</span><span class="o">.</span><span class="n">xs</span><span class="p">)],</span> <span class="n">valSize</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
         <span class="p">)</span>
     <span class="n">xx</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">xpace</span><span class="o">.</span><span class="n">xs</span>
     <span class="n">xx</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s1">&#39;projection_x_coordinate&#39;</span>
@@ -495,7 +442,6 @@
     <span class="c1"># # (Y-axis)</span>
     <span class="c1"># yy = nc.createVariable(</span>
     <span class="c1">#     &#39;latitude&#39;, &#39;f8&#39;, dimensions=(&#39;y&#39;, &#39;x&#39;),</span>
-    <span class="c1">#     chunksizes=CHUNK_3D([len(xpace.ys), len(xpace.xs)], valSize=8),</span>
     <span class="c1">#     )</span>
     <span class="c1"># yy[:] = lat</span>
     <span class="c1"># yy.coordinates = &#39;latitude&#39;</span>
@@ -506,7 +452,6 @@
     <span class="c1"># # (X-axis)</span>
     <span class="c1"># xx = nc.createVariable(</span>
     <span class="c1">#     &#39;longitude&#39;, &#39;f8&#39;, dimensions=(&#39;y&#39;, &#39;x&#39;),</span>
-    <span class="c1">#     chunksizes=CHUNK_3D([len(xpace.ys), len(xpace.xs)], valSize=8),</span>
     <span class="c1">#     )</span>
     <span class="c1"># xx[:] = lon</span>
     <span class="c1"># xx.coordinates = &#39;longitude&#39;</span>
@@ -518,7 +463,6 @@
     <span class="c1"># store the MASK</span>
     <span class="n">ncmask</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
         <span class="s1">&#39;mask&#39;</span><span class="p">,</span> <span class="s1">&#39;i1&#39;</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">),</span> <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">complevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
-        <span class="n">chunksizes</span><span class="o">=</span><span class="n">CHUNK_3D</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">xpace</span><span class="o">.</span><span class="n">ys</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">xpace</span><span class="o">.</span><span class="n">xs</span><span class="p">)],</span> <span class="n">valSize</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
         <span class="p">)</span>
     <span class="n">ncmask</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">xpace</span><span class="o">.</span><span class="n">catchment_mask</span>
     <span class="n">ncmask</span><span class="o">.</span><span class="n">grid_mapping</span> <span class="o">=</span> <span class="n">sref_name</span>
@@ -530,7 +474,6 @@
     <span class="c1"># store the kmeans/regions</span>
     <span class="n">kmeans</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
         <span class="s1">&#39;regions&#39;</span><span class="p">,</span> <span class="s1">&#39;i1&#39;</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">),</span> <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">complevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
-        <span class="n">chunksizes</span><span class="o">=</span><span class="n">CHUNK_3D</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">xpace</span><span class="o">.</span><span class="n">ys</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">xpace</span><span class="o">.</span><span class="n">xs</span><span class="p">)],</span> <span class="n">valSize</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
         <span class="n">fill_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="c1"># kmeans[:] = -1</span>
@@ -571,7 +514,6 @@
     <span class="c1"># storing dates (time-axis)</span>
     <span class="n">timexx</span> <span class="o">=</span> <span class="n">sub_grp</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
         <span class="n">nctnam</span><span class="p">,</span> <span class="n">TIMEINT</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">TIMEFIL</span><span class="p">,</span>
-        <span class="n">chunksizes</span><span class="o">=</span><span class="n">CHUNK_3D</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)],</span> <span class="n">valSize</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
         <span class="p">)</span>
     <span class="n">timexx</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">times</span>
     <span class="n">timexx</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s1">&#39;starting time&#39;</span>
@@ -588,7 +530,6 @@
         <span class="c1"># DOING.FLOATS</span>
         <span class="n">ncvarx</span> <span class="o">=</span> <span class="n">sub_grp</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
             <span class="n">ncvnam</span><span class="p">,</span> <span class="n">datatype</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">RAINFMT</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">),</span>
-            <span class="n">chunksizes</span><span class="o">=</span><span class="n">CHUNK_3D</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">xpace</span><span class="o">.</span><span class="n">ys</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">xpace</span><span class="o">.</span><span class="n">xs</span><span class="p">)],</span> <span class="n">valSize</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
             <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">complevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">least_significant_digit</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
             <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -596,7 +537,6 @@
         <span class="n">ncvarx</span> <span class="o">=</span> <span class="n">sub_grp</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span>
             <span class="n">ncvnam</span><span class="p">,</span> <span class="n">datatype</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">RAINFMT</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">dimensions</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">),</span>
             <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">complevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
-            <span class="n">chunksizes</span><span class="o">=</span><span class="n">CHUNK_3D</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">xpace</span><span class="o">.</span><span class="n">ys</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">xpace</span><span class="o">.</span><span class="n">xs</span><span class="p">)],</span> <span class="n">valSize</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
             <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">RAINFMT</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>  <span class="c1"># 0 is filling!</span>
             <span class="p">)</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -640,15 +580,20 @@
 
 <span class="c1"># %% regionalisation</span>
 
-<div class="viewcode-block" id="regionalisation"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.regionalisation">[docs]</a><span class="k">def</span> <span class="nf">regionalisation</span><span class="p">(</span><span class="n">file_zon</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">xpace</span><span class="p">):</span>
+<div class="viewcode-block" id="regionalisation"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.regionalisation">[docs]</a><span class="k">def</span> <span class="nf">regionalisation</span><span class="p">(</span><span class="n">file_zon</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">xpace</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    arrange into a dictionary shp-regions.\n</span>
 <span class="sd">    Input -&gt;</span>
 <span class="sd">    *file_zon* : char; path to rain-regions shapefile.</span>
 <span class="sd">    *tag* : char; geoPandas.GeoDataFrame column used as burning values.</span>
+<span class="sd">    *val* : char; geoPandas.GeoDataFrame column used as numeric lead.</span>
 <span class="sd">    *xpace* : class; class where spatial variables are defined.\n</span>
+<span class="sd">    **kwargs -&gt;</span>
+<span class="sd">    add : int; signed integer to add to k-means mask.\n</span>
 <span class="sd">    Output -&gt; dict; ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">magik</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
     <span class="n">reg_shp</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">parent_d</span><span class="p">,</span> <span class="n">file_zon</span><span class="p">)))</span>
     <span class="c1"># transform it into EPSG:42106 &amp; make the buffer</span>
     <span class="c1"># https://gis.stackexchange.com/a/328276/127894  (geo series into gpd)</span>
@@ -666,18 +611,19 @@
     <span class="c1"># ... then assign 0 everywhere else.</span>
     <span class="n">reg_np</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">k_means</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
         <span class="n">k_means</span> <span class="o">!=</span> <span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">k_means</span> <span class="o">==</span> <span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">k_means</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">k_means</span><span class="p">),</span> <span class="n">magik</span><span class="p">)))</span>
     <span class="c1"># as long as the GeoDataFrame comes from &quot;pdfs_&quot;, it&#39;ll always have &#39;u_rain&#39;</span>
     <span class="n">output</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span>
         <span class="p">(</span><span class="s1">&#39;mask&#39;</span><span class="p">,</span> <span class="s1">&#39;rain&#39;</span><span class="p">,</span> <span class="s1">&#39;npma&#39;</span><span class="p">,</span> <span class="s1">&#39;kmeans&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">reg_shp</span><span class="p">,</span> <span class="n">reg_shp</span><span class="p">[</span><span class="s1">&#39;u_rain&#39;</span><span class="p">],</span> <span class="n">reg_np</span><span class="p">,</span> <span class="n">k_means</span><span class="p">)</span>
+        <span class="c1"># (reg_shp, reg_shp[&#39;u_rain&#39;], reg_np, k_means)</span>
+        <span class="p">(</span><span class="n">reg_shp</span><span class="p">,</span> <span class="n">reg_shp</span><span class="p">[</span><span class="n">val</span><span class="p">],</span> <span class="n">reg_np</span><span class="p">,</span> <span class="n">k_means</span><span class="p">)</span>
         <span class="p">))</span>
     <span class="k">return</span> <span class="n">output</span></div>
 
 
 <span class="c1"># %% reading pdfs</span>
 
-<div class="viewcode-block" id="read_pdfs"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.read_pdfs">[docs]</a><span class="k">def</span> <span class="nf">read_pdfs</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="read_pdfs"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.read_pdfs">[docs]</a><span class="k">def</span> <span class="nf">read_pdfs</span><span class="p">(</span><span class="n">PDF_FILE</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    reads the CSV-file (where PDF&#39;s parameters are stored).\n</span>
 <span class="sd">    Input: optional.\n</span>
@@ -685,16 +631,13 @@
 <span class="sd">    char; path to the csv-file.</span>
 <span class="sd">    Output -&gt; pd.DataFrame with tabulated pdf-parameters.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># silly loop so it can take any custom name and don&#39;t check it out/testing</span>
-    <span class="c1"># https://dev.to/trinityyi/how-to-check-if-a-tuple-is-empty-in-python-2ie2</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
-        <span class="n">file_pdf</span> <span class="o">=</span> <span class="n">PDF_FILE</span>
-        <span class="c1"># append season_&amp;_regions tag to file.name</span>
-        <span class="n">fil_tag</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;_</span><span class="si">{</span><span class="n">SEASON_TAG</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">NREGIONS</span><span class="si">}</span><span class="s1">r.csv&#39;</span>
-        <span class="k">if</span> <span class="n">fil_tag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_pdf</span><span class="p">:</span>
-            <span class="n">file_pdf</span> <span class="o">=</span> <span class="n">file_pdf</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span> <span class="n">fil_tag</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">file_pdf</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">file_pdf</span> <span class="o">=</span> <span class="n">PDF_FILE</span>
+    <span class="c1"># append season_&amp;_regions tag to file.name</span>
+    <span class="n">fil_tag</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;_</span><span class="si">{</span><span class="n">SEASON_TAG</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">NREGIONS</span><span class="si">}</span><span class="s1">r.csv&#39;</span>
+    <span class="k">if</span> <span class="n">fil_tag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_pdf</span><span class="p">:</span>
+        <span class="n">file_pdf</span> <span class="o">=</span> <span class="n">file_pdf</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span> <span class="n">fil_tag</span><span class="p">)</span>
+
     <span class="c1"># https://stackoverflow.com/a/58227453/5885810  (import tricky CSV)</span>
     <span class="n">pdfs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_fwf</span><span class="p">(</span><span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">parent_d</span><span class="p">,</span> <span class="n">file_pdf</span><span class="p">)),</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">pdfs</span> <span class="o">=</span> <span class="n">pdfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;f8&#39;</span><span class="p">)</span>
@@ -818,15 +761,17 @@
 <span class="sd">    *distro* : dict; contains a scipy.stats (pdf) frozen infrastructure.\n</span>
 <span class="sd">    **kwargs -&gt;</span>
 <span class="sd">    limits : tuple; variable limits to sample within.</span>
+<span class="sd">    type_l : char; limits nature (either &#39;prob&#39; or &#39;var&#39; -&gt; default).</span>
 <span class="sd">    band : char; key (of the &#39;distro&#39; dictionary) addressing the frozen pdf.</span>
 <span class="sd">    n : int; numbers of (random) samples.\n</span>
 <span class="sd">    Output -&gt; np.array of floats with n-samples.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">limits</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;limits&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span>
+    <span class="n">timit</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type_l&#39;</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">)</span>
     <span class="n">band</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;band&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="c1"># set up useful range from limits</span>
-    <span class="n">ulims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">distro</span><span class="p">[</span><span class="n">band</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">,</span> <span class="n">limits</span><span class="p">))</span>
+    <span class="n">ulims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">distro</span><span class="p">[</span><span class="n">band</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">,</span> <span class="n">limits</span><span class="p">))</span> <span class="k">if</span> <span class="n">timit</span> <span class="o">==</span> <span class="s1">&#39;var&#39;</span> <span class="k">else</span> <span class="n">limits</span>
     <span class="c1"># sample via a uniform.PPF</span>
     <span class="n">sample</span> <span class="o">=</span> <span class="n">distro</span><span class="p">[</span><span class="n">band</span><span class="p">]</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">npr</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">ulims</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">high</span><span class="o">=</span><span class="n">ulims</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">))</span>
     <span class="c1"># # reproducibility...</span>
@@ -1011,17 +956,15 @@
 
 <span class="c1"># %% timing</span>
 
-<div class="viewcode-block" id="wet_days"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.wet_days">[docs]</a><span class="k">def</span> <span class="nf">wet_days</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="wet_days"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.wet_days">[docs]</a><span class="k">def</span> <span class="nf">wet_days</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    defines the days of the (wet)-season to sample from (given a &quot;seed&quot; year).\n</span>
 <span class="sd">    Input -&gt;</span>
 <span class="sd">    *year* : int; modified (or not) SEED_YEAR.\n</span>
-<span class="sd">    **kwargs -&gt;</span>
 <span class="sd">    season_tag : char; three-letter season tag (&#39;MAM&#39;, &#39;JJAS&#39; or &#39;OND&#39;).\n</span>
 <span class="sd">    Output -&gt; tuple; number of months in the season (first) &amp; list of \</span>
 <span class="sd">        start &amp; end &#39;datetime.datetime(s)&#39; of the season (last).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tag</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;season_tag&#39;</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">)</span>
     <span class="c1"># establish the SEASONAL-dict</span>
     <span class="n">sdic</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;MAM&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="s1">&#39;JJAS&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="s1">&#39;OND&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]}</span>
     <span class="c1"># monthly duration for season(al)-[tag] (12 months in a year)</span>
@@ -1063,7 +1006,8 @@
     <span class="k">if</span> <span class="n">kase</span> <span class="o">==</span> <span class="s1">&#39;floor&#39;</span><span class="p">:</span>
         <span class="n">iround</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">stamps</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># .astype(TIMEINT)</span>
     <span class="k">elif</span> <span class="n">kase</span> <span class="o">==</span> <span class="s1">&#39;nearest&#39;</span><span class="p">:</span>
-        <span class="n">iround</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">*</span> <span class="p">(</span><span class="n">stamps</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">())</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">ndec</span><span class="p">)</span>  <span class="c1"># .astype(TIMEINT)</span>
+        <span class="c1"># iround = (base * (stamps / base).round(0)).round(ndec)  # .astype(TIMEINT)</span>
+        <span class="n">iround</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">stamps</span> <span class="o">/</span> <span class="n">base</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">ndec</span><span class="p">)</span>  <span class="c1"># .astype(TIMEINT)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Wrong method passed!</span><span class="se">\n</span><span class="s2">&quot;</span>
                         <span class="s2">&quot;Pass &#39;floor&#39; or &#39;nearest&#39; to the &#39;method&#39; argument.&quot;</span><span class="p">)</span>
@@ -1109,7 +1053,7 @@
     <span class="k">return</span> <span class="n">sfactors</span></div>
 
 
-<div class="viewcode-block" id="quantum_time"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.quantum_time">[docs]</a><span class="k">def</span> <span class="nf">quantum_time</span><span class="p">(</span><span class="n">doy_par</span><span class="p">,</span> <span class="n">tod_par</span><span class="p">,</span> <span class="n">DUR_S</span><span class="p">,</span> <span class="n">date_pool</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="quantum_time"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.quantum_time">[docs]</a><span class="k">def</span> <span class="nf">quantum_time</span><span class="p">(</span><span class="n">doy_par</span><span class="p">,</span> <span class="n">tod_par</span><span class="p">,</span> <span class="n">DUR_S</span><span class="p">,</span> <span class="n">date_pool</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="c1"># doy_par=DOYEAR[nreg]; tod_par=DATIME[nreg]; n=NUM_S</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    samples datetimes and quatize them into packs of storm duration(s).\n</span>
@@ -1119,8 +1063,23 @@
 <span class="sd">    *DUR_S* : np.array; float numpy of storm durations (in hours).</span>
 <span class="sd">    *date_pool* : list of start &amp; end &#39;datetime.datetime(s)&#39; of the season.</span>
 <span class="sd">    *n* : int; sample size.\n</span>
-<span class="sd">    Output -&gt; tuple; list-quatized hourly resolutions &amp; their xploded equivalent (date)times.</span>
+<span class="sd">    **kwargs -&gt;</span>
+<span class="sd">    t_res : int; temporal resolution.</span>
+<span class="sd">    time_tag : char; string indicating the base resolution.</span>
+<span class="sd">    time_dic : dic; dictionary containing the equivalences of &#39;tags&#39; in base 60.</span>
+<span class="sd">    base_system: int; conversion constant for the time_dic-system (default: 60).</span>
+<span class="sd">    tz : char; standarized name of the (local) time zone.</span>
+<span class="sd">    t_format : char; string indicating the output format (&#39;u4&#39;, &#39;f8&#39;... etc).\n</span>
+<span class="sd">    Output -&gt; tuple; list-quantized hourly resolutions &amp; \</span>
+<span class="sd">        their xploded equivalent (date)times.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t_res&#39;</span><span class="p">,</span> <span class="n">T_RES</span><span class="p">)</span>
+    <span class="n">time_dic</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;time_dic&#39;</span><span class="p">,</span> <span class="n">TIME_DICT_</span><span class="p">)</span>
+    <span class="n">time_tag</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;time_tag&#39;</span><span class="p">,</span> <span class="n">TIME_OUTNC</span><span class="p">)</span>
+    <span class="n">s_base</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;base_system&#39;</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>  <span class="c1"># sexagesimal</span>
+    <span class="n">time_zon</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tz&#39;</span><span class="p">,</span> <span class="n">TIME_ZONE</span><span class="p">)</span>
+    <span class="n">time_int</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t_format&#39;</span><span class="p">,</span> <span class="n">TIMEINT</span><span class="p">)</span>
+
     <span class="c1"># computing DOY</span>
     <span class="n">M</span> <span class="o">=</span> <span class="n">n</span>
     <span class="n">all_dates</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1139,37 +1098,50 @@
         <span class="n">M</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">sates</span><span class="p">)</span>
         <span class="n">all_dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sates</span><span class="p">)</span>
     <span class="n">all_dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_dates</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># shuffle the dates (so later the selection can be done left-to-right)</span>
+    <span class="c1"># # https://stackoverflow.com/a/72040563/5885810  (shuffle pandas)</span>
+    <span class="c1"># pd.Series(np.random.permutation(all_dates))</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">all_dates</span><span class="p">)</span>
+    <span class="c1"># np.random.RandomState(</span>
+    <span class="c1">#     seed=np.random.randint(0, 4294967295, 1, dtype=np.int64)</span>
+    <span class="c1">#     ).shuffle(all_dates)</span>
+    <span class="c1"># # https://github.com/DLR-RM/stable-baselines3/issues/1579#issuecomment-1611892556</span>
+
     <span class="c1"># computing TOD</span>
     <span class="n">cs_tod</span> <span class="o">=</span> <span class="n">circular</span><span class="p">(</span><span class="n">tod_par</span><span class="p">,)</span>
     <span class="n">times</span> <span class="o">=</span> <span class="n">cs_tod</span><span class="o">.</span><span class="n">samples</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;tod&#39;</span><span class="p">)</span>
     <span class="c1"># cs_tod.plot_samples(data=times, data_type=&#39;tod&#39;, bins=40)  # plotting</span>
     <span class="c1"># https://stackoverflow.com/a/50062101/5885810</span>
+
     <span class="c1"># SECONDS since DATE_ORIGIN</span>
     <span class="n">stamps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
         <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">d</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="p">(</span><span class="n">d</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">t</span><span class="p">)</span> <span class="o">-</span> <span class="n">date_origen</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">(),</span>
-            <span class="n">all_dates</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">tz_localize</span><span class="p">(</span><span class="n">TIME_ZONE</span><span class="p">),</span> <span class="n">times</span>
+            <span class="n">all_dates</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">tz_localize</span><span class="p">(</span><span class="n">time_zon</span><span class="p">),</span> <span class="n">times</span>
             <span class="p">))</span>
         <span class="p">)</span>
     <span class="c1"># # https://stackoverflow.com/a/67105429/5885810  (chopping milliseconds)</span>
     <span class="c1"># stamps = np.asarray(list(map(lambda d, t: (</span>
     <span class="c1">#     d +timedelta(hours=t)).isoformat(timespec=&#39;seconds&#39;), dates, times)))</span>
-    <span class="n">stamps</span> <span class="o">=</span> <span class="n">stamps</span> <span class="o">*</span> <span class="n">TIME_DICT_</span><span class="p">[</span><span class="n">TIME_OUTNC</span><span class="p">]</span>  <span class="c1"># scaled to output.TIMENC.res</span>
+    <span class="n">stamps</span> <span class="o">=</span> <span class="n">stamps</span> <span class="o">*</span> <span class="n">time_dic</span><span class="p">[</span><span class="n">time_tag</span><span class="p">]</span>  <span class="c1"># scaled to output.TIMENC.res</span>
+
     <span class="c1"># round starting.dates to nearest.floor T_RES</span>
     <span class="n">rates</span> <span class="o">=</span> <span class="n">base_round</span><span class="p">(</span><span class="n">stamps</span><span class="p">)</span>
     <span class="c1"># turn the DUR_S into discrete time.slices</span>
     <span class="n">s_cal</span> <span class="o">=</span> <span class="n">slice_time</span><span class="p">(</span><span class="n">stamps</span><span class="p">,</span> <span class="n">rates</span><span class="p">,</span> <span class="n">DUR_S</span><span class="p">)</span>
     <span class="c1"># xploding of discrete timestamps (per storm.cluster)</span>
-    <span class="n">tres_up</span> <span class="o">=</span> <span class="n">T_RES</span> <span class="o">*</span> <span class="n">TIME_DICT_</span><span class="p">[</span><span class="n">TIME_OUTNC</span><span class="p">]</span> <span class="o">*</span> <span class="mi">60</span>
+    <span class="n">tres_up</span> <span class="o">=</span> <span class="n">base</span> <span class="o">*</span> <span class="n">time_dic</span><span class="p">[</span><span class="n">time_tag</span><span class="p">]</span> <span class="o">*</span> <span class="n">s_base</span>
     <span class="n">mates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r_s</span><span class="p">,</span> <span class="n">i_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
         <span class="n">start</span><span class="o">=</span><span class="n">r_s</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">r_s</span> <span class="o">+</span> <span class="n">tres_up</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">i_s</span><span class="p">),</span> <span class="n">step</span><span class="o">=</span><span class="n">tres_up</span><span class="p">),</span>
-        <span class="n">rates</span><span class="p">,</span> <span class="n">s_cal</span><span class="p">)))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">TIMEINT</span><span class="p">)</span>
+        <span class="n">rates</span><span class="p">,</span> <span class="n">s_cal</span><span class="p">)))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">time_int</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">mates</span><span class="p">,</span> <span class="n">s_cal</span></div>
 
 
 <span class="c1"># %% raster</span>
 
 <div class="viewcode-block" id="moving_storm"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.moving_storm">[docs]</a><span class="k">def</span> <span class="nf">moving_storm</span><span class="p">(</span><span class="n">dir_par</span><span class="p">,</span> <span class="n">vel_par</span><span class="p">,</span> <span class="n">stridin</span><span class="p">,</span> <span class="n">centres</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="c1"># dir_par=DIRMOV[nreg]; vel_par=VELMOV[nreg]; stridin=STRIDE; centres=CENT.samples</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    samples storm direction and velocity; and moves storm initial centres along.\n</span>
 <span class="sd">    Input -&gt;</span>
@@ -1195,17 +1167,22 @@
     <span class="n">azimut</span> <span class="o">=</span> <span class="n">cs_dir</span><span class="o">.</span><span class="n">samples</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">i_lens</span><span class="p">),</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;dir&#39;</span><span class="p">)</span>
 
     <span class="c1"># displace the storm_centres</span>
-    <span class="n">pad_i</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])),</span> <span class="n">stridin</span><span class="p">))</span>
+    <span class="c1"># pad_i = list(map(lambda x: np.concat(([0], x[:-1])), stridin))</span>
+    <span class="n">pad_i</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="o">*</span> <span class="mi">3600</span><span class="p">,</span> <span class="n">stridin</span><span class="p">))</span>
     <span class="c1"># update &#39;wspeed&#39; to &#39;s_stat&#39;</span>
     <span class="c1"># wspeed = wspeed if s_stat is None else list(map(eval(f&#39;np.{s_stat}&#39;), wspeed))</span>
     <span class="n">wspeed</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;np.</span><span class="si">{</span><span class="n">s_stat</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span> <span class="n">wspeed</span><span class="p">))</span>
-    <span class="n">stride</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">,</span> <span class="n">wspeed</span><span class="p">,</span> <span class="n">pad_i</span><span class="p">))))</span>
-    <span class="c1"># these &quot;deltas&quot; are computational faster (by 3x) than:</span>
-    <span class="c1"># deltax = list(map(lambda s, a: s * 1000 * np.cos(a), stride, azimut))</span>
-    <span class="c1"># ... but be mindful that strictly speaking STRIDE is the one to &quot;* 1000&quot;!</span>
-    <span class="c1"># &quot;* 1000&quot; because the velocity is in m/s but the reference.grid is in km!</span>
-    <span class="n">deltax</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">azimut</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">))</span>  <span class="c1"># (in km!)</span>
-    <span class="n">deltay</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">azimut</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">))</span>  <span class="c1"># (in km!)</span>
+
+    <span class="n">stride</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">,</span> <span class="n">wspeed</span><span class="p">,</span> <span class="n">pad_i</span><span class="p">))))</span>  <span class="c1"># -&gt; in meters!!</span>
+    <span class="c1"># # these &quot;deltas&quot; are computational faster (by 3x) than:</span>
+    <span class="c1"># # deltax = list(map(lambda s, a: s * 1000 * np.cos(a), stride, azimut))</span>
+    <span class="c1"># # ... but be mindful that strictly speaking STRIDE is the one to &quot;* 1000&quot;!</span>
+    <span class="c1"># # &quot;* 1000&quot; because the velocity is in m/s but the reference.grid is in km!</span>
+    <span class="c1"># deltax = list(map(np.multiply, stride, np.cos(azimut) * 1000))  # (in km!)</span>
+    <span class="c1"># deltay = list(map(np.multiply, stride, np.sin(azimut) * 1000))  # (in km!)</span>
+    <span class="n">deltax</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">azimut</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># (in meters!)</span>
+    <span class="n">deltay</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">azimut</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># (in meters!)</span>
+
     <span class="c1"># updated-and-aggregated centers</span>
     <span class="n">x_s</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="n">centres</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">deltax</span><span class="p">))</span>
     <span class="n">y_s</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="n">centres</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">deltay</span><span class="p">))</span>
@@ -1357,7 +1334,7 @@
 
 
 <div class="viewcode-block" id="rain_cube"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.rain_cube">[docs]</a><span class="k">def</span> <span class="nf">rain_cube</span><span class="p">(</span><span class="n">c_ring</span><span class="p">,</span> <span class="n">last_r</span><span class="p">,</span> <span class="n">t_stamp</span><span class="p">,</span> <span class="n">np_mask</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="c1"># t_stamp=list(time_idx.keys());</span>
+<span class="c1"># t_stamp=list(time_idx.keys()); space=SPACE; max_=iMAX</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    creates a rainfall cube (potentially) with regional rain already achieved.\n</span>
 <span class="sd">    Input -&gt;</span>
@@ -1412,6 +1389,70 @@
     <span class="k">return</span> <span class="n">void</span><span class="p">,</span> <span class="n">suma_</span></div>
 
 
+<div class="viewcode-block" id="rain_cube_dask"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.rain_cube_dask">[docs]</a><span class="k">def</span> <span class="nf">rain_cube_dask</span><span class="p">(</span><span class="n">c_ring</span><span class="p">,</span> <span class="n">last_r</span><span class="p">,</span> <span class="n">t_stamp</span><span class="p">,</span> <span class="n">np_mask</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="c1"># t_stamp=list(time_idx.keys()); space=SPACE; max_=iMAX</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    creates a rainfall cube (potentially) with regional rain already achieved.\n</span>
+<span class="sd">    Input -&gt;</span>
+<span class="sd">    *c_ring* : tuple; geopandas.GeoDataFrame linerings geometry with rain.</span>
+<span class="sd">    *last_r* : tuple; pandas.Series; polygon geometry with outermost (rain) ring.</span>
+<span class="sd">    *t_stamp* : list; numpy integers representing time-steps since origin.</span>
+<span class="sd">    *np_mask* : numpy; 2D-numpy with 1&#39;s representing the rain-region.\n</span>
+<span class="sd">    **kwargs -&gt;</span>
+<span class="sd">    space : class; class where spatial variables are defined.</span>
+<span class="sd">    max_val : float; maximum value for rainfall allowed.\n</span>
+<span class="sd">    Output -&gt; tuple; xarray.DataArray(s) with rounded rainfall (first) and \</span>
+<span class="sd">        total rainfall (within n-region) for every time-stamp (last).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">space</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;space&#39;</span><span class="p">,</span> <span class="n">SPACE</span><span class="p">)</span>
+    <span class="n">max_</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;max_val&#39;</span><span class="p">,</span> <span class="n">iMAX</span><span class="p">)</span>
+
+    <span class="n">tmp_mask</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">np_mask</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,)</span>
+    <span class="n">tot_pix</span> <span class="o">=</span> <span class="n">np_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>  <span class="c1"># pixels in mask</span>
+    <span class="c1"># # create empty dask xarray</span>
+    <span class="c1"># vals = delayed(np.zeros)(len(c_ring) * len(space.ys) * len(space.xs))</span>
+    <span class="c1"># vaid = array.from_delayed(value=vals, shape=(len(c_ring), len(space.ys),</span>
+    <span class="c1">#                                              len(space.xs)), dtype=RAINFMT)</span>
+    <span class="c1"># # vaid.visualize()</span>
+
+    <span class="c1"># create empty array to store sums</span>
+    <span class="n">suma</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">dain</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]:</span>  <span class="c1"># i=0</span>
+        <span class="n">tmpslice</span> <span class="o">=</span> <span class="n">rasterize</span><span class="p">(</span><span class="n">c_ring</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">last_r</span><span class="p">[</span><span class="n">i</span><span class="p">],)</span>
+        <span class="n">tmpslice</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">tmpslice</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;f4&#39;</span><span class="p">),</span> <span class="n">chunks</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,)</span> <span class="c1"># chunks=&#39;0.09 MiB&#39;,</span>
+        <span class="c1"># my_ufunc  = array.gufunc(base_round, signature=&#39;()-&gt;()&#39;,</span>
+        <span class="c1">#                          output_dtypes=&#39;f4&#39;, vectorize=False,)</span>
+        <span class="c1"># tmpslice = my_ufunc(tmpslice, method=&#39;nearest&#39;, base=PRECISION,)</span>
+        <span class="n">tmpslice</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">apply_gufunc</span><span class="p">(</span>
+            <span class="n">base_round</span><span class="p">,</span> <span class="s1">&#39;()-&gt;()&#39;</span><span class="p">,</span> <span class="n">tmpslice</span><span class="p">,</span> <span class="n">output_dtypes</span><span class="o">=</span><span class="s1">&#39;f4&#39;</span><span class="p">,</span>
+            <span class="n">vectorize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">PRECISION</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">tmpslice</span><span class="p">[</span><span class="n">tmpslice</span> <span class="o">&gt;</span> <span class="n">max_</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_</span>  <span class="c1"># capping above maxima</span>
+        <span class="c1"># only keep rainfall inside the mask</span>
+        <span class="n">tmpslice</span><span class="p">[</span><span class="n">tmp_mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="c1"># compute sum here, before changing to INTeger</span>
+        <span class="n">suma</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmpslice</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span> <span class="o">/</span> <span class="n">tot_pix</span><span class="p">)</span>
+        <span class="c1"># now do the INTransformation</span>
+        <span class="n">tmpslice</span> <span class="o">=</span> <span class="p">((</span><span class="n">tmpslice</span> <span class="o">-</span> <span class="n">ADD</span><span class="p">)</span> <span class="o">/</span> <span class="n">SCL</span><span class="p">)</span>
+        <span class="n">tmpslice</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">apply_gufunc</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">,</span> <span class="s1">&#39;()-&gt;()&#39;</span><span class="p">,</span> <span class="n">tmpslice</span><span class="p">,</span>
+                                      <span class="n">output_dtypes</span><span class="o">=</span><span class="n">RAINFMT</span><span class="p">,</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">,)</span>
+        <span class="c1"># only keep rainfall larger than zero (i.e., 1 INT)</span>
+        <span class="n">tmpslice</span><span class="p">[</span><span class="n">tmpslice</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># tmpslice.visualize()</span>
+        <span class="c1"># tmpslice.compute()</span>
+        <span class="n">dain</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmpslice</span><span class="p">)</span>
+    <span class="n">dain</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">dain</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># dain.visualize()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    dividing by TOT_PIXimplies REACHING the MEAN (in the stopping criterium).</span>
+<span class="sd">    if one wants the &#39;granular&#39; MEDIAN, something else has to be thought about!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">suma_</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">suma</span><span class="p">),</span> <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">void</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]},)</span>
+    <span class="c1"># suma = (void.sum(dim=(&#39;x&#39;, &#39;y&#39;)) * SCL + ADD) / tot_pix</span>
+    <span class="k">return</span> <span class="n">void</span><span class="p">,</span> <span class="n">suma_</span></div>
+
+
 <span class="c1"># %% main loop</span>
 
 <div class="viewcode-block" id="loop"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.loop">[docs]</a><span class="k">def</span> <span class="nf">loop</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">mask_shp</span><span class="p">,</span> <span class="n">np_mask</span><span class="p">,</span> <span class="n">nsim</span><span class="p">,</span> <span class="n">simy</span><span class="p">,</span> <span class="n">nreg</span><span class="p">,</span> <span class="n">mlen</span><span class="p">,</span> <span class="n">upd_max</span><span class="p">,</span> <span class="n">maxima</span><span class="p">,</span> <span class="n">date_pool</span><span class="p">):</span>
@@ -1437,7 +1478,7 @@
     <span class="c1"># for the HAD we assume (initially) there&#39;s ~6 storm/day; then</span>
     <span class="c1"># ... we continue &#39;half-ing&#39; the above seed</span>
     <span class="c1"># 30*?? (&#39;_SF&#39; runs); 30*?? (&#39;_SC&#39; runs); 30*6?? (&#39;STANDARD&#39; runs)</span>
-    <span class="n">NUM_S</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="mi">7</span> <span class="o">*</span> <span class="n">mlen</span>
+    <span class="n">NUM_S</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">tunnin</span> <span class="o">*</span> <span class="n">mlen</span>
     <span class="n">CUM_S</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">contar_int</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -1447,6 +1488,7 @@
     <span class="c1"># until total rainfall is reached or no more storms to compute!</span>
     <span class="k">while</span> <span class="n">CUM_S</span> <span class="o">&lt;</span> <span class="n">train</span> <span class="ow">and</span> <span class="n">NUM_S</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
     <span class="c1"># while contar_int &lt; 1 and NUM_S &gt;= 2:  # does the cycle 1x maximum!</span>
+        <span class="n">collect</span><span class="p">()</span>
 <span class="c1">#%%</span>
         <span class="c1"># sample random storm centres</span>
         <span class="n">CENT</span> <span class="o">=</span> <span class="n">scentres</span><span class="p">(</span><span class="n">mask_shp</span><span class="p">,</span> <span class="n">NUM_S</span><span class="p">)</span>  <span class="c1"># CENT.plot()</span>
@@ -1465,8 +1507,11 @@
 
         <span class="c1"># computing time</span>
         <span class="n">MATE</span><span class="p">,</span> <span class="n">STRIDE</span> <span class="o">=</span> <span class="n">quantum_time</span><span class="p">(</span><span class="n">DOYEAR</span><span class="p">[</span><span class="n">nreg</span><span class="p">],</span> <span class="n">DATIME</span><span class="p">[</span><span class="n">nreg</span><span class="p">],</span> <span class="n">DUR_S</span><span class="p">,</span> <span class="n">date_pool</span><span class="p">,</span> <span class="n">NUM_S</span><span class="p">)</span>
+        <span class="c1"># plt.plot(range(len(MATE)), MATE, color=&#39;g&#39;)</span>
+        <span class="c1"># pd.DataFrame({&#39;time&#39;:MATE}).groupby(&#39;time&#39;).size().plot()</span>
         <span class="n">group_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">STRIDE</span><span class="p">)))</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">time_idx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">MATE</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">indices</span>
+        <span class="n">time_idx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">MATE</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">indices</span>  <span class="c1"># unsorted</span>
+        <span class="c1"># time_idx = pd.DataFrame(MATE).groupby([0], sort=True).indices  # sorted</span>
 
         <span class="c1"># multiply and displace storm.centres</span>
         <span class="n">M_CENT</span> <span class="o">=</span> <span class="n">moving_storm</span><span class="p">(</span><span class="n">DIRMOV</span><span class="p">[</span><span class="n">nreg</span><span class="p">],</span> <span class="n">VELMOV</span><span class="p">[</span><span class="n">nreg</span><span class="p">],</span> <span class="n">STRIDE</span><span class="p">,</span> <span class="n">CENT</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span>
@@ -1478,7 +1523,7 @@
 
         <span class="c1"># sampling maxima radii</span>
         <span class="n">RADII</span> <span class="o">=</span> <span class="n">faster_sampling</span><span class="p">(</span><span class="n">RADIUS</span><span class="p">[</span><span class="n">nreg</span><span class="p">],</span> <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="n">minmax_radius</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span> <span class="n">n</span><span class="o">=</span><span class="n">MATE</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
-        <span class="c1"># RADII = np.split(RADII, group_idx)  # no.ne.for.splitting.no.more?</span>
+        <span class="c1"># RADII = np.split(RADII, group_idx)  # no.need.for.splitting.no.more?</span>
         <span class="c1"># 876 μs ± 4.81 μs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)</span>
 
         <span class="c1"># # run the line below instead for averaged/unique radii per storm</span>
@@ -1536,8 +1581,8 @@
         <span class="c1"># MAX_I = MAX_I * (1 + STORMINESS_SC[eval(n_sim_y)] + (simy * STORMINESS_SF[eval(n_sim_y)]))</span>
 
         <span class="c1"># compute granular rainfall over intermediate rings</span>
-        <span class="n">rings</span> <span class="o">=</span>  <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="n">lotr</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">c</span><span class="p">),</span>
-                          <span class="n">RADII</span><span class="p">,</span> <span class="n">BETA</span><span class="p">,</span> <span class="n">MAX_I</span><span class="p">,</span> <span class="n">reduce</span><span class="p">(</span><span class="n">iconcat</span><span class="p">,</span> <span class="n">STRIDE</span><span class="p">,</span> <span class="p">[]),</span> <span class="n">M_CENT</span><span class="p">))</span>
+        <span class="n">rings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="n">lotr</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">c</span><span class="p">),</span>
+                         <span class="n">RADII</span><span class="p">,</span> <span class="n">BETA</span><span class="p">,</span> <span class="n">MAX_I</span><span class="p">,</span> <span class="n">reduce</span><span class="p">(</span><span class="n">iconcat</span><span class="p">,</span> <span class="n">STRIDE</span><span class="p">,</span> <span class="p">[]),</span> <span class="n">M_CENT</span><span class="p">))</span>
 
         <span class="c1"># group rings by unique time.stamp (to reduce # of rasterizations)</span>
         <span class="n">c_ring</span><span class="p">,</span> <span class="n">last_r</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span>
@@ -1551,7 +1596,7 @@
         <span class="c1"># # # https://stackoverflow.com/a/38679861/5885810  (itemgetter)</span>
         <span class="c1"># # # ... but it did NOT allow for pd.concat (when only having one)</span>
         <span class="c1"># # c_ring = list(map(lambda x: pd.concat(itemgetter(*x)(rings), ignore_index=True), ...))</span>
-
+<span class="c1">#%%</span>
         <span class="c1"># returns a time-sorted &amp; void.trimmed (xarray) rainfall cube</span>
         <span class="c1"># the minimum value in the cube is the data.resolution (i.e., NO ZEROS)</span>
         <span class="n">rain</span><span class="p">,</span> <span class="n">suma</span> <span class="o">=</span> <span class="n">rain_cube</span><span class="p">(</span><span class="n">c_ring</span><span class="p">,</span> <span class="n">last_r</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">time_idx</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">np_mask</span><span class="p">)</span>
@@ -1560,40 +1605,72 @@
         <span class="n">lrain</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
         <span class="n">lsuma</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">suma</span><span class="p">)</span>
 
-        <span class="c1"># find if CUM_S is reached</span>
-        <span class="n">new_sum</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">lsuma</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">if</span>\
-            <span class="n">contar_int</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">lsuma</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="c1"># plt.plot(range(len(new_sum)), new_sum.time.data)</span>
-        <span class="n">tmp_cum</span> <span class="o">=</span> <span class="n">new_sum</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>  <span class="c1"># tmp_cum.plot(color=&#39;g&#39;)</span>
+        <span class="c1">#     guess = [1, len(suma)]</span>
+        <span class="c1">#     gdiff = abs(np.diff(guess))[0]</span>
+        <span class="c1">#     ii = 1</span>
+        <span class="c1">#     while gdiff &gt; 1:</span>
+        <span class="c1">#         print(ii)</span>
+        <span class="c1">#         # use_sum = suma[:guess[-1]]</span>
+        <span class="c1">#         tmp_cum = xr.concat((lsuma[0], suma[:guess[-1]]), dim=&#39;time&#39;).groupby(&#39;time&#39;).sum().cumsum()</span>
+        <span class="c1">#         pos_ = -1 if tmp_cum[-1] &gt; train else +1</span>
+        <span class="c1">#         guess[-1] = guess[-1] + pos_ * int(gdiff / 2)</span>
+        <span class="c1">#         # guess = guess[::-1]  # reverse vector</span>
+        <span class="c1">#         guess.reverse()</span>
+        <span class="c1">#         gdiff = abs(np.diff(guess))[0]</span>
+        <span class="c1">#         ii += 1</span>
+        <span class="c1">#     fpos = min(guess)</span>
+
+        <span class="n">tmp_cum</span> <span class="o">=</span> <span class="n">suma</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span> <span class="o">+</span> <span class="n">CUM_S</span>  <span class="c1"># tmp_cum.plot(color=&#39;g&#39;)</span>
+        <span class="c1"># plt.plot(range(len(tmp_cum)), tmp_cum.time.data)</span>
+
+        <span class="c1"># new_sum = xr.concat(lsuma, dim=&#39;time&#39;).groupby(&#39;time&#39;).sum() if\</span>
+        <span class="c1">#     contar_int != 0 else lsuma[-1]</span>
+        <span class="c1"># # plt.plot(range(len(new_sum)), new_sum.time.data)</span>
+        <span class="c1"># tmp_cum = new_sum.cumsum()  # tmp_cum.plot(color=&#39;g&#39;)</span>
+
         <span class="c1"># preserve time.slices falling below &quot;train&quot;</span>
         <span class="n">bynd</span> <span class="o">=</span> <span class="n">tmp_cum</span><span class="p">[</span><span class="n">tmp_cum</span> <span class="o">&gt;=</span> <span class="n">train</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
-        <span class="n">idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">tmp_cum</span><span class="p">[</span><span class="n">tmp_cum</span> <span class="o">&lt;</span> <span class="n">train</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-                          <span class="n">bynd</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bynd</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">bynd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">)],)</span>
+        <span class="c1"># update &#39;bynd&#39; (in case &#39;train&#39; hasn&#39;t been reached yet)</span>
+        <span class="n">bynd</span> <span class="o">=</span> <span class="n">bynd</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bynd</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">bynd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">undr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">tmp_cum</span><span class="p">[</span><span class="n">tmp_cum</span> <span class="o">&lt;</span> <span class="n">train</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">bynd</span><span class="p">],)</span>
+        <span class="c1"># update time.step sums</span>
+        <span class="n">new_sum</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">lsuma</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lsuma</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">undr</span><span class="p">]),</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">if</span> <span class="n">contar_int</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">lsuma</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">undr</span><span class="p">]</span>
+
+        <span class="c1"># idxs = np.concat([tmp_cum[tmp_cum &lt; train][&#39;time&#39;].data, bynd],)</span>
 
         <span class="c1"># intersections</span>
-        <span class="n">t_two</span> <span class="o">=</span> <span class="n">lsuma</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">lsuma</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">idxs</span><span class="p">)]</span>
-        <span class="n">t_one</span> <span class="o">=</span> <span class="n">lsuma</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">lsuma</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">idxs</span><span class="p">)]</span> <span class="k">if</span>\
-            <span class="n">contar_int</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">t_two</span>
-        <span class="n">intersect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">t_one</span><span class="p">,</span> <span class="n">t_two</span><span class="p">,</span> <span class="n">assume_unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,)</span>
+        <span class="c1"># t_two = lsuma[-1][&#39;time&#39;].loc[np.isin(lsuma[-1][&#39;time&#39;], idxs)]</span>
+        <span class="n">t_two</span> <span class="o">=</span> <span class="n">lsuma</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">undr</span><span class="p">]</span>
+        <span class="c1"># t_one = lsuma[0][&#39;time&#39;].loc[np.isin(lsuma[0][&#39;time&#39;], idxs)] if\</span>
+        <span class="c1">#     contar_int != 0 else t_two</span>
+        <span class="n">t_one</span> <span class="o">=</span> <span class="n">lsuma</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">contar_int</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">t_two</span>
+        <span class="n">intersect</span><span class="p">,</span> <span class="n">one_ix</span><span class="p">,</span> <span class="n">two_ix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span>
+            <span class="n">t_one</span><span class="p">,</span> <span class="n">t_two</span><span class="p">,</span> <span class="n">assume_unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># intunsort = t_two[np.sort(two_ix)].data</span>
 
         <span class="c1"># DON&#39;T update &#39;lsuma&#39; before &#39;the intersections&#39;</span>
-        <span class="n">lsuma</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_sum</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idxs</span><span class="p">]</span>
+        <span class="c1"># lsuma[0] = new_sum.loc[idxs]</span>
+        <span class="n">lsuma</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_sum</span>
         <span class="c1"># lsuma[0] = new_sum.loc[intersect]</span>
 
-        <span class="k">if</span> <span class="n">contar_int</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">contar_int</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># painful but necessary (&#39;u4&#39;) because maxima is clipped to &#39;zero&#39;</span>
             <span class="c1"># 1 has to be subtracted 4.all intersected-sums after 1st iteration!</span>
 
-            <span class="c1"># # WHY NOT?? (saves one computation!)</span>
-            <span class="c1"># tmp_rain = xr.concat(list(map(lambda x: x.loc[intersect], lrain)),</span>
-            <span class="c1">#                      dim=&#39;time&#39;,).groupby(&#39;time&#39;).sum().astype(&#39;u4&#39;)</span>
-            <span class="n">tmp_rain</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
-                <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">idxs</span><span class="p">)],</span> <span class="n">lrain</span><span class="p">)),</span>
-                <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;u4&#39;</span><span class="p">)</span>
-            <span class="c1"># tmp_rain = xr.concat([</span>
-            <span class="c1">#     lrain[0].loc[np.isin(lrain[0][&#39;time&#39;], idxs)],</span>
-            <span class="c1">#     lrain[1].loc[np.isin(lrain[1][&#39;time&#39;], idxs)] - 1],</span>
+            <span class="c1"># # # WHY NOT?? (saves one computation!)</span>
+            <span class="c1"># # tmp_rain = xr.concat(list(map(lambda x: x.loc[intersect], lrain)),</span>
+            <span class="c1"># #                      dim=&#39;time&#39;,).groupby(&#39;time&#39;).sum().astype(&#39;u4&#39;)</span>
+            <span class="c1"># tmp_rain = xr.concat(</span>
+            <span class="c1">#     list(map(lambda x: x.loc[np.isin(x[&#39;time&#39;], idxs)], lrain)),</span>
             <span class="c1">#     dim=&#39;time&#39;,).groupby(&#39;time&#39;).sum().astype(&#39;u4&#39;)</span>
+            <span class="c1"># # tmp_rain = xr.concat([</span>
+            <span class="c1"># #     lrain[0].loc[np.isin(lrain[0][&#39;time&#39;], idxs)],</span>
+            <span class="c1"># #     lrain[1].loc[np.isin(lrain[1][&#39;time&#39;], idxs)] - 1],</span>
+            <span class="c1"># #     dim=&#39;time&#39;,).groupby(&#39;time&#39;).sum().astype(&#39;u4&#39;)</span>
+            <span class="n">tmp_rain</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">lrain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lrain</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">undr</span><span class="p">]),</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                                 <span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;u4&#39;</span><span class="p">)</span>
 
             <span class="c1"># # THIS IS also CORRECT!</span>
             <span class="c1"># tmp_rain.loc[intersect][tmp_rain.loc[intersect] &gt;= 4] =\</span>
@@ -1606,12 +1683,15 @@
             <span class="n">tmp_rain</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">intersect</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_rain</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">intersect</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
                 <span class="n">tmp_rain</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">intersect</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">,</span> <span class="n">tmp_rain</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">intersect</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
             <span class="c1"># capping maxima again</span>
-            <span class="n">tmp_rain</span> <span class="o">=</span> <span class="n">tmp_rain</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tmp_rain</span> <span class="o">&lt;=</span> <span class="n">maxima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">RAINFMT</span><span class="p">)</span>
+            <span class="n">tmp_rain</span> <span class="o">=</span> <span class="n">tmp_rain</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tmp_rain</span> <span class="o">&lt;=</span> <span class="n">maxima</span><span class="p">,</span> <span class="n">maxima</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">tmp_rain</span> <span class="o">=</span> <span class="n">lrain</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">intersect</span><span class="p">]</span>
+            <span class="c1"># tmp_rain = lrain[-1].loc[intersect]</span>
+            <span class="c1"># np.equal(undr, intunsort).all()</span>
+            <span class="c1"># tmp_rain = lrain[-1].loc[intunsort]</span>
+            <span class="n">tmp_rain</span> <span class="o">=</span> <span class="n">lrain</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">undr</span><span class="p">]</span>
             <span class="c1"># no need to cap maxima here (no sum of nothing here)</span>
         <span class="c1"># update also lrain[0] (so always to only have a 2-element list!)</span>
-        <span class="n">lrain</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_rain</span>
+        <span class="n">lrain</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp_rain</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">RAINFMT</span><span class="p">)</span>
 
         <span class="c1"># remove last item so always to only have a 2-element list!</span>
         <span class="k">del</span> <span class="n">lrain</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -1632,6 +1712,7 @@
         <span class="s1">&#39;(i.e., parameter &quot;NUM_S&quot;). If the problem persists, it might be &#39;</span>\
         <span class="s1">&#39;likely that the parameterization is not adequate.&#39;</span>
 
+    <span class="n">collect</span><span class="p">()</span>
     <span class="c1"># lrain[0] = lrain[0].where(np_mask == 1, 0)</span>
     <span class="c1"># MAYBE THE 1.MASK SHOULD HAPPEN HERE</span>
     <span class="k">return</span> <span class="n">lrain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kum_s</span></div>
@@ -1639,65 +1720,11 @@
 
 <span class="c1"># %% wrapper</span>
 
-<div class="viewcode-block" id="wrapper"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.wrapper">[docs]</a><span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">NC_NAMES</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<div class="viewcode-block" id="wrapper"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.rainfall.wrapper">[docs]</a><span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">NC_NAMES</span><span class="p">,</span> <span class="n">year_z</span><span class="p">,</span> <span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">,</span> <span class="n">TER_FILE</span><span class="p">,</span> <span class="n">PDF_FILE</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">,</span> <span class="n">ZON_FILE</span><span class="p">):</span>
 <span class="c1">#%%</span>
     <span class="k">global</span> <span class="n">SPACE</span>
 
-    <span class="c1"># Add all parameters to globals</span>
-    <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-
-    <span class="c1"># Connect the wkt string to proper format and add to globals</span>
-    <span class="n">wkt_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;WKT_OGC&quot;</span><span class="p">])</span>
-    <span class="nb">globals</span><span class="p">()[</span><span class="s2">&quot;WKT_OGC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wkt_string</span>
-
-    <span class="c1"># Get current directory for finding model input path</span>
-    <span class="n">script_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
-
-    <span class="c1"># Paths for parameters</span>
-    <span class="n">PDF_FILE</span> <span class="o">=</span> <span class="s2">&quot;model_input/ProbabilityDensityFunctions.csv&quot;</span>
-    <span class="n">SHP_FILE</span> <span class="o">=</span> <span class="s2">&quot;model_input/HAD_basin.shp&quot;</span>
-    <span class="n">DEM_FILE</span> <span class="o">=</span> <span class="s2">&quot;model_input/HAD_wgs84.tif&quot;</span>
-    <span class="n">ZON_FILE</span> <span class="o">=</span> <span class="s2">&quot;model_input/regions.shp&quot;</span>
-    <span class="n">RAIN_MAP</span> <span class="o">=</span> <span class="s2">&quot;model_input/rainfall_OND.nc&quot;</span>
-    <span class="n">parameter_file_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">PDF_FILE</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">,</span> <span class="n">DEM_FILE</span><span class="p">,</span> <span class="n">ZON_FILE</span><span class="p">,</span> <span class="n">RAIN_MAP</span><span class="p">]</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;FILE PATHS ******************&quot;</span><span class="p">)</span>
-    <span class="c1"># Connect the local path to full file path</span>
-    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">parameter_file_paths</span><span class="p">:</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script_dir</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-
-
-
-    <span class="n">minmax_radius</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">X_RES</span><span class="p">,</span> <span class="n">Y_RES</span><span class="p">])</span> <span class="o">/</span> <span class="mf">1e3</span>  <span class="c1"># in km (function of resolution)</span>
-    <span class="nb">globals</span><span class="p">()[</span><span class="s2">&quot;minmax_radius&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">minmax_radius</span>
-    <span class="n">year_z</span> <span class="o">=</span> <span class="n">SEED_YEAR</span> <span class="k">if</span> <span class="n">SEED_YEAR</span> <span class="k">else</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span>  <span class="c1"># SEED_YEAR = []?</span>
-    <span class="nb">globals</span><span class="p">()[</span><span class="s2">&quot;year_z&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">year_z</span>
-
-    <span class="c1"># convert DATE_ORIGIN into &#39;datetime&#39;</span>
-    <span class="c1"># https://stackoverflow.com/a/623312/5885810</span>
-    <span class="c1"># https://stackoverflow.com/q/70460247/5885810  (timezone no pytz)</span>
-    <span class="c1"># https://stackoverflow.com/a/65319240/5885810  (replace timezone)</span>
-    <span class="n">date_origen</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">DATE_ORIGIN</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-        <span class="n">tzinfo</span><span class="o">=</span><span class="n">ZoneInfo</span><span class="p">(</span><span class="n">TIME_ZONE</span><span class="p">))</span>
-    
-    <span class="nb">globals</span><span class="p">()[</span><span class="s2">&quot;date_origen&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_origen</span>
-    
-    <span class="c1"># replicate scalars for NUMSIMS (if only one was passed)</span>
-    <span class="n">scalar</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;PTOT_SC&#39;</span><span class="p">:</span> <span class="n">PTOT_SC</span><span class="p">,</span> <span class="s1">&#39;PTOT_SF&#39;</span><span class="p">:</span> <span class="n">PTOT_SF</span><span class="p">,</span>
-        <span class="s1">&#39;STORMINESS_SC&#39;</span><span class="p">:</span> <span class="n">STORMINESS_SC</span><span class="p">,</span> <span class="s1">&#39;STORMINESS_SF&#39;</span><span class="p">:</span> <span class="n">STORMINESS_SF</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="n">n_scal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">scalar</span><span class="o">.</span><span class="n">values</span><span class="p">()))))</span>
-    <span class="nb">globals</span><span class="p">()[</span><span class="s2">&quot;n_scal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_scal</span>
-    <span class="n">maxnum</span>  <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">)</span>
-    <span class="nb">globals</span><span class="p">()[</span><span class="s2">&quot;maxnum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxnum</span>
-    <span class="k">if</span> <span class="n">n_scal</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">n_scal</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">maxnum</span><span class="p">:</span>
-        <span class="n">update_par</span><span class="p">(</span><span class="n">scalar</span><span class="p">,</span> <span class="n">fun</span><span class="o">=</span><span class="s1">&#39;np.repeat(args[x], maxnum)&#39;</span><span class="p">)</span>
-    <span class="c1"># pick the counter to call &#39;the scalars&#39;</span>
-    <span class="n">n_sim_y</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;nsim&#39;</span><span class="p">,</span> <span class="s1">&#39;simy&#39;</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">((</span><span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">))]</span>
-    <span class="nb">globals</span><span class="p">()[</span><span class="s2">&quot;n_sim_y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_sim_y</span>
-
+    <span class="n">n_sim_y</span> <span class="o">=</span> <span class="n">replicate_</span><span class="p">(</span><span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">)</span>
 
     <span class="c1"># set globals for INTEGER rainfall-NC-output</span>
     <span class="n">nc_bytes</span><span class="p">()</span>
@@ -1708,31 +1735,41 @@
     <span class="n">maxima</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(((</span><span class="n">upd_max</span> <span class="o">-</span> <span class="n">ADD</span><span class="p">)</span> <span class="o">/</span> <span class="n">SCL</span><span class="p">)</span> <span class="o">+</span> <span class="n">MINIMUM</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">RAINFMT</span><span class="p">)</span>
     <span class="c1"># transform to INTEGER the global rainfall maxima</span>
 
-    <span class="n">PDFS</span> <span class="o">=</span> <span class="n">read_pdfs</span><span class="p">()</span>  <span class="c1"># reads (and checks) the PDF-parameters</span>
+    <span class="n">PDFS</span> <span class="o">=</span> <span class="n">read_pdfs</span><span class="p">(</span><span class="n">PDF_FILE</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">)</span>  <span class="c1"># reads (and checks) the PDF-parameters</span>
     <span class="n">construct_pdfs</span><span class="p">(</span><span class="n">PDFS</span><span class="p">)</span>
     <span class="c1"># pdfx = read_pdfs(&#39;./model_input/ProbabilityDensityFunctions_OND_3r.csv&#39;)</span>
     <span class="c1"># construct_pdfs(pdfx, tactic=2)</span>
 
-    <span class="n">SPACE</span> <span class="o">=</span> <span class="n">masking</span><span class="p">(</span><span class="n">SHP_FILE</span><span class="p">,</span> <span class="n">WKT_OGC</span><span class="p">,</span> <span class="n">BUFFER</span><span class="p">,</span> <span class="n">X_RES</span><span class="p">,</span> <span class="n">Y_RES</span><span class="p">)</span>  <span class="c1"># SPACE.plot()  # SPACE = masking(catchment=SHP_FILE)</span>
+    <span class="n">SPACE</span> <span class="o">=</span> <span class="n">masking</span><span class="p">(</span><span class="n">SHP_FILE</span><span class="p">)</span>  <span class="c1"># SPACE.plot()  # SPACE = masking(catchment=SHP_FILE)</span>
 
-    <span class="c1"># region_s = regionalisation(ZON_FILE.replace(&#39;.shp&#39;, f&#39;_{SEASON_TAG}_{9}r.shp&#39;), &#39;region&#39;, SPACE,)</span>
     <span class="n">region_s</span> <span class="o">=</span> <span class="n">regionalisation</span><span class="p">(</span>
+        <span class="c1"># ZON_FILE.replace(&#39;.shp&#39;, f&#39;_{SEASON_TAG}_{NREGIONS}kc.shp&#39;),</span>
         <span class="n">ZON_FILE</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.shp&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;_</span><span class="si">{</span><span class="n">SEASON_TAG</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">NREGIONS</span><span class="si">}</span><span class="s1">r.shp&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;region&#39;</span><span class="p">,</span> <span class="n">SPACE</span><span class="p">,</span>
+        <span class="s1">&#39;region&#39;</span><span class="p">,</span> <span class="s1">&#39;u_rain&#39;</span><span class="p">,</span> <span class="n">SPACE</span><span class="p">,</span>  <span class="c1"># there is NO &#39;u_rain_ in KC.SHP</span>
         <span class="p">)</span>
     <span class="c1"># plt.imshow(region_s[&#39;kmeans&#39;], interpolation=&#39;none&#39;, cmap=&#39;turbo&#39;)</span>
     <span class="c1"># plt.imshow(region_s[&#39;npma&#39;][-1], interpolation=&#39;none&#39;, cmap=&#39;plasma_r&#39;)</span>
 
+    <span class="k">if</span> <span class="n">TER_FILE</span><span class="p">:</span>
+        <span class="n">icpac_s</span> <span class="o">=</span> <span class="n">regionalisation</span><span class="p">(</span><span class="n">TER_FILE</span><span class="p">,</span> <span class="s1">&#39;region&#39;</span><span class="p">,</span> <span class="s1">&#39;tercile&#39;</span><span class="p">,</span> <span class="n">SPACE</span><span class="p">,</span> <span class="n">add</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># plt.imshow(icpac_s[&#39;kmeans&#39;], interpolation=&#39;none&#39;, cmap=&#39;turbo&#39;)</span>
+        <span class="c1"># plt.imshow(icpac_s[&#39;npma&#39;][-1], interpolation=&#39;none&#39;, cmap=&#39;plasma_r&#39;)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># masks 1s to make.it icpac.compatible</span>
+        <span class="n">icpac_s</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;npma&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">region_s</span><span class="p">[</span><span class="s1">&#39;npma&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()]}</span>
+        <span class="n">icpac_s</span><span class="p">[</span><span class="s1">&#39;npma&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][:]</span> <span class="o">=</span> <span class="mi">1</span>
+
+
 <span class="c1">#%%</span>
     <span class="c1"># FOR EVERY FILE/SIMULATION</span>
     <span class="k">for</span> <span class="n">nsim</span><span class="p">,</span> <span class="n">sim_file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">NC_NAMES</span><span class="p">):</span>
-        <span class="c1"># nsim=0; sim_file=NC_NAMES[nsim]</span>
+    <span class="c1"># nsim=0; sim_file=NC_NAMES[nsim]</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">RUN: </span><span class="si">{</span><span class="s2">&quot;</span><span class="si">{:02d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nsim</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="s2">&quot;</span><span class="si">{:02d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">NC_NAMES</span><span class="p">))</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;progress&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;********&#39;</span><span class="p">)</span>
 
-        <span class="n">nc</span> <span class="o">=</span> <span class="n">nc4</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">sim_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;NETCDF4&#39;</span><span class="p">,)</span><span class="c1">#set_auto_mask=False)</span>
+        <span class="n">nc</span> <span class="o">=</span> <span class="n">nc4</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">sim_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;h5netcdf&#39;</span><span class="p">)</span><span class="c1">#, format=&#39;NETCDF4&#39;,)#set_auto_mask=False)</span>
         <span class="n">nc</span><span class="o">.</span><span class="n">created_on</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">tzlocal</span><span class="p">())</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S %Z&#39;</span><span class="p">)</span><span class="c1">#%z</span>
 
         <span class="c1"># # 1ST FILL OF THE NC.FILE (defining global vars &amp; CRS)</span>
@@ -1740,12 +1777,14 @@
         <span class="n">nc</span><span class="p">,</span> <span class="n">tag_y</span><span class="p">,</span> <span class="n">tag_x</span> <span class="o">=</span> <span class="n">nc_file_iv</span><span class="p">(</span><span class="n">nc</span><span class="p">,)</span>
         <span class="n">nc</span><span class="p">[</span><span class="s1">&#39;regions&#39;</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">region_s</span><span class="p">[</span><span class="s1">&#39;kmeans&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;i1&#39;</span><span class="p">)</span>
 
+        <span class="n">nc</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
 <span class="c1">#%%</span>
         <span class="c1"># FOR EVERY YEAR of the SIMULATION</span>
-        <span class="k">for</span> <span class="n">simy</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">NUMSIMYRS</span><span class="p">),</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>  <span class="c1"># simy=0</span>
+        <span class="k">for</span> <span class="n">simy</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">NUMSIMYRS</span><span class="p">),</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>  <span class="c1"># simy=0; year_z=2024</span>
 
             <span class="n">iyear</span> <span class="o">=</span> <span class="n">year_z</span> <span class="o">+</span> <span class="n">simy</span>
-            <span class="n">mlen</span><span class="p">,</span> <span class="n">date_pool</span> <span class="o">=</span> <span class="n">wet_days</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span>
+            <span class="n">mlen</span><span class="p">,</span> <span class="n">date_pool</span> <span class="o">=</span> <span class="n">wet_days</span><span class="p">(</span><span class="n">iyear</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">)</span>
             <span class="c1"># seasonal time.index</span>
             <span class="n">time_seas</span> <span class="o">=</span> <span class="p">((</span>
                 <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">date_pool</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">date_pool</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">freq</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">T_RES</span><span class="si">}</span><span class="s1">min&#39;</span><span class="p">,</span>
@@ -1753,63 +1792,114 @@
                 <span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">*</span> <span class="n">TIME_DICT_</span><span class="p">[</span><span class="n">TIME_OUTNC</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">TIMEINT</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
 
             <span class="c1"># # 2ND FILL OF THE NC.FILE (creating the TIME &amp; RAIN vars)</span>
+            <span class="n">nc</span> <span class="o">=</span> <span class="n">nc4</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">sim_file</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;h5netcdf&#39;</span><span class="p">)</span><span class="c1">#, format=&#39;NETCDF4&#39;,)#set_auto_mask=False)</span>
+
             <span class="n">sub_grp</span> <span class="o">=</span> <span class="n">nc_file_v</span><span class="p">(</span><span class="n">nc</span><span class="p">,</span> <span class="n">iyear</span><span class="p">,</span> <span class="n">time_seas</span><span class="p">,</span> <span class="n">tag_y</span><span class="p">,</span> <span class="n">tag_x</span><span class="p">,)</span>
             <span class="n">sub_grp</span><span class="p">[</span><span class="n">RAIN_NAME</span><span class="p">]</span><span class="o">.</span><span class="n">set_auto_mask</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># CRUCIAL for SPEED</span>
 
             <span class="c1"># sampling/updating total seasonal rainfall</span>
+
+            <span class="c1"># # delete!!!</span>
+            <span class="c1"># if ptot_or_kmean == 1:</span>
+            <span class="c1">#     region_s[&#39;rain&#39;] = pd.Series(np.ravel(list(map(</span>
+            <span class="c1">#         lambda x: truncated_sampling(TOTALP[x], limits=(NO_RAIN, np.inf)),</span>
+            <span class="c1">#         range(len(TOTALP))))), name=&#39;s_rain&#39;,)</span>
+
             <span class="k">if</span> <span class="n">ptot_or_kmean</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">region_s</span><span class="p">[</span><span class="s1">&#39;rain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span>
-                    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">truncated_sampling</span><span class="p">(</span><span class="n">TOTALP</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="n">NO_RAIN</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)),</span>
-                    <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">TOTALP</span><span class="p">))))),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;s_rain&#39;</span><span class="p">,)</span>
+                <span class="k">if</span> <span class="n">TER_FILE</span><span class="p">:</span>
+                    <span class="c1"># the lower.lim of 1st.element could lead to ZERO.rainfall!!</span>
+                    <span class="n">terlim</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]]</span>
+                    <span class="c1"># https://numpy.org/doc/stable/reference/random/bit_generators/index.html</span>
+                    <span class="n">rtg</span> <span class="o">=</span> <span class="n">npr</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">npr</span><span class="o">.</span><span class="n">PCG64</span><span class="p">())</span>
+                    <span class="n">tercil</span> <span class="o">=</span> <span class="n">icpac_s</span><span class="p">[</span><span class="s1">&#39;rain&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)))))</span>
+                    <span class="n">tercil</span> <span class="o">=</span> <span class="n">tercil</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">forecasting</span><span class="o">.</span><span class="n">split_diff</span><span class="p">)</span>
+                    <span class="n">wat</span> <span class="o">=</span> <span class="n">tercil</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">rtg</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">else</span> <span class="n">rtg</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">x</span> <span class="o">/</span> <span class="mi">100</span><span class="p">))</span>
+                    <span class="n">seas_rain</span> <span class="o">=</span> <span class="p">[[</span><span class="n">truncated_sampling</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">terlim</span><span class="p">[</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">type_l</span><span class="o">=</span><span class="s1">&#39;prob&#39;</span><span class="p">,)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">wat</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">TOTALP</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">seas_rain</span> <span class="o">=</span> <span class="p">[[</span><span class="n">truncated_sampling</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="n">NO_RAIN</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">TOTALP</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">seas_rain</span> <span class="o">=</span> <span class="p">[[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">,</span> <span class="n">region_s</span><span class="p">[</span><span class="s1">&#39;rain&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))]</span>
 
             <span class="n">C_OUT</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># meaningless array to collect reached cums</span>
 
             <span class="c1"># FOR EVERY N_REGION</span>
-            <span class="k">for</span> <span class="n">nreg</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">NREGIONS</span><span class="p">),</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>  <span class="c1"># nreg=2</span>
-            <span class="c1"># for nreg in tqdm(range(1), ncols=50):  # nreg=0  # for testing!</span>
+            <span class="k">for</span> <span class="n">nreg</span><span class="p">,</span> <span class="n">srain</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">seas_rain</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">50</span><span class="p">)):</span>
+            <span class="c1"># nreg=2; srain=seas_rain[nreg]</span>
+                <span class="c1"># print(nreg, srain)</span>
+                <span class="k">for</span> <span class="n">jter</span><span class="p">,</span> <span class="n">ireg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">icpac_s</span><span class="p">[</span><span class="s1">&#39;npma&#39;</span><span class="p">],</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">50</span><span class="p">)):</span>
+                <span class="c1"># jter=1; ireg=icpac_s[&#39;npma&#39;][jter]</span>
+                    <span class="n">micro_mask</span> <span class="o">=</span> <span class="n">region_s</span><span class="p">[</span><span class="s1">&#39;npma&#39;</span><span class="p">][</span><span class="n">nreg</span><span class="p">]</span> <span class="o">*</span> <span class="n">ireg</span>
+                    <span class="c1"># plt.imshow(micro_mask, cmap=&#39;turbo&#39;, interpolation=&#39;none&#39;)</span>
+                <span class="c1"># the region must be &quot;large&quot; enough to compute rainfall</span>
+                    <span class="k">if</span> <span class="n">micro_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">999</span><span class="p">:</span>
 
-                <span class="c1"># scale (or not) the total seasonal rainfall</span>
-                <span class="c1"># using &#39;(simy + 1)&#39; starts the increase right from the first year</span>
-                <span class="n">reg_tot</span> <span class="o">=</span> <span class="n">region_s</span><span class="p">[</span><span class="s1">&#39;rain&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">nreg</span><span class="p">]</span> <span class="o">*</span>\
-                    <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">PTOT_SC</span><span class="p">[</span><span class="nb">eval</span><span class="p">(</span><span class="n">n_sim_y</span><span class="p">)]</span> <span class="o">+</span> <span class="p">(</span><span class="n">simy</span> <span class="o">*</span> <span class="n">PTOT_SF</span><span class="p">[</span><span class="nb">eval</span><span class="p">(</span><span class="n">n_sim_y</span><span class="p">)]))</span>
-                    <span class="c1"># (1 + PTOT_SC[simy] + (simy * PTOT_SF[simy]))</span>
-                <span class="c1"># reg_tot = 50.  # for testing!</span>
+                        <span class="c1"># scale (or not) the total seasonal rainfall</span>
+                        <span class="c1"># using &#39;(simy + 1)&#39; starts the increase right from the first year</span>
+                        <span class="n">reg_tot</span> <span class="o">=</span> <span class="n">srain</span><span class="p">[</span><span class="n">jter</span><span class="p">]</span> <span class="o">*</span>\
+                            <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">PTOT_SC</span><span class="p">[</span><span class="nb">eval</span><span class="p">(</span><span class="n">n_sim_y</span><span class="p">)]</span> <span class="o">+</span> <span class="p">(</span><span class="n">simy</span> <span class="o">*</span> <span class="n">PTOT_SF</span><span class="p">[</span><span class="nb">eval</span><span class="p">(</span><span class="n">n_sim_y</span><span class="p">)]))</span>
+                            <span class="c1"># (1 + PTOT_SC[simy] + (simy * PTOT_SF[simy]))</span>
+                        <span class="c1"># reg_tot = 1e-1  # for testing!</span>
 
-                <span class="n">reg_rain</span><span class="p">,</span> <span class="n">cum_out</span> <span class="o">=</span> <span class="n">loop</span><span class="p">(</span>
-                    <span class="n">reg_tot</span><span class="p">,</span> <span class="n">region_s</span><span class="p">[</span><span class="s1">&#39;mask&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">nreg</span><span class="p">],</span> <span class="n">region_s</span><span class="p">[</span><span class="s1">&#39;npma&#39;</span><span class="p">][</span><span class="n">nreg</span><span class="p">],</span>
-                    <span class="n">nsim</span><span class="p">,</span> <span class="n">simy</span><span class="p">,</span> <span class="n">nreg</span><span class="p">,</span> <span class="n">mlen</span><span class="p">,</span> <span class="n">upd_max</span><span class="p">,</span> <span class="n">maxima</span><span class="p">,</span> <span class="n">date_pool</span><span class="p">,</span>
-                    <span class="p">)</span>
+                        <span class="n">reg_rain</span><span class="p">,</span> <span class="n">cum_out</span> <span class="o">=</span> <span class="n">loop</span><span class="p">(</span>
+                            <span class="n">reg_tot</span><span class="p">,</span> <span class="n">region_s</span><span class="p">[</span><span class="s1">&#39;mask&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">nreg</span><span class="p">],</span> <span class="n">micro_mask</span><span class="p">,</span>
+                            <span class="n">nsim</span><span class="p">,</span> <span class="n">simy</span><span class="p">,</span> <span class="n">nreg</span><span class="p">,</span> <span class="n">mlen</span><span class="p">,</span> <span class="n">upd_max</span><span class="p">,</span> <span class="n">maxima</span><span class="p">,</span> <span class="n">date_pool</span><span class="p">,</span>
+                            <span class="p">)</span>
 
-                <span class="c1"># where the rain must be placed</span>
-                <span class="n">what</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">time_seas</span><span class="p">,</span> <span class="n">reg_rain</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span>
-                                      <span class="n">assume_unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="n">sub_grp</span><span class="p">[</span><span class="n">RAIN_NAME</span><span class="p">][</span><span class="n">what</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">reg_rain</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span>\
-                    <span class="n">sub_grp</span><span class="p">[</span><span class="n">RAIN_NAME</span><span class="p">][</span><span class="n">what</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">RAINFMT</span><span class="p">)</span>
+                        <span class="c1"># # where the rain must be placed</span>
+                        <span class="c1"># what = np.intersect1d(time_seas, reg_rain[&#39;time&#39;],</span>
+                        <span class="c1">#                       assume_unique=True, return_indices=True)</span>
+                        <span class="c1"># sub_grp[RAIN_NAME][what[1], :, :] = reg_rain.data +\</span>
+                        <span class="c1">#     sub_grp[RAIN_NAME][what[1], :, :].astype(RAINFMT)</span>
+                        <span class="c1"># # sub_grp[RAIN_NAME][sub_grp[RAIN_NAME] == 0] = 1</span>
 
-                <span class="n">collect</span><span class="p">()</span>
+                        <span class="n">reg_rain</span> <span class="o">=</span> <span class="n">reg_rain</span><span class="o">.</span><span class="n">reindex</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">time_seas</span><span class="p">},</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="n">sub_grp</span><span class="p">[</span><span class="n">RAIN_NAME</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">reg_rain</span> <span class="o">+</span> <span class="n">sub_grp</span><span class="p">[</span><span class="n">RAIN_NAME</span><span class="p">][:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">RAINFMT</span><span class="p">)</span>
+                        <span class="c1"># # having assigned the &#39;rain&#39; name</span>
+                        <span class="c1"># reg_rain.to_netcdf(&#39;./model_output/zdos.nc&#39;, engine=&#39;h5netcdf&#39;,</span>
+                        <span class="c1">#     encoding={&#39;rain&#39;:{&#39;dtype&#39;:&#39;u2&#39;, &#39;zlib&#39;:True, &#39;complevel&#39;:9}},</span>
+                        <span class="c1">#     # encoding={&#39;rain&#39;:{&#39;dtype&#39;:&#39;u2&#39;, &#39;compression&#39;:&#39;gzip&#39;, &quot;compression_opts&quot;: 9}},</span>
+                        <span class="c1">#     )</span>
 
-                <span class="n">C_OUT</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cum_out</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                        <span class="n">collect</span><span class="p">()</span>
+                        <span class="c1"># the line below should be removed??</span>
+                        <span class="n">C_OUT</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cum_out</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="c1"># # FOR EVERY N_REGION</span>
+            <span class="c1"># for nreg in tqdm(range(NREGIONS), ncols=50):  # nreg=2</span>
+            <span class="c1"># # for nreg in tqdm(range(1), ncols=50):  # nreg=0  # for testing!</span>
+
+            <span class="c1">#     # scale (or not) the total seasonal rainfall</span>
+            <span class="c1">#     # using &#39;(simy + 1)&#39; starts the increase right from the first year</span>
+            <span class="c1">#     reg_tot = region_s[&#39;rain&#39;].iloc[nreg] *\</span>
+            <span class="c1">#         (1 + PTOT_SC[eval(n_sim_y)] + (simy * PTOT_SF[eval(n_sim_y)]))</span>
+            <span class="c1">#         # (1 + PTOT_SC[simy] + (simy * PTOT_SF[simy]))</span>
+            <span class="c1">#     # reg_tot = 10.  # for testing!</span>
+
+            <span class="c1">#     reg_rain, cum_out = loop(</span>
+            <span class="c1">#         reg_tot, region_s[&#39;mask&#39;].iloc[nreg], region_s[&#39;npma&#39;][nreg],</span>
+            <span class="c1">#         nsim, simy, nreg, mlen, upd_max, maxima, date_pool,</span>
+            <span class="c1">#         )</span>
+
+            <span class="c1">#     # # where the rain must be placed</span>
+            <span class="c1">#     # what = np.intersect1d(time_seas, reg_rain[&#39;time&#39;],</span>
+            <span class="c1">#     #                       assume_unique=True, return_indices=True)</span>
+            <span class="c1">#     # sub_grp[RAIN_NAME][what[1], :, :] = reg_rain.data +\</span>
+            <span class="c1">#     #     sub_grp[RAIN_NAME][what[1], :, :].astype(RAINFMT)</span>
+            <span class="c1">#     # # sub_grp[RAIN_NAME][sub_grp[RAIN_NAME] == 0] = 1</span>
+
+            <span class="c1">#     reg_rain = reg_rain.reindex({&#39;time&#39;: time_seas}, fill_value=0)</span>
+            <span class="c1">#     sub_grp[RAIN_NAME][:] = reg_rain + sub_grp[RAIN_NAME][:].astype(RAINFMT)</span>
+            <span class="c1">#     # # having assigned the &#39;rain&#39; name</span>
+            <span class="c1">#     # reg_rain.to_netcdf(&#39;./model_output/zdos.nc&#39;, engine=&#39;h5netcdf&#39;,</span>
+            <span class="c1">#     #     encoding={&#39;rain&#39;:{&#39;dtype&#39;:&#39;u2&#39;, &#39;zlib&#39;:True, &#39;complevel&#39;:9}},</span>
+            <span class="c1">#     #     # encoding={&#39;rain&#39;:{&#39;dtype&#39;:&#39;u2&#39;, &#39;compression&#39;:&#39;gzip&#39;, &quot;compression_opts&quot;: 9}},</span>
+            <span class="c1">#     #     )</span>
+
+            <span class="c1">#     collect()</span>
+
+            <span class="c1">#     C_OUT.append(cum_out[-1].data)</span>
 
             <span class="c1"># MAYBE THE 1.MASK SHOULD HAPPEN HERE</span>
-
-            <span class="c1"># store.mean.stats as CSV.file (less memory when using INT)</span>
-            <span class="k">if</span> <span class="n">output_stats_</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">zumaz</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">sub_grp</span><span class="p">[</span><span class="n">RAIN_NAME</span><span class="p">][:])</span>
-                <span class="c1"># zumaz = zumaz.where(zumaz &gt;= 2, 0)  # if storing 1 (ones)</span>
-                <span class="n">zumaz</span> <span class="o">=</span> <span class="n">zumaz</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;dim_0&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;u4&#39;</span><span class="p">)</span>
-                <span class="n">zumaz</span> <span class="o">=</span> <span class="n">zumaz</span> <span class="o">*</span> <span class="n">SCL</span> <span class="o">+</span> <span class="n">ADD</span>
-                <span class="n">zumaz</span> <span class="o">=</span> <span class="n">zumaz</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">zumaz</span> <span class="o">&gt;=</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-                <span class="n">cum_nc</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">region_s</span><span class="p">[</span><span class="s1">&#39;npma&#39;</span><span class="p">]:</span>
-                    <span class="n">cum_nc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zumaz</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">rr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">rr</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
-                <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-                    <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">iyear</span><span class="p">,</span> <span class="n">NREGIONS</span><span class="p">),</span>
-                    <span class="s1">&#39;k&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="n">NREGIONS</span><span class="p">),</span>
-                    <span class="s1">&#39;mean_in&#39;</span><span class="p">:</span> <span class="n">region_s</span><span class="p">[</span><span class="s1">&#39;rain&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
-                    <span class="s1">&#39;mean_out&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">C_OUT</span><span class="p">],</span>
-                    <span class="s1">&#39;mean_nc&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cum_nc</span><span class="p">],</span>
-                    <span class="p">})</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">sim_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.nc&#39;</span><span class="p">,</span> <span class="s1">&#39;_stats.csv&#39;</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span>
-                              <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            this is the only right place to assign the SCL and ADD attributes\</span>
@@ -1821,9 +1911,29 @@
             <span class="k">if</span> <span class="n">RAINFMT</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span>
                 <span class="n">sub_grp</span><span class="p">[</span><span class="n">RAIN_NAME</span><span class="p">]</span><span class="o">.</span><span class="n">scale_factor</span> <span class="o">=</span> <span class="n">SCL</span>
                 <span class="n">sub_grp</span><span class="p">[</span><span class="n">RAIN_NAME</span><span class="p">]</span><span class="o">.</span><span class="n">add_offset</span> <span class="o">=</span> <span class="n">ADD</span>
+
+            <span class="n">nc</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">collect</span><span class="p">()</span>
 <span class="c1">#%%</span>
 
-        <span class="n">nc</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+            <span class="c1"># store.mean.stats as CSV.file (less memory when using INT)</span>
+            <span class="k">if</span> <span class="n">output_stats_</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">zumaz</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">sub_grp</span><span class="p">[</span><span class="n">RAIN_NAME</span><span class="p">][:])</span>
+                <span class="c1"># zumaz = zumaz.where(zumaz &gt;= 2, 0)  # if storing 1&#39;s (ones)</span>
+                <span class="n">zumaz</span> <span class="o">=</span> <span class="n">zumaz</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;dim_0&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;u4&#39;</span><span class="p">)</span>
+                <span class="n">zumaz</span> <span class="o">=</span> <span class="n">zumaz</span> <span class="o">*</span> <span class="n">SCL</span> <span class="o">+</span> <span class="n">ADD</span>
+                <span class="n">zumaz</span> <span class="o">=</span> <span class="n">zumaz</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">zumaz</span> <span class="o">&gt;=</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># if storing 0&#39;s</span>
+                <span class="n">cum_nc</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">region_s</span><span class="p">[</span><span class="s1">&#39;npma&#39;</span><span class="p">]:</span>
+                    <span class="n">cum_nc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zumaz</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">rr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">rr</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+                    <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">iyear</span><span class="p">,</span> <span class="n">NREGIONS</span><span class="p">),</span>
+                    <span class="s1">&#39;k&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="n">NREGIONS</span><span class="p">),</span>
+                    <span class="s1">&#39;mean_in&#39;</span><span class="p">:</span> <span class="n">region_s</span><span class="p">[</span><span class="s1">&#39;rain&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+                    <span class="s1">&#39;mean_out&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">C_OUT</span><span class="p">],</span>
+                    <span class="s1">&#39;mean_nc&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cum_nc</span><span class="p">],</span>
+                    <span class="p">})</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">sim_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.nc&#39;</span><span class="p">,</span> <span class="s1">&#39;_stats.csv&#39;</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span>
+                              <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 <span class="c1"># def whopper(NC_NAMOS):</span>
@@ -1848,6 +1958,7 @@
 <span class="c1">#             # sub_grp = nc_file_iii(nc, iyear, time_seas,)</span>
 <span class="c1">#             sub_grp = nc_file_v(nc, iyear, time_seas, tag_y, tag_x,)</span>
 <span class="c1">#         nc.close()</span>
+
 
 </pre></div>
 

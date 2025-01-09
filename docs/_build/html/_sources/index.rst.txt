@@ -19,6 +19,9 @@ Welcome to CUWALID's documentation!
    modules
    maintenance
    dryp_developers
+   Authors
+   Acknowledgements
+   Licences
    
 
 Indices and tables

@@ -48,7 +48,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Licences.html">Licences</a></li>
 </ul>
 
         </div>
@@ -83,28 +86,29 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">from</span> <span class="nn">fitter</span> <span class="kn">import</span> <span class="n">Fitter</span>
 <span class="kn">from</span> <span class="nn">gc</span> <span class="kn">import</span> <span class="n">collect</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">geopandas</span> <span class="kn">import</span> <span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">GeoSeries</span><span class="p">,</span> <span class="n">points_from_xy</span><span class="p">,</span> <span class="n">read_file</span><span class="p">,</span> <span class="n">sjoin</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">lmfit</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Parameters</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span>
 <span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal</span>
 <span class="kn">from</span> <span class="nn">pyproj</span> <span class="kn">import</span> <span class="n">CRS</span>
-<span class="kn">from</span> <span class="nn">fitter</span> <span class="kn">import</span> <span class="n">Fitter</span>
-<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">morphology</span>
-<span class="kn">from</span> <span class="nn">rasterstats</span> <span class="kn">import</span> <span class="n">zonal_stats</span>
-<span class="kn">from</span> <span class="nn">lmfit</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Parameters</span>
-<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">filterwarnings</span><span class="p">,</span> <span class="n">warn</span><span class="p">,</span> <span class="n">simplefilter</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">special</span>
-<span class="kn">from</span> <span class="nn">geopandas</span> <span class="kn">import</span> <span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">GeoSeries</span><span class="p">,</span> <span class="n">points_from_xy</span><span class="p">,</span> <span class="n">read_file</span><span class="p">,</span> <span class="n">sjoin</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">join</span>
-<span class="kn">from</span> <span class="nn">statsmodels.distributions.copula.api</span> <span class="kn">import</span> <span class="n">GaussianCopula</span>
-<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
-<span class="kn">from</span> <span class="nn">sklearn.mixture</span> <span class="kn">import</span> <span class="n">GaussianMixture</span>
+<span class="kn">from</span> <span class="nn">rasterio</span> <span class="kn">import</span> <span class="nb">open</span> <span class="k">as</span> <span class="n">openr</span>
 <span class="kn">from</span> <span class="nn">rasterio.enums</span> <span class="kn">import</span> <span class="n">Resampling</span>  <span class="c1"># IF doing BILINEAR or NEAREST too?</span>
 <span class="kn">from</span> <span class="nn">rasterio.features</span> <span class="kn">import</span> <span class="n">shapes</span>
-<span class="kn">from</span> <span class="nn">rasterio</span> <span class="kn">import</span> <span class="nb">open</span> <span class="k">as</span> <span class="n">openr</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="c1">#from cuwalid.storm.parameters import SHP_FILE, DEM_FILE, WKT_OGC, BUFFER, X_RES, Y_RES, ZON_FILE</span>
-<span class="c1">#from cuwalid.storm.parameters import PDF_FILE, RAIN_MAP, NREGIONS, SEASON_TAG, Z_CUTS, Z_STAT</span>
-<span class="c1"># from dask.distributed import Client, LocalCluster</span>
+<span class="kn">from</span> <span class="nn">rasterstats</span> <span class="kn">import</span> <span class="n">zonal_stats</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">special</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">NearestNDInterpolator</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">morphology</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+<span class="kn">from</span> <span class="nn">sklearn.mixture</span> <span class="kn">import</span> <span class="n">GaussianMixture</span>
+<span class="kn">from</span> <span class="nn">statsmodels.distributions.copula.api</span> <span class="kn">import</span> <span class="n">GaussianCopula</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">filterwarnings</span><span class="p">,</span> <span class="n">warn</span><span class="p">,</span> <span class="n">simplefilter</span>
+<span class="kn">from</span> <span class="nn">cuwalid.storm.parameters</span> <span class="kn">import</span> <span class="n">WKT_OGC</span><span class="p">,</span> <span class="n">BUFFER</span><span class="p">,</span> <span class="n">X_RES</span><span class="p">,</span> <span class="n">Y_RES</span><span class="p">,</span> <span class="n">Z_CUTS</span><span class="p">,</span> <span class="n">Z_STAT</span>
+<span class="kn">from</span> <span class="nn">cuwalid.storm.parameters</span> <span class="kn">import</span> <span class="n">NREGIONS</span>
 
 <span class="c1"># https://stackoverflow.com/a/9134842/5885810  (supress warning by message)</span>
 <span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;You will likely lose important projection &#39;</span>
@@ -124,7 +128,7 @@
 <span class="k">if</span> <span class="n">gdal</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;3&#39;</span><span class="p">:</span>
     <span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span>
     <span class="c1"># gdal.DontUseExceptions()</span>
-    <span class="c1"># gdal.__version__ # wos_ &#39;3.6.2&#39; # linux_ &#39;3.7.0&#39;</span>
+    <span class="c1"># gdal.__version__ # wos_ &#39;3.9.2&#39; # linux_ &#39;3.9.3&#39;</span>
 
 <span class="n">parent_d</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>  <span class="c1"># otherwise, will append the path.of.the.tests</span>
 <span class="c1"># parent_d = &#39;./&#39;  # to be used in IPython</span>
@@ -138,30 +142,9 @@
 
 <span class="c1"># %% parameters</span>
 
-<span class="c1"># EVENT_DATA = &#39;./model_input/0326_collect_MAM_track_hadIMERG_.nc&#39;</span>
-<span class="n">EVENT_DATA</span> <span class="o">=</span> <span class="s1">&#39;./model_input/0326_collect_OND_track_hadIMERG_.nc&#39;</span>
+
 <span class="n">ALTERNATIV</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># 1-for.simple.totals; 2-simple.totals+copula; 3-pf-based</span>
-
-<span class="c1"># # parameters imported from &quot;parameters.py&quot;</span>
-
-<span class="c1"># PDF_FILE = &#39;./model_input/ProbabilityDensityFunctions.csv&#39;  # pdf.pars file</span>
-<span class="c1"># ZON_FILE = &#39;./model_input/regions.shp&#39;  # nK regions file</span>
-<span class="c1"># SHP_FILE = &#39;./model_input/HAD_basin.shp&#39;  # catchment shape-file in WGS84</span>
-<span class="c1"># DEM_FILE = &#39;./model_input/HAD_wgs84.tif&#39;  # aoi raster-file (optional**)</span>
-<span class="c1"># # RAIN_MAP = &#39;./model_input/rainfall_MAM.nc&#39;</span>
-<span class="c1"># RAIN_MAP = &#39;./model_input/rainfall_OND.nc&#39;</span>
-<span class="c1"># NREGIONS = 4</span>
-<span class="c1"># SEASON_TAG = &#39;OND&#39;</span>
-
-<span class="c1"># # Z_CUTS = [ 400, 1000]  # [34.2, 67.5]%</span>
-<span class="c1"># # Z_CUTS = [1000, 2000, 3000]  # [67.53, 97.15, 99.87]%</span>
-<span class="c1"># Z_CUTS = [300,  600, 1200]  # [28.13, 48.75, 78.57]%</span>
-<span class="c1"># # Z_CUTS = []</span>
-<span class="c1"># # Z_CUTS = None</span>
-
-<span class="c1"># BUFFER    =  7000.  # in meters! -&gt; buffer distance (out of the HAD)</span>
-<span class="c1"># X_RES     =  5000.  # in meters! (pxl.resolution for the &#39;regular/local&#39; CRS)</span>
-<span class="c1"># Y_RES     =  5000.  # in meters! (pxl.resolution for the &#39;regular/local&#39; CRS)</span>
+<span class="n">ICPAC_ONLY</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 1-for.only.ICPAC.forecast.SHP; 0-for.only.preprocessing</span>
 
 <span class="c1"># # OGC-WKT for HAD [taken from https://epsg.io/42106]</span>
 <span class="c1"># WKT_OGC = &#39;PROJCS[&quot;WGS84_/_Lambert_Azim_Mozambique&quot;,&#39;\</span>
@@ -188,26 +171,22 @@
 
 <div class="viewcode-block" id="masking"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.masking">[docs]</a><span class="k">class</span> <span class="nc">masking</span><span class="p">:</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">,</span> <span class="n">WKT_OGC</span><span class="p">,</span> <span class="n">BUFFER</span><span class="p">,</span> <span class="n">X_RES</span><span class="p">,</span> <span class="n">Y_RES</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        reads catchment-SHP, buffers it, and burns them into 2D-numpy.\n</span>
-<span class="sd">        Input: none.\n</span>
+<span class="sd">        Input: -&gt;</span>
+<span class="sd">        *SHP_FILE* : str; path to catchment shape-file</span>
 <span class="sd">        **kwargs\n</span>
-<span class="sd">        catchment: shp; shapefile.</span>
-<span class="sd">        wkt_prj: char; WKT (well-known text) of the local CRS.</span>
-<span class="sd">        buffer: float; buffer (in meters) to expand the shapefile.</span>
-<span class="sd">        x_res: float; spatial resolution (in meters) along the X-dimension.</span>
-<span class="sd">        y_res: float; spatial resolution (in meters) along the Y-dimension.</span>
 <span class="sd">        initValues: int/float; default value to pre-empt the raster (with).</span>
 <span class="sd">        burn_tag: char; geoPandas.GeoDataFrame column used as burning values.\n</span>
 <span class="sd">        Output -&gt; a class having the buffer &amp; catchment rasters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">catch_shp</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;catchment&#39;</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wkt_prj</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;wkt_prj&#39;</span><span class="p">,</span> <span class="n">WKT_OGC</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;buffer&#39;</span><span class="p">,</span> <span class="n">BUFFER</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">x_res</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;x_res&#39;</span><span class="p">,</span> <span class="n">X_RES</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">y_res</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;y_res&#39;</span><span class="p">,</span> <span class="n">Y_RES</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">catch_shp</span> <span class="o">=</span> <span class="n">SHP_FILE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wkt_prj</span> <span class="o">=</span> <span class="n">WKT_OGC</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">BUFFER</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_res</span> <span class="o">=</span> <span class="n">X_RES</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_res</span> <span class="o">=</span> <span class="n">Y_RES</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seed_val</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;initValues&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">burn_tag</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;burn_tag&#39;</span><span class="p">,</span> <span class="s1">&#39;burn&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bbbox</span> <span class="o">=</span> <span class="kc">None</span>
@@ -406,7 +385,7 @@
 
 <div class="viewcode-block" id="field"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.field">[docs]</a><span class="k">class</span> <span class="nc">field</span><span class="p">:</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rain_map</span><span class="p">,</span> <span class="n">x_prj</span><span class="p">,</span> <span class="n">y_prj</span><span class="p">,</span> <span class="n">WKT_OGC</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rain_map</span><span class="p">,</span> <span class="n">x_prj</span><span class="p">,</span> <span class="n">y_prj</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="n">rain_map</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x_prj</span> <span class="o">=</span> <span class="n">x_prj</span>
@@ -498,33 +477,39 @@
 
 <div class="viewcode-block" id="regional"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.regional">[docs]</a><span class="k">class</span> <span class="nc">regional</span><span class="p">:</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_prj</span><span class="p">,</span> <span class="n">mask_bfr</span><span class="p">,</span> <span class="n">mask_cat</span><span class="p">,</span> <span class="n">WKT_OGC</span><span class="p">,</span> <span class="n">ZON_FILE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_prj</span><span class="p">,</span> <span class="n">mask_bfr</span><span class="p">,</span> <span class="n">mask_cat</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">up_dic</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># self.up_dic = None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wkt_prj</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;wkt_prj&#39;</span><span class="p">,</span> <span class="n">WKT_OGC</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nr&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">statistic</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stat&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">realization</span> <span class="o">=</span> <span class="n">map_prj</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">mask_bfr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">catchment</span> <span class="o">=</span> <span class="n">mask_cat</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">WKT_OGC</span> <span class="o">=</span> <span class="n">WKT_OGC</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ZON_FILE</span> <span class="o">=</span> <span class="n">ZON_FILE</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
             <span class="c1"># this means there are NO.partitions/regions in buffer!</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nr_dic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_regions</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">realization</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchment</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">morph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">morphopen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">)</span>
             <span class="c1"># self.morph = self.regions</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">gshape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_shp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">morph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">realization</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">catchment</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wkt_prj</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gshape</span> <span class="o">=</span> <span class="n">regional</span><span class="o">.</span><span class="n">to_shp</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">morph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">realization</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchment</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wkt_prj</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gshape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_means</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">realization</span><span class="o">.</span><span class="n">rain</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">morph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gshape</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># this means that k-means should NOT be computed!</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># 0 doesn&#39;t count</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nr_dic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_regions</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">realization</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchment</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistic</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">morph</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">gshape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_shp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">realization</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">catchment</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wkt_prj</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gshape</span> <span class="o">=</span> <span class="n">regional</span><span class="o">.</span><span class="n">to_shp</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">realization</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchment</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wkt_prj</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gshape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_means</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">realization</span><span class="o">.</span><span class="n">rain</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gshape</span><span class="p">)</span>
 
 <div class="viewcode-block" id="regional.n_regions"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.regional.n_regions">[docs]</a>    <span class="k">def</span> <span class="nf">n_regions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_eal</span><span class="p">,</span> <span class="n">catch</span><span class="p">,</span> <span class="n">buff</span><span class="p">,</span> <span class="n">statistic</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -591,9 +576,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        split the field into *n_c* k-means.\n</span>
 <span class="sd">        Input:\n</span>
-<span class="sd">        r_eal : 2D.np; rainfall.field [realization].</span>
-<span class="sd">        catch : 2D.np; catchment/region.</span>
-<span class="sd">        n_c : int; number of clusters.\n</span>
+<span class="sd">        *r_eal* : 2D.np; rainfall.field [realization].</span>
+<span class="sd">        *catch* : 2D.np; catchment/region.</span>
+<span class="sd">        *n_c* : int; number of clusters.\n</span>
 <span class="sd">        Output -&gt; 2D.numpy with splitted regions; and dic with k_means.per.region.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -688,9 +673,8 @@
         <span class="c1"># return new.astype(&#39;u1&#39;)</span>
         <span class="k">return</span> <span class="n">new</span></div>
 
-        <span class="c1"># mopen = test.regions; realization = rain_.field_prj; wkt_prj = WKT_OGC</span>
-        <span class="c1"># buffer_mask = space.buffer_mask; catchm_mask = space.catchment_mask</span>
-<div class="viewcode-block" id="regional.to_shp"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.regional.to_shp">[docs]</a>    <span class="k">def</span> <span class="nf">to_shp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mopen</span><span class="p">,</span> <span class="n">realization</span><span class="p">,</span> <span class="n">buffer_mask</span><span class="p">,</span> <span class="n">catchm_mask</span><span class="p">,</span> <span class="n">wkt_prj</span><span class="p">):</span>
+<div class="viewcode-block" id="regional.to_shp"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.regional.to_shp">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">to_shp</span><span class="p">(</span><span class="n">mopen</span><span class="p">,</span> <span class="n">realization</span><span class="p">,</span> <span class="n">buffer_mask</span><span class="p">,</span> <span class="n">catchm_mask</span><span class="p">,</span> <span class="n">wkt_prj</span><span class="p">):</span>
         <span class="c1"># np2shp [.rio.transform() IS QUITE OF THE ESSENCE HERE!]</span>
         <span class="n">lopen</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">shapes</span><span class="p">(</span><span class="n">mopen</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">buffer_mask</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
                             <span class="n">transform</span><span class="o">=</span><span class="n">realization</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">transform</span><span class="p">()))</span>
@@ -717,7 +701,7 @@
 
         <span class="c1"># turn-back them into GeoPandas</span>
         <span class="n">masks</span> <span class="o">=</span> <span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">nasks</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">wkt_prj</span><span class="p">)</span>
-        <span class="c1"># masks.geometry.iloc[0]g</span>
+        <span class="c1"># masks.geometry.iloc[0]</span>
         <span class="c1"># masks.geometry.loc[0]</span>
         <span class="c1"># masks.loc[0].geometry</span>
         <span class="c1"># masks.geometry.xs(0)</span>
@@ -727,23 +711,30 @@
         <span class="n">wasks</span> <span class="o">=</span> <span class="n">masks</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">crs</span><span class="o">=</span><span class="s1">&#39;EPSG:4326&#39;</span><span class="p">)</span>
         <span class="c1"># turn index into column</span>
         <span class="n">wasks</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="c1"># compute updated seasonal rain</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">up_dic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_means</span><span class="p">(</span><span class="n">realization</span><span class="o">.</span><span class="n">rain</span><span class="p">,</span> <span class="n">mopen</span><span class="p">,</span> <span class="n">wasks</span><span class="o">.</span><span class="n">region</span><span class="p">)</span>
-        <span class="n">wasks</span><span class="p">[</span><span class="s1">&#39;u_rain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">up_dic</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-        <span class="n">wasks</span><span class="p">[</span><span class="s1">&#39;k_rain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nr_dic</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">wasks</span></div>
 
-    <span class="k">def</span> <span class="nf">_update_means</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapa</span><span class="p">,</span> <span class="n">up_reg</span><span class="p">,</span> <span class="n">reg_lab</span><span class="p">):</span>
-        <span class="c1"># zone = list(reg_lab.keys())</span>
-        <span class="n">zone</span> <span class="o">=</span> <span class="n">reg_lab</span>
+    <span class="k">def</span> <span class="nf">_update_means</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapa</span><span class="p">,</span> <span class="n">up_reg</span><span class="p">,</span> <span class="n">maxkx</span><span class="p">):</span>
+        <span class="n">zone</span> <span class="o">=</span> <span class="n">maxkx</span><span class="o">.</span><span class="n">region</span>
         <span class="n">new_</span> <span class="o">=</span> <span class="p">[</span><span class="n">mapa</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">up_reg</span> <span class="o">==</span> <span class="n">i</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">zone</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;u2&#39;</span><span class="p">)]</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">zone</span><span class="p">,</span> <span class="n">new_</span><span class="p">))</span>
+        <span class="n">up_dic</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">zone</span><span class="p">,</span> <span class="n">new_</span><span class="p">))</span>
+        <span class="n">maxkx</span><span class="p">[</span><span class="s1">&#39;u_rain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">up_dic</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">maxkx</span><span class="p">[</span><span class="s1">&#39;k_rain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nr_dic</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">maxkx</span>
 
 <div class="viewcode-block" id="regional.xport_shp"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.regional.xport_shp">[docs]</a>    <span class="k">def</span> <span class="nf">xport_shp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        exports as shp.file from a geopandas input.\n</span>
+<span class="sd">        Input: none.\n</span>
+<span class="sd">        **kwargs -&gt;</span>
+<span class="sd">        driver : char; output&#39;s driver (default: &#39;ESRI Shapefile&#39;).</span>
+<span class="sd">        layer : char; output&#39;s layer name/title.</span>
+<span class="sd">        file : char; path to output shapefile.\n</span>
+<span class="sd">        Output -&gt; shapefile stored at &#39;file&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">drvr</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;driver&#39;</span><span class="p">,</span> <span class="s1">&#39;ESRI Shapefile&#39;</span><span class="p">)</span>
         <span class="n">lyr</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;layer&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">prnt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ZON_FILE</span><span class="p">)</span>
+        <span class="n">prnt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="n">ZON_FILE</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gshape</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">prnt</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="n">drvr</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="n">lyr</span><span class="p">)</span>
         <span class="k">return</span></div></div>
 
@@ -751,7 +742,7 @@
 <span class="c1"># %% mask  clipping</span>
 
 <div class="viewcode-block" id="region"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.region">[docs]</a><span class="k">class</span> <span class="nc">region</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">,</span> <span class="n">shp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="n">assertdir</span> <span class="o">=</span> <span class="s1">&#39;Wrong argument passed!</span><span class="se">\n</span><span class="s1">&#39;</span>\
             <span class="s1">&#39;You are trying to pass shapefile that may not exist &#39;</span>\
@@ -928,14 +919,19 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">met_cap</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;met_cap&#39;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;criterion&#39;</span><span class="p">,</span> <span class="s1">&#39;BIC&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_criteria</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt_mix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
-            <span class="c1"># fit n models &amp; pick up the optimum</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_n_models</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_mix</span><span class="p">)</span>
-            <span class="c1"># parameters initial set up</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">phi_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_0</span><span class="o">.</span><span class="n">means_</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">kappa_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_kappa</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">alpha_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_0</span><span class="o">.</span><span class="n">weights_</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mix_str</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_vmtab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+            <span class="c1"># the loop below is necessary as the FIT of the gaussian initial...</span>
+            <span class="c1"># guess(es) were causing in some iterations inconsistent ALPHA_</span>
+            <span class="n">alps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">alps</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="p">(</span><span class="n">alps</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">alps</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
+                <span class="c1"># print(alps); print(alps.sum())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fit_n_models</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_mix</span><span class="p">)</span>  <span class="c1"># fit_pick optimum</span>
+                <span class="c1"># parameters set up</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">phi_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_0</span><span class="o">.</span><span class="n">means_</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kappa_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_kappa</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">alpha_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_0</span><span class="o">.</span><span class="n">weights_</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mix_str</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_vmtab</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vmini</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+                <span class="n">alps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vmtab</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">values</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Invalid data type!</span><span class="se">\n</span><span class="s2">Erroneous data type passed. &quot;</span>
                             <span class="s2">&quot;Only DICTIONARY or NUMPY accepted.&quot;</span><span class="p">)</span>
@@ -1126,10 +1122,11 @@
 
 <span class="c1"># https://www.lancaster.ac.uk/staff/drummonn/PHYS281/demo-classes/</span>
 <div class="viewcode-block" id="circular.find_best_parameters"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.circular.find_best_parameters">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">find_best_parameters</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">find_best_parameters</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        estimates the optima parameters for a von Mises model of n-mixtures.\n</span>
-<span class="sd">        Input: np.array.\n</span>
+<span class="sd">        Input -&gt;</span>
+<span class="sd">        *arr* : numpy.array; numeric array.\n</span>
 <span class="sd">        **kwargs -&gt;</span>
 <span class="sd">        best_model : *sklearn.mixture._gaussian_mixture.GaussianMixture*.</span>
 <span class="sd">        n_mix      : int; must be provided if *best_model* is not.</span>
@@ -1139,7 +1136,7 @@
 <span class="sd">        Output -&gt; list with pd.DataFrame (optima pars) and str.model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
     <span class="c1"># initial reading</span>
-        <span class="n">data_p</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># one may use this caopy later</span>
+        <span class="n">data_p</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># one may use this copy later</span>
         <span class="n">best_model</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;best_model&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">n_mix</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;n_mix&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="c1"># how many mixtures?</span>
@@ -1158,8 +1155,13 @@
         <span class="n">kappa_</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;kappa_&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n_mix</span><span class="p">))</span>
         <span class="n">alpha_</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;alpha_&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">n_mix</span><span class="p">,</span> <span class="n">n_mix</span><span class="p">))</span>
 
+    <span class="c1"># initial guess</span>
+        <span class="n">ini_params</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;m</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_mix</span><span class="p">)],</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="n">alpha_</span><span class="p">,</span> <span class="s1">&#39;phi&#39;</span><span class="p">:</span> <span class="n">phi_</span><span class="p">,</span> <span class="s1">&#39;kappa&#39;</span><span class="p">:</span> <span class="n">kappa_</span><span class="p">})</span>
+
     <span class="c1"># compute the probs from a histogram (and modify data accordingly)</span>
-        <span class="n">probs</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">24</span><span class="o">*</span><span class="mi">4</span><span class="o">*</span><span class="mi">3</span><span class="o">*</span><span class="mi">1</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">probs</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">24</span><span class="o">*</span><span class="mi">4</span><span class="o">*</span><span class="mi">3</span><span class="o">*</span><span class="mi">1</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="n">variation</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -1190,17 +1192,17 @@
                   <span class="s1">&#39;phi&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nu</span><span class="p">],</span>
                   <span class="s1">&#39;kappa&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ka</span><span class="p">]})</span>
     <span class="c1"># return model.string and pars</span>
-        <span class="k">return</span> <span class="n">fit_params</span><span class="p">,</span> <span class="n">str_0</span></div>
+        <span class="k">return</span> <span class="n">str_0</span><span class="p">,</span> <span class="n">fit_params</span><span class="p">,</span> <span class="n">ini_params</span></div>
 
 <div class="viewcode-block" id="circular.fit"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.circular.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
-        <span class="n">parameters</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mix_str</span> <span class="o">=</span> <span class="n">circular</span><span class="o">.</span><span class="n">find_best_parameters</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mix_str</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">initial</span> <span class="o">=</span> <span class="n">circular</span><span class="o">.</span><span class="n">find_best_parameters</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">best_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_0</span><span class="p">,</span> <span class="n">phi_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">phi_</span><span class="p">,</span>
             <span class="n">kappa_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa_</span><span class="p">,</span> <span class="n">alpha_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha_</span><span class="p">)</span>
     <span class="c1"># updating the parameters in the class</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">phi_</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">.</span><span class="n">phi</span><span class="o">.</span><span class="n">values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kappa_</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">.</span><span class="n">kappa</span><span class="o">.</span><span class="n">values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha_</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">values</span>
-        <span class="k">return</span> <span class="n">parameters</span></div>
+        <span class="k">return</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">initial</span></div>
 
 <div class="viewcode-block" id="circular.save"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.circular.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -1286,7 +1288,7 @@
 
 <div class="viewcode-block" id="elevation"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.elevation">[docs]</a><span class="k">class</span> <span class="nc">elevation</span><span class="p">:</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">WKT_OGC</span><span class="p">,</span> <span class="n">DEM_FILE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># lon=c_x; lat=c_y; buffer=c_r</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># lon=c_x; lat=c_y; buffer=c_r</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        creates greometrie(s) from coordainates and radii.\n</span>
 <span class="sd">        Input -&gt;</span>
@@ -1320,8 +1322,6 @@
         <span class="c1"># guess input.proj &amp; create buffers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_guess_crs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">geom_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">radii</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">WKT_OGC</span> <span class="o">=</span> <span class="n">WKT_OGC</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">DEM_FILE</span> <span class="o">=</span> <span class="n">DEM_FILE</span>
 
     <span class="c1"># # https://stackoverflow.com/a/248066/5885810</span>
     <span class="c1">#     # parent_d = dirname(__file__)  # otherwise, will append the tests-path</span>
@@ -1372,7 +1372,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geom_</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">crs_out</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="elevation.retrieve_z"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.elevation.retrieve_z">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">retrieve_z</span><span class="p">(</span><span class="n">geo_</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">Z_STAT</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">retrieve_z</span><span class="p">(</span><span class="n">geo_</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        retrieves the elevation (from *raster*) for a set of geo_features.\n</span>
 <span class="sd">        Input -&gt;</span>
@@ -1449,7 +1449,7 @@
 
 <div class="viewcode-block" id="copulas"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.copulas">[docs]</a><span class="k">class</span> <span class="nc">copulas</span><span class="p">:</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cset</span><span class="p">,</span> <span class="n">pair</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">Z_STAT</span><span class="p">,</span> <span class="n">Z_CUTS</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cset</span><span class="p">,</span> <span class="n">pair</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        computes bi-variate copulas.\n</span>
 <span class="sd">        Input -&gt;</span>
@@ -1680,7 +1680,7 @@
 
 <div class="viewcode-block" id="betas.pd_base"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.betas.pd_base">[docs]</a>    <span class="k">def</span> <span class="nf">pd_base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cset</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        add estra variables to enable model fitting/optimization/solving.\n</span>
+<span class="sd">        adds extra variables to enable model fitting/optimization/solving.\n</span>
 <span class="sd">        Input -&gt;</span>
 <span class="sd">        *cset* : pd.DataFrame; with fields\</span>
 <span class="sd">            &#39;pf_maxrainrate&#39; &amp; &#39;radii&#39;-or-&#39;area&#39; &amp; &#39;avgrainrate&#39;-or-&#39;rratio&#39;.\n</span>
@@ -2057,7 +2057,7 @@
     <span class="c1">#                     facecolor=fig.get_facecolor())</span>
 
 
-<div class="viewcode-block" id="totals"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.totals">[docs]</a><span class="k">def</span> <span class="nf">totals</span><span class="p">(</span><span class="n">set_tot</span><span class="p">,</span> <span class="n">area_km</span><span class="p">,</span> <span class="n">X_RES</span><span class="p">,</span> <span class="n">Y_RES</span><span class="p">):</span>
+<div class="viewcode-block" id="totals"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.totals">[docs]</a><span class="k">def</span> <span class="nf">totals</span><span class="p">(</span><span class="n">set_tot</span><span class="p">,</span> <span class="n">area_km</span><span class="p">):</span>
     <span class="c1"># set_tot=fset.clip_set</span>
     <span class="c1"># area_km=(one_area.region.area_m / 1e6).values; area_km=npix</span>
     <span class="n">stot</span> <span class="o">=</span> <span class="n">betas</span><span class="p">(</span><span class="n">set_tot</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;total&#39;</span><span class="p">)</span>
@@ -2073,12 +2073,10 @@
 
 <span class="c1"># # reading MONTHLY.IMERG (for a given season)</span>
 <span class="c1"># # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
-<span class="c1"># from glob import glob</span>
-
 <span class="c1"># sdic = {&#39;MAM&#39;: [3, 4, 5], &#39;OND&#39;: [10, 11, 12]}</span>
 
 <span class="c1"># def imorg(year):  # year=2000; year=2021</span>
-<span class="c1">#     flist = glob(f&#39;../SETS/imerg_m/3B-MO*{year}*&#39; )</span>
+<span class="c1">#     flist = glob(f&#39;../SETS/imerg_m/3B-MO*{year}*&#39;)</span>
 <span class="c1">#     ix = np.isin(list(map(lambda x: int(x.split(&#39;E235959&#39;)[1][1:3]), flist)), sdic[SEASON_TAG])</span>
 <span class="c1">#     flist = [value for bool_, value in zip(ix, flist) if bool_]</span>
 <span class="c1">#     if len(flist)!=0:</span>
@@ -2105,28 +2103,191 @@
 <span class="c1">#     list(filter(None, ilis)), &#39;time&#39;, compat=&#39;override&#39;, coords=&#39;minimal&#39;)</span>
 
 
+<span class="c1"># %% icpacs casting</span>
+
+<div class="viewcode-block" id="forecasting"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting">[docs]</a><span class="k">class</span> <span class="nc">forecasting</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span> <span class="n">nc_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># xpace=SPACE</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        reads icpac&#39;s forecast and transforms it into shp.regions.\n</span>
+<span class="sd">        Input:\n</span>
+<span class="sd">        *space* : class; class where spatial variables are defined.</span>
+<span class="sd">        *nc_path*: char; path to icpac&#39;s forecasting nc.file.\n</span>
+<span class="sd">        **kwargs\n</span>
+<span class="sd">        resampling: rasterio.enums; resampling method.</span>
+<span class="sd">        nc_crs: char/pyproj.crs; WKT (well-known text) of icpac&#39;s forecast.</span>
+<span class="sd">        Output -&gt; a class having a geopandas of icpac-terciles.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># silly constant</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">space</span> <span class="o">=</span> <span class="n">space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nc_icpac</span> <span class="o">=</span> <span class="n">nc_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resam</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;resampling&#39;</span><span class="p">,</span> <span class="n">Resampling</span><span class="o">.</span><span class="n">nearest</span><span class="p">)</span>  <span class="c1"># bilinear</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nc_crs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nc_crs&#39;</span><span class="p">,</span> <span class="n">CRS</span><span class="p">(</span><span class="s1">&#39;EPSG:4326&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">icpac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reproject</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icpac_mask</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gshape</span> <span class="o">=</span> <span class="n">regional</span><span class="o">.</span><span class="n">to_shp</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">buffer_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">catchment_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">wkt_prj</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gshape</span><span class="p">[</span><span class="s1">&#39;tercile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat</span>
+
+<div class="viewcode-block" id="forecasting.reproject"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting.reproject">[docs]</a>    <span class="k">def</span> <span class="nf">reproject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        reprojects (to the local grid) (and nan-fills) the icpac forecast.\n</span>
+<span class="sd">        Input: none.\n</span>
+<span class="sd">        **kwargs -&gt;</span>
+<span class="sd">        base_mask : 2d-numpy; mask over which to interpolate/fill.\n</span>
+<span class="sd">        Output -&gt; tuple; 2D-numpy(s) having the buffer &amp; catchment rasters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;base_mask&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">buffer_mask</span><span class="p">)</span>
+
+        <span class="c1"># empty xarray</span>
+        <span class="n">blank</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">empty_map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">xs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">ys</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">wkt_prj</span><span class="p">)</span>
+        <span class="c1"># read icpac_nc &amp; assign crs</span>
+        <span class="n">icpac</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc_icpac</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+                                <span class="n">decode_cf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mask_and_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="n">icpac</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_crs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc_crs</span><span class="p">,</span> <span class="n">grid_mapping_name</span><span class="o">=</span><span class="s1">&#39;spatial_ref&#39;</span><span class="p">,</span>
+                            <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># pac = icpac.to_stacked_array(&#39;p&#39;, sample_dims=[&#39;LAT&#39;, &#39;LON&#39;], variable_dim=&#39;tercile&#39;)</span>
+        <span class="c1"># pac.plot(x=&#39;LON&#39;, y=&#39;LAT&#39;, col=&#39;p&#39;, col_wrap=3, cmap=&#39;gist_ncar_r&#39;, robust=False,)</span>
+        <span class="n">icpac</span> <span class="o">=</span> <span class="n">icpac</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;LAT&#39;</span><span class="p">:</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;LON&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,})</span>
+
+        <span class="n">re_</span> <span class="o">=</span> <span class="n">icpac</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">reproject_match</span><span class="p">(</span><span class="n">blank</span><span class="p">,</span> <span class="n">resampling</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resam</span><span class="p">)</span>
+        <span class="c1"># stack the reprojection (to have only one 3D-variable)</span>
+        <span class="n">se_</span> <span class="o">=</span> <span class="n">re_</span><span class="o">.</span><span class="n">to_stacked_array</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="n">sample_dims</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">],</span>
+                                   <span class="n">variable_dim</span><span class="o">=</span><span class="s1">&#39;tercile&#39;</span><span class="p">)</span>
+        <span class="c1"># se_.plot(x=&#39;x&#39;, y=&#39;y&#39;, col=&#39;p&#39;, col_wrap=3, cmap=&#39;gist_ncar_r&#39;,)</span>
+
+        <span class="c1"># # filling (to the nearest)</span>
+        <span class="c1"># mask = np.where(se_.sum(dim=(&#39;p&#39;), skipna=True).where(base == 1, np.nan) != 0)</span>
+        <span class="c1"># sf_ = []</span>
+        <span class="c1"># for i in range(se_.shape[-1]):</span>
+        <span class="c1">#     # https://stackoverflow.com/a/68197821/5885810</span>
+        <span class="c1">#     interp = NearestNDInterpolator(np.transpose(mask),</span>
+        <span class="c1">#                                    se_[:, :, i].data[mask])</span>
+        <span class="c1">#     sf_.append(interp(*np.indices(se_[:, :, i].data.shape)))</span>
+        <span class="c1"># sf_ = np.asarray(sf_)</span>
+        <span class="c1"># si_ = se_.copy(deep=True)</span>
+        <span class="c1"># si_[:] = np.transpose(np.asarray(sf_), (1, 2, 0))</span>
+        <span class="c1"># # si_.plot(x=&#39;x&#39;, y=&#39;y&#39;, col=&#39;p&#39;, col_wrap=3, cmap=&#39;gist_ncar_r&#39;,)</span>
+        <span class="c1"># return si_</span>
+
+        <span class="k">return</span> <span class="n">se_</span></div>
+
+<div class="viewcode-block" id="forecasting.split_diff"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting.split_diff">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">split_diff</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># arr = val_ter[0]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        adjusts the vector values to sum up 1.\n</span>
+<span class="sd">        Input -&gt;</span>
+<span class="sd">        *arr* : list; list of numeric array(s).\n</span>
+<span class="sd">        **kwargs -&gt;</span>
+<span class="sd">        t : int or float; absolute limit representing 1; (default: 100).\n</span>
+<span class="sd">        Output -&gt; adjusted numpy-lists where the elements&#39; sum adds up to 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tot</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>  <span class="c1"># .round(2)</span>
+        <span class="n">sam</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">rra</span> <span class="o">=</span> <span class="n">arr</span> <span class="o">+</span> <span class="n">arr</span> <span class="o">/</span> <span class="n">sam</span> <span class="o">*</span> <span class="p">(</span><span class="n">tot</span> <span class="o">-</span> <span class="n">sam</span><span class="p">)</span>
+        <span class="c1"># return &#39;_&#39;.join(list(map(str, rra.round(3))))</span>
+        <span class="k">return</span> <span class="n">rra</span></div>
+
+<div class="viewcode-block" id="forecasting.dominant_tercile"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting.dominant_tercile">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">dominant_tercile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        finds and masks the maximum value of a vector/array.\n</span>
+<span class="sd">        Input -&gt;</span>
+<span class="sd">        *x* : np.array; numeric array containint icpac terciles.\n</span>
+<span class="sd">        **kwargs -&gt;</span>
+<span class="sd">        c : int or float; numeric value to mask the dominant tercile with.\n</span>
+<span class="sd">        Output -&gt; numpy where the maximum is masked by &#39;c&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">some_c</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">y</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">y</span><span class="p">)]</span> <span class="o">=</span> <span class="n">some_c</span>
+        <span class="k">return</span> <span class="n">y</span></div>
+
+<div class="viewcode-block" id="forecasting.icpac_mask"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting.icpac_mask">[docs]</a>    <span class="k">def</span> <span class="nf">icpac_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        computes the icpac.mask and its tercile.means.\n</span>
+<span class="sd">        Input: none.\n</span>
+<span class="sd">        **kwargs -&gt;</span>
+<span class="sd">        in_core : list; char list with dimensions found in &#39;self.icpac&#39;.</span>
+<span class="sd">        out_core : list; char list with dimensions found in &#39;self.icpac&#39;.</span>
+<span class="sd">        stat_dim : tuple; char tupe with &#39;self.icpac&#39; dims to compute stats along.\n</span>
+<span class="sd">        Output -&gt; tuple; 2D-numpy of icpac mask (1st), and tercile.means (2nd).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">in_dim</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;in_core&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">])</span>
+        <span class="n">out_dim</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;out_core&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">])</span>
+        <span class="n">sum_dim</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stat_dim&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">))</span>
+
+        <span class="n">catch_icpac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icpac</span>
+        <span class="n">maxos</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span>
+            <span class="n">forecasting</span><span class="o">.</span><span class="n">dominant_tercile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">icpac</span><span class="p">,</span>
+            <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[</span><span class="n">in_dim</span><span class="p">],</span> <span class="n">output_core_dims</span><span class="o">=</span><span class="p">[</span><span class="n">out_dim</span><span class="p">],</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">},</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;allowed&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">maxos</span> <span class="o">=</span> <span class="n">maxos</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">maxos</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span>
+        <span class="c1"># maxos.plot(x=&#39;x&#39;, y=&#39;y&#39;, col=&#39;p&#39;, col_wrap=3, cmap=&#39;turbo&#39;,)</span>
+
+        <span class="c1"># constructing icpac.mask</span>
+        <span class="n">ter</span> <span class="o">=</span> <span class="n">maxos</span> <span class="o">*</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="p">{</span><span class="n">sum_dim</span><span class="p">})</span>
+        <span class="n">ter</span> <span class="o">=</span> <span class="n">ter</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">sum_dim</span><span class="p">,</span> <span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># ter = ter.where(~np.isnan(maxos[:, :, 0]), np.nan)</span>
+        <span class="c1"># ter.plot(cmap=&#39;turbo_r&#39;,)</span>
+
+        <span class="c1"># computing MEANs of icpac.regions</span>
+        <span class="n">val_ter</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">icpac</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="o">~</span><span class="p">(</span><span class="n">ter</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">catchment_mask</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="n">ter</span> <span class="o">==</span> <span class="n">i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">isnull</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">icpac</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">]</span>
+        <span class="c1"># round the MEANs &amp; convert them into a char.string</span>
+        <span class="n">vals_</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">forecasting</span><span class="o">.</span><span class="n">split_diff</span><span class="p">,</span> <span class="n">val_ter</span><span class="p">))</span>
+        <span class="n">vals_</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">vals_</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">ter</span><span class="p">,</span> <span class="n">vals_</span></div>
+
+<div class="viewcode-block" id="forecasting.xport_shp"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting.xport_shp">[docs]</a>    <span class="k">def</span> <span class="nf">xport_shp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        exports as shp.file from a geopandas input.\n</span>
+<span class="sd">        Input: -&gt;</span>
+<span class="sd">        PDF_FILE : str; path to PDF File</span>
+<span class="sd">        **kwargs -&gt;</span>
+<span class="sd">        driver : char; output&#39;s driver (default: &#39;ESRI Shapefile&#39;).</span>
+<span class="sd">        layer : char; output&#39;s layer name/title.</span>
+<span class="sd">        file : char; path to output shapefile.\n</span>
+<span class="sd">        Output -&gt; shapefile stored at &#39;file&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">drvr</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;driver&#39;</span><span class="p">,</span> <span class="s1">&#39;ESRI Shapefile&#39;</span><span class="p">)</span>
+        <span class="n">lyr</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;layer&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">prnt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="n">ZON_FILE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gshape</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">prnt</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="n">drvr</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="n">lyr</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+
+
 <span class="c1"># %% call all</span>
 
-<span class="c1"># def compute(region=None):</span>
-<span class="c1">#     if region=None:</span>
-<div class="viewcode-block" id="compute"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.compute">[docs]</a><span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="n">RAIN_MAP</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">,</span> <span class="n">NREGIONS</span><span class="p">,</span> <span class="n">WKT_OGC</span><span class="p">,</span> <span class="n">ZON_FILE</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">,</span> <span class="n">PDF_FILE</span><span class="p">,</span> <span class="n">BUFFER</span><span class="p">,</span> <span class="n">X_RES</span><span class="p">,</span> <span class="n">Y_RES</span><span class="p">):</span>
+<div class="viewcode-block" id="compute"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.compute">[docs]</a><span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">RAIN_MAP</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">,</span> <span class="n">PDF_FILE</span><span class="p">,</span> <span class="n">ZON_FILE</span><span class="p">):</span>  <span class="c1"># space = masking()</span>
+
+    <span class="n">EVENT_DATA</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;./model_input/0326_collect_</span><span class="si">{</span><span class="n">SEASON_TAG</span><span class="si">}</span><span class="s1">_track_hadIMERG_.nc&#39;</span>
 
 <span class="c1">#  1. SPLITING SHP INTO AOI</span>
     <span class="c1"># if reading SEASONAL.MAP with XARRAY</span>
     <span class="n">seas</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span>
-        <span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">parent_d</span><span class="p">,</span> <span class="n">RAIN_MAP</span><span class="p">)),</span>
+        <span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">parent_d</span><span class="p">,</span> <span class="n">RAIN_MAP</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">)),</span>
         <span class="n">chunks</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">decode_cf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_cftime</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">decode_coords</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span>  <span class="c1"># &quot;decode_coords&quot; helps to interpret CRS</span>
         <span class="p">)</span>
     <span class="n">seas</span> <span class="o">=</span> <span class="n">seas</span><span class="o">.</span><span class="n">drop_vars</span><span class="p">(</span><span class="s1">&#39;spatial_ref&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">})</span>
     <span class="c1"># seas.rain.plot(cmap=&#39;gist_ncar&#39;, robust=True)</span>
 
-    <span class="c1"># space = masking()</span>
-    <span class="n">space</span> <span class="o">=</span> <span class="n">masking</span><span class="p">(</span><span class="n">SHP_FILE</span><span class="p">,</span> <span class="n">WKT_OGC</span><span class="p">,</span> <span class="n">BUFFER</span><span class="p">,</span> <span class="n">X_RES</span><span class="p">,</span> <span class="n">Y_RES</span><span class="p">,</span> <span class="n">catchment</span><span class="o">=</span><span class="n">SHP_FILE</span><span class="p">)</span>  <span class="c1"># space.plot()</span>
-    <span class="n">rain_</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">seas</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">xs</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">ys</span><span class="p">,</span> <span class="n">WKT_OGC</span><span class="p">)</span>
+    <span class="n">rain_</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">seas</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">xs</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">ys</span><span class="p">)</span>
 
     <span class="n">areas</span> <span class="o">=</span> <span class="n">regional</span><span class="p">(</span><span class="n">rain_</span><span class="o">.</span><span class="n">field_prj</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">buffer_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">),</span>
-                     <span class="n">space</span><span class="o">.</span><span class="n">catchment_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">),</span> <span class="n">WKT_OGC</span><span class="p">,</span> <span class="n">ZON_FILE</span><span class="p">,</span> <span class="n">nr</span><span class="o">=</span><span class="n">NREGIONS</span><span class="p">,</span> <span class="p">)</span>
+                     <span class="n">space</span><span class="o">.</span><span class="n">catchment_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">),</span> <span class="n">nr</span><span class="o">=</span><span class="n">NREGIONS</span><span class="p">)</span>
     <span class="c1"># update xport.shp.file name &amp; xport it</span>
     <span class="n">FILE_ZON</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">parent_d</span><span class="p">,</span>
         <span class="n">ZON_FILE</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.shp&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;_</span><span class="si">{</span><span class="n">SEASON_TAG</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">areas</span><span class="o">.</span><span class="n">n_</span><span class="si">}</span><span class="s1">r.shp&#39;</span><span class="p">)</span>
@@ -2151,11 +2312,11 @@
                            <span class="n">chunked_array_type</span><span class="o">=</span><span class="s1">&#39;dask&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
 
     <span class="c1"># for i, r in enumerate(areas.gshape.region):</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">areas</span><span class="o">.</span><span class="n">gshape</span><span class="o">.</span><span class="n">region</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">50</span><span class="p">)):</span>  <span class="c1"># i=0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">areas</span><span class="o">.</span><span class="n">gshape</span><span class="o">.</span><span class="n">region</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">50</span><span class="p">)):</span>  <span class="c1"># i=2</span>
 
 <span class="c1">#  4. DEFINE THE AREA OF ANALYSIS</span>
         <span class="c1"># one_area = region()  # if.doing.the.whole.area (also?)</span>
-        <span class="n">one_area</span> <span class="o">=</span> <span class="n">region</span><span class="p">(</span><span class="n">SHP_FILE</span><span class="p">,</span> <span class="n">shp</span><span class="o">=</span><span class="n">areas</span><span class="o">.</span><span class="n">gshape</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="n">i</span><span class="p">]])</span>
+        <span class="n">one_area</span> <span class="o">=</span> <span class="n">region</span><span class="p">(</span><span class="n">shp</span><span class="o">=</span><span class="n">areas</span><span class="o">.</span><span class="n">gshape</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="n">i</span><span class="p">]])</span>
         <span class="c1"># areas.gshape.iloc[[i]].geometry.xs(i)     # plotting</span>
         <span class="c1"># one_area.region.geometry.xs(i)            # plotting</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="n">one_area</span><span class="o">.</span><span class="n">region</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -2271,7 +2432,8 @@
         <span class="n">mdir_rad</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">apply_ufunc</span><span class="p">(</span><span class="n">one_vm</span><span class="p">,</span> <span class="n">mdir</span><span class="p">,</span> <span class="n">dask</span><span class="o">=</span><span class="s1">&#39;parallelized&#39;</span><span class="c1">#&#39;allowed&#39;</span>
             <span class="p">,</span><span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">input_core_dims</span><span class="o">=</span><span class="p">[[</span><span class="s1">&#39;times&#39;</span><span class="p">,]])</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
         <span class="n">dir_c</span> <span class="o">=</span> <span class="n">circular</span><span class="p">(</span><span class="n">mdir_rad</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">mdir_rad</span><span class="p">)],</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">,</span> <span class="n">met_cap</span><span class="o">=</span><span class="mf">.91</span><span class="p">)</span>
-        <span class="c1"># tod_c.plot_samples(file=&#39;zome_file.jpg&#39;, data_type=&#39;dir&#39;, bins=50)</span>
+        <span class="c1"># dir_c._vmtab, dir_c._vmtab.sum()</span>
+        <span class="c1"># dir_c.plot_samples(file=&#39;zome_file.jpg&#39;, data_type=&#39;dir&#39;, bins=50)</span>
         <span class="c1"># dir_c.plot_samples(data_type=&#39;dir&#39;)</span>
         <span class="c1"># dir_c.plot_bic()</span>
         <span class="n">dir_c</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">FILE_PDF</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;DIRMOV&#39;</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="n">r</span><span class="p">)</span>
@@ -2286,6 +2448,7 @@
         <span class="n">tod</span> <span class="o">=</span> <span class="n">dset</span><span class="o">.</span><span class="n">clip_set</span><span class="o">.</span><span class="n">start_basetime</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
         <span class="n">tod</span> <span class="o">=</span> <span class="p">(</span><span class="n">tod</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">hour</span> <span class="o">+</span> <span class="n">tod</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">minute</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">tod</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">second</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
         <span class="n">tod_c</span> <span class="o">=</span> <span class="n">circular</span><span class="p">(</span><span class="n">tod</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;tod&#39;</span><span class="p">,</span> <span class="n">met_cap</span><span class="o">=</span><span class="mf">.93</span><span class="p">)</span>
+        <span class="c1"># tod_c._vmtab, tod_c._vmtab.sum(), tod_c._vmini, tod_c._vmini.sum()</span>
         <span class="c1"># tod_c.plot_samples(data_type=&#39;tod&#39;, bins=50)</span>
         <span class="c1"># tod_c.plot_bic()</span>
         <span class="n">tod_c</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">FILE_PDF</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;DATIME&#39;</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="n">r</span><span class="p">)</span>
@@ -2293,32 +2456,49 @@
 <span class="c1"># 18. DAY of YEAR [CIRCULAR]</span>
         <span class="n">doy</span> <span class="o">=</span> <span class="p">(</span><span class="n">dset</span><span class="o">.</span><span class="n">clip_set</span><span class="o">.</span><span class="n">start_basetime</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">dayofyear</span> <span class="o">+</span> <span class="n">tod</span> <span class="o">/</span> <span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
         <span class="n">doy_c</span> <span class="o">=</span> <span class="n">circular</span><span class="p">(</span><span class="n">doy</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;doy&#39;</span><span class="p">,</span> <span class="n">met_cap</span><span class="o">=</span><span class="mf">.83</span><span class="p">)</span>
+        <span class="c1"># doy_c._vmtab, doy_c._vmtab.sum()</span>
         <span class="c1"># doy_c.plot_samples(data_type=&#39;doy&#39;, bins=20)</span>
         <span class="c1"># doy_c.plot_bic()</span>
         <span class="n">doy_c</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">FILE_PDF</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;DOYEAR&#39;</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="n">r</span><span class="p">)</span></div>
 
 
+<span class="c1"># %% call pac</span>
+
+<div class="viewcode-block" id="compute_icpac"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.pdfs_.compute_icpac">[docs]</a><span class="k">def</span> <span class="nf">compute_icpac</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">TER_FILE</span><span class="p">,</span> <span class="n">TER_YEAR</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">):</span>  <span class="c1"># space = masking()</span>
+    <span class="n">ifile</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./model_input/Ens_Prec_*</span><span class="si">{</span><span class="n">SEASON_TAG</span><span class="si">}</span><span class="s1">*-avgRaw</span><span class="si">{</span><span class="n">TER_YEAR</span><span class="si">}</span><span class="s1">.nc&#39;</span><span class="p">)</span>
+    <span class="c1"># ifile should be a 1-element list!</span>
+    <span class="n">ifile</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">parent_d</span><span class="p">,</span> <span class="n">ifile</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+<span class="c1"># 19. PRODUCE ICPAC FORECAST SHP</span>
+    <span class="n">assertcast</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;NO ICPAC_CAST!</span><span class="se">\n</span><span class="s1">&#39;</span>\
+        <span class="s1">&#39;You chose to account for the ICPAC forecasting. Nevertheless, the&#39;</span>\
+        <span class="sa">f</span><span class="s1">&#39; path to the icpac.nc file </span><span class="si">{</span><span class="n">ifile</span><span class="si">}</span><span class="s1"> was not correctly set up or &#39;</span>\
+        <span class="s1">&#39;the file does not exist.</span><span class="se">\n</span><span class="s1">&#39;</span>\
+        <span class="s1">&#39;Please ensure that the icpac.nc file exists in the correct path.&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">ifile</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">assertcast</span><span class="p">)</span>
+
+    <span class="n">forecast</span> <span class="o">=</span> <span class="n">forecasting</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">ifile</span><span class="p">)</span>
+    <span class="c1"># update xport.shp.file name &amp; xport it</span>
+    <span class="n">forecast</span><span class="o">.</span><span class="n">xport_shp</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">parent_d</span><span class="p">,</span> <span class="n">TER_FILE</span><span class="p">)))</span></div>
+
+
 <span class="c1"># %% main</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Usage: python &lt;script_name.py&gt; &lt;path_to_config.json&gt;&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     
     <span class="n">config_file</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="c1"># Load JSON data</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
-    <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 
-    <span class="n">wkt_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;WKT_OGC&quot;</span><span class="p">])</span>
-
-    <span class="nb">globals</span><span class="p">()[</span><span class="s2">&quot;WKT_OGC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wkt_string</span>
-
-    <span class="n">compute</span><span class="p">(</span><span class="n">RAIN_MAP</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">,</span> <span class="n">NREGIONS</span><span class="p">,</span> <span class="n">WKT_OGC</span><span class="p">,</span> <span class="n">ZON_FILE</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">,</span> <span class="n">PDF_FILE</span><span class="p">,</span> <span class="n">BUFFER</span><span class="p">,</span> <span class="n">X_RES</span><span class="p">,</span> <span class="n">Y_RES</span><span class="p">)</span>
+    <span class="n">space</span> <span class="o">=</span> <span class="n">masking</span><span class="p">(</span><span class="n">catchment</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;SHP_FILE&quot;</span><span class="p">])</span>  <span class="c1"># space.plot()</span>
+    
+    <span class="n">compute_icpac</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;TER_FILE&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;TER_YEAR&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;SEASON_TAG&quot;</span><span class="p">])</span> <span class="k">if</span> <span class="n">ICPAC_ONLY</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">compute</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;RAIN_MAP&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;SEASON_TAG&quot;</span><span class="p">])</span>
 </pre></div>
 
            </div>

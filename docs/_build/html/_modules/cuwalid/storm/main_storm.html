@@ -48,7 +48,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Licences.html">Licences</a></li>
 </ul>
 
         </div>
@@ -79,7 +82,8 @@
 <span></span><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">cuwalid.storm.rainfall</span> <span class="kn">import</span> <span class="n">wrapper</span>
-<span class="kn">from</span> <span class="nn">cuwalid.storm.checks_</span> <span class="kn">import</span> <span class="n">welcome</span>
+<span class="kn">from</span> <span class="nn">cuwalid.storm.checks_</span> <span class="kn">import</span> <span class="n">welcome</span><span class="p">,</span> <span class="n">assertion</span>
+<span class="kn">from</span> <span class="nn">cuwalid.storm.parameters</span> <span class="kn">import</span> <span class="o">*</span>
 
 <div class="viewcode-block" id="run_storm"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.main_storm.run_storm">[docs]</a><span class="k">def</span> <span class="nf">run_storm</span><span class="p">(</span><span class="n">json_input</span><span class="p">):</span>
 
@@ -90,11 +94,24 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">json_input</span>
 
-    <span class="n">willkommen</span> <span class="o">=</span> <span class="n">welcome</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;NUMSIMS&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;NUMSIMYRS&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;PTOT_SC&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;PTOT_SF&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;STORMINESS_SC&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;STORMINESS_SF&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;OUT_PATH&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;SEASON_TAG&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;SEED_YEAR&quot;</span><span class="p">],</span> <span class="p">)</span>
+    <span class="n">NUMSIMS</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;NUMSIMS&quot;</span><span class="p">]</span>
+    <span class="n">NUMSIMYRS</span><span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;NUMSIMYRS&quot;</span><span class="p">]</span>
+    <span class="n">SEASON_TAG</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;SEASON_TAG&quot;</span><span class="p">]</span>
+    <span class="n">SEED_YEAR</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;SEED_YEAR&quot;</span><span class="p">]</span>
+    <span class="n">OUT_PATH</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;OUT_PATH&quot;</span><span class="p">]</span>
+    <span class="n">TER_FILE</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;TER_FILE&quot;</span><span class="p">]</span>
+    <span class="n">PDF_FILE</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;PDF_FILE&quot;</span><span class="p">]</span>
+    <span class="n">DEM_FILE</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;DEM_FILE&quot;</span><span class="p">]</span>
+    <span class="n">SHP_FILE</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;SHP_FILE&quot;</span><span class="p">]</span>
+    <span class="n">ZON_FILE</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;ZON_FILE&quot;</span><span class="p">]</span>
+
+
+    <span class="n">willkommen</span> <span class="o">=</span> <span class="n">welcome</span><span class="p">(</span><span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">,</span> <span class="n">SEED_YEAR</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">,</span> <span class="n">OUT_PATH</span><span class="p">)</span>
+    <span class="n">assertion</span><span class="p">(</span><span class="n">willkommen</span><span class="o">.</span><span class="n">wet_hash</span><span class="p">,</span> <span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">,</span> <span class="n">DEM_FILE</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">)</span>
     <span class="n">NC_NAMES</span> <span class="o">=</span> <span class="n">willkommen</span><span class="o">.</span><span class="n">ncs</span>
     
     <span class="n">wrapper</span><span class="p">(</span>
-        <span class="n">NC_NAMES</span><span class="p">,</span> <span class="n">config</span>
+        <span class="n">NC_NAMES</span><span class="p">,</span> <span class="n">SEED_YEAR</span><span class="p">,</span> <span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">,</span> <span class="n">SEASON_TAG</span><span class="p">,</span> <span class="n">TER_FILE</span><span class="p">,</span> <span class="n">PDF_FILE</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">,</span> <span class="n">ZON_FILE</span>
     <span class="p">)</span></div>
 
 

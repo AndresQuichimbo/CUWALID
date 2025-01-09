@@ -48,7 +48,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Licences.html">Licences</a></li>
 </ul>
 
         </div>
@@ -83,6 +86,8 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">cuwalid.storm.parameters</span> <span class="kn">import</span> <span class="n">PTOT_SC</span><span class="p">,</span> <span class="n">PTOT_SF</span>
+<span class="kn">from</span> <span class="nn">cuwalid.storm.parameters</span> <span class="kn">import</span> <span class="n">Z_CUTS</span><span class="p">,</span> <span class="n">STORMINESS_SC</span><span class="p">,</span> <span class="n">STORMINESS_SF</span>
 <span class="kn">from</span> <span class="nn">dateutil.tz</span> <span class="kn">import</span> <span class="n">tzlocal</span>
 <span class="c1"># https://stackoverflow.com/a/248066/5885810</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span>
@@ -97,7 +102,7 @@
 
 <div class="viewcode-block" id="parse"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.parse">[docs]</a><span class="k">class</span> <span class="nc">parse</span><span class="p">:</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">NUMSIMS</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">PTOT_SC</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">PTOT_SF</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">STORMINESS_SC</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">STORMINESS_SF</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        preliminars before running STORM3.\n</span>
 <span class="sd">        Parameters</span>
@@ -108,6 +113,7 @@
 <span class="sd">        --------</span>
 <span class="sd">        n_sims : int; indicates the number of simulations/files to output.</span>
 <span class="sd">        n_sims_y : int; indicates the number of years (per simulation) to run.</span>
+<span class="sd">        year : int; indicates the (date) year of the simulation.</span>
 <span class="sd">        ptot_sc : list; Step Change factors in observed wetness.</span>
 <span class="sd">        ptot_sf : list; Progressive Trend factors in observed wetness.</span>
 <span class="sd">        storm_sc : list; Step Change factors in observed storminess.</span>
@@ -121,6 +127,7 @@
         <span class="c1"># assign the global/default parameters (to inner variables)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">numsims</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;n_sims&#39;</span><span class="p">,</span> <span class="n">NUMSIMS</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">numsimyrs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;n_sims_y&#39;</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed_year</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">SEED_YEAR</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ptot_sc&#39;</span><span class="p">,</span> <span class="n">PTOT_SC</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sf</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ptot_sf&#39;</span><span class="p">,</span> <span class="n">PTOT_SF</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storm_sc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;storm_sc&#39;</span><span class="p">,</span> <span class="n">STORMINESS_SC</span><span class="p">)</span>
@@ -182,6 +189,10 @@
             <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of years per Simulation (default: </span><span class="si">%(default)s</span><span class="s1">)&#39;</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s1">&#39;-a&#39;</span><span class="p">,</span> <span class="s1">&#39;--SEED_YEAR&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed_year</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Year (XXXX) to pin-down the Simulation (default: </span><span class="si">%(default)s</span><span class="s1">)&#39;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s1">&#39;-ps&#39;</span><span class="p">,</span> <span class="s1">&#39;--PTOT_SC&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ptot_sc</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">none_too</span><span class="p">,</span>
             <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span>  <span class="c1"># type=float,</span>
             <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Relative change in the seasonal rain equally applied to &#39;</span>
@@ -216,30 +227,34 @@
 
 <div class="viewcode-block" id="welcome"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.welcome">[docs]</a><span class="k">class</span> <span class="nc">welcome</span><span class="p">:</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NUMSIMS</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">PTOT_SC</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">PTOT_SF</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">STORMINESS_SC</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">STORMINESS_SF</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">OUT_PATH</span><span class="o">=</span><span class="s2">&quot;storm_output&quot;</span><span class="p">,</span> <span class="n">SEASON</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">YEAR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_sims</span><span class="p">,</span> <span class="n">n_sims_y</span><span class="p">,</span> <span class="n">seed_year</span><span class="p">,</span> 
+                 <span class="n">season</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="n">ptot_sc</span><span class="o">=</span><span class="n">PTOT_SC</span><span class="p">,</span> <span class="n">ptot_sf</span><span class="o">=</span><span class="n">PTOT_SF</span><span class="p">,</span> 
+                 <span class="n">storm_sc</span><span class="o">=</span><span class="n">STORMINESS_SC</span><span class="p">,</span> <span class="n">storm_sf</span><span class="o">=</span><span class="n">STORMINESS_SF</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        generates and prints the names of the output nc-files.\n</span>
-<span class="sd">        Input: none.\n</span>
-<span class="sd">        **kwargs -&gt;</span>
+<span class="sd">        generates and prints the names of the output nc-files.</span>
+
+<span class="sd">        Input:</span>
+<span class="sd">        n_sims : int; indicates the number of simulations/files to output.</span>
+<span class="sd">        n_sims_y : int; indicates the number of years (per simulation) to run.</span>
+<span class="sd">        year : int; indicates the (date) year of the simulation.</span>
 <span class="sd">        ptot_sc : list; Step Change factors in observed wetness.</span>
 <span class="sd">        ptot_sf : list; Progressive Trend factors in observed wetness.</span>
 <span class="sd">        storm_sc : list; Step Change factors in observed storminess.</span>
 <span class="sd">        storm_sf : list; Progressive Trend factors in observed storminess.</span>
-<span class="sd">        n_sims : int; indicates the number of simulations/files to output.</span>
-<span class="sd">        n_sims_y : int; indicates the number of years (per simulation) to run.</span>
-<span class="sd">        out_path : char; where to store the simulations.\n</span>
+<span class="sd">        out_path : char; where to store the simulations.</span>
+
 <span class="sd">        Output -&gt; list; containing output file-paths/names.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># assign the global/default parameters (to inner variables)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">numsims</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;n_sims&#39;</span><span class="p">,</span> <span class="n">NUMSIMS</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">numsimyrs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;n_sims_y&#39;</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ptot_sc&#39;</span><span class="p">,</span> <span class="n">PTOT_SC</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sf</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ptot_sf&#39;</span><span class="p">,</span> <span class="n">PTOT_SF</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">storm_sc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;storm_sc&#39;</span><span class="p">,</span> <span class="n">STORMINESS_SC</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">storm_sf</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;storm_sf&#39;</span><span class="p">,</span> <span class="n">STORMINESS_SF</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;out_path&#39;</span><span class="p">,</span> <span class="n">OUT_PATH</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">season</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;season&#39;</span><span class="p">,</span> <span class="n">SEASON</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="n">YEAR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numsims</span> <span class="o">=</span> <span class="n">n_sims</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numsimyrs</span> <span class="o">=</span> <span class="n">n_sims_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed_year</span> <span class="o">=</span> <span class="n">seed_year</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">season</span> <span class="o">=</span> <span class="n">season</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sc</span> <span class="o">=</span> <span class="n">ptot_sc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sf</span> <span class="o">=</span> <span class="n">ptot_sf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storm_sc</span> <span class="o">=</span> <span class="n">storm_sc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storm_sf</span> <span class="o">=</span> <span class="n">storm_sf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span> <span class="o">=</span> <span class="n">out_path</span>
         <span class="c1"># table relating core variables (Var2) to understandable meanings (Var3)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wet_hash</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">({</span>
             <span class="s1">&#39;Var2&#39;</span><span class="p">:[</span><span class="s1">&#39;PTOT&#39;</span><span class="p">,</span> <span class="s1">&#39;STORMINESS&#39;</span><span class="p">],</span>
@@ -290,67 +305,64 @@
             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">scalar</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
                 <span class="n">exec</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;globals()[&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">&quot;] = np.repeat(scalar[x], self.numsims)&#39;</span><span class="p">)</span>
         <span class="c1"># print(PTOT_SC, PTOT_SF)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sc</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sf</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">storm_sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storm_sc</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">storm_sf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storm_sf</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sc</span> <span class="o">=</span> <span class="n">PTOT_SC</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sf</span> <span class="o">=</span> <span class="n">PTOT_SF</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storm_sc</span> <span class="o">=</span> <span class="n">STORMINESS_SC</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storm_sf</span> <span class="o">=</span> <span class="n">STORMINESS_SF</span></div>
 
-<div class="viewcode-block" id="welcome.output_path"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.welcome.output_path">[docs]</a>    <span class="k">def</span> <span class="nf">output_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="welcome.output_path"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.welcome.output_path">[docs]</a>    <span class="k">def</span> <span class="nf">output_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generates the names of the output NC files.</span>
-<span class="sd">        Input: none.</span>
-<span class="sd">        Output -&gt; list; containing output file paths/names.</span>
+<span class="sd">        generates the names of the output nc-files.\n</span>
+<span class="sd">        Input: none.\n</span>
+<span class="sd">        Output -&gt; list; containing output file-paths/names.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Infer scenarios</span>
+        <span class="c1"># infer scenarios</span>
         <span class="n">PTOT_scene</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">infer_scenario</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ptot_sf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_ptot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_sign</span>
-        <span class="p">)</span>
+            <span class="p">)</span>
         <span class="n">STORMINESS_scene</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">infer_scenario</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">storm_sc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">storm_sf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_storm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_sign</span>
-        <span class="p">)</span>
+            <span class="p">)</span>
 
         <span class="c1"># Use the current working directory instead of parent_d</span>
         <span class="n">abs_path</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="p">))</span>
 
-        <span class="c1"># Create the subfolder with the season_year format</span>
-        <span class="n">subfolder_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">season</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">subfolder_path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">abs_path</span><span class="p">,</span> <span class="n">subfolder_name</span><span class="p">)</span>
-        <span class="n">Path</span><span class="p">(</span><span class="n">subfolder_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">abs_path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Determine the base file format</span>
         <span class="n">base_name_format</span> <span class="o">=</span> <span class="s2">&quot;Forecast_PRE_HAD_ens_</span><span class="si">{year}</span><span class="s2">_</span><span class="si">{season}</span><span class="s2">_</span><span class="si">{sim_id}</span><span class="s2">.nc&quot;</span>
 
         <span class="c1"># Define NC output file names</span>
         <span class="n">nc_paths</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">subfolder_path</span><span class="p">)</span><span class="si">}</span><span class="s2">/&quot;</span> <span class="o">+</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">abs_path</span><span class="p">)</span><span class="si">}</span><span class="s2">/&quot;</span> <span class="o">+</span>
             <span class="n">base_name_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">year</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+                <span class="n">year</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed_year</span><span class="p">,</span>
                 <span class="n">season</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">season</span><span class="p">,</span>
                 <span class="n">sim_id</span><span class="o">=</span><span class="n">sim_id</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">sim_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numsims</span><span class="p">)</span>
         <span class="p">]</span>
 
-        <span class="c1"># Print the core info</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">RUN SETTINGS&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;************</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of simulations: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">numsims</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Years per simulation: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">numsimyrs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
+        <span class="c1"># print the CORE INFO</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">RUN SETTINGS&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;************</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;number of simulations: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">numsims</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;years per simulation : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">numsimyrs</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;simulation seed year : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">seed_year</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wet_hash</span><span class="o">.</span><span class="n">Var2</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">wet_hash</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">wet_hash</span><span class="o">.</span><span class="n">Var2</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">j</span><span class="p">])]</span><span class="o">.</span><span class="n">Var3</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> scenarios &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;sim</span><span class="si">{</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numsims</span><span class="p">)])</span><span class="si">}</span><span class="s1">):  &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">eval</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">_scene[</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">].center(8,&quot;</span><span class="w"> </span><span class="s2">&quot;)&quot;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numsims</span><span class="p">)]))</span><span class="si">}</span><span class="s1">&#39;</span>
-            <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Output paths:&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span>
-            <span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">nc_paths</span><span class="p">)),</span> <span class="s1">&#39; &#39;</span><span class="p">))</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span>
-                <span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">nc_paths</span><span class="p">))</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">nc_paths</span>
-        <span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">wet_hash</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">wet_hash</span><span class="o">.</span><span class="n">Var2</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">j</span><span class="p">])]</span><span class="o">.</span><span class="n">Var3</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> scenarios &#39;</span>
+                  <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;sim</span><span class="si">{</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numsims</span><span class="p">)])</span><span class="si">}</span><span class="s1">):  &#39;</span>
+                  <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="w"> </span><span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">eval</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">_scene[</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">].center(8,&quot;</span><span class="w"> </span><span class="s2">&quot;)&quot;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numsims</span><span class="p">)]))</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="c1"># 8 because &#39;stormsT+&#39; is the maximum length of these strings</span>
+        <span class="c1"># https://stackoverflow.com/a/25559140/5885810  (string no sign)</span>
+        <span class="c1"># https://www.delftstack.com/howto/python/python-pad-string-with-spaces/</span>
+        <span class="c1"># https://stackoverflow.com/a/45120812/5885810  (print/create string padding)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Output paths:&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[(</span><span class="n">k</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">nc_paths</span><span class="p">)),</span> <span class="s1">&#39; &#39;</span><span class="p">))</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span>
+            <span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">nc_paths</span><span class="p">))</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">nc_paths</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">nc_paths</span></div>
-    
+
 <div class="viewcode-block" id="welcome.infer_scenario"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.welcome.infer_scenario">[docs]</a>    <span class="k">def</span> <span class="nf">infer_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stepchange</span><span class="p">,</span> <span class="n">scaling_factor</span><span class="p">,</span> <span class="n">tab_x</span><span class="p">,</span> <span class="n">tab_sign</span><span class="p">):</span>
     <span class="c1"># stepchange=PTOT_SC; scaling_factor=PTOT_SF; tab_x=tab_ptot</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -382,10 +394,9 @@
         <span class="k">return</span> <span class="n">str_vec</span></div></div>
 
 
-
 <span class="c1"># %% assert</span>
 
-<div class="viewcode-block" id="assertion"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.assertion">[docs]</a><span class="k">def</span> <span class="nf">assertion</span><span class="p">(</span><span class="n">wet_hash</span><span class="p">,</span> <span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">,</span> <span class="n">Z_CUTS</span><span class="p">,</span> <span class="n">DEM_FILE</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">):</span>
+<div class="viewcode-block" id="assertion"><a class="viewcode-back" href="../../../cuwalid.storm.html#cuwalid.storm.checks_.assertion">[docs]</a><span class="k">def</span> <span class="nf">assertion</span><span class="p">(</span><span class="n">wet_hash</span><span class="p">,</span> <span class="n">NUMSIMS</span><span class="p">,</span> <span class="n">NUMSIMYRS</span><span class="p">,</span> <span class="n">DEM_FILE</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    performs some assertions to test the validity of input parameters.\n</span>
 <span class="sd">    Input -&gt;</span>
@@ -395,12 +406,12 @@
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">wet_hash</span><span class="o">.</span><span class="n">Var2</span><span class="p">:</span>
         <span class="n">SC</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s1">_SC&#39;</span>
         <span class="n">SF</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s1">_SF&#39;</span>
-        <span class="c1"># print(NUMSIMS)</span>
         <span class="c1"># does each dimension/season have the same length among them??</span>
         <span class="k">if</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">SC</span><span class="p">,</span> <span class="n">SF</span><span class="p">]]),</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-            <span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Incompatible Sizes in </span><span class="si">{</span><span class="n">SC</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">SF</span><span class="si">}</span><span class="s1">!</span><span class="se">\n</span><span class="s1">STORM will &#39;</span>
-                 <span class="s1">&#39;only use the values of the first Simulation, so they &#39;</span>
-                 <span class="sa">f</span><span class="s1">&#39;can be passed to all </span><span class="si">{</span><span class="n">NUMSIMS</span><span class="si">}</span><span class="s1"> Simulations.&#39;</span><span class="p">)</span>
+            <span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Sizes of </span><span class="si">{</span><span class="n">SC</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">SF</span><span class="si">}</span><span class="s1"> do not match dimensions of NUMSIM &#39;</span>
+                 <span class="s1">&#39;or NUMSIMYRS!</span><span class="se">\n</span><span class="s1">STORM will only use the values of the first &#39;</span>
+                 <span class="sa">f</span><span class="s1">&#39;Simulation, so they can be passed to all </span><span class="si">{</span><span class="n">NUMSIMS</span><span class="si">}</span><span class="s1"> &#39;</span>
+                 <span class="sa">f</span><span class="s1">&#39;Simulations and/or </span><span class="si">{</span><span class="n">NUMSIMYRS</span><span class="si">}</span><span class="s1"> Years-per-Simulation.&#39;</span><span class="p">)</span>
         <span class="c1"># is each dimension/simulation as long as 1 or NUMSIMYRS??</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUMSIMS</span><span class="p">):</span>
             <span class="c1"># does the progression factor (SF) reduces below 0 rain?</span>
@@ -447,6 +458,20 @@
     <span class="k">if</span> <span class="n">SHP_FILE</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">abspath</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">parent_d</span><span class="p">,</span> <span class="n">SHP_FILE</span><span class="p">))):</span>
         <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">assertshp</span><span class="p">)</span></div>
 
+
+<span class="c1"># %% run</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;STOchastic Rainstorm Model [STORM v3.0]&#39;</span><span class="p">)</span>
+    <span class="c1"># call class</span>
+    <span class="n">update</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
+    <span class="c1"># run the parsing</span>
+    <span class="n">update</span><span class="o">.</span><span class="n">parsing</span><span class="p">()</span>
+
+    <span class="n">willkommen</span> <span class="o">=</span> <span class="n">welcome</span><span class="p">()</span>
+    <span class="c1"># willkommen.ncs</span>
+    <span class="n">assertion</span><span class="p">(</span><span class="n">willkommen</span><span class="o">.</span><span class="n">wet_hash</span><span class="p">)</span>
 </pre></div>
 
            </div>

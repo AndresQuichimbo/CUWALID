@@ -48,7 +48,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Licences.html">Licences</a></li>
 </ul>
 
         </div>
@@ -134,6 +137,7 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="c1"># make boundaries close</span>
 		<span class="n">grid</span><span class="o">.</span><span class="n">status_at_node</span><span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">status_at_node</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">BC_NODE_IS_CLOSED</span>
+		
 		<span class="c1"># Initialize the gw component</span>
 		<span class="k">if</span> <span class="s1">&#39;aux_grid&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">at_node</span><span class="p">:</span>
 			<span class="n">grid</span><span class="o">.</span><span class="n">add_zeros</span><span class="p">(</span><span class="s1">&#39;node&#39;</span><span class="p">,</span> <span class="s1">&#39;aux_grid&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -166,7 +170,7 @@
 			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Groundwater settings: Constant transmissivity function&#39;</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Groundwater settings: Linear transmissivity function&#39;</span><span class="p">)</span>
-		<span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+		<span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Groundwater settings: Exponential transmissivity function&#39;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Groundwater settings: Multi-transmissivity function&#39;</span><span class="p">)</span>
@@ -207,7 +211,7 @@
 		<span class="c1">#self.lakes_is_active = data_in.lakes</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">lakes_is_active</span> <span class="o">=</span> <span class="mi">1</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">flux_at_CHB</span> <span class="o">=</span> <span class="mf">0.0</span>
-				
+		
 	<span class="c1">#@profile</span>
 <div class="viewcode-block" id="gwflow_EFD.run_one_step_gw"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.gwflow_EFD.run_one_step_gw">[docs]</a>	<span class="k">def</span> <span class="nf">run_one_step_gw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">thickness</span><span class="p">,</span>
 		     <span class="n">bathymetry</span><span class="p">,</span> <span class="n">riv_elevation</span><span class="p">,</span> <span class="n">riv_nodes</span><span class="p">,</span> <span class="n">Sy</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span>
@@ -331,7 +335,6 @@
 			<span class="c1"># adjusting heads at the bottom of the model domain</span>
 			<span class="c1"># WARNING! this could lead to increases in mass balance errors</span>
 			<span class="n">head</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="n">head</span><span class="p">)</span>
-			
 			<span class="c1"># adjusting head at the surface of the model domain</span>
 			<span class="c1"># WARNING! this could lead to increases in mass balance errors</span>
 			<span class="c1">#if env_state.func == 2:</span>
@@ -344,11 +347,9 @@
 			<span class="c1">#self.hriv = np.minimum(self.hriv,</span>
 			<span class="c1">#	riv_elevation</span>
 			<span class="c1">#	)</span>
-			
 			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_CHB</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 				<span class="c1">#self.ch_boundaries = bc[self.id_CHB]</span>
 				<span class="n">head</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_CHB</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ch_boundaries</span>
-			
 			<span class="c1"># calculate aquifer saturated thickness at nodes</span>
 			<span class="c1"># for models with exponential function assign effective depth</span>
 			<span class="c1"># skip this for first iiteration</span>
@@ -390,15 +391,53 @@
 			<span class="c1"># change transmisivity at lakes nodes and links</span>
 			<span class="c1"># identify links at lake nodes that have water table depth above</span>
 			<span class="c1"># the surface</span>
-			<span class="n">aux_Tr</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># create a copy of transmissivity</span>
+			<span class="c1">#aux_Tr = T.copy() # create a copy of transmissivity</span>
+			
 			<span class="n">lake_nodes</span> <span class="o">=</span> <span class="n">head</span> <span class="o">-</span> <span class="n">bathymetry</span> <span class="c1"># find lake with water</span>
+			
+			<span class="n">inner_lake_nodes</span> <span class="o">=</span> <span class="n">lake_nodes</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+					<span class="n">grid</span><span class="o">.</span><span class="n">number_of_node_rows</span><span class="p">,</span>
+					<span class="n">grid</span><span class="o">.</span><span class="n">number_of_node_columns</span>
+					<span class="p">)</span>
+			
+			<span class="n">inner_lake_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+				<span class="n">shrink_region</span><span class="p">(</span><span class="n">inner_lake_nodes</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+			
+			<span class="c1">#outer_lake_nodes = np.where(</span>
+			<span class="c1">#	expand_region(inner_lake_nodes).reshape(-1) &gt; 0)</span>
+			
 			<span class="n">lake_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lake_nodes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># select lake nodes with water </span>
+			<span class="c1">#print(lake_nodes,len(lake_nodes))</span>
 			<span class="n">links_at_lake</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">links_at_node</span><span class="p">[</span><span class="n">lake_nodes</span><span class="p">]</span> <span class="c1"># select lake links</span>
-			<span class="n">T</span><span class="p">[</span><span class="n">links_at_lake</span><span class="p">]</span> <span class="o">=</span> <span class="n">COURANT_2D</span><span class="o">*</span><span class="n">grid</span><span class="o">.</span><span class="n">dx</span><span class="o">*</span><span class="n">grid</span><span class="o">.</span><span class="n">dx</span><span class="o">*</span><span class="mf">0.01</span> <span class="c1"># reduce transmissivity</span>
+			<span class="n">inner_links_at_lake</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">links_at_node</span><span class="p">[</span><span class="n">inner_lake_nodes</span><span class="p">]</span> <span class="c1"># select lake links</span>
+			<span class="c1">#outer_links_at_lake = grid.links_at_node[inner_lake_nodes] # select lake links</span>
+			
+			<span class="c1">#T[outer_links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.01 # reduce transmissivity</span>
+			<span class="n">T</span><span class="p">[</span><span class="n">links_at_lake</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="p">[</span><span class="n">links_at_lake</span><span class="p">]</span><span class="o">*</span><span class="mf">0.025</span> <span class="c1"># reduce transmissivity</span>
+			<span class="c1">#T[links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.025 # reduce transmissivity</span>
+			<span class="n">T</span><span class="p">[</span><span class="n">inner_links_at_lake</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">dx</span><span class="o">*</span><span class="n">grid</span><span class="o">.</span><span class="n">dx</span> <span class="c1"># reduce transmissivity</span>
+			
 			<span class="c1">#Sy_aux = Sy[act_nodes]</span>
-			<span class="c1">#Sy_aux[lake_nodes] = 1.0</span>
-			<span class="c1"># --------------------------------------------------------------</span>
+			<span class="n">Sy_aux</span> <span class="o">=</span> <span class="n">Sy</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+			<span class="n">Sy_aux</span><span class="p">[</span><span class="n">lake_nodes</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+			<span class="c1">#Sy_aux[inner_lake_nodes] = 1.0</span>
+			<span class="c1">#Sy_aux[outer_lake_nodes] = 1.0</span>
+			<span class="c1">#print(Sy, Sy_aux)</span>
+			
+			<span class="c1">#try:</span>
+			<span class="c1">#	if inner_lake_nodes[0]:</span>
+			<span class="c1">#	#print(&quot;len&quot;, inner_lake_nodes)</span>
+			<span class="c1">#		print(&quot;time&quot;,</span>
+		   	<span class="c1">#			time_step_confined(1, Sy_aux[lake_nodes],</span>
+			<span class="c1">#			map_max_of_node_links_to_node(grid, T)[lake_nodes], grid.dx</span>
+			<span class="c1">#			#time_step_confined(1, Sy_aux[inner_lake_nodes],</span>
+			<span class="c1">#			#map_max_of_node_links_to_node(grid, T)[inner_lake_nodes], grid.dx</span>
+			<span class="c1">#		))</span>
+			<span class="c1">#		print(map_max_of_node_links_to_node(grid, T)[inner_lake_nodes])</span>
+			<span class="c1">#except:</span>
+			<span class="c1">#	a = 1</span>
 
+			<span class="c1"># --------------------------------------------------------------</span>
 			<span class="c1"># Calculate the hydraulic gradients</span>
 			<span class="n">grid</span><span class="o">.</span><span class="n">at_node</span><span class="p">[</span><span class="s1">&#39;aux_grid&#39;</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">head</span><span class="p">[:]</span>
 			<span class="n">dhdl</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">calc_grad_at_link</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">at_node</span><span class="p">[</span><span class="s1">&#39;aux_grid&#39;</span><span class="p">])</span>
@@ -556,8 +595,8 @@
 			<span class="n">discharge</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dqs</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span><span class="o">*</span><span class="n">dtsp</span>
 			<span class="c1">#print(&#39;discharge&#39;,env_state.SZgrid.at_node[&#39;discharge&#39;][219])</span>
 			<span class="c1"># Calculate maximum time step</span>
-			<span class="n">dtsp</span> <span class="o">=</span> <span class="n">time_step_confined</span><span class="p">(</span><span class="n">COURANT_2D</span><span class="p">,</span> <span class="n">Sy</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span>
-			<span class="c1">#dtsp = time_step_confined(COURANT_2D, Sy_aux,</span>
+			<span class="c1">#dtsp = time_step_confined(COURANT_2D, Sy[act_nodes],</span>
+			<span class="n">dtsp</span> <span class="o">=</span> <span class="n">time_step_confined</span><span class="p">(</span><span class="n">COURANT_2D</span><span class="p">,</span> <span class="n">Sy_aux</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span>
 				<span class="n">map_max_of_node_links_to_node</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">T</span><span class="p">)[</span><span class="n">act_nodes</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">dx</span>
 				<span class="p">)</span>
 			
@@ -568,7 +607,7 @@
 			<span class="c1"># WARNING! this could lead to increases in mass balance errors</span>
 			<span class="c1">#grid.at_node[&#39;water_table__elevation&#39;][:] = np.minimum(</span>
 			<span class="n">head</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">surface</span><span class="p">,</span> <span class="n">head</span><span class="p">)</span> <span class="c1"># time step could be very small</span>
-			<span class="c1">#print(dtsp)</span>
+			<span class="c1">#print(&quot;t&quot;, dtsp)</span>
 			<span class="c1"># Update time step</span>
 			<span class="k">if</span> <span class="n">dtsp</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
 				<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;invalid time step&quot;</span><span class="p">,</span> <span class="n">dtsp</span><span class="p">)</span>			
@@ -605,6 +644,8 @@
 			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">MB</span><span class="p">,</span><span class="s1">&#39;Groundwater Water balance Error: &#39;</span>
 		   		<span class="s1">&#39;Please check units and non-data values&#39;</span><span class="p">)</span>
 		<span class="c1">#print(inner_iter)</span>
+		<span class="c1">#print(head)</span>
+		<span class="c1">#print(v)</span>
 		<span class="k">return</span> <span class="n">head</span><span class="p">,</span> <span class="n">discharge</span></div></div>
 
 <div class="viewcode-block" id="transmissivity_multi_aquifer"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.transmissivity_multi_aquifer">[docs]</a><span class="k">def</span> <span class="nf">transmissivity_multi_aquifer</span><span class="p">(</span><span class="n">Ksat</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">aqtype</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
@@ -979,6 +1020,68 @@
 	<span class="c1">#dt = np.nanmin(dt[dt &gt; 0])</span>
 	<span class="c1">#return dt</span>
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">dt</span><span class="p">[</span><span class="n">dt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="shrink_region"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.shrink_region">[docs]</a><span class="k">def</span> <span class="nf">shrink_region</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shrinks a binary region in a 2D array by removing </span>
+<span class="sd">    pixels around the regions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">    array:numpy array</span>
+<span class="sd">		2D NumPy array of integers. </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">    	2D NumPy array with the shrunk region.</span>
+
+<span class="sd">    This function first converts the input array to integers. </span>
+<span class="sd">    Then, it identifies and removes single-pixel protrusions </span>
+<span class="sd">    from the binary region represented by non-zero values </span>
+<span class="sd">    in the array. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+	<span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+	<span class="n">array</span><span class="p">[</span><span class="n">array</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">array</span><span class="p">[</span><span class="n">array</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+	
+	<span class="n">aux</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+	<span class="n">array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">prepend</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">prepend</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+	
+	<span class="k">return</span> <span class="n">array</span></div>
+
+<div class="viewcode-block" id="expand_region"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.expand_region">[docs]</a><span class="k">def</span> <span class="nf">expand_region</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shrinks a binary region in a 2D array by removing </span>
+<span class="sd">    pixels around the regions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">    array:numpy array</span>
+<span class="sd">		2D NumPy array of integers. </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">    	2D NumPy array with the shrunk region.</span>
+
+<span class="sd">    This function first converts the input array to integers. </span>
+<span class="sd">    Then, it identifies and removes single-pixel protrusions </span>
+<span class="sd">    from the binary region represented by non-zero values </span>
+<span class="sd">    in the array. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+	<span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+	<span class="n">array</span><span class="p">[</span><span class="n">array</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">array</span><span class="p">[</span><span class="n">array</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+	
+	<span class="n">aux</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+	<span class="n">array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="n">array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="n">array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">prepend</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="n">array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">prepend</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+	
+	<span class="k">return</span> <span class="n">array</span></div>
 
 <div class="viewcode-block" id="recharge_routing"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.recharge_routing">[docs]</a><span class="k">class</span> <span class="nc">recharge_routing</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">):</span>
