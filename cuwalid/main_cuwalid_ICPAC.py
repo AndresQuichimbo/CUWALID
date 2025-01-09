@@ -59,6 +59,7 @@ def run_cuwalid(cuwalid_input):
 	forecast_path_dryp_model = forecast_path + "model/"
 	forecast_path_dryp_output = forecast_path + "output/"
 	forecast_path_dryp_postpp = forecast_path + "postpp/"
+	nc2shp_file_loc = forecast_path + "dataset/pre/"+season+"_"+str(iyear)+"/"
 	
 	
 	# RUN MODEL COMPONENTS AND ANY ADDITIONAL PROCESS
@@ -74,11 +75,14 @@ def run_cuwalid(cuwalid_input):
 		storm_input["SEED_YEAR"] = iyear
 		storm_input["NUMSIMS"] = nsim
 		storm_input["OUT_PATH"] = forecast_path_storm_output
+		shp_output = os.path.join(nc2shp_file_loc, f"tercilesICPAC_{storm_input['SEASON_TAG']}_{storm_input['SEED_YEAR']}.shp")
+		storm_input["TER_FILE"] = shp_output
+
+		print("shp output: " + shp_output)
 
 		# Convert .nc file into .shp
-		space = masking(catchment=storm_input["SHP_FILE"])
-		output_name = f"Ens_Prec_*{storm_input["SEASON_TAG"]}*-avgRaw{storm_input["SEED_YEAR"]}.nc"
-		compute_icpac(space, storm_input["TER_FILE"], storm_input["SEED_YEAR"], storm_input["SEASON_TAG"], "", output_name)
+		space = masking(storm_input["SHP_FILE"])
+		compute_icpac(space, storm_file, storm_input["TER_FILE"], storm_input["ZON_FILE"])
 
 		run_storm(storm_input)
 

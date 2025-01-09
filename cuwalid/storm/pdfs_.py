@@ -5,6 +5,7 @@ import rioxarray
 import numpy as np
 import pandas as pd
 import xarray as xr
+import os
 from fitter import Fitter
 from gc import collect
 from geopandas import GeoDataFrame, GeoSeries, points_from_xy, read_file, sjoin
@@ -594,6 +595,11 @@ class regional:
 
     @staticmethod
     def to_shp(mopen, realization, buffer_mask, catchm_mask, wkt_prj):
+
+        if mopen.dtype == "float64":
+            mopen = mopen.astype('float32')
+
+
         # np2shp [.rio.transform() IS QUITE OF THE ESSENCE HERE!]
         lopen = list(shapes(mopen, mask=buffer_mask, connectivity=4,
                             transform=realization.rio.transform()))
@@ -614,8 +620,8 @@ class regional:
 
         # grouping to retrieve just the CLUSTER.masks (the output is a Series)
     # nasks = feats.groupby(by='region').apply(lambda x: x.unary_union, include_groups=False)
-        nasks = feats.groupby(by='region').apply(
-            lambda x: x.union_all(), include_groups=False)
+
+        nasks = feats.groupby(by='region').apply(lambda x: x.unary_union)
         # nasks[0] ; nasks[1] ; nasks[2] ; nasks[3]
 
         # turn-back them into GeoPandas
@@ -2071,7 +2077,7 @@ class forecasting:
                             inplace=True)
         # pac = icpac.to_stacked_array('p', sample_dims=['LAT', 'LON'], variable_dim='tercile')
         # pac.plot(x='LON', y='LAT', col='p', col_wrap=3, cmap='gist_ncar_r', robust=False,)
-        icpac = icpac.rename({'LAT': 'y', 'LON': 'x',})
+        icpac = icpac.rename({'lat': 'y', 'lon': 'x',})
 
         re_ = icpac.rio.reproject_match(blank, resampling=self.resam)
         # stack the reprojection (to have only one 3D-variable)
@@ -2169,7 +2175,7 @@ class forecasting:
         vals_ = ['_'.join(list(map(str, x.round(3)))) for x in vals_]
         return ter, vals_
 
-    def xport_shp(self, **kwargs):
+    def xport_shp(self, ZON_FILE, **kwargs):
         """
         exports as shp.file from a geopandas input.\n
         Input: ->
@@ -2383,11 +2389,10 @@ def compute(space, RAIN_MAP, SEASON_TAG, PDF_FILE, ZON_FILE):  # space = masking
 
 # %% call pac
 
-def compute_icpac(space, TER_FILE, TER_YEAR, SEASON_TAG, output_loc, output_name):  # space = masking()
+def compute_icpac(space, input_file, output_file, ZON_FILE):  # space = masking()
     # ifile = glob(f'./model_input/Ens_Prec_*{SEASON_TAG}*-avgRaw{TER_YEAR}.nc')
-    ifile = glob(os.path.join(output_loc, output_name))
-    # ifile should be a 1-element list!
-    ifile = abspath(ifile[0])
+    ifile = abspath(input_file)
+
 
 # 19. PRODUCE ICPAC FORECAST SHP
     assertcast = f'NO ICPAC_CAST!\n'\
@@ -2400,7 +2405,7 @@ def compute_icpac(space, TER_FILE, TER_YEAR, SEASON_TAG, output_loc, output_name
 
     forecast = forecasting(space, ifile)
     # update xport.shp.file name & xport it
-    forecast.xport_shp(file=abspath(TER_FILE))
+    forecast.xport_shp(ZON_FILE, file=abspath(output_file))
 
 
 # %% main
