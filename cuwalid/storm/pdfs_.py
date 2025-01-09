@@ -2077,7 +2077,15 @@ class forecasting:
                             inplace=True)
         # pac = icpac.to_stacked_array('p', sample_dims=['LAT', 'LON'], variable_dim='tercile')
         # pac.plot(x='LON', y='LAT', col='p', col_wrap=3, cmap='gist_ncar_r', robust=False,)
-        icpac = icpac.rename({'lat': 'y', 'lon': 'x',})
+
+        # Update the coords based on different naming formats
+        if 'lat' in list(icpac.coords):
+            icpac = icpac.rename({'lat': 'y', 'lon': 'x'})
+        elif 'latitude' in list(icpac.coords):
+            icpac = icpac.rename({'latitude': 'y', 'longitude': 'x'})
+        elif 'Y' in list(icpac.coords):
+            icpac = icpac.rename({'Y': 'y', 'X': 'x'})
+
 
         re_ = icpac.rio.reproject_match(blank, resampling=self.resam)
         # stack the reprojection (to have only one 3D-variable)

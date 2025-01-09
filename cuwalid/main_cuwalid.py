@@ -59,7 +59,6 @@ def run_cuwalid(cuwalid_input):
 	forecast_path_dryp_model = forecast_path + "model/"
 	forecast_path_dryp_output = forecast_path + "output/"
 	forecast_path_dryp_postpp = forecast_path + "postpp/"
-	nc2shp_file_loc = forecast_path + "dataset/pre/"+season+"_"+str(iyear)+"/"
 	
 	
 	# RUN MODEL COMPONENTS AND ANY ADDITIONAL PROCESS
@@ -77,7 +76,7 @@ def run_cuwalid(cuwalid_input):
 		storm_input["OUT_PATH"] = forecast_path_storm_output
 
 		# Create path for converted .shp file and set this to the new TER_FILE
-		shp_output = os.path.join(nc2shp_file_loc, f"tercilesICPAC_{storm_input['SEASON_TAG']}_{storm_input['SEED_YEAR']}.shp")
+		shp_output = os.path.join(forecast_path_storm_output, f"tercilesICPAC_{storm_input['SEASON_TAG']}_{storm_input['SEED_YEAR']}.shp")
 		storm_input["TER_FILE"] = shp_output
 
 		# Convert .nc file into .shp
@@ -86,9 +85,6 @@ def run_cuwalid(cuwalid_input):
 
 		run_storm(storm_input)
 
-		# add code to modify input files
-		# set up path for model putputs
-		# set up model simulation name outputs
 	else:
 		print("storm is not executed")
 
