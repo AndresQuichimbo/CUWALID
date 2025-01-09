@@ -63,7 +63,7 @@ tqdm.pandas(ncols=50)  # , desc="progress-bar")
 
 
 ALTERNATIV = 1  # 1-for.simple.totals; 2-simple.totals+copula; 3-pf-based
-ICPAC_ONLY = 0  # 1-for.only.ICPAC.forecast.SHP; 0-for.only.preprocessing
+# ICPAC_ONLY = 0  # 1-for.only.ICPAC.forecast.SHP; 0-for.only.preprocessing
 
 # # OGC-WKT for HAD [taken from https://epsg.io/42106]
 # WKT_OGC = 'PROJCS["WGS84_/_Lambert_Azim_Mozambique",'\
@@ -2383,10 +2383,11 @@ def compute(space, RAIN_MAP, SEASON_TAG, PDF_FILE, ZON_FILE):  # space = masking
 
 # %% call pac
 
-def compute_icpac(space, TER_FILE, TER_YEAR, SEASON_TAG):  # space = masking()
-    ifile = glob(f'./model_input/Ens_Prec_*{SEASON_TAG}*-avgRaw{TER_YEAR}.nc')
+def compute_icpac(space, TER_FILE, TER_YEAR, SEASON_TAG, output_loc, output_name):  # space = masking()
+    # ifile = glob(f'./model_input/Ens_Prec_*{SEASON_TAG}*-avgRaw{TER_YEAR}.nc')
+    ifile = glob(os.path.join(output_loc, output_name))
     # ifile should be a 1-element list!
-    ifile = abspath(join(parent_d, ifile[0]))
+    ifile = abspath(ifile[0])
 
 # 19. PRODUCE ICPAC FORECAST SHP
     assertcast = f'NO ICPAC_CAST!\n'\
@@ -2399,7 +2400,7 @@ def compute_icpac(space, TER_FILE, TER_YEAR, SEASON_TAG):  # space = masking()
 
     forecast = forecasting(space, ifile)
     # update xport.shp.file name & xport it
-    forecast.xport_shp(file=abspath(join(parent_d, TER_FILE)))
+    forecast.xport_shp(file=abspath(TER_FILE))
 
 
 # %% main

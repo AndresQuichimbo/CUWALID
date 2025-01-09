@@ -6,6 +6,7 @@ import sys
 sys.path.append("/home/cuwalid/CUWALID")
 import numpy as np
 from cuwalid.storm.main_storm import run_storm
+from cuwalid.storm.pdfs_ import compute_icpac, masking
 from cuwalid.stopet.main_stopet import run_stoPET
 from cuwalid.dryp.main_DRYP import run_DRYP
 from cuwalid.forecasting.main_hydro_forecast import run_hydro_forecast
@@ -74,8 +75,13 @@ def run_cuwalid(cuwalid_input):
 		storm_input["NUMSIMS"] = nsim
 		storm_input["OUT_PATH"] = forecast_path_storm_output
 
+		# Convert .nc file into .shp
+		space = masking(catchment=storm_input["SHP_FILE"])
+		output_name = f"Ens_Prec_*{storm_input["SEASON_TAG"]}*-avgRaw{storm_input["SEED_YEAR"]}.nc"
+		compute_icpac(space, storm_input["TER_FILE"], storm_input["SEED_YEAR"], storm_input["SEASON_TAG"], "", output_name)
 
 		run_storm(storm_input)
+
 		# add code to modify input files
 		# set up path for model putputs
 		# set up model simulation name outputs
