@@ -3,7 +3,7 @@ import json
 import numpy as np
 import calendar
 
-def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, destination,
+def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, destination, path_outputs=None,
 						   start_date="2024 03 01", end_date="2024 05 31", new_setting_file=None):
 	""" This function create the simulation and setting file for running DRYP. New
 	files are created  based on files provided as original files, this function
@@ -34,6 +34,9 @@ def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, destina
 	json_template["METEO"]["path_pre"] = path_pre
 	json_template["METEO"]["path_pet"] = path_pet
 
+	if path_outputs is not None:
+		json_template["OUTPUT"]["path_output"] = path_outputs
+	
 	
 	# create new settings file
 	if new_setting_file is not None:

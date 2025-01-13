@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import geopandas as gpd
+from cuwalid.forecasting.components.helper_functions import load_config
 from cuwalid.forecasting.components.plot_impact_forecast import plot_map
 import cuwalid.forecasting.components.forecast as forecast
 import cuwalid.forecasting.components.read_paths as paths
@@ -67,16 +68,25 @@ def plot_maps_json(config_file):
 	- If attempting to create maps for multiple countries at once, ensure that place_names is not 
 	  specified in the JSON file, as this will cause an error.
 	"""
-	with open(config_file, 'r') as file:
-		try:
-			config = json.load(file)
-		except json.JSONDecodeError as e:
-			print(f"Error reading JSON file: {e}")
-			return
+
+	# Load configuration file
+	if type(config_file) == str:
+		config = load_config(config_file)
+	else:
+		config = config_file
+
+	#with open(config_file, 'r') as file:
+	#	try:
+	#		config = json.load(file)
+	#	except json.JSONDecodeError as e:
+	#		print(f"Error reading JSON file: {e}")
+	#		return
 
 	# Check for required keys and provide feedback if missing
-#	required_keys = ["plot_scales", "seasons", "water_status", "year", "mask_path", "river_path"]
+	# required_keys = ["plot_scales", "seasons", "water_status", "year", "mask_path", "river_path"]
+
 	required_keys = ["plot_scales", "seasons", "water_status", "year"]
+
 	for key in required_keys:
 		if key not in config:
 			print(f"Missing required key: {key} in the configuration file.")
@@ -185,7 +195,7 @@ def plot_maps_json(config_file):
 				seasons=season, 
 				water_status=water_status, 
 				year=year, 
-				output_dir=output_dir, 
+				output_dir=output_dir+"fig/", 
 				language=language,
 				netcdf_path_list=netcdf_path_list,
 				#threshold_path=threshold_path,

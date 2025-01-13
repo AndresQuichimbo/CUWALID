@@ -407,7 +407,7 @@ season_name = {
 
 # variable labels and colorbar labels -------------------------
 water_var = {
-"Flood": "dis",
+"Flood": "flood",
 "Groundwater": "twsc",
 "Surface": "dis",
 "Soil": "tht",

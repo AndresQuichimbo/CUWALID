@@ -1,5 +1,6 @@
 import argparse
 import json
+from cuwalid.forecasting.components.helper_functions import load_config
 from cuwalid.forecasting.components.hindcast import *
 from cuwalid.forecasting.components.forecast import *
 from cuwalid.forecasting.components.plot_hydro_forecast import *
@@ -11,9 +12,15 @@ def run_hydro_forecast(config_path):
     model path files.
     """
 
-    # Load JSON data from the config_path
-    with open(config_path, 'r') as file:
-        config = json.load(file)
+    # Load configuration file
+    if type(config_path) == str:
+        config = load_config(config_path)
+    else:
+        config = config_path
+
+    ## Load JSON data from the config_path
+    #with open(config_path, 'r') as file:
+    #    config = json.load(file)
 
     include_hincast = config["run_historical"]
     include_forecast = config["run_forecast"]
@@ -85,13 +92,13 @@ def run_hydro_forecast(config_path):
                                         start_year, end_year, season, variables,
                                         historical_postpp_path)
 
-            print("Step 6: Getting quatiles 05, 33, 50, 66, 95 form historical simulations")
-            get_extremes_quantiles_multi_netcdf(historical_model_path,
-                                                historical_model_name,
-                                                start_year, end_year, season, variables,
-                                                historical_postpp_path)
+            #print("Step 6: Getting quatiles 05, 33, 50, 66, 95 form historical simulations")
+            #get_extremes_quantiles_multi_netcdf(historical_model_path,
+            #                                    historical_model_name,
+            #                                    start_year, end_year, season, variables,
+            #                                    historical_postpp_path)
 
-            print("Step 7: Getting average values form historical simualations")
+            print("Step 6: Getting average values from historical simualations")
             get_average_multi_netcdf(historical_model_path,
                                      historical_model_name,
                                      start_year, end_year, season, variables,

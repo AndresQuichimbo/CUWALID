@@ -5,6 +5,7 @@ import matplotlib.patches as mpatches
 import numpy as np
 import rasterio
 import xarray as xr
+import json
 from matplotlib import patheffects
 #from bidi import algorithm as bidialg
 #import arabic_reshaper
@@ -12,6 +13,11 @@ from matplotlib import patheffects
 A file containing helper functions to assist with the forecasting element
 
 """
+# This function loads the configuration from the JSON file
+def load_config(input_file):
+    with open(input_file, 'r') as f:
+        config = json.load(f)
+    return config
 
 def read_dataset(fname, var_name='tht'):
 	# Open the first netCDF file

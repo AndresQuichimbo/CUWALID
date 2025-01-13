@@ -742,16 +742,28 @@ def get_ensamble_forecasting(model_path, model_name, variables, season, postpp_p
 				fname_list = [
 					ifname.split('.')[0]+'_'+ivar+'.nc' for ifname in fname_list
 					]
+			if ivar == 'flood':
+				fname_list = [
+					ifname.split('.')[0]+'max.nc' for ifname in fname_list
+					]
 			#print(fname_list)
 			mean = False
 			if (ivar == 'tht') or (ivar == 'wte'):
 				mean = True
 			# get average values for all variables from a list of netcdf files
-			dataset = cuwalid.get_ensamble_from_netcdf_list(fname_list,
+			if ivar == "flood":
+				dataset = cuwalid.get_ensamble_from_netcdf_list(fname_list,
+									"dis", mean=mean,
+									delta=None, season=iseason,
+									fname_output=None)
+				dataset = dataset.rename("flood")
+			else:
+				dataset = cuwalid.get_ensamble_from_netcdf_list(fname_list,
 									ivar, mean=mean,
 									delta=None, season=iseason,
 									fname_output=None)
 		
+
 			# save files
 			#fname_out = '/user/work/km19051/HAD_postpp/netcfd/HAD_'+imodel+'_wte_mean.nc'
 			#fname_out = "/home/c1755103/HAD/HAD_postpp/netcdf/HAD_" + imodel + "_mean.nc"
