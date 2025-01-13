@@ -38,13 +38,13 @@ def run_hydro_forecast(config_file):
     #/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGcv_sim83_OND_quantiles.nc
 
     #threshold_path = config["threshold_path"]
-    threshold_path = os.path.join(historical_postpp_path, "netcdf", historical_model_name, "_SSS_extremes_quantiles.nc")
+    threshold_path = os.path.join(historical_postpp_path, "netcdf", historical_model_name + "_SSS_extremes_quantiles.nc")
     season = config['season']
     start_year = config['start_year']
     end_year = config['end_year']
     variables = config['variables']
     iyear = config["year"]
-    nsim = 30
+    nsim = config["nsim"]
 
 
     # ----------------------HINDCAST-----------------------

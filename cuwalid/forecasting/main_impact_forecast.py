@@ -126,7 +126,7 @@ def plot_maps_json(config_file):
 	for iwater_status in water_status:
 		if netcdf_path is None:	
 			ivar = water_var[iwater_status]
-			netcdf_path_aux = output_dir+"netcdf/" + model_name + "_" +ivar+"_"+season[0]+"_"+str(year)+"_probabilistic_tercile_forecast.nc"
+			netcdf_path_aux = os.path.join(output_dir, "netcdf", f"{model_name}_{ivar}_{season[0]}_{year}_probabilistic_tercile_forecast.nc")
 			netcdf_path_list.append(netcdf_path_aux)
 		else:
 			netcdf_path_list.append(netcdf_path)
