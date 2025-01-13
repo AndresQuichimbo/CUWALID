@@ -2,6 +2,9 @@
 
 # MAP PROPERTIES ===================================================
 # Define filter for tertiary highways
+import os
+
+
 highway_filter = ["primary", "motorway", "tertiary", "trunk"]
 # do not modify this
 highways = {
@@ -266,6 +269,15 @@ language_short_name = {
 "Oromo": "OM",
 }
 
+font_paths = {
+    "English": None,
+    "Swahili": None, 
+    "Somali": None,
+    "Amharic": os.path.join(os.path.dirname(__file__), "..", "forecasting", "fonts", "NotoSansEthiopic-VariableFont_wdth,wght.ttf"),
+    "Oromo": None, 
+}
+
+
 language_labels = {
 "English":{
     	"Administrative Boundary": "Boundary",
@@ -348,7 +360,7 @@ language_labels = {
 		"Pasture": "Pasture Status",
 		},
 "Amharic":{"Administrative Boundary": "Mpaka",
-		"Natural Reserve": "Natural Reserve",
+		"Natural Reserve": "የተፈጥሮ ሀብት",
 		"River": "River",
 		"Stream": "Stream",
 		"Airport": "Uwanja wa ndege",

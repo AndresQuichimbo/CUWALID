@@ -40,8 +40,6 @@ def run_cuwalid(cuwalid_input):
 	# read stopet input file path
 	tercile_forecast_file = cuwalid_config["Tercile_Pre_path"]
 
-	#threshold_path = historical_postpp_path + "netcdf/"+ historical_model_name+ "_SSS_extremes_quantiles.nc"
-
 	season = cuwalid_config['season'][0]
 	#start_year = cuwalid_config['start_year']
 	#end_year = cuwalid_config['end_year']
@@ -137,8 +135,6 @@ def run_cuwalid(cuwalid_input):
 	#forecast_path_stopet_output = "/home/cuwalid/training/forecast/regional/dataset/pet/"+season+"_"+str(iyear)+"_PET_forecast/"#Forecast_PET_HAD_ens_0_MAM_2024.nc"
 	#forecast_path_storm_output = "/home/cuwalid/training/forecast/regional/dataset/pre/"+season+"_"+str(iyear)+"/"#Forecast_PET_HAD_ens_0_MAM_2024.nc"
 	#forecast_path_storm_output = "/home/cuwalid/leo_test/CUWALID/storm_output/"+season+"_"+str(iyear)+"/"#Forecast_PET_HAD_ens_0_MAM_2024.nc"
-
-	local_directory = "/home/cuwalid/training/forecast/regional/model/" #D:/HAD/training/regional/model/"
 	
 	# run DRYP multiple simulations
 	if cuwalid_config["run_DRYP"] is True:
@@ -147,15 +143,16 @@ def run_cuwalid(cuwalid_input):
 		dryp_settings_path = cuwalid_config["MODELS"]["DRYP"]["settings"]
 		with open(dryp_input_path, 'r') as file:
 			dryp_input = json.load(file)
-		# get basefile of model parameters and settings files
-		#fsim_input_file = local_directory + "HAD_IMERGcv_input_sim85.json"#"HAD_IMERG_input_sim_cuwalid.dmp"
-	
+
 		# TODO: Change pet to the same order naming as pre
-		fname_pet = [forecast_path_stopet_output+ "Forecast_PET_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
+		fname_pet = [forecast_path_stopet_output + "Forecast_PET_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
 		fname_pre = [forecast_path_storm_output + "Forecast_PRE_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
 		forcing_list = np.array(JSON_builder.create_ensamble([fname_pet, fname_pre], nsamples=nsim))
-		for ifsim_forecasting, imname, ifname_pre, ifname_pet in zip(fsim_forecasting, mname, forcing_list[:,1], forcing_list[:,0]):
-			#write_JSON_dryp_file(
+
+		# Create the list of commands for each simulation
+		commands = []
+		for ifsim_forecasting, imname, ifname_pre, ifname_pet in zip(fsim_forecasting, mname, forcing_list[:, 1], forcing_list[:, 0]):
+			# Generate JSON for each simulation (same as before)
 			JSON_builder.write_JSON_dryp_files(
 				json_template=dryp_input,
 				model_name=imname,
@@ -166,28 +163,29 @@ def run_cuwalid(cuwalid_input):
 				end_date=end_date,
 				new_setting_file=fname_setting_file,
 			)
-		# Get dryp input file list
-		#fsim_forecasting_list = ["HAD_IMERG_input_"+season+"_"+str(iyear)+"_forecast_"+str(isim)+".json" for isim in range(nsim)]
-		#fsim_forecasting_list = ["Hydro_model_forecast_input_"+season+"_"+str(iyear)+ "_" +str(isim)+".json" for isim in range(nsim)]
-		
-		# LEO change this to a local directory automatically selected
-		log_dir = "logs"  # Adjust to your desired log directory
-		# Make sure the log directory exists
-		os.makedirs(log_dir, exist_ok=True)
-		#for ifsim_forecasting in fsim_forecasting_list:
-		for ifsim_forecasting in fsim_forecasting:
-			# Remove the .json extension for the log file name
-			base_name = os.path.splitext(ifsim_forecasting)[0]
 
-			# Generate a unique log file name for each process
+			# Prepare the log file and command for each process
+			log_dir = "logs"  # Adjust to your desired log directory
+			os.makedirs(log_dir, exist_ok=True)
+			base_name = os.path.splitext(ifsim_forecasting)[0]
 			log_file = os.path.join(log_dir, f"{base_name}_output.log")
-			# Build the command to run the simulation and redirect both stdout and stderr to the log file
-			#command = f"nohup python -m cuwalid.dryp.main_DRYP /home/cuwalid/training/forecast/regional/model/{ifsim_forecasting} > {log_file} 2>&1 &"
-			#command = f"nohup python -m cuwalid.dryp.main_DRYP {forecast_path_dryp_model+ifsim_forecasting} > {log_file} 2>&1 &"
+
+			# Command to run the DRYP simulation in the background
 			command = f"nohup python -m cuwalid.dryp.main_DRYP {ifsim_forecasting} > {log_file} 2>&1 &"
-			print(command)
-			# Run the command as a background process using subprocess
-			#subprocess.Popen(command, shell=True)
+			print(f"Executing: {command}")
+			commands.append(command)
+
+		# Run each command in parallel using subprocess
+		processes = []
+		for command in commands:
+			process = subprocess.Popen(command, shell=True)
+			processes.append(process)
+
+		# Wait for all subprocesses to finish
+		for process in processes:
+			process.wait()  # This will block until the process completes
+
+		print("All DRYP simulations are finished.")
 	else:
 		print("DRYP is not executed")
 
@@ -203,10 +201,32 @@ def run_cuwalid(cuwalid_input):
 		# modify season and year
 
 		print("Executing hydrological forecasting: HyCast")
-		#run_hydro_forecast(HyCast_input_path)
+		# Open json config
+		with open(HyCast_input_path, 'r') as file:
+			HyCast_input = json.load(file)
+
+		# Modify variables to intergrate previous outputs
+		HyCast_input["historical"] = cuwalid_config["historical"]
+		HyCast_input["forecasting"] = cuwalid_config["forecasting"]
+		HyCast_input["season"] = cuwalid_config["season"]
+		HyCast_input["start_year"] = cuwalid_config["start_year"]
+		HyCast_input["end_year"] = cuwalid_config["end_year"]
+		HyCast_input["year"] = cuwalid_config["year"]
+
+		run_hydro_forecast(HyCast_input)
 		
 		print("Executing Impact-based water forecasting: ImCast")
-		#fcast.plot_maps_json(ImCast_input_path)
+		# Open json config
+		with open(ImCast_input_path, 'r') as file:
+			ImCast_input = json.load(file)
+
+		# Modify variables to intergrate previous outputs
+		ImCast_input["season"] = cuwalid_config["season"]
+		ImCast_input["year"] = cuwalid_config["year"]
+		ImCast_input["model_name"] = cuwalid_config["forecasting"]["model_name"]
+		ImCast_input["output_dir"] = "/forecast/regional/postpp/" #TODO
+
+		fcast.plot_maps_json(ImCast_input)
 
 if __name__ == '__main__':
 	# Set up argument parser to get the JSON config file from command line

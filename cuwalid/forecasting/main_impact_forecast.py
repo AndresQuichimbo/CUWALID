@@ -20,7 +20,7 @@ def plot_maps_json(config_file):
 
 	Parameters
 	----------
-	config_file: str
+	config_file: str or dictionary (that represents the json input structure)
 		The path to the JSON configuration file that contains the input parameters.
 
 	JSON Configuration Keys:
@@ -67,12 +67,17 @@ def plot_maps_json(config_file):
 	- If attempting to create maps for multiple countries at once, ensure that place_names is not 
 	  specified in the JSON file, as this will cause an error.
 	"""
-	with open(config_file, 'r') as file:
-		try:
-			config = json.load(file)
-		except json.JSONDecodeError as e:
-			print(f"Error reading JSON file: {e}")
-			return
+	# If config_file is string get the file from the path
+	if type(config_file) == str:
+		with open(config_file, 'r') as file:
+			try:
+				config = json.load(file)
+			except json.JSONDecodeError as e:
+				print(f"Error reading JSON file: {e}")
+				return
+	# If config_file is not a string, assume it is already a dictionary
+	else:
+		config = config_file
 
 	# Check for required keys and provide feedback if missing
 #	required_keys = ["plot_scales", "seasons", "water_status", "year", "mask_path", "river_path"]
