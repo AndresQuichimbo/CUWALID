@@ -1,4 +1,5 @@
 #import pyproj as pp
+import os
 import numpy as np
 import xarray as xr
 import geopandas as gpd
@@ -24,37 +25,41 @@ def plot_tercile_probability_forecast(model_path, model_name, season, variables,
 	# specified fields
 	field = cuwalid.drop_false_keys(variables)
 
-	#ifname = fname_ensamble.replace("_VVV", "")
 
-	#iyear = 2022
-	#iseason = "MAM"
-
-	#fname = "D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_" + iseason + "_probabilistic_tercile_forecast_region.nc"
-	#fname = "D:/HAD/postpp/netcdf/MAM_2022_realization_pre_MAM_2022_probabilistic_tercile_forecast.nc"
-	#fname = "D:/HAD/postpp/netcdf/MAM_2022_realization_pet_MAM_2022_probabilistic_tercile_forecast.nc"
 	for iseason in season:
 		for ivar in field:
-			# save as NETCDF files
+			# Ensure directories for `netcdf` and `fig` exist
+			netcdf_dir = os.path.join(postpp_path, "netcdf")
+			fig_dir = os.path.join(postpp_path, "fig")
+			os.makedirs(netcdf_dir, exist_ok=True)
+			os.makedirs(fig_dir, exist_ok=True)
+
+			# Save as NETCDF files
 			if iseason is None:
-				fname = postpp_path+"netcdf/" + model_name + "_" +ivar+"_"+str(iyear)+"_probabilistic_tercile_forecast.nc"
+				fname = os.path.join(netcdf_dir, f"{model_name}_{ivar}_{iyear}_probabilistic_tercile_forecast.nc")
 			else:
-				fname = postpp_path+"netcdf/" + model_name + "_" +ivar+"_"+iseason+"_"+str(iyear)+"_probabilistic_tercile_forecast.nc"
+				fname = os.path.join(netcdf_dir, f"{model_name}_{ivar}_{iseason}_{iyear}_probabilistic_tercile_forecast.nc")
 
 			data = xr.open_dataset(fname)
-			im = cuwalidplt.plot_probabilistic_tercile_forecast(data,
-					title="Probabilistic Forecasting\n"+
-						cuwalidplt.get_label_variable(ivar),
-					reproject=True, fshapefile=shapefile_county,
-					fmask=path_mask)
+			im = cuwalidplt.plot_probabilistic_tercile_forecast(
+				data,
+				title="Probabilistic Forecasting\n" +
+				cuwalidplt.get_label_variable(ivar),
+				reproject=True,
+				fshapefile=shapefile_county,
+				fmask=path_mask
+			)
 
+			# Ensure the `fig` directory exists and save the plot
 			if iseason is None:
-				fname_fig = postpp_path+"fig/" + model_name + "_" +ivar+"_"+str(iyear)+"_probabilistic_tercile_forecast.png"
+				fname_fig = os.path.join(fig_dir, f"{model_name}_{ivar}_{iyear}_probabilistic_tercile_forecast.png")
 			else:
-				fname_fig = postpp_path+"fig/" + model_name + "_" +ivar+"_"+iseason+"_"+str(iyear)+"_probabilistic_tercile_forecast.png"
+				fname_fig = os.path.join(fig_dir, f"{model_name}_{ivar}_{iseason}_{iyear}_probabilistic_tercile_forecast.png")
 
-			#fname_fig = "D:/HAD/postpp/fig/IMERGag_sim0_MAM_tercile_forecasting_example.png"
+			# Save the figure
 			plt.savefig(fname_fig, dpi=300)
-		#plt.show()
+
+
 	
 def plot_deterministic_forecast(model_path, model_name, season, variables, postpp_path, iyear=2022):
 	"""This function creates a figure from the tercile forecats

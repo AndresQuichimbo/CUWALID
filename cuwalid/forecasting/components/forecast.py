@@ -313,11 +313,12 @@ def extract_forecasting_variable(model_name,
 
 					if save_nc is True:
 						# save dataset as netcdf
-						fname_nc = (postpp_path + "netcdf/" +
-								model_name + "_" +
-								iseason +"_"+iplace_name+"_"+ivar+
-								"_probabilistic_tercile_forecast_region.nc"
-								)
+						fname_nc = os.path.join(
+							postpp_path,
+							"netcdf",
+							f"{model_name}_{iseason}_{iplace_name}_{ivar}_probabilistic_tercile_forecast_region.nc"
+						)
+
 						#fname = "D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_" + iseason + "_probabilistic_tercile_forecast_region.nc"
 
 						dataset.to_netcdf(fname_nc)
@@ -370,7 +371,11 @@ def extract_forecasting_variable(model_name,
 		for i, itercile in enumerate(tercile):
 			df[itercile] = area[:, i]
 
-		fname = postpp_path + "csv/" + model_name+"_"+iseason+"_"+str(iyear)+"_county_areas.csv"
+		fname = os.path.join(
+			postpp_path,
+			"csv",
+			f"{model_name}_{iseason}_{iyear}_county_areas.csv"
+		)
 		df.to_csv(fname, index=False)
 				
 

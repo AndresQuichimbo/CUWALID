@@ -55,9 +55,9 @@ def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, destina
 		settings_file_template["SIMULATION_PERIOD"]["end_date"] = end_date
 
 
-	# Save the `dryp` part to the destination file
+	# Save the `dryp` part to the json_destination file
 	#dryp_data = json_template["dryp"]
-	with open(destination, "w") as dest_file:
+	with open(json_destination, "w") as dest_file:
 		#json.dump(dryp_data, dest_file, indent=4)
 		json.dump(json_template, dest_file, indent=4)
 
