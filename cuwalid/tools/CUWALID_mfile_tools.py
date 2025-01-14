@@ -1,3 +1,4 @@
+import datetime
 import os
 import numpy as np
 import pandas as pd
@@ -97,6 +98,12 @@ def get_dates_season(season, year):
 	start_date = str(year) + " " + str(imonths[0]) + " " + str(1)
 	end_date = str(year) + " " + str(imonths[-1]) + " " + str(last_day)
 	return start_date, end_date
+
+def date_to_day_of_year(date_str):
+    # Convert the date string into a datetime object
+    date = datetime.datetime.strptime(date_str, "%Y %m %d")
+    # Return the day of the year (1 for Jan 1, 365 for Dec 31 in non-leap years)
+    return date.timetuple().tm_yday
 
 def concatenate_netCDF(fname_list, var, agg="M", dim='time', season=None):
 	""" Get a xarray from a list of netcdf files
@@ -486,7 +493,7 @@ def get_ensamble_from_netcdf_list(fname_list, var_name, mean=True,
 			
 			if delta is not None:
 				# calculate annual average to reduce the use of memory
-				idata = resample_dataset(data, mean=mean, delt=delta)
+				idata = resample_dataset(idata, mean=mean, delt=delta)
 			
 			if mean is True:
 				idata = idata.mean(dim='time')

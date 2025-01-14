@@ -45,8 +45,8 @@ def run_stoPET(config_file):
     startyear = config['startyear']
     endyear = config['endyear']
     seasonswitch = config['seasonswitch']
-    startdate = config['startdate']
-    enddate = config['enddate']
+    startdate = int(config['startdate'])
+    enddate = int(config['enddate'])
     latval = config['latval']
     lonval = config['lonval']
     latval_min = config['latval_min']

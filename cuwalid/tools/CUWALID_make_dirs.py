@@ -28,4 +28,3 @@ def create_directory_structure(base_dir, season_name, year):
     # Create each directory if it doesn't exist
     for directory in directories:
         os.makedirs(directory, exist_ok=True)
-        print(f"Created (or already exists): {directory}")

@@ -1,3 +1,4 @@
+import os
 import warnings
 
 # # https://stackoverflow.com/a/9134842/5885810     (supress warning by message)
@@ -513,7 +514,11 @@ def regionalisation(file_zon, tag, val, xpace, **kwargs):
     """
     magik = kwargs.get('add', -1)
 
-    reg_shp = gpd.read_file(abspath(join(parent_d, file_zon)))
+    if os.path.exists(file_zon):
+        reg_shp = gpd.read_file(file_zon)
+    else:
+        # Fall back to using the parent directory path
+        reg_shp = gpd.read_file(abspath(join(parent_d, file_zon)))
     # transform it into EPSG:42106 & make the buffer
     # https://gis.stackexchange.com/a/328276/127894  (geo series into gpd)
     reg_shp = reg_shp.to_crs(crs=xpace.wkt_prj)  # //epsg.io/42106.wkt

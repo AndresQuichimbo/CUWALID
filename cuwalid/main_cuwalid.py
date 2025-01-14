@@ -12,6 +12,7 @@ from cuwalid.dryp.main_DRYP import run_DRYP
 from cuwalid.forecasting.main_hydro_forecast import run_hydro_forecast
 import cuwalid.forecasting.main_impact_forecast as fcast
 from cuwalid.tools.DRYP_json_builder import create_ensamble, write_JSON_dryp_file
+from cuwalid.tools.download_data import check_and_download
 import cuwalid.tools.CUWALID_json_builder as JSON_builder
 import cuwalid.tools.CUWALID_mfile_tools as cuwalid_mtools
 from cuwalid.tools.CUWALID_make_dirs import create_directory_structure
@@ -21,6 +22,10 @@ def run_cuwalid(cuwalid_input):
 	# Get input file as dictionary
 	with open(cuwalid_input, 'r') as file:
 		cuwalid_config = json.load(file)
+
+	# Checks if the stopet parameter files and osm forecasting data
+	# and downloads it if its not
+	check_and_download()
 
 	# read historical paths
 	historical_model_name = cuwalid_config["historical_model_name"]
@@ -40,17 +45,16 @@ def run_cuwalid(cuwalid_input):
 	iyear = cuwalid_config["year"]
 	nsim = cuwalid_config["NSIM"]
 	start_date, end_date = cuwalid_mtools.get_dates_season(season, iyear)
+	start_day, end_day = cuwalid_mtools.date_to_day_of_year(start_date), cuwalid_mtools.date_to_day_of_year(end_date)
 
-	# SET UP MODEL PATHS
-	# Leo make sure that this folder exist otherwise create new ones
-	# I guess ww should also ask if (using a boolead entry) if this paths need to 
-	# be updated in the dryp, storm, or stopet.
-	forecast_path_storm_output = forecast_path + "dataset/pre/"+season+"_"+str(iyear)+"/"
-	forecast_path_stopet_output = forecast_path + "dataset/pet/"+season+"_"+str(iyear)+"/"
-	forecast_path_dryp_model = forecast_path + "model/"
-	forecast_path_dryp_output = forecast_path + "output"#/"
-	forecast_path_dryp_postpp = forecast_path + "postpp/"
-	
+	# Create directory structure for cuwalid system where user ran code
+	create_directory_structure("", season, iyear)
+
+	forecast_path_storm_output = os.path.join(forecast_path, f"{season}_{str(iyear)}", "dataset/pre/")
+	forecast_path_stopet_output = os.path.join(forecast_path, f"{season}_{str(iyear)}", "dataset/pet/")
+	forecast_path_dryp_model = os.path.join(forecast_path, f"{season}_{str(iyear)}", "model")
+	forecast_path_dryp_output = os.path.join(forecast_path, f"{season}_{str(iyear)}", "output")
+	forecast_path_dryp_postpp = os.path.join(forecast_path, f"{season}_{str(iyear)}", "postpp")
 	
 	# RUN MODEL COMPONENTS AND ANY ADDITIONAL PROCESS
 	# Run storm
@@ -89,10 +93,11 @@ def run_cuwalid(cuwalid_input):
 
 		stoPET_input["outputpath"] = forecast_path_stopet_output
 		stoPET_input["startyear"] = iyear
-		stoPET_input["startyear"] = iyear
-		stoPET_input["startdate"] = start_date
-		stoPET_input["enddate"] = end_date
+		stoPET_input["endyear"] = iyear
+		stoPET_input["startdate"] = start_day
+		stoPET_input["enddate"] = end_day
 		stoPET_input["trial_number"] = nsim
+		stoPET_input["number_ensm"] = nsim
 		stoPET_input["seasonName"] =season
 		stoPET_input["tercile_forecast_file"] = tercile_forecast_file
 
@@ -106,9 +111,9 @@ def run_cuwalid(cuwalid_input):
 	# create model names
 	mname = [season + "_" + str(iyear) + "_realization_" + str(isim) for isim in range(nsim)]
 	# create model settings file names for realizations
-	fname_setting_file = forecast_path_dryp_model+"Hydro_model_forecast_settings_"+season+"_"+str(iyear)+".json"
+	fname_setting_file = os.path.join(forecast_path_dryp_model,"Hydro_model_forecast_settings_"+season+"_"+str(iyear)+".json")
 	# create model parameter file names for realizations
-	fsim_forecasting = [forecast_path_dryp_model+"Hydro_model_forecast_input_"+ season +"_"+str(iyear)+ "_" +str(isim)+".json" for isim in range(nsim)]
+	fsim_forecasting = [os.path.join(forecast_path_dryp_model,"Hydro_model_forecast_input_"+ season +"_"+str(iyear)+ "_" +str(isim)+".json") for isim in range(nsim)]
 	
 	
 	# run DRYP multiple simulations
@@ -135,7 +140,7 @@ def run_cuwalid(cuwalid_input):
 				model_name=imname,
 				path_pre=ifname_pre,
 				path_pet=ifname_pet,
-				destination=ifsim_forecasting,
+				json_destination=ifsim_forecasting,
 				dryp_output= forecast_path_dryp_output,
 				start_date=start_date,
 				end_date=end_date,
@@ -146,15 +151,25 @@ def run_cuwalid(cuwalid_input):
 			# Prepare the log file and command for each process
 			log_dir = "logs"  
 			os.makedirs(log_dir, exist_ok=True)
-			base_name = os.path.splitext(ifsim_forecasting)[0]
+			base_name = os.path.splitext(os.path.basename(ifsim_forecasting))[0]
 			log_file = os.path.join(log_dir, f"{base_name}_output.log")
 
 			# Command to run the DRYP simulation in the background
-			command = f"nohup python -m cuwalid.dryp.main_DRYP {ifsim_forecasting} > {log_file} 2>&1 &"
-			#command = f"nohup python /home/cuwalid/training/WS/run_model_input.py {ifsim_forecasting} > {log_file} 2>&1 &"
-			print(command)
-			# Run the command as a background process using subprocess
-			#subprocess.Popen(command, shell=True)
+			command = f"nohup python -u -m cuwalid.dryp.main_DRYP {ifsim_forecasting} > {log_file} 2>&1 &"
+			print(f"Executing: {command}")
+			commands.append(command)
+
+		# Run each command in parallel using subprocess
+		processes = []
+		for command in commands:
+			process = subprocess.Popen(command, shell=True)
+			processes.append(process)
+
+		# Wait for all subprocesses to finish
+		for process in processes:
+			process.wait()  # This will block until the process completes
+
+		print("All DRYP simulations are finished.")
 	else:
 		print("DRYP is not executed")
 
