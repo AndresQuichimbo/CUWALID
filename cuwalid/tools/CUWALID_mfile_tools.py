@@ -127,7 +127,7 @@ def concatenate_netCDF(fname_list, var, agg="M", dim='time', season=None):
 			mean = True
 		
 		# check if is the riparian area
-		if (var == 'fch') or (var == 'tls') or (var == 'flood'):
+		if (var == 'fch') or (var == 'tls'):# or (var == 'flood'):
 			ifname = ifname.split('.')[0]+'rp.nc'
 		if (var == 'flood'):
 			ifname = ifname.split('.')[0]+'max.nc'

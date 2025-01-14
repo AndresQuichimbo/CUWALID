@@ -211,7 +211,7 @@ def get_percentiles_multi_files(model_path, model_name, start_year, end_year, se
 			
 			# CHANGE NAMES TO ADD MORE VARIABLES
 			# using anomalies
-			if (ifield == "twsc") or (ifield == "wrsi"):
+			if (ifield == "twsc") or (ifield == "wrsi"):# or (ifield == "flood"):
 				fname = get_name_list_historical_netcdf_files(model_path, model_name,
 												  start_year, end_year,
 												  ifield=ifield
@@ -225,14 +225,20 @@ def get_percentiles_multi_files(model_path, model_name, start_year, end_year, se
 				#data_concat = cuwalid.concatenate_netCDF(
 				#	fname_list, ifield, agg="M", dim='time'
 				#	)
+			#elif ifield == "flood":
+			#	fname = get_name_list_historical_netcdf_files(model_path, model_name,
+			#									  start_year, end_year,
+			#									  ifield=ifield
+			#									  )
 			else:# or (ifield == "flood")
 				fname = get_name_list_historical_netcdf_files(model_path, model_name,
 												  start_year, end_year)
 	
+
 			# concatenate dataset at selected fields
 			if  ifield == "flood":
 				data_concat = cuwalid.concatenate_netCDF(
-						fname, "dis", agg="M", dim='time'
+						fname, ifield, agg="M", dim='time'
 						)
 				# rename variable
 				data_concat = data_concat.rename({'dis':'flood'})
@@ -687,5 +693,8 @@ def get_name_list_historical_netcdf_files(model_path, model_name, start_year, en
 
 	if ifield is not None:
 		fname = [ifname.split('.')[0]+'_'+ifield+'.nc' for ifname in fname]
+	
+	#if ifield == "flood":
+	#	fname = [ifname.split('.')[0]+'max.nc' for ifname in fname]
 		
 	return fname
