@@ -241,7 +241,7 @@ def get_percentiles_multi_files(model_path, model_name, start_year, end_year, se
 						fname, ifield, agg="M", dim='time'
 						)
 				# rename variable
-				data_concat = data_concat.rename({'dis':'flood'})
+				data_concat = data_concat.rename('flood')
 
 			else:
 				data_concat = cuwalid.concatenate_netCDF(

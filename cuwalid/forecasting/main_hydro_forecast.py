@@ -5,7 +5,7 @@ from cuwalid.forecasting.components.hindcast import *
 from cuwalid.forecasting.components.forecast import *
 from cuwalid.forecasting.components.plot_hydro_forecast import *
 
-def run_hydro_forecast(config_file):
+def run_hydro_forecast(config_path):
     """
     This function run the forecasting analysis, if historical analyais has
     not been activated, the forecasting will use results specified in the
@@ -48,7 +48,7 @@ def run_hydro_forecast(config_file):
     end_year = config['end_year']
     variables = config['variables']
     iyear = config["year"]
-    nsim = config["nsim"]
+    #nsim = config["nsim"]
 
 
     # ----------------------HINDCAST-----------------------
