@@ -488,7 +488,7 @@ def get_ensamble_from_netcdf_list(fname_list, var_name, mean=True,
 			
 			if delta is not None:
 				# calculate annual average to reduce the use of memory
-				idata = resample_dataset(data, mean=mean, delt=delta)
+				idata = resample_dataset(idata, mean=mean, delt=delta)
 			
 			if mean is True:
 				idata = idata.mean(dim='time')
