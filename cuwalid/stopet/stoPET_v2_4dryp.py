@@ -142,8 +142,8 @@ def future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, l
                                     datapath, outputpath, tempAdj,deltat, dpetdt, randnoise, season_name):
 
     # create a folder to save the data
-    if not os.path.isdir(os.path.join(outputpath, season_name + "_" + str(startyear))):
-        os.makedirs(os.path.join(outputpath, season_name + "_" + str(startyear)))
+    if not os.path.isdir(outputpath):
+        os.makedirs(outputpath)
 
     # generate the hourly time series period
     years = np.arange(startyear,endyear+1)
@@ -254,7 +254,7 @@ def future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, l
         # save each year value separately (.nc)
         tunits = 'days since '+str(yr)+'-01-01' 
         # PET values jgenerated without any adjustment
-        filename1 = os.path.join(outputpath, season_name + "_" + str(startyear), str(yr)+'_'+str(tempAdj)+ '_ens_'+ str(ens_num) + '_stoPET.nc')      
+        filename1 = os.path.join(outputpath,  "Forecast_PET_HAD_ens_" + str(yr)+'_' + season_name + "_" + str(ens_num) + '.nc')      
         nc_write(stoch_pet, latlen, lonlen, 'pet', tunits, filename1)
         
         # Temperature adjusted PET (This is deactivated for ICPAC as we don't need the data) it will sve space.
@@ -429,9 +429,7 @@ def future_pet_ts_generate_singlepoint(startyear, endyear, latval, lonval, lats,
                                        ampl, omega, phase, shift, sr, ss, skew, loc, scale,
                                        slope_vals, mcont_vals,ens_num, datapath, outputpath,
                                        tempAdj,deltat, dpetdt):
-    # create a folder to save the data
-    if not os.path.isdir(outputpath+locname+'_E'+str(ens_num)+'_StoPET/'):
-        os.makedirs(outputpath+locname+'_E'+str(ens_num)+'_StoPET/')
+
 
     # generate the hourly time series period
     years = np.arange(startyear,endyear+1)
@@ -489,7 +487,7 @@ def future_pet_ts_generate_singlepoint(startyear, endyear, latval, lonval, lats,
                 annual_pet = np.append(annual_pet, spet) # append stopet for later adjustment
 
         # save each year generated pet timeseries in a text file
-        filename1 = outputpath+locname+'_E'+str(ens_num)+'_StoPET/'+str(yr)+'_'+str(latval)+'_'+str(lonval)+'_'+str(tempAdj)+'_stoPET.txt'
+        filename1 = os.path.join(outputpath, str(yr)+'_'+str(latval)+'_'+str(lonval)+'_'+str(tempAdj)+'_stoPET.txt')
         np.savetxt(filename1, stoch_pet, fmt='%0.5f')
         
         # here make the adjustment for change in temperature
@@ -504,7 +502,7 @@ def future_pet_ts_generate_singlepoint(startyear, endyear, latval, lonval, lats,
         adj_stopet = increase_temp_singlepoint(slope, mcont, annual_pet, tempAdj, deltat, yr, 
                                                startyear, endyear,dpetdt_val)
         # save the adjusted pet timeseries in a text file
-        filename2 = outputpath+locname+'_E'+str(ens_num)+'_StoPET/'+str(yr)+'_'+str(latval)+'_'+str(lonval)+'_'+str(tempAdj)+'_AdjstoPET.txt'
+        filename2 = os.path.join(outputpath, str(yr)+'_'+str(latval)+'_'+str(lonval)+'_'+str(tempAdj)+'_AdjstoPET.txt')
         np.savetxt(filename2, adj_stopet, fmt='%0.5f')
 
         print(yr)
@@ -610,13 +608,12 @@ def increase_temp_singlepoint(slope, mcont, annual_pet, tempAdj, deltat, yr,
 def seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, endyear, startdate, enddate, seasonswitch, season_name):
     years = np.arange(startyear,endyear+1)  
     for i in range(0,number_ensm):
-      filepath = os.path.join(outputpath, season_name + "_" + str(startyear))
       for j in range(0,len(years)):
         year = years[j]                   
         # old naming
         # fname1 = '%s_%s_stoPET.nc'%(year, tempAdj)
-        fname1 = str(startyear)+'_'+str(tempAdj)+ '_ens_'+ str(i) + '_stoPET.nc'
-        stopet4dryp(filepath, fname1, seasonswitch, startdate, enddate, i, season_name)
+        fname1 = "Forecast_PET_HAD_ens_" + str(startyear)+'_'+season_name+ '_' + str(i) + '.nc'
+        stopet4dryp(outputpath, fname1, seasonswitch, startdate, enddate, i, season_name)
         
 ##        fname2 = '%s_%s_AdjstoPET.nc'%(year, tempAdj)
 ##        stopet4dryp(filepath, fname2, seasonswitch, startdate, enddate, i)
@@ -642,10 +639,10 @@ def stopet4dryp(filepath, fname, seasonswitch, startdate, enddate, i, season_nam
     # here we need to cut out row from top and botom 
     # and one column from left and right
     # this is done because the smoothing don't work on thos grid cells.
-    nc = Dataset(os.path.join(filepath, fname))  
-    lats = nc.variables['latitude'][1:-1]
-    lons = nc.variables['longitude'][1:-1]
-    pet = nc.variables['pet'][:,:,1:-1,1:-1] 
+    with Dataset(os.path.join(filepath, fname)) as nc:
+        lats = nc.variables['latitude'][1:-1]
+        lons = nc.variables['longitude'][1:-1]
+        pet = nc.variables['pet'][:, :, 1:-1, 1:-1]
     
     # extract season values
     if seasonswitch == 1:
@@ -665,7 +662,7 @@ def stopet4dryp(filepath, fname, seasonswitch, startdate, enddate, i, season_nam
     # split the file name
     f = fname.split('.')
     x = f[0].split("_")
-    year = x[0]
+    year = x[4]
     method = x[1]
     suffix = x[2]
 
