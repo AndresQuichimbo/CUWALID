@@ -11,6 +11,7 @@ from cuwalid.dryp.main_DRYP import run_DRYP
 from cuwalid.forecasting.main_hydro_forecast import run_hydro_forecast
 import cuwalid.forecasting.main_impact_forecast as fcast
 from cuwalid.tools.DRYP_json_builder import create_ensamble, write_JSON_dryp_file
+from cuwalid.tools.download_data import check_and_download
 import cuwalid.tools.CUWALID_json_builder as JSON_builder
 import cuwalid.tools.CUWALID_mfile_tools as cuwalid_mtools
 from cuwalid.tools.CUWALID_make_dirs import create_directory_structure
@@ -20,6 +21,10 @@ def run_cuwalid(cuwalid_input):
 	# Get input file as dictionary
 	with open(cuwalid_input, 'r') as file:
 		cuwalid_config = json.load(file)
+
+	# Checks if the stopet parameter files and osm forecasting data
+	# and downloads it if its not
+	check_and_download()
 
 	# read historical paths
 	historical_model_name = cuwalid_config["historical_model_name"]
