@@ -438,10 +438,10 @@ def plot_map(plot_scale="Zoom",
 					  left=0.025, right=0.975)
 
 		# Add figure
-		# cuwalidplt.plot_impact_tercile_forecast(ds,
-		# 	title="Impact based Forecast", reproject=False,
-		# 	fshapefile=None, fmask=None, ax=ax,
-		# 	color=var_colour[iwater_status])
+		cuwalidplt.plot_impact_tercile_forecast(ds,
+			title="Impact based Forecast", reproject=False,
+			fshapefile=None, fmask=None, ax=ax,
+			color=var_colour[iwater_status])
 
 		# Add sublevels for padmin boudaries
 		if level_2_region is not None:
