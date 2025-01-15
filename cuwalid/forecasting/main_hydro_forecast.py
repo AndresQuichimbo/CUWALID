@@ -1,22 +1,26 @@
 import argparse
 import json
+from cuwalid.forecasting.components.helper_functions import load_config
 from cuwalid.forecasting.components.hindcast import *
 from cuwalid.forecasting.components.forecast import *
 from cuwalid.forecasting.components.plot_hydro_forecast import *
 
-def run_hydro_forecast(config_file):
+def run_hydro_forecast(config_path):
     """
     This function run the forecasting analysis, if historical analyais has
     not been activated, the forecasting will use results specified in the
     model path files.
     """
 
-    # Load JSON data from the config_path if config is a string
-    if type(config_file) == str:
-        with open(config_file, 'r') as file:
-            config = json.load(file)
+    # Load configuration file
+    if type(config_path) == str:
+        config = load_config(config_path)
     else:
-        config = config_file
+        config = config_path
+
+    ## Load JSON data from the config_path
+    #with open(config_path, 'r') as file:
+    #    config = json.load(file)
 
     include_hincast = config["run_historical"]
     include_forecast = config["run_forecast"]
@@ -38,13 +42,14 @@ def run_hydro_forecast(config_file):
     #/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGcv_sim83_OND_quantiles.nc
 
     #threshold_path = config["threshold_path"]
-    threshold_path = os.path.join(historical_postpp_path, "netcdf", historical_model_name + "_SSS_extremes_quantiles.nc")
+    #threshold_path = os.path.join(historical_postpp_path, "netcdf", historical_model_name + "_SSS_extremes_quantiles.nc")
+    threshold_path = os.path.join(historical_postpp_path, "netcdf", historical_model_name + "_SSS_quantiles.nc")
     season = config['season']
     start_year = config['start_year']
     end_year = config['end_year']
     variables = config['variables']
     iyear = config["year"]
-    nsim = config["nsim"]
+    #nsim = config["nsim"]
 
 
     # ----------------------HINDCAST-----------------------
@@ -88,13 +93,13 @@ def run_hydro_forecast(config_file):
                                         start_year, end_year, season, variables,
                                         historical_postpp_path)
 
-            print("Step 6: Getting quatiles 05, 33, 50, 66, 95 form historical simulations")
-            get_extremes_quantiles_multi_netcdf(historical_model_path,
-                                                historical_model_name,
-                                                start_year, end_year, season, variables,
-                                                historical_postpp_path)
+            #print("Step 6: Getting quatiles 05, 33, 50, 66, 95 form historical simulations")
+            #get_extremes_quantiles_multi_netcdf(historical_model_path,
+            #                                    historical_model_name,
+            #                                    start_year, end_year, season, variables,
+            #                                    historical_postpp_path)
 
-            print("Step 7: Getting average values form historical simualations")
+            print("Step 6: Getting average values from historical simualations")
             get_average_multi_netcdf(historical_model_path,
                                      historical_model_name,
                                      start_year, end_year, season, variables,

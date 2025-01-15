@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 
 def get_csv_TS_files_from_multi_CSV(model_path, model_name, start_year, end_year):
 	csv_file = [
-	"_RZ_avg.csv",
+	"_avgrp.csv",
+	"_avgpnd.csv",
 	"_p_wte.csv",
 	"_p_tht.csv",
 	"_p_ssz.csv",
@@ -210,7 +211,7 @@ def get_percentiles_multi_files(model_path, model_name, start_year, end_year, se
 			
 			# CHANGE NAMES TO ADD MORE VARIABLES
 			# using anomalies
-			if (ifield == "twsc") or (ifield == "wrsi"):
+			if (ifield == "twsc") or (ifield == "wrsi"):# or (ifield == "flood"):
 				fname = get_name_list_historical_netcdf_files(model_path, model_name,
 												  start_year, end_year,
 												  ifield=ifield
@@ -224,15 +225,28 @@ def get_percentiles_multi_files(model_path, model_name, start_year, end_year, se
 				#data_concat = cuwalid.concatenate_netCDF(
 				#	fname_list, ifield, agg="M", dim='time'
 				#	)
-			else:
+			#elif ifield == "flood":
+			#	fname = get_name_list_historical_netcdf_files(model_path, model_name,
+			#									  start_year, end_year,
+			#									  ifield=ifield
+			#									  )
+			else:# or (ifield == "flood")
 				fname = get_name_list_historical_netcdf_files(model_path, model_name,
 												  start_year, end_year)
 	
-				# concatenate dataset at selected fields
 
-			data_concat = cuwalid.concatenate_netCDF(
-					fname, ifield, agg="M", dim='time'
-					)
+			# concatenate dataset at selected fields
+			if  ifield == "flood":
+				data_concat = cuwalid.concatenate_netCDF(
+						fname, ifield, agg="M", dim='time'
+						)
+				# rename variable
+				data_concat = data_concat.rename('flood')
+
+			else:
+				data_concat = cuwalid.concatenate_netCDF(
+						fname, ifield, agg="M", dim='time'
+						)
 			
 			# accummulate dataset, just in case of TWSA
 			if ifield == 'twsc':
@@ -242,14 +256,20 @@ def get_percentiles_multi_files(model_path, model_name, start_year, end_year, se
 			if (ifield == 'tht') or (ifield == 'wte'):
 				mean = True
 			
-			if iseason is not None:
-				# get seasson
-				data_concat = data_concat.where(
-					data_concat.time.dt.month.isin(
-					cuwalid.season_name_to_number(iseason)))
+			if  ifield != "flood":
+				if iseason is not None:
+					# get seasson
+					data_concat = data_concat.where(
+						data_concat.time.dt.month.isin(
+						cuwalid.season_name_to_number(iseason)))
 				
 			# resample dataset
-			data_concat = cuwalid.resample_dataset(data_concat,
+			if  ifield == "flood":
+				data_concat = cuwalid.resample_dataset(data_concat,
+						extremes="max", delt='Y'
+						)
+			else:
+				data_concat = cuwalid.resample_dataset(data_concat,
 						mean=mean, delt='Y'
 						)
 			
@@ -673,5 +693,8 @@ def get_name_list_historical_netcdf_files(model_path, model_name, start_year, en
 
 	if ifield is not None:
 		fname = [ifname.split('.')[0]+'_'+ifield+'.nc' for ifname in fname]
+	
+	#if ifield == "flood":
+	#	fname = [ifname.split('.')[0]+'max.nc' for ifname in fname]
 		
 	return fname

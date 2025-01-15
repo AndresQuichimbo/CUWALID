@@ -3,6 +3,7 @@ import json
 import os
 import subprocess
 import sys
+#sys.path.append("/home/cuwalid/CUWALID")
 import numpy as np
 from cuwalid.storm.main_storm import run_storm
 from cuwalid.storm.pdfs_ import compute_icpac, masking
@@ -26,17 +27,28 @@ def run_cuwalid(cuwalid_input):
 	# and downloads it if its not
 	check_and_download()
 
+	# General parameters 
 	# read historical paths
-	historical_model_name = cuwalid_config["historical_model_name"]
-
+	historical_model_name = cuwalid_config["historical"]['model_name']
+	historical_path = cuwalid_config["historical"]['main_path']
+	historical_model_path = cuwalid_config["historical"]['model_path']
+	historical_postpp_path = cuwalid_config["historical"]['postpp_path']
+	
 	# read forecasting parameters
-	forecast_model_name = cuwalid_config["forecasting_model_name"]
+	forecast_model_name = cuwalid_config["forecasting"]['model_name']
+	forecast_path = cuwalid_config["forecasting"]['main_path']
+	forecast_model_path = cuwalid_config["forecasting"]['model_path']
+	forecast_postpp_path = cuwalid_config["forecasting"]['postpp_path']
 
-	forecast_path = os.path.join(cuwalid_config["output_dir"], "forecast/regional")
-
-	# read storm input file path
-	storm_file = cuwalid_config["Tercile_Tem_path"]
-
+	# I have disable it to allows make it work in my script
+##	# read historical paths
+##	historical_model_name = cuwalid_config["historical_model_name"]
+##
+##	# read forecasting parameters
+##	forecast_model_name = cuwalid_config["forecasting_model_name"]
+##
+##	forecast_path = os.path.join(cuwalid_config["output_dir"], "forecast/regional")
+	
 	# read stopet input file path
 	tercile_forecast_file = cuwalid_config["Tercile_Pre_path"]
 
@@ -46,14 +58,27 @@ def run_cuwalid(cuwalid_input):
 	start_date, end_date = cuwalid_mtools.get_dates_season(season, iyear)
 	start_day, end_day = cuwalid_mtools.date_to_day_of_year(start_date), cuwalid_mtools.date_to_day_of_year(end_date)
 
+	forecast_path = os.path.join(forecast_path, f"{season}_{str(iyear)}")+"/"
+
+	# read storm input file path
+	storm_file = cuwalid_config["Tercile_Tem_path"]
+
 	# Create directory structure for cuwalid system where user ran code
 	create_directory_structure("", season, iyear)
 
-	forecast_path_storm_output = os.path.join(forecast_path, f"{season}_{str(iyear)}", "dataset/pre/")
-	forecast_path_stopet_output = os.path.join(forecast_path, f"{season}_{str(iyear)}", "dataset/pet/")
-	forecast_path_dryp_model = os.path.join(forecast_path, f"{season}_{str(iyear)}", "model")
-	forecast_path_dryp_output = os.path.join(forecast_path, f"{season}_{str(iyear)}", "output")
-	forecast_path_dryp_postpp = os.path.join(forecast_path, f"{season}_{str(iyear)}", "postpp")
+##	forecast_path_storm_output = os.path.join(forecast_path, f"{season}_{str(iyear)}", "dataset/pre/")
+##	forecast_path_stopet_output = os.path.join(forecast_path, f"{season}_{str(iyear)}", "dataset/pet/")
+##	forecast_path_dryp_model = os.path.join(forecast_path, f"{season}_{str(iyear)}", "model")
+##	forecast_path_dryp_output = os.path.join(forecast_path, f"{season}_{str(iyear)}", "output")
+##	forecast_path_dryp_postpp = os.path.join(forecast_path, f"{season}_{str(iyear)}", "postpp")
+
+	# I have added this to run this in my session so delete if it does not apply
+	forecast_path_storm_output = forecast_path + "dataset/pre/"+season+"_"+str(iyear)+"/"
+	forecast_path_stopet_output = forecast_path + "dataset/pet/"+season+"_"+str(iyear)+"/"
+	forecast_path_dryp_model = forecast_path + "model/"
+	forecast_path_dryp_output = forecast_path + "output/"
+	forecast_path_dryp_postpp = forecast_path + "postpp/"
+
 	
 	# RUN MODEL COMPONENTS AND ANY ADDITIONAL PROCESS
 	# Run storm
@@ -124,8 +149,10 @@ def run_cuwalid(cuwalid_input):
 			dryp_input = json.load(file)
 
 		# TODO: Change pet to the same order naming as pre
-		fname_pet = [forecast_path_stopet_output + "Forecast_PET_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
-		fname_pre = [forecast_path_storm_output + "Forecast_PRE_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
+		#fname_pet = [forecast_path_stopet_output+ "Forecast_PET_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
+		#fname_pre = [forecast_path_storm_output + "Forecast_PRE_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
+		fname_pet = [forecast_path_stopet_output+ "Forecast_PET_HAD_ens_" + str(isim) + "_" + season + "_" + str(iyear) + ".nc" for isim in range(nsim)]
+		fname_pre = [forecast_path_storm_output + "Forecast_PRE_HAD_ens_" + str(isim) + "_" + season + "_" + str(iyear) + ".nc" for isim in range(nsim)]
 		forcing_list = np.array(JSON_builder.create_ensamble([fname_pet, fname_pre], nsamples=nsim))
 
 		# Create the list of commands for each simulation
@@ -142,6 +169,7 @@ def run_cuwalid(cuwalid_input):
 				start_date=start_date,
 				end_date=end_date,
 				new_setting_file=fname_setting_file,
+				path_outputs=forecast_path_dryp_output,
 			)
 
 			# Prepare the log file and command for each process
@@ -174,53 +202,37 @@ def run_cuwalid(cuwalid_input):
 	if cuwalid_config["run_WaterCast"] is True:
 		print("Executing Water forecasting: WaterCast")
 		HyCast_input_path = cuwalid_config["MODELS"]["WaterCast"]["HyCast"]
-		ImCast_input_path = cuwalid_config["MODELS"]["WaterCast"]["ImCast"]
-
-		# Add functions to modify paths and names according to the cofiguration files before runing the forecast
-		# modify names
-		# modify season and year
-
-		print("Executing hydrological forecasting: HyCast")
-		# Open json config
+		
 		with open(HyCast_input_path, 'r') as file:
 			HyCast_input = json.load(file)
-
-		# Modify vairables for forecasting
-		forecasting_input = {
-			"model_name": forecast_model_name,
-			"main_path": f"forecast/regional/{season}_{str(iyear)}/",
-			"model_path": f"forecast/regional/{season}_{str(iyear)}/output/",
-			"postpp_path": f"forecast/regional/{season}_{str(iyear)}/postpp/",
-		}
-		HyCast_input["forecasting"] = forecasting_input
-
-		historical_input = {
-			"model_name": historical_model_name,
-			"main_path": f"historical/regional/{season}_{str(iyear)}/",
-			"model_path": f"historical/regional/{season}_{str(iyear)}/output/",
-			"postpp_path": f"historical/regional/{season}_{str(iyear)}/postpp/",
-		}
-		HyCast_input["historical"] = historical_input
-
-		HyCast_input["season"] = cuwalid_config["season"]
-		HyCast_input["start_year"] = cuwalid_config["start_year"]
-		HyCast_input["end_year"] = cuwalid_config["end_year"]
-		HyCast_input["year"] = cuwalid_config["year"]
-		HyCast_input["nsim"] = cuwalid_config["NSIM"]
-
-		run_hydro_forecast(HyCast_input)
 		
-		print("Executing Impact-based water forecasting: ImCast")
-		# Open json config
+		# modify names
+		# modify season and year
+		HyCast_input["forecasting"]["model_name"] = season + "_" + str(iyear) + "_realization"
+		HyCast_input["forecasting"]["model_path"] = forecast_path_dryp_output #+ "/"
+		HyCast_input["forecasting"]["postpp_path"] = forecast_path_dryp_postpp
+		HyCast_input["year"] = iyear
+		HyCast_input["seasons"] = season
+		#print(HyCast_input)
+		print("Executing hydrological forecasting: HyCast")
+		run_hydro_forecast(HyCast_input)
+
+		# Impact base forecasting
+		ImCast_input_path = cuwalid_config["MODELS"]["WaterCast"]["ImCast"]
+
 		with open(ImCast_input_path, 'r') as file:
 			ImCast_input = json.load(file)
-
-		# Modify variables to intergrate previous outputs
-		ImCast_input["season"] = cuwalid_config["season"]
-		ImCast_input["year"] = cuwalid_config["year"]
-		ImCast_input["model_name"] = cuwalid_config["forecasting"]["model_name"]
+		
+		# modify names
+		# modify season and year
+		ImCast_input["model_name"] = season + "_" + str(iyear) + "_realization"
+		ImCast_input["model_path"] = forecast_path_dryp_output #+ #"/"
+		ImCast_input["postpp_path"] = forecast_path_dryp_postpp
 		ImCast_input["output_dir"] = forecast_path_dryp_postpp
-
+		ImCast_input["year"] = iyear
+		ImCast_input["season"] = season
+		#print(ImCast_input)
+		print("Executing Impact-based water forecasting: ImCast")
 		fcast.plot_maps_json(ImCast_input)
 
 if __name__ == '__main__':

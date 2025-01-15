@@ -134,11 +134,16 @@ def concatenate_netCDF(fname_list, var, agg="M", dim='time', season=None):
 			mean = True
 		
 		# check if is the riparian area
-		if (var == 'fch') or (var == 'tls'):
+		if (var == 'fch') or (var == 'tls'):# or (var == 'flood'):
 			ifname = ifname.split('.')[0]+'rp.nc'
+		if (var == 'flood'):
+			ifname = ifname.split('.')[0]+'max.nc'
 		
 		# read dataset
-		data = read_dataset(ifname, var_name=var)
+		if (var == 'flood'):
+			data = read_dataset(ifname, var_name="dis")
+		else:
+			data = read_dataset(ifname, var_name=var)
 		
 		# select season
 		if season is not None:
@@ -592,10 +597,10 @@ def get_average_from_list(fname_list, var="pre", mean=True, season=None,
 	# loop over all continues simulation files
 	concat_first_read = True
 	for ifname in fname_list:
-		print(ifname, var)
+		#print(ifname, var)
 		# read datasets
 		data = read_dataset(ifname, var_name=var)
-		print(data)
+		#print(data)
 		# if seasonal average, select months
 		if season is not None:
 			data = data.where(data.time.dt.month.isin(
@@ -669,6 +674,12 @@ def get_average_all_variables_from_list(fname, field, season):
 				ifname.split('.')[0]+'_'+ifield+'.nc' for ifname in fname
 				]
 		
+		if ifield == "flood":
+			fname_list = [
+				ifname.split('.')[0]+'max.nc' for ifname in fname_list
+				]
+		
+
 		# read dataset
 		mean = False
 		if (ifield == 'tht') or (ifield == 'wte'):
@@ -683,8 +694,14 @@ def get_average_all_variables_from_list(fname, field, season):
 			accum = "Y"
 			
 		# loop over all continues simulation files
-		data = get_average_from_list(fname_list, var=ifield, mean=mean,
-				season=season, accum=accum, delta=delta)
+		if ifield == "flood":
+			data = get_average_from_list(fname_list, var="dis", mean=mean,
+					season=season, accum=accum, delta=delta)
+			data = data.rename('flood')
+			#data = data.rename({'dis':'flood'})
+		else:
+			data = get_average_from_list(fname_list, var=ifield, mean=mean,
+					season=season, accum=accum, delta=delta)
 		
 		# concatenate all datasets into one netcdf file
 		if first_read == True:

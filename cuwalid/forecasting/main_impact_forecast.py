@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import geopandas as gpd
+from cuwalid.forecasting.components.helper_functions import load_config
 from cuwalid.forecasting.components.plot_impact_forecast import plot_map
 import cuwalid.forecasting.components.forecast as forecast
 import cuwalid.forecasting.components.read_paths as paths
@@ -67,21 +68,25 @@ def plot_maps_json(config_file):
 	- If attempting to create maps for multiple countries at once, ensure that place_names is not 
 	  specified in the JSON file, as this will cause an error.
 	"""
-	# If config_file is string get the file from the path
+
+	# Load configuration file
 	if type(config_file) == str:
-		with open(config_file, 'r') as file:
-			try:
-				config = json.load(file)
-			except json.JSONDecodeError as e:
-				print(f"Error reading JSON file: {e}")
-				return
-	# If config_file is not a string, assume it is already a dictionary
+		config = load_config(config_file)
 	else:
 		config = config_file
 
+	#with open(config_file, 'r') as file:
+	#	try:
+	#		config = json.load(file)
+	#	except json.JSONDecodeError as e:
+	#		print(f"Error reading JSON file: {e}")
+	#		return
+
 	# Check for required keys and provide feedback if missing
-#	required_keys = ["plot_scales", "seasons", "water_status", "year", "mask_path", "river_path"]
+	# required_keys = ["plot_scales", "seasons", "water_status", "year", "mask_path", "river_path"]
+
 	required_keys = ["plot_scales", "seasons", "water_status", "year"]
+
 	for key in required_keys:
 		if key not in config:
 			print(f"Missing required key: {key} in the configuration file.")
@@ -154,6 +159,10 @@ def plot_maps_json(config_file):
 	if place_name is None:
 		read_country_list = True
 	
+	# get osm file name
+	script_dir = os.path.dirname(os.path.abspath(__file__))
+	osm_data_dir = os.path.join(script_dir, '..', 'forecasting', 'osm_data')
+
 	# Create maps
 	for icountry in country_names:
 		#for iplace in place_name:
@@ -177,7 +186,10 @@ def plot_maps_json(config_file):
 							dataset_parameters.name_short_country
 							#place_name=place_name
 							)[2]
-			
+		
+		# specify osm file name
+		osm_file = icountry+".som.pbf"
+
 		#print(dataset_parameters.shapefile_level_1_dic[icountry])
 		if create_map is True:	
 			print("Plot Impact forecasting maps")
@@ -190,14 +202,15 @@ def plot_maps_json(config_file):
 				seasons=season, 
 				water_status=water_status, 
 				year=year, 
-				output_dir=output_dir, 
+				output_dir=output_dir+"fig/", 
 				language=language,
 				netcdf_path_list=netcdf_path_list,
 				#threshold_path=threshold_path,
 				#mask_path=mask_path,
 				#river_path=river_path,
 				#shape_path=dataset_parameters.shapefile_level_1_dic[icountry]
-				shape_path=dataset_parameter_list
+				shape_path=dataset_parameter_list,
+				osm_file=os.path.join(osm_data_dir, osm_file)
 				)
 		# function to get netcdf files from regional files at each selected place
 		if create_dataset is True or create_table is True:
@@ -273,7 +286,8 @@ def call_plot_maps(plot_scales=["Zoom"],
 		threshold_path=None,
 		mask_path=None,
 		river_path=None,
-		shape_path=None
+		shape_path=None,
+		osm_file=None
 		):
 	"""
 	Function to call the map plotting function for specified regions and conditions.
@@ -400,7 +414,8 @@ def call_plot_maps(plot_scales=["Zoom"],
 								threshold_path=threshold_path,
 								mask_path=mask_path,
 								river_path=river_path,
-								fname_output=ifname_fig
+								fname_output=ifname_fig,
+								osm_file=osm_file
 								)
 					#except Exception as e:
 					#	print(f"An exception occured {country_name} {iplace_name}")
