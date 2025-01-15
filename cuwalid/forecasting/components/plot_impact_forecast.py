@@ -1,5 +1,6 @@
 # Import libraries from local repository
 import os
+import pickle
 import geopy
 from geopy.geocoders import Nominatim
 from matplotlib import pyplot as plt
@@ -146,31 +147,27 @@ def plot_map(plot_scale="Zoom",
 			geometry=[bbox], crs="EPSG:4326")["geometry"]
 		polygon = extend.iloc[0]
 
-	## Path to your local OSM file
-	#osm_file = "path/to/your-data.osm"
 
-	# get roads and street from OSM
+	# get roads and streets from OSM
 	if plot_obj_id[plot_scale]["Main Roads"] is True:
-		cache_file = os.path.join(osm_data_dir, f'{country_name}_roads.osm.pbf')
+		cache_file = os.path.join(osm_data_dir, f'{place_name}_roads.pkl')
 		try:
 			if os.path.exists(cache_file):
-				# read and extract data form file
 				print("Reading road data from cached file")
-				highway = gpd.read_file(cache_file)
-				
-				# Filter geometries that intersect with the polygon
-				#highway = highway[highway.intersects(polygon)]
+				with open(cache_file, 'rb') as f:
+					highway = pickle.load(f)
 			else:
-				# Query amenities using the latest OSMnx version (0.18.1 as of 2024-02-21)
-				print("getting road data from osm server")
+				print("Getting road data from OSM server")
 				highway = ox.features.features_from_polygon(polygon, tags={'highway': True})
-				highway.to_file(cache_file, driver="GeoJSON")
-			# 4. Clip the OSM data to the polygon
+				with open(cache_file, 'wb') as f:
+					pickle.dump(highway, f)
+
+			# Clip the OSM data to the polygon
 			highway = gpd.clip(highway, polygon)
 			highway.crs = mapPP
-			highway = highway.to_crs(netcdfPP)#ds.rio.crs)
+			highway = highway.to_crs(netcdfPP)  # ds.rio.crs
 		except:
-			print("error with highway")
+			print("Error with highway")
 
 	# read point locations
 	read_oms = False
@@ -179,169 +176,142 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{country_name}_amenity.osm.pbf')
+		cache_file = os.path.join(osm_data_dir, f'{place_name}_amenity.pkl')
 		try:
 			if os.path.exists(cache_file):
-				# read and extract data form file
-				print("getting data from file")
-				amenities = gpd.read_file(cache_file)
+				print("Getting amenity data from file")
+				with open(cache_file, 'rb') as f:
+					amenities = pickle.load(f)
 			else:
-				print("getting data from osm server")
-
+				print("Getting amenity data from OSM server")
 				amenities = ox.features.features_from_polygon(polygon, tags={'amenity': True})
-				# Filter geometries that intersect with the polygon
 				amenities = amenities[amenities.intersects(polygon)]
-				amenities.to_file(cache_file, driver="GeoJSON")
+				with open(cache_file, 'wb') as f:
+					pickle.dump(amenities, f)
 		except:
-			print("no airports found")
+			print("No amenities found")
 			amenities = []
 
 		amenities = amenities.loc["node"]
 		amenities.crs = mapPP
 		amenities = amenities.to_crs(netcdfPP)
 
-	# read point locations
+	# read point locations for aeroways
 	read_oms = False
 	for ipoint in aeroway_obj:
 		if plot_obj_id[plot_scale][ipoint] is True:
 			read_oms = True
 
 	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{country_name}_aeroway.osm.pbf')
+		cache_file = os.path.join(osm_data_dir, f'{place_name}_aeroway.pkl')
 		try:
 			if os.path.exists(cache_file):
-				# read and extract data form file
-				print("getting data from file")
-				aeroway = gpd.read_file(cache_file)
-				# Filter geometries that intersect with the polygon
-				#aeroway = aeroway[aeroway.intersects(polygon)]
+				print("Getting aeroway data from file")
+				with open(cache_file, 'rb') as f:
+					aeroway = pickle.load(f)
 			else:
-				print("getting data from osm server")
-
+				print("Getting aeroway data from OSM server")
 				aeroway = ox.features.features_from_polygon(polygon, tags={'aeroway': True})
-			aeroway = aeroway[aeroway["name"].notnull()]
-			#aeroway = aeroway.loc["node"]
-			# 4. Clip the OSM data to the polygon
-			aeroway = gpd.clip(aeroway, polygon)
-			aeroway.crs = mapPP
-			aeroway = aeroway.to_crs(netcdfPP)
-			aeroway = aeroway.centroid
-			aeroway.to_file(cache_file, driver="GeoJSON")
+				aeroway = aeroway[aeroway["name"].notnull()]
+				aeroway = gpd.clip(aeroway, polygon)
+				aeroway.crs = mapPP
+				aeroway = aeroway.to_crs(netcdfPP)
+				aeroway = aeroway.centroid
+				with open(cache_file, 'wb') as f:
+					pickle.dump(aeroway, f)
 		except:
-			print("no airports found")
+			print("No airports found")
 			aeroway = []
 
 	# read waterways
-	read_oms = False	
+	read_oms = False
 	for iwater in water_objects:
 		if plot_obj_id[plot_scale][iwater] is True:
 			read_oms = True
 
-	water = None
 	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{country_name}_waterway.osm.pbf')
+		cache_file = os.path.join(osm_data_dir, f'{place_name}_waterway.pkl')
 		try:
 			if os.path.exists(cache_file):
-				# read and extract data form file
-				print("getting data from file")
-				water = gpd.read_file(cache_file)
-				# Filter geometries that intersect with the polygon
-				#aeroway = aeroway[aeroway.intersects(polygon)]
+				print("Getting waterway data from file")
+				with open(cache_file, 'rb') as f:
+					water = pickle.load(f)
 			else:
-				print("getting data from osm server")
-
+				print("Getting waterway data from OSM server")
 				water = ox.features.features_from_polygon(polygon, tags={'waterway': True})
-				aeroway.to_file(cache_file, driver="GeoJSON")
-			# 4. Clip the OSM data to the polygon
-			water = gpd.clip(water, polygon)
-			water.crs = mapPP
-			water = water.to_crs(netcdfPP)
+				water = gpd.clip(water, polygon)
+				water.crs = mapPP
+				water = water.to_crs(netcdfPP)
+				with open(cache_file, 'wb') as f:
+					pickle.dump(water, f)
 		except:
-			print("error with waterway")
+			print("Error with waterway")
+			water = None
 
 	# read natural reserves
-	read_oms = False	
+	read_oms = False
 	for iwater in water_objects:
 		if plot_obj_id[plot_scale][iwater] is True:
 			read_oms = True
 
 	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{country_name}_leisure.osm.pbf')
+		cache_file = os.path.join(osm_data_dir, f'{place_name}_leisure.pkl')
 		try:
 			if os.path.exists(cache_file):
-				# read and extract data form file
-				print("getting data from file")
-				leisure = gpd.read_file(cache_file)
-				# Filter geometries that intersect with the polygon
-				#aeroway = aeroway[aeroway.intersects(polygon)]
+				print("Getting leisure data from file")
+				with open(cache_file, 'rb') as f:
+					leisure = pickle.load(f)
 			else:
-				print("getting data from osm server")
-
+				print("Getting leisure data from OSM server")
 				leisure = ox.features.features_from_polygon(polygon, tags={'leisure': True})
-				leisure.to_file(cache_file, driver="GeoJSON")
-			# 4. Clip the OSM data to the polygon
-			leisure = gpd.clip(leisure, polygon)
-			leisure.crs = mapPP
-			leisure = leisure.to_crs(netcdfPP)
-
+				leisure = gpd.clip(leisure, polygon)
+				leisure.crs = mapPP
+				leisure = leisure.to_crs(netcdfPP)
+				with open(cache_file, 'wb') as f:
+					pickle.dump(leisure, f)
 		except:
-			print("error with leisure")
+			print("Error with leisure")
 
 	# read urban centres
-	read_oms = False	
+	read_oms = False
 	for iplaces in places_obj:
 		if plot_obj_id[plot_scale][iplaces] is True:
 			read_oms = True
 
 	if read_oms is True:
-		#bbox = wards.total_bounds
-		#bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
-		#polygon_bnd = gpd.GeoDataFrame({'id': [1]},
-		#	geometry=[bbox], crs="EPSG:4326")["geometry"].iloc[0]
-		cache_file = os.path.join(osm_data_dir, f'{country_name}_place.osm.pbf')
+		cache_file = os.path.join(osm_data_dir, f'{place_name}_place.pkl')
 		if os.path.exists(cache_file):
-			# read and extract data form file
-			print("getting data from file")
-			places = gpd.read_file(cache_file)
-			# Filter geometries that intersect with the polygon
-			#aeroway = aeroway[aeroway.intersects(polygon)]
+			print("Getting place data from file")
+			with open(cache_file, 'rb') as f:
+				places = pickle.load(f)
 		else:
-			print("getting data from osm server")
-		#places = ox.features.features_from_polygon(polygon_bnd, tags={'place': True})
+			print("Getting place data from OSM server")
 			places = ox.features.features_from_polygon(polygon, tags={'place': True})
-			print(places.dtypes)
-			places.to_file(cache_file, driver="GeoJSON")
-		places = places.loc['node']
-		places.crs = mapPP
-		#places = gpd.clip(places, polygon_bnd)
-		places = gpd.clip(places, polygon)
-		places = places.to_crs(netcdfPP)
-	
-	#places.plot()
-	
-	# admininstrative borders
+			places = places.loc['node']
+			places.crs = mapPP
+			places = gpd.clip(places, polygon)
+			places = places.to_crs(netcdfPP)
+			with open(cache_file, 'wb') as f:
+				pickle.dump(places, f)
+
+	# administrative borders
 	if plot_obj_id[plot_scale]["Administrative Boundary"] is True:
-		#bbox = wards.total_bounds
-		#bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
-		#polygon_bnd = gpd.GeoDataFrame({'id': [1]},
-		#	geometry=[bbox], crs="EPSG:4326")["geometry"].iloc[0]
-		#bnd_admin = ox.features.features_from_polygon(polygon_bnd, tags={'boundary': True})
-		#bnd_admin = gpd.clip(bnd_admin, polygon_bnd)
-		cache_file = os.path.join(osm_data_dir, f'{country_name}_boundary.osm.pbf')
+		cache_file = os.path.join(osm_data_dir, f'{place_name}_boundary.pkl')
 		if os.path.exists(cache_file):
-			# read and extract data form file
-			print("getting data from file")
-			bnd_admin = gpd.read_file(cache_file)
-			# Filter geometries that intersect with the polygon
-			#aeroway = aeroway[aeroway.intersects(polygon)]
+			print("Getting boundary data from file")
+			with open(cache_file, 'rb') as f:
+				bnd_admin = pickle.load(f)
 		else:
-			print("getting data from osm server")
+			print("Getting boundary data from OSM server")
 			bnd_admin = ox.features.features_from_polygon(polygon, tags={'boundary': True})
-			bnd_admin.to_file(cache_file, driver="GeoJSON")
-		bnd_admin = gpd.clip(bnd_admin, polygon)
-		bnd_admin = bnd_admin.loc['relation']
-		bnd_admin.crs = mapPP
-		bnd_admin = bnd_admin.to_crs(netcdfPP)
+			bnd_admin = gpd.clip(bnd_admin, polygon)
+			bnd_admin = bnd_admin.loc['relation']
+			bnd_admin.crs = mapPP
+			bnd_admin = bnd_admin.to_crs(netcdfPP)
+			with open(cache_file, 'wb') as f:
+				pickle.dump(bnd_admin, f)
+
+
 
 	# Assign the CRS to the GeoPandas DataFrame
 	wards.crs = mapPP
@@ -615,7 +585,7 @@ def plot_map(plot_scale="Zoom",
 						language=language_map[ilanguage], #color="gray"
 						)
 				except:
-					print("error with add_label_features")
+					print("error with add_label_features for place object")
 
 				place_filter.plot(ax=ax,
 					color=place_color[iplaces],
@@ -766,7 +736,7 @@ def plot_map(plot_scale="Zoom",
 		if output_dir is not None:	
 			# Check if path exist
 			if not os.path.exists(output_dir):
-				os.makedirs(output_dir)
+				os.makedirs(output_dir, exist_ok=True)
 			if fname_output is not None:
 				fname_fig = os.path.join(output_dir, fname_output)
 			else:
