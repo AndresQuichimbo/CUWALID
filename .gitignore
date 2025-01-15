@@ -37,3 +37,5 @@ json_testing/
 logs/
 inputs/
 cuwalid/forecasting/fonts
+cuwalid/forecasting/osm_data/
+forecast_output/
