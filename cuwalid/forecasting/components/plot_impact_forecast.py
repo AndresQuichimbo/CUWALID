@@ -184,13 +184,13 @@ def plot_map(plot_scale="Zoom",
 			if os.path.exists(cache_file):
 				# read and extract data form file
 				print("getting data from file")
-				amenities = ox.geometries_from_file(cache_file, tags={'amenity': True})
-				# Filter geometries that intersect with the polygon
-				amenities = amenities[amenities.intersects(polygon)]
+				amenities = gpd.read_file(cache_file)
 			else:
 				print("getting data from osm server")
 
 				amenities = ox.features.features_from_polygon(polygon, tags={'amenity': True})
+				# Filter geometries that intersect with the polygon
+				amenities = amenities[amenities.intersects(polygon)]
 				amenities.to_file(cache_file, driver="GeoJSON")
 		except:
 			print("no airports found")
@@ -212,7 +212,7 @@ def plot_map(plot_scale="Zoom",
 			if os.path.exists(cache_file):
 				# read and extract data form file
 				print("getting data from file")
-				aeroway = ox.geometries_from_file(cache_file, tags={'aeroway': True})
+				aeroway = gpd.read_file(cache_file)
 				# Filter geometries that intersect with the polygon
 				#aeroway = aeroway[aeroway.intersects(polygon)]
 			else:
@@ -244,7 +244,7 @@ def plot_map(plot_scale="Zoom",
 			if os.path.exists(cache_file):
 				# read and extract data form file
 				print("getting data from file")
-				water = ox.geometries_from_file(cache_file, tags={'waterway': True})
+				water = gpd.read_file(cache_file)
 				# Filter geometries that intersect with the polygon
 				#aeroway = aeroway[aeroway.intersects(polygon)]
 			else:
@@ -271,7 +271,7 @@ def plot_map(plot_scale="Zoom",
 			if os.path.exists(cache_file):
 				# read and extract data form file
 				print("getting data from file")
-				leisure = ox.geometries_from_file(cache_file, tags={'leisure': True})
+				leisure = gpd.read_file(cache_file)
 				# Filter geometries that intersect with the polygon
 				#aeroway = aeroway[aeroway.intersects(polygon)]
 			else:
@@ -302,13 +302,14 @@ def plot_map(plot_scale="Zoom",
 		if os.path.exists(cache_file):
 			# read and extract data form file
 			print("getting data from file")
-			places = ox.geometries_from_file(cache_file, tags={'place': True})
+			places = gpd.read_file(cache_file)
 			# Filter geometries that intersect with the polygon
 			#aeroway = aeroway[aeroway.intersects(polygon)]
 		else:
 			print("getting data from osm server")
 		#places = ox.features.features_from_polygon(polygon_bnd, tags={'place': True})
 			places = ox.features.features_from_polygon(polygon, tags={'place': True})
+			print(places.dtypes)
 			places.to_file(cache_file, driver="GeoJSON")
 		places = places.loc['node']
 		places.crs = mapPP
@@ -330,7 +331,7 @@ def plot_map(plot_scale="Zoom",
 		if os.path.exists(cache_file):
 			# read and extract data form file
 			print("getting data from file")
-			bnd_admin = ox.geometries_from_file(cache_file, tags={'boundary': True})
+			bnd_admin = gpd.read_file(cache_file)
 			# Filter geometries that intersect with the polygon
 			#aeroway = aeroway[aeroway.intersects(polygon)]
 		else:
