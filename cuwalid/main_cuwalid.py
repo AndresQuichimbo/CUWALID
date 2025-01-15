@@ -23,9 +23,6 @@ def run_cuwalid(cuwalid_input):
 	with open(cuwalid_input, 'r') as file:
 		cuwalid_config = json.load(file)
 
-	# Checks if the stopet parameter files and osm forecasting data
-	# and downloads it if its not
-	check_and_download()
 
 	# General parameters 
 	# read historical paths

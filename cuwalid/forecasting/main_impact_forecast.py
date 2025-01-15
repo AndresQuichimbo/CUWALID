@@ -159,9 +159,6 @@ def plot_maps_json(config_file):
 	if place_name is None:
 		read_country_list = True
 	
-	# get osm file name
-	script_dir = os.path.dirname(os.path.abspath(__file__))
-	osm_data_dir = os.path.join(script_dir, '..', 'forecasting', 'osm_data')
 
 	# Create maps
 	for icountry in country_names:
@@ -187,8 +184,6 @@ def plot_maps_json(config_file):
 							#place_name=place_name
 							)[2]
 		
-		# specify osm file name
-		osm_file = icountry+".som.pbf"
 
 		#print(dataset_parameters.shapefile_level_1_dic[icountry])
 		if create_map is True:	
@@ -209,8 +204,7 @@ def plot_maps_json(config_file):
 				#mask_path=mask_path,
 				#river_path=river_path,
 				#shape_path=dataset_parameters.shapefile_level_1_dic[icountry]
-				shape_path=dataset_parameter_list,
-				osm_file=os.path.join(osm_data_dir, osm_file)
+				shape_path=dataset_parameter_list
 				)
 		# function to get netcdf files from regional files at each selected place
 		if create_dataset is True or create_table is True:
@@ -287,7 +281,6 @@ def call_plot_maps(plot_scales=["Zoom"],
 		mask_path=None,
 		river_path=None,
 		shape_path=None,
-		osm_file=None
 		):
 	"""
 	Function to call the map plotting function for specified regions and conditions.
@@ -414,8 +407,7 @@ def call_plot_maps(plot_scales=["Zoom"],
 								threshold_path=threshold_path,
 								mask_path=mask_path,
 								river_path=river_path,
-								fname_output=ifname_fig,
-								osm_file=osm_file
+								fname_output=ifname_fig
 								)
 					#except Exception as e:
 					#	print(f"An exception occured {country_name} {iplace_name}")
