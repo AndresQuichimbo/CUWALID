@@ -159,6 +159,7 @@ def plot_maps_json(config_file):
 	if place_name is None:
 		read_country_list = True
 	
+
 	# Create maps
 	for icountry in country_names:
 		#for iplace in place_name:
@@ -182,7 +183,8 @@ def plot_maps_json(config_file):
 							dataset_parameters.name_short_country
 							#place_name=place_name
 							)[2]
-			
+		
+
 		#print(dataset_parameters.shapefile_level_1_dic[icountry])
 		if create_map is True:	
 			print("Plot Impact forecasting maps")
@@ -278,7 +280,7 @@ def call_plot_maps(plot_scales=["Zoom"],
 		threshold_path=None,
 		mask_path=None,
 		river_path=None,
-		shape_path=None
+		shape_path=None,
 		):
 	"""
 	Function to call the map plotting function for specified regions and conditions.

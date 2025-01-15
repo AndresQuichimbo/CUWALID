@@ -95,6 +95,8 @@ def plot_map(plot_scale="Zoom",
 					river_path=river_path
 					)
 	
+	osm_data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "osm_data")
+	
 	# =========================================================
 	# DO NOT CHANGE FROM THIS LINE
 	# =========================================================
@@ -144,11 +146,25 @@ def plot_map(plot_scale="Zoom",
 			geometry=[bbox], crs="EPSG:4326")["geometry"]
 		polygon = extend.iloc[0]
 
+	## Path to your local OSM file
+	#osm_file = "path/to/your-data.osm"
+
 	# get roads and street from OSM
 	if plot_obj_id[plot_scale]["Main Roads"] is True:
+		cache_file = os.path.join(osm_data_dir, f'{country_name}_roads.osm.pbf')
 		try:
-			# Query amenities using the latest OSMnx version (0.18.1 as of 2024-02-21)
-			highway = ox.features.features_from_polygon(polygon, tags={'highway': True})
+			if os.path.exists(cache_file):
+				# read and extract data form file
+				print("Reading road data from cached file")
+				highway = gpd.read_file(cache_file)
+				
+				# Filter geometries that intersect with the polygon
+				#highway = highway[highway.intersects(polygon)]
+			else:
+				# Query amenities using the latest OSMnx version (0.18.1 as of 2024-02-21)
+				print("getting road data from osm server")
+				highway = ox.features.features_from_polygon(polygon, tags={'highway': True})
+				highway.to_file(cache_file, driver="GeoJSON")
 			# 4. Clip the OSM data to the polygon
 			highway = gpd.clip(highway, polygon)
 			highway.crs = mapPP
@@ -163,7 +179,23 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
-		amenities = ox.features.features_from_polygon(polygon, tags={'amenity': True})
+		cache_file = os.path.join(osm_data_dir, f'{country_name}_amenity.osm.pbf')
+		try:
+			if os.path.exists(cache_file):
+				# read and extract data form file
+				print("getting data from file")
+				amenities = ox.geometries_from_file(cache_file, tags={'amenity': True})
+				# Filter geometries that intersect with the polygon
+				amenities = amenities[amenities.intersects(polygon)]
+			else:
+				print("getting data from osm server")
+
+				amenities = ox.features.features_from_polygon(polygon, tags={'amenity': True})
+				amenities.to_file(cache_file, driver="GeoJSON")
+		except:
+			print("no airports found")
+			amenities = []
+
 		amenities = amenities.loc["node"]
 		amenities.crs = mapPP
 		amenities = amenities.to_crs(netcdfPP)
@@ -175,8 +207,18 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
+		cache_file = os.path.join(osm_data_dir, f'{country_name}_aeroway.osm.pbf')
 		try:
-			aeroway = ox.features.features_from_polygon(polygon, tags={'aeroway': True})
+			if os.path.exists(cache_file):
+				# read and extract data form file
+				print("getting data from file")
+				aeroway = ox.geometries_from_file(cache_file, tags={'aeroway': True})
+				# Filter geometries that intersect with the polygon
+				#aeroway = aeroway[aeroway.intersects(polygon)]
+			else:
+				print("getting data from osm server")
+
+				aeroway = ox.features.features_from_polygon(polygon, tags={'aeroway': True})
 			aeroway = aeroway[aeroway["name"].notnull()]
 			#aeroway = aeroway.loc["node"]
 			# 4. Clip the OSM data to the polygon
@@ -184,6 +226,7 @@ def plot_map(plot_scale="Zoom",
 			aeroway.crs = mapPP
 			aeroway = aeroway.to_crs(netcdfPP)
 			aeroway = aeroway.centroid
+			aeroway.to_file(cache_file, driver="GeoJSON")
 		except:
 			print("no airports found")
 			aeroway = []
@@ -196,8 +239,19 @@ def plot_map(plot_scale="Zoom",
 
 	water = None
 	if read_oms is True:
+		cache_file = os.path.join(osm_data_dir, f'{country_name}_waterway.osm.pbf')
 		try:
-			water = ox.features.features_from_polygon(polygon, tags={'waterway': True})
+			if os.path.exists(cache_file):
+				# read and extract data form file
+				print("getting data from file")
+				water = ox.geometries_from_file(cache_file, tags={'waterway': True})
+				# Filter geometries that intersect with the polygon
+				#aeroway = aeroway[aeroway.intersects(polygon)]
+			else:
+				print("getting data from osm server")
+
+				water = ox.features.features_from_polygon(polygon, tags={'waterway': True})
+				aeroway.to_file(cache_file, driver="GeoJSON")
 			# 4. Clip the OSM data to the polygon
 			water = gpd.clip(water, polygon)
 			water.crs = mapPP
@@ -212,8 +266,19 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
+		cache_file = os.path.join(osm_data_dir, f'{country_name}_leisure.osm.pbf')
 		try:
-			leisure = ox.features.features_from_polygon(polygon, tags={'leisure': True})
+			if os.path.exists(cache_file):
+				# read and extract data form file
+				print("getting data from file")
+				leisure = ox.geometries_from_file(cache_file, tags={'leisure': True})
+				# Filter geometries that intersect with the polygon
+				#aeroway = aeroway[aeroway.intersects(polygon)]
+			else:
+				print("getting data from osm server")
+
+				leisure = ox.features.features_from_polygon(polygon, tags={'leisure': True})
+				leisure.to_file(cache_file, driver="GeoJSON")
 			# 4. Clip the OSM data to the polygon
 			leisure = gpd.clip(leisure, polygon)
 			leisure.crs = mapPP
@@ -233,9 +298,18 @@ def plot_map(plot_scale="Zoom",
 		#bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
 		#polygon_bnd = gpd.GeoDataFrame({'id': [1]},
 		#	geometry=[bbox], crs="EPSG:4326")["geometry"].iloc[0]
-
+		cache_file = os.path.join(osm_data_dir, f'{country_name}_place.osm.pbf')
+		if os.path.exists(cache_file):
+			# read and extract data form file
+			print("getting data from file")
+			places = ox.geometries_from_file(cache_file, tags={'place': True})
+			# Filter geometries that intersect with the polygon
+			#aeroway = aeroway[aeroway.intersects(polygon)]
+		else:
+			print("getting data from osm server")
 		#places = ox.features.features_from_polygon(polygon_bnd, tags={'place': True})
-		places = ox.features.features_from_polygon(polygon, tags={'place': True})
+			places = ox.features.features_from_polygon(polygon, tags={'place': True})
+			places.to_file(cache_file, driver="GeoJSON")
 		places = places.loc['node']
 		places.crs = mapPP
 		#places = gpd.clip(places, polygon_bnd)
@@ -252,7 +326,17 @@ def plot_map(plot_scale="Zoom",
 		#	geometry=[bbox], crs="EPSG:4326")["geometry"].iloc[0]
 		#bnd_admin = ox.features.features_from_polygon(polygon_bnd, tags={'boundary': True})
 		#bnd_admin = gpd.clip(bnd_admin, polygon_bnd)
-		bnd_admin = ox.features.features_from_polygon(polygon, tags={'boundary': True})
+		cache_file = os.path.join(osm_data_dir, f'{country_name}_boundary.osm.pbf')
+		if os.path.exists(cache_file):
+			# read and extract data form file
+			print("getting data from file")
+			bnd_admin = ox.geometries_from_file(cache_file, tags={'boundary': True})
+			# Filter geometries that intersect with the polygon
+			#aeroway = aeroway[aeroway.intersects(polygon)]
+		else:
+			print("getting data from osm server")
+			bnd_admin = ox.features.features_from_polygon(polygon, tags={'boundary': True})
+			bnd_admin.to_file(cache_file, driver="GeoJSON")
 		bnd_admin = gpd.clip(bnd_admin, polygon)
 		bnd_admin = bnd_admin.loc['relation']
 		bnd_admin.crs = mapPP
