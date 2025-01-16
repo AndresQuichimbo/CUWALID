@@ -166,11 +166,7 @@ def plot_maps_json(config_file):
 		os.makedirs(os.path.join(output_dir, "fig"), exist_ok=True)
 	if not os.path.exists(os.path.join(output_dir, "netcdf")):
 		os.makedirs(os.path.join(output_dir, "netcdf"), exist_ok=True)
-	
-	# set up directories for dataset download
-	# Construct the data directory path relative to the script location
-	script_dir = os.path.dirname(os.path.abspath(__file__))
-	osm_data_dir = os.path.join(script_dir, '..', 'forecasting', 'osm_data')
+
 
 	# Create maps
 	for icountry in country_names:
@@ -217,7 +213,6 @@ def plot_maps_json(config_file):
 				#river_path=river_path,
 				#shape_path=dataset_parameters.shapefile_level_1_dic[icountry]
 				shape_path=dataset_parameter_list,
-				path_osm=osm_data_dir
 				)
 		# function to get netcdf files from regional files at each selected place
 		if create_dataset is True or create_table is True:
@@ -294,7 +289,6 @@ def call_plot_maps(plot_scales=["Zoom"],
 		mask_path=None,
 		river_path=None,
 		shape_path=None,
-		path_osm = None
 		):
 	"""
 	Function to call the map plotting function for specified regions and conditions.
@@ -422,7 +416,6 @@ def call_plot_maps(plot_scales=["Zoom"],
 								mask_path=mask_path,
 								river_path=river_path,
 								fname_output=ifname_fig,
-								path_osm = path_osm
 								)
 					#except Exception as e:
 					#	print(f"An exception occured {country_name} {iplace_name}")
