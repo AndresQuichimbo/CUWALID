@@ -1,5 +1,6 @@
 # Import libraries from local repository
 import os
+import pickle
 import geopy
 from geopy.geocoders import Nominatim
 from matplotlib import pyplot as plt
@@ -97,7 +98,7 @@ def plot_map(plot_scale="Zoom",
 					river_path=river_path
 					)
 	
-	osm_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "osm_data", f'{country_name}.osm.pbf')
+	osm_data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "osm_data")
 	
 	# =========================================================
 	# DO NOT CHANGE FROM THIS LINE
@@ -148,10 +149,8 @@ def plot_map(plot_scale="Zoom",
 			geometry=[bbox], crs="EPSG:4326")["geometry"]
 		polygon = extend.iloc[0]
 
-	## Path to your local OSM file
-	#osm_file = "path/to/your-data.osm"
 
-	# get roads and street from OSM
+	# get roads and streets from OSM
 	if plot_obj_id[plot_scale]["Main Roads"] is True:
 		path_file_json = os.path.join(path_osm, "highway_"+country_name + ".json")
 		try:
@@ -169,9 +168,9 @@ def plot_map(plot_scale="Zoom",
 			# 4. Clip the OSM data to the polygon
 			highway = gpd.clip(highway, polygon)
 			highway.crs = mapPP
-			highway = highway.to_crs(netcdfPP)#ds.rio.crs)
+			highway = highway.to_crs(netcdfPP)  # ds.rio.crs
 		except:
-			print("error with highway")
+			print("Error with highway")
 
 	# read point locations
 	read_oms = False
@@ -196,7 +195,7 @@ def plot_map(plot_scale="Zoom",
 		amenities.crs = mapPP
 		amenities = amenities.to_crs(netcdfPP)
 
-	# read point locations
+	# read point locations for aeroways
 	read_oms = False
 	for ipoint in aeroway_obj:
 		if plot_obj_id[plot_scale][ipoint] is True:
@@ -223,16 +222,15 @@ def plot_map(plot_scale="Zoom",
 			aeroway = aeroway.to_crs(netcdfPP)
 			aeroway = aeroway.centroid
 		except:
-			print("no airports found")
+			print("No airports found")
 			aeroway = []
 
 	# read waterways
-	read_oms = False	
+	read_oms = False
 	for iwater in water_objects:
 		if plot_obj_id[plot_scale][iwater] is True:
 			read_oms = True
 
-	water = None
 	if read_oms is True:
 		path_file_json = os.path.join(path_osm, "waterway_"+country_name + ".json")
 		try:
@@ -251,10 +249,11 @@ def plot_map(plot_scale="Zoom",
 			water.crs = mapPP
 			water = water.to_crs(netcdfPP)
 		except:
-			print("error with waterway")
+			print("Error with waterway")
+			water = None
 
 	# read natural reserves
-	read_oms = False	
+	read_oms = False
 	for iwater in water_objects:
 		if plot_obj_id[plot_scale][iwater] is True:
 			read_oms = True
@@ -278,10 +277,10 @@ def plot_map(plot_scale="Zoom",
 			leisure = leisure.to_crs(netcdfPP)
 
 		except:
-			print("error with leisure")
+			print("Error with leisure")
 
 	# read urban centres
-	read_oms = False	
+	read_oms = False
 	for iplaces in places_obj:
 		if plot_obj_id[plot_scale][iplaces] is True:
 			read_oms = True
@@ -609,7 +608,7 @@ def plot_map(plot_scale="Zoom",
 						language=language_map[ilanguage], #color="gray"
 						)
 				except:
-					print("error with add_label_features")
+					print("error with add_label_features for place object")
 
 				place_filter.plot(ax=ax,
 					color=place_color[iplaces],
@@ -760,7 +759,7 @@ def plot_map(plot_scale="Zoom",
 		if output_dir is not None:	
 			# Check if path exist
 			if not os.path.exists(output_dir):
-				os.makedirs(output_dir)
+				os.makedirs(output_dir, exist_ok=True)
 			if fname_output is not None:
 				fname_fig = os.path.join(output_dir, fname_output)
 			else:
