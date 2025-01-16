@@ -4,6 +4,7 @@ import pickle
 import geopy
 from geopy.geocoders import Nominatim
 from matplotlib import pyplot as plt
+from matplotlib.font_manager import FontProperties
 import osmnx as ox
 import geopandas as gpd
 import xarray as xr
@@ -389,6 +390,11 @@ def plot_map(plot_scale="Zoom",
 	
 	# add loop for languages to avoid duplicate downloads
 	for ilanguage in language:
+
+		# Get font file for Amharic_font_path
+		amharic_font_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "fonts", "NotoSansEthiopic-VariableFont_wdth,wght.ttf")
+		amharic_font = FontProperties(fname=amharic_font_path)
+
 	
 		# figure size
 		map_width = 5.0*plot_scale_id[plot_scale]
@@ -607,7 +613,7 @@ def plot_map(plot_scale="Zoom",
 			" - " + place_name +#"\n"+
 			get_labels_by_lenguage(language_labels, ilanguage, iseason) + " " +
 			#"\n" +
-			"YYYY",
+			str(iyear),
 #			str(iyear)
 			#str(pd.to_datetime(rescaled.time.values[time_plot]).year)
 			fontweight="bold")

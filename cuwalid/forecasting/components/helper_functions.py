@@ -1,3 +1,4 @@
+import re
 import geopy
 from geopy.distance import geodesic
 from matplotlib import pyplot as plt
@@ -236,6 +237,12 @@ def add_label_features(geodata, fontsize=6, boundbox=None, offset=0,
 			#print(iname)
 			#iname = bidialg.get_display(iname)
 			#print(iname)
+
+			# If language is english remove arabic letters from osm data (prevents boxes for unrecognised characters)
+			if language == 'English':
+				cleaned_iname = re.sub(r"[^a-zA-Z0-9\s.,!?;:'\"()\-]", "", iname)
+
+
 			plt.text(x_mid+offset, y_mid+offset, s=iname,
 				fontsize=fontsize, fontstyle=fontstyle,
 				horizontalalignment=halignament, alpha=alpha,
