@@ -158,6 +158,14 @@ def plot_maps_json(config_file):
 	read_country_list = False	
 	if place_name is None:
 		read_country_list = True
+
+	#ensure output folders have been created
+	if not os.path.exists(os.path.join(output_dir, "csv")):
+		os.makedirs(os.path.join(output_dir, "csv"), exist_ok=True)
+	if not os.path.exists(os.path.join(output_dir, "fig")):
+		os.makedirs(os.path.join(output_dir, "fig"), exist_ok=True)
+	if not os.path.exists(os.path.join(output_dir, "netcdf")):
+		os.makedirs(os.path.join(output_dir, "netcdf"), exist_ok=True)
 	
 
 	# Create maps

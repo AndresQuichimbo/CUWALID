@@ -20,7 +20,7 @@ def get_tercile_hindcast_fluxes(model_path, model_name, season, variables, postp
 
 
 	fname_var = model_path+model_name+"_YYYY_grid_VVV.nc"
-	fname_threshold = postpp_path+"netcdf/" + model_name + "_SSS_quantiles.nc"
+	fname_threshold = os.path.join(postpp_path,"netcdf", model_name + "_SSS_quantiles.nc")
 	#fname_threshold = postpp_path+"netcdf/" + model_name + "_SSS_extremes_quantiles.nc"
 	#fname_var = "/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_YYYY_grid_VVV.nc"
 	#fname_var = "/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_YYYY_grid.nc"
@@ -53,14 +53,16 @@ def get_tercile_hindcast_fluxes(model_path, model_name, season, variables, postp
 			# get tercile forecasting
 			tercile = cuwalid.get_tercile_probabilities_from_netcdf(ifname, ifname_threshold,
 					var=ivar, season=iseason)
+
+			directory = os.path.dirname(os.path.join(postpp_path,"netcdf"))
 			
 			# save as NETCDF files
 			if iseason is None:
-				fname_out = postpp_path+"netcdf/" + model_name + "_" +ivar+"_"+str(iyear)+"_probabilistic_tercile_forecast.nc"
+				fname_out = os.path.join(postpp_path,"netcdf", model_name + "_" +ivar+"_"+str(iyear)+"_probabilistic_tercile_forecast.nc")
 			else:
 				#fname_out = "/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_"+ivar+"_"+iseason+"_"+str(iyear)+"_probabilistic_tercile_forecast.nc"
 				#fname = "D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_" + iseason + "_probabilistic_tercile_forecast.nc"
-				fname_out = postpp_path+"netcdf/" + model_name + "_" +ivar+"_"+iseason+"_"+str(iyear)+"_probabilistic_tercile_forecast.nc"
+				fname_out = os.path.join(postpp_path,"netcdf", model_name + "_" +ivar+"_"+iseason+"_"+str(iyear)+"_probabilistic_tercile_forecast.nc")
 			
 			# save probabilistic forecast as netcdf
 			tercile.to_netcdf(fname_out)
@@ -79,6 +81,8 @@ def get_tercile_hindcast_extreme_values(model_path, model_name, season, variable
 	fname_var = model_path+model_name+"_YYYY_grid_VVV.nc"
 	#fname_threshold = postpp_path+"netcdf/" + model_name + "_SSS_extremes_quantiles.nc"
 	fname_threshold = postpp_path+"netcdf/" + model_name + "_SSS_quantiles.nc"
+
+	
 
 	#fname_var = "/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_YYYY_grid_VVV.nc"
 	#fname_var = "/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_YYYY_grid.nc"
@@ -118,7 +122,8 @@ def get_tercile_hindcast_extreme_values(model_path, model_name, season, variable
 			# save as NETCDF files
 			if iseason is None:
 				#fname_out = postpp_path+"netcdf/" + model_name + "_" +ivar+"_"+str(iyear)+"_probabilistic_tercile_forecast.nc"
-				fname_out = postpp_path+"netcdf/" + model_name + "_flow_"+str(iyear)+"_probabilistic_tercile_forecast.nc"
+				
+				fname_out = os.path.join(postpp_path,"netcdf/", model_name + "_flow_"+str(iyear)+"_probabilistic_tercile_forecast.nc")
 			
 			else:
 				#fname_out = "/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_"+ivar+"_"+iseason+"_"+str(iyear)+"_probabilistic_tercile_forecast.nc"
@@ -483,7 +488,8 @@ def get_areas_terciles(model_path, model_name, season, variables, postpp_path):
 	for i, itercile in enumerate(tercile):
 		df[itercile] = area[:, i]
 
-	fname = postpp_path + "csv/" + model_name+"_county_areas.csv"
+	fname = os.path.os.join(postpp_path, "csv/", model_name+"_county_areas.csv")
+	directory = os.path.dirname(fname)
 	df.to_csv(fname)
 	#print(area)
 	

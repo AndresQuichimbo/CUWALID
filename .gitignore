@@ -39,3 +39,6 @@ inputs/
 cuwalid/forecasting/fonts
 cuwalid/forecasting/osm_data/
 forecast_output/
+fig/
+netcdf/
+output.log
