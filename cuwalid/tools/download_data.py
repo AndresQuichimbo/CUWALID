@@ -13,11 +13,11 @@ stopet_download_urls = {
 }
 
 osm_download_urls = {
-    "eritrea.osm.pbf": "https://download.geofabrik.de/africa/eritrea-latest.osm.pbf",
-    "djibouti.osm.pbf": "https://download.geofabrik.de/africa/djibouti-latest.osm.pbf",
-    "ethiopia.osm.pbf": "https://download.geofabrik.de/africa/ethiopia-latest.osm.pbf",
-    "somalia.osm.pbf": "https://download.geofabrik.de/africa/somalia-latest.osm.pbf",
-    "kenya.osm.pbf": "https://download.geofabrik.de/africa/kenya-latest.osm.pbf"
+    #"eritrea-latest.osm.pbf": "https://download.geofabrik.de/africa/eritrea-latest.osm.pbf",
+    "djibouti-latest.osm.pbf": "https://download.geofabrik.de/africa/djibouti-latest.osm.pbf",
+    #"ethiopia-latest.osm.pbf": "https://download.geofabrik.de/africa/ethiopia-latest.osm.pbf",
+    #"somalia-latest.osm.pbf": "https://download.geofabrik.de/africa/somalia-latest.osm.pbf",
+    #"kenya-latest.osm.pbf": "https://download.geofabrik.de/africa/kenya-latest.osm.pbf"
 }
 
 # Construct the data directory path relative to the script location

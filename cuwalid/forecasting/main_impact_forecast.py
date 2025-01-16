@@ -8,6 +8,7 @@ import cuwalid.forecasting.components.forecast as forecast
 import cuwalid.forecasting.components.read_paths as paths
 from cuwalid.forecasting.components.map_properties import water_var
 #from aux_HAD_plot_probabilistic_forecasting_map import plot_map
+from cuwalid.tools.CUWALID_download_data import get_data_osm
 
 # Function to plot maps based on the configuration in the JSON file
 def plot_maps_json(config_file):
@@ -167,6 +168,14 @@ def plot_maps_json(config_file):
 	if not os.path.exists(os.path.join(output_dir, "netcdf")):
 		os.makedirs(os.path.join(output_dir, "netcdf"), exist_ok=True)
 	
+	# set up directories for dataset download
+	# Construct the data directory path relative to the script location
+	script_dir = os.path.dirname(os.path.abspath(__file__))
+	osm_data_dir = os.path.join(script_dir, '..', 'forecasting', 'osm_data')
+
+	# Download OSM open street maps
+	for icountry in country_names:
+		get_data_osm(icountry, path=osm_data_dir)
 
 	# Create maps
 	for icountry in country_names:
@@ -212,7 +221,8 @@ def plot_maps_json(config_file):
 				#mask_path=mask_path,
 				#river_path=river_path,
 				#shape_path=dataset_parameters.shapefile_level_1_dic[icountry]
-				shape_path=dataset_parameter_list
+				shape_path=dataset_parameter_list,
+				path_osm=osm_data_dir
 				)
 		# function to get netcdf files from regional files at each selected place
 		if create_dataset is True or create_table is True:
@@ -289,6 +299,7 @@ def call_plot_maps(plot_scales=["Zoom"],
 		mask_path=None,
 		river_path=None,
 		shape_path=None,
+		path_osm = None
 		):
 	"""
 	Function to call the map plotting function for specified regions and conditions.
@@ -415,7 +426,8 @@ def call_plot_maps(plot_scales=["Zoom"],
 								threshold_path=threshold_path,
 								mask_path=mask_path,
 								river_path=river_path,
-								fname_output=ifname_fig
+								fname_output=ifname_fig,
+								path_osm = path_osm
 								)
 					#except Exception as e:
 					#	print(f"An exception occured {country_name} {iplace_name}")

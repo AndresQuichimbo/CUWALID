@@ -21,6 +21,7 @@ from cuwalid.forecasting.components.read_paths import *
 import cuwalid.tools.CUWALID_view_tool as cuwalidplt
 import matplotlib.image as mpimg
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+
 #import arabic_reshaper
 #from bidi import algorithm as bidialg
 
@@ -55,7 +56,8 @@ def plot_map(plot_scale="Zoom",
 			river_path=None,
 			fname_output=None,
 			place_code_field=False,
-			shape_path_list=None):
+			shape_path_list=None,
+			path_osm=None):
 	"""Plot maps
 	
 	Parameters:
@@ -150,19 +152,20 @@ def plot_map(plot_scale="Zoom",
 
 	# get roads and streets from OSM
 	if plot_obj_id[plot_scale]["Main Roads"] is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_roads.pkl')
+		path_file_json = os.path.join(path_osm, "highway_"+country_name + ".json")
 		try:
-			if os.path.exists(cache_file):
-				print("Reading road data from cached file")
-				with open(cache_file, 'rb') as f:
-					highway = pickle.load(f)
-			else:
-				print("Getting road data from OSM server")
-				highway = ox.features.features_from_polygon(polygon, tags={'highway': True})
-				with open(cache_file, 'wb') as f:
-					pickle.dump(highway, f)
-
-			# Clip the OSM data to the polygon
+			if os.path.exists(path_file_json):
+				# read and extract data form file
+				print("getting data from file")
+				highway = gpd.read_file(path_file_json)
+				
+				# Filter geometries that intersect with the polygon
+				#highway = highway[highway.intersects(polygon)]
+			#else:
+			#	# Query amenities using the latest OSMnx version (0.18.1 as of 2024-02-21)
+			#	print("getting data from osm server")
+			#	highway = ox.features.features_from_polygon(polygon, tags={'highway': True})
+			# 4. Clip the OSM data to the polygon
 			highway = gpd.clip(highway, polygon)
 			highway.crs = mapPP
 			highway = highway.to_crs(netcdfPP)  # ds.rio.crs
@@ -176,22 +179,18 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_amenity.pkl')
-		try:
-			if os.path.exists(cache_file):
-				print("Getting amenity data from file")
-				with open(cache_file, 'rb') as f:
-					amenities = pickle.load(f)
-			else:
-				print("Getting amenity data from OSM server")
-				amenities = ox.features.features_from_polygon(polygon, tags={'amenity': True})
-				amenities = amenities[amenities.intersects(polygon)]
-				with open(cache_file, 'wb') as f:
-					pickle.dump(amenities, f)
-		except:
-			print("No amenities found")
-			amenities = []
+		path_file_json = os.path.join(path_osm, "amenity_"+country_name+".json")
+		
+		if os.path.exists(path_file_json):
+			# read and extract data form file
+			print("getting data from file")
+			amenities = gpd.read_file(path_file_json)
+			# Filter geometries that intersect with the polygon
+			amenities = amenities[amenities.intersects(polygon)]
+		#else:
+		#	print("getting data from osm server")
 
+		#	amenities = ox.features.features_from_polygon(polygon, tags={'amenity': True})
 		amenities = amenities.loc["node"]
 		amenities.crs = mapPP
 		amenities = amenities.to_crs(netcdfPP)
@@ -203,22 +202,25 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_aeroway.pkl')
+		path_file_json = os.path.join(path_osm, "aeroway_"+country_name + ".json")
 		try:
-			if os.path.exists(cache_file):
-				print("Getting aeroway data from file")
-				with open(cache_file, 'rb') as f:
-					aeroway = pickle.load(f)
-			else:
-				print("Getting aeroway data from OSM server")
-				aeroway = ox.features.features_from_polygon(polygon, tags={'aeroway': True})
-				aeroway = aeroway[aeroway["name"].notnull()]
-				aeroway = gpd.clip(aeroway, polygon)
-				aeroway.crs = mapPP
-				aeroway = aeroway.to_crs(netcdfPP)
-				aeroway = aeroway.centroid
-				with open(cache_file, 'wb') as f:
-					pickle.dump(aeroway, f)
+			if os.path.exists(path_file_json):
+				# read and extract data form file
+				print("getting data from file")
+				aeroway = gpd.read_file(path_file_json)
+				# Filter geometries that intersect with the polygon
+				#aeroway = aeroway[aeroway.intersects(polygon)]
+			#else:
+			#	print("getting data from osm server")
+
+			#	aeroway = ox.features.features_from_polygon(polygon, tags={'aeroway': True})
+			aeroway = aeroway[aeroway["name"].notnull()]
+			#aeroway = aeroway.loc["node"]
+			# 4. Clip the OSM data to the polygon
+			aeroway = gpd.clip(aeroway, polygon)
+			aeroway.crs = mapPP
+			aeroway = aeroway.to_crs(netcdfPP)
+			aeroway = aeroway.centroid
 		except:
 			print("No airports found")
 			aeroway = []
@@ -230,20 +232,22 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_waterway.pkl')
+		path_file_json = os.path.join(path_osm, "waterway_"+country_name + ".json")
 		try:
-			if os.path.exists(cache_file):
-				print("Getting waterway data from file")
-				with open(cache_file, 'rb') as f:
-					water = pickle.load(f)
-			else:
-				print("Getting waterway data from OSM server")
-				water = ox.features.features_from_polygon(polygon, tags={'waterway': True})
-				water = gpd.clip(water, polygon)
-				water.crs = mapPP
-				water = water.to_crs(netcdfPP)
-				with open(cache_file, 'wb') as f:
-					pickle.dump(water, f)
+			if os.path.exists(path_file_json):
+				# read and extract data form file
+				print("getting data from file")
+				water = gpd.read_file(path_file_json)
+				# Filter geometries that intersect with the polygon
+				#aeroway = aeroway[aeroway.intersects(polygon)]
+			#else:
+			#	print("getting data from osm server")
+
+			#	water = ox.features.features_from_polygon(polygon, tags={'waterway': True})
+			# 4. Clip the OSM data to the polygon
+			water = gpd.clip(water, polygon)
+			water.crs = mapPP
+			water = water.to_crs(netcdfPP)
 		except:
 			print("Error with waterway")
 			water = None
@@ -255,20 +259,23 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_leisure.pkl')
+		path_file_json = os.path.join(path_osm, "leisure_"+country_name + ".json")
 		try:
-			if os.path.exists(cache_file):
-				print("Getting leisure data from file")
-				with open(cache_file, 'rb') as f:
-					leisure = pickle.load(f)
-			else:
-				print("Getting leisure data from OSM server")
-				leisure = ox.features.features_from_polygon(polygon, tags={'leisure': True})
-				leisure = gpd.clip(leisure, polygon)
-				leisure.crs = mapPP
-				leisure = leisure.to_crs(netcdfPP)
-				with open(cache_file, 'wb') as f:
-					pickle.dump(leisure, f)
+			if os.path.exists(path_file_json):
+				# read and extract data form file
+				print("getting data from file")
+				leisure = gpd.read_file(path_file_json)
+				# Filter geometries that intersect with the polygon
+				#aeroway = aeroway[aeroway.intersects(polygon)]
+			#else:
+			#	print("getting data from osm server")
+
+			#	leisure = ox.features.features_from_polygon(polygon, tags={'leisure': True})
+			# 4. Clip the OSM data to the polygon
+			leisure = gpd.clip(leisure, polygon)
+			leisure.crs = mapPP
+			leisure = leisure.to_crs(netcdfPP)
+
 		except:
 			print("Error with leisure")
 
@@ -279,40 +286,56 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_place.pkl')
-		if os.path.exists(cache_file):
-			print("Getting place data from file")
-			with open(cache_file, 'rb') as f:
-				places = pickle.load(f)
-		else:
-			print("Getting place data from OSM server")
-			places = ox.features.features_from_polygon(polygon, tags={'place': True})
+		#bbox = wards.total_bounds
+		#bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
+		#polygon_bnd = gpd.GeoDataFrame({'id': [1]},
+		#	geometry=[bbox], crs="EPSG:4326")["geometry"].iloc[0]
+		path_file_json = os.path.join(path_osm, "place_"+country_name+".json")
+		try:
+			if os.path.exists(path_file_json):
+				# read and extract data form file
+				print("getting data from file")
+				places = gpd.read_file(path_file_json)
+				# Filter geometries that intersect with the polygon
+				#aeroway = aeroway[aeroway.intersects(polygon)]
+			#else:
+			#	print("getting data from osm server")
+			#places = ox.features.features_from_polygon(polygon_bnd, tags={'place': True})
+			#	places = ox.features.features_from_polygon(polygon, tags={'place': True})
 			places = places.loc['node']
 			places.crs = mapPP
+			#places = gpd.clip(places, polygon_bnd)
 			places = gpd.clip(places, polygon)
 			places = places.to_crs(netcdfPP)
-			with open(cache_file, 'wb') as f:
-				pickle.dump(places, f)
-
-	# administrative borders
+		except:
+			print("error with place")
+	#places.plot()
+	
+	# admininstrative borders
 	if plot_obj_id[plot_scale]["Administrative Boundary"] is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_boundary.pkl')
-		if os.path.exists(cache_file):
-			print("Getting boundary data from file")
-			with open(cache_file, 'rb') as f:
-				bnd_admin = pickle.load(f)
-		else:
-			print("Getting boundary data from OSM server")
-			bnd_admin = ox.features.features_from_polygon(polygon, tags={'boundary': True})
+		#bbox = wards.total_bounds
+		#bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
+		#polygon_bnd = gpd.GeoDataFrame({'id': [1]},
+		#	geometry=[bbox], crs="EPSG:4326")["geometry"].iloc[0]
+		#bnd_admin = ox.features.features_from_polygon(polygon_bnd, tags={'boundary': True})
+		#bnd_admin = gpd.clip(bnd_admin, polygon_bnd)
+		path_file_json = os.path.join(path_osm, "boundary_"+country_name+".json")
+		try:
+			if os.path.exists(path_file_json):
+				# read and extract data form file
+				print("getting data from file")
+				bnd_admin = gpd.read_file(path_file_json)
+				# Filter geometries that intersect with the polygon
+				#aeroway = aeroway[aeroway.intersects(polygon)]
+			#else:
+			#	print("getting data from osm server")
+			#	bnd_admin = ox.features.features_from_polygon(polygon, tags={'boundary': True})
 			bnd_admin = gpd.clip(bnd_admin, polygon)
 			bnd_admin = bnd_admin.loc['relation']
 			bnd_admin.crs = mapPP
 			bnd_admin = bnd_admin.to_crs(netcdfPP)
-			with open(cache_file, 'wb') as f:
-				pickle.dump(bnd_admin, f)
-
-
-
+		except:
+			print("error with boundaries")
 	# Assign the CRS to the GeoPandas DataFrame
 	wards.crs = mapPP
 	wards = wards.to_crs(netcdfPP)#ds.rio.crs)
