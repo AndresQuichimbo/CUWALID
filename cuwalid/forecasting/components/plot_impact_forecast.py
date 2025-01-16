@@ -20,6 +20,7 @@ from cuwalid.forecasting.components.read_paths import *
 import cuwalid.tools.CUWALID_view_tool as cuwalidplt
 import matplotlib.image as mpimg
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+
 #import arabic_reshaper
 #from bidi import algorithm as bidialg
 
@@ -54,7 +55,8 @@ def plot_map(plot_scale="Zoom",
 			river_path=None,
 			fname_output=None,
 			place_code_field=False,
-			shape_path_list=None):
+			shape_path_list=None,
+			path_osm=None):
 	"""Plot maps
 	
 	Parameters:
@@ -151,18 +153,19 @@ def plot_map(plot_scale="Zoom",
 
 	# get roads and street from OSM
 	if plot_obj_id[plot_scale]["Main Roads"] is True:
+		path_file_json = os.path.join(path_osm, "highway_"+country_name + ".json")
 		try:
-			if os.path.exists(osm_file):
+			if os.path.exists(path_file_json):
 				# read and extract data form file
 				print("getting data from file")
-				highway = ox.geometries_from_file(osm_file, tags={'highway': True})
+				highway = gpd.read_file(path_file_json)
 				
 				# Filter geometries that intersect with the polygon
 				#highway = highway[highway.intersects(polygon)]
-			else:
-				# Query amenities using the latest OSMnx version (0.18.1 as of 2024-02-21)
-				print("getting data from osm server")
-				highway = ox.features.features_from_polygon(polygon, tags={'highway': True})
+			#else:
+			#	# Query amenities using the latest OSMnx version (0.18.1 as of 2024-02-21)
+			#	print("getting data from osm server")
+			#	highway = ox.features.features_from_polygon(polygon, tags={'highway': True})
 			# 4. Clip the OSM data to the polygon
 			highway = gpd.clip(highway, polygon)
 			highway.crs = mapPP
@@ -177,16 +180,18 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
-		if os.path.exists(osm_file):
+		path_file_json = os.path.join(path_osm, "amenity_"+country_name+".json")
+		
+		if os.path.exists(path_file_json):
 			# read and extract data form file
 			print("getting data from file")
-			amenities = ox.geometries_from_file(osm_file, tags={'amenity': True})
+			amenities = gpd.read_file(path_file_json)
 			# Filter geometries that intersect with the polygon
 			amenities = amenities[amenities.intersects(polygon)]
-		else:
-			print("getting data from osm server")
+		#else:
+		#	print("getting data from osm server")
 
-			amenities = ox.features.features_from_polygon(polygon, tags={'amenity': True})
+		#	amenities = ox.features.features_from_polygon(polygon, tags={'amenity': True})
 		amenities = amenities.loc["node"]
 		amenities.crs = mapPP
 		amenities = amenities.to_crs(netcdfPP)
@@ -198,17 +203,18 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
+		path_file_json = os.path.join(path_osm, "aeroway_"+country_name + ".json")
 		try:
-			if os.path.exists(osm_file):
+			if os.path.exists(path_file_json):
 				# read and extract data form file
 				print("getting data from file")
-				aeroway = ox.geometries_from_file(osm_file, tags={'aeroway': True})
+				aeroway = gpd.read_file(path_file_json)
 				# Filter geometries that intersect with the polygon
 				#aeroway = aeroway[aeroway.intersects(polygon)]
-			else:
-				print("getting data from osm server")
+			#else:
+			#	print("getting data from osm server")
 
-				aeroway = ox.features.features_from_polygon(polygon, tags={'aeroway': True})
+			#	aeroway = ox.features.features_from_polygon(polygon, tags={'aeroway': True})
 			aeroway = aeroway[aeroway["name"].notnull()]
 			#aeroway = aeroway.loc["node"]
 			# 4. Clip the OSM data to the polygon
@@ -228,17 +234,18 @@ def plot_map(plot_scale="Zoom",
 
 	water = None
 	if read_oms is True:
+		path_file_json = os.path.join(path_osm, "waterway_"+country_name + ".json")
 		try:
-			if os.path.exists(osm_file):
+			if os.path.exists(path_file_json):
 				# read and extract data form file
 				print("getting data from file")
-				water = ox.geometries_from_file(osm_file, tags={'waterway': True})
+				water = gpd.read_file(path_file_json)
 				# Filter geometries that intersect with the polygon
 				#aeroway = aeroway[aeroway.intersects(polygon)]
-			else:
-				print("getting data from osm server")
+			#else:
+			#	print("getting data from osm server")
 
-				water = ox.features.features_from_polygon(polygon, tags={'waterway': True})
+			#	water = ox.features.features_from_polygon(polygon, tags={'waterway': True})
 			# 4. Clip the OSM data to the polygon
 			water = gpd.clip(water, polygon)
 			water.crs = mapPP
@@ -253,17 +260,18 @@ def plot_map(plot_scale="Zoom",
 			read_oms = True
 
 	if read_oms is True:
+		path_file_json = os.path.join(path_osm, "leisure_"+country_name + ".json")
 		try:
-			if os.path.exists(osm_file):
+			if os.path.exists(path_file_json):
 				# read and extract data form file
 				print("getting data from file")
-				leisure = ox.geometries_from_file(osm_file, tags={'leisure': True})
+				leisure = gpd.read_file(path_file_json)
 				# Filter geometries that intersect with the polygon
 				#aeroway = aeroway[aeroway.intersects(polygon)]
-			else:
-				print("getting data from osm server")
+			#else:
+			#	print("getting data from osm server")
 
-				leisure = ox.features.features_from_polygon(polygon, tags={'leisure': True})
+			#	leisure = ox.features.features_from_polygon(polygon, tags={'leisure': True})
 			# 4. Clip the OSM data to the polygon
 			leisure = gpd.clip(leisure, polygon)
 			leisure.crs = mapPP
@@ -283,22 +291,25 @@ def plot_map(plot_scale="Zoom",
 		#bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
 		#polygon_bnd = gpd.GeoDataFrame({'id': [1]},
 		#	geometry=[bbox], crs="EPSG:4326")["geometry"].iloc[0]
-		if os.path.exists(osm_file):
-			# read and extract data form file
-			print("getting data from file")
-			places = ox.geometries_from_file(osm_file, tags={'place': True})
-			# Filter geometries that intersect with the polygon
-			#aeroway = aeroway[aeroway.intersects(polygon)]
-		else:
-			print("getting data from osm server")
-		#places = ox.features.features_from_polygon(polygon_bnd, tags={'place': True})
-			places = ox.features.features_from_polygon(polygon, tags={'place': True})
-		places = places.loc['node']
-		places.crs = mapPP
-		#places = gpd.clip(places, polygon_bnd)
-		places = gpd.clip(places, polygon)
-		places = places.to_crs(netcdfPP)
-	
+		path_file_json = os.path.join(path_osm, "place_"+country_name+".json")
+		try:
+			if os.path.exists(path_file_json):
+				# read and extract data form file
+				print("getting data from file")
+				places = gpd.read_file(path_file_json)
+				# Filter geometries that intersect with the polygon
+				#aeroway = aeroway[aeroway.intersects(polygon)]
+			#else:
+			#	print("getting data from osm server")
+			#places = ox.features.features_from_polygon(polygon_bnd, tags={'place': True})
+			#	places = ox.features.features_from_polygon(polygon, tags={'place': True})
+			places = places.loc['node']
+			places.crs = mapPP
+			#places = gpd.clip(places, polygon_bnd)
+			places = gpd.clip(places, polygon)
+			places = places.to_crs(netcdfPP)
+		except:
+			print("error with place")
 	#places.plot()
 	
 	# admininstrative borders
@@ -309,20 +320,23 @@ def plot_map(plot_scale="Zoom",
 		#	geometry=[bbox], crs="EPSG:4326")["geometry"].iloc[0]
 		#bnd_admin = ox.features.features_from_polygon(polygon_bnd, tags={'boundary': True})
 		#bnd_admin = gpd.clip(bnd_admin, polygon_bnd)
-		if os.path.exists(osm_file):
-			# read and extract data form file
-			print("getting data from file")
-			bnd_admin = ox.geometries_from_file(osm_file, tags={'boundary': True})
-			# Filter geometries that intersect with the polygon
-			#aeroway = aeroway[aeroway.intersects(polygon)]
-		else:
-			print("getting data from osm server")
-			bnd_admin = ox.features.features_from_polygon(polygon, tags={'boundary': True})
-		bnd_admin = gpd.clip(bnd_admin, polygon)
-		bnd_admin = bnd_admin.loc['relation']
-		bnd_admin.crs = mapPP
-		bnd_admin = bnd_admin.to_crs(netcdfPP)
-
+		path_file_json = os.path.join(path_osm, "boundary_"+country_name+".json")
+		try:
+			if os.path.exists(path_file_json):
+				# read and extract data form file
+				print("getting data from file")
+				bnd_admin = gpd.read_file(path_file_json)
+				# Filter geometries that intersect with the polygon
+				#aeroway = aeroway[aeroway.intersects(polygon)]
+			#else:
+			#	print("getting data from osm server")
+			#	bnd_admin = ox.features.features_from_polygon(polygon, tags={'boundary': True})
+			bnd_admin = gpd.clip(bnd_admin, polygon)
+			bnd_admin = bnd_admin.loc['relation']
+			bnd_admin.crs = mapPP
+			bnd_admin = bnd_admin.to_crs(netcdfPP)
+		except:
+			print("error with boundaries")
 	# Assign the CRS to the GeoPandas DataFrame
 	wards.crs = mapPP
 	wards = wards.to_crs(netcdfPP)#ds.rio.crs)
