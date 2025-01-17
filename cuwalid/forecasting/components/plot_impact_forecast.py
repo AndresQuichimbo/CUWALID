@@ -286,14 +286,17 @@ def plot_map(plot_scale="Zoom",
 			with open(cache_file, 'rb') as f:
 				places = pickle.load(f)
 		else:
-			print("Getting place data from OSM server")
-			places = ox.features.features_from_polygon(polygon, tags={'place': True})
-			places = places.loc['node']
-			places.crs = mapPP
-			places = gpd.clip(places, polygon)
-			places = places.to_crs(netcdfPP)
-			with open(cache_file, 'wb') as f:
-				pickle.dump(places, f)
+			try:
+				print("Getting place data from OSM server")
+				places = ox.features.features_from_polygon(polygon, tags={'place': True})
+				places = places.loc['node']
+				places.crs = mapPP
+				places = gpd.clip(places, polygon)
+				places = places.to_crs(netcdfPP)
+				with open(cache_file, 'wb') as f:
+					pickle.dump(places, f)
+			except:
+				print("Error getting place names")
 
 	# administrative borders
 	if plot_obj_id[plot_scale]["Administrative Boundary"] is True:
@@ -303,14 +306,17 @@ def plot_map(plot_scale="Zoom",
 			with open(cache_file, 'rb') as f:
 				bnd_admin = pickle.load(f)
 		else:
-			print("Getting boundary data from OSM server")
-			bnd_admin = ox.features.features_from_polygon(polygon, tags={'boundary': True})
-			bnd_admin = gpd.clip(bnd_admin, polygon)
-			bnd_admin = bnd_admin.loc['relation']
-			bnd_admin.crs = mapPP
-			bnd_admin = bnd_admin.to_crs(netcdfPP)
-			with open(cache_file, 'wb') as f:
-				pickle.dump(bnd_admin, f)
+			try:
+				print("Getting boundary data from OSM server")
+				bnd_admin = ox.features.features_from_polygon(polygon, tags={'boundary': True})
+				bnd_admin = gpd.clip(bnd_admin, polygon)
+				bnd_admin = bnd_admin.loc['relation']
+				bnd_admin.crs = mapPP
+				bnd_admin = bnd_admin.to_crs(netcdfPP)
+				with open(cache_file, 'wb') as f:
+					pickle.dump(bnd_admin, f)
+			except:
+				print("Error getting boundry's")
 
 
 
@@ -434,19 +440,22 @@ def plot_map(plot_scale="Zoom",
 			for iwater in water_objects:
 				if plot_obj_id[plot_scale][iwater] is True:
 					if water is not None:
-						water_filter = water[water['waterway'].isin(water_body[iwater])]
-						water_filter.plot(ax=ax,
-							#marker=point_marker[ipoint],
-							#color=water_color[iwater],
-							edgecolor=water_color[iwater],
-							linewidths=water_lw[iwater],
-							facecolor='none',#water_color[iwater],
-							#markersize=0.0*marker_size[ipoint],
-							#label=iwater+ "\n" + language_labels["Swahili"][iwater],
-							label=get_labels_by_lenguage(language_labels, ilanguage, iwater),
-							path_effects=[path_effects.withStroke(
-									linewidth=water_lw[iwater]*1.5, foreground='w')]
-							)
+						try:
+							water_filter = water[water['waterway'].isin(water_body[iwater])]
+							water_filter.plot(ax=ax,
+								#marker=point_marker[ipoint],
+								#color=water_color[iwater],
+								edgecolor=water_color[iwater],
+								linewidths=water_lw[iwater],
+								facecolor='none',#water_color[iwater],
+								#markersize=0.0*marker_size[ipoint],
+								#label=iwater+ "\n" + language_labels["Swahili"][iwater],
+								label=get_labels_by_lenguage(language_labels, ilanguage, iwater),
+								path_effects=[path_effects.withStroke(
+										linewidth=water_lw[iwater]*1.5, foreground='w')]
+								)
+						except:
+							print("Error plotting waterway")
 
 		# plot layers from Open Street Map
 		if plot_obj_id[plot_scale]["Small Roads"] is True:		
@@ -507,18 +516,16 @@ def plot_map(plot_scale="Zoom",
 		# print label of admin boundaries
 		if plot_obj_id[plot_scale]["Administrative Boundary"] is True:
 			#boundary_filter = bnd_admin[bnd_admin['admin_level'].notnull()]
-			boundary_filter = bnd_admin[bnd_admin['admin_level'].isin(["4"])]
+			
 			# add labels
 			try:
+				boundary_filter = bnd_admin[bnd_admin['admin_level'].isin(["4"])]
 				add_label_features(boundary_filter, boundbox=extend, #, offset=1000)
 					fontsize=12.5, fontstyle="italic", halignament="center", alpha=0.7,
 					language=language_map[ilanguage], #color="gray"
 					)
 			except:
-				add_label_features(boundary_filter, boundbox=extend, #, offset=1000)
-					fontsize=12.5, fontstyle="italic", halignament="center", alpha=0.7,
-					language=language_map["English"], #color="gray"
-					)
+				print("Error with boundary plotting")
 
 		# Plot the original polygon (boundaries)
 		wards.plot(ax=ax, facecolor='none',
@@ -533,21 +540,24 @@ def plot_map(plot_scale="Zoom",
 		# if plot_scale != "Country":
 		for ipoint in points:
 			if plot_obj_id[plot_scale][ipoint] is True:
-				points_filter = amenities[amenities['amenity'].isin(points_ids[ipoint])]
+				try:
+					points_filter = amenities[amenities['amenity'].isin(points_ids[ipoint])]
 
-				if len(points_filter) > 10:
-					points_filter = points_filter.sample(n=10, random_state=1)
+					if len(points_filter) > 10:
+						points_filter = points_filter.sample(n=10, random_state=1)
 
-				points_filter.plot(ax=ax,
-					color=point_color[ipoint],
-					marker=point_marker[ipoint],
-					edgecolor='none',
-					#linewidths=0.1,
-					facecolor=point_color[ipoint],
-					markersize=marker_size[ipoint],
-					#label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
-					label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
-					)
+					points_filter.plot(ax=ax,
+						color=point_color[ipoint],
+						marker=point_marker[ipoint],
+						edgecolor='none',
+						#linewidths=0.1,
+						facecolor=point_color[ipoint],
+						markersize=marker_size[ipoint],
+						#label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
+						label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
+						)
+				except:
+					print("Error plotting amenities")
 		
 		# Add point attributes -----------------------------------------------------------------------
 		#if plot_scale != "Country":
@@ -579,31 +589,33 @@ def plot_map(plot_scale="Zoom",
 		#if plot_scale != "Country":
 		for iplaces in places_obj:
 			if plot_obj_id[plot_scale][iplaces] is True:
-				place_filter = places[places['place'].isin(place_ids[iplaces])]
-
-				if len(place_filter) > 10:
-					place_filter = place_filter.sample(n=10, random_state=1)
 
 				try:
+					place_filter = places[places['place'].isin(place_ids[iplaces])]
+
+					if len(place_filter) > 10:
+						place_filter = place_filter.sample(n=10, random_state=1)
+
 					add_label_features(place_filter, boundbox=extend, #, offset=1000)
 						fontsize=8, fontstyle="italic", offset=1000,
 						halignament="left", #alpha=0.7,
 						language=language_map[ilanguage], #color="gray"
 						)
+					place_filter.plot(ax=ax,
+						color=place_color[iplaces],
+						marker=place_marker[iplaces],
+						edgecolor=place_edgecolor[iplaces],
+						#markeredgecolor=place_edgecolor[iplaces],
+						linewidths=1.5,
+						facecolor=place_color[iplaces],
+						markersize=place_size[iplaces],
+						#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
+						label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
+						)
 				except:
 					print("error with add_label_features for place object")
 
-				place_filter.plot(ax=ax,
-					color=place_color[iplaces],
-					marker=place_marker[iplaces],
-					edgecolor=place_edgecolor[iplaces],
-					#markeredgecolor=place_edgecolor[iplaces],
-					linewidths=1.5,
-					facecolor=place_color[iplaces],
-					markersize=place_size[iplaces],
-					#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
-					label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
-					)
+				
 
 				
 		# MAP TITLE ============================================================================

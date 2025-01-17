@@ -239,8 +239,9 @@ def add_label_features(geodata, fontsize=6, boundbox=None, offset=0,
 			#print(iname)
 
 			# If language is english remove arabic letters from osm data (prevents boxes for unrecognised characters)
-			if language == 'English':
-				cleaned_iname = re.sub(r"[^a-zA-Z0-9\s.,!?;:'\"()\-]", "", iname)
+			if language == 'English'or language == 'name':
+				iname = re.sub(r"[^a-zA-Z0-9\s.,!?;:'\"()\-]", "", iname)
+				iname = iname.strip()
 
 
 			plt.text(x_mid+offset, y_mid+offset, s=iname,
