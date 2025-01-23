@@ -245,7 +245,7 @@ def run_DRYP(filename_input):
 			data_in.ini_date,
 			)
 
-	# read overland flow boundary condition
+	# read unsaturated zone flow boundary condition
 	print("====== > Reading unsaturated flux boundary conditions")
 	fluxUZ = read_temporal_dataset(
 			data_in.fname_TSUZ,
@@ -255,7 +255,7 @@ def run_DRYP(filename_input):
 			data_in.ini_date,
 			)
 	
-	# read overland flow boundary condition units should be in m3 s-1
+	# read saturated zone flow boundary condition units should be in m3 s-1
 	print("====== > Reading saturated flux boundary conditions")
 	fluxSZ = read_temporal_dataset(
 			data_in.fname_TSSZ,
@@ -310,17 +310,18 @@ def run_DRYP(filename_input):
 	if fluxOF.data_set is not None:
 		if data_in.data_reading['fluxOF'] == 0:
 			idFluxOF, idFluxOF_act = extract_id_from_coords(
-				grid, data_in.fname_surface.path_of_bc_flux)
+				grid, data_in.fname_surface.fname_of_bc_flux)
 
 	if fluxUZ.data_set is not None:
 		if data_in.data_reading['fluxUZ'] == 0:
 			idFluxUZ, idFluxUZ_act = extract_id_from_coords(
-				grid, data_in.fname_soil.path_uz_bc_flux)
+				grid, data_in.fname_soil.fname_uz_bc_flux)
 
 	if fluxSZ.data_set is not None:
+		#print(data_in.fname_aquifer.fname_sz_bc_flux)
 		if data_in.data_reading['fluxSZ'] == 0:
 			idFluxSZ, idFluxSZ_act = extract_id_from_coords(
-				grid, data_in.fname_aquifer.path_sz_bc_flux)
+				grid, data_in.fname_aquifer.fname_sz_bc_flux)
 			
 		#elif data_in.data_reading['abs'] == 2:
 		#	idFluxOF = extract_id_from_raster(
@@ -668,9 +669,13 @@ def run_DRYP(filename_input):
 				runoff[act_nodes] = EXS + ROF + baseflow[act_nodes]*1000.0
 				
 				# add data abstractions/sink/source points
-				# select row from dataframe and add to the excess component
+				# all units should be in m3 (ubic meters)
+				# positive values indicate flow in the river/pond
+				# negative values indicate flow out of the river/ponds
 				if fluxOF.data_set is not None:					
-					runoff[idFluxOF] += fluxOF.get_point_dataset_one_step(t_abs)
+					# select row from dataframe and add to the excess component
+					# change units of flow rate to depth
+					runoff[idFluxOF] += fluxOF.get_point_dataset_one_step(t_abs)*1000.00/topo.area_cells
 				
 				# RUNOFF: estimate runoff---------------------------------------
 				# all variables with containing length must be changed to meters [m]
@@ -761,9 +766,11 @@ def run_DRYP(filename_input):
 				#	kcrip_mb.append(0)
 				
 				# add data abstractions/sink/source points
-				# select row from dataframe and add to the excess component
+				# units should be in m3 (cubic meters)
 				if fluxSZ.data_set is not None:					
-					rch_agg[idFluxSZ] += fluxSZ.get_point_dataset_one_step(t_abs)
+					# select row from dataframe and add to the excess component
+					# cange units from flow (m3) to depth in mm
+					rch_agg[idFluxSZ] += fluxSZ.get_point_dataset_one_step(t_abs)*1000.0/topo.area_cells
 				
 				# GROUNDWATER --------------------------------------------------
 				# activate groundwater component (gw)

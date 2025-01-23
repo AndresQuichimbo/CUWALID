@@ -112,6 +112,7 @@ class GlobalGridVar:
 
 		# maximum number of time steps per day
 		self.daily_steps = nstep_day
+		self.store_max = store_max
 
 		# activate store maximum value options
 		if store_max is True:
@@ -121,7 +122,7 @@ class GlobalGridVar:
 				self.store_max = True
 		else:
 			self.store_max = False
-
+		
 		if self.daily_steps is None:
 			self.store_max = False
 		elif self.daily_steps > 1:
@@ -129,7 +130,7 @@ class GlobalGridVar:
 				self.store_max = False
 		else:
 			self.store_max = False
-
+		#print(self.store_max)
 		#if store_max is True:
 		#	self.store_max = True
 		#else:

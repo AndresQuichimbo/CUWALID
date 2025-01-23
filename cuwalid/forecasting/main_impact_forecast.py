@@ -8,7 +8,7 @@ import cuwalid.forecasting.components.forecast as forecast
 import cuwalid.forecasting.components.read_paths as paths
 from cuwalid.forecasting.components.map_properties import water_var
 #from aux_HAD_plot_probabilistic_forecasting_map import plot_map
-from cuwalid.tools.CUWALID_download_data import get_data_osm
+#from cuwalid.tools.CUWALID_download_data import get_data_osm
 
 # Function to plot maps based on the configuration in the JSON file
 def plot_maps_json(config_file):
@@ -166,8 +166,8 @@ def plot_maps_json(config_file):
 	osm_data_dir = os.path.join(script_dir, '..', 'forecasting', 'osm_data')
 
 	# Download OSM open street maps
-	for icountry in country_names:
-		get_data_osm(icountry, path=osm_data_dir)
+	#for icountry in country_names:
+	#	get_data_osm(icountry, path=osm_data_dir)
 
 	# Create maps
 	for icountry in country_names:
@@ -242,7 +242,8 @@ def plot_maps_json(config_file):
 							place_code=place_code,
 							icode_field_shp=dataset_parameters.code_county_shp[icountry],
 							iname_field_shp=dataset_parameters.name_county_shp[icountry],
-							save_nc=create_dataset
+							save_nc=create_dataset,
+							iyear=year
 							)
 				
 def get_list_places(country, shapefile_level_1_dic, name_county_shp,

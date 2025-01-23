@@ -124,7 +124,9 @@ class get_model_settings(object):
 		# specify if maximum values are stored
 		self.store_max = False
 		if self.nstep_day <= 24:
-			self.store_max = True		
+			self.store_max = True
+			if self.dt_results == "1D":
+				self.store_max = False
 
 		# set up units
 		self.unit_change_manning = (1 / (self.dt * 60)) ** (3 / 5)
@@ -393,7 +395,8 @@ class get_list_of_groundwater_files(object):
         self.fname_GWdomain = dryp_config["SATURATED"]["path_sz_mask"]  # GW Boundary conditions
         self.fname_SZ_Ksat = dryp_config["SATURATED"]["path_sz_ksat"]  # Saturated hydraulic conductivity (Ks)
         self.fname_SZ_Sy = dryp_config["SATURATED"]["path_sz_sy"]  # Specific yield
-        self.fname_FHB = dryp_config["SATURATED"]["path_sz_bc_flux"]  # flux head boundary
+        #self.fname_FHB = dryp_config["SATURATED"]["path_sz_bc_flux"]  # flux head boundary
+        self.fname_FHB = None  # flux head boundary
         self.fname_CHB = dryp_config["SATURATED"]["path_sz_bc_head"]  # Constant flux boundary
         self.fname_SZ_bot = dryp_config["SATURATED"]["path_sz_bottom"]  # path_sz_bottom
         
