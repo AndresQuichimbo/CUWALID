@@ -7,6 +7,7 @@ import numpy as np
 from cuwalid.storm.main_storm import run_storm
 from cuwalid.storm.pdfs_ import compute_icpac, masking
 from cuwalid.stopet.main_stopet import run_stoPET
+from cuwalid.stopet.pet_forecast_generation import forecast_wrapper
 from cuwalid.dryp.main_DRYP import run_DRYP
 from cuwalid.forecasting.main_hydro_forecast import run_hydro_forecast
 import cuwalid.forecasting.main_impact_forecast as fcast
@@ -30,10 +31,10 @@ def run_cuwalid(cuwalid_input):
 	forecast_path = os.path.join(cuwalid_config["output_dir"], "forecast/regional")
 
 	# read storm input file path
-	storm_file = cuwalid_config["Tercile_Tem_path"]
+	storm_tercile_file = cuwalid_config["Tercile_Pre_path"]
 
 	# read stopet input file path
-	tercile_forecast_file = cuwalid_config["Tercile_Pre_path"]
+	stopet_tercile_file = cuwalid_config["Tercile_Tem_path"]
 
 	season = cuwalid_config['season'][0]
 	iyear = cuwalid_config["year"]
@@ -71,7 +72,7 @@ def run_cuwalid(cuwalid_input):
 		# Convert .nc file into .shp
 		space = masking(storm_input["SHP_FILE"])
 		print("Computing shp file")
-		compute_icpac(space, storm_file, storm_input["TER_FILE"], storm_input["ZON_FILE"])
+		compute_icpac(space, storm_tercile_file, storm_input["TER_FILE"], storm_input["ZON_FILE"])
 		print("Finished creating shp file")
 
 		run_storm(storm_input)
@@ -87,17 +88,22 @@ def run_cuwalid(cuwalid_input):
 		with open(stopet_input_path, 'r') as file:
 			stoPET_input = json.load(file)
 
-		stoPET_input["outputpath"] = forecast_path_stopet_output
+		stoPET_input["outputpath"] = os.path.join(forecast_path_stopet_output, "before_gen")
 		stoPET_input["startyear"] = iyear
 		stoPET_input["endyear"] = iyear
 		stoPET_input["startdate"] = start_day
 		stoPET_input["enddate"] = end_day
 		stoPET_input["trial_number"] = nsim
 		stoPET_input["number_ensm"] = nsim
-		stoPET_input["seasonName"] =season
-		stoPET_input["tercile_forecast_file"] = tercile_forecast_file
+		stoPET_input["seasonName"] = season
+		stoPET_input["tercile_forecast_file"] = stopet_tercile_file
 
 		run_stoPET(stoPET_input)
+
+		# Converting sim*2 number of files from stopet into sim number of files for dryp to use
+		print("Converting stopet output into files for dryp")
+		print(f"tercile file {stoPET_input['tercile_forecast_file']}")
+		forecast_wrapper(stoPET_input["tercile_forecast_file"], forecast_path_stopet_output, iyear, start_day, end_day, stoPET_input["locname"], nsim, stoPET_input["tempAdj"], season)
 
 	else:
 		print("stoPET is not executed")
@@ -135,14 +141,14 @@ def run_cuwalid(cuwalid_input):
 				path_pre=ifname_pre,
 				path_pet=ifname_pet,
 				json_destination=ifsim_forecasting,
-				dryp_output= forecast_path_dryp_output,
+				dryp_output=forecast_path_dryp_output,
 				start_date=start_date,
 				end_date=end_date,
 				new_setting_file=fname_setting_file,
 			)
 
 			# Prepare the log file and command for each process
-			log_dir = "logs"  
+			log_dir = "logs"
 			os.makedirs(log_dir, exist_ok=True)
 			base_name = os.path.splitext(os.path.basename(ifsim_forecasting))[0]
 			log_file = os.path.join(log_dir, f"{base_name}_output.log")
@@ -152,19 +158,30 @@ def run_cuwalid(cuwalid_input):
 			print(f"Executing: {command}")
 			commands.append(command)
 
-		# Run each command in parallel using subprocess
+		# Split commands into two groups
+		#first_batch = commands[:15]  # First 15 commands to run automatically
+		#remaining_batch = commands[15:]  # Remaining commands to print
+
+		# Run the first batch in parallel
 		processes = []
 		for command in commands:
+			print(f"Executing: {command}")
 			process = subprocess.Popen(command, shell=True)
 			processes.append(process)
 
-		# Wait for all subprocesses to finish
+		# Wait for all first-batch processes to finish
 		for process in processes:
-			process.wait()  # This will block until the process completes
+			process.wait()  # This will block until each process completes
 
-		print("All DRYP simulations are finished.")
+		# Print the remaining commands to the console
+		# if remaining_batch:
+		# 	print("\nThe following commands need to be run manually after the first batch finishes:")
+		# 	for command in remaining_batch:
+		# 		print(command)
+		print("DRYP is running, check logs")
 	else:
 		print("DRYP is not executed")
+
 
 
 	# print add water forecasting entry
@@ -197,7 +214,7 @@ def run_cuwalid(cuwalid_input):
 			"model_path": f"historical/regional/{season}_{str(iyear)}/output/",
 			"postpp_path": f"historical/regional/{season}_{str(iyear)}/postpp/",
 		}
-		HyCast_input["historical"] = historical_input
+		#HyCast_input["historical"] = historical_input
 
 		HyCast_input["season"] = cuwalid_config["season"]
 		HyCast_input["start_year"] = cuwalid_config["start_year"]
@@ -215,7 +232,7 @@ def run_cuwalid(cuwalid_input):
 		# Modify variables to intergrate previous outputs
 		ImCast_input["season"] = cuwalid_config["season"]
 		ImCast_input["year"] = cuwalid_config["year"]
-		ImCast_input["model_name"] = cuwalid_config["forecasting"]["model_name"]
+		ImCast_input["model_name"] = forecast_model_name#cuwalid_config["forecasting"]["model_name"]
 		ImCast_input["output_dir"] = forecast_path_dryp_postpp
 
 		fcast.plot_maps_json(ImCast_input)

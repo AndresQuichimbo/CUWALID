@@ -100,7 +100,7 @@ def plot_maps_json(config_file):
 	plot_scales = config.get("plot_scales", ["Zoom"])
 	country_names = config.get("country", ["Kenya"])
 	place_name = config.get("place_names", None)
-	season = config.get("seasons", ["OND"])
+	season = config.get("seasons", ["MAM"])
 	water_status = config.get("water_status", ["Flood"])
 	year = config["year"]
 	language = config.get("language", "English")
@@ -205,7 +205,7 @@ def plot_maps_json(config_file):
 				seasons=season, 
 				water_status=water_status, 
 				year=year, 
-				output_dir=output_dir+"fig/", 
+				output_dir = os.path.join(output_dir,"fig"), 
 				language=language,
 				netcdf_path_list=netcdf_path_list,
 				#threshold_path=threshold_path,

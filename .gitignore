@@ -41,3 +41,6 @@ forecast_output/
 fig/
 netcdf/
 output.log
+forecast/
+historical/
+aux_plot_maps_parallel.py
