@@ -69,7 +69,11 @@ def forecast_wrapper(tercile_forecast_file, outputpath, startyear, startdate, en
   
   print('PET forecasting started ...')  
   # this will read one file from the stoPET output to use as a template for the array length and time
-  nc = Dataset(os.path.join(outputpath, "before_gen", f'Forecast_PET_{locname}_ens_{startyear}_{seasonName}_0.nc'))
+  temp_output = os.path.join(outputpath, "..", "..", "..", "temp", str(startyear))
+  if not os.path.isdir(temp_output):
+      os.mkdir(temp_output)
+
+  nc = Dataset(os.path.join(temp_output, f'E_0_{locname}_ens_{str(startyear)}.nc'))
   lats = nc.variables['latitude'][:]
   lons = nc.variables['longitude'][:]
   time = nc.variables['time']
@@ -94,7 +98,8 @@ def forecast_wrapper(tercile_forecast_file, outputpath, startyear, startdate, en
   # Read the entire forecast loop as an array (ensemble, time, lat, lon)
   # This is required since the numba jit cant read files but only numpy array
   # Since we are reading all the files of pool it requre storage space
-  ens_A = read_forecast_pool(number_ensm*2, ori_data, os.path.join(outputpath, "before_gen"), locname, tempAdj, startdate, enddate, startyear, seasonName) # ensemble number is multiplied by 2
+  pool_dir = os.path.join(temp_output, seasonName)
+  ens_A = read_forecast_pool(number_ensm*2, ori_data, pool_dir, locname, tempAdj, startdate, enddate, startyear, seasonName) # ensemble number is multiplied by 2
   
   # Generate the tercile cut-off points 
   seasonSum, tercile_thresholds_1, tercile_thresholds_2 = compute_tercile_thresholds(ens_A)
@@ -163,7 +168,7 @@ def read_forecast_pool(number_ensm, ori_data, outputpath, locname, tempAdj, star
     # file name of the adjusted PET from stopet
     # Above
     for ens in range(0,number_ensm):
-        filename = os.path.join(outputpath, f'Forecast_PET_{locname}_ens_{startyear}_{season_Name}_{ens}.nc')
+        filename = os.path.join(outputpath, f'PET_{locname}_ens_{str(startyear)}_{season_Name}_{str(ens)}.nc')
         # read the file and append to the 4D array
         nca = Dataset(filename)
         pet_A = nca.variables['pet'][:,:,:]
@@ -329,7 +334,7 @@ def writing_forecast_file(ensembleArray, seasonName, locname, startyear, outputp
     # write the output files
 
 
-    filename = os.path.join(outputpath, f'Forecast_PET_{locname}_ens_{startyear}_{seasonName}_{f}.nc')
+    filename = os.path.join(outputpath, f'Forecast_PET_{locname}_ens_{str(startyear)}_{seasonName}_{str(f)}.nc')
     print(f"filename: {filename}")
     varname = 'pet'
     timevals = time[:]

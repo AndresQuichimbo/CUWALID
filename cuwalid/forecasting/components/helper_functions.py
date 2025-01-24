@@ -172,7 +172,7 @@ def add_scale_bar(ax, length, location=(0.05, 0.05), linewidth=3, text='1 km'):
 		transform=ax.figure.transFigure
 		)
 
-def add_label_features(geodata, fontsize=6, boundbox=None, offset=0,
+def add_label_features(geodata, language_font, fontsize=6, boundbox=None, offset=0,
 	fontstyle="normal", halignament="center", alpha=1.0, color="k",
 	language="name"):
 	"""
@@ -182,6 +182,7 @@ def add_label_features(geodata, fontsize=6, boundbox=None, offset=0,
 	----------
 
 	geodata: geopandas datasets
+	language_font: Matplotlib font object
 	fontsize: int
 		defalult 6
 	boundbox :
@@ -197,7 +198,7 @@ def add_label_features(geodata, fontsize=6, boundbox=None, offset=0,
 	color: str
 		color, default is "k"
 	language: str
-		name of the field to plot, default is "name"
+		name of the field to plot
 
 	Returns
 	-------
@@ -211,12 +212,18 @@ def add_label_features(geodata, fontsize=6, boundbox=None, offset=0,
 	for idx, row in geodata.iterrows():
 		x_mid, y_mid = row.geometry.centroid.coords[0]
 
-		iname = row[language].split(' ')
+		iname = None
 
-		if len(iname) > 2:
-			iname = "\n".join(iname)
+		if language in row: 
+			iname = str(row[language]).replace(" ", "\n")
+			# if language != "name" and iname != "nan":
+				# print(f"language specific name: {iname}")
+
+		if iname == "nan" and "name" in row:
+			iname = str(row['name']).replace(" ", "\n")
 		else:
-			iname = row[language]
+			continue
+
 		#print(x_mid, y_mid, boundbox, iname)
 		if boundbox is not None:
 			if (boundbox[0] > x_mid) or (x_mid > boundbox[2]):
@@ -239,9 +246,9 @@ def add_label_features(geodata, fontsize=6, boundbox=None, offset=0,
 			#print(iname)
 
 			# If language is english remove arabic letters from osm data (prevents boxes for unrecognised characters)
-			if language == 'English'or language == 'name':
-				iname = re.sub(r"[^a-zA-Z0-9\s.,!?;:'\"()\-]", "", iname)
-				iname = iname.strip()
+			# if language != "name:am":
+			# 	iname = re.sub(r"[^a-zA-Z0-9\s.,!?;:'\"()\-]", "", iname)
+			# 	iname = iname.strip()
 
 
 			plt.text(x_mid+offset, y_mid+offset, s=iname,
@@ -249,4 +256,6 @@ def add_label_features(geodata, fontsize=6, boundbox=None, offset=0,
 				horizontalalignment=halignament, alpha=alpha,
 				color=color,
 				path_effects=[patheffects.withStroke(linewidth=0.75,
-                                                        foreground="w")])
+                                                        foreground="w")],
+				fontproperties=language_font									
+				)

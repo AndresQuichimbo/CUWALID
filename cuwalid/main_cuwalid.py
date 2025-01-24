@@ -93,7 +93,6 @@ def run_cuwalid(cuwalid_input):
 		stoPET_input["endyear"] = iyear
 		stoPET_input["startdate"] = start_day
 		stoPET_input["enddate"] = end_day
-		stoPET_input["trial_number"] = nsim
 		stoPET_input["number_ensm"] = nsim
 		stoPET_input["seasonName"] = season
 		stoPET_input["tercile_forecast_file"] = stopet_tercile_file
@@ -103,7 +102,8 @@ def run_cuwalid(cuwalid_input):
 		# Converting sim*2 number of files from stopet into sim number of files for dryp to use
 		print("Converting stopet output into files for dryp")
 		print(f"tercile file {stoPET_input['tercile_forecast_file']}")
-		forecast_wrapper(stoPET_input["tercile_forecast_file"], forecast_path_stopet_output, iyear, start_day, end_day, stoPET_input["locname"], nsim, stoPET_input["tempAdj"], season)
+		if stoPET_input["tercile_forecast_file"]:
+			forecast_wrapper(stoPET_input["tercile_forecast_file"], forecast_path_stopet_output, iyear, start_day, end_day, stoPET_input["locname"], nsim, stoPET_input["tempAdj"], season)
 
 	else:
 		print("stoPET is not executed")

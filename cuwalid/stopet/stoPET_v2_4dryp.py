@@ -86,7 +86,7 @@ def stoPET_wrapper_regional(startyear, endyear, latval_min, latval_max, lonval_m
     stopet = future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, lonval_min,lonval_max,
                                              lats, lons, locname, ampl, omega, phase, shift, sr, ss, skew, loc, scale,
                                              slope_vals, mcont_vals,ens_num, datapath, outputpath, tempAdj, deltat, 
-                                             dpetdt, randnoise, season_name)
+                                             dpetdt, randnoise)
 
 
     print('stoPET finished successfully.')
@@ -139,11 +139,8 @@ def adjust_pet(stoch_pet, stoch_pet_adj, slope_vals, dpetdt, mcont_vals, latind_
 
 def future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, lonval_min,lonval_max, lats, lons, locname,
                                     ampl, omega, phase, shift, sr, ss, skew, loc, scale, slope_vals, mcont_vals,ens_num,
-                                    datapath, outputpath, tempAdj,deltat, dpetdt, randnoise, season_name):
+                                    datapath, outputpath, tempAdj,deltat, dpetdt, randnoise):
 
-    # create a folder to save the data
-    if not os.path.isdir(outputpath):
-        os.makedirs(outputpath)
 
     # generate the hourly time series period
     years = np.arange(startyear,endyear+1)
@@ -163,6 +160,13 @@ def future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, l
         stoch_pet_adj = []
 
         yr = years[i]
+
+        # create a folder to save the data
+        temp_output = os.path.join(outputpath, "..", "..", "..", "temp", str(yr))
+        if not os.path.isdir(temp_output):
+            os.makedirs(temp_output)
+
+
         if yr%4 == 0 and (yr % 100 != 0 or yr % 400 == 0):
             m = [31,29,31,30,31,30,31,31,30,31,30,31]
                
@@ -254,7 +258,7 @@ def future_pet_ts_generate_regional(startyear, endyear, latval_min,latval_max, l
         # save each year value separately (.nc)
         tunits = 'days since '+str(yr)+'-01-01' 
         # PET values jgenerated without any adjustment
-        filename1 = os.path.join(outputpath,  "Forecast_PET_HAD_ens_" + str(yr)+'_' + season_name + "_" + str(ens_num) + '.nc')      
+        filename1 = os.path.join(temp_output, f'E_{ens_num}_{locname}_ens_{yr}.nc')      
         nc_write(stoch_pet, latlen, lonlen, 'pet', tunits, filename1)
         
         # Temperature adjusted PET (This is deactivated for ICPAC as we don't need the data) it will sve space.
@@ -612,8 +616,9 @@ def seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, 
         year = years[j]                   
         # old naming
         # fname1 = '%s_%s_stoPET.nc'%(year, tempAdj)
-        fname1 = "Forecast_PET_HAD_ens_" + str(startyear)+'_'+season_name+ '_' + str(i) + '.nc'
-        stopet4dryp(outputpath, fname1, seasonswitch, startdate, enddate, i, season_name)
+        fname1 = f'E_{str(i)}_{locname}_ens_{str(year)}.nc'
+        temp_output = os.path.join(outputpath, "..", "..", "..", "temp", str(year))
+        stopet4dryp(temp_output, fname1, seasonswitch, startdate, enddate, i, season_name)
         
 ##        fname2 = '%s_%s_AdjstoPET.nc'%(year, tempAdj)
 ##        stopet4dryp(filepath, fname2, seasonswitch, startdate, enddate, i)
@@ -667,11 +672,11 @@ def stopet4dryp(filepath, fname, seasonswitch, startdate, enddate, i, season_nam
     suffix = x[2]
 
     if seasonswitch == 1:
-      filename = os.path.join(filepath, "Forecast_PET_HAD_ens_"+str(year)+"_"+season_name+"_"+str(i)+".nc") 
+      filename = os.path.join(filepath, season_name, "Forecast_PET_HAD_ens_"+str(year)+"_"+season_name+"_"+str(i)+".nc") 
     elif seasonswitch == 0:
-      filename = os.path.join(filepath, "Forecast_PET_HAD_ens_"+str(year)+"_"+season_name+"_"+str(i)+".nc") 
+      filename = os.path.join(filepath, season_name, "Forecast_PET_HAD_ens_"+str(year)+"_"+season_name+"_"+str(i)+".nc") 
     else:
-      filename = os.path.join(filepath, "Forecast_PET_HAD_ens_"+str(year)+"_"+season_name+"_"+str(i)+".nc") 
+      filename = os.path.join(filepath, season_name, "Forecast_PET_HAD_ens_"+str(year)+"_"+season_name+"_"+str(i)+".nc") 
 
     # Previous file naming for reference
     # if seasonswitch == 1:

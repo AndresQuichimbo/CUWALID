@@ -183,6 +183,7 @@ def plot_maps_json(config_file):
 							)
 		else:
 			place_code = [None]
+			
 			iname_short_country = get_list_places(
 							icountry,
 							dataset_parameters.shapefile_level_1_dic,

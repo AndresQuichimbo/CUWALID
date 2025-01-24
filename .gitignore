@@ -44,3 +44,4 @@ output.log
 forecast/
 historical/
 aux_plot_maps_parallel.py
+test/

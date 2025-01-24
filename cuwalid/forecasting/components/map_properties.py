@@ -254,7 +254,7 @@ plot_obj_id = {
 # do not change this
 # https://www.loc.gov/standards/iso639-2/php/code_list.php
 language_map = {
-"English": "name",
+"English": "name:en",
 "Swahili": "name:sw",
 "Somali": "name:so",
 "Amharic": "name:am",
@@ -270,11 +270,11 @@ language_short_name = {
 }
 
 font_paths = {
-    "English": None,
-    "Swahili": None, 
-    "Somali": None,
-    "Amharic": os.path.join(os.path.dirname(__file__), "..", "forecasting", "fonts", "NotoSansEthiopic-VariableFont_wdth,wght.ttf"),
-    "Oromo": None, 
+    "english": None,
+    "swahili": None, 
+    "somali": None,
+    "amharic": os.path.join(os.path.dirname(__file__), "..", "fonts", "NotoSansEthiopic-VariableFont_wdth,wght.ttf"),
+    "oromo": None, 
 }
 
 
@@ -448,40 +448,40 @@ status_labels = {
 	"Pasture": ["Above Normal","Normal", "Below Normal"],
 },
 "Swahili":{
-    "Flood": ["High", "Normal", "Low"],
-	"Groundwater": ["Above Normal","Normal", "Below Normal"],#"Bad", "Good"
-	"Surface": ["Above Normal","Normal", "Below Normal"],
-	"Soil": ["Above Normal","Normal", "Below Normal"],
-	"Evaporation": ["Above Normal","Normal", "Below Normal"],
-	"Crop": ["Above Normal","Normal", "Below Normal"],
-	"Pasture": ["Above Normal","Normal", "Below Normal"],
+    "Flood": ["Juu", "Kawaida", "Chini"],
+	"Groundwater": ["Juu ya Kawaida","Kawaida", "Chini ya Kawaida"],#"Bad", "Good"
+	"Surface": ["Juu ya Kawaida","Kawaida", "Chini ya Kawaida"],
+	"Soil": ["Juu ya Kawaida","Kawaida", "Chini cya Kawaida"],
+	"Evaporation": ["Juu ya Kawaida","Kawaida", "Chini ya Kawaida"],
+	"Crop": ["Juu ya Kawaida","Kawaida", "Chini ya Kawaida"],
+	"Pasture": ["Juu ya Kawaida","Kawaida", "Chini ya Kawaida"],
 },
 "Somali":{
-    "Flood": ["High", "Normal", "Low"],
-	"Groundwater": ["Above Normal","Normal", "Below Normal"],#"Bad", "Good"
-	"Surface": ["Above Normal","Normal", "Below Normal"],
-	"Soil": ["Above Normal","Normal", "Below Normal"],
-	"Evaporation": ["Above Normal","Normal", "Below Normal"],
-	"Crop": ["Above Normal","Normal", "Below Normal"],
-	"Pasture": ["Above Normal","Normal", "Below Normal"],
+    "Flood": ["Sare", "Caadiga", "Hooseeya"],
+	"Groundwater": ["Ka Sarreeya Caadiga","Caadiga", "Ka hooseeya Caadiga"],#"Bad", "Good"
+	"Surface": ["Ka Sarreeya Caadiga","Caadiga", "Ka hooseeya Caadiga"],
+	"Soil": ["Ka Sarreeya Caadiga","Caadiga", "Ka hooseeya Caadiga"],
+	"Evaporation": ["Ka Sarreeya Caadiga","Caadiga", "Ka hooseeya Caadiga"],
+	"Crop": ["Ka Sarreeya Caadiga","Caadiga", "Ka hooseeya Caadiga"],
+	"Pasture": ["Ka Sarreeya Caadiga","Caadiga", "Ka hooseeya Caadiga"],
 },
 "Oromo":{
-    "Flood": ["High", "Normal", "Low"],
-	"Groundwater": ["Above Normal","Normal", "Below Normal"],#"Bad", "Good"
-	"Surface": ["Above Normal","Normal", "Below Normal"],
-	"Soil": ["Above Normal","Normal", "Below Normal"],
-	"Evaporation": ["Above Normal","Normal", "Below Normal"],
-	"Crop": ["Above Normal","Normal", "Below Normal"],
-	"Pasture": ["Above Normal","Normal", "Below Normal"],
+    "Flood": ["High", "Idilee dhihoo", "Low"],
+	"Groundwater": ["Idilee ol","Idilee dhihoo", "Idilee gadi"],#"Bad", "Good"
+	"Surface": ["Idilee ol","Idilee dhihoo", "Idilee gadi"],
+	"Soil": ["Idilee ol","Idilee dhihoo", "Idilee gadi"],
+	"Evaporation": ["Idilee ol","Idilee dhihoo", "Idilee gadi"],
+	"Crop": ["Idilee ol","Idilee dhihoo", "Idilee gadi"],
+	"Pasture": ["Idilee ol","Idilee dhihoo", "Idilee gadi"],
 },
 "Amharic":{
-    "Flood": ["High", "Normal", "Low"],
-	"Groundwater": ["Above Normal","Normal", "Below Normal"],#"Bad", "Good"
-	"Surface": ["Above Normal","Normal", "Below Normal"],
-	"Soil": ["Above Normal","Normal", "Below Normal"],
-	"Evaporation": ["Above Normal","Normal", "Below Normal"],
-	"Crop": ["Above Normal","Normal", "Below Normal"],
-	"Pasture": ["Above Normal","Normal", "Below Normal"],
+    "Flood": ["ከፍተኛ", "መደበኛ", "ዝቅተኛ"],
+	"Groundwater": ["ከመደበኛ በላይ","መደበኛ", "ከመደበኛ በታች"],#"Bad", "Good"
+	"Surface": ["ከመደበኛ በላይ","መደበኛ", "ከመደበኛ በታች"],
+	"Soil": ["ከመደበኛ በላይ","መደበኛ", "ከመደበኛ በታች"],
+	"Evaporation": ["ከመደበኛ በላይ","መደበኛ", "ከመደበኛ በታች"],
+	"Crop": ["ከመደበኛ በላይ","መደበኛ", "ከመደበኛ በታች"],
+	"Pasture": ["ከመደበኛ በላይ","መደበኛ", "ከመደበኛ በታች"],
 },
 }
 
