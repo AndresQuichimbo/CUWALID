@@ -4,6 +4,7 @@ import pickle
 import geopy
 from geopy.geocoders import Nominatim
 from matplotlib import pyplot as plt
+from matplotlib.font_manager import FontProperties
 import osmnx as ox
 import geopandas as gpd
 import xarray as xr
@@ -21,7 +22,6 @@ from cuwalid.forecasting.components.read_paths import *
 import cuwalid.tools.CUWALID_view_tool as cuwalidplt
 import matplotlib.image as mpimg
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-
 #import arabic_reshaper
 #from bidi import algorithm as bidialg
 
@@ -56,9 +56,7 @@ def plot_map(plot_scale="Zoom",
 			river_path=None,
 			fname_output=None,
 			place_code_field=False,
-			shape_path_list=None,
-			path_osm=None,
-			):
+			shape_path_list=None):
 	"""Plot maps
 	
 	Parameters:
@@ -165,7 +163,7 @@ def plot_map(plot_scale="Zoom",
 				with open(cache_file, 'wb') as f:
 					pickle.dump(highway, f)
 
-			# 4. Clip the OSM data to the polygon
+			# Clip the OSM data to the polygon
 			highway = gpd.clip(highway, polygon)
 			highway.crs = mapPP
 			highway = highway.to_crs(netcdfPP)  # ds.rio.crs
@@ -216,7 +214,6 @@ def plot_map(plot_scale="Zoom",
 				print("Getting aeroway data from OSM server")
 				aeroway = ox.features.features_from_polygon(polygon, tags={'aeroway': True})
 				aeroway = aeroway[aeroway["name"].notnull()]
-				# 4. Clip the OSM data to the polygon
 				aeroway = gpd.clip(aeroway, polygon)
 				aeroway.crs = mapPP
 				aeroway = aeroway.to_crs(netcdfPP)
@@ -300,8 +297,8 @@ def plot_map(plot_scale="Zoom",
 					pickle.dump(places, f)
 			except:
 				print("Error getting place names")
-	
-	# admininstrative borders
+
+	# administrative borders
 	if plot_obj_id[plot_scale]["Administrative Boundary"] is True:
 		cache_file = os.path.join(osm_data_dir, f'{place_name}_boundary.pkl')
 		if os.path.exists(cache_file):
@@ -320,6 +317,8 @@ def plot_map(plot_scale="Zoom",
 					pickle.dump(bnd_admin, f)
 			except:
 				print("Error getting boundry's")
+
+
 
 	# Assign the CRS to the GeoPandas DataFrame
 	wards.crs = mapPP
@@ -398,7 +397,12 @@ def plot_map(plot_scale="Zoom",
 	# add loop for languages to avoid duplicate downloads
 	for ilanguage in language:
 
-		# check if file already exist
+		font_path = font_paths[ilanguage.lower()]
+
+		if font_path:
+			language_font = FontProperties(fname=font_path)
+		else:
+			language_font = FontProperties()
 
 		# Save figure as png ========================================================
 		if output_dir is not None:	
@@ -462,19 +466,22 @@ def plot_map(plot_scale="Zoom",
 				for iwater in water_objects:
 					if plot_obj_id[plot_scale][iwater] is True:
 						if water is not None:
-							water_filter = water[water['waterway'].isin(water_body[iwater])]
-							water_filter.plot(ax=ax,
-								#marker=point_marker[ipoint],
-								#color=water_color[iwater],
-								edgecolor=water_color[iwater],
-								linewidths=water_lw[iwater],
-								facecolor='none',#water_color[iwater],
-								#markersize=0.0*marker_size[ipoint],
-								#label=iwater+ "\n" + language_labels["Swahili"][iwater],
-								label=get_labels_by_lenguage(language_labels, ilanguage, iwater),
-								path_effects=[path_effects.withStroke(
-										linewidth=water_lw[iwater]*1.5, foreground='w')]
-								)
+							try:
+								water_filter = water[water['waterway'].isin(water_body[iwater])]
+								water_filter.plot(ax=ax,
+									#marker=point_marker[ipoint],
+									#color=water_color[iwater],
+									edgecolor=water_color[iwater],
+									linewidths=water_lw[iwater],
+									facecolor='none',#water_color[iwater],
+									#markersize=0.0*marker_size[ipoint],
+									#label=iwater+ "\n" + language_labels["Swahili"][iwater],
+									label=get_labels_by_lenguage(language_labels, ilanguage, iwater),
+									path_effects=[path_effects.withStroke(
+											linewidth=water_lw[iwater]*1.5, foreground='w')],
+									)
+							except:
+								print("Error plotting waterway")
 
 			# plot layers from Open Street Map
 			if plot_obj_id[plot_scale]["Small Roads"] is True:		
@@ -526,7 +533,7 @@ def plot_map(plot_scale="Zoom",
 						leisure_filter = leisure_filter[leisure_filter["name"].notnull()]#.sample(n=50)
 
 						# Annotate the plot with street names
-						add_label_features(leisure_filter, boundbox=extend,
+						add_label_features(leisure_filter, language_font, boundbox=extend,
 							#language=language_map[ilanguage],
 							)
 					except:
@@ -538,15 +545,12 @@ def plot_map(plot_scale="Zoom",
 				boundary_filter = bnd_admin[bnd_admin['admin_level'].isin(["4"])]
 				# add labels
 				try:
-					add_label_features(boundary_filter, boundbox=extend, #, offset=1000)
+					add_label_features(boundary_filter, language_font, boundbox=extend, #, offset=1000)
 						fontsize=12.5, fontstyle="italic", halignament="center", alpha=0.7,
 						language=language_map[ilanguage], #color="gray"
 						)
 				except:
-					add_label_features(boundary_filter, boundbox=extend, #, offset=1000)
-						fontsize=12.5, fontstyle="italic", halignament="center", alpha=0.7,
-						language=language_map["English"], #color="gray"
-						)
+					print("Error when adding admin boundry label features")
 
 			# Plot the original polygon (boundaries)
 			wards.plot(ax=ax, facecolor='none',
@@ -561,21 +565,24 @@ def plot_map(plot_scale="Zoom",
 			# if plot_scale != "Country":
 			for ipoint in points:
 				if plot_obj_id[plot_scale][ipoint] is True:
-					points_filter = amenities[amenities['amenity'].isin(points_ids[ipoint])]
+					try:
+						points_filter = amenities[amenities['amenity'].isin(points_ids[ipoint])]
 
-					if len(points_filter) > 10:
-						points_filter = points_filter.sample(n=10, random_state=1)
+						if len(points_filter) > 10:
+							points_filter = points_filter.sample(n=10, random_state=1)
 
-					points_filter.plot(ax=ax,
-						color=point_color[ipoint],
-						marker=point_marker[ipoint],
-						edgecolor='none',
-						#linewidths=0.1,
-						facecolor=point_color[ipoint],
-						markersize=marker_size[ipoint],
-						#label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
-						label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
-						)
+						points_filter.plot(ax=ax,
+							color=point_color[ipoint],
+							marker=point_marker[ipoint],
+							edgecolor='none',
+							#linewidths=0.1,
+							facecolor=point_color[ipoint],
+							markersize=marker_size[ipoint],
+							#label=ipoint+ "\n" + language_labels["Swahili"][ipoint],
+							label=get_labels_by_lenguage(language_labels, ilanguage, ipoint),
+							)
+					except:
+						print("Error plotting amenities")
 
 			# Add point attributes -----------------------------------------------------------------------
 			#if plot_scale != "Country":
@@ -598,8 +605,9 @@ def plot_map(plot_scale="Zoom",
 			boundary_line, = plt.plot([], [], # Invisible in plot, visible in legend
 						color=line_colors["Administrative Boundary"],
 						ls=line_ls["Administrative Boundary"],
-						label=get_labels_by_lenguage(language_labels, ilanguage,'Boundary'),
+						label=get_labels_by_lenguage(language_labels, ilanguage,'Boundary')
 						)  
+			plt.legend(handles=[boundary_line], prop=language_font)
 
 
 
@@ -607,20 +615,21 @@ def plot_map(plot_scale="Zoom",
 			#if plot_scale != "Country":
 			for iplaces in places_obj:
 				if plot_obj_id[plot_scale][iplaces] is True:
+					
 					place_filter = places[places['place'].isin(place_ids[iplaces])]
 
 					if len(place_filter) > 10:
 						place_filter = place_filter.sample(n=10, random_state=1)
 
-					try:
-						add_label_features(place_filter, boundbox=extend, #, offset=1000)
-							fontsize=8, fontstyle="italic", offset=1000,
-							halignament="left", #alpha=0.7,
-							language=language_map[ilanguage], #color="gray"
-							)
-					except:
-						print("error with add_label_features for place object")
 
+					add_label_features(place_filter, language_font, boundbox=extend, #, offset=1000)
+						fontsize=8, fontstyle="italic", offset=1000,
+						halignament="left", #alpha=0.7,
+						language=language_map[ilanguage], #color="gray"
+						)
+
+
+					
 					place_filter.plot(ax=ax,
 						color=place_color[iplaces],
 						marker=place_marker[iplaces],
@@ -639,12 +648,11 @@ def plot_map(plot_scale="Zoom",
 				# English
 				get_labels_by_lenguage(language_labels, ilanguage, iwater_status) +
 				" - " + place_name +#"\n"+
-				get_labels_by_lenguage(language_labels, ilanguage, iseason) + " " +
-				#"\n" +
-				"YYYY",
+				get_labels_by_lenguage(language_labels, ilanguage, iseason) + " " + str(iyear),
 	#			str(iyear)
 				#str(pd.to_datetime(rescaled.time.values[time_plot]).year)
-				fontweight="bold")
+				fontweight="bold",
+				fontproperties=language_font)
 
 
 			# MAP LEGEND ============================================================================
@@ -660,7 +668,8 @@ def plot_map(plot_scale="Zoom",
 					loc=2,
 					frameon=False,
 					#title=get_labels_by_lenguage(language_labels, ilanguage,"Geography"),
-					ncols=ncol_legend
+					ncols=ncol_legend,
+					prop= language_font
 					)
 
 			# Add the legend manually to the Axes.
@@ -686,8 +695,8 @@ def plot_map(plot_scale="Zoom",
 					#			language_labels["Swahili"][iwater_status],
 					title=get_labels_by_lenguage(language_labels, ilanguage, iwater_status),
 					frameon=False,
-					title_fontproperties={#'weight':'bold',
-								 "style": "italic"}
+					title_fontproperties=language_font,
+					prop=language_font
 					)
 
 			# ADD SCALE BAR TO FIGURE ======================================================
@@ -790,8 +799,6 @@ def plot_map(plot_scale="Zoom",
 			print("**************")
 			print(ratio_bw)
 			plt.close()
-			#plt.show()
-
 def get_labels_by_lenguage(dictionary, language, iterm):
 	"""Funciton to create labels with different languages
 	

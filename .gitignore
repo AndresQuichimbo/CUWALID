@@ -36,6 +36,12 @@ stopet_output/
 json_testing/
 logs/
 inputs/
-cuwalid/forecasting/fonts
 cuwalid/forecasting/osm_data/
 forecast_output/
+fig/
+netcdf/
+output.log
+forecast/
+historical/
+aux_plot_maps_parallel.py
+test/

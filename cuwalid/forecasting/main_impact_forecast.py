@@ -8,7 +8,6 @@ import cuwalid.forecasting.components.forecast as forecast
 import cuwalid.forecasting.components.read_paths as paths
 from cuwalid.forecasting.components.map_properties import water_var
 #from aux_HAD_plot_probabilistic_forecasting_map import plot_map
-#from cuwalid.tools.CUWALID_download_data import get_data_osm
 
 # Function to plot maps based on the configuration in the JSON file
 def plot_maps_json(config_file):
@@ -101,7 +100,7 @@ def plot_maps_json(config_file):
 	plot_scales = config.get("plot_scales", ["Zoom"])
 	country_names = config.get("country", ["Kenya"])
 	place_name = config.get("place_names", None)
-	season = config.get("seasons", ["OND"])
+	season = config.get("seasons", ["MAM"])
 	water_status = config.get("water_status", ["Flood"])
 	year = config["year"]
 	language = config.get("language", "English")
@@ -159,15 +158,15 @@ def plot_maps_json(config_file):
 	read_country_list = False	
 	if place_name is None:
 		read_country_list = True
-	
-	# set up directories for dataset download
-	# Construct the data directory path relative to the script location
-	script_dir = os.path.dirname(os.path.abspath(__file__))
-	osm_data_dir = os.path.join(script_dir, '..', 'forecasting', 'osm_data')
 
-	# Download OSM open street maps
-	#for icountry in country_names:
-	#	get_data_osm(icountry, path=osm_data_dir)
+	#ensure output folders have been created
+	if not os.path.exists(os.path.join(output_dir, "csv")):
+		os.makedirs(os.path.join(output_dir, "csv"), exist_ok=True)
+	if not os.path.exists(os.path.join(output_dir, "fig")):
+		os.makedirs(os.path.join(output_dir, "fig"), exist_ok=True)
+	if not os.path.exists(os.path.join(output_dir, "netcdf")):
+		os.makedirs(os.path.join(output_dir, "netcdf"), exist_ok=True)
+
 
 	# Create maps
 	for icountry in country_names:
@@ -184,6 +183,7 @@ def plot_maps_json(config_file):
 							)
 		else:
 			place_code = [None]
+			
 			iname_short_country = get_list_places(
 							icountry,
 							dataset_parameters.shapefile_level_1_dic,
@@ -206,7 +206,7 @@ def plot_maps_json(config_file):
 				seasons=season, 
 				water_status=water_status, 
 				year=year, 
-				output_dir=output_dir+"fig/", 
+				output_dir = os.path.join(output_dir,"fig"), 
 				language=language,
 				netcdf_path_list=netcdf_path_list,
 				#threshold_path=threshold_path,
@@ -214,7 +214,6 @@ def plot_maps_json(config_file):
 				#river_path=river_path,
 				#shape_path=dataset_parameters.shapefile_level_1_dic[icountry]
 				shape_path=dataset_parameter_list,
-				path_osm=osm_data_dir
 				)
 		# function to get netcdf files from regional files at each selected place
 		if create_dataset is True or create_table is True:
@@ -292,7 +291,6 @@ def call_plot_maps(plot_scales=["Zoom"],
 		mask_path=None,
 		river_path=None,
 		shape_path=None,
-		path_osm = None
 		):
 	"""
 	Function to call the map plotting function for specified regions and conditions.
@@ -406,22 +404,26 @@ def call_plot_maps(plot_scales=["Zoom"],
 						str(year)#+".png"# + "_"
 						)
 					#try:
-					plot_map(plot_scale=iplot_scale,
-								country_name=country_name,
-								place_name=iplace_name,
-								iwater_status=iiwater_status,
-								iyear=year,
-								iseason=iiseason,
-								language=language,
-								shape_path_list=shape_path,
-								output_dir=output_dir,
-								netcdf_path=inetcdf_path,
-								threshold_path=threshold_path,
-								mask_path=mask_path,
-								river_path=river_path,
-								fname_output=ifname_fig,
-								path_osm = path_osm
-								)
+
+					full_path = os.path.join(output_dir, ifname_fig + "_EN.png")
+					if os.path.exists(full_path):
+						print(f"The map {ifname_fig} already exists, skipping to next")
+					else:
+						plot_map(plot_scale=iplot_scale,
+									country_name=country_name,
+									place_name=iplace_name,
+									iwater_status=iiwater_status,
+									iyear=year,
+									iseason=iiseason,
+									language=language,
+									shape_path_list=shape_path,
+									output_dir=output_dir,
+									netcdf_path=inetcdf_path,
+									threshold_path=threshold_path,
+									mask_path=mask_path,
+									river_path=river_path,
+									fname_output=ifname_fig,
+									)
 					#except Exception as e:
 					#	print(f"An exception occured {country_name} {iplace_name}")
 					#	print(f"Error: {e}")

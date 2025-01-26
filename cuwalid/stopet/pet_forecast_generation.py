@@ -25,21 +25,38 @@ from cuwalid.stopet.helper_functions import load_config
 
 # ================ pre processing ICPAC forecast file =============##
 def icpac_forecast_preprocessing(tercile_forecast_file, seasonName, startyear, locname):
-  # step 1 invert lat
-  # Split the path
-  tforc_datapath, filename = os.path.split(tercile_forecast_file)
-  f = filename.split('.')
-  fin = tercile_forecast_file
-  fout = f[0]+'_inv.nc'
-  command = 'cdo invertlat %s %s' % (fin, fout)
-  os.system(command)  
-  
-  # step 2 slice data to fit existing stoPET
-  fin2 = fout
-  fout2 = tforc_datapath + '/ICPAC_TempF_%s%s_%s.nc'%(seasonName, startyear, locname)
-  command = 'cdo sellonlatbox,31.1,51.92,-6.82,15.9 %s %s' % (fin2, fout2)
-  os.system(command) 
-  return  fout2
+    # Step 1: Invert latitude (invert latitudes in the dataset)
+    tforc_datapath, filename = os.path.split(tercile_forecast_file)
+    f = filename.split('.')
+    fin = tercile_forecast_file
+    fout = f[0] + '_inv.nc'
+    
+    # Open the dataset
+    ds = xr.open_dataset(fin)
+    
+    # Invert latitudes (flip the latitude axis)
+    ds = ds.isel(lat=slice(None, None, -1))  # Reverses the latitude axis
+    
+    # Save the modified dataset
+    ds.to_netcdf(fout)
+
+    # Step 2: Slice the data to fit the existing stoPET (using lat/lon bounding box)
+    fin2 = fout
+    fout2 = os.path.join(tforc_datapath, 'ICPAC_TempF_%s%s_%s.nc' % (seasonName, startyear, locname))
+    
+    # Open the dataset again
+    ds2 = xr.open_dataset(fin2)
+
+    # Slice the dataset based on the lon/lat box: lon=[31.1, 51.92], lat=[-6.82, 15.9]
+    lon_min, lon_max = 31.1, 51.92
+    lat_min, lat_max = -6.82, 15.9
+    
+    ds2 = ds2.sel(lon=slice(lon_min, lon_max), lat=slice(lat_max, lat_min))  # Note that latitudes are typically inverted (max to min)
+
+    # Save the sliced dataset
+    ds2.to_netcdf(fout2)
+
+    return fout2
 
 
 def forecast_wrapper(tercile_forecast_file, outputpath, startyear, startdate, enddate, locname, number_ensm, tempAdj, seasonName):  
@@ -52,7 +69,11 @@ def forecast_wrapper(tercile_forecast_file, outputpath, startyear, startdate, en
   
   print('PET forecasting started ...')  
   # this will read one file from the stoPET output to use as a template for the array length and time
-  nc = Dataset(outputpath + '%s_E0_StoPET/E_0_stoPET_%s_%s_%s_%s.nc'%(locname, tempAdj, startdate, enddate, startyear))
+  temp_output = os.path.join(outputpath, "..", "..", "..", "temp", str(startyear))
+  if not os.path.isdir(temp_output):
+      os.mkdir(temp_output)
+
+  nc = Dataset(os.path.join(temp_output, f'E_0_{locname}_ens_{str(startyear)}.nc'))
   lats = nc.variables['latitude'][:]
   lons = nc.variables['longitude'][:]
   time = nc.variables['time']
@@ -77,16 +98,17 @@ def forecast_wrapper(tercile_forecast_file, outputpath, startyear, startdate, en
   # Read the entire forecast loop as an array (ensemble, time, lat, lon)
   # This is required since the numba jit cant read files but only numpy array
   # Since we are reading all the files of pool it requre storage space
-  ens_A = read_forecast_pool(number_ensm*2, ori_data, outputpath, locname, tempAdj, startdate, enddate, startyear) # ensemble number is multiplied by 2
+  pool_dir = os.path.join(temp_output, seasonName)
+  ens_A = read_forecast_pool(number_ensm*2, ori_data, pool_dir, locname, tempAdj, startdate, enddate, startyear, seasonName) # ensemble number is multiplied by 2
   
   # Generate the tercile cut-off points 
   seasonSum, tercile_thresholds_1, tercile_thresholds_2 = compute_tercile_thresholds(ens_A)
   
   # save seasonal sum if needed
-  np.save(outputpath + 'seasonal_sum_%s_%s.npy'%(seasonName, startyear), seasonSum)
+  np.save(os.path.join(outputpath, 'seasonal_sum_%s_%s.npy'%(seasonName, startyear)), seasonSum)
   # save the terciles for later plotting
-  np.save(outputpath + 'tercile_1_stopet_%s_%s.npy'%(seasonName, startyear), tercile_thresholds_1)
-  np.save(outputpath + 'tercile_2_stopet_%s_%s.npy'%(seasonName, startyear), tercile_thresholds_2)
+  np.save(os.path.join(outputpath, 'tercile_1_stopet_%s_%s.npy'%(seasonName, startyear)), tercile_thresholds_1)
+  np.save(os.path.join(outputpath, 'tercile_2_stopet_%s_%s.npy'%(seasonName, startyear)), tercile_thresholds_2)
   
   # loop through each grid and start extracting the respective timeseries 
   # make sure the number of files percentage is correct.
@@ -103,7 +125,8 @@ def forecast_wrapper(tercile_forecast_file, outputpath, startyear, startdate, en
   # This will create the forecasted PET value 
   ensembleArray = forecast_pet(ensemble_indices, ens_A, ens_f) 
   
-  # Write the output array into files                        
+  # Write the output array into files     
+  print("writing pet forecast files")                   
   writing_forecast_file(ensembleArray, seasonName, locname, startyear, outputpath, time, lats, lons, tunits) 
   
   print('PET forecasting completed!')
@@ -138,14 +161,14 @@ def fill_masked_ocean_2d(data, fillvalue):
     return filled_data  
 
 
-def read_forecast_pool(number_ensm, ori_data, outputpath, locname, tempAdj, startdate, enddate, startyear):   
+def read_forecast_pool(number_ensm, ori_data, outputpath, locname, tempAdj, startdate, enddate, startyear, season_Name):   
     # create array to append data of each ensembles
     ens_A = (np.ones((number_ensm, ori_data.shape[0], ori_data.shape[1], ori_data.shape[2]))) * np.nan
 
     # file name of the adjusted PET from stopet
     # Above
     for ens in range(0,number_ensm):
-        filename = outputpath + '%s_E%s_StoPET/E_%s_stoPET_%s_%s_%s_%s.nc'%(locname, ens, ens, tempAdj, startdate, enddate, startyear)
+        filename = os.path.join(outputpath, f'PET_{locname}_ens_{str(startyear)}_{season_Name}_{str(ens)}.nc')
         # read the file and append to the 4D array
         nca = Dataset(filename)
         pet_A = nca.variables['pet'][:,:,:]
@@ -301,9 +324,6 @@ def check_forecast_percentage(forcvals, num_file):
 def writing_forecast_file(ensembleArray, seasonName, locname, startyear, outputpath, time, lats, lons, tunits): 
       
   # write the final ensembles on a netcdf file
-  # create a folder to save the data
-  if not os.path.isdir(outputpath + '%s_%s/'%(seasonName,startyear)):
-    os.mkdir(outputpath + '%s_%s/'%(seasonName,startyear))
   # file name of the adjusted PET from stopet 
   for f in range(ensembleArray.shape[0]):
     # read the each ensemble array
@@ -312,8 +332,10 @@ def writing_forecast_file(ensembleArray, seasonName, locname, startyear, outputp
     # the newar by grid should be with in 10% diffrence from  the surrounding average
     data = smooth_grid_numba_parallel(pet_data)
     # write the output files
-    outpath = outputpath + '%s_%s/'%(seasonName,startyear)
-    filename = (outpath + 'Forecast_PET_%s_ens_%s_%s_%s.nc')%(locname,f,seasonName,startyear)
+
+
+    filename = os.path.join(outputpath, f'Forecast_PET_{locname}_ens_{str(startyear)}_{seasonName}_{str(f)}.nc')
+    print(f"filename: {filename}")
     varname = 'pet'
     timevals = time[:]
     forecast_nc_write(data, lats, lons, varname, timevals, tunits, filename)
