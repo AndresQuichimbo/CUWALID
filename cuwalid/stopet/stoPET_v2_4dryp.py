@@ -671,12 +671,16 @@ def stopet4dryp(filepath, fname, seasonswitch, startdate, enddate, i, season_nam
     method = x[1]
     suffix = x[2]
 
+    seasonal_folder = os.path.join(filepath, season_name)
+    if not os.path.isdir(seasonal_folder):
+        os.makedirs(seasonal_folder)
+
     if seasonswitch == 1:
-      filename = os.path.join(filepath, season_name, "Forecast_PET_HAD_ens_"+str(year)+"_"+season_name+"_"+str(i)+".nc") 
+      filename = os.path.join(filepath, season_name, f'PET_{year}_{season_name}_ens_{i}.nc') 
     elif seasonswitch == 0:
-      filename = os.path.join(filepath, season_name, "Forecast_PET_HAD_ens_"+str(year)+"_"+season_name+"_"+str(i)+".nc") 
+      filename = os.path.join(filepath, season_name, f'PET_{year}_{season_name}_ens_{i}.nc') 
     else:
-      filename = os.path.join(filepath, season_name, "Forecast_PET_HAD_ens_"+str(year)+"_"+season_name+"_"+str(i)+".nc") 
+      filename = os.path.join(filepath, season_name, f'PET_{year}_{season_name}_ens_{i}.nc') 
 
     # Previous file naming for reference
     # if seasonswitch == 1:

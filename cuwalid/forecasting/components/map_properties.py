@@ -30,7 +30,7 @@ line_colors = {
 # specify line widths of streets and roads
 line_width = {
 "Small Roads": 0.50,
-"Main Roads": 2.0,
+"Main Roads": 1.5,
 "Administrative Boundary": 2.5,
 }
 

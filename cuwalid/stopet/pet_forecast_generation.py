@@ -168,7 +168,7 @@ def read_forecast_pool(number_ensm, ori_data, outputpath, locname, tempAdj, star
     # file name of the adjusted PET from stopet
     # Above
     for ens in range(0,number_ensm):
-        filename = os.path.join(outputpath, f'PET_{locname}_ens_{str(startyear)}_{season_Name}_{str(ens)}.nc')
+        filename = os.path.join(outputpath, f'PET_{startyear}_{season_Name}_ens_{ens}.nc')
         # read the file and append to the 4D array
         nca = Dataset(filename)
         pet_A = nca.variables['pet'][:,:,:]
@@ -177,7 +177,7 @@ def read_forecast_pool(number_ensm, ori_data, outputpath, locname, tempAdj, star
     
      
 # numba parallel run function  
-# decorate the function  
+# decorate the function 
 @jit(nopython=True, parallel=True)  
 def index_forecast_with_tercile(tercileTf, number_ensm, ens_A, fnumbers, ens_f, tercile_thresholds_1, tercile_thresholds_2, seasonSum):
     # Initialize array to store final samples (number_ensm//2, X.shape[1], X.shape[2])

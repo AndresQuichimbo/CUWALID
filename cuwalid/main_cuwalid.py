@@ -88,7 +88,7 @@ def run_cuwalid(cuwalid_input):
 		with open(stopet_input_path, 'r') as file:
 			stoPET_input = json.load(file)
 
-		stoPET_input["outputpath"] = os.path.join(forecast_path_stopet_output, "before_gen")
+		stoPET_input["outputpath"] = os.path.join(forecast_path_stopet_output)
 		stoPET_input["startyear"] = iyear
 		stoPET_input["endyear"] = iyear
 		stoPET_input["startdate"] = start_day
