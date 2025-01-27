@@ -73,7 +73,7 @@ def forecast_wrapper(tercile_forecast_file, outputpath, startyear, startdate, en
   if not os.path.isdir(temp_output):
       os.mkdir(temp_output)
 
-  nc = Dataset(os.path.join(temp_output, f'E_0_{locname}_ens_{str(startyear)}.nc'))
+  nc = Dataset(os.path.join(temp_output, seasonName, f'PET_{startyear}_{seasonName}_ens_0.nc'))
   lats = nc.variables['latitude'][:]
   lons = nc.variables['longitude'][:]
   time = nc.variables['time']
