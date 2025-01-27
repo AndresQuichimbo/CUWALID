@@ -81,7 +81,7 @@ class read_temporal_dataset():
 				data_set = pd.read_csv(filename)
 				
 				# change to txt to datetime
-				data_set["Date"] = pd.to_datetime(data_set['Date'], format = '%d/%m/%Y %H:%M')
+				data_set["Date"] = pd.to_datetime(data_set['Date'])#, format = '%d/%m/%Y %H:%M')
 				
 				# Find id of the precipitation array for the the simulation period 
 				idate_aux = np.where((data_set["Date"] <= end_date)

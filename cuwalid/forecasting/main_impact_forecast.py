@@ -241,7 +241,8 @@ def plot_maps_json(config_file):
 							place_code=place_code,
 							icode_field_shp=dataset_parameters.code_county_shp[icountry],
 							iname_field_shp=dataset_parameters.name_county_shp[icountry],
-							save_nc=create_dataset
+							save_nc=create_dataset,
+							iyear=year
 							)
 				
 def get_list_places(country, shapefile_level_1_dic, name_county_shp,

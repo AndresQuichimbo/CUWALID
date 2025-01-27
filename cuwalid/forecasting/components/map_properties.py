@@ -307,7 +307,7 @@ language_labels = {
         'Boundary':'Boundary',
         'Location': 'Location',
         "Crop": "Crop Status",
-		"Pasture": "Pasture Status",
+		"Pasture": "Pasture/browse Status",
 		},
 "Swahili":{"Administrative Boundary": "Mpaka",
 		"Natural Reserve": "Hifadhi ya Asili",
