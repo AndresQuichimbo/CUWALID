@@ -2081,10 +2081,16 @@ class forecasting:
         # Update the coords based on different naming formats
         if 'lat' in list(icpac.coords):
             icpac = icpac.rename({'lat': 'y', 'lon': 'x'})
+        elif 'LAT' in list(icpac.coords):
+            icpac = icpac.rename({'LAT': 'y', 'LON': 'x'})
         elif 'latitude' in list(icpac.coords):
             icpac = icpac.rename({'latitude': 'y', 'longitude': 'x'})
         elif 'Y' in list(icpac.coords):
             icpac = icpac.rename({'Y': 'y', 'X': 'x'})
+        elif 'x' in list(icpac.coords):
+            pass # correct naming
+        else:
+            print("ERROR found in precipitation tercile file, please rename he coords to use 'x' and 'y'")
 
 
         re_ = icpac.rio.reproject_match(blank, resampling=self.resam)
