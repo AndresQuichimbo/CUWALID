@@ -193,6 +193,7 @@
 
 		<span class="c1"># maximum number of time steps per day</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">daily_steps</span> <span class="o">=</span> <span class="n">nstep_day</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">store_max</span> <span class="o">=</span> <span class="n">store_max</span>
 
 		<span class="c1"># activate store maximum value options</span>
 		<span class="k">if</span> <span class="n">store_max</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
@@ -202,7 +203,7 @@
 				<span class="bp">self</span><span class="o">.</span><span class="n">store_max</span> <span class="o">=</span> <span class="kc">True</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">store_max</span> <span class="o">=</span> <span class="kc">False</span>
-
+		
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">daily_steps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">store_max</span> <span class="o">=</span> <span class="kc">False</span>
 		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">daily_steps</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -210,7 +211,7 @@
 				<span class="bp">self</span><span class="o">.</span><span class="n">store_max</span> <span class="o">=</span> <span class="kc">False</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">store_max</span> <span class="o">=</span> <span class="kc">False</span>
-
+		<span class="c1">#print(self.store_max)</span>
 		<span class="c1">#if store_max is True:</span>
 		<span class="c1">#	self.store_max = True</span>
 		<span class="c1">#else:</span>

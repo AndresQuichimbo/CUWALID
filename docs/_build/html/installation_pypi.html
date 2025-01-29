@@ -90,18 +90,15 @@
 <span id="pypi-installation"></span><h1>Installation with PyPi<a class="headerlink" href="#installation-with-pypi" title="Permalink to this heading"></a></h1>
 <p>These steps assume you already have python installed, we recommended python a version between 3.9-3.11.</p>
 <p>If you don’t have python yet then you can find the install <a class="reference external" href="https://www.python.org/downloads/release/python-3119/">here</a>, just make sure to tick the box to “Add to path” during your installation to make things easier.</p>
-<p>Or using Anaconda to create an environment with a specific python version also works.</p>
+<p>Or using Anaconda to create an environment with a specific python version also works (shown below).</p>
 <p>These steps should work correctly even if installing through PyPi within a conda environment, however please note there is a higher change of conflicting dependencies with this method.</p>
 <ol class="arabic">
-<li><p>Open the directory you want to work in and ensure that python is working there by typing the following in you terminal.</p>
+<li><p>Open the directory you want to work in and ensure that python or anaconda is working there.</p>
 <blockquote>
-<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>--version
-</pre></div>
-</div>
-<p>It should print out your python version if everything is working correctly</p>
-<p>Now create a virtual environment (This step is recommended but not technically necessary) by running the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>test_env
-<span class="nb">source</span><span class="w"> </span>test_env/bin/activate<span class="w">  </span><span class="c1"># On Windows use `test_env\Scripts\activate`</span>
+<div><p>Now it is recommended to create a virtual environment by running the following command (Using conda as shown will make this process easier):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># For creating a conda environment with the name &quot;test_env&quot;:</span>
+conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>test_env<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.11<span class="w"> </span>-y
+conda<span class="w"> </span>activate<span class="w"> </span>test_env
 </pre></div>
 </div>
 <p>Now your environment is created and is activated</p>
@@ -110,37 +107,33 @@
 <li><p>Now you can install the package with the command as follows. This should download the latest version of the package.</p>
 <blockquote>
 <div><p>Run the command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://test.pypi.org/simple/<span class="w"> </span>--extra-index-url<span class="w"> </span>https://pypi.org/simple<span class="w"> </span>CUWALID
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is currently only on the test version of PyPi, this will need to be changed when fully released</span>
+pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://test.pypi.org/simple/<span class="w"> </span>--extra-index-url<span class="w"> </span>https://pypi.org/simple<span class="w"> </span>CUWALID
 </pre></div>
 </div>
 <p>This will install all other dependencies along with the CUWALID package.</p>
 <p>If you need to update the package to the newest version of CUWALID, please use the command below:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://test.pypi.org/simple/<span class="w"> </span>--extra-index-url<span class="w"> </span>https://pypi.org/simple<span class="w"> </span>CUWALID<span class="w"> </span>--upgrade
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is currently only on the test version of PyPi, this will need to be changed when fully released</span>
+pip<span class="w"> </span>install<span class="w"> </span>-i<span class="w"> </span>https://test.pypi.org/simple/<span class="w"> </span>--extra-index-url<span class="w"> </span>https://pypi.org/simple<span class="w"> </span>CUWALID<span class="w"> </span>--upgrade
 </pre></div>
 </div>
-<p>Some of the parameter files for the StoPET model are too large to be installed with the package, so use the command below after installing the package if you want to use the StoPET model:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>cuwalid.tools.download_data
+<p>For using storm you will need gdal installed, the easiest way to do this is by installing it using conda (not pip, however it can be done through pip if you follow some extra steps which you can find online)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>gdal<span class="w"> </span><span class="s2">&quot;numpy&lt;2.0&quot;</span><span class="w"> </span><span class="c1"># It is important to include this numpy version for gdal to work correctly for storm</span>
 </pre></div>
 </div>
 </div></blockquote>
 </li>
-<li><p>You can now choose to run some tests first or go on to the next step and just try running the model, to run the test scripts you can use this command:</p>
+<li><p>You can now choose to run some tests first (may take some time, but if they start running you can stop early as that means cuwalid has been installed correctly):</p>
 <blockquote>
-<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>cuwalid.tests.dryp.run_tests
+<div><p>To run the whole cuwalid system go see the tutorial <a class="reference internal" href="cuwalid_tutorial.html#cuwalid-tutorial"><span class="std std-ref">here</span></a> and use the example github repository <a class="reference external" href="https://github.com/CornishLeo/CUWALID-Example">CUWALID Example</a> to get some example inputs:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>cuwalid.tests.dryp.run_tests
 python<span class="w"> </span>-m<span class="w"> </span>cuwalid.tests.stopet.run_tests
 </pre></div>
 </div>
 </div></blockquote>
 </li>
 </ol>
-<ol class="arabic" start="3">
-<li><p>Now you can run the model, here is a link to a github repository with an example of using the CUWALID models for you to use:</p>
-<blockquote>
-<div><p><a class="reference external" href="https://github.com/CornishLeo/CUWALID-Example">CUWALID Example</a></p>
-<p>This will use the input files specified at the file path given. Look <a class="reference internal" href="dryp_tutorial.html#dryp-parameters"><span class="std std-ref">here</span></a> to learn more about the input files.</p>
-</div></blockquote>
-</li>
-</ol>
+<p>_</p>
 </section>
 
 
