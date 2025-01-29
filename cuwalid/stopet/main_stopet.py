@@ -59,6 +59,7 @@ def run_stoPET(config_file):
     deltat = config['deltat']
     udpi_pet = config['udpi_pet']
     season_name = config['seasonName']
+    temp_path = config.get("temp_path", "")
 
     if execution_type == 'dryp':
         run_stoPET_4_dryp(
@@ -105,7 +106,8 @@ def run_stoPET(config_file):
             deltat=deltat,
             udpi_pet=udpi_pet,
             slice_only=slice_only,
-            season_name=season_name
+            season_name=season_name,
+            temp_path = temp_path
         )
 
     print('Seasonal PET extraction finished successfully.')

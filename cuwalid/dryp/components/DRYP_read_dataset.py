@@ -92,8 +92,11 @@ class read_temporal_dataset():
 				if dt > 60:
 					# aggregate data to the model time step
 					self.data_set.index = pd.DatetimeIndex(self.data_set['Date'])
-					
-					self.data_set = (self.data_set.resample(freq_dt).sum()).reset_index()
+					#print(self.data_set)
+					try:
+						self.data_set = (self.data_set.resample(freq_dt).sum()).reset_index()
+					except:
+						self.data_set = (self.data_set.resample(freq_dt).sum(numeric_only=True)).reset_index()
 				
 				if not idate_aux.size:
 					print(filename)
