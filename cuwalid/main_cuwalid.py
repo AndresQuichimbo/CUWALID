@@ -3,6 +3,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 import numpy as np
 from cuwalid.storm.main_storm import run_storm
 from cuwalid.storm.pdfs_ import compute_icpac, masking
@@ -22,9 +23,6 @@ def run_cuwalid(cuwalid_input):
 	with open(cuwalid_input, 'r') as file:
 		cuwalid_config = json.load(file)
 
-	# read historical paths
-	historical_model_name = cuwalid_config["historical_model_name"]
-
 	# read forecasting parameters
 	forecast_model_name = cuwalid_config["forecasting_model_name"]
 
@@ -42,8 +40,14 @@ def run_cuwalid(cuwalid_input):
 	start_date, end_date = cuwalid_mtools.get_dates_season(season, iyear)
 	start_day, end_day = cuwalid_mtools.date_to_day_of_year(start_date), cuwalid_mtools.date_to_day_of_year(end_date)
 
+	# Find if the user wants to run in parallel when possible
+	sim_in_parallel = cuwalid_config.get("sim_in_parallel", True)
+
 	# Create directory structure for cuwalid system where user ran code
 	create_directory_structure("", season, iyear)
+
+	# create a temporary file folder
+	temp_folder = os.path.join(forecast_path, "temp")
 
 	forecast_path_storm_output = os.path.join(forecast_path, f"{season}_{str(iyear)}", "dataset/pre/")
 	forecast_path_stopet_output = os.path.join(forecast_path, f"{season}_{str(iyear)}", "dataset/pet/")
@@ -89,6 +93,7 @@ def run_cuwalid(cuwalid_input):
 			stoPET_input = json.load(file)
 
 		stoPET_input["outputpath"] = os.path.join(forecast_path_stopet_output)
+		stoPET_input["temp_path"] = temp_folder
 		stoPET_input["startyear"] = iyear
 		stoPET_input["endyear"] = iyear
 		stoPET_input["startdate"] = start_day
@@ -103,7 +108,7 @@ def run_cuwalid(cuwalid_input):
 		print("Converting stopet output into files for dryp")
 		print(f"tercile file {stoPET_input['tercile_forecast_file']}")
 		if stoPET_input["tercile_forecast_file"]:
-			forecast_wrapper(stoPET_input["tercile_forecast_file"], forecast_path_stopet_output, iyear, start_day, end_day, stoPET_input["locname"], nsim, stoPET_input["tempAdj"], season)
+			forecast_wrapper(stoPET_input["tercile_forecast_file"], forecast_path_stopet_output, iyear, start_day, end_day, stoPET_input["locname"], nsim, stoPET_input["tempAdj"], season, stoPET_input["temp_path"])
 
 	else:
 		print("stoPET is not executed")
@@ -154,30 +159,28 @@ def run_cuwalid(cuwalid_input):
 			log_file = os.path.join(log_dir, f"{base_name}_output.log")
 
 			# Command to run the DRYP simulation in the background
-			command = f"nohup python -u -m cuwalid.dryp.main_DRYP {ifsim_forecasting} > {log_file} 2>&1 &"
-			print(f"Executing: {command}")
+			if sim_in_parallel:
+				print("Running DRYP in parallel")
+				command = f"nohup python -u -m cuwalid.dryp.main_DRYP {ifsim_forecasting} > {log_file} 2>&1 &"
+				print(f"Executing: {command}")
+			else:
+				print("Running DRYP in sequence")
+				command = ifsim_forecasting
+			
 			commands.append(command)
 
-		# Split commands into two groups
-		#first_batch = commands[:15]  # First 15 commands to run automatically
-		#remaining_batch = commands[15:]  # Remaining commands to print
 
 		# Run the first batch in parallel
 		processes = []
 		for command in commands:
 			print(f"Executing: {command}")
-			process = subprocess.Popen(command, shell=True)
-			processes.append(process)
+			if sim_in_parallel: # run simulations in paralell using nohup
+				process = subprocess.Popen(command, shell=True)
+				processes.append(process)
+				time.sleep(2)
+			else: # Run in sequence
+				run_DRYP(command)
 
-		# Wait for all first-batch processes to finish
-		for process in processes:
-			process.wait()  # This will block until each process completes
-
-		# Print the remaining commands to the console
-		# if remaining_batch:
-		# 	print("\nThe following commands need to be run manually after the first batch finishes:")
-		# 	for command in remaining_batch:
-		# 		print(command)
 		print("DRYP is running, check logs")
 	else:
 		print("DRYP is not executed")
@@ -189,10 +192,6 @@ def run_cuwalid(cuwalid_input):
 		print("Executing Water forecasting: WaterCast")
 		HyCast_input_path = cuwalid_config["MODELS"]["WaterCast"]["HyCast"]
 		ImCast_input_path = cuwalid_config["MODELS"]["WaterCast"]["ImCast"]
-
-		# Add functions to modify paths and names according to the cofiguration files before runing the forecast
-		# modify names
-		# modify season and year
 
 		print("Executing hydrological forecasting: HyCast")
 		# Open json config
@@ -208,13 +207,15 @@ def run_cuwalid(cuwalid_input):
 		}
 		HyCast_input["forecasting"] = forecasting_input
 
-		historical_input = {
-			"model_name": historical_model_name,
-			"main_path": f"historical/regional/{season}_{str(iyear)}/",
-			"model_path": f"historical/regional/{season}_{str(iyear)}/output/",
-			"postpp_path": f"historical/regional/{season}_{str(iyear)}/postpp/",
+		default_historical = {
+			"model_name": "historical model",
+			"main_path": f"forecast/regional/{season}_{str(iyear)}/",
+			"model_path": f"forecast/regional/{season}_{str(iyear)}/output/",
+			"postpp_path": f"forecast/regional/{season}_{str(iyear)}/postpp/",
 		}
-		#HyCast_input["historical"] = historical_input
+
+		historical_config = cuwalid_config.get("historical", default_historical)
+		HyCast_input["historical"] = historical_config
 
 		HyCast_input["season"] = cuwalid_config["season"]
 		HyCast_input["start_year"] = cuwalid_config["start_year"]
@@ -232,10 +233,40 @@ def run_cuwalid(cuwalid_input):
 		# Modify variables to intergrate previous outputs
 		ImCast_input["season"] = cuwalid_config["season"]
 		ImCast_input["year"] = cuwalid_config["year"]
-		ImCast_input["model_name"] = forecast_model_name#cuwalid_config["forecasting"]["model_name"]
+		ImCast_input["model_name"] = forecast_model_name
 		ImCast_input["output_dir"] = forecast_path_dryp_postpp
 
-		fcast.plot_maps_json(ImCast_input)
+
+		if sim_in_parallel: # parallelise the map plotting for speed
+			print("Running map plotting in parallel")
+			for icountry in ImCast_input["country"]:
+				for iwater in ImCast_input["water_status"]:
+					for ilanguage in ImCast_input.get("language", ["English"]):
+						
+						# Modify variables to make one specific map
+						ImCast_input["language"] = [ilanguage]
+						ImCast_input["water_status"] = [iwater]
+						ImCast_input["country"] = [icountry]
+						
+						forecasting_folder = os.path.join(temp_folder, "plot_jsons")
+						ifsim_forecasting_file = os.path.join(forecasting_folder, f"map_input_{icountry}_{iwater}_{ilanguage}.json")
+						print("Creating map for:")
+						print(icountry, iwater, ilanguage)
+						
+						flog = os.path.join("logs", f"{icountry}_{iwater}_{ilanguage}.out")
+						with open(ifsim_forecasting_file, "w") as ImCast_input_file:
+							#json.dump(dryp_data, dest_file, indent=4)
+							json.dump(ImCast_input, ImCast_input_file, indent=4)
+						
+						time.sleep(2)
+						# Command to run the DRYP simulation in the background
+						command = f"nohup python -u -m cuwalid.forecasting.main_impact_forecast {ifsim_forecasting_file} > {flog}&"
+						print(f"Executing: {command}")
+						print(command)
+						process = subprocess.Popen(command, shell=True)
+		else: # plot maps in sequence
+			print("Running map plotting in sequence")
+			fcast.plot_maps_json(ImCast_input)
 
 if __name__ == '__main__':
 	# Set up argument parser to get the JSON config file from command line

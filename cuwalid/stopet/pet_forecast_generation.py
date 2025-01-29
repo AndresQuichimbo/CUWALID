@@ -24,12 +24,12 @@ from cuwalid.stopet.helper_functions import load_config
 # the other variables should be similar to the stoPET run exactly as they are used to name files.
 
 # ================ pre processing ICPAC forecast file =============##
-def icpac_forecast_preprocessing(tercile_forecast_file, seasonName, startyear, locname):
+def icpac_forecast_preprocessing(tercile_forecast_file, seasonName, startyear, locname, temp_path):
     # Step 1: Invert latitude (invert latitudes in the dataset)
     tforc_datapath, filename = os.path.split(tercile_forecast_file)
     f = filename.split('.')
     fin = tercile_forecast_file
-    fout = f[0] + '_inv.nc'
+    fout = os.path.join(temp_path, f[0] + '_inv.nc')
     
     # Open the dataset
     ds = xr.open_dataset(fin)
@@ -42,7 +42,7 @@ def icpac_forecast_preprocessing(tercile_forecast_file, seasonName, startyear, l
 
     # Step 2: Slice the data to fit the existing stoPET (using lat/lon bounding box)
     fin2 = fout
-    fout2 = os.path.join(tforc_datapath, 'ICPAC_TempF_%s%s_%s.nc' % (seasonName, startyear, locname))
+    fout2 = os.path.join(temp_path, 'ICPAC_TempF_%s%s_%s.nc' % (seasonName, startyear, locname))
     
     # Open the dataset again
     ds2 = xr.open_dataset(fin2)
@@ -59,17 +59,17 @@ def icpac_forecast_preprocessing(tercile_forecast_file, seasonName, startyear, l
     return fout2
 
 
-def forecast_wrapper(tercile_forecast_file, outputpath, startyear, startdate, enddate, locname, number_ensm, tempAdj, seasonName):  
+def forecast_wrapper(tercile_forecast_file, outputpath, startyear, startdate, enddate, locname, number_ensm, tempAdj, seasonName, temp_path=""):  
 
   # We need to pre process the ICPAC forecast
   print('Preprocessing ICPAC forecast ...')
-  temp_tercile_forecast_file = icpac_forecast_preprocessing(tercile_forecast_file, seasonName, startyear, locname)
+  temp_tercile_forecast_file = icpac_forecast_preprocessing(tercile_forecast_file, seasonName, startyear, locname, temp_path)
   print('Preprocessing ICPAC forecast completed!') 
   
   
   print('PET forecasting started ...')  
   # this will read one file from the stoPET output to use as a template for the array length and time
-  temp_output = os.path.join(outputpath, "..", "..", "..", "temp", str(startyear))
+  temp_output = os.path.join(temp_path, str(startyear))
   if not os.path.isdir(temp_output):
       os.mkdir(temp_output)
 
