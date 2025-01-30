@@ -26,7 +26,8 @@ def run_cuwalid(cuwalid_input):
 	# read forecasting parameters
 	forecast_model_name = cuwalid_config["forecasting_model_name"]
 
-	forecast_path = os.path.join(cuwalid_config["output_dir"], "forecast/regional")
+	forecast_path = cuwalid_config["output_dir"]
+	#forecast_path = os.path.join(cuwalid_config["output_dir"], "forecast/regional")
 
 	# read storm input file path
 	storm_tercile_file = cuwalid_config["Tercile_Pre_path"]
@@ -44,7 +45,7 @@ def run_cuwalid(cuwalid_input):
 	sim_in_parallel = cuwalid_config.get("sim_in_parallel", True)
 
 	# Create directory structure for cuwalid system where user ran code
-	create_directory_structure("", season, iyear)
+	create_directory_structure(forecast_path, season, iyear)
 
 	# create a temporary file folder
 	temp_folder = os.path.join(forecast_path, "temp")
