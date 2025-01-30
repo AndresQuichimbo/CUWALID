@@ -404,12 +404,12 @@ def call_plot_maps(plot_scales=["Zoom"],
 						str(year)#+".png"# + "_"
 						)
 					#try:
-
-					full_path = os.path.join(output_dir, ifname_fig + "_EN.png")
-					if os.path.exists(full_path):
-						print(f"The map {ifname_fig} already exists, skipping to next")
-					else:
-						plot_map(plot_scale=iplot_scale,
+					# this was removed to allow the creation of all maps
+					#full_path = os.path.join(output_dir, ifname_fig + "_EN.png")
+					#if os.path.exists(full_path):
+					#	print(f"The map {ifname_fig} already exists, skipping to next")
+					#else:
+					plot_map(plot_scale=iplot_scale,
 									country_name=country_name,
 									place_name=iplace_name,
 									iwater_status=iiwater_status,
