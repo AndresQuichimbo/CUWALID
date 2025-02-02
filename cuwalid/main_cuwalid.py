@@ -24,7 +24,7 @@ def run_cuwalid(cuwalid_input):
 		cuwalid_config = json.load(file)
 
 	# read forecasting parameters
-	forecast_model_name = cuwalid_config["forecasting_model_name"]
+	#forecast_model_name = cuwalid_config["forecasting_model_name"]
 
 	forecast_path = cuwalid_config["output_dir"]
 	#forecast_path = os.path.join(cuwalid_config["output_dir"], "forecast/regional")
@@ -55,7 +55,7 @@ def run_cuwalid(cuwalid_input):
 	forecast_path_dryp_model = os.path.join(forecast_path, f"{season}_{str(iyear)}", "model")
 	forecast_path_dryp_output = os.path.join(forecast_path, f"{season}_{str(iyear)}", "output")
 	forecast_path_dryp_postpp = os.path.join(forecast_path, f"{season}_{str(iyear)}", "postpp")
-	
+
 	# RUN MODEL COMPONENTS AND ANY ADDITIONAL PROCESS
 	# Run storm
 	if cuwalid_config["run_STORM"] is True:
@@ -123,6 +123,8 @@ def run_cuwalid(cuwalid_input):
 	# create model parameter file names for realizations
 	fsim_forecasting = [os.path.join(forecast_path_dryp_model,"Hydro_model_forecast_input_"+ season +"_"+str(iyear)+ "_" +str(isim)+".json") for isim in range(nsim)]
 	
+	# forecasting dryp model name
+	forecast_model_name = season + "_" + str(iyear) + "_realization"
 	
 	# run DRYP multiple simulations
 	if cuwalid_config["run_DRYP"] is True:
@@ -200,21 +202,21 @@ def run_cuwalid(cuwalid_input):
 		# Modify vairables for forecasting
 		forecasting_input = {
 			"model_name": forecast_model_name,
-			"main_path": f"forecast/regional/{season}_{str(iyear)}/",
-			"model_path": f"forecast/regional/{season}_{str(iyear)}/output/",
-			"postpp_path": f"forecast/regional/{season}_{str(iyear)}/postpp/",
+			"main_path": forecast_path_dryp_model+"/",#f"forecast/regional/{season}_{str(iyear)}/",
+			"model_path": forecast_path_dryp_output+"/",#f"forecast/regional/{season}_{str(iyear)}/output/",
+			"postpp_path": forecast_path_dryp_postpp+"/",#f"forecast/regional/{season}_{str(iyear)}/postpp/",
 		}
 		HyCast_input["forecasting"] = forecasting_input
 
-		default_historical = {
-			"model_name": "historical model",
-			"main_path": f"forecast/regional/{season}_{str(iyear)}/",
-			"model_path": f"forecast/regional/{season}_{str(iyear)}/output/",
-			"postpp_path": f"forecast/regional/{season}_{str(iyear)}/postpp/",
-		}
+		#default_historical = {
+		#	"model_name": "historical model",
+		#	"main_path": f"forecast/regional/{season}_{str(iyear)}/",
+		#	"model_path": f"forecast/regional/{season}_{str(iyear)}/output/",
+		#	"postpp_path": f"forecast/regional/{season}_{str(iyear)}/postpp/",
+		#}
 
-		historical_config = cuwalid_config.get("historical", default_historical)
-		HyCast_input["historical"] = historical_config
+		#historical_config = cuwalid_config.get("historical", default_historical)
+		#HyCast_input["historical"] = historical_config
 
 		HyCast_input["season"] = cuwalid_config["season"]
 		HyCast_input["start_year"] = cuwalid_config["start_year"]
