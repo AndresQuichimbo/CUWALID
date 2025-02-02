@@ -138,7 +138,7 @@ def plot_map(plot_scale="Zoom",
 							)
 
 			osm_data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "osm_data")
-
+			
 			# =========================================================
 			# DO NOT CHANGE FROM THIS LINE
 			# =========================================================
@@ -629,6 +629,11 @@ def plot_map(plot_scale="Zoom",
 			for ipoint in aeroway_obj:
 				if plot_obj_id[plot_scale][ipoint] is True:
 					if len(aeroway) > 0:
+						try:
+							aeroway = aeroway.centroid
+						except:
+							print("Centroid is not being calculated")
+						
 						aeroway.plot(ax=ax,
 							color=aeroway_color[ipoint],
 							marker=aeroway_marker[ipoint],
@@ -800,7 +805,7 @@ def plot_map(plot_scale="Zoom",
 
 			# Navigate two levels up
 			two_levels_up = os.path.abspath(os.path.join(current_dir, '..', '..','..'))
-			fname = os.path.join(two_levels_up,"docs/fig/CUWALID_Logo_LS_Tag.png")
+			fname = os.path.join(two_levels_up,"docs","fig","CUWALID_Logo_LS_Tag.png")
 			logo = plt.imread(fname, format="png")
 
 			# Create an OffsetImage object
