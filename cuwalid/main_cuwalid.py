@@ -219,8 +219,8 @@ def run_cuwalid(cuwalid_input):
 		#HyCast_input["historical"] = historical_config
 
 		HyCast_input["season"] = cuwalid_config["season"]
-		HyCast_input["start_year"] = cuwalid_config["start_year"]
-		HyCast_input["end_year"] = cuwalid_config["end_year"]
+		#HyCast_input["start_year"] = cuwalid_config["start_year"]
+		#HyCast_input["end_year"] = cuwalid_config["end_year"]
 		HyCast_input["year"] = cuwalid_config["year"]
 		HyCast_input["nsim"] = cuwalid_config["NSIM"]
 
@@ -232,10 +232,13 @@ def run_cuwalid(cuwalid_input):
 			ImCast_input = json.load(file)
 
 		# Modify variables to intergrate previous outputs
-		ImCast_input["season"] = cuwalid_config["season"]
+		ImCast_input["seasons"] = cuwalid_config["season"]
 		ImCast_input["year"] = cuwalid_config["year"]
 		ImCast_input["model_name"] = forecast_model_name
 		ImCast_input["output_dir"] = forecast_path_dryp_postpp
+
+		# make a copy of impact forecast files
+		iImCast_input = ImCast_input.copy()
 
 
 		if sim_in_parallel: # parallelise the map plotting for speed
@@ -245,9 +248,9 @@ def run_cuwalid(cuwalid_input):
 					for ilanguage in ImCast_input.get("language", ["English"]):
 						
 						# Modify variables to make one specific map
-						ImCast_input["language"] = [ilanguage]
-						ImCast_input["water_status"] = [iwater]
-						ImCast_input["country"] = [icountry]
+						iImCast_input["language"] = [ilanguage]
+						iImCast_input["water_status"] = [iwater]
+						iImCast_input["country"] = [icountry]
 						
 						forecasting_folder = os.path.join(temp_folder, "plot_jsons")
 						ifsim_forecasting_file = os.path.join(forecasting_folder, f"map_input_{icountry}_{iwater}_{ilanguage}.json")
@@ -257,7 +260,7 @@ def run_cuwalid(cuwalid_input):
 						flog = os.path.join("logs", f"{icountry}_{iwater}_{ilanguage}.out")
 						with open(ifsim_forecasting_file, "w") as ImCast_input_file:
 							#json.dump(dryp_data, dest_file, indent=4)
-							json.dump(ImCast_input, ImCast_input_file, indent=4)
+							json.dump(iImCast_input, ImCast_input_file, indent=4)
 						
 						time.sleep(2)
 						# Command to run the DRYP simulation in the background
