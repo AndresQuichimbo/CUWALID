@@ -660,33 +660,34 @@ def plot_map(plot_scale="Zoom",
 			#if plot_scale != "Country":
 			for iplaces in places_obj:
 				if plot_obj_id[plot_scale][iplaces] is True:
-					
-					place_filter = places[places['place'].isin(place_ids[iplaces])]
+					try:
+						place_filter = places[places['place'].isin(place_ids[iplaces])]
 
-					if len(place_filter) > 10:
-						place_filter = place_filter.sample(n=10, random_state=1)
-
-
-					add_label_features(place_filter, language_font, boundbox=extend, #, offset=1000)
-						fontsize=8, fontstyle="italic", offset=1000,
-						halignament="left", #alpha=0.7,
-						language=language_map[ilanguage], #color="gray"
-						)
+						if len(place_filter) > 10:
+							place_filter = place_filter.sample(n=10, random_state=1)
 
 
-					
-					place_filter.plot(ax=ax,
-						color=place_color[iplaces],
-						marker=place_marker[iplaces],
-						edgecolor=place_edgecolor[iplaces],
-						#markeredgecolor=place_edgecolor[iplaces],
-						linewidths=1.5,
-						facecolor=place_color[iplaces],
-						markersize=place_size[iplaces],
-						#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
-						label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
-						)
+						add_label_features(place_filter, language_font, boundbox=extend, #, offset=1000)
+							fontsize=8, fontstyle="italic", offset=1000,
+							halignament="left", #alpha=0.7,
+							language=language_map[ilanguage], #color="gray"
+							)
 
+
+
+						place_filter.plot(ax=ax,
+							color=place_color[iplaces],
+							marker=place_marker[iplaces],
+							edgecolor=place_edgecolor[iplaces],
+							#markeredgecolor=place_edgecolor[iplaces],
+							linewidths=1.5,
+							facecolor=place_color[iplaces],
+							markersize=place_size[iplaces],
+							#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
+							label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
+							)
+					except:
+						print("No labels to show for places")
 
 			# MAP TITLE ============================================================================
 			plt.title(#"Map of "+ place_name + "" + ", Kenya\n"+
