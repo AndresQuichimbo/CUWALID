@@ -248,7 +248,6 @@ def add_label_features(geodata, language_font, fontsize=6, boundbox=None, offset
 		#	y_mid = np.min([boundbox[3]-offset, y_mid])
 		#print(x_mid, y_mid, boundbox)
 		#print(iname)
-		print(f"Iname forth: {iname}")
 		if iname is not None:
 			#print(iname)
 			#iname = bidialg.get_display(iname)
@@ -260,8 +259,6 @@ def add_label_features(geodata, language_font, fontsize=6, boundbox=None, offset
 				iname_temp = iname_temp.strip()
 				if len(iname_temp) > 2: # only update it if the name still is long enoough after strip
 					iname = iname_temp
-					print(f"Iname fith: {iname}")
-			print(f"Iname sixth: {iname}")
 
 
 			plt.text(x_mid+offset, y_mid+offset, s=iname,
