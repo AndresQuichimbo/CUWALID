@@ -24,7 +24,7 @@ def run_cuwalid(cuwalid_input):
 		cuwalid_config = json.load(file)
 
 	# read forecasting parameters
-	forecast_model_name = cuwalid_config["forecasting_model_name"]
+	#forecast_model_name = cuwalid_config["forecasting_model_name"]
 
 	forecast_path = cuwalid_config["output_dir"]
 	#forecast_path = os.path.join(cuwalid_config["output_dir"], "forecast/regional")
@@ -55,7 +55,7 @@ def run_cuwalid(cuwalid_input):
 	forecast_path_dryp_model = os.path.join(forecast_path, f"{season}_{str(iyear)}", "model")
 	forecast_path_dryp_output = os.path.join(forecast_path, f"{season}_{str(iyear)}", "output")
 	forecast_path_dryp_postpp = os.path.join(forecast_path, f"{season}_{str(iyear)}", "postpp")
-	
+
 	# RUN MODEL COMPONENTS AND ANY ADDITIONAL PROCESS
 	# Run storm
 	if cuwalid_config["run_STORM"] is True:
@@ -123,6 +123,8 @@ def run_cuwalid(cuwalid_input):
 	# create model parameter file names for realizations
 	fsim_forecasting = [os.path.join(forecast_path_dryp_model,"Hydro_model_forecast_input_"+ season +"_"+str(iyear)+ "_" +str(isim)+".json") for isim in range(nsim)]
 	
+	# forecasting dryp model name
+	forecast_model_name = season + "_" + str(iyear) + "_realization"
 	
 	# run DRYP multiple simulations
 	if cuwalid_config["run_DRYP"] is True:
@@ -200,25 +202,25 @@ def run_cuwalid(cuwalid_input):
 		# Modify vairables for forecasting
 		forecasting_input = {
 			"model_name": forecast_model_name,
-			"main_path": f"forecast/regional/{season}_{str(iyear)}/",
-			"model_path": f"forecast/regional/{season}_{str(iyear)}/output/",
-			"postpp_path": f"forecast/regional/{season}_{str(iyear)}/postpp/",
+			"main_path": forecast_path_dryp_model+"/",#f"forecast/regional/{season}_{str(iyear)}/",
+			"model_path": forecast_path_dryp_output+"/",#f"forecast/regional/{season}_{str(iyear)}/output/",
+			"postpp_path": forecast_path_dryp_postpp+"/",#f"forecast/regional/{season}_{str(iyear)}/postpp/",
 		}
 		HyCast_input["forecasting"] = forecasting_input
 
-		default_historical = {
-			"model_name": "historical model",
-			"main_path": f"forecast/regional/{season}_{str(iyear)}/",
-			"model_path": f"forecast/regional/{season}_{str(iyear)}/output/",
-			"postpp_path": f"forecast/regional/{season}_{str(iyear)}/postpp/",
-		}
+		#default_historical = {
+		#	"model_name": "historical model",
+		#	"main_path": f"forecast/regional/{season}_{str(iyear)}/",
+		#	"model_path": f"forecast/regional/{season}_{str(iyear)}/output/",
+		#	"postpp_path": f"forecast/regional/{season}_{str(iyear)}/postpp/",
+		#}
 
-		historical_config = cuwalid_config.get("historical", default_historical)
-		HyCast_input["historical"] = historical_config
+		#historical_config = cuwalid_config.get("historical", default_historical)
+		#HyCast_input["historical"] = historical_config
 
 		HyCast_input["season"] = cuwalid_config["season"]
-		HyCast_input["start_year"] = cuwalid_config["start_year"]
-		HyCast_input["end_year"] = cuwalid_config["end_year"]
+		#HyCast_input["start_year"] = cuwalid_config["start_year"]
+		#HyCast_input["end_year"] = cuwalid_config["end_year"]
 		HyCast_input["year"] = cuwalid_config["year"]
 		HyCast_input["nsim"] = cuwalid_config["NSIM"]
 
@@ -230,10 +232,13 @@ def run_cuwalid(cuwalid_input):
 			ImCast_input = json.load(file)
 
 		# Modify variables to intergrate previous outputs
-		ImCast_input["season"] = cuwalid_config["season"]
+		ImCast_input["seasons"] = cuwalid_config["season"]
 		ImCast_input["year"] = cuwalid_config["year"]
 		ImCast_input["model_name"] = forecast_model_name
 		ImCast_input["output_dir"] = forecast_path_dryp_postpp
+
+		# make a copy of impact forecast files
+		iImCast_input = ImCast_input.copy()
 
 
 		if sim_in_parallel: # parallelise the map plotting for speed
@@ -243,9 +248,9 @@ def run_cuwalid(cuwalid_input):
 					for ilanguage in ImCast_input.get("language", ["English"]):
 						
 						# Modify variables to make one specific map
-						ImCast_input["language"] = [ilanguage]
-						ImCast_input["water_status"] = [iwater]
-						ImCast_input["country"] = [icountry]
+						iImCast_input["language"] = [ilanguage]
+						iImCast_input["water_status"] = [iwater]
+						iImCast_input["country"] = [icountry]
 						
 						forecasting_folder = os.path.join(temp_folder, "plot_jsons")
 						ifsim_forecasting_file = os.path.join(forecasting_folder, f"map_input_{icountry}_{iwater}_{ilanguage}.json")
@@ -255,7 +260,7 @@ def run_cuwalid(cuwalid_input):
 						flog = os.path.join("logs", f"{icountry}_{iwater}_{ilanguage}.out")
 						with open(ifsim_forecasting_file, "w") as ImCast_input_file:
 							#json.dump(dryp_data, dest_file, indent=4)
-							json.dump(ImCast_input, ImCast_input_file, indent=4)
+							json.dump(iImCast_input, ImCast_input_file, indent=4)
 						
 						time.sleep(2)
 						# Command to run the DRYP simulation in the background

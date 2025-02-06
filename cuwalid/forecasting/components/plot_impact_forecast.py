@@ -87,7 +87,7 @@ def plot_map(plot_scale="Zoom",
 		
 	"""
 
-	# make sure that kanguage is a list
+	# make sure that language is a list
 	if isinstance(language, str):
 		language = [language]
 	
@@ -138,7 +138,8 @@ def plot_map(plot_scale="Zoom",
 							)
 
 			osm_data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "osm_data")
-
+			os.makedirs(osm_data_dir, exist_ok=True)
+			
 			# =========================================================
 			# DO NOT CHANGE FROM THIS LINE
 			# =========================================================
@@ -629,6 +630,11 @@ def plot_map(plot_scale="Zoom",
 			for ipoint in aeroway_obj:
 				if plot_obj_id[plot_scale][ipoint] is True:
 					if len(aeroway) > 0:
+						try:
+							aeroway = aeroway.centroid
+						except:
+							print("Centroid is not being calculated")
+						
 						aeroway.plot(ax=ax,
 							color=aeroway_color[ipoint],
 							marker=aeroway_marker[ipoint],
@@ -655,33 +661,34 @@ def plot_map(plot_scale="Zoom",
 			#if plot_scale != "Country":
 			for iplaces in places_obj:
 				if plot_obj_id[plot_scale][iplaces] is True:
-					
-					place_filter = places[places['place'].isin(place_ids[iplaces])]
+					try:
+						place_filter = places[places['place'].isin(place_ids[iplaces])]
 
-					if len(place_filter) > 10:
-						place_filter = place_filter.sample(n=10, random_state=1)
-
-
-					add_label_features(place_filter, language_font, boundbox=extend, #, offset=1000)
-						fontsize=8, fontstyle="italic", offset=1000,
-						halignament="left", #alpha=0.7,
-						language=language_map[ilanguage], #color="gray"
-						)
+						if len(place_filter) > 10:
+							place_filter = place_filter.sample(n=10, random_state=1)
 
 
-					
-					place_filter.plot(ax=ax,
-						color=place_color[iplaces],
-						marker=place_marker[iplaces],
-						edgecolor=place_edgecolor[iplaces],
-						#markeredgecolor=place_edgecolor[iplaces],
-						linewidths=1.5,
-						facecolor=place_color[iplaces],
-						markersize=place_size[iplaces],
-						#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
-						label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
-						)
+						add_label_features(place_filter, language_font, boundbox=extend, #, offset=1000)
+							fontsize=8, fontstyle="italic", offset=1000,
+							halignament="left", #alpha=0.7,
+							language=language_map[ilanguage], #color="gray"
+							)
 
+
+
+						place_filter.plot(ax=ax,
+							color=place_color[iplaces],
+							marker=place_marker[iplaces],
+							edgecolor=place_edgecolor[iplaces],
+							#markeredgecolor=place_edgecolor[iplaces],
+							linewidths=1.5,
+							facecolor=place_color[iplaces],
+							markersize=place_size[iplaces],
+							#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
+							label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
+							)
+					except:
+						print("No labels to show for places")
 
 			# MAP TITLE ============================================================================
 			plt.title(#"Map of "+ place_name + "" + ", Kenya\n"+
@@ -800,7 +807,7 @@ def plot_map(plot_scale="Zoom",
 
 			# Navigate two levels up
 			two_levels_up = os.path.abspath(os.path.join(current_dir, '..', '..','..'))
-			fname = os.path.join(two_levels_up,"docs/fig/CUWALID_Logo_LS_Tag.png")
+			fname = os.path.join(two_levels_up,"docs","fig","CUWALID_Logo_LS_Tag.png")
 			logo = plt.imread(fname, format="png")
 
 			# Create an OffsetImage object
