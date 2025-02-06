@@ -12,7 +12,7 @@ you will need to install this yourself, it is recommended if you are using a con
 
 .. code-block:: bash
 
-    conda install gdal
+    conda install gdal "numpy<2.0"
 
 IMPORTANT: For running stoPET you need to download some pararmeter files, the system will give you a warning if you try to run it without the files,
 The command for downloading these files if using cuwalid as a package is:
@@ -73,6 +73,10 @@ run_WaterCast
     *Type*: Boolean  
     Whether to run the WaterCast simulation. Set to `true` to enable.
 
+sim_in_parallel
+    *Type*: Boolean  
+    If set to `false` all processes will run sequentially, if set as `true` this will use 'nohup' to run simulations in the background to save time (only for the dryp model and impact map plotting), but some issues may occur with memory allocation based on your environment.
+
 historical
 ----------
 
@@ -92,24 +96,13 @@ postpp_path
     *Type*: String  
     Path to the post-processing outputs of the historical simulation.
 
+
 forecasting
 -----------
 
-model_name
+forecasting_model_name
     *Type*: String  
     The name of the forecasting model used for the simulation.
-
-main_path
-    *Type*: String  
-    Path to the main directory of the forecasting dataset.
-
-model_path
-    *Type*: String  
-    Path to the directory containing the forecasting model outputs.
-
-postpp_path
-    *Type*: String  
-    Path to the post-processing outputs of the forecasting simulation.
 
 Tercile_Pre_path
     *Type*: String  

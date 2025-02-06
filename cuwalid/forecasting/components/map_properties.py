@@ -30,7 +30,7 @@ line_colors = {
 # specify line widths of streets and roads
 line_width = {
 "Small Roads": 0.50,
-"Main Roads": 1.5,
+"Main Roads": 1.0,
 "Administrative Boundary": 2.5,
 }
 
@@ -488,7 +488,7 @@ status_labels = {
 var_colour = {
 "Groundwater": ["#648FFF", "#FFFF00", "#DB4325"],
 "Surface": ["#648FFF", "#FFFF00", "#DB4325"],
-"Soil": ["#648FFF", "##FFFF00", "#DB4325"],
+"Soil": ["#648FFF", "#FFFF00", "#DB4325"],
 "Evaporation": ["#FFFF00", "#EDA247", "#57C4AD"],
 #"Crop": ["#57C4AD", "#EDA247", "#DB4325"],
 #"Crop": ["#CC79A7", "#E69F00", "#D55E00"],

@@ -326,7 +326,7 @@
 			<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
 			<span class="p">)</span>
 
-	<span class="c1"># read overland flow boundary condition</span>
+	<span class="c1"># read unsaturated zone flow boundary condition</span>
 	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading unsaturated flux boundary conditions&quot;</span><span class="p">)</span>
 	<span class="n">fluxUZ</span> <span class="o">=</span> <span class="n">read_temporal_dataset</span><span class="p">(</span>
 			<span class="n">data_in</span><span class="o">.</span><span class="n">fname_TSUZ</span><span class="p">,</span>
@@ -336,7 +336,7 @@
 			<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
 			<span class="p">)</span>
 	
-	<span class="c1"># read overland flow boundary condition units should be in m3 s-1</span>
+	<span class="c1"># read saturated zone flow boundary condition units should be in m3 s-1</span>
 	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading saturated flux boundary conditions&quot;</span><span class="p">)</span>
 	<span class="n">fluxSZ</span> <span class="o">=</span> <span class="n">read_temporal_dataset</span><span class="p">(</span>
 			<span class="n">data_in</span><span class="o">.</span><span class="n">fname_TSSZ</span><span class="p">,</span>
@@ -391,17 +391,18 @@
 	<span class="k">if</span> <span class="n">fluxOF</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 		<span class="k">if</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;fluxOF&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 			<span class="n">idFluxOF</span><span class="p">,</span> <span class="n">idFluxOF_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span>
-				<span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_surface</span><span class="o">.</span><span class="n">path_of_bc_flux</span><span class="p">)</span>
+				<span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_surface</span><span class="o">.</span><span class="n">fname_of_bc_flux</span><span class="p">)</span>
 
 	<span class="k">if</span> <span class="n">fluxUZ</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 		<span class="k">if</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;fluxUZ&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 			<span class="n">idFluxUZ</span><span class="p">,</span> <span class="n">idFluxUZ_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span>
-				<span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_soil</span><span class="o">.</span><span class="n">path_uz_bc_flux</span><span class="p">)</span>
+				<span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_soil</span><span class="o">.</span><span class="n">fname_uz_bc_flux</span><span class="p">)</span>
 
 	<span class="k">if</span> <span class="n">fluxSZ</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="c1">#print(data_in.fname_aquifer.fname_sz_bc_flux)</span>
 		<span class="k">if</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;fluxSZ&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 			<span class="n">idFluxSZ</span><span class="p">,</span> <span class="n">idFluxSZ_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span>
-				<span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_aquifer</span><span class="o">.</span><span class="n">path_sz_bc_flux</span><span class="p">)</span>
+				<span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_aquifer</span><span class="o">.</span><span class="n">fname_sz_bc_flux</span><span class="p">)</span>
 			
 		<span class="c1">#elif data_in.data_reading[&#39;abs&#39;] == 2:</span>
 		<span class="c1">#	idFluxOF = extract_id_from_raster(</span>
@@ -749,9 +750,13 @@
 				<span class="n">runoff</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span> <span class="o">=</span> <span class="n">EXS</span> <span class="o">+</span> <span class="n">ROF</span> <span class="o">+</span> <span class="n">baseflow</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span><span class="o">*</span><span class="mf">1000.0</span>
 				
 				<span class="c1"># add data abstractions/sink/source points</span>
-				<span class="c1"># select row from dataframe and add to the excess component</span>
+				<span class="c1"># all units should be in m3 (ubic meters)</span>
+				<span class="c1"># positive values indicate flow in the river/pond</span>
+				<span class="c1"># negative values indicate flow out of the river/ponds</span>
 				<span class="k">if</span> <span class="n">fluxOF</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>					
-					<span class="n">runoff</span><span class="p">[</span><span class="n">idFluxOF</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fluxOF</span><span class="o">.</span><span class="n">get_point_dataset_one_step</span><span class="p">(</span><span class="n">t_abs</span><span class="p">)</span>
+					<span class="c1"># select row from dataframe and add to the excess component</span>
+					<span class="c1"># change units of flow rate to depth</span>
+					<span class="n">runoff</span><span class="p">[</span><span class="n">idFluxOF</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fluxOF</span><span class="o">.</span><span class="n">get_point_dataset_one_step</span><span class="p">(</span><span class="n">t_abs</span><span class="p">)</span><span class="o">*</span><span class="mf">1000.00</span><span class="o">/</span><span class="n">topo</span><span class="o">.</span><span class="n">area_cells</span>
 				
 				<span class="c1"># RUNOFF: estimate runoff---------------------------------------</span>
 				<span class="c1"># all variables with containing length must be changed to meters [m]</span>
@@ -842,9 +847,11 @@
 				<span class="c1">#	kcrip_mb.append(0)</span>
 				
 				<span class="c1"># add data abstractions/sink/source points</span>
-				<span class="c1"># select row from dataframe and add to the excess component</span>
+				<span class="c1"># units should be in m3 (cubic meters)</span>
 				<span class="k">if</span> <span class="n">fluxSZ</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>					
-					<span class="n">rch_agg</span><span class="p">[</span><span class="n">idFluxSZ</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fluxSZ</span><span class="o">.</span><span class="n">get_point_dataset_one_step</span><span class="p">(</span><span class="n">t_abs</span><span class="p">)</span>
+					<span class="c1"># select row from dataframe and add to the excess component</span>
+					<span class="c1"># cange units from flow (m3) to depth in mm</span>
+					<span class="n">rch_agg</span><span class="p">[</span><span class="n">idFluxSZ</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fluxSZ</span><span class="o">.</span><span class="n">get_point_dataset_one_step</span><span class="p">(</span><span class="n">t_abs</span><span class="p">)</span><span class="o">*</span><span class="mf">1000.0</span><span class="o">/</span><span class="n">topo</span><span class="o">.</span><span class="n">area_cells</span>
 				
 				<span class="c1"># GROUNDWATER --------------------------------------------------</span>
 				<span class="c1"># activate groundwater component (gw)</span>

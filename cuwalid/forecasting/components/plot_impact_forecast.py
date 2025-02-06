@@ -86,311 +86,6 @@ def plot_map(plot_scale="Zoom",
 	--------
 		
 	"""
-	# use this function to cleam some variables and names in the code
-	paths = get_paths(plot_scale, region, country_name,
-				   	iwater_status, iyear, iseason,
-					shape_path_list=shape_path_list,
-					place_code_field=place_code_field,
-					netcdf_path=netcdf_path,
-					threshold_path=threshold_path,
-					mask_path=mask_path,
-					river_path=river_path
-					)
-	
-	osm_data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "osm_data")
-	# create the caching directory if it doesnt already exist
-	os.makedirs(osm_data_dir, exist_ok=True)
-	
-	# =========================================================
-	# DO NOT CHANGE FROM THIS LINE
-	# =========================================================
-	# SPECIFY projection
-	# define new projection (output) #!with.PYPROJ.library
-	netcdfPP = rasterio.crs.CRS.from_string(
-	"+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
-	)
-
-	# define current projection (input)
-	mapPP = 'EPSG:4326'
-
-	# ===========================================================
-	# READ DATA FROM REGIONAL DATASET FROM LOCAL REPO
-	# ----------------------------------------------------------
-	wards = gpd.read_file(paths.fname_place)
-
-	if place_code_field is False:
-		wards = wards[(wards[paths.iname_field_shp[country_name.lower()]] == place_name)]
-	else:
-		wards = wards[(wards[paths.iname_field_shp] == place_code)]
-	
-	# select polygon to use as mask
-	polygon = wards["geometry"].iloc[0]
-
-	# Get the street network graph for walking
-	# Load data from shapefiles
-	rivers = gpd.read_file(paths.rivers_shapefile)
-	#settlements = gpd.read_file(settlements_shapefile)
-	#facilities = gpd.read_file(facilities_shapefile)
-
-	# Clip rivers and settlements to the Burat boundary
-	# Ensure the CRS of both the shapefile and NetCDF file match
-	rivers = gpd.clip(rivers, polygon)
-
-	#settlements = gpd.clip(settlements, polygon)
-
-	# ----------------------------------------------------------
-	# GET DATA FROM OPEN STREET MAP (osm) =====================
-	# ----------------------------------------------------------
-	# Get OSM data from point location and area extend
-	if plot_scale == "Zoom":
-		bbox = bounding_box(wards_data[place_name], distance=10) # in km
-		bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
-		# Create a GeoDataFrame
-		extend = gpd.GeoDataFrame({'id': [1]},
-			geometry=[bbox], crs="EPSG:4326")["geometry"]
-		polygon = extend.iloc[0]
-
-
-	# get roads and streets from OSM
-	if plot_obj_id[plot_scale]["Main Roads"] is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_roads.pkl')
-		try:
-			if os.path.exists(cache_file):
-				print("Reading road data from cached file")
-				with open(cache_file, 'rb') as f:
-					highway = pickle.load(f)
-			else:
-				print("Getting road data from OSM server")
-				highway = ox.features.features_from_polygon(polygon, tags={'highway': True})
-				with open(cache_file, 'wb') as f:
-					pickle.dump(highway, f)
-
-			# Clip the OSM data to the polygon
-			highway = gpd.clip(highway, polygon)
-			highway.crs = mapPP
-			highway = highway.to_crs(netcdfPP)  # ds.rio.crs
-		except:
-			print("Error with highway")
-
-	# read point locations
-	read_oms = False
-	for ipoint in points:
-		if plot_obj_id[plot_scale][ipoint] is True:
-			read_oms = True
-
-	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_amenity.pkl')
-		try:
-			if os.path.exists(cache_file):
-				print("Getting amenity data from file")
-				with open(cache_file, 'rb') as f:
-					amenities = pickle.load(f)
-			else:
-				print("Getting amenity data from OSM server")
-				amenities = ox.features.features_from_polygon(polygon, tags={'amenity': True})
-				amenities = amenities[amenities.intersects(polygon)]
-				with open(cache_file, 'wb') as f:
-					pickle.dump(amenities, f)
-		except:
-			print("No amenities found")
-			amenities = []
-
-		amenities = amenities.loc["node"]
-		amenities.crs = mapPP
-		amenities = amenities.to_crs(netcdfPP)
-
-	# read point locations for aeroways
-	read_oms = False
-	for ipoint in aeroway_obj:
-		if plot_obj_id[plot_scale][ipoint] is True:
-			read_oms = True
-
-	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_aeroway.pkl')
-		try:
-			if os.path.exists(cache_file):
-				print("Getting aeroway data from file")
-				with open(cache_file, 'rb') as f:
-					aeroway = pickle.load(f)
-			else:
-				print("Getting aeroway data from OSM server")
-				aeroway = ox.features.features_from_polygon(polygon, tags={'aeroway': True})
-				aeroway = aeroway[aeroway["name"].notnull()]
-				aeroway = gpd.clip(aeroway, polygon)
-				aeroway.crs = mapPP
-				aeroway = aeroway.to_crs(netcdfPP)
-				aeroway = aeroway.centroid
-				with open(cache_file, 'wb') as f:
-					pickle.dump(aeroway, f)
-		except:
-			print("No airports found")
-			aeroway = []
-
-	# read waterways
-	read_oms = False
-	for iwater in water_objects:
-		if plot_obj_id[plot_scale][iwater] is True:
-			read_oms = True
-
-	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_waterway.pkl')
-		try:
-			if os.path.exists(cache_file):
-				print("Getting waterway data from file")
-				with open(cache_file, 'rb') as f:
-					water = pickle.load(f)
-			else:
-				print("Getting waterway data from OSM server")
-				water = ox.features.features_from_polygon(polygon, tags={'waterway': True})
-				water = gpd.clip(water, polygon)
-				water.crs = mapPP
-				water = water.to_crs(netcdfPP)
-				with open(cache_file, 'wb') as f:
-					pickle.dump(water, f)
-		except:
-			print("Error with waterway")
-			water = None
-
-	# read natural reserves
-	read_oms = False
-	for iwater in water_objects:
-		if plot_obj_id[plot_scale][iwater] is True:
-			read_oms = True
-
-	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_leisure.pkl')
-		try:
-			if os.path.exists(cache_file):
-				print("Getting leisure data from file")
-				with open(cache_file, 'rb') as f:
-					leisure = pickle.load(f)
-			else:
-				print("Getting leisure data from OSM server")
-				leisure = ox.features.features_from_polygon(polygon, tags={'leisure': True})
-				leisure = gpd.clip(leisure, polygon)
-				leisure.crs = mapPP
-				leisure = leisure.to_crs(netcdfPP)
-				with open(cache_file, 'wb') as f:
-					pickle.dump(leisure, f)
-		except:
-			print("Error with leisure")
-
-	# read urban centres
-	read_oms = False
-	for iplaces in places_obj:
-		if plot_obj_id[plot_scale][iplaces] is True:
-			read_oms = True
-
-	if read_oms is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_place.pkl')
-		if os.path.exists(cache_file):
-			print("Getting place data from file")
-			with open(cache_file, 'rb') as f:
-				places = pickle.load(f)
-		else:
-			try:
-				print("Getting place data from OSM server")
-				places = ox.features.features_from_polygon(polygon, tags={'place': True})
-				places = places.loc['node']
-				places.crs = mapPP
-				places = gpd.clip(places, polygon)
-				places = places.to_crs(netcdfPP)
-				with open(cache_file, 'wb') as f:
-					pickle.dump(places, f)
-			except:
-				print("Error getting place names")
-
-	# administrative borders
-	if plot_obj_id[plot_scale]["Administrative Boundary"] is True:
-		cache_file = os.path.join(osm_data_dir, f'{place_name}_boundary.pkl')
-		if os.path.exists(cache_file):
-			print("Getting boundary data from file")
-			with open(cache_file, 'rb') as f:
-				bnd_admin = pickle.load(f)
-		else:
-			try:
-				print("Getting boundary data from OSM server")
-				bnd_admin = ox.features.features_from_polygon(polygon, tags={'boundary': True})
-				bnd_admin = gpd.clip(bnd_admin, polygon)
-				bnd_admin = bnd_admin.loc['relation']
-				bnd_admin.crs = mapPP
-				bnd_admin = bnd_admin.to_crs(netcdfPP)
-				with open(cache_file, 'wb') as f:
-					pickle.dump(bnd_admin, f)
-			except:
-				print("Error getting boundry's")
-
-
-
-	# Assign the CRS to the GeoPandas DataFrame
-	wards.crs = mapPP
-	wards = wards.to_crs(netcdfPP)#ds.rio.crs)
-	rivers.crs = mapPP
-	rivers = rivers.to_crs(netcdfPP)
-
-	# get map extend
-	if plot_scale == "Zoom":
-		extend.crs = mapPP
-		extend = extend.to_crs(netcdfPP)
-		extend = extend.total_bounds
-	else:
-		extend = wards.total_bounds
-
-	# =========================================================
-	# READ MODEL DATASETS AND THRSHOLDS
-	# =========================================================
-	# especify water variable to read and plot
-	var = water_var[iwater_status]
-
-	# READ MODEL OUTPUTS ---------------------------------------
-	# Open dataset of model outputs
-	ds = xr.open_dataset(paths.netcdf_path)
-
-	# Apply mask to datasets
-	if paths.mask_path is not None:
-		#print(paths.mask_path)
-		mask = np.flip(get_mask(paths.mask_path), 0)
-		ds = ds*mask	
-
-	# Write projection on dataset
-	ds = ds.rio.write_crs(netcdfPP)
-
-	# convert mask into xarray dataset
-	#mask = reproject_dataset(mask, oldPP, newPP)
-
-	# reprojec dataset
-	ds = ds.rename({'lon': 'x', 'lat': 'y'})
-	#ds = reproject_dataset(ds, netcdfPP, mapPP)
-	#ds_thrshold = ds_thrshold.rename({'lon': 'x', 'lat': 'y'})
-	#ds_thrshold = reproject_dataset(ds_thrshold, netcdfPP, mapPP)
-
-	# ==========================================================
-	# FORECASTING ANALYSIS
-	# ==========================================================
-	# FILTER DATA BETWEEN THRSHOLDS ----------------------------
-	# THIS SECTION WILL BE UPDATED WHEN FORECASTING WILL BE
-	# AVAILABLE
-
-	if (plot_scale == "County") or (plot_scale == "Country"):
-		# Clip the data model
-		ds = ds.rio.clip(wards.geometry.values, wards.crs,
-					  drop=False
-					  )
-
-	# clip raster
-	level_2_region = None
-	if paths.shapefile_level_2 is not None:
-		level_2_region = gpd.read_file(paths.shapefile_level_2)
-		level_2_region = gpd.clip(level_2_region, polygon)
-
-	# =========================================================
-	# =========================================================
-	# CREATE FIGURE - MAP
-	# =========================================================
-	# calulate ration of figure heigth/width
-	ratio_bw = np.abs((extend[1]-extend[3])/(extend[0]-extend[2]))
-	if ratio_bw <= 0.5:
-		ratio_bw = ratio_bw*1.2
 
 	# make sure that kanguage is a list
 	if isinstance(language, str):
@@ -426,9 +121,352 @@ def plot_map(plot_scale="Zoom",
 		fname_fig = os.path.splitext(fname_fig)[0] + "_" + language_short_name[ilanguage] + ".png"
 
 		if os.path.exists(fname_fig):
-			print("File already exist, delete it before you run it if you want to create a new file")
-			print(fname_fig)
+			#print("File already exist, delete it before you run it if you want to create a new file")
+			print(f"The map {fname_fig} already exists, skipping to next")
 		else:
+
+
+			# use this function to cleam some variables and names in the code
+			paths = get_paths(plot_scale, region, country_name,
+						   	iwater_status, iyear, iseason,
+							shape_path_list=shape_path_list,
+							place_code_field=place_code_field,
+							netcdf_path=netcdf_path,
+							threshold_path=threshold_path,
+							mask_path=mask_path,
+							river_path=river_path
+							)
+
+			osm_data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "osm_data")
+			
+			# =========================================================
+			# DO NOT CHANGE FROM THIS LINE
+			# =========================================================
+			# SPECIFY projection
+			# define new projection (output) #!with.PYPROJ.library
+			netcdfPP = rasterio.crs.CRS.from_string(
+			"+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+			)
+
+			# define current projection (input)
+			mapPP = 'EPSG:4326'
+
+			# ===========================================================
+			# READ DATA FROM REGIONAL DATASET FROM LOCAL REPO
+			# ----------------------------------------------------------
+			wards = gpd.read_file(paths.fname_place)
+
+			if place_code_field is False:
+				wards = wards[(wards[paths.iname_field_shp[country_name.lower()]] == place_name)]
+			else:
+				wards = wards[(wards[paths.iname_field_shp] == place_code)]
+
+			# select polygon to use as mask
+			polygon = wards["geometry"].iloc[0]
+
+			# Get the street network graph for walking
+			# Load data from shapefiles
+			rivers = gpd.read_file(paths.rivers_shapefile)
+			#settlements = gpd.read_file(settlements_shapefile)
+			#facilities = gpd.read_file(facilities_shapefile)
+
+			# Clip rivers and settlements to the Burat boundary
+			# Ensure the CRS of both the shapefile and NetCDF file match
+			rivers = gpd.clip(rivers, polygon)
+
+			#settlements = gpd.clip(settlements, polygon)
+
+			# ----------------------------------------------------------
+			# GET DATA FROM OPEN STREET MAP (osm) =====================
+			# ----------------------------------------------------------
+			# Get OSM data from point location and area extend
+			if plot_scale == "Zoom":
+				bbox = bounding_box(wards_data[place_name], distance=10) # in km
+				bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
+				# Create a GeoDataFrame
+				extend = gpd.GeoDataFrame({'id': [1]},
+					geometry=[bbox], crs="EPSG:4326")["geometry"]
+				polygon = extend.iloc[0]
+
+
+			# get roads and streets from OSM
+			if plot_obj_id[plot_scale]["Main Roads"] is True:
+				cache_file = os.path.join(osm_data_dir, f'{place_name}_roads.pkl')
+				try:
+					if os.path.exists(cache_file):
+						print("Reading road data from cached file")
+						with open(cache_file, 'rb') as f:
+							highway = pickle.load(f)
+					else:
+						print("Getting road data from OSM server")
+						highway = ox.features.features_from_polygon(polygon, tags={'highway': True})
+						with open(cache_file, 'wb') as f:
+							pickle.dump(highway, f)
+
+					# Clip the OSM data to the polygon
+					highway = gpd.clip(highway, polygon)
+					highway.crs = mapPP
+					highway = highway.to_crs(netcdfPP)  # ds.rio.crs
+				except:
+					print("Error with highway")
+
+			# read point locations
+			read_oms = False
+			for ipoint in points:
+				if plot_obj_id[plot_scale][ipoint] is True:
+					read_oms = True
+
+			if read_oms is True:
+				cache_file = os.path.join(osm_data_dir, f'{place_name}_amenity.pkl')
+				try:
+					if os.path.exists(cache_file):
+						print("Getting amenity data from file")
+						with open(cache_file, 'rb') as f:
+							amenities = pickle.load(f)
+					else:
+						print("Getting amenity data from OSM server")
+						amenities = ox.features.features_from_polygon(polygon, tags={'amenity': True})
+						amenities = amenities[amenities.intersects(polygon)]
+						with open(cache_file, 'wb') as f:
+							pickle.dump(amenities, f)
+				except:
+					print("No amenities found")
+					amenities = []
+
+				amenities = amenities.loc["node"]
+				amenities.crs = mapPP
+				amenities = amenities.to_crs(netcdfPP)
+
+			# read point locations for aeroways
+			read_oms = False
+			for ipoint in aeroway_obj:
+				if plot_obj_id[plot_scale][ipoint] is True:
+					read_oms = True
+
+			if read_oms is True:
+				cache_file = os.path.join(osm_data_dir, f'{place_name}_aeroway.pkl')
+				try:
+					if os.path.exists(cache_file):
+						print("Getting aeroway data from file")
+						with open(cache_file, 'rb') as f:
+							aeroway = pickle.load(f)
+					else:
+						print("Getting aeroway data from OSM server")
+						aeroway = ox.features.features_from_polygon(polygon, tags={'aeroway': True})
+						aeroway = aeroway[aeroway["name"].notnull()]
+						aeroway = gpd.clip(aeroway, polygon)
+						aeroway.crs = mapPP
+						aeroway = aeroway.to_crs(netcdfPP)
+						aeroway = aeroway.centroid
+						with open(cache_file, 'wb') as f:
+							pickle.dump(aeroway, f)
+				except:
+					print("No airports found")
+					aeroway = []
+
+			# read waterways
+			read_oms = False
+			for iwater in water_objects:
+				if plot_obj_id[plot_scale][iwater] is True:
+					read_oms = True
+
+			if read_oms is True:
+				cache_file = os.path.join(osm_data_dir, f'{place_name}_waterway.pkl')
+				try:
+					if os.path.exists(cache_file):
+						print("Getting waterway data from file")
+						with open(cache_file, 'rb') as f:
+							water = pickle.load(f)
+					else:
+						print("Getting waterway data from OSM server")
+						water = ox.features.features_from_polygon(polygon, tags={'waterway': True})
+						water = gpd.clip(water, polygon)
+						water.crs = mapPP
+						water = water.to_crs(netcdfPP)
+						with open(cache_file, 'wb') as f:
+							pickle.dump(water, f)
+				except:
+					print("Error with waterway")
+					water = None
+
+			# read natural reserves
+			read_oms = False
+			for iwater in water_objects:
+				if plot_obj_id[plot_scale][iwater] is True:
+					read_oms = True
+
+			if read_oms is True:
+				cache_file = os.path.join(osm_data_dir, f'{place_name}_leisure.pkl')
+				try:
+					if os.path.exists(cache_file):
+						print("Getting leisure data from file")
+						with open(cache_file, 'rb') as f:
+							leisure = pickle.load(f)
+					else:
+						print("Getting leisure data from OSM server")
+						leisure = ox.features.features_from_polygon(polygon, tags={'leisure': True})
+						leisure = gpd.clip(leisure, polygon)
+						leisure.crs = mapPP
+						leisure = leisure.to_crs(netcdfPP)
+						with open(cache_file, 'wb') as f:
+							pickle.dump(leisure, f)
+				except:
+					print("Error with leisure")
+
+			# read urban centres
+			read_oms = False
+			for iplaces in places_obj:
+				if plot_obj_id[plot_scale][iplaces] is True:
+					read_oms = True
+
+			if read_oms is True:
+				cache_file = os.path.join(osm_data_dir, f'{place_name}_place.pkl')
+				if os.path.exists(cache_file):
+					print("Getting place data from file")
+					with open(cache_file, 'rb') as f:
+						places = pickle.load(f)
+				else:
+					try:
+						print("Getting place data from OSM server")
+						places = ox.features.features_from_polygon(polygon, tags={'place': True})
+						places = places.loc['node']
+						places.crs = mapPP
+						places = gpd.clip(places, polygon)
+						places = places.to_crs(netcdfPP)
+						with open(cache_file, 'wb') as f:
+							pickle.dump(places, f)
+					except:
+						print("Error getting place names")
+
+			# administrative borders
+			if plot_obj_id[plot_scale]["Administrative Boundary"] is True:
+				cache_file = os.path.join(osm_data_dir, f'{place_name}_boundary.pkl')
+				if os.path.exists(cache_file):
+					print("Getting boundary data from file")
+					with open(cache_file, 'rb') as f:
+						bnd_admin = pickle.load(f)
+				else:
+					try:
+						print("Getting boundary data from OSM server")
+						bnd_admin = ox.features.features_from_polygon(polygon, tags={'boundary': True})
+						bnd_admin = gpd.clip(bnd_admin, polygon)
+						bnd_admin = bnd_admin.loc['relation']
+						bnd_admin.crs = mapPP
+						bnd_admin = bnd_admin.to_crs(netcdfPP)
+						with open(cache_file, 'wb') as f:
+							pickle.dump(bnd_admin, f)
+					except:
+						print("Error getting boundry's")
+
+
+
+			# Assign the CRS to the GeoPandas DataFrame
+			wards.crs = mapPP
+			wards = wards.to_crs(netcdfPP)#ds.rio.crs)
+			rivers.crs = mapPP
+			rivers = rivers.to_crs(netcdfPP)
+
+			# get map extend
+			if plot_scale == "Zoom":
+				extend.crs = mapPP
+				extend = extend.to_crs(netcdfPP)
+				extend = extend.total_bounds
+			else:
+				extend = wards.total_bounds
+
+			# =========================================================
+			# READ MODEL DATASETS AND THRSHOLDS
+			# =========================================================
+			# especify water variable to read and plot
+			var = water_var[iwater_status]
+
+			# READ MODEL OUTPUTS ---------------------------------------
+			# Open dataset of model outputs
+			ds = xr.open_dataset(paths.netcdf_path)
+
+			# Apply mask to datasets
+			if paths.mask_path is not None:
+				#print(paths.mask_path)
+				mask = np.flip(get_mask(paths.mask_path), 0)
+				ds = ds*mask	
+
+			# Write projection on dataset
+			ds = ds.rio.write_crs(netcdfPP)
+
+			# convert mask into xarray dataset
+			#mask = reproject_dataset(mask, oldPP, newPP)
+
+			# reprojec dataset
+			ds = ds.rename({'lon': 'x', 'lat': 'y'})
+			#ds = reproject_dataset(ds, netcdfPP, mapPP)
+			#ds_thrshold = ds_thrshold.rename({'lon': 'x', 'lat': 'y'})
+			#ds_thrshold = reproject_dataset(ds_thrshold, netcdfPP, mapPP)
+
+			# ==========================================================
+			# FORECASTING ANALYSIS
+			# ==========================================================
+			# FILTER DATA BETWEEN THRSHOLDS ----------------------------
+			# THIS SECTION WILL BE UPDATED WHEN FORECASTING WILL BE
+			# AVAILABLE
+
+			if (plot_scale == "County") or (plot_scale == "Country"):
+				# Clip the data model
+				ds = ds.rio.clip(wards.geometry.values, wards.crs,
+							  drop=False
+							  )
+
+			# clip raster
+			level_2_region = None
+			if paths.shapefile_level_2 is not None:
+				level_2_region = gpd.read_file(paths.shapefile_level_2)
+				level_2_region = gpd.clip(level_2_region, polygon)
+
+			# =========================================================
+			# =========================================================
+			# CREATE FIGURE - MAP
+			# =========================================================
+			# calulate ration of figure heigth/width
+			ratio_bw = np.abs((extend[1]-extend[3])/(extend[0]-extend[2]))
+			if ratio_bw <= 0.5:
+				ratio_bw = ratio_bw*1.2
+
+	## make sure that kanguage is a list
+	#if isinstance(language, str):
+	#	language = [language]
+	#
+	## add loop for languages to avoid duplicate downloads
+	#for ilanguage in language:
+#
+	#	font_path = font_paths[ilanguage.lower()]
+#
+	#	if font_path:
+	#		language_font = FontProperties(fname=font_path)
+	#	else:
+	#		language_font = FontProperties()
+#
+	#	# Save figure as png ========================================================
+	#	if output_dir is not None:	
+	#		# Check if path exist
+	#		if not os.path.exists(output_dir):
+	#			os.makedirs(output_dir, exist_ok=True)
+	#		if fname_output is not None:
+	#			fname_fig = os.path.join(output_dir, fname_output)
+	#		else:
+	#			#fname_fig = os.path.join(output_dir, 'HAD_forecasting_map_m_' + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png')
+	#			fname_fig = os.path.join(output_dir, str(place_code) + "_" + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png')
+	#	else:
+	#		if fname_output is not None:
+	#			fname_fig = fname_output
+	#		else:
+	#			fname_fig = str(place_code) + "_" + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png'
+#
+	#	# add language initial at maps names.
+	#	fname_fig = os.path.splitext(fname_fig)[0] + "_" + language_short_name[ilanguage] + ".png"
+#
+	#	if os.path.exists(fname_fig):
+	#		print("File already exist, delete it before you run it if you want to create a new file")
+	#		print(fname_fig)
+	#	else:
 	
 			# figure size
 			map_width = 5.0*plot_scale_id[plot_scale]
@@ -591,6 +629,11 @@ def plot_map(plot_scale="Zoom",
 			for ipoint in aeroway_obj:
 				if plot_obj_id[plot_scale][ipoint] is True:
 					if len(aeroway) > 0:
+						try:
+							aeroway = aeroway.centroid
+						except:
+							print("Centroid is not being calculated")
+						
 						aeroway.plot(ax=ax,
 							color=aeroway_color[ipoint],
 							marker=aeroway_marker[ipoint],
@@ -617,33 +660,34 @@ def plot_map(plot_scale="Zoom",
 			#if plot_scale != "Country":
 			for iplaces in places_obj:
 				if plot_obj_id[plot_scale][iplaces] is True:
-					
-					place_filter = places[places['place'].isin(place_ids[iplaces])]
+					try:
+						place_filter = places[places['place'].isin(place_ids[iplaces])]
 
-					if len(place_filter) > 10:
-						place_filter = place_filter.sample(n=10, random_state=1)
-
-
-					add_label_features(place_filter, language_font, boundbox=extend, #, offset=1000)
-						fontsize=8, fontstyle="italic", offset=1000,
-						halignament="left", #alpha=0.7,
-						language=language_map[ilanguage], #color="gray"
-						)
+						if len(place_filter) > 10:
+							place_filter = place_filter.sample(n=10, random_state=1)
 
 
-					
-					place_filter.plot(ax=ax,
-						color=place_color[iplaces],
-						marker=place_marker[iplaces],
-						edgecolor=place_edgecolor[iplaces],
-						#markeredgecolor=place_edgecolor[iplaces],
-						linewidths=1.5,
-						facecolor=place_color[iplaces],
-						markersize=place_size[iplaces],
-						#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
-						label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
-						)
+						add_label_features(place_filter, language_font, boundbox=extend, #, offset=1000)
+							fontsize=8, fontstyle="italic", offset=1000,
+							halignament="left", #alpha=0.7,
+							language=language_map[ilanguage], #color="gray"
+							)
 
+
+
+						place_filter.plot(ax=ax,
+							color=place_color[iplaces],
+							marker=place_marker[iplaces],
+							edgecolor=place_edgecolor[iplaces],
+							#markeredgecolor=place_edgecolor[iplaces],
+							linewidths=1.5,
+							facecolor=place_color[iplaces],
+							markersize=place_size[iplaces],
+							#label=iplaces + "\n" + language_labels["Swahili"][iplaces],
+							label=get_labels_by_lenguage(language_labels, ilanguage, iplaces),
+							)
+					except:
+						print("No labels to show for places")
 
 			# MAP TITLE ============================================================================
 			plt.title(#"Map of "+ place_name + "" + ", Kenya\n"+
@@ -762,7 +806,7 @@ def plot_map(plot_scale="Zoom",
 
 			# Navigate two levels up
 			two_levels_up = os.path.abspath(os.path.join(current_dir, '..', '..','..'))
-			fname = os.path.join(two_levels_up,"docs/fig/CUWALID_Logo_LS_Tag.png")
+			fname = os.path.join(two_levels_up,"docs","fig","CUWALID_Logo_LS_Tag.png")
 			logo = plt.imread(fname, format="png")
 
 			# Create an OffsetImage object

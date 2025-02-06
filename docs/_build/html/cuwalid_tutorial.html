@@ -106,7 +106,7 @@
 <h2>Preparing your system for running CUWALID<a class="headerlink" href="#preparing-your-system-for-running-cuwalid" title="Permalink to this heading"></a></h2>
 <p>IMPORTANT: GDAL is needed to be able to run the storm, this cannot be added to the package because it does not work with the windows operating system,
 you will need to install this yourself, it is recommended if you are using a conda environment you can run this:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>gdal
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>gdal<span class="w"> </span><span class="s2">&quot;numpy&lt;2.0&quot;</span>
 </pre></div>
 </div>
 <p>IMPORTANT: For running stoPET you need to download some pararmeter files, the system will give you a warning if you try to run it without the files,
@@ -203,6 +203,9 @@ Whether to run the DRYP simulation. Set to <cite>true</cite> to enable.</p>
 <dt>run_WaterCast</dt><dd><p><em>Type</em>: Boolean
 Whether to run the WaterCast simulation. Set to <cite>true</cite> to enable.</p>
 </dd>
+<dt>sim_in_parallel</dt><dd><p><em>Type</em>: Boolean
+If set to <cite>false</cite> all processes will run sequentially, if set as <cite>true</cite> this will use ‘nohup’ to run simulations in the background to save time (only for the dryp model and impact map plotting), but some issues may occur with memory allocation based on your environment.</p>
+</dd>
 </dl>
 <section id="historical">
 <h3>historical<a class="headerlink" href="#historical" title="Permalink to this heading"></a></h3>
@@ -224,17 +227,8 @@ Path to the post-processing outputs of the historical simulation.</p>
 <section id="forecasting">
 <h3>forecasting<a class="headerlink" href="#forecasting" title="Permalink to this heading"></a></h3>
 <dl class="simple">
-<dt>model_name</dt><dd><p><em>Type</em>: String
+<dt>forecasting_model_name</dt><dd><p><em>Type</em>: String
 The name of the forecasting model used for the simulation.</p>
-</dd>
-<dt>main_path</dt><dd><p><em>Type</em>: String
-Path to the main directory of the forecasting dataset.</p>
-</dd>
-<dt>model_path</dt><dd><p><em>Type</em>: String
-Path to the directory containing the forecasting model outputs.</p>
-</dd>
-<dt>postpp_path</dt><dd><p><em>Type</em>: String
-Path to the post-processing outputs of the forecasting simulation.</p>
 </dd>
 <dt>Tercile_Pre_path</dt><dd><p><em>Type</em>: String
 Path to the NetCDF file for the precipitation tercile data (For StoPET).</p>
