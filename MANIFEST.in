@@ -4,4 +4,4 @@ recursive-include cuwalid/forecasting/forecasting_dataset *
 recursive-include cuwalid/storm/model_input *
 include cuwalid/tests/stopet/test_input.json
 recursive-include cuwalid/forecasting/fonts *
-include docs/fig/CUWALID_Logo_LS_Tag.png
+recursive-include cuwalid/forecasting/images *

@@ -806,8 +806,8 @@ def plot_map(plot_scale="Zoom",
 			current_dir = os.path.dirname(os.path.abspath(__file__))
 
 			# Navigate two levels up
-			two_levels_up = os.path.abspath(os.path.join(current_dir, '..', '..','..'))
-			fname = os.path.join(two_levels_up,"docs","fig","CUWALID_Logo_LS_Tag.png")
+			forecasting_dir = os.path.abspath(os.path.join(current_dir, '..'))
+			fname = os.path.join(forecasting_dir,"images","CUWALID_Logo_LS_Tag.png")
 			logo = plt.imread(fname, format="png")
 
 			# Create an OffsetImage object
