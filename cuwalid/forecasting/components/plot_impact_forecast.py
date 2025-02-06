@@ -98,6 +98,8 @@ def plot_map(plot_scale="Zoom",
 					)
 	
 	osm_data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "osm_data")
+	# create the caching directory if it doesnt already exist
+	os.makedirs(osm_data_dir, exist_ok=True)
 	
 	# =========================================================
 	# DO NOT CHANGE FROM THIS LINE

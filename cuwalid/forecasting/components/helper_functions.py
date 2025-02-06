@@ -214,15 +214,23 @@ def add_label_features(geodata, language_font, fontsize=6, boundbox=None, offset
 
 		iname = None
 
-		if language in row: 
-			iname = str(row[language]).replace(" ", "\n")
-			# if language != "name" and iname != "nan":
-				# print(f"language specific name: {iname}")
 
-		if iname == "nan" and "name" in row:
+		# Try and get location labels in selected language
+		if language in row and str(row[language]).replace(" ", "\n") != "nan":
+			iname = str(row[language]).replace(" ", "\n")
+		# Try and get the english name
+		elif "name:en" in row and str(row['name:en']).replace(" ", "\n") != "nan": 
+			iname = str(row['name:en']).replace(" ", "\n")
+		# Try the defualt name
+		elif "name" in row and str(row['name']).replace(" ", "\n") != "nan":
 			iname = str(row['name']).replace(" ", "\n")
-		else:
-			continue
+		else: # For debubbing missing labels
+			# print("****************")
+			# print("Name not found:")
+			# print(row)
+			# print("****************")
+			pass
+
 
 		#print(x_mid, y_mid, boundbox, iname)
 		if boundbox is not None:
@@ -240,15 +248,20 @@ def add_label_features(geodata, language_font, fontsize=6, boundbox=None, offset
 		#	y_mid = np.min([boundbox[3]-offset, y_mid])
 		#print(x_mid, y_mid, boundbox)
 		#print(iname)
+		print(f"Iname forth: {iname}")
 		if iname is not None:
 			#print(iname)
 			#iname = bidialg.get_display(iname)
 			#print(iname)
 
 			# If language is english remove arabic letters from osm data (prevents boxes for unrecognised characters)
-			# if language != "name:am":
-			# 	iname = re.sub(r"[^a-zA-Z0-9\s.,!?;:'\"()\-]", "", iname)
-			# 	iname = iname.strip()
+			if language != "name:am":
+				iname_temp = re.sub(r"[^a-zA-Z0-9\s.,!?;:'\"()\-]", "", iname)
+				iname_temp = iname_temp.strip()
+				if len(iname_temp) > 2: # only update it if the name still is long enoough after strip
+					iname = iname_temp
+					print(f"Iname fith: {iname}")
+			print(f"Iname sixth: {iname}")
 
 
 			plt.text(x_mid+offset, y_mid+offset, s=iname,
