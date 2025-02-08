@@ -431,44 +431,6 @@ def plot_map(plot_scale="Zoom",
 			if ratio_bw <= 0.5:
 				ratio_bw = ratio_bw*1.2
 
-	## make sure that kanguage is a list
-	#if isinstance(language, str):
-	#	language = [language]
-	#
-	## add loop for languages to avoid duplicate downloads
-	#for ilanguage in language:
-#
-	#	font_path = font_paths[ilanguage.lower()]
-#
-	#	if font_path:
-	#		language_font = FontProperties(fname=font_path)
-	#	else:
-	#		language_font = FontProperties()
-#
-	#	# Save figure as png ========================================================
-	#	if output_dir is not None:	
-	#		# Check if path exist
-	#		if not os.path.exists(output_dir):
-	#			os.makedirs(output_dir, exist_ok=True)
-	#		if fname_output is not None:
-	#			fname_fig = os.path.join(output_dir, fname_output)
-	#		else:
-	#			#fname_fig = os.path.join(output_dir, 'HAD_forecasting_map_m_' + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png')
-	#			fname_fig = os.path.join(output_dir, str(place_code) + "_" + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png')
-	#	else:
-	#		if fname_output is not None:
-	#			fname_fig = fname_output
-	#		else:
-	#			fname_fig = str(place_code) + "_" + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png'
-#
-	#	# add language initial at maps names.
-	#	fname_fig = os.path.splitext(fname_fig)[0] + "_" + language_short_name[ilanguage] + ".png"
-#
-	#	if os.path.exists(fname_fig):
-	#		print("File already exist, delete it before you run it if you want to create a new file")
-	#		print(fname_fig)
-	#	else:
-	
 			# figure size
 			map_width = 5.0*plot_scale_id[plot_scale]
 			map_height = 5.2*ratio_bw*plot_scale_id[plot_scale]
@@ -822,24 +784,7 @@ def plot_map(plot_scale="Zoom",
 			# Add the annotation to the plot
 			ax.add_artist(ab)
 
-			##### Save figure as png ========================================================
-			####if output_dir is not None:	
-			####	# Check if path exist
-			####	if not os.path.exists(output_dir):
-			####		os.makedirs(output_dir, exist_ok=True)
-			####	if fname_output is not None:
-			####		fname_fig = os.path.join(output_dir, fname_output)
-			####	else:
-			####		#fname_fig = os.path.join(output_dir, 'HAD_forecasting_map_m_' + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png')
-			####		fname_fig = os.path.join(output_dir, str(place_code) + "_" + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png')
-			####else:
-			####	if fname_output is not None:
-			####		fname_fig = fname_output
-			####	else:
-			####		fname_fig = str(place_code) + "_" + place_name + "_" + iwater_status + "_" + plot_scale + "_" + iseason + '.png'
-			##### add language initial at maps names.
-			####fname_fig = os.path.splitext(fname_fig)[0] + "_" + language_short_name[ilanguage] + ".png"
-
+			# save figure as png
 			plt.savefig(fname_fig, dpi=300)
 			print("**************")
 			print(fname_fig)
