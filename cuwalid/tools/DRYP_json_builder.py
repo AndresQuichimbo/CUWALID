@@ -54,9 +54,9 @@ def write_JSON_dryp_file(json_template, model_name, path_pre, path_pet, destinat
 			json.dump(dryp_settings_data, settings_file, indent=4)
 		
 def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, destination,
-						   start_date="2024 03 01", end_date="2024 05 31", new_setting_file=None,
+						   start_date=None, end_date=None, new_setting_file=None,
 						   path_Qo=None, path_uz_theta=None, path_sz_wte=None, path_rp_theta=None,
-						   path_pnd_Vo=None, path_outputs=None):
+						   path_pnd_Vo=None, path_outputs=None, parameter_factors=None):
 	""" This function create the simulation and setting file for running DRYP. New
 	files are created  based on files provided as original files, this function
 	changes the model name, precipitation and potential evapotranspiration
@@ -79,12 +79,16 @@ def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, destina
 			date in the following format "YYYY-MM-DD" (e.g. 2002-03-01)
 	new_setting_file : bool
 			If True it create the setting dryp file
+	destination: path
+			path of the new input created file
 	"""
 
 	# Change necesarry variables in template
 	json_template["model_name"] = model_name
-	json_template["METEO"]["path_pre"] = path_pre
-	json_template["METEO"]["path_pet"] = path_pet
+	if path_pre is not None:
+		json_template["METEO"]["path_pre"] = path_pre
+	if path_pet is not None:
+		json_template["METEO"]["path_pet"] = path_pet
 
 	if path_Qo is not None:
 		json_template["TERRAIN"]["path_Qo"] = path_Qo
@@ -98,9 +102,8 @@ def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, destina
 		json_template["WATER_BODIES"]["path_pnd_Vo"] = path_pnd_Vo
 	if path_outputs is not None:
 		json_template["OUTPUT"]["path_output"] = path_outputs
-	
 
-	# create new settings file
+	# create new settings file only if new setting file does not exist
 	if new_setting_file is not None:
 
 		# Get input file as dictionary
@@ -113,10 +116,16 @@ def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, destina
 		## Change variables in settings file
 		#json_template["dryp_settings"]["SIMULATION_PERIOD"]["start_date"] = start_date
 		#json_template["dryp_settings"]["SIMULATION_PERIOD"]["end_date"] = end_date
-		settings_file_template["SIMULATION_PERIOD"]["start_date"] = start_date
-		settings_file_template["SIMULATION_PERIOD"]["end_date"] = end_date
+		if start_date is not None:
+			settings_file_template["SIMULATION_PERIOD"]["start_date"] = start_date
+		if end_date is not None:
+			settings_file_template["SIMULATION_PERIOD"]["end_date"] = end_date
 
-
+		# update parameter factors only if provided
+		if parameter_factors is not None:
+			for ikey in parameter_factors.keys():
+				settings_file_template["GLOBAL_FACTORS"][ikey] = parameter_factors[ikey]
+	
 	# Save the `dryp` part to the destination file
 	#dryp_data = json_template["dryp"]
 	with open(destination, "w") as dest_file:
