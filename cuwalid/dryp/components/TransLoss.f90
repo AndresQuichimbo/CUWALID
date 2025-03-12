@@ -150,9 +150,10 @@ IF (riv .eq. 1) THEN
 Qin = (Qout+Q_ini)
 !# abstractions, it can be modified
 IF (Qin .le. Qaof) THEN
-Qaof = Qaoft*Qin*0.0
+! this is to make sure there is negative storage in the channel
+Qaof = Qaoft*Qin
 END IF
-!#Qin = Qin-Qaoft
+Qin = Qin-Qaoft
 
 Q_ini = 0
 QTL = 0
