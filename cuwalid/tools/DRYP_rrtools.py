@@ -52,7 +52,7 @@ def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda):
 	save_raster(fname_wp, wilting_point, profile, transform)
 	save_raster(fname_awc, available_water_content, profile, transform)
 
-def create_raster_flowdirection_dryp(fname, fname_out, transform=True):
+def create_raster_flowdirection_dryp(fname, fname_out, translate=True):
 	"""Create raster file from a raster D8 flow direction map
 	
 	Parameters
@@ -71,7 +71,7 @@ def create_raster_flowdirection_dryp(fname, fname_out, transform=True):
 	# read raster dataset
 	flowdird8, profile, transform = open_raster(fname) 
 	
-	if transform is True:
+	if translate is True:
 		## save data tuype
 		#dtype = flowdird8.dtype
 
