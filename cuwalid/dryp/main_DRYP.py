@@ -60,7 +60,8 @@ from cuwalid.dryp.components.DRYP_groundwater_EFD import (
 from cuwalid.dryp.components.DRYP_store_functions import (
 	GlobalGridVar,
 	save_map_to_rastergrid)
-from cuwalid.dryp.components.DRYP_ponds import ponds											
+from cuwalid.dryp.components.DRYP_ponds import ponds
+from cuwalid.dryp.components.DRYP_dams import water_management										
 
 # ---------------------------------------------------------------------
 # Version and algorithm information
@@ -121,6 +122,10 @@ def run_DRYP(filename_input):
 	print("====== > Reading water body parameters")
 	water_bodies = water_body_parameters(topo.grid_size,
 				data_in.fname_water_bodies)
+	
+	# read water bodies management fluxes
+	print("====== > Reading water body management")
+	water_bodies_management = water_management()
 
 	# setting location and model results
 	#env_state.set_output_dir(data_in)
@@ -264,6 +269,16 @@ def run_DRYP(filename_input):
 			data_in.end_date,
 			data_in.ini_date,
 			)
+
+	# read water bodies flow boundary condition units should be in m3 s-1
+	print("====== > Reading saturated flux boundary conditions")
+	fluxWB = read_temporal_dataset(
+			data_in.fname_TSWB,
+			data_in.data_reading['fluxWB'],
+			data_in.dt,
+			data_in.end_date,
+			data_in.ini_date,
+			)
 	
 	# add variable saturated component
 	Qusz = recharge_routing(topo.grid_size)
@@ -328,6 +343,17 @@ def run_DRYP(filename_input):
 		#		env_state.grid,
 		#		data_in.filename_OF_points
 		#		)
+	
+	if fluxWB.data_set is not None:
+		#print(data_in.fname_aquifer.fname_sz_bc_flux)
+		if data_in.data_reading['fluxWB'] == 0:
+			idFluxWB, idFluxWB_act = extract_id_from_coords(
+				grid, data_in.fname_water_bodies.fname_wb_bc_flux)
+		if data_in.data_reading['fluxWB'] == 0:
+			idFluxWBout, idFluxWBout_act = extract_id_from_coords(
+				grid, data_in.fname_water_bodies.fname_wb_bc_flux,
+				xlabel="East_out", ylabel="North_out"
+				)
 	
 	t = 0	
 	t_eto = 0	
@@ -399,9 +425,9 @@ def run_DRYP(filename_input):
 	AOF_threshold = np.ones(topo.grid_size)
 	
 	# Output variables and location
-	idOF, idOF_act = extract_id_from_coords(grid, data_in.fname_DISpoints)	# Discharge points
-	idUZ, idUZ_act = extract_id_from_coords(grid, data_in.fname_SMDpoints)	# Soil moisture points
-	idGW, idGW_act = extract_id_from_coords(grid, data_in.fname_GWpoints)
+	idOF, idOF_act = extract_id_from_coords(grid, data_in.fname_DISpoints)	# Discharge monitoring points
+	idUZ, idUZ_act = extract_id_from_coords(grid, data_in.fname_SMDpoints)	# Soil moisture monitoring points
+	idGW, idGW_act = extract_id_from_coords(grid, data_in.fname_GWpoints) # groundwater monitoring points
 	
 	# initialize array to store model results
 	point_var = GlobalGridVar(data_in.ini_date,
@@ -583,6 +609,25 @@ def run_DRYP(filename_input):
 						theta[act_nodes]
 						)
 				
+				# calculate maximum water available to extract from water bodies
+				# select row from dataframe and add to the excess component
+				# units of abstractions should be in flux/volume (m3)
+				if fluxWB.data_set is not None:
+					# read datasets				
+					maximum_flux_wb = np.abs(fluxWB.get_point_dataset_one_step(t_abs))
+					
+					# change units from m3 to m
+					maximum_flux_wb = maximum_flux_wb/topo.area_cells
+
+					# calculate storage of water bodies (meters)
+					# storage can not be negative
+					storage_wb = head[idFluxWB] - topo.bathymetry[idFluxWB]
+					storage_wb[storage_wb < 0] = 0
+
+					# calculate maximum abstractions
+					maximum_flux_wb = water_bodies_management.get_abstractions(
+						storage_wb, maximum_flux_wb)
+				
 				# ratio of Etp, units of procesing are in meters
 				ratio_etp = head[act_nodes] - z_extintion
 				ratio_etp[ratio_etp < 0] = 0
@@ -669,13 +714,19 @@ def run_DRYP(filename_input):
 				runoff[act_nodes] = EXS + ROF + baseflow[act_nodes]*1000.0
 				
 				# add data abstractions/sink/source points
-				# all units should be in m3 (ubic meters)
+				# all abstractions units should be in m3 (cubic meters)
 				# positive values indicate flow in the river/pond
 				# negative values indicate flow out of the river/ponds
 				if fluxOF.data_set is not None:					
 					# select row from dataframe and add to the excess component
-					# change units of flow rate to depth
+					# change units of flow rate to depth (m3 to m)
 					runoff[idFluxOF] += fluxOF.get_point_dataset_one_step(t_abs)*1000.00/topo.area_cells
+				
+				# add flux (abstractions) from water bodies to streams	
+				if fluxWB.data_set is not None:					
+					# select row from dataframe and add to the excess component
+					# units should be in m
+					runoff[idFluxWBout] += maximum_flux_wb
 				
 				# RUNOFF: estimate runoff---------------------------------------
 				# all variables with containing length must be changed to meters [m]
@@ -726,6 +777,12 @@ def run_DRYP(filename_input):
 
 					# update total recharge, umits [mm/dt]
 					recharge[riv_nodes] += rPCR
+
+					# update recharge with abstractions for water bodies
+					# add flux (abstractions) from water bodies to streams	
+					if fluxWB.data_set is not None:					
+						# select row from dataframe and add to the excess component
+						recharge[idFluxWB] += -maximum_flux_wb
 				
 				# correct hill slop fluxes to grid cells
 				#swb.pcl_dt *= env_state.hill_factor
