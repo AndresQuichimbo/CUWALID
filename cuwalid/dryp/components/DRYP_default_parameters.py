@@ -65,6 +65,7 @@ default_input = {
    	"path_TSUZ": None,
    	"path_TSSZ": None,
    	"path_TSav": None, # vegetation cover fraction
+      "path_TSWB": None, # Variable flux for water bodies and dams
    },
 
    "OUTPUT": {
@@ -132,6 +133,7 @@ default_input = {
       "path_pnd_hmax": None, # ponds max depth
       "path_pnd_Amax": None, # ponds maximum extend
       "path_pnd_Vo": None, # ponds volume of water
+      "path_wb_bc_flux": None, # water bodies boundary conditions
    }
 
 }

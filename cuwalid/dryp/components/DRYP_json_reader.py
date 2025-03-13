@@ -162,6 +162,7 @@ class get_model_settings(object):
 		self.fname_TSOF = dryp_config["METEO"]["path_TSOF"]
 		self.fname_TSUZ = dryp_config["METEO"]["path_TSUZ"]
 		self.fname_TSSZ = dryp_config["METEO"]["path_TSSZ"]
+		self.fname_TSWB = dryp_config["METEO"]["path_TSWB"]
 		self.fname_TSav = dryp_config["METEO"]["path_TSav"]
 		self.fname_savi_min = None
 		self.fname_savi_max = None
@@ -446,6 +447,7 @@ class get_list_of_water_bodies_files(object):
         self.fname_pnd_hmax = dryp_config["WATER_BODIES"]["path_pnd_hmax"]
         self.fname_pnd_Amax = dryp_config["WATER_BODIES"]["path_pnd_Amax"]
         self.fname_pnd_Vo = dryp_config["WATER_BODIES"]["path_pnd_Vo"]
+        self.fname_wb_bc_flux = dryp_config["WATER_BODIES"]["path_wb_bc_flux"]
 		
 
 

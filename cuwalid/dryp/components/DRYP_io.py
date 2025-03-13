@@ -765,7 +765,7 @@ class water_body_parameters(object):
 
 		self.id_nodes = id_nodes
 
-def extract_id_from_coords(grid, filename):
+def extract_id_from_coords(grid, filename, xlabel="East", ylabel="North"):
 	""" extract nodes from a csv file
 	this component uses the landlab funtion "find_nearest_node
 
@@ -799,8 +799,8 @@ def extract_id_from_coords(grid, filename):
 	for ndis in range(npoints):
 		# find the nearest point in the grid
 		point = grid.find_nearest_node(
-			[datapoints['East'][ndis],
-			datapoints['North'][ndis]])
+			[datapoints[xlabel][ndis],
+			datapoints[ylabel][ndis]])
 		if grid.status_at_node[point] == 0:
 			# store id only if it is an active node
 			idpoint.append(point)
