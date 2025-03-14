@@ -271,7 +271,7 @@ def run_DRYP(filename_input):
 			)
 
 	# read water bodies flow boundary condition units should be in m3 s-1
-	print("====== > Reading saturated flux boundary conditions")
+	print("====== > Reading reservoirs flux boundary conditions")
 	fluxWB = read_temporal_dataset(
 			data_in.fname_TSWB,
 			data_in.data_reading['fluxWB'],
@@ -627,6 +627,7 @@ def run_DRYP(filename_input):
 					# calculate maximum abstractions
 					maximum_flux_wb = water_bodies_management.get_abstractions(
 						storage_wb, maximum_flux_wb)
+					#print(maximum_flux_wb)
 				
 				# ratio of Etp, units of procesing are in meters
 				ratio_etp = head[act_nodes] - z_extintion
@@ -727,7 +728,7 @@ def run_DRYP(filename_input):
 					# select row from dataframe and add to the excess component
 					# units should be in m
 					runoff[idFluxWBout] += maximum_flux_wb
-				
+					#print(maximum_flux_wb)
 				# RUNOFF: estimate runoff---------------------------------------
 				# all variables with containing length must be changed to meters [m]
 				ro.run_runoff_one_step(
