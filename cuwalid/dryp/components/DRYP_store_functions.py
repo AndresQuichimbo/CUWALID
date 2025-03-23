@@ -46,9 +46,9 @@ long_name = {'pre':'precipitation', 'aet':'actual evapotranspiration', 'pet':'po
 			'wte':'water table elevation', 'egw':'groundwater evaporation', 'run':'runoff',
 			'gdh':'groundwater discharge',
 			'tht':'soil moisture', 'twsc':'water storage change', 'dis':'discharge',
-			"vpd" : "Total volume of water available",
-			"epd" : "evaporation",
-			"apd" :"Total abstractions"
+			"vpd" : "Total volume of water available - ponds",
+			"epd" : "evaporation - ponds",
+			"apd" :"Total abstractions - ponds"
 			}
 
 units_var = {'pre':'mm/dt', 'aet':'mm/dt', 'pet':'mm/dt', 'inf':'mm/dt',

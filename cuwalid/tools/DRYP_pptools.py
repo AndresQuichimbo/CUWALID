@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import calendar
 import rasterio
+import DRYP_rrtools as rrtools
 
 class grid_pptools(object):
 	"""
@@ -328,6 +329,48 @@ def calculate_AI_from_netCDF(fname_pre, fname_pet, fname_out=None,
 		fname_out = fname_pre.split('.')[0]+'_ai.nc'
 	save_xarray_dataset_as_netcdf(fname_out, dataset, ["ai"])
 
+def calculate_saturation_from_netCDF(fname, path_wp, path_sat, fname_out=None,
+									 var_name="tht",):
+	"""This funtion calculate the saturation from water content from
+	the dryp model outputs
+	 
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	path_wp :	str
+		file name of the wilting point raster dataset
+	path_sat :	str
+		file name of the soil moisture at saturation as raster
+	var_name :	str
+		model variables to process
+	deltat : str
+		time interval for temporal aggregation.
+	
+	Returns
+	-------
+	xarray :
+		2D time series mean or sum of tne dataset
+
+	 """
+	# change variable name to the new dataset
+	dataset = read_dataset(fname, var_name=var_name)
+
+	# read raster dataset -  wilting point
+	theta_wp = rrtools.open_raster(path_wp)[0]
+	theta_wp = np.array(np.flip(theta_wp, 0), dtype=float)
+
+	# read raster dataset -  wilting point
+	theta_sat = rrtools.open_raster(path_sat)[0]
+	theta_sat = np.array(np.flip(theta_sat, 0), dtype=float)
+
+	# calculate saturation
+	data = calculate_saturation(dataset, theta_wp, theta_sat)
+	# save files
+	if fname_out is None:
+		fname_out = fname
+		fname_out = fname_out.split('.')[0]+'_tht_sat.nc'
+	save_xarray_dataset_as_netcdf(fname_out, data, ["tht"])
 
 def calculate_seasonal_average_from_netCDF(fname, var_name='pre', season="OND",
 			       fname_out=None, mean=False,
@@ -391,6 +434,29 @@ def calculate_aridity_index(dataset_pre, dataset_pet):
 		Aridity index
 	"""
 	return dataset_pre/dataset_pet
+
+def calculate_saturation(dataset, theta_wp, theta_sat):
+	"""Calculate the saturation from soil water content, normalization
+	of water content in relation to saturation
+	
+	Parameters
+	----------
+	dataset : Dataxarray
+		soil moisture dataset
+	theta_wp : numpy array
+		soil moisture at wilting point
+	theta_sat : numpy array
+		soil moisture at saturation point (porosity)
+
+	Returns
+	-------
+	DataArray
+		saturation
+	"""
+	# Calculate saturation
+	saturation = (dataset - theta_wp)/theta_sat
+
+	return saturation
 
 def preprocesses_netCDF(fname, var_name, mean=True, deltat='Y',
 			start_time=None, end_time=None):
