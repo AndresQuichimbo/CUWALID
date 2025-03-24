@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import calendar
 import rasterio
-import DRYP_rrtools as rrtools
+import cuwalid.tools.DRYP_rrtools as rrtools
 
 class grid_pptools(object):
 	"""
@@ -91,6 +91,156 @@ class grid_pptools(object):
 		
 def get_output_filenames(fname):
 	"""Function to get all names of model outputs"""
+
+
+def calculate_storage_from_files(fname, path_surface, path_Droot, path_theta_sat, path_Sy,
+								  path_bathymetry=None, path_bottom=None,
+								  start_time=None, end_time=None, fname_out=None,
+								  anomalies=True):
+	
+	"""Calculate storage for all components (surface, subsurface, groundwater)
+	from model simulations
+	
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	path_surface :	str
+		file name of raster surface
+	path_surface :	str
+		file name of raster surface
+	path_bathymetry :	str
+		file name of raster surface
+	path_bottom :	str
+		file name of raster surface
+	path_Droot :	str
+		file name of raster surface
+	path_theta_sat :	str
+		file name of raster surface
+	path_Sy :	str
+		file name of raster surface
+	start_time : str
+		starting date for the analysis, "DD-MM-YYYY".
+	end_time : str
+		final date for the analysis, "DD-MM-YYYY".
+
+	Returns
+	-------
+
+	"""
+
+
+	#fsurface, fbathymetry,
+	#fbottom, fDroot, ftheta_sat, fSy):
+	
+	#fsurface = fname_rasters[0]
+	#fbathymetry = fname_rasters[1]
+	##fbottom = fname_rasters[0]
+	#fDroot = fname_rasters[2]
+	#ftheta_sat = fname_rasters[3]
+	#fSy = fname_rasters[4]
+	
+	head = preprocesses_netCDF(fname, "wte", mean=True, deltat='M',
+			start_time=start_time, end_time=end_time
+			)
+	
+	theta = preprocesses_netCDF(fname, "tht", mean=True, deltat='M',
+			start_time=start_time, end_time=end_time
+			)
+		
+	surface = rrtools.open_raster(path_surface)[0]
+	if path_bathymetry is not None:
+		bathymetry = rrtools.open_raster(path_bathymetry)[0]
+	else:
+		bathymetry = surface.copy()
+	
+	if path_bottom is not None:
+		bottom = rrtools.open_raster(path_bottom)[0]
+	else:
+		bottom = np.zeros_like(surface)
+	
+	Droot = rrtools.open_raster(path_Droot)[0]
+	theta_sat = rrtools.open_raster(path_theta_sat)[0]
+	Sy = rrtools.open_raster(path_Sy)[0]
+	
+	str_sz, str_uz, str_lakes = calculate_storage(head, theta, surface,
+		bathymetry, bottom, Droot*0.001, theta_sat, Sy)
+	
+	if anomalies is True:
+		str_sz = str_sz-str_sz.mean(dim="time")
+		str_uz = str_uz-str_uz.mean(dim="time")
+		str_lakes = str_lakes-str_lakes.mean(dim="time")
+	
+	#save raster dataset as netcdf
+	# save files
+	if fname_out is None:
+		fname_out = fname
+
+	# save dataset as netcdf
+	# unsaturated zone storage
+	fname_out_uz = fname_out.split('.')[0]+'_str_uz.nc'
+	save_xarray_dataset_as_netcdf(fname_out_uz, str_uz, ["str_uz"])
+
+	# saturated zone storage
+	fname_out_sz = fname_out.split('.')[0]+'_str_sz.nc'
+	save_xarray_dataset_as_netcdf(fname_out_sz, str_sz, ["str_sz"])
+
+	# lakes zone storage
+	fname_out_pnd = fname_out.split('.')[0]+'_str_lakes.nc'
+	save_xarray_dataset_as_netcdf(fname_out_pnd, str_lakes, ["str_lakes"])
+
+	#return str_sz, str_uz, str_lakes
+
+def calculate_storage(head, theta, surface, bathymetry, bottom, Droot, theta_sat,
+		  Sy):
+	"""Function to calculate storage for all components of the water balance
+	calculate the Total storage along the vertical profile of each model cell
+	
+	Parameters
+	----------
+	surface:	surface elevation [m]
+	bottom:		bottom elevation [m]
+	bathymetry:	surface elevation of lakes [m] 
+	Droot:		Rooting depth [mm]
+	theta:		Water content at time t [-]
+	head:		water table [m]
+	theta_sat:	Saturated water content [-]
+	Sy:			Specific yield [-]
+	
+	Returns
+	-------
+	total:		Volume of water stored in the saturated zone [mm]
+	"""
+	
+	# water stored in lakes
+	str_lakes = head - bathymetry
+	str_lakes[str_lakes < 0.0] = 0.0
+
+	# estimate saturated-unsaturated storage
+	z_root = bathymetry - Droot
+	str_usz = (head - str_lakes - z_root)
+	str_usz[str_usz < 0] = 0.0
+	
+	# estimate storage water available in the unsaturated zone
+	# estimate rooting depth storage
+	str_uz = Droot - str_usz
+	str_uz = str_uz*theta
+	
+	# estimate saturated storage
+	str_sz = head - str_usz - str_lakes - bottom
+	str_sz = str_sz*Sy + str_usz*theta_sat
+		
+	# total storage
+	# total = storage in saturated zone
+	# 		+ storage in unsaturated zone + storage in lakes
+	#total = (str_lakes
+	#		+ str_uz*theta
+	#		+ str_usz*theta_sat
+	#		+ str_sz*Sy
+	#		)
+	
+	return str_sz, str_uz, str_lakes
+
 
 def calculate_anomalies_from_netCDF(fname, field='pre', fname_out=None,
 			       deltat='Y', start_time=None, end_time=None):
