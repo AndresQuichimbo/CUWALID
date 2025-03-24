@@ -175,7 +175,7 @@ def calculate_storage_from_files(fname, path_surface, path_Droot, path_theta_sat
 	# save files
 	if fname_out is None:
 		fname_out = fname
-
+	
 	# save dataset as netcdf
 	# unsaturated zone storage
 	fname_out_uz = fname_out.split('.')[0]+'_str_uz.nc'
@@ -214,22 +214,26 @@ def calculate_storage(head, theta, surface, bathymetry, bottom, Droot, theta_sat
 	
 	# water stored in lakes
 	str_lakes = head - bathymetry
-	str_lakes[str_lakes < 0.0] = 0.0
+	#str_lakes[str_lakes < 0.0] = 0.0
+	str_lakes = str_lakes.where(str_lakes < 0.0, 0.0)
+	str_lakes = str_lakes.rename("str_lakes")
 
 	# estimate saturated-unsaturated storage
 	z_root = bathymetry - Droot
 	str_usz = (head - str_lakes - z_root)
-	str_usz[str_usz < 0] = 0.0
+	#str_usz[str_usz < 0] = 0.0
+	str_usz = str_usz.where(str_usz < 0.0, 0.0)
 	
 	# estimate storage water available in the unsaturated zone
 	# estimate rooting depth storage
 	str_uz = Droot - str_usz
 	str_uz = str_uz*theta
+	str_uz = str_uz.rename("str_uz")
 	
 	# estimate saturated storage
 	str_sz = head - str_usz - str_lakes - bottom
 	str_sz = str_sz*Sy + str_usz*theta_sat
-		
+	str_sz = str_sz.rename("str_sz")
 	# total storage
 	# total = storage in saturated zone
 	# 		+ storage in unsaturated zone + storage in lakes
