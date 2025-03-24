@@ -9,6 +9,7 @@ import rioxarray
 from itertools import compress
 import operator
 import calendar
+import DRYP_pptools as pptools
 
 def read_dataset(fname, var_name='tht'):
 	# Open the first netCDF file
@@ -516,7 +517,7 @@ def get_ensamble_from_netcdf_list(fname_list, var_name, mean=True,
 	else:
 		return dataset
 
-def get_postprocessed_hydro_variables_mfiles(fname, field=["wrsi", "aet"]):
+def get_postprocessed_hydro_variables_mfiles(fname, field=["wrsi", "aet"]):#, "tht"]):
 	"""Function for post processing hydrological variables such as WRSI"""
 	for ifield in field:
 		
@@ -527,10 +528,12 @@ def get_postprocessed_hydro_variables_mfiles(fname, field=["wrsi", "aet"]):
 					# Calculate WRSI 
 					data = read_dataset(ifname, "aet")/read_dataset(ifname, "pet")
 					data = data.rename("wrsi")
-				else:
+				elif ifield == "aet":
 					# Calculate total evaporation
 					data = read_dataset(ifname, "aet") + read_dataset(ifname, "egw")
 					data = data.rename("aet")
+				#elif ifield == "tht":
+				#	data = pptools.calculate_saturation_from_netCDF()
 
 				# Define the path for the yearly NetCDF file
 				fname_output = ifname.split('.')[0]+'_'+ifield+'.nc'
@@ -541,6 +544,89 @@ def get_postprocessed_hydro_variables_mfiles(fname, field=["wrsi", "aet"]):
 				data.to_netcdf(fname_output)
 			else:
 				print(ifname+" File does not found, skip this file from the analysis")
+
+def get_postprocessed_storage_mfiles(fname_list,path_surface, path_Droot, path_theta_sat, path_Sy,
+								  path_bathymetry=None, path_bottom=None,
+								  start_time=None, end_time=None, fname_out=None,
+								  anomalies=True):
+	"""Get storage from a list of modet simulation files,
+	only valid for yearly netcdf files.
+	When seasonal average is set, the calucation will aggregate annually
+	before the average is calculated.
+	When accumulation is active, the temporal aggregation is done at the
+	end othe concatenation.
+	
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	path_surface :	str
+		file name of raster surface
+	path_surface :	str
+		file name of raster surface
+	path_bathymetry :	str
+		file name of raster surface
+	path_bottom :	str
+		file name of raster surface
+	path_Droot :	str
+		file name of raster surface
+	path_theta_sat :	str
+		file name of raster surface
+	path_Sy :	str
+		file name of raster surface
+	start_time : str
+		starting date for the analysis, "DD-MM-YYYY".
+	end_time : str
+		final date for the analysis, "DD-MM-YYYY".
+	
+	Returns
+	-------
+	data : xarray dataset
+		containing all calculated values
+	"""
+	for ifname in fname_list:
+		# test if file exist
+		if os.path.exists(ifname):
+			pptools.calculate_storage_from_files(ifname, path_surface,
+								path_Droot, path_theta_sat, path_Sy,
+								path_bathymetry=path_bathymetry, path_bottom=path_bottom,
+								start_time=None, end_time=None, fname_out=None,
+								anomalies=anomalies)
+		else:
+			print(ifname+" File does not found, skip this file from the analysis")
+
+def get_postprocessed_saturation_mfiles(fname_list, path_theta_sat, path_theta_wp,
+								  path_bathymetry=None, path_bottom=None,
+								  start_time=None, end_time=None, fname_out=None,
+								  anomalies=True):
+	"""Get saturation from a list of modet simulation files,
+	
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	path_theta_sat :	str
+		file name of raster water content as saturation
+	path_theta_wp :	str
+		file name of raster water content at wilting point
+	start_time : str
+		starting date for the analysis, "DD-MM-YYYY".
+	end_time : str
+		final date for the analysis, "DD-MM-YYYY".
+	
+	Returns
+	-------
+	data : xarray dataset
+		containing all calculated values
+	"""
+	for ifname in fname_list:
+		# test if file exist
+		if os.path.exists(ifname):
+			pptools.calculate_saturation_from_netCDF(ifname, path_theta_wp,
+									path_theta_sat, fname_out=None,
+									var_name="tht")
+		else:
+			print(ifname+" File does not found, skip this file from the analysis")
 
 def save_xarray_dataset_as_netcdf(fname, data, var_name):
 	# data has to be in the same dimentions
