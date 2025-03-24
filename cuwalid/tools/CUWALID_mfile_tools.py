@@ -9,7 +9,7 @@ import rioxarray
 from itertools import compress
 import operator
 import calendar
-import DRYP_pptools as pptools
+import cuwalid.tools.DRYP_pptools as pptools
 
 def read_dataset(fname, var_name='tht'):
 	# Open the first netCDF file
