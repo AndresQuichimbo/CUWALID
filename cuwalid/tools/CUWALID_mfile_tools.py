@@ -406,9 +406,60 @@ def clip_dataset_by_region(ds, region):
 	# Clip the data model
 	ds_clipped = ds.rio.clip(region.geometry.values, region.crs)
 	return ds_clipped
+
+def extract_mdataset(fname_list, region, clip_region=False,
+	dataPP=None, maskPP=None, bands=["pre", "aet", "pet", "rch"],
+	fname_out=None, save=False):
+	"""This function clip netcdf files by region, projection should
+	match WGS84, otherwise it will raise an error.
 	
+	Parameters
+	----------
+	netcdf_path : str
+		list of paths
+	region : geodataframe
+		name of variable to process
+	region_clip: bool
+		make values outside the region NaN, default true
+
+	Returns
+	-------
+	dataset : xarray dataset
+		concatenated datasets
+
+	"""
+	first_read = True
+	for ifname in fname_list:
+		# Check if input file exist
+		if os.path.exists(ifname):
+			# read dataset and calculate the correlation
+			pptools.extract_dataset(ifname, region, clip_region=clip_region,
+				dataPP=dataPP, maskPP=maskPP,
+				bands=bands, save=save,
+				fname_out=fname_out
+				)
+
+
 def extract_dataset(netcdf_path, region, clip_region=True,
 	dataPP=None, maskPP=None, bands=["AN", "NN", "BN"]):
+	"""This function clip netcdf files by region, projection should
+	match WGS84, otherwise it will raise an error.
+	
+	Parameters
+	----------
+	netcdf_path : str
+		list of paths
+	region : geodataframe
+		name of variable to process
+	region_clip: bool
+		make values outside the region NaN, default true
+
+	Returns
+	-------
+	dataset : xarray dataset
+		concatenated datasets
+
+	"""
 	# =========================================================
 	# DO NOT CHANGE FROM THIS LINE
 	# =========================================================

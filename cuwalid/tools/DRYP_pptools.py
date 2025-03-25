@@ -570,6 +570,103 @@ def calculate_seasonal_average_from_netCDF(fname, var_name='pre', season="OND",
 		fname_out = fname_out.split('.')[0]+'_'+season+'.nc'
 	save_xarray_dataset_as_netcdf(fname_out, data, [var_name])
 
+def extract_dataset(netcdf_path, region, clip_region=True,
+	dataPP=None, maskPP=None, fname_out=None, save=False, bands=["pre"]):
+	"""This function clip netcdf files by region, projection should
+	match WGS84, otherwise it will raise an error.
+	
+	Parameters
+	----------
+	netcdf_path : str
+		list of paths
+	region : geodataframe
+		name of variable to process
+	region_clip: bool
+		make values outside the region NaN, default true
+	save: bool
+		activate save option, default true
+	fname_out : str
+		path of outputs
+
+	Returns
+	-------
+	dataset : xarray dataset
+		concatenated datasets
+	
+	"""
+	# SPECIFY projection
+	# define new projection (output) #!with.PYPROJ.library
+	newPP, oldPP = maskPP, dataPP
+
+	if dataPP is None:
+		oldPP = rasterio.crs.CRS.from_string(
+		"+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+		)
+	
+	if maskPP is None:
+		# define current projection (input)
+		newPP = 'EPSG:4326'
+		
+	# get bounding boxfrom shapefile
+	bbox = region.total_bounds
+	
+	# create new dataset by extracting the specified area/extend
+	first_read = True
+	for ivar in bands:
+		# Open dataset of model outputs
+		data = read_dataset(netcdf_path, var_name=ivar)
+		
+		# reproject estimated probabilistic forecasting
+		data = reproject_dataset(data, oldPP, newPP)
+		
+		# clip area
+		if clip_region is True:
+			region_ds = clip_dataset_by_region(data, region)
+		else:
+			region_ds = data.sel(
+				lat=slice(bbox[3], bbox[1]),
+				lon=slice(bbox[0], bbox[2])
+				)
+		
+		if first_read is True:
+			dataset = region_ds.copy()
+			first_read = False
+		else:
+			dataset = xr.merge([dataset, region_ds])
+	
+	# save season as netcdf file
+	if save is True:
+		# save files
+		if fname_out is None:
+			fname_out = netcdf_path
+			fname_out = fname_out.split('.')[0]+'_'+'clipped.nc'
+
+		save_xarray_dataset_as_netcdf(fname_out, dataset, bands)
+	else:
+		return dataset
+
+def clip_dataset_by_region(ds, region):
+	"""This function clip netcdf files by region, projection should
+	match WGS84, otherwise it will raise an error.
+	
+	Parameters
+	----------
+	dataset : data xarray
+		dataset
+	region : geodataframe
+		name of variable to process
+
+	Returns
+	-------
+	dataset : xarray dataset
+	
+	"""
+	# Clip the data model
+	ds_clipped = ds.rio.clip(region.geometry.values, region.crs)
+
+	return ds_clipped
+	
+
 def calculate_aridity_index(dataset_pre, dataset_pet):
 	"""Calculate the aridity index based on the UNEP:
 	UNEP. World atlas of desertification - Second Edition. vol. SECOND 
@@ -1046,3 +1143,26 @@ def get_ensamble_from_netcdf_list(fname_list, var_name, mean=True, save=True,
 	else:
 		return dataset
 
+def reproject_dataset(data, oldPP, newPP):
+	"""Transform projection system
+	oldPP and newPP have to be defined first
+	
+	Parameters
+	----------
+	Data:	Dataset
+	
+	Returns
+	-------
+	Data:	Dataset
+	"""
+	# check if projection is in ERSG format
+	if len(newPP) > 11:
+		newPP = rasterio.crs.CRS.from_string(newPP)
+	
+	# reprojec dataset
+	data = data.rename({'lon': 'x', 'lat': 'y'})  # new method
+	data = data.rio.write_crs(oldPP) # write crs
+	data = data.rio.reproject(newPP) # reproject the file
+	data = data.rename({'x': 'lon', 'y': 'lat'})  # new method
+	
+	return data
