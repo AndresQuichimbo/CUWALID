@@ -439,11 +439,11 @@ def run_DRYP(filename_input):
 	grid_rmax = GlobalGridVar(data_in.ini_date,
 			   data_in.dt_results, data_in.save_netcdf,
 			   data_in.store.var_grid,
-			   store_max=data_in.store_max, nstep_day=data_in.nstep_day)
+			   store_max=data_in.store_rmax, nstep_day=data_in.nstep_day)
 	grid_vmax = GlobalGridVar(data_in.ini_date,
 			   data_in.dt_results, data_in.save_netcdf,
 			   data_in.store.var_grid,
-			   store_max=data_in.store_max, nstep_day=data_in.nstep_day)
+			   store_max=data_in.store_vmax, nstep_day=data_in.nstep_day)
 	total_var = GlobalGridVar(data_in.ini_date,
 			   data_in.dt_results, data_in.save_results,
 			   data_in.store.var_avg)
