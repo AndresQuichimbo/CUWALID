@@ -436,7 +436,11 @@ def run_DRYP(filename_input):
 	grid_var = GlobalGridVar(data_in.ini_date,
 			   data_in.dt_results, data_in.save_netcdf,
 			   data_in.store.var_grid)
-	grid_max = GlobalGridVar(data_in.ini_date,
+	grid_rmax = GlobalGridVar(data_in.ini_date,
+			   data_in.dt_results, data_in.save_netcdf,
+			   data_in.store.var_grid,
+			   store_max=data_in.store_max, nstep_day=data_in.nstep_day)
+	grid_vmax = GlobalGridVar(data_in.ini_date,
 			   data_in.dt_results, data_in.save_netcdf,
 			   data_in.store.var_grid,
 			   store_max=data_in.store_max, nstep_day=data_in.nstep_day)
@@ -909,10 +913,19 @@ def run_DRYP(filename_input):
 					})
 				
 				# store maximum values
-				if grid_max.store_max is True:
+				if grid_rmax.store_max is True:
 					if riv_nodes.size > 0:
-						grid_max.store_variables(PRE.date_sim_dt, t_pre,
+						grid_rmax.store_variables(PRE.date_sim_dt, t_pre,
 			      			{"dis": ro.discharge[riv_nodes]}
+							)
+				# store maximum values
+				if grid_vmax.store_max is True:
+					grid_vmax.store_variables(PRE.date_sim_dt, t_pre,
+			      			{"pre": rain[act_nodes], "pet": PET[act_nodes],
+	   						"aet": AET, "inf": INF, "run": runoff[act_nodes],
+							"rch": recharge[act_nodes], "egw": PETsz,
+							"gdh": baseflow[act_nodes],
+							}
 							)
 
 				# get all fluxes and states at sampling points
@@ -1031,13 +1044,21 @@ def run_DRYP(filename_input):
 	grid_var.save_netCDF_var(data_in.fnameTS_grid+'.nc',
 			   topo.lat, topo.lon, act_nodes,# var_name
 			   )
-	# save grided model result datasets 
-	if grid_max.store_max is True:
-		print("<==== saving model temporal maximum values outputs")
+	# save grided model maximum values at streams - result datasets 
+	if grid_rmax.store_max is True:
+		print("<==== saving model temporal maximum values at streams outputs")
 		if riv_nodes.size > 0:
-			grid_max.save_netCDF_var(data_in.fnameTS_grid+'max.nc',
+			grid_rmax.save_netCDF_var(data_in.fnameTS_grid+'max.nc',
 			   topo.lat, topo.lon, riv_nodes,# var_name
 			   )
+	
+	# save maximum grided model result datasets 
+	if grid_vmax.store_max is True:
+		print("<==== saving model temporal maximum values outputs")
+		grid_vmax.save_netCDF_var(data_in.fnameTS_grid+'vmax.nc',
+			   topo.lat, topo.lon, act_nodes,# var_name
+			   )
+	
 
 	# SAVE VARIABLES FROM THE RIPARIAN ZONE
 	# save average riparian zone variables in a csv file
