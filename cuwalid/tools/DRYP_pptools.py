@@ -506,7 +506,35 @@ def calculate_saturation_from_netCDF(fname, path_wp, path_sat, fname_out=None,
 	xarray :
 		2D time series mean or sum of tne dataset
 
-	 """
+	Example:
+	--------
+	>>> import sys
+	>>> import os
+	>>> import geopandas as gpd
+
+	>>> import cuwalid.tools.DRYP_pptools as pptools
+
+	>>>	path_Sy = "path_to_file"
+	>>>	path_surface = "path_to_file"
+	>>>	path_bathymetry = "path_to_file"
+	>>>	path_theta_sat = "path_to_file"
+	>>>	path_theta_wp = "path_to_file"
+	>>>	path_Droot = "path_to_file"
+
+
+	>>>	fname = "path_output_netcdf_file"
+	>>>	shapefile_path = "path_output_netcdf_file"
+
+	>>>	region = gpd.read_file(shapefile_path)
+
+	>>>	pptools.extract_dataset(fname, region, clip_region=False,
+	>>>		dataPP=None, maskPP=None, bands=["pre", "aet", "rch", "dis"], save=True)
+
+	>>>	pptools.calculate_saturation_from_netCDF(fname, path_theta_wp, path_theta_sat,
+	>>>			fname_out=None, var_name="tht")
+
+	"""
+	
 	# change variable name to the new dataset
 	dataset = read_dataset(fname, var_name=var_name)
 
@@ -593,6 +621,19 @@ def extract_dataset(netcdf_path, region, clip_region=True,
 	dataset : xarray dataset
 		concatenated datasets
 	
+	Example:
+	--------
+	>>> import geopandas as gpd
+	>>> import cuwalid.tools.DRYP_pptools as pptools
+
+	>>>	fname = "path_output_netcdf_file"
+	>>>	shapefile_path = "path_output_netcdf_file"
+
+	>>>	region = gpd.read_file(shapefile_path)
+
+	>>>	pptools.extract_dataset(fname, region, clip_region=False,
+	>>>		dataPP=None, maskPP=None, bands=["pre", "aet", "rch", "dis"], save=True)
+
 	"""
 	# SPECIFY projection
 	# define new projection (output) #!with.PYPROJ.library

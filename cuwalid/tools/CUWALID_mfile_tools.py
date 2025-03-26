@@ -669,6 +669,29 @@ def get_postprocessed_saturation_mfiles(fname_list, path_theta_sat, path_theta_w
 	-------
 	data : xarray dataset
 		containing all calculated values
+
+	Example:
+	--------
+	>>> import sys
+	>>> import os
+	>>> import geopandas as gpd
+
+	>>> import cuwalid.tools.DRYP_pptools as pptools
+
+	>>>	path_Sy = "path_to_file"
+	>>>	path_surface = "path_to_file"
+	>>>	path_bathymetry = "path_to_file"
+	>>>	path_theta_sat = "path_to_file"
+	>>>	path_theta_wp = "path_to_file"
+	>>>	path_Droot = "path_to_file"
+
+
+	>>>	fname = "path_output_netcdf_file"
+	>>>	shapefile_path = "path_output_netcdf_file"
+
+	>>>	pptools.calculate_saturation_from_netCDF(fname, path_theta_wp, path_theta_sat,
+	>>>			fname_out=None, var_name="tht")
+
 	"""
 	for ifname in fname_list:
 		# test if file exist
