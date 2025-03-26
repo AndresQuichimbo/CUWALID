@@ -102,6 +102,8 @@ default_settings = {
     "OUTPUT": {
         "output_csv": True, # activate save model outputs (only csv files)
         "output_grid": False, # activate save model outputs (grid files)
+        "output_grid_rmax": True, # activate save maximum values at stream model outputs (grid files)
+        "output_grid_vmax": False, # activate save model outputs (grid files)
         "output_dt_csv": "1M",
         "output_dt": "1M",
     },
