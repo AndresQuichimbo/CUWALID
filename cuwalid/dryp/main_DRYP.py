@@ -1048,7 +1048,7 @@ def run_DRYP(filename_input):
 	if grid_rmax.store_max is True:
 		print("<==== saving model temporal maximum values at streams outputs")
 		if riv_nodes.size > 0:
-			grid_rmax.save_netCDF_var(data_in.fnameTS_grid+'max.nc',
+			grid_rmax.save_netCDF_var(data_in.fnameTS_grid+'rmax.nc',
 			   topo.lat, topo.lon, riv_nodes,# var_name
 			   )
 	
