@@ -1,11 +1,13 @@
 """DRYP: post-processing tools."""
 import os
+import json
 import xarray as xr
 import numpy as np
 import pandas as pd
 import calendar
 import rasterio
 import cuwalid.tools.DRYP_rrtools as rrtools
+#from cuwalid.dryp.components.DRYP_json_reader import get_model_settings
 
 class grid_pptools(object):
 	"""
@@ -89,9 +91,90 @@ class grid_pptools(object):
 	
 
 		
-def get_output_filenames(fname):
+class get_output_filenames(object):
 	"""Function to get all names of model outputs"""
+	def __init__(self, path_input):
+		"""Fuction to generate names of model results. This names are
+		paths to the model outputs. The function will read the
+		configuration file and generate the names of the outputs.
+		path_grid : path to the model grid outputs
+		path_csv : path to the model csv outputs
+		path_raster : path to the model raster outputs
+		
+		Parameters:
+		----------
+		path_input : str
+			filename including path of the model "input_file"
+		
+		Returns:
+		--------
+		object containing strings as filenames
+				
+		Example:
+		--------
+		>>> import DRYP_pptools as pptools
+		>>> fnames = pptools.get_output_filenames(file_model_input)
+		>>> fnames.path_csv
+		>>> fnames.path_grid
+		>>> fnames.path_grid["grid"]
+		>>> fnames.path_grid["rp"]
+		>>> fnames.path_raster
+		>>> fnames.path_raster["wte"]
+		>>> fnames.path_raster["tht"]
+		>>> fnames.path_raster["Qo"]
+		>>> fnames.path_raster["Vpnd"]
+		>>> fnames.path_raster["thtrp"]
+		"""
+		# Output filenames
+		with open(path_input, 'r') as f:
+			dryp_config = json.load(f)
 
+		Mname = dryp_config["model_name"]
+		DirOutput = dryp_config["OUTPUT"]["path_output"]
+
+		fnameTS_grid = os.path.join(DirOutput, Mname + '_grid')
+		fnameTS_point = os.path.join(DirOutput, Mname + '_p_')
+		fnameTS_UZ = os.path.join(DirOutput, Mname + '_UZ_')
+		fnameTS_RZ = os.path.join(DirOutput, Mname + '_RZ_')
+		fnameTS_RZ_avg = os.path.join(DirOutput, Mname + '_RZ_avg')
+		fnameTS_avg = os.path.join(DirOutput, Mname + '_avg')
+
+		labels = ['pre', 'pet', 'dis', 'aet', 'inf', 'run', 'tht', 
+		   'rch', 'egw', 'wte', 'gdh', 'twsc']
+
+		point_csv_dict = {}
+		# get directories
+		for key in labels:
+			# name csv file names
+			point_csv_dict[key] = fnameTS_point + key + '.csv'
+
+		# get directories
+		# name csv file names
+		self.path_csv = {
+		"avg" : fnameTS_avg+".csv",
+		"point" : point_csv_dict,
+		"avgrp": fnameTS_avg+'rp'+".csv",
+		"avgpnd": fnameTS_avg+'pnd'+".csv",
+		}
+
+		# filename of the model grid outputs
+		self.path_grid = {
+		"grid" : fnameTS_grid+'.nc',
+		"rp" : fnameTS_grid+'rp.nc',
+		"pnd" : fnameTS_grid+'pnd.nc',
+		"vmax" : fnameTS_grid+'vmax.nc',
+		"rmax" : fnameTS_grid+'rmax.nc',
+		}
+
+		# name outputs for initial conditions
+		self.path_raster = {
+		"wte" : fnameTS_avg + '_wte_ini.asc',
+		"tht" : fnameTS_avg + '_tht_ini.asc',
+		"Qo" :fnameTS_avg + '_Q_ini.asc',
+		"thtrp" : fnameTS_avg + '_tht_rp_ini.asc',
+		"Vpnd" : fnameTS_avg + '_V_pnd_ini.asc',
+		}
+	pass
 
 def calculate_storage_from_files(fname, path_surface, path_Droot, path_theta_sat, path_Sy,
 								  path_bathymetry=None, path_bottom=None,

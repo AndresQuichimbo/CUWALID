@@ -15,7 +15,7 @@ class DRYP_plot(object):
 		df2 = df.resample(delta_t).mean().reset_index()		
 		df = df.resample(delta_t).sum().reset_index()		
 		fig, (ax) = plt.subplots(len(head),1, sharex = True)		
-		fig.set_size_inches(9,len(head)*1.25)
+		fig.set_size_inches(9, len(head)*1.25)
 		
 		for ilabel, iax in zip(head,fig.axes):			
 			if ilabel == 'THT':				
@@ -25,9 +25,9 @@ class DRYP_plot(object):
 			iax.set_ylabel(ilabel)
 			
 		plt.legend(frameon = False)		
-		iax.set_xlabel('Date')		
+		iax.set_xlabel('Date')
 		fig.tight_layout()		
-		plt.savefig(fname_out,dpi = 100)
+		plt.savefig(fname_out,dpi = 300)
 		
 	def plot_point_var(fname, fname_out, delta_t = 'D'):	
 		df = pd.read_csv(fname)		
@@ -44,4 +44,4 @@ class DRYP_plot(object):
 		plt.legend(frameon = False)		
 		ax.set_xlabel('Date')		
 		fig.tight_layout()		
-		plt.savefig(fname_out,dpi = 100)
+		plt.savefig(fname_out,dpi = 300)
