@@ -67,13 +67,25 @@ class GlobalGridVar:
 	def __init__(self, ini_date, dt, save_results=True, store_var=None, store_max=False, nstep_day=None):
 		"""Create a set of 2D arrays to store spatio-temporal datasets.
 
-		Parameters
-		------
+		Parameters:
+		----------
+		ini_date: datetime object
+			starting date of the simulation
+		dt: string
+			delta time step, e.g. 1D, 1H, 1M, 1Y
+		save_results: bool
+			flag to save results in a file
+			True - save results in a file
+			False - do not save results in a file
+		store_max: bool
+			flag to store maximum values over a specified period
 		store_var:	dictionary
 			with key containing model name variables and boolean as values
 
-		Returns
+
+		Returns:
 		-------
+		None
 		"""
 		# set activate store
 		self.save_results = save_results
