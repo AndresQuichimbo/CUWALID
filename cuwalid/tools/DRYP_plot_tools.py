@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import json
 import os
 import xarray as xr
 import geopandas as gpd
@@ -28,6 +29,26 @@ units_var = {'pre':'mm/dt', 'aet':'mm/dt', 'pet':'mm/dt', 'inf':'mm/dt',
 			"epd" : "m3/dt",
 			"apd" :"m3/dt"
 			}
+
+name_axis = {0:'Y', 1: "X", 'time':'Time'}
+
+def read_json_file(json_file):
+	"""Read a JSON file and return the data as a dictionary.
+	Parameters:
+	-----------
+	json_file: str
+		path to the JSON file
+	Returns:
+	--------
+		data: dict
+			data from the JSON file as a dictionary
+	Example:
+	>>> json_file = "path/to/json_file.json"
+	>>> data = read_json_file(json_file)
+	"""
+	with open(json_file, 'r') as file:
+		data = json.load(file)
+	return data
 
 def split_text(text, max_len=1):
 	"""Split text into lines of a maximum length.
@@ -77,8 +98,8 @@ def plot_avg_var(fname, fname_out=None, fields=None, delta_t='D', max_subplots=N
 	>>> import os
 	>>> import xarray as xr
 	>>> import geopandas as gpd
-	>>> import cuwalid.tools.DRYP_plot_tools as plttools
-	>>> plttools.plot_avg_var('data.csv', 'output_plot.png', delta_t='M')
+	>>> import cuwalid.tools.DRYP_plot_tools as plotcwld
+	>>> plotcwld.plot_avg_var('data.csv', 'output_plot.png', delta_t='M')
 	
 	"""
 	# read the csv file and convert the date column to datetime
@@ -158,8 +179,8 @@ def plot_point_var(fname, fields=None, fname_out=None, delta_t='D', mean=True, m
 	>>> import os
 	>>> import xarray as xr
 	>>> import geopandas as gpd
-	>>> import cuwalid.tools.DRYP_plot_tools as plttools
-	>>> plttools.plot_point_var('data.csv', 'output_plot.png', delta_t='M')
+	>>> import cuwalid.tools.DRYP_plot_tools as plotcwld
+	>>> plotcwld.plot_point_var('data.csv', 'output_plot.png', delta_t='M')
 	
 
 	"""	
@@ -262,14 +283,21 @@ def plot_profile(dataset, axis=0, time=[0], n=1, dem=None, bathymetry=None, titl
 	Example:
 	-------
 	>>> import matplotlib.pyplot as plt
-	>>> import pandas as pd
 	>>> import numpy as np
 	>>> import os
 	>>> import xarray as xr
-	>>> import geopandas as gpd
-	>>> import cuwalid.tools.DRYP_plot_tools as plttools
-	>>> plttools.plot_profile(dataset, axis=0, time=[0], n=1, dem=None, bathymetry=None, title=None)
-
+	>>> import cuwalid.tools.DRYP_plot_tools as plotcwld
+	>>> import cuwalid.tools.DRYP_pptools as pptools
+	>>> import cuwalid.tools.DRYP_rrtools as rrtools
+	>>> path_bathymetry = "path_bathymetry.asc"
+	>>> path_dem = "path_dem.asc"
+	>>> dem = rrtools.open_raster([path_dem)[0]
+	>>> bathymetry = rrtools.open_raster(path_bathymetry)[0]
+	>>> bathymetry[bathymetry < 0] = np.nan
+	>>> fname = 'peth_model_outputs.nc'
+	>>> dataset = xr.open_dataset(fname)["wte"]
+	>>> plotcwld.plot_profile(dataset, axis=0, time=[0], n=1, dem=None, bathymetry=None, title=None)
+	>>> plt.show()
 	"""
 	
 	fig, ax = plt.subplots()#3, 5, sharex=True, sharey=True)
@@ -289,7 +317,8 @@ def plot_profile(dataset, axis=0, time=[0], n=1, dem=None, bathymetry=None, titl
 		dem[dem < 0] = np.nan
 	if bathymetry is not None:
 		bathymetry[bathymetry < 0] = np.nan
-
+	# check if the axis is 0 or 1
+	# if axis is 0, plot the profile along the latitude
 	if axis == 0:
 		if dem is not None:
 			ax.plot(dataset['lat'], dem[:, n][::-1], 'k')
@@ -306,10 +335,14 @@ def plot_profile(dataset, axis=0, time=[0], n=1, dem=None, bathymetry=None, titl
 			ax.plot(dataset['lon'], bathymetry[-n], 'gray')
 		ax.set_xlabel('Longitude')
 	
+	# set the title of the plot
+	# check if the title is None or not
 	if title is None:
 		var_name = dataset.name
 		try:
-			ax.set_title('Profile of ' + long_name[var_name])# +
+			ax.set_title('Profile of ' + long_name[var_name]+
+						  " along axis "+name_axis[axis]+
+						  " at index "+str(n))
 			ax.set_ylabel(long_name[var_name]+
 						  " ["+units_var[var_name]+"]")
 		except:

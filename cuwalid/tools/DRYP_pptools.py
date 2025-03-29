@@ -115,6 +115,8 @@ class get_output_filenames(object):
 		>>> import DRYP_pptools as pptools
 		>>> fnames = pptools.get_output_filenames(file_model_input)
 		>>> fnames.path_csv
+		>>> fnames.path_csv["avg"]
+		>>> fnames.path_csv["point"]["pre"]
 		>>> fnames.path_grid
 		>>> fnames.path_grid["grid"]
 		>>> fnames.path_grid["rp"]
