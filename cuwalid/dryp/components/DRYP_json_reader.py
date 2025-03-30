@@ -203,9 +203,9 @@ class get_model_settings(object):
 
 		# Output files maps
 		self.DirOutput = dryp_config["OUTPUT"]["path_output"]
-		self.fname_DISpoints = dryp_config["OUTPUT"]["path_out_sz"]
+		self.fname_DISpoints = dryp_config["OUTPUT"]["path_out_oz"]
 		self.fname_SMDpoints = dryp_config["OUTPUT"]["path_out_uz"]
-		self.fname_GWpoints = dryp_config["OUTPUT"]["path_out_oz"]
+		self.fname_GWpoints = dryp_config["OUTPUT"]["path_out_sz"]
 
 		print("Model Name: ", self.Mname)
 
