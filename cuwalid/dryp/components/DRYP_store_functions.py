@@ -151,14 +151,18 @@ class GlobalGridVar:
 		pass
 
 	def store_variables(self, date_sim_dt, t_date, variables):
-		"""stack variables in an 1d-array so store
+		"""	This function store variables in a 2D array, it will
+		store the variables in a 2D array, if the time step is greater than
+		one day, it will store the maximum values for the entire day.
+		Otherwise, it will store the values for the entire day. It will
+		stack variables in an 1d-array so store
 
 		Parameters
 		----------
-		date_sim_dt : datetime array
-			array of dates at results time steps
+		date_sim_dt :numpy array
+			1D array of dates at results time steps
 		t_date :int
-			array index
+			index of the date to store
 		variables :	dict
 			dictionary containig variables to store
 
@@ -271,7 +275,7 @@ class GlobalGridVar:
 	def save_csv_var(self, fname, multi_files=True):
 		"""This function save multiple arrays in a csv file
 		
-		Parameters
+		Parameters:
 		----------
 		fname : str
 			filename of csv files to store
@@ -280,7 +284,7 @@ class GlobalGridVar:
 			True - save in multiple files
 			False - save variables in one file
 
-		Returns
+		Returns:
 		-------
 		csv files
 			output files in csv format
@@ -393,13 +397,6 @@ class GlobalGridVar:
 			time.calendar = 'gregorian'
 			lon.units = 'meters'
 			lat.units = 'meters'
-
-			# create dictionary of units
-			#units_var = {'pre':'mm/dt', 'aet':'mm/dt', 'pet':'mm/dt', 'inf':'mm/dt',
-			#			'tls':'mm/dt', 'fch':'mm/dt', 'ssz':'m3/dt', 'rch':'mm/dt',
-			#			'wte':'m', 'egw':'mm/dt', 'run':'mm/dt', 'gdh':'m3/dt',
-			#			'tht':'m3/m3', 'twsc':'mm', 'dis':'m3/dt'
-			#			}
 
 			# create variable
 			for ivar in self.store_var_names:

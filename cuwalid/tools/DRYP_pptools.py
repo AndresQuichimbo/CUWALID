@@ -1185,6 +1185,36 @@ def get_dataframe_zone_from_netcdf(fname, fname_mask, field=['twsc'], regionid=N
 	return df
 
 def get_point_from_dataset(dataset, x_coord, y_coord, field):
+	"""Get time series of a point from a netCDF
+	
+	Parameters:
+	----------
+	dataset : dataset
+		dataset from which the mean will be extracted
+	x_coord : list
+		x coordinates of the points
+	y_coord : list
+		y coordinates of the points
+	field : list
+		name of the field to get values (default: dis)
+
+	
+	Returns:
+	-------
+		dataframe
+		containing the time series of the points
+
+	Example:
+	--------
+	>>> import cuwalid.tools.DRYP_pptools as pptools
+	>>> import pandas as pd
+	>>> import xarray as xr
+	>>> import os
+	>>> import numpy as np
+	>>> import rasterio
+
+	
+	"""
 	# read model dataset
 	data = dataset[field]
 	time = dataset['time']
@@ -1273,13 +1303,26 @@ def reproject_dataset(data, oldPP, newPP):
 	"""Transform projection system
 	oldPP and newPP have to be defined first
 	
-	Parameters
+	Parameters:
 	----------
 	Data:	Dataset
-	
-	Returns
+		dataset to be reprojected
+	oldPP:	Projection
+		projection of the dataset
+	newPP:	Projection
+		projection of the new dataset
+
+	Returns:
 	-------
 	Data:	Dataset
+		reprojected dataset
+		
+	Example:
+	>>> import cuwalid.tools.DRYP_pptools as pptools
+	>>> import pandas as pd
+	>>> import xarray as xr
+	>>> import os
+	
 	"""
 	# check if projection is in ERSG format
 	if len(newPP) > 11:
