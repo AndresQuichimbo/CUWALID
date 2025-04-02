@@ -655,7 +655,7 @@ def run_DRYP(filename_input):
 				# potential evapotranspiration for unsaturated zone
 				#PETuz = PETh - PETsz
 				PETuz = PETh.copy()# - PETsz
-				#print(PETuz)
+				#print(INF)
 				# SOIL WATER BALANCE: Mestimate soil water balance-------
 				# Units for fluxes are in mm, units of soil moisture [--]
 				AET, PCR, theta[act_nodes], ROF= swb.run_swbm_one_step(

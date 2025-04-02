@@ -395,6 +395,36 @@ def Gauss2p(t, Sp, P, mu_Y, sigma_Y, ks):
 
 # Epsilon funtion for upscaled GA infiltration	
 def epsilon_fks(k,t,Sp,P,mu_Y,sigma_Y,ks):
+	"""Epsilon function for upscaled GA infiltration
+	Parameters:
+	-----------
+	k:		Dimensionless time
+	t:		Cummulative event time
+	Sp:		Sorptivity (keep the same sorptivity for one event)
+	P:		Precipitation
+	mu_Y:	Mean of the log-normal distribution
+	sigma_Y:	Standard deviation of the log-normal distribution
+	ks:		Sat. Hydraulic Conductivity
+	Returns:
+	--------
+	epsilon:	Epsilon function
+
+	Example:
+	--------
+	>>> k = np.array([0.1, 0.2, 0.3])
+	>>> t = np.array([1, 2, 3])
+	>>> Sp = np.array([0.5, 0.6, 0.7])
+	>>> P = np.array([10, 20, 30])
+	>>> mu_Y = np.array([0.1, 0.2, 0.3])
+	>>> sigma_Y = np.array([0.1, 0.2, 0.3])
+	>>> ks = np.array([0.1, 0.2, 0.3])
+	>>> epsilon = epsilon_fks(k,t,Sp,P,mu_Y,sigma_Y,ks)
+	>>> print(epsilon)
+	[0.1 0.2 0.3]
+
+	"""
+	
+
 	X = getX(t,Sp,P)
 	kp = ks/(P*X)
 	fks = np.where(k <= 0.0,0.0,(1.0/(k*sigma_Y*np.sqrt(2.0*np.pi)))*np.exp(-0.5*(np.power((np.log(k)-mu_Y)/sigma_Y,2))))
@@ -405,6 +435,27 @@ def epsilon_fks(k,t,Sp,P,mu_Y,sigma_Y,ks):
 
 # Dimentionless time parameter	
 def getX(t, Sp, P):
+	"""Get the dimensionless time parameter for upscaled GA infiltration
+	Parameters:
+	-----------
+	t:	int
+		Cummulative event time
+	Sp: float
+		Sorptivity (keep the same sorptivity for one event)
+	P:	float
+		Precipitation
+	Returns:
+	--------
+	X:		Dimensionless time parameter
+	Example:
+	--------
+	>>> t = np.array([1, 2, 3])
+	>>> Sp = np.array([0.5, 0.6, 0.7])
+	>>> P = np.array([10, 20, 30])
+	>>> X = getX(t, Sp, P)
+	>>> print(X)
+	[0.1 0.2 0.3]
+	"""
 	X_aux = P*t/Sp
 	return np.where(X_aux == 0.0,0.0,1/(1+1/X_aux))
 

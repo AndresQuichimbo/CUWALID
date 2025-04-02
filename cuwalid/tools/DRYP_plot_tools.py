@@ -18,7 +18,8 @@ long_name = {'pre':'precipitation', 'aet':'actual evapotranspiration',
 			'dis':'discharge',
 			"vpd" : "Total volume of water available - ponds",
 			"epd" : "evaporation - ponds",
-			"apd" :"Total abstractions - ponds"
+			"apd" :"Total abstractions - ponds",
+			"chb" : "flux constant head boundary",
 			}
 
 units_var = {'pre':'mm/dt', 'aet':'mm/dt', 'pet':'mm/dt', 'inf':'mm/dt',
@@ -27,7 +28,9 @@ units_var = {'pre':'mm/dt', 'aet':'mm/dt', 'pet':'mm/dt', 'inf':'mm/dt',
 			'tht':'m3/m3', 'twsc':'mm', 'dis':'m3/dt',
 			"vpd" : "m3",
 			"epd" : "m3/dt",
-			"apd" :"m3/dt"
+			"apd" :"m3/dt",
+			"chb" : "m3/dt",
+			"sz" : "m3",
 			}
 
 name_axis = {0:'Y', 1: "X", 'time':'Time'}

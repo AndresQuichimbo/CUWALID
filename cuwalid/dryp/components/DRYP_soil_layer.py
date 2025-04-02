@@ -149,7 +149,7 @@ class swbm(object):
 		# If the soil is fully saturated, unsaturated zone is zero,
 		# (water table is close to the surface), all water return
 		# as saturation excess, there is not percolation
-		
+		#print(inf, AET, theta, Droot, THT)
 		#print(226, np.mean(inf), np.mean(AET), np.mean(PCR), np.mean(ROF))
 		#print(np.mean((THT - theta)*Droot), np.mean(theta), np.mean(THT))
 		# test the mass balance
