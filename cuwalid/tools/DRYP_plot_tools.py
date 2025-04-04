@@ -78,6 +78,7 @@ def split_text(text, max_len=1):
 
 def plot_avg_var(fname, fname_out=None, fields=None, delta_t='D', max_subplots=None):
 	"""Plot average variables from a csv file.
+	
 	Parameters:
 	-----------
 	fname: str
