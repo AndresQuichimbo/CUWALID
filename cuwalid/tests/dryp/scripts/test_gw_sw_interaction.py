@@ -55,7 +55,7 @@ def test_gw_sw_interaction():
     
     # evaluate the result
     assert np.allclose(head, answer)
-    print('GW_SW interactions: Test runs successfully')
+    print('GW_SW interactions: Test completed successfully')
 
 if __name__ == '__main__':
 	test_gw_sw_interaction()				

@@ -128,7 +128,7 @@ def test_precipitation():
 	# evaluate the result
 	assert np.allclose(pre, answer)
 	
-	print('Precipitation step function: Test runs successfully')
+	print('Precipitation step function: Test completed successfully')
 
 	# remove the test dataset created
 	fname = "HAD_test_precipitation_01.nc"

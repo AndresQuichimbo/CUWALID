@@ -91,7 +91,7 @@ def test_groundwater_multiaq():
 	
 	assert np.allclose(out, answer)
 
-	print('Groundwater Muti-aquifer: Test runs successfully')
+	print('Groundwater Muti-aquifer: Test completed successfully')
 	
 if __name__ == '__main__':
 	test_groundwater_multiaq()

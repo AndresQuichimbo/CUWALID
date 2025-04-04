@@ -57,7 +57,7 @@ def test_runoff():
 	answer = [(ncol-2.0)*np.power(grid_cellsize, 2), 839701.111778]
 	assert np.allclose(out, answer)
 
-	print('Flow routing: Test runs successfully')
+	print('Flow routing: Test completed successfully')
 	
 if __name__ == '__main__':
 	test_runoff()

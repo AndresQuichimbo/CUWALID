@@ -129,7 +129,7 @@ def test_precipitation():
 	# evaluate the result
 	assert np.allclose(pre, answer)
 
-	print('Precipitation: Test run successfully')
+	print('Precipitation: Test completed successfully')
 
 	# remove the test dataset created
 	os.remove(fname) if os.path.exists(fname) else None

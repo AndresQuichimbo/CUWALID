@@ -75,7 +75,7 @@ def test_save_variables():
     out = read_dataset(fname, var_name='pre').values[0]
     
     assert np.allclose(out, answer, equal_nan=True)
-    print('Save Dataset: Test runs successfully')
+    print('Save Dataset: Test completed successfully')
     
     # remove the test dataset created
     os.remove(fname) if os.path.exists(fname) else None

@@ -39,7 +39,7 @@ def test_ponds():
     answer = [0.0]
     #print(Vo)
     assert np.allclose(Vo, answer)
-    print('ponds: Test runs successfully')
+    print('ponds: Test completed successfully')
 
 if __name__ == '__main__':
 	test_ponds()

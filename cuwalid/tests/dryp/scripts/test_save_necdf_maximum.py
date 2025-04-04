@@ -71,7 +71,7 @@ def test_save_maximum():
     #print(out)
     #print(answer)
     assert np.allclose(out, answer, equal_nan=True)
-    print('Save maximum dataset: Test runs successfully')
+    print('Save maximum dataset: Test completed successfully')
     
     # remove the test dataset created
     os.remove(fname) if os.path.exists(fname) else None

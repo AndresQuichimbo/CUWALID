@@ -27,7 +27,7 @@ def test_dryp():
     # Perform assertion on the outputs
     assert np.allclose(out, ans)
 
-    print('Test model: Test runs successfully')
+    print('Test model: Test completed successfully')
 
 if __name__ == '__main__':
     test_dryp()

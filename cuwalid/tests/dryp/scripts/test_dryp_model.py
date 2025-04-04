@@ -349,7 +349,7 @@ def test_dryp():
 		#print(349, twsc[act_nodes])
 		recharge[act_nodes] = 0.0
 	
-	print('DRYP model: Test runs successfully')
+	print('DRYP model: Test completed successfully')
 
 if __name__ == '__main__':
 	test_dryp()
