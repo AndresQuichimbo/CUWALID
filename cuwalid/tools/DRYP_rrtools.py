@@ -596,7 +596,7 @@ def clip_raster_by_mask(fname, fname_mask, fname_output):
 	files must have the same size, otherwise and error will raise.
 	The output file will be 
 
-	Parameters
+	Parameters:
 	----------    
 	fname : str
 		raster file name
@@ -605,10 +605,20 @@ def clip_raster_by_mask(fname, fname_mask, fname_output):
 	fname_out : str
 		file name for the clipped raster dataset
 
-	Returns
+	Returns:
 	-------
 	file
 		clipped raster file
+	
+	Examples:
+	--------
+
+	>>> fname = "raster.asc"
+	>>> fname_mask = "mask.asc"
+	>>> fname_output = "clipped_raster.asc"
+	>>> clip_raster_by_mask(fname, fname_mask, fname_output)
+	>>> # This will create a raster file named "clipped_raster.asc"
+	>>> # with the clipped raster values.
 	
 	"""
 
@@ -632,7 +642,7 @@ def clip_raster_by_mask(fname, fname_mask, fname_output):
 def clip_raster_by_extent(fname, fname_output, extent):
 	"""Function to clip raster files by extent.
 	
-	Parameters
+	Parameters:
 	----------    
 	fname : str
 		raster file name
@@ -641,10 +651,23 @@ def clip_raster_by_extent(fname, fname_output, extent):
 	extent : list of floats
 		list of boundaries to clip, [xmin, ymin, xmax, ymax]
 	
-	Returns
+	Returns:
 	-------
-	file
-		clipped raster file
+	None
+		None, but creates a raster file with the specified name.
+		The raster file will contain the clipped raster values.
+		Note: The function does not return any values, but it saves the
+		raster file with the specified name.
+
+	Example:
+	-------
+	>>> fname = "raster.asc"
+	>>> fname_output = "clipped_raster.asc"
+	>>> extent = [xmin, ymin, xmax, ymax]
+	>>> clip_raster_by_extent(fname, fname_output, extent)
+	>>> # This will create a raster file named "clipped_raster.asc"
+	>>> # with the clipped raster values.
+	>>> # The function does not return any values, but it saves the raster file.
 	
 	"""
 	# Open the raster file
@@ -688,15 +711,30 @@ def find_region_bounds(array):
 	a 2D numpy array. Region must be specified with values greater
 	than zero.
 
-	Parameters
+	Parameters:
 	----------
 	array : numpy array
 		2D numpy array (e.g.: from a raster file)
 	
-	Returns
+	Returns:
 	-------
-	list of int
-		min_row, max_row, min_col, max_col
+		min_row, max_row, min_col, max_col : int
+		indices of the region in the array
+		These indices represent the minimum and maximum row and column indices
+		of the region in the 2D array.
+		The values are returned as a tuple of four integers.
+		For example, if the region is found between rows 10 and 20 and columns 5 and 15,
+		the function will return (10, 20, 5, 15).
+		Note: The indices are zero-based, meaning that the first row and column have an index of 0.
+		Make sure to provide the correct 2D array for the function to work properly.
+
+		Example: (10, 20, 5, 15)
+		Note: The indices are returned as a tuple of four integers.
+	
+		Example: (min_row, max_row, min_col, max_col)
+		Note: The indices are returned as a tuple of four integers.
+		For example, if the region is found between rows 10 and 20 and columns 5 and 15,
+		the function will return (10, 20, 5, 15).
 	"""
 	# Find the indices of non-zero elements of a 2d array
 	nonzero_indices = np.nonzero(array)
