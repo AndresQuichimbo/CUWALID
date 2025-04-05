@@ -116,7 +116,7 @@ class GlobalGridVar:
 		#self.update_keys = True
 		
 		# set counter for number of step for max value
-		self.nsteps_max = 0
+		self.nsteps_max = 1
 
 		# activate option to save maximum values over a specified period
 		# this function will only be activated if data is stored in time
@@ -191,7 +191,7 @@ class GlobalGridVar:
 			
 			# accumulate variables/create array of variables
 			variables = np.concatenate(variables)
-			
+			#print(date, self.idate)
 			if date < self.idate:
 				# accumulate variables
 				if self.var_acummulation is None:
@@ -200,8 +200,8 @@ class GlobalGridVar:
 				else:
 					# accumulate
 					self.var_acummulation += variables
-				self.nsteps += 1.0
-				
+				self.nsteps += 1
+				#print(self.daily_steps, self.nsteps, self.nsteps_max)
 				# Store maximum values at daily time steps
 				# accumulate values for the entire day
 				if self.store_max is True:
@@ -211,6 +211,7 @@ class GlobalGridVar:
 						if self.var_maximum is None:
 							# create variables
 							self.var_maximum = np.array(variables)
+							#self.var_maximum = np.array(self.var_acummulation)
 
 						self.var_maximum = np.maximum(
 								self.var_acummulation,
@@ -221,13 +222,15 @@ class GlobalGridVar:
 						self.nsteps_max = 0
 
 					self.nsteps_max += 1
-
+					#print("Max: ", self.nsteps_max, " - ", self.var_maximum)
 				
 			else:
 				# Store variables at the specified time step
 				if (self.var_acummulation is None):
 					# create variables
 					self.var_acummulation = np.array(variables)
+				#print("Store: ", self.var_acummulation)
+				#print("Store: ", variables)
 
 				# Store maximum values at daily time steps
 				# accumulate values for the entire day
@@ -237,31 +240,40 @@ class GlobalGridVar:
 					if self.var_maximum is None:
 						# create variables
 						self.var_maximum = np.array(variables)
+						#self.var_maximum = np.array(self.var_acummulation)
 					# get maximum value
 					self.var_maximum = np.maximum(
 							self.var_acummulation,
 							self.var_maximum)
 
 					# restart daily accumulation counter
-					self.nsteps_max = 0
-
+					self.nsteps_max = 1
+				
+				# store variables
 				self.nsteps_vector.append(self.nsteps)
 				if self.store_max is True:
 					self.cumm_variable.append(self.var_maximum)
 				else:
 					self.cumm_variable.append(self.var_acummulation)
+				
+				# reset variables
 				self.time_grid.append(self.pdate)
 				self.pdate = self.idate
 				self.idate = addtime(self.idate, self.delta)
-				self.nsteps = 1.0
+				self.nsteps = 1
 				self.var_acummulation = None
+				#print(t_date, "Date: ", date, " - ", self.idate)
+				#print(self.var_maximum)
+				#if (t_date < len(date_sim_dt)-1):
+					#print(t_date, "Date: ", date, " - ", self.idate)
 				self.var_maximum = None
-			
+			#print(len(self.cumm_variable))
 			# check the if the last step has been processed
 			# check if variable has been accumulated, otherwise
 			# store the available dataset, skip if it has already
 			# been added
 			if (t_date == len(date_sim_dt)-1):
+				#print("Last date: ", t_date, "Date: ", date, " - ", self.idate)
 				if self.var_acummulation is not None:
 					self.nsteps_vector.append(self.nsteps)
 					if self.store_max is True:

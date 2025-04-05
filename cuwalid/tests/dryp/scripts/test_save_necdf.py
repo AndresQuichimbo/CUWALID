@@ -22,7 +22,7 @@ def test_save_variables():
     grid_size = ncols*nrows
 
     ini_date = datetime.strptime("2000 1 1", '%Y %m %d')
-    end_date = datetime.strptime("2000 2 5", '%Y %m %d')
+    end_date = datetime.strptime("2001 2 5", '%Y %m %d')
 		
     dt = 1440
     dt_results = 'M'

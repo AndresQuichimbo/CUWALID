@@ -913,12 +913,6 @@ def run_DRYP(filename_input):
 					})
 				
 				# store maximum values
-				if grid_rmax.store_max is True:
-					if riv_nodes.size > 0:
-						grid_rmax.store_variables(PRE.date_sim_dt, t_pre,
-			      			{"dis": ro.discharge[riv_nodes]}
-							)
-				# store maximum values
 				if grid_vmax.store_max is True:
 					grid_vmax.store_variables(PRE.date_sim_dt, t_pre,
 			      			{"pre": rain[act_nodes], "pet": PET[act_nodes],
@@ -926,6 +920,12 @@ def run_DRYP(filename_input):
 							"rch": recharge[act_nodes], "egw": PETsz,
 							"gdh": baseflow[act_nodes],
 							}
+							)
+				# store maximum values at streams locations
+				if grid_rmax.store_max is True:
+					if riv_nodes.size > 0:
+						grid_rmax.store_variables(PRE.date_sim_dt, t_pre,
+			      			{"dis": ro.discharge[riv_nodes]}
 							)
 
 				# get all fluxes and states at sampling points
