@@ -47,7 +47,7 @@ aux_plot_maps_parallel.py
 test/
 *.log
 docs/source/notebooks/DRYP/.ipynb_checkpoints
-cuwalid/tests/dryp/tilted_v/output/
+cuwalid/tests/dryp/tilted_v/output/*
 cuwalid/tests/dryp/HAD_test_precipitation.nc
 cuwalid/tests/dryp/HAD_test_precipitation_01.nc
 cuwalid/tests/dryp/test_save_netcdf.nc
