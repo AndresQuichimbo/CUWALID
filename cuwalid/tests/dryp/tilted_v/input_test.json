@@ -1,7 +1,6 @@
 {
-    "drylandmodel": {
-        "model_name": "test"
-    },
+    "model_name": "test",
+    "path_input": "",
     "TERRAIN": {
         "path_dem": "tilted_v/input/test_dem_m.asc",
         "path_Qo": null,
