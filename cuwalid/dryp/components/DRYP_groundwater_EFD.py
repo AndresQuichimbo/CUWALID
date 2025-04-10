@@ -285,10 +285,10 @@ class gwflow_EFD(object):
 				elif self.method == 3:
 					# saturated thickness for multiaquifer conditions
 					# update thikness for aquifers with linear transmissinity
-					idnodes = np.where(inodetype == 3)
+					idnodes = np.where(inodetype == 1)
 					thickness_sat[idnodes] = head[idnodes] - bottom[idnodes]
 					# updates thickness of aquiferes with exponential transmissivity
-					idnodes = np.where(inodetype == 1)
+					idnodes = np.where(inodetype == 2)
 					thickness_sat[idnodes] = exponential(thickness[idnodes],
 								surface[idnodes]-thickness[idnodes],
 								head[idnodes])
