@@ -61,7 +61,7 @@ def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda):
 	save_raster(fname_wp, wilting_point, profile, transform)
 	save_raster(fname_awc, available_water_content, profile, transform)
 
-def create_raster_flowdirection_dryp(fname, fname_out, translate=True):
+def create_raster_flowdirection_dryp(fname, fname_out, translate=True, format_data="D8"):
 	"""Create raster file from a raster D8 flow direction map
 	
 	Parameters:
@@ -69,8 +69,22 @@ def create_raster_flowdirection_dryp(fname, fname_out, translate=True):
 	fname : str
 		filename path of the flow direction map, the raster
 		file has to be in D8 direction format
+	translate : bool
+		True if the flow direction map is in D8 format, False if it is in Landlab format
 	fname_out : str
 		filename of the output file
+		The output raster file will be created with the specified name.
+		The output raster file will contain the flow direction values.
+		Make sure to provide the correct file path and name for the output raster file.
+		Example: "path/to/output_raster.tif"
+		Note: The output raster file will be created in the same format as the input raster file.
+	format_data : str
+		format of the data, D8 or D* format
+		- D8: D8 format (default)
+		- LDD: LDD format
+		- GRASS: GRASS format
+		- AGNPS: AGNPS format
+		- i-digit: i-digit format
 
 	Returns:
 	-------
@@ -99,7 +113,7 @@ def create_raster_flowdirection_dryp(fname, fname_out, translate=True):
 
 		# calculate flow direction
 		flowdir = transform_flowdirection_d8_to_landlab_array(
-			flowdird8, format_data="D8")
+			flowdird8, format_data=format_data)
 
 		## assign data type
 		#flowdir = np.array(flowdir, dtype=dtype)
@@ -948,6 +962,21 @@ def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
 	"""Function to get flow direction in landlab format from a D8
 	direction map.
 
+	GRASS pcraster format:
+		135  90  45
+		180   0 360
+		225 270 315
+
+	AGNPS pcraster format: Agricultural Non-Point Source Pollution Model
+		8 1 2
+		7 0 3
+		6 5 4
+
+	LDD pcraster format
+		7 8 9
+		4 0 6
+		1 2 3
+
 	D8 direction format
 		32 64 128
 		16 0  1
@@ -967,6 +996,13 @@ def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
 	----------
 	flowdir : numpy array of int
 		flow direction map in D8 format
+	format_data : str
+		format of the data, D8 or D* format
+		- D8: D8 format (default)
+		- LDD: LDD format
+		- GRASS: GRASS format
+		- AGNPS: AGNPS format
+		- i-digit: i-digit format
 
 	Returns:
 	-------
@@ -1010,6 +1046,12 @@ def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
 	# create an array of D* direction codes
 	if format_data == "D8":
 		dir_code=[1, 128, 64, 32, 16, 8, 4, 2]
+	elif format_data == "LDD":
+		dir_code=[6, 9, 8, 7, 4, 1, 1, 3]
+	elif format_data == "GRASS":
+		dir_code=[360, 45, 90, 135, 180, 225, 270, 315]
+	elif format_data == "AGNPS":
+		dir_code=[3, 2, 1, 8, 7, 6, 5, 4]
 	else:
 		dir_code=np.arange(1,9)
 	
