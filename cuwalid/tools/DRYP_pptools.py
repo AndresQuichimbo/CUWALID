@@ -211,6 +211,8 @@ def calculate_storage_from_files(fname, path_surface, path_Droot, path_theta_sat
 
 	Returns
 	-------
+		xarray dataset containing all calculated values		
+		["str_uz", "str_sz", "str_lakes"]
 
 	"""
 
