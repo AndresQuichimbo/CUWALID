@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.forecasting.components package &mdash; CUWALID 0.0.1 documentation</title>
@@ -11,6 +11,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -18,8 +20,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Tests Package" href="cuwalid.tests.html" />
-    <link rel="prev" title="Forecasting Package" href="cuwalid.forecasting.html" /> 
+    <link rel="next" title="cuwalid.stopet package" href="cuwalid.stopet.html" />
+    <link rel="prev" title="cuwalid.forecasting package" href="cuwalid.forecasting.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,20 +51,22 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Documentation</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.dryp.html">DRYP Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.stopet.html">StoPET Package</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="cuwalid.forecasting.html">Forecasting Package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="cuwalid.forecasting.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4 current"><a class="current reference internal" href="#">cuwalid.forecasting.components package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">cuwalid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="cuwalid.html">cuwalid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cuwalid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.dryp.html">cuwalid.dryp package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="cuwalid.forecasting.html">cuwalid.forecasting package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html">cuwalid.stopet package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.storm.html">cuwalid.storm package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tests.html">cuwalid.tests package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html">cuwalid.tools package</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.html#cuwalid-forecasting-main-forecast-module">cuwalid.forecasting.Main_forecast module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#cuwalid-main-cuwalid-module">cuwalid.main_cuwalid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#module-cuwalid">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.tests.html">Tests Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.tools.html">Tools Package</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
@@ -86,9 +90,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">API Documentation</a></li>
-          <li class="breadcrumb-item"><a href="cuwalid.html">&lt;no title&gt;</a></li>
-          <li class="breadcrumb-item"><a href="cuwalid.forecasting.html">Forecasting Package</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">cuwalid</a></li>
+          <li class="breadcrumb-item"><a href="cuwalid.html">cuwalid package</a></li>
+          <li class="breadcrumb-item"><a href="cuwalid.forecasting.html">cuwalid.forecasting package</a></li>
       <li class="breadcrumb-item active">cuwalid.forecasting.components package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/cuwalid.forecasting.components.rst.txt" rel="nofollow"> View page source</a>
@@ -104,59 +108,725 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
-<section id="cuwalid-forecasting-components-n00-cuwalid-had-get-csv-ts-files-from-multi-csv-module">
-<h2>cuwalid.forecasting.components.N00_cuwalid_HAD_get_csv_TS_files_from_multi_CSV module<a class="headerlink" href="#cuwalid-forecasting-components-n00-cuwalid-had-get-csv-ts-files-from-multi-csv-module" title="Permalink to this heading"></a></h2>
+<section id="module-cuwalid.forecasting.components.default_parameter_dataset">
+<span id="cuwalid-forecasting-components-default-parameter-dataset-module"></span><h2>cuwalid.forecasting.components.default_parameter_dataset module<a class="headerlink" href="#module-cuwalid.forecasting.components.default_parameter_dataset" title="Permalink to this heading"></a></h2>
+<p>default_parameter_dataset</p>
+<p>country codes from
+<a class="reference external" href="https://wiki.openstreetmap.org/wiki/Nominatim/Country_Codes">https://wiki.openstreetmap.org/wiki/Nominatim/Country_Codes</a></p>
 </section>
-<section id="cuwalid-forecasting-components-n01a-cuwalid-had-get-twsa-from-mult-files-module">
-<h2>cuwalid.forecasting.components.N01a_cuwalid_HAD_get_TWSA_from_mult_files module<a class="headerlink" href="#cuwalid-forecasting-components-n01a-cuwalid-had-get-twsa-from-mult-files-module" title="Permalink to this heading"></a></h2>
+<section id="module-cuwalid.forecasting.components.forecast">
+<span id="cuwalid-forecasting-components-forecast-module"></span><h2>cuwalid.forecasting.components.forecast module<a class="headerlink" href="#module-cuwalid.forecasting.components.forecast" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.forecast.extract_forecasting_variable">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.forecast.</span></span><span class="sig-name descname"><span class="pre">extract_forecasting_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_path_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapefile_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">place_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">place_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icode_field_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iname_field_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_nc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iyear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2022</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/forecast.html#extract_forecasting_variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.forecast.extract_forecasting_variable" title="Permalink to this definition"></a></dt>
+<dd><p>Function to get a set netCDF files for each place listed in place_name
+Each file is cliped only for the area whithin the boundaries of each place</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h3>
+<p>model_name: str
+model_path: str
+plot_scale: str
+season: list
+variables: list
+postpp_path: str
+netcdf_path: str
+shapefile_path: str
+place_name: list
+name_field_shp: str</p>
+<dl class="simple">
+<dt>plot_scales<span class="classifier">list of str, optional</span></dt><dd><p>A list of zoom levels or plot scales for the maps (e.g., “Zoom”, “National”, “Regional”).
+Defaults to [“Zoom”].</p>
+</dd>
+<dt>country_name<span class="classifier">str, optional</span></dt><dd><p>The name of the country for which the maps are being generated. Defaults to “Kenya”.</p>
+</dd>
+<dt>place_names<span class="classifier">list of str or [None], optional</span></dt><dd><p>A list of specific places (e.g., counties) for which maps will be created.
+If [None], maps will be created for all counties in the country. Defaults to [None].</p>
+</dd>
+<dt>seasons<span class="classifier">list of str, optional</span></dt><dd><p>A list of seasons for which the maps will be generated. Examples include “MAM” (March-April-May)
+and “OND” (October-November-December). Defaults to [“MAM”].</p>
+</dd>
+<dt>water_status<span class="classifier">list of str, optional</span></dt><dd><p>Water condition or status, such as “Flood”, “Drought”, etc. Defaults to [“Flood”].</p>
+</dd>
+<dt>year<span class="classifier">int, optional</span></dt><dd><p>The year for which the maps are generated. Defaults to 2010.</p>
+</dd>
+<dt>output_dir<span class="classifier">str, optional</span></dt><dd><p>The directory where the generated maps will be saved. Defaults to “output”.</p>
+</dd>
+<dt>language<span class="classifier">str, optional</span></dt><dd><p>The language for the map labels and outputs. Defaults to “English”.</p>
+</dd>
+<dt>netcdf_path<span class="classifier">str, optional</span></dt><dd><p>Path to the NetCDF file containing climate or forecast data. Defaults to None.</p>
+</dd>
+<dt>threshold_path<span class="classifier">str, optional</span></dt><dd><p>Path to the threshold file used to determine warning or risk levels. Defaults to None.</p>
+</dd>
+<dt>mask_path<span class="classifier">str, optional</span></dt><dd><p>Path to the file containing mask data for areas that should be excluded from the maps.
+Defaults to None.</p>
+</dd>
+<dt>river_path<span class="classifier">str, optional</span></dt><dd><p>Path to the file containing river data to be overlaid on the map. Defaults to None.</p>
+</dd>
+<dt>shape_path<span class="classifier">str, optional</span></dt><dd><p>Path to the optional shape file to overide built in shape files for HAD region. Defaults to None.</p>
+</dd>
+</dl>
 </section>
-<section id="cuwalid-forecasting-components-n01b-cuwalid-had-get-additional-variables-multi-netcdf-module">
-<h2>cuwalid.forecasting.components.N01b_cuwalid_HAD_get_additional_variables_multi_netcdf module<a class="headerlink" href="#cuwalid-forecasting-components-n01b-cuwalid-had-get-additional-variables-multi-netcdf-module" title="Permalink to this heading"></a></h2>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.forecast.get_areas_terciles">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.forecast.</span></span><span class="sig-name descname"><span class="pre">get_areas_terciles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/forecast.html#get_areas_terciles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.forecast.get_areas_terciles" title="Permalink to this definition"></a></dt>
+<dd><p>Function to extract values form selected areas</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_path</strong> (<em>str</em>) – paht for model netcdf file</p></li>
+<li><p><strong>model_name</strong> (<em>str</em>) – model name</p></li>
+<li><p><strong>season</strong> (<em>str</em>) – season eg. OND</p></li>
+<li><p><strong>variables</strong> (<em>str</em>) – variables to plot</p></li>
+<li><p><strong>postpp_path</strong> (<em>str</em>) – paht for storing outputs</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.forecast.get_deterministic_forecast_ensamble">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.forecast.</span></span><span class="sig-name descname"><span class="pre">get_deterministic_forecast_ensamble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iyear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2022</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/forecast.html#get_deterministic_forecast_ensamble"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.forecast.get_deterministic_forecast_ensamble" title="Permalink to this definition"></a></dt>
+<dd><dl>
+<dt>This function calculates the probabilistic forecasting using the tercile approach</dt><dd><p>from the ensamble dataset. It will create a file for each analised variable</p>
+<p>Parameters</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>model_name<span class="classifier">str</span></dt><dd><p>Name of the model to retrieve forecasts from.</p>
+</dd>
+<dt>season<span class="classifier">str</span></dt><dd><p>Season for which the forecasts are required (e.g., ‘OND’, ‘MAM’).</p>
+</dd>
+<dt>variables<span class="classifier">list of str</span></dt><dd><p>List of variable names to include in the forecast (e.g., [‘pet’, ‘pre’]).</p>
+</dd>
+<dt>postpp_path<span class="classifier">str</span></dt><dd><p>Path to the post-processing configuration or scripts.</p>
+</dd>
+<dt>threshold_path<span class="classifier">str</span></dt><dd><p>Path to the file containing threshold values for the variables.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing processed deterministic forecasts for each ensemble member. The structure
+typically includes ensemble members, their corresponding forecasts, and any additional post-processed
+data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>xarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Ensure that the <cite>model_path</cite> contains the necessary data files for the specified <cite>model_name</cite>.</p></li>
+<li><p>The <cite>postpp_path</cite> should point to valid configurations or scripts for applying post-processing methods.</p></li>
+<li><p>Thresholds provided in <cite>threshold_path</cite> should match the variables specified.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">get_deterministic_forecast_ensemble</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">model_path</span><span class="o">=</span><span class="s2">&quot;/data/models/&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;GFS&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">season</span><span class="o">=</span><span class="s2">&quot;OND&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pre&quot;</span><span class="p">,</span> <span class="s2">&quot;pet&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">postpp_path</span><span class="o">=</span><span class="s2">&quot;/config/postprocessing/&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">threshold_path</span><span class="o">=</span><span class="s2">&quot;/config/thresholds/&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">])</span>
+<span class="go">[0.5, 0.2, 0.8]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.forecast.get_ensamble_forecasting">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.forecast.</span></span><span class="sig-name descname"><span class="pre">get_ensamble_forecasting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/forecast.html#get_ensamble_forecasting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.forecast.get_ensamble_forecasting" title="Permalink to this definition"></a></dt>
+<dd><dl>
+<dt>This funtion create an ensamble of model simulation for each</dt><dd><p>variable especify in the ‘config_forecasting.py’ file.</p>
+<p>WARNING! Values of total water storage needs to be updated for
+all the simulations</p>
+<p>Parameters</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>model_name<span class="classifier">str</span></dt><dd><p>Name of the model to retrieve forecasts from.</p>
+</dd>
+<dt>season<span class="classifier">str</span></dt><dd><p>Season for which the forecasts are required (e.g., ‘OND’, ‘MAM’).</p>
+</dd>
+<dt>variables<span class="classifier">list of str</span></dt><dd><p>List of variable names to include in the forecast (e.g., [‘pet’, ‘pre’]).</p>
+</dd>
+<dt>postpp_path<span class="classifier">str</span></dt><dd><p>Path to the post-processing configuration or scripts.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing processed deterministic forecasts for each ensemble member. The structure
+typically includes ensemble members, their corresponding forecasts, and any additional post-processed
+data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>xarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Ensure that the <cite>model_path</cite> contains the necessary data files for the specified <cite>model_name</cite>.</p></li>
+<li><p>The <cite>postpp_path</cite> should point to valid configurations or scripts for applying post-processing methods.</p></li>
+<li><p>Thresholds provided in <cite>threshold_path</cite> should match the variables specified.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">get_deterministic_forecast_ensemble</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">model_path</span><span class="o">=</span><span class="s2">&quot;/data/models/&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;GFS&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">season</span><span class="o">=</span><span class="s2">&quot;OND&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pre&quot;</span><span class="p">,</span> <span class="s2">&quot;pet&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">postpp_path</span><span class="o">=</span><span class="s2">&quot;/config/postprocessing/&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">threshold_path</span><span class="o">=</span><span class="s2">&quot;/config/thresholds/&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">])</span>
+<span class="go">[0.5, 0.2, 0.8]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.forecast.get_postprocessed_variables_forecast">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.forecast.</span></span><span class="sig-name descname"><span class="pre">get_postprocessed_variables_forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/forecast.html#get_postprocessed_variables_forecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.forecast.get_postprocessed_variables_forecast" title="Permalink to this definition"></a></dt>
+<dd><p>Get WRSI water satisfaction index and total evapotranspiration</p>
+<section id="id1">
+<h3>Parameters:<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>model_path: path (str)</dt><dd><p>folder path of model outputs files</p>
+</dd>
+<dt>model_name: str</dt><dd><p>model name</p>
+</dd>
+<dt>start_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+<dt>end_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+</dl>
 </section>
-<section id="cuwalid-forecasting-components-n02a-cuwalid-had-get-percentiles-multi-files-module">
-<h2>cuwalid.forecasting.components.N02a_cuwalid_HAD_get_percentiles_multi_files module<a class="headerlink" href="#cuwalid-forecasting-components-n02a-cuwalid-had-get-percentiles-multi-files-module" title="Permalink to this heading"></a></h2>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.forecast.get_probabilistic_tercile_forecast_ensamble">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.forecast.</span></span><span class="sig-name descname"><span class="pre">get_probabilistic_tercile_forecast_ensamble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iyear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2022</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/forecast.html#get_probabilistic_tercile_forecast_ensamble"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.forecast.get_probabilistic_tercile_forecast_ensamble" title="Permalink to this definition"></a></dt>
+<dd><p>This function calculates the probabilistic forecasting using the tercile approach</p>
+<blockquote>
+<div><p>Parameters</p>
+</div></blockquote>
+<dl class="simple">
+<dt>model_name<span class="classifier">str</span></dt><dd><p>Name of the model to retrieve forecasts from.</p>
+</dd>
+<dt>season<span class="classifier">str</span></dt><dd><p>Season for which the forecasts are required (e.g., ‘OND’, ‘MAM’).</p>
+</dd>
+<dt>variables<span class="classifier">list of str</span></dt><dd><p>List of variable names to include in the forecast (e.g., [‘pet’, ‘pre’]).</p>
+</dd>
+<dt>postpp_path<span class="classifier">str</span></dt><dd><p>Path to the post-processing configuration or scripts.</p>
+</dd>
+<dt>threshold_path<span class="classifier">str</span></dt><dd><p>Path to the file containing threshold values for the variables.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing processed deterministic forecasts for each ensemble member. The structure
+typically includes ensemble members, their corresponding forecasts, and any additional post-processed
+data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>xarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Ensure that the <cite>model_path</cite> contains the necessary data files for the specified <cite>model_name</cite>.</p></li>
+<li><p>The <cite>postpp_path</cite> should point to valid configurations or scripts for applying post-processing methods.</p></li>
+<li><p>Thresholds provided in <cite>threshold_path</cite> should match the variables specified.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">get_deterministic_forecast_ensemble</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">model_path</span><span class="o">=</span><span class="s2">&quot;/data/models/&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;GFS&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">season</span><span class="o">=</span><span class="s2">&quot;OND&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pre&quot;</span><span class="p">,</span> <span class="s2">&quot;pet&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">postpp_path</span><span class="o">=</span><span class="s2">&quot;/config/postprocessing/&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">threshold_path</span><span class="o">=</span><span class="s2">&quot;/config/thresholds/&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">])</span>
+<span class="go">[0.5, 0.2, 0.8]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.forecast.get_tercile_hindcast_extreme_values">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.forecast.</span></span><span class="sig-name descname"><span class="pre">get_tercile_hindcast_extreme_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/forecast.html#get_tercile_hindcast_extreme_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.forecast.get_tercile_hindcast_extreme_values" title="Permalink to this definition"></a></dt>
+<dd><p>This function calculates the probabilistic forecasting using the tercile approach</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.forecast.get_tercile_hindcast_fluxes">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.forecast.</span></span><span class="sig-name descname"><span class="pre">get_tercile_hindcast_fluxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/forecast.html#get_tercile_hindcast_fluxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.forecast.get_tercile_hindcast_fluxes" title="Permalink to this definition"></a></dt>
+<dd><p>This function calculates the probabilistic forecasting using the tercile approach</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.forecast.get_update_TWSA">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.forecast.</span></span><span class="sig-name descname"><span class="pre">get_update_TWSA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iyear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2022</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/forecast.html#get_update_TWSA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.forecast.get_update_TWSA" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.forecast.get_updated_TWSA_ensamble">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.forecast.</span></span><span class="sig-name descname"><span class="pre">get_updated_TWSA_ensamble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name_historical</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path_historical</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iyear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2022</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/forecast.html#get_updated_TWSA_ensamble"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.forecast.get_updated_TWSA_ensamble" title="Permalink to this definition"></a></dt>
+<dd><p>This function</p>
+<blockquote>
+<div><p>Parameters</p>
+</div></blockquote>
+<dl class="simple">
+<dt>model_name<span class="classifier">str</span></dt><dd><p>Name of the model to retrieve forecasts from.</p>
+</dd>
+<dt>season<span class="classifier">str</span></dt><dd><p>Season for which the forecasts are required (e.g., ‘OND’, ‘MAM’).</p>
+</dd>
+<dt>variables<span class="classifier">list of str</span></dt><dd><p>List of variable names to include in the forecast (e.g., [‘pet’, ‘pre’]).</p>
+</dd>
+<dt>postpp_path<span class="classifier">str</span></dt><dd><p>Path to the post-processing configuration or scripts.</p>
+</dd>
+<dt>threshold_path<span class="classifier">str</span></dt><dd><p>Path to the file containing threshold values for the variables.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing processed deterministic forecasts for each ensemble member. The structure
+typically includes ensemble members, their corresponding forecasts, and any additional post-processed
+data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>xarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Ensure that the <cite>model_path</cite> contains the necessary data files for the specified <cite>model_name</cite>.</p></li>
+<li><p>The <cite>postpp_path</cite> should point to valid configurations or scripts for applying post-processing methods.</p></li>
+<li><p>Thresholds provided in <cite>threshold_path</cite> should match the variables specified.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">get_deterministic_forecast_ensemble</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">model_path</span><span class="o">=</span><span class="s2">&quot;/data/models/&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;GFS&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">season</span><span class="o">=</span><span class="s2">&quot;OND&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pre&quot;</span><span class="p">,</span> <span class="s2">&quot;pet&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">postpp_path</span><span class="o">=</span><span class="s2">&quot;/config/postprocessing/&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">threshold_path</span><span class="o">=</span><span class="s2">&quot;/config/thresholds/&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">])</span>
+<span class="go">[0.5, 0.2, 0.8]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.forecast.read_dataset">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.forecast.</span></span><span class="sig-name descname"><span class="pre">read_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tht'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/forecast.html#read_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.forecast.read_dataset" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="cuwalid-forecasting-components-n02c-cuwalid-had-get-extremes-quantiles-multi-netcdf-module">
-<h2>cuwalid.forecasting.components.N02c_cuwalid_HAD_get_extremes_quantiles_multi_netcdf module<a class="headerlink" href="#cuwalid-forecasting-components-n02c-cuwalid-had-get-extremes-quantiles-multi-netcdf-module" title="Permalink to this heading"></a></h2>
+<section id="module-cuwalid.forecasting.components.helper_functions">
+<span id="cuwalid-forecasting-components-helper-functions-module"></span><h2>cuwalid.forecasting.components.helper_functions module<a class="headerlink" href="#module-cuwalid.forecasting.components.helper_functions" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.helper_functions.add_label_features">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.helper_functions.</span></span><span class="sig-name descname"><span class="pre">add_label_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geodata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language_font</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundbox</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontstyle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'normal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">halignament</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'center'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/helper_functions.html#add_label_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.helper_functions.add_label_features" title="Permalink to this definition"></a></dt>
+<dd><p>Add labels to plot from geopandas</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geodata</strong> (<em>geopandas datasets</em>) – </p></li>
+<li><p><strong>language_font</strong> (<em>Matplotlib font object</em>) – </p></li>
+<li><p><strong>fontsize</strong> (<em>int</em>) – defalult 6</p></li>
+<li><p><strong>boundbox</strong> – None</p></li>
+<li><p><strong>offset</strong> (<em>float</em>) – distance from the location, default 0</p></li>
+<li><p><strong>fontstyle</strong> – “normal”</p></li>
+<li><p><strong>halignament</strong> – “center”</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – transparency 1.0</p></li>
+<li><p><strong>color</strong> (<em>str</em>) – color, default is “k”</p></li>
+<li><p><strong>language</strong> (<em>str</em>) – name of the field to plot</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.helper_functions.add_scale_bar">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.helper_functions.</span></span><span class="sig-name descname"><span class="pre">add_scale_bar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.05,</span> <span class="pre">0.05)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linewidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1</span> <span class="pre">km'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/helper_functions.html#add_scale_bar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.helper_functions.add_scale_bar" title="Permalink to this definition"></a></dt>
+<dd><p>Add a scale bar to a Matplotlib Axes object.</p>
+<p>Parameters:
+- ax: The Matplotlib Axes object to add the scale bar to.
+- length: Length of the scale bar in Axes coordinates (0 to 1).
+- location: Tuple indicating the location of the scale bar in Axes coordinates.
+- linewidth: The thickness of the scale bar line.
+- text: A string with the text label for the scale bar.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.helper_functions.bounding_box">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.helper_functions.</span></span><span class="sig-name descname"><span class="pre">bounding_box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/helper_functions.html#bounding_box"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.helper_functions.bounding_box" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.helper_functions.get_mask">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.helper_functions.</span></span><span class="sig-name descname"><span class="pre">get_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmask</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/helper_functions.html#get_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.helper_functions.get_mask" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.helper_functions.get_season_dataset">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.helper_functions.</span></span><span class="sig-name descname"><span class="pre">get_season_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/helper_functions.html#get_season_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.helper_functions.get_season_dataset" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.helper_functions.load_config">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.helper_functions.</span></span><span class="sig-name descname"><span class="pre">load_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/helper_functions.html#load_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.helper_functions.load_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.helper_functions.read_dataset">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.helper_functions.</span></span><span class="sig-name descname"><span class="pre">read_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tht'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/helper_functions.html#read_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.helper_functions.read_dataset" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.helper_functions.reproject_dataset">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.helper_functions.</span></span><span class="sig-name descname"><span class="pre">reproject_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oldPP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newPP</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/helper_functions.html#reproject_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.helper_functions.reproject_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Transform projection system
+oldPP and newPP have to be defined first</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Data</strong> (<em>Dataset</em>) – </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Data</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.helper_functions.resample_dataset">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.helper_functions.</span></span><span class="sig-name descname"><span class="pre">resample_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Y'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/helper_functions.html#resample_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.helper_functions.resample_dataset" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.helper_functions.season_name_to_number">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.helper_functions.</span></span><span class="sig-name descname"><span class="pre">season_name_to_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">season</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/helper_functions.html#season_name_to_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.helper_functions.season_name_to_number" title="Permalink to this definition"></a></dt>
+<dd><p>Converts a string representing a season to a list of numbers indicating corresponding months.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>season</strong> (<em>str</em><em> or </em><em>list</em><em> or </em><em>int</em>) – The season represented by three capital letters (e.g., “OND”) or a list of month numbers.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of integers representing the months for the given season. If the input is already
+a list of months, it is returned as is. If the input is not recognized, it returns
+the input wrapped in a list.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Supported season codes:
+- “MAM” : March, April, May [3, 4, 5]
+- “OND” : October, November, December [10, 11, 12]
+- “JJS” : June, July, August [6, 7, 8]
+- “JF”  : January, February [1, 2]
+- “JJSA”: June, July, August, September [6, 7, 8, 9]</p>
+<p>If the input is not a string or a list, the function wraps the input in a list.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">season_name_to_number</span><span class="p">(</span><span class="s2">&quot;MAM&quot;</span><span class="p">)</span>
+<span class="go">[3, 4, 5]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">season_name_to_number</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">[1, 2, 3]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">season_name_to_number</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">[2]</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
-<section id="cuwalid-forecasting-components-n02d-cuwalid-had-get-average-multi-netcdf-module">
-<h2>cuwalid.forecasting.components.N02d_cuwalid_HAD_get_average_multi_netcdf module<a class="headerlink" href="#cuwalid-forecasting-components-n02d-cuwalid-had-get-average-multi-netcdf-module" title="Permalink to this heading"></a></h2>
+<section id="module-cuwalid.forecasting.components.hindcast">
+<span id="cuwalid-forecasting-components-hindcast-module"></span><h2>cuwalid.forecasting.components.hindcast module<a class="headerlink" href="#module-cuwalid.forecasting.components.hindcast" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.hindcast.get_TWSA_from_mult_files">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.hindcast.</span></span><span class="sig-name descname"><span class="pre">get_TWSA_from_mult_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/hindcast.html#get_TWSA_from_mult_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.hindcast.get_TWSA_from_mult_files" title="Permalink to this definition"></a></dt>
+<dd><p>Get TWSA - total water storage anomalies form multiple netcdf files</p>
+<section id="id2">
+<h3>Parameters:<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>model_path: path (str)</dt><dd><p>folder path of model outputs files</p>
+</dd>
+<dt>model_name: str</dt><dd><p>model name</p>
+</dd>
+<dt>start_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+<dt>end_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+</dl>
 </section>
-<section id="cuwalid-forecasting-components-n03-cuwalid-had-get-anomalies-multi-netcdf-module">
-<h2>cuwalid.forecasting.components.N03_cuwalid_HAD_get_anomalies_multi_netcdf module<a class="headerlink" href="#cuwalid-forecasting-components-n03-cuwalid-had-get-anomalies-multi-netcdf-module" title="Permalink to this heading"></a></h2>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.hindcast.get_additional_variables_multi_netcdf">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.hindcast.</span></span><span class="sig-name descname"><span class="pre">get_additional_variables_multi_netcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/hindcast.html#get_additional_variables_multi_netcdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.hindcast.get_additional_variables_multi_netcdf" title="Permalink to this definition"></a></dt>
+<dd><p>Get WRSI water satisfaction index and total evapotranspiration</p>
+<section id="id3">
+<h3>Parameters:<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>model_path: path (str)</dt><dd><p>folder path of model outputs files</p>
+</dd>
+<dt>model_name: str</dt><dd><p>model name</p>
+</dd>
+<dt>start_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+<dt>end_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+</dl>
 </section>
-<section id="cuwalid-forecasting-components-n04a-cuwalid-had-get-tercile-hindcast-fluxes-module">
-<h2>cuwalid.forecasting.components.N04a_cuwalid_HAD_get_tercile_hindcast_fluxes module<a class="headerlink" href="#cuwalid-forecasting-components-n04a-cuwalid-had-get-tercile-hindcast-fluxes-module" title="Permalink to this heading"></a></h2>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.hindcast.get_anomalies_multi_netcdf">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.hindcast.</span></span><span class="sig-name descname"><span class="pre">get_anomalies_multi_netcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/hindcast.html#get_anomalies_multi_netcdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.hindcast.get_anomalies_multi_netcdf" title="Permalink to this definition"></a></dt>
+<dd><p>Get TWSA - total water storage anomalies form multiple netcdf files</p>
+<section id="id4">
+<h3>Parameters:<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>model_path: path (str)</dt><dd><p>folder path of model outputs files</p>
+</dd>
+<dt>model_name: str</dt><dd><p>model name</p>
+</dd>
+<dt>start_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+<dt>end_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+</dl>
 </section>
-<section id="cuwalid-forecasting-components-n04b-cuwalid-had-get-tercile-hindcast-extreme-values-module">
-<h2>cuwalid.forecasting.components.N04b_cuwalid_HAD_get_tercile_hindcast_extreme_values module<a class="headerlink" href="#cuwalid-forecasting-components-n04b-cuwalid-had-get-tercile-hindcast-extreme-values-module" title="Permalink to this heading"></a></h2>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.hindcast.get_average_multi_netcdf">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.hindcast.</span></span><span class="sig-name descname"><span class="pre">get_average_multi_netcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/hindcast.html#get_average_multi_netcdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.hindcast.get_average_multi_netcdf" title="Permalink to this definition"></a></dt>
+<dd><p>Get TWSA - total water storage anomalies form multiple netcdf files</p>
+<section id="id5">
+<h3>Parameters:<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>model_path: path (str)</dt><dd><p>folder path of model outputs files</p>
+</dd>
+<dt>model_name: str</dt><dd><p>model name</p>
+</dd>
+<dt>start_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+<dt>end_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+</dl>
 </section>
-<section id="cuwalid-forecasting-components-n05-cuwalid-had-extract-forecasting-variable-module">
-<h2>cuwalid.forecasting.components.N05_cuwalid_HAD_extract_forecasting_variable module<a class="headerlink" href="#cuwalid-forecasting-components-n05-cuwalid-had-extract-forecasting-variable-module" title="Permalink to this heading"></a></h2>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.hindcast.get_csv_TS_files_from_multi_CSV">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.hindcast.</span></span><span class="sig-name descname"><span class="pre">get_csv_TS_files_from_multi_CSV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/hindcast.html#get_csv_TS_files_from_multi_CSV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.hindcast.get_csv_TS_files_from_multi_CSV" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.hindcast.get_extremes_quantiles_multi_netcdf">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.hindcast.</span></span><span class="sig-name descname"><span class="pre">get_extremes_quantiles_multi_netcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/hindcast.html#get_extremes_quantiles_multi_netcdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.hindcast.get_extremes_quantiles_multi_netcdf" title="Permalink to this definition"></a></dt>
+<dd><p>Get TWSA - total water storage anomalies form multiple netcdf files</p>
+<section id="id6">
+<h3>Parameters:<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>model_path: path (str)</dt><dd><p>folder path of model outputs files</p>
+</dd>
+<dt>model_name: str</dt><dd><p>model name</p>
+</dd>
+<dt>start_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+<dt>end_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+</dl>
 </section>
-<section id="cuwalid-forecasting-components-n06-cuwalid-had-get-areas-terciles-module">
-<h2>cuwalid.forecasting.components.N06_cuwalid_HAD_get_areas_terciles module<a class="headerlink" href="#cuwalid-forecasting-components-n06-cuwalid-had-get-areas-terciles-module" title="Permalink to this heading"></a></h2>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.hindcast.get_monthly_average_multi_netcdf">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.hindcast.</span></span><span class="sig-name descname"><span class="pre">get_monthly_average_multi_netcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/hindcast.html#get_monthly_average_multi_netcdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.hindcast.get_monthly_average_multi_netcdf" title="Permalink to this definition"></a></dt>
+<dd><p>Function to ger files with monthly average values of each variable from
+multi-files model simulation
+Parameter
+———</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.hindcast.get_name_list_historical_netcdf_files">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.hindcast.</span></span><span class="sig-name descname"><span class="pre">get_name_list_historical_netcdf_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ifield</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/hindcast.html#get_name_list_historical_netcdf_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.hindcast.get_name_list_historical_netcdf_files" title="Permalink to this definition"></a></dt>
+<dd><p>Get list of name of historical files when multiple files are
+are analysed</p>
+<section id="id7">
+<h3>Parameters:<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>model_path: path (str)</dt><dd><p>folder path of model outputs files</p>
+</dd>
+<dt>model_name: str</dt><dd><p>model name</p>
+</dd>
+<dt>start_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+<dt>end_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+</dl>
 </section>
-<section id="cuwalid-forecasting-components-n07-cuwalid-had-get-update-twsa-module">
-<h2>cuwalid.forecasting.components.N07_cuwalid_HAD_get_update_TWSA module<a class="headerlink" href="#cuwalid-forecasting-components-n07-cuwalid-had-get-update-twsa-module" title="Permalink to this heading"></a></h2>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.hindcast.get_percentiles_multi_files">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.hindcast.</span></span><span class="sig-name descname"><span class="pre">get_percentiles_multi_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/hindcast.html#get_percentiles_multi_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.hindcast.get_percentiles_multi_files" title="Permalink to this definition"></a></dt>
+<dd><p>Get TWSA - total water storage anomalies form multiple netcdf files</p>
+<section id="id8">
+<h3>Parameters:<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>model_path: path (str)</dt><dd><p>folder path of model outputs files</p>
+</dd>
+<dt>model_name: str</dt><dd><p>model name</p>
+</dd>
+<dt>start_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+<dt>end_year: int</dt><dd><p>starting year of the analysis</p>
+</dd>
+</dl>
 </section>
-<section id="cuwalid-forecasting-components-n08-cuwalid-had-get-updated-twsa-ensamble-module">
-<h2>cuwalid.forecasting.components.N08_cuwalid_HAD_get_updated_TWSA_ensamble module<a class="headerlink" href="#cuwalid-forecasting-components-n08-cuwalid-had-get-updated-twsa-ensamble-module" title="Permalink to this heading"></a></h2>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.hindcast.read_dataset">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.hindcast.</span></span><span class="sig-name descname"><span class="pre">read_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tht'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/hindcast.html#read_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.hindcast.read_dataset" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.hindcast.resample_dataset">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.hindcast.</span></span><span class="sig-name descname"><span class="pre">resample_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Y'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/hindcast.html#resample_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.hindcast.resample_dataset" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.hindcast.save_xarray_dataset_as_netcdf">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.hindcast.</span></span><span class="sig-name descname"><span class="pre">save_xarray_dataset_as_netcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/hindcast.html#save_xarray_dataset_as_netcdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.hindcast.save_xarray_dataset_as_netcdf" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="cuwalid-forecasting-components-n09-cuwalid-had-get-ensamble-forecasting-module">
-<h2>cuwalid.forecasting.components.N09_cuwalid_HAD_get_ensamble_forecasting module<a class="headerlink" href="#cuwalid-forecasting-components-n09-cuwalid-had-get-ensamble-forecasting-module" title="Permalink to this heading"></a></h2>
+<section id="module-cuwalid.forecasting.components.map_properties">
+<span id="cuwalid-forecasting-components-map-properties-module"></span><h2>cuwalid.forecasting.components.map_properties module<a class="headerlink" href="#module-cuwalid.forecasting.components.map_properties" title="Permalink to this heading"></a></h2>
+<p>forecasting_map_properties</p>
 </section>
-<section id="cuwalid-forecasting-components-n10a-cuwalid-had-get-probabilistic-tercile-forecast-ensamble-module">
-<h2>cuwalid.forecasting.components.N10a_cuwalid_HAD_get_probabilistic_tercile_forecast_ensamble module<a class="headerlink" href="#cuwalid-forecasting-components-n10a-cuwalid-had-get-probabilistic-tercile-forecast-ensamble-module" title="Permalink to this heading"></a></h2>
+<section id="module-cuwalid.forecasting.components.plot_hydro_forecast">
+<span id="cuwalid-forecasting-components-plot-hydro-forecast-module"></span><h2>cuwalid.forecasting.components.plot_hydro_forecast module<a class="headerlink" href="#module-cuwalid.forecasting.components.plot_hydro_forecast" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.plot_hydro_forecast.plot_deterministic_forecast">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.plot_hydro_forecast.</span></span><span class="sig-name descname"><span class="pre">plot_deterministic_forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iyear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2022</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/plot_hydro_forecast.html#plot_deterministic_forecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.plot_hydro_forecast.plot_deterministic_forecast" title="Permalink to this definition"></a></dt>
+<dd><p>This function creates a figure from the tercile forecats
+file. Variabkes names of the file must be: “AN”, “NN, “BN”.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.plot_hydro_forecast.plot_tercile_probability_forecast">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.plot_hydro_forecast.</span></span><span class="sig-name descname"><span class="pre">plot_tercile_probability_forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">postpp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iyear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2022</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/plot_hydro_forecast.html#plot_tercile_probability_forecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.plot_hydro_forecast.plot_tercile_probability_forecast" title="Permalink to this definition"></a></dt>
+<dd><p>This function creates a figure from the tercile forecats
+file. Variabkes names of the file must be: “AN”, “NN, “BN”.</p>
+</dd></dl>
+
 </section>
-<section id="cuwalid-forecasting-components-n10b-cuwalid-had-get-deterministic-forecast-ensamble-module">
-<h2>cuwalid.forecasting.components.N10b_cuwalid_HAD_get_deterministic_forecast_ensamble module<a class="headerlink" href="#cuwalid-forecasting-components-n10b-cuwalid-had-get-deterministic-forecast-ensamble-module" title="Permalink to this heading"></a></h2>
+<section id="module-cuwalid.forecasting.components.plot_impact_forecast">
+<span id="cuwalid-forecasting-components-plot-impact-forecast-module"></span><h2>cuwalid.forecasting.components.plot_impact_forecast module<a class="headerlink" href="#module-cuwalid.forecasting.components.plot_impact_forecast" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.plot_impact_forecast.get_labels_by_lenguage">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.plot_impact_forecast.</span></span><span class="sig-name descname"><span class="pre">get_labels_by_lenguage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/plot_impact_forecast.html#get_labels_by_lenguage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.plot_impact_forecast.get_labels_by_lenguage" title="Permalink to this definition"></a></dt>
+<dd><p>Funciton to create labels with different languages</p>
+<section id="id9">
+<h3>Parameters:<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>dictionary: dictionary</dt><dd><p>dictionary containing all terms in different languages</p>
+</dd>
+<dt>language: list</dt><dd><p>list of languages to print</p>
+</dd>
+<dt>iterm<span class="classifier">str</span></dt><dd><p>name of the word/term to include in the label</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>label</strong> – string containing all labels to pinclude in the map</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </section>
-<section id="cuwalid-forecasting-components-n11a-cuwalid-had-plot-tercile-probability-forecast-module">
-<h2>cuwalid.forecasting.components.N11a_cuwalid_HAD_plot_tercile_probability_forecast module<a class="headerlink" href="#cuwalid-forecasting-components-n11a-cuwalid-had-plot-tercile-probability-forecast-module" title="Permalink to this heading"></a></h2>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.plot_impact_forecast.plot_map">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.plot_impact_forecast.</span></span><span class="sig-name descname"><span class="pre">plot_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Zoom'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'region'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Kenya'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">place_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Burat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">place_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">29</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iseason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'OND'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iwater_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Groundwater'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iyear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2010</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['English',</span> <span class="pre">'Swahili',</span> <span class="pre">'Amharic',</span> <span class="pre">'Oromo',</span> <span class="pre">'Somali']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">river_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">place_code_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape_path_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/plot_impact_forecast.html#plot_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.plot_impact_forecast.plot_map" title="Permalink to this definition"></a></dt>
+<dd><p>Plot maps</p>
+<section id="id10">
+<h3>Parameters:<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>plot_scale<span class="classifier">string</span></dt><dd><p>default Zoom</p>
+</dd>
+</dl>
+<p>region=”region”,
+country_name=”Kenya”,
+place_name=”Burat”,
+place_code=29,
+iseason=”OND”,
+iwater_status=”Groundwater”,
+iyear=2010,
+ilanguage=”English”,
+output_dir=None,
+netcdf_path=None,
+threshold_path=None,
+mask_path=None,
+river_path=None,
+fname_output=None,
+place_code_field : bool</p>
+<blockquote>
+<div><p>Name of shapefile attribute to use as poligon, default is False,
+it will use the place name,</p>
+</div></blockquote>
+<p>shape_path</p>
 </section>
-<section id="cuwalid-forecasting-components-n11b-cuwalid-had-plot-deterministic-forecast-module">
-<h2>cuwalid.forecasting.components.N11b_cuwalid_HAD_plot_deterministic_forecast module<a class="headerlink" href="#cuwalid-forecasting-components-n11b-cuwalid-had-plot-deterministic-forecast-module" title="Permalink to this heading"></a></h2>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h3>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-cuwalid.forecasting.components.read_paths">
+<span id="cuwalid-forecasting-components-read-paths-module"></span><h2>cuwalid.forecasting.components.read_paths module<a class="headerlink" href="#module-cuwalid.forecasting.components.read_paths" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.read_paths.get_paths">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.read_paths.</span></span><span class="sig-name descname"><span class="pre">get_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iwater_status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iseason</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape_path_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">place_code_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">river_shapefile_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">river_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/read_paths.html#get_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.read_paths.get_paths" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Function to read all variables and path required for running the
+impact based forecascasting component. This fuction first check if
+a set of datasets has been provided, otherwise it look at the default
+dataset (Africa region). All paths and variables available for the specied
+place are uploaded. The output python object is used in the impact_forecasting.py
+function</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.forecasting.components.read_paths.read_dataset_list_json">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.components.read_paths.</span></span><span class="sig-name descname"><span class="pre">read_dataset_list_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter_dataset_list_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/components/read_paths.html#read_dataset_list_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.components.read_paths.read_dataset_list_json" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This function read the parameter_dataset_list from a json file, if json
+file not provided, default values from default_parameter_dataset.py are used</p>
+</dd></dl>
+
 </section>
 <section id="module-cuwalid.forecasting.components">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cuwalid.forecasting.components" title="Permalink to this heading"></a></h2>
@@ -167,8 +837,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cuwalid.forecasting.html" class="btn btn-neutral float-left" title="Forecasting Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cuwalid.tests.html" class="btn btn-neutral float-right" title="Tests Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cuwalid.forecasting.html" class="btn btn-neutral float-left" title="cuwalid.forecasting package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuwalid.stopet.html" class="btn btn-neutral float-right" title="cuwalid.stopet package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SAMPLING STORM CENTERS &mdash; CUWALID 0.0.1 documentation</title>
@@ -12,6 +12,8 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
@@ -70,7 +72,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">cuwalid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../Authors.html">Introduction</a></li>
@@ -115,8 +117,8 @@
 <hr class="docutils" />
 <p>STORM samples storm centres following the complete spatial randomness (CSR) framework implemented throughout the <a class="reference external" href="http://pysal.org/pointpats/">Pointpats</a> library. Please check out the aforementioned reference, which offers more in-depth mathematical details. For now, suffice to say that the approach presented below allows a faster generation of random samples following a <a class="reference external" href="https://en.wikipedia.org/wiki/Poisson_point_process">Poisson (Point) Process</a> inside a (delimited) region (e.g.,
 <span class="math notranslate nohighlight">\(\lambda\)</span>-conditioned CSR, where <span class="math notranslate nohighlight">\(\lambda\)</span> represents the intensity of events).</p>
-<p>Note: Unlike the PDF-parameterization shown in notebook <a class="reference internal" href="one_.html"><span class="doc">one_</span></a>, the spatial parameters/constants displayed here do represent the HAD (Horn-of-Africa Drylands).</p>
-<p>Most of the variables shown in caps (constraining the modeling and performance of STORM) can be found and set up in the <a class="reference external" href="../parameters.py">parameters.py</a> module.</p>
+<p>Note: Unlike the PDF-parameterization shown in notebook<a class="reference internal" href="one_.html"><span class="doc">one_</span></a>, the spatial parameters/constants displayed here do represent the HAD (Horn-of-Africa Drylands).</p>
+<p>Most of the variables shown in caps (constraining the modeling and performance of STORM) can be found and set up in the<a class="reference external" href="../parameters.py">parameters.py</a>module.</p>
 <hr class="docutils" />
 <p>The sampling and processing of storm centres is done by STORM through the functions: SCENTRES, SHP_REGION, and SHP_REGION_GRID of the <a class="reference external" href="../rainfall.py">rainfall.py</a> module.</p>
 <hr class="docutils" />
@@ -326,7 +328,7 @@
 </section>
 <section id="Visualization-(via-Cartopy)">
 <h3>Visualization (via Cartopy)<a class="headerlink" href="#Visualization-(via-Cartopy)" title="Permalink to this heading"></a></h3>
-<p>Note: The use of Proj strings is being higly discouraged (check <a class="reference external" href="https://gis.stackexchange.com/questions/374508/spproj4string-equivalent-in-the-proj6-framework/374968#374968">this</a> or <a class="reference external" href="https://inbo.github.io/tutorials/tutorials/spatial_crs_coding/">this</a> out).</p>
+<p>Note: The use of Proj strings is being higly discouraged (check<a class="reference external" href="https://gis.stackexchange.com/questions/374508/spproj4string-equivalent-in-the-proj6-framework/374968#374968">this</a>or<a class="reference external" href="https://inbo.github.io/tutorials/tutorials/spatial_crs_coding/">this</a>out).</p>
 <p>Cartopy allows some few <a class="reference external" href="https://scitools.org.uk/cartopy/docs/v0.15/crs/projections.html">projections</a> defined mainly? via <a class="reference external" href="https://proj.org/en/9.3/">Proj</a> strings. <a class="reference external" href="https://pyproj4.github.io/pyproj/stable/">Pyproj</a> allows the conversion from WKT to Proj strings; something like…</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
@@ -522,7 +524,7 @@
 <img alt="../../_images/notebooks_STORM_two__20_0.png" src="../../_images/notebooks_STORM_two__20_0.png" />
 </div>
 </div>
-<p>You’re encouraged to test/bring your own SHP into the SHP_FILE variable (mind the WKT_OGC!)</p>
+<p>You’re encouraged to test/bring your own SHP into theSHP_FILEvariable (mind theWKT_OGC!)</p>
 </section>
 </section>
 </section>

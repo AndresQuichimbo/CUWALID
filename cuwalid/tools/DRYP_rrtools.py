@@ -18,7 +18,7 @@ def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda):
 	"""Calculate soil water content at field capacity and available water content
 	
 	Parameters:
-	----------
+	-----------
 	fname_porosity : str
 		raster file name of porosity
 	fname_psi : str
@@ -65,7 +65,7 @@ def create_raster_flowdirection_dryp(fname, fname_out, translate=True, format_da
 	"""Create raster file from a raster D8 flow direction map
 	
 	Parameters:
-	----------
+	-----------
 	fname : str
 		filename path of the flow direction map, the raster
 		file has to be in D8 direction format
@@ -87,7 +87,7 @@ def create_raster_flowdirection_dryp(fname, fname_out, translate=True, format_da
 		- i-digit: i-digit format
 
 	Returns:
-	-------
+	--------
 	None
 		None, but creates a raster file with the specified name.
 		The raster file will contain the flow direction values in Landlab format.
@@ -95,7 +95,7 @@ def create_raster_flowdirection_dryp(fname, fname_out, translate=True, format_da
 		raster file with the specified name.
 
 	Example:
-	-------
+	--------
 	>>> fname = "flow_direction.asc
 	>>> fname_out = "flow_direction_landlab.asc
 	>>> create_raster_flowdirection_dryp(fname, fname_out, translate=True)
@@ -160,7 +160,7 @@ def create_raster_river_network(fname, threshold, fname_out,
 	threshold specified for the minimm number of cells or minimum area.
 	
 	Parameters:
-	----------
+	-----------
 	fname : str
 		filename path of the flow accumulation map, this file raster
 		file can be created by get_watershed_area() funtion
@@ -183,7 +183,7 @@ def create_raster_river_network(fname, threshold, fname_out,
 		raster file with the specified name.
 	
 	Example:
-	-------
+	--------
 
 	>>> fname = "flow_accumulation.asc"
 	>>> threshold = 1000	# number of cells or area in square meters
@@ -225,7 +225,7 @@ def create_raster_bc_at_point(fname_wte, fname_bc_head,
 	(non data values in DRYP).
 	
 	Parameters:
-	----------
+	-----------
 	fname_wte : str
 		file path of the raster file
 		The raster file should be in a format supported by rasterio (e.g., GeoTIFF).
@@ -251,7 +251,7 @@ def create_raster_bc_at_point(fname_wte, fname_bc_head,
 		Note: The output raster file will be created in the same format as the input raster file.
 
 	Returns:
-	-------
+	--------
 	None
 		None, but creates a raster file with the specified name.
 		The raster file will contain the values at the specified locations.
@@ -259,7 +259,7 @@ def create_raster_bc_at_point(fname_wte, fname_bc_head,
 		raster file with the specified name.
 	
 	Example:
-	-------
+	--------
 	>>> fname_wte = "water_table_elevation.asc"
 	>>> fname_bc_head = "boundary_conditions.csv"
 	>>> fname_out = "boundary_conditions_raster.asc"
@@ -304,14 +304,14 @@ def create_raster_from_shapefile(fname_shp, fname_raster, fname_out):
 	as mask
 	
 	Parameters:
-	----------
+	-----------
 	fname_shp : str
 		file path of shapefile
 	fname_raster : str
 		file path of raster file
 
 	Returns:
-	-------
+	--------
 	None
 		None, but creates a raster file with the specified name.
 		The raster file will contain the shapefile geometry as a mask.
@@ -356,7 +356,7 @@ def create_raster_landlab_idnodes(fname, fname_out):
 		path of raster file
 		
 	Returns:
-	-------
+	--------
 	None
 		None, but creates a raster file with the specified name.
 		The raster file will contain the idnodes values in Landlab format.
@@ -364,7 +364,7 @@ def create_raster_landlab_idnodes(fname, fname_out):
 		raster file with the specified name.
 
 	Example:
-	-------
+	--------
 
 	>>> fname = "raster.asc"
 	>>> fname_out = "idnodes.asc"
@@ -457,7 +457,7 @@ def save_raster(fname, data, profile, transform):
 	"""This function saves a raster file with the specified name.
 	
 	Parameters:
-	----------
+	-----------
 	fname : str
 		file name of the raster
 		The raster file will be created with the specified name.
@@ -493,14 +493,14 @@ def save_raster(fname, data, profile, transform):
 
 
 	Returns:
-	-------
+	--------
 	None
 		None, but creates a raster file with the specified name.
 		The raster file will contain the data and properties specified in the profile.
 		Note: The function does not return any values, but it saves the raster file with the specified name.
 
 	Example:
-	-------
+	--------
 
 	>>> fname = "output_raster.asc"
 	>>> data = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
@@ -527,7 +527,7 @@ def get_raster_properties(fname):
 
 	
 	Parameters:
-	----------
+	-----------
 	fname : str
 		file name of the raster
 		The raster file should be in a format supported by rasterio (e.g., GeoTIFF).
@@ -537,7 +537,7 @@ def get_raster_properties(fname):
 		Example: "path/to/raster_file.tif"
 	
 	Returns:
-	-------
+	--------
 	grid_ncols : int
 		number of columns in the raster file
 		The number of columns in the raster file.
@@ -611,7 +611,7 @@ def clip_raster_by_mask(fname, fname_mask, fname_output):
 	The output file will be 
 
 	Parameters:
-	----------    
+	-----------    
 	fname : str
 		raster file name
 	fname_mask : str
@@ -620,7 +620,7 @@ def clip_raster_by_mask(fname, fname_mask, fname_output):
 		file name for the clipped raster dataset
 
 	Returns:
-	-------
+	--------
 	file
 		clipped raster file
 	
@@ -657,7 +657,7 @@ def clip_raster_by_extent(fname, fname_output, extent):
 	"""Function to clip raster files by extent.
 	
 	Parameters:
-	----------    
+	-----------    
 	fname : str
 		raster file name
 	fname_out : str
@@ -666,7 +666,7 @@ def clip_raster_by_extent(fname, fname_output, extent):
 		list of boundaries to clip, [xmin, ymin, xmax, ymax]
 	
 	Returns:
-	-------
+	--------
 	None
 		None, but creates a raster file with the specified name.
 		The raster file will contain the clipped raster values.
@@ -674,7 +674,7 @@ def clip_raster_by_extent(fname, fname_output, extent):
 		raster file with the specified name.
 
 	Example:
-	-------
+	--------
 	>>> fname = "raster.asc"
 	>>> fname_output = "clipped_raster.asc"
 	>>> extent = [xmin, ymin, xmax, ymax]
@@ -726,12 +726,12 @@ def find_region_bounds(array):
 	than zero.
 
 	Parameters:
-	----------
+	-----------
 	array : numpy array
 		2D numpy array (e.g.: from a raster file)
 	
 	Returns:
-	-------
+	--------
 		min_row, max_row, min_col, max_col : int
 		indices of the region in the array
 		These indices represent the minimum and maximum row and column indices
@@ -993,7 +993,7 @@ def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
 		0 1 2
 
 	Parameters:
-	----------
+	-----------
 	flowdir : numpy array of int
 		flow direction map in D8 format
 	format_data : str
@@ -1005,7 +1005,7 @@ def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
 		- i-digit: i-digit format
 
 	Returns:
-	-------
+	--------
 	drinodes: numpy array of ints
 		flow direction map in landlab format
 

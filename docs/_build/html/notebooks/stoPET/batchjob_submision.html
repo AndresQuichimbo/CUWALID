@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Learning objective: &mdash; CUWALID 0.0.1 documentation</title>
@@ -12,6 +12,8 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
@@ -70,7 +72,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">cuwalid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../Authors.html">Introduction</a></li>
@@ -104,9 +106,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <table><tr><td><p><img alt="b35797da46484dbaba5c58f1204d5487" class="no-scaled-link" src="../../_images/CardiffUniversity.PNG" style="width: 250px;" /></p>
-</td><td><p><img alt="6c20773aa0de417b821353689a38407d" class="no-scaled-link" src="../../_images/Down2Earth.PNG" style="width: 250px;" /></p>
-</td><td><p><img alt="8d9cf0be40a5423986f021963b5f5aec" class="no-scaled-link" src="../../_images/UniversityOfBristol.PNG" style="width: 250px;" /></p>
+  <table><tr><td><p><img alt="9ce2efe7ea1a499d8f8ae56c526821f6" class="no-scaled-link" src="../../_images/CardiffUniversity.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="ad87ccb27b8245bdac65ba014366933d" class="no-scaled-link" src="../../_images/Down2Earth.PNG" style="width: 250px;" /></p>
+</td><td><p><img alt="a5b7881cbd69493985188f671a3ec994" class="no-scaled-link" src="../../_images/UniversityOfBristol.PNG" style="width: 250px;" /></p>
 </td></tr></table><section id="Learning-objective:">
 <h1>Learning objective:<a class="headerlink" href="#Learning-objective:" title="Permalink to this heading"></a></h1>
 <ul class="simple">
@@ -184,7 +186,7 @@
 </div>
 </div>
 <p>The above function helps us write the bash files with the necessary commands for the HPC job submission. As you can see, most of the lines are common and similar required by the HPC, hence, we can use this function to write any bash file we need with little modification. An example of the bash file produced using this function is shown below.</p>
-<table><tr><td><p><img alt="5c22611e2ac04d4d995cbf486832fc9e" class="no-scaled-link" src="../../_images/bashfile.png" style="width: 800px;" /></p>
+<table><tr><td><p><img alt="bb0e2e41f35a40fc890fb8e29f9f88d7" class="no-scaled-link" src="../../_images/bashfile.png" style="width: 800px;" /></p>
 </td></tr></table><p>This will be what is written in the imerg_download_2012.bash according to the example.</p>
 <p>If there are multiple jobs that use similar python scripts, then what you have to do is run above function to write the bash files with same <strong>suffix</strong> and a differetiating <strong>prefix</strong> so that we can submit it at the same time. In the above example we can see the file name is <strong>imerg_download_year.bash</strong> here the imerg_download is the prefix while the year is suffix. Now we can write any number of years we want to download (e.g imerg_download_2018.bash, imerg_download_2019.bash, …). Once we
 prepare these files, then we are ready to submit multiple jobs to the HPC.</p>
@@ -192,7 +194,7 @@ prepare these files, then we are ready to submit multiple jobs to the HPC.</p>
 <section id="1.3-Submitting-multiple-jobs">
 <h1>1.3 Submitting multiple jobs<a class="headerlink" href="#1.3-Submitting-multiple-jobs" title="Permalink to this heading"></a></h1>
 <p>Once we prepare the bash files containing the jobs we want to run on HPC next is to use a little shell script to submit the jobs. The shell script is given as <strong>runBashFiles.sh</strong>. The file contains a few lines of code that allows to read all the bash files we prepare and sumbit it to the HPC. Here is an example file looks like</p>
-<table><tr><td><p><img alt="cf6ddb913d4d42d794657695762208fc" class="no-scaled-link" src="../../_images/shellfile.png" style="width: 800px;" /></p>
+<table><tr><td><p><img alt="b80cf952984243498d5306ff936e4852" class="no-scaled-link" src="../../_images/shellfile.png" style="width: 800px;" /></p>
 </td></tr></table><p>In the above image as you can see from line 5, all the files that start with <strong>imerg_download_</strong> will be submited to the HPC and the files will be moved to the <strong>bSub_doneME</strong> directory we create earlier (Line 7).</p>
 <p>Line 6 is where you see the <strong>.error</strong> and <strong>.out</strong> files that we discussed above to put any error message and output message from the job will be printed and svaed in the <strong>bSub_logME</strong> directory.</p>
 <table class="docutils align-default">

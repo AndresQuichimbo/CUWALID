@@ -10,6 +10,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -46,7 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">cuwalid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dryp_developers.html">CUWALID: Workflow for contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Authors.html">Introduction</a></li>
@@ -90,7 +92,6 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
- | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -103,7 +104,7 @@
  | <a href="#U"><strong>U</strong></a>
  | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
- | <a href="#X"><strong>X</strong></a>
+ | <a href="#Y"><strong>Y</strong></a>
  | <a href="#Z"><strong>Z</strong></a>
  
 </div>
@@ -116,9 +117,15 @@
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_abstractions.abstractions">abstractions (class in cuwalid.dryp.components.DRYP_abstractions)</a>
 </li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.add_label_features">add_label_features() (in module cuwalid.forecasting.components.helper_functions)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.add_scale_bar">add_scale_bar() (in module cuwalid.forecasting.components.helper_functions)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_store_functions.addtime">addtime() (in module cuwalid.dryp.components.DRYP_store_functions)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.adjust_pet">adjust_pet() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
 </li>
       <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_dryp_tilted_V.aggregate_slice_csv">aggregate_slice_csv() (in module cuwalid.tests.dryp.scripts.test_dryp_tilted_V)</a>
 </li>
@@ -134,15 +141,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_routing.runoff_routing.base_flow_streams">base_flow_streams() (cuwalid.dryp.components.DRYP_routing.runoff_routing method)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.base_round">base_round() (in module cuwalid.storm.rainfall)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.discrete.best">best() (cuwalid.storm.pdfs_.discrete method)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.betas.beta_calc">beta_calc() (cuwalid.storm.pdfs_.betas static method)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.betas">betas (class in cuwalid.storm.pdfs_)</a>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.bounding_box">bounding_box() (in module cuwalid.forecasting.components.helper_functions)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -170,9 +171,17 @@
 </li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_percentage_anomaly">calculate_percentage_anomaly() (in module cuwalid.tools.DRYP_pptools)</a>
 </li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_saturation">calculate_saturation() (in module cuwalid.tools.DRYP_pptools)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_saturation_from_netCDF">calculate_saturation_from_netCDF() (in module cuwalid.tools.DRYP_pptools)</a>
+</li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_seasonal_average_from_netCDF">calculate_seasonal_average_from_netCDF() (in module cuwalid.tools.DRYP_pptools)</a>
 </li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.calculate_soil_paramters">calculate_soil_paramters() (in module cuwalid.tools.DRYP_rrtools)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_storage">calculate_storage() (in module cuwalid.tools.DRYP_pptools)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_storage_from_files">calculate_storage_from_files() (in module cuwalid.tools.DRYP_pptools)</a>
 </li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_twsa_from_netCDF">calculate_twsa_from_netCDF() (in module cuwalid.tools.DRYP_pptools)</a>
 </li>
@@ -182,43 +191,57 @@
 </li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_WRSI_from_netCDF">calculate_WRSI_from_netCDF() (in module cuwalid.tools.DRYP_pptools)</a>
 </li>
+      <li><a href="cuwalid.forecasting.html#cuwalid.forecasting.main_impact_forecast.call_plot_maps">call_plot_maps() (in module cuwalid.forecasting.main_impact_forecast)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.check_forecast_percentage">check_forecast_percentage() (in module cuwalid.stopet.pet_forecast_generation)</a>
+</li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.check_if_field_available_in_netCDF">check_if_field_available_in_netCDF() (in module cuwalid.tools.DRYP_pptools)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.helper_functions.check_missing_files">check_missing_files() (in module cuwalid.stopet.helper_functions)</a>
 </li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.check_raster_alignaments">check_raster_alignaments() (in module cuwalid.tools.DRYP_rrtools)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.circular">circular (class in cuwalid.storm.pdfs_)</a>
-</li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.clapp_horner_retention_curve">clapp_horner_retention_curve() (in module cuwalid.tools.DRYP_rrtools)</a>
 </li>
+      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_json_reader.clean_input">clean_input() (in module cuwalid.dryp.components.DRYP_json_reader)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.clip_dataset_by_region">clip_dataset_by_region() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.clip_dataset_by_region">(in module cuwalid.tools.DRYP_pptools)</a>
+</li>
+      </ul></li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.clip_raster_by_extent">clip_raster_by_extent() (in module cuwalid.tools.DRYP_rrtools)</a>
 </li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.clip_raster_by_mask">clip_raster_by_mask() (in module cuwalid.tools.DRYP_rrtools)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.clipping.clip_trac">clip_trac() (cuwalid.storm.pdfs_.clipping static method)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.icpac_forecast_preprocessing.combine_all_plots_horizontal_seasonal">combine_all_plots_horizontal_seasonal() (in module cuwalid.stopet.icpac_forecast_preprocessing)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.clipping">clipping (class in cuwalid.storm.pdfs_)</a>
+      <li><a href="cuwalid.storm.html#cuwalid.storm.storm.compute_storm">compute_storm() (in module cuwalid.storm.storm)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.copulas.compress">compress() (cuwalid.storm.pdfs_.copulas static method)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.compute_tercile_thresholds">compute_tercile_thresholds() (in module cuwalid.stopet.pet_forecast_generation)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.compute">compute() (in module cuwalid.storm.pdfs_)</a>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.concatenate_netCDF">concatenate_netCDF() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.compute_icpac">compute_icpac() (in module cuwalid.storm.pdfs_)</a>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_convert.convert_text_to_json">convert_text_to_json() (in module cuwalid.tools.DRYP_convert)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.circular.compute_probs">compute_probs() (cuwalid.storm.pdfs_.circular static method)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.construct_pdfs">construct_pdfs() (in module cuwalid.storm.rainfall)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.masking.coords">coords() (cuwalid.storm.pdfs_.masking method)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.copula_sampling">copula_sampling() (in module cuwalid.storm.rainfall)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.copulas">copulas (class in cuwalid.storm.pdfs_)</a>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.create_binary_dataarray">create_binary_dataarray() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.create_coordinate_array">create_coordinate_array() (in module cuwalid.dryp.components.DRYP_io)</a>
 </li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_make_dirs.create_directory_structure">create_directory_structure() (in module cuwalid.tools.CUWALID_make_dirs)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_json_builder.create_ensamble">create_ensamble() (in module cuwalid.tools.CUWALID_json_builder)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_json_builder.create_ensamble">(in module cuwalid.tools.DRYP_json_builder)</a>
+</li>
+      </ul></li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.create_ensamble_simulations">create_ensamble_simulations() (in module cuwalid.tools.DRYP_pptools)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.grid_environment.create_grid">create_grid() (cuwalid.dryp.components.DRYP_io.grid_environment method)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.helper_functions.create_output_folder">create_output_folder() (in module cuwalid.stopet.helper_functions)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_routing.Create_parameter_ManningTL">Create_parameter_ManningTL() (in module cuwalid.dryp.components.DRYP_routing)</a>
 </li>
@@ -247,7 +270,25 @@
       <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_precipitation_csv.create_test_dataframe">create_test_dataframe() (in module cuwalid.tests.dryp.scripts.test_precipitation_csv)</a>
 </li>
       <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_precipitation.create_test_dataset">create_test_dataset() (in module cuwalid.tests.dryp.scripts.test_precipitation)</a>
+
+      <ul>
+        <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_precipitation_step.create_test_dataset">(in module cuwalid.tests.dryp.scripts.test_precipitation_step)</a>
 </li>
+      </ul></li>
+      <li>
+    cuwalid
+
+      <ul>
+        <li><a href="cuwalid.html#module-cuwalid">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.dryp
+
+      <ul>
+        <li><a href="cuwalid.dryp.html#module-cuwalid.dryp">module</a>
+</li>
+      </ul></li>
       <li>
     cuwalid.dryp.components
 
@@ -274,6 +315,34 @@
 
       <ul>
         <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_change_input_files">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.dryp.components.DRYP_dams
+
+      <ul>
+        <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_dams">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.dryp.components.DRYP_defalut_projections
+
+      <ul>
+        <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_defalut_projections">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.dryp.components.DRYP_default_parameters
+
+      <ul>
+        <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_default_parameters">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.dryp.components.DRYP_default_settings
+
+      <ul>
+        <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_default_settings">module</a>
 </li>
       </ul></li>
       <li>
@@ -340,10 +409,24 @@
 </li>
       </ul></li>
       <li>
+    cuwalid.dryp.components.DRYP_json_reader
+
+      <ul>
+        <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_json_reader">module</a>
+</li>
+      </ul></li>
+      <li>
     cuwalid.dryp.components.DRYP_plot_fun
 
       <ul>
         <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_plot_fun">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.dryp.components.DRYP_ponds
+
+      <ul>
+        <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_ponds">module</a>
 </li>
       </ul></li>
       <li>
@@ -395,8 +478,6 @@
         <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_store_functions">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     cuwalid.dryp.components.DRYP_store_parameters
 
@@ -453,6 +534,8 @@
         <li><a href="cuwalid.dryp.html#module-cuwalid.dryp.main_DRYP">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     cuwalid.dryp.main_DRYP23
 
@@ -475,6 +558,13 @@
 </li>
       </ul></li>
       <li>
+    cuwalid.forecasting
+
+      <ul>
+        <li><a href="cuwalid.forecasting.html#module-cuwalid.forecasting">module</a>
+</li>
+      </ul></li>
+      <li>
     cuwalid.forecasting.components
 
       <ul>
@@ -482,10 +572,136 @@
 </li>
       </ul></li>
       <li>
+    cuwalid.forecasting.components.default_parameter_dataset
+
+      <ul>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.default_parameter_dataset">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.forecasting.components.forecast
+
+      <ul>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.forecast">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.forecasting.components.helper_functions
+
+      <ul>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.helper_functions">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.forecasting.components.hindcast
+
+      <ul>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.hindcast">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.forecasting.components.map_properties
+
+      <ul>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.map_properties">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.forecasting.components.plot_hydro_forecast
+
+      <ul>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.plot_hydro_forecast">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.forecasting.components.plot_impact_forecast
+
+      <ul>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.plot_impact_forecast">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.forecasting.components.read_paths
+
+      <ul>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.read_paths">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.forecasting.main_hydro_forecast
+
+      <ul>
+        <li><a href="cuwalid.forecasting.html#module-cuwalid.forecasting.main_hydro_forecast">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.forecasting.main_impact_forecast
+
+      <ul>
+        <li><a href="cuwalid.forecasting.html#module-cuwalid.forecasting.main_impact_forecast">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.stopet
+
+      <ul>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.stopet.helper_functions
+
+      <ul>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.helper_functions">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.stopet.icpac_forecast_preprocessing
+
+      <ul>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.icpac_forecast_preprocessing">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.stopet.main_stopet
+
+      <ul>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.main_stopet">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.stopet.pet_forecast_generation
+
+      <ul>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.pet_forecast_generation">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.stopet.run_stoPET_4dryp
+
+      <ul>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.run_stoPET_4dryp">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.stopet.run_stoPET_inHPC
+
+      <ul>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.run_stoPET_inHPC">module</a>
+</li>
+      </ul></li>
+      <li>
     cuwalid.stopet.stopet_parameters
 
       <ul>
         <li><a href="cuwalid.stopet.stopet_parameters.html#module-cuwalid.stopet.stopet_parameters">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.stopet.stoPET_v2_4dryp
+
+      <ul>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.stoPET_v2_4dryp">module</a>
 </li>
       </ul></li>
       <li>
@@ -503,24 +719,24 @@
 </li>
       </ul></li>
       <li>
-    cuwalid.storm.main_storm
+    cuwalid.storm.parameters
 
       <ul>
-        <li><a href="cuwalid.storm.html#module-cuwalid.storm.main_storm">module</a>
+        <li><a href="cuwalid.storm.html#module-cuwalid.storm.parameters">module</a>
 </li>
       </ul></li>
       <li>
-    cuwalid.storm.pdfs_
+    cuwalid.storm.storm
 
       <ul>
-        <li><a href="cuwalid.storm.html#module-cuwalid.storm.pdfs_">module</a>
+        <li><a href="cuwalid.storm.html#module-cuwalid.storm.storm">module</a>
 </li>
       </ul></li>
       <li>
-    cuwalid.storm.rainfall
+    cuwalid.tests
 
       <ul>
-        <li><a href="cuwalid.storm.html#module-cuwalid.storm.rainfall">module</a>
+        <li><a href="cuwalid.tests.html#module-cuwalid.tests">module</a>
 </li>
       </ul></li>
       <li>
@@ -622,6 +838,13 @@
 </li>
       </ul></li>
       <li>
+    cuwalid.tests.dryp.scripts.test_ponds
+
+      <ul>
+        <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_ponds">module</a>
+</li>
+      </ul></li>
+      <li>
     cuwalid.tests.dryp.scripts.test_precipitation
 
       <ul>
@@ -633,6 +856,13 @@
 
       <ul>
         <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_precipitation_csv">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.tests.dryp.scripts.test_precipitation_step
+
+      <ul>
+        <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_precipitation_step">module</a>
 </li>
       </ul></li>
       <li>
@@ -650,10 +880,24 @@
 </li>
       </ul></li>
       <li>
+    cuwalid.tests.dryp.scripts.test_save_necdf_maximum
+
+      <ul>
+        <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_save_necdf_maximum">module</a>
+</li>
+      </ul></li>
+      <li>
     cuwalid.tests.dryp.scripts.test_soil_layer
 
       <ul>
         <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_soil_layer">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.tests.dryp.scripts.test_soil_layer_drainage
+
+      <ul>
+        <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_soil_layer_drainage">module</a>
 </li>
       </ul></li>
       <li>
@@ -685,6 +929,27 @@
 </li>
       </ul></li>
       <li>
+    cuwalid.tools.CUWALID_json_builder
+
+      <ul>
+        <li><a href="cuwalid.tools.html#module-cuwalid.tools.CUWALID_json_builder">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.tools.CUWALID_make_dirs
+
+      <ul>
+        <li><a href="cuwalid.tools.html#module-cuwalid.tools.CUWALID_make_dirs">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.tools.CUWALID_mfile_tools
+
+      <ul>
+        <li><a href="cuwalid.tools.html#module-cuwalid.tools.CUWALID_mfile_tools">module</a>
+</li>
+      </ul></li>
+      <li>
     cuwalid.tools.CUWALID_view_tool
 
       <ul>
@@ -696,6 +961,27 @@
 
       <ul>
         <li><a href="cuwalid.tools.html#module-cuwalid.tools.download_data">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.tools.DRYP_convert
+
+      <ul>
+        <li><a href="cuwalid.tools.html#module-cuwalid.tools.DRYP_convert">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.tools.DRYP_json_builder
+
+      <ul>
+        <li><a href="cuwalid.tools.html#module-cuwalid.tools.DRYP_json_builder">module</a>
+</li>
+      </ul></li>
+      <li>
+    cuwalid.tools.DRYP_plot_tools
+
+      <ul>
+        <li><a href="cuwalid.tools.html#module-cuwalid.tools.DRYP_plot_tools">module</a>
 </li>
       </ul></li>
       <li>
@@ -718,6 +1004,10 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cuwalid.storm.html#cuwalid.storm.parameters.DATE_ORIGIN">DATE_ORIGIN (in module cuwalid.storm.parameters)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.date_to_day_of_year">date_to_day_of_year() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_store_functions.del_all">del_all() (in module cuwalid.dryp.components.DRYP_store_functions)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.dF_GA">dF_GA() (in module cuwalid.dryp.components.DRYP_infiltration)</a>
@@ -726,13 +1016,9 @@
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_routing.dfmanning">dfmanning() (in module cuwalid.dryp.components.DRYP_routing)</a>
 </li>
-      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accumf90.runoff_routing.discharge">discharge (cuwalid.dryp.components.DRYP_flow_accumf90.runoff_routing attribute)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.discrete">discrete (class in cuwalid.storm.pdfs_)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting.dominant_tercile">dominant_tercile() (cuwalid.storm.pdfs_.forecasting static method)</a>
+      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accumf90.runoff_routing.discharge">discharge (cuwalid.dryp.components.DRYP_flow_accumf90.runoff_routing attribute)</a>
 </li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.download_data.download_file">download_file() (in module cuwalid.tools.download_data)</a>
 </li>
@@ -741,7 +1027,11 @@
       <li><a href="cuwalid.tools.html#cuwalid.tools.download_data.DownloadProgressBar">DownloadProgressBar (class in cuwalid.tools.download_data)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_store_functions.drop_false_keys">drop_false_keys() (in module cuwalid.dryp.components.DRYP_store_functions)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.drop_false_keys">(in module cuwalid.tools.CUWALID_mfile_tools)</a>
 </li>
+      </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_plot_fun.DRYP_plot">DRYP_plot (class in cuwalid.dryp.components.DRYP_plot_fun)</a>
 </li>
   </ul></td>
@@ -750,16 +1040,6 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.discrete.e_group">e_group() (cuwalid.storm.pdfs_.discrete method)</a>
-
-      <ul>
-        <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.fit_pdf.e_group">(cuwalid.storm.pdfs_.fit_pdf method)</a>
-</li>
-      </ul></li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.elevation">elevation (class in cuwalid.storm.pdfs_)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.field.empty_map">empty_map() (cuwalid.storm.pdfs_.field static method)</a>
-</li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.epsilon_fks">epsilon_fks() (in module cuwalid.dryp.components.DRYP_infiltration)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.exp_decay_loss_wp">exp_decay_loss_wp() (in module cuwalid.dryp.components.DRYP_flow_accum)</a>
@@ -770,8 +1050,6 @@
       </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_routing.exp_decay_power">exp_decay_power() (in module cuwalid.dryp.components.DRYP_routing)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.exp_decay_wp">exp_decay_wp() (in module cuwalid.dryp.components.DRYP_flow_accum)</a>
 
       <ul>
@@ -786,11 +1064,23 @@
         <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.exponential">(in module cuwalid.dryp.components.DRYP_groundwater_EFD_SS)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.exponential_T">exponential_T() (in module cuwalid.dryp.components.DRYP_groundwater_EFD_SS)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.extract_dataset">extract_dataset() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.extract_dataset">(in module cuwalid.tools.DRYP_pptools)</a>
+</li>
+      </ul></li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.extract_forecasting_variable">extract_forecasting_variable() (in module cuwalid.forecasting.components.forecast)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.extract_id_from_coords">extract_id_from_coords() (in module cuwalid.dryp.components.DRYP_io)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.extract_id_from_raster">extract_id_from_raster() (in module cuwalid.dryp.components.DRYP_io)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.extract_mdataset">extract_mdataset() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -802,13 +1092,13 @@
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.FAO2L">FAO2L() (in module cuwalid.dryp.components.DRYP_soil_layer)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.faster_sampling">faster_sampling() (in module cuwalid.storm.rainfall)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.fill_masked_ocean_2d">fill_masked_ocean_2d() (in module cuwalid.stopet.pet_forecast_generation)</a>
+
+      <ul>
+        <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.fill_masked_ocean_2d">(in module cuwalid.stopet.stoPET_v2_4dryp)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.field">field (class in cuwalid.storm.pdfs_)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.circular.find_best_parameters">find_best_parameters() (cuwalid.storm.pdfs_.circular static method)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.betas.find_beta">find_beta() (cuwalid.storm.pdfs_.betas static method)</a>
+      </ul></li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.fill_masked_ocean_3d">fill_masked_ocean_3d() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.find_discharge_and_losses">find_discharge_and_losses() (in module cuwalid.dryp.components.DRYP_flow_accum)</a>
 </li>
@@ -818,17 +1108,13 @@
         <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accumf90.find_drainage_area">(in module cuwalid.dryp.components.DRYP_flow_accumf90)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.find_indices">find_indices() (in module cuwalid.tools.DRYP_rrtools)</a>
 </li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.find_region_bounds">find_region_bounds() (in module cuwalid.tools.DRYP_rrtools)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.find_watersheds">find_watersheds() (in module cuwalid.dryp.components.DRYP_flow_accum)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.circular.fit">fit() (cuwalid.storm.pdfs_.circular method)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.fit_pdf">fit_pdf (class in cuwalid.storm.pdfs_)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_routing.flow">flow() (in module cuwalid.dryp.components.DRYP_routing)</a>
 </li>
@@ -836,9 +1122,17 @@
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_routing.fmaning">fmaning() (in module cuwalid.dryp.components.DRYP_routing)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting">forecasting (class in cuwalid.storm.pdfs_)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.forecast_nc_write">forecast_nc_write() (in module cuwalid.stopet.pet_forecast_generation)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.forecast_pet">forecast_pet() (in module cuwalid.stopet.pet_forecast_generation)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.forecast_wrapper">forecast_wrapper() (in module cuwalid.stopet.pet_forecast_generation)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.fun_update_UZ_SZ_depth">fun_update_UZ_SZ_depth() (in module cuwalid.dryp.components.DRYP_groundwater_EFD)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.future_pet_ts_generate_regional">future_pet_ts_generate_regional() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.future_pet_ts_generate_singlepoint">future_pet_ts_generate_singlepoint() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -850,9 +1144,25 @@
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_solvers.gauss_seidel_iteration">gauss_seidel_iteration() (in module cuwalid.dryp.components.DRYP_solvers)</a>
 </li>
+      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_dams.water_management.get_abstractions">get_abstractions() (cuwalid.dryp.components.DRYP_dams.water_management method)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_additional_variables_multi_netcdf">get_additional_variables_multi_netcdf() (in module cuwalid.forecasting.components.hindcast)</a>
+</li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.grid_pptools.get_anomalies">get_anomalies() (cuwalid.tools.DRYP_pptools.grid_pptools method)</a>
 </li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_anomalies_multi_netcdf">get_anomalies_multi_netcdf() (in module cuwalid.forecasting.components.hindcast)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_areas_terciles">get_areas_terciles() (in module cuwalid.forecasting.components.forecast)</a>
+</li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.grid_pptools.get_aridity_index">get_aridity_index() (cuwalid.tools.DRYP_pptools.grid_pptools method)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.get_average_all_variables_from_list">get_average_all_variables_from_list() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.get_average_from_list">get_average_from_list() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_average_multi_netcdf">get_average_multi_netcdf() (in module cuwalid.forecasting.components.hindcast)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_csv_TS_files_from_multi_CSV">get_csv_TS_files_from_multi_CSV() (in module cuwalid.forecasting.components.hindcast)</a>
 </li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.get_dataframe_point_from_netcdf">get_dataframe_point_from_netcdf() (in module cuwalid.tools.DRYP_pptools)</a>
 </li>
@@ -864,37 +1174,97 @@
         <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.read_temporal_dataset.get_dataset_one_step">(cuwalid.dryp.components.DRYP_read_meteo.read_temporal_dataset method)</a>
 </li>
       </ul></li>
-      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.get_ensamble_from_netcdf_list">get_ensamble_from_netcdf_list() (in module cuwalid.tools.DRYP_pptools)</a>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.get_dates_season">get_dates_season() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_deterministic_forecast_ensamble">get_deterministic_forecast_ensamble() (in module cuwalid.forecasting.components.forecast)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_ensamble_forecasting">get_ensamble_forecasting() (in module cuwalid.forecasting.components.forecast)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.get_ensamble_from_netcdf_list">get_ensamble_from_netcdf_list() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.get_ensamble_from_netcdf_list">(in module cuwalid.tools.DRYP_pptools)</a>
+</li>
+      </ul></li>
+      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_dams.get_excess_storage">get_excess_storage() (in module cuwalid.dryp.components.DRYP_dams)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_extremes_quantiles_multi_netcdf">get_extremes_quantiles_multi_netcdf() (in module cuwalid.forecasting.components.hindcast)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_watershed.get_flow_path">get_flow_path() (in module cuwalid.dryp.components.DRYP_watershed)</a>
 </li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.get_forecast">get_forecast() (in module cuwalid.stopet.pet_forecast_generation)</a>
+</li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.get_label_variable">get_label_variable() (in module cuwalid.tools.CUWALID_view_tool)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.plot_impact_forecast.get_labels_by_lenguage">get_labels_by_lenguage() (in module cuwalid.forecasting.components.plot_impact_forecast)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.get_LAI_from_SAVI">get_LAI_from_SAVI() (in module cuwalid.dryp.components.DRYP_interception)</a>
 </li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.get_lat_lon_coordinates">get_lat_lon_coordinates() (in module cuwalid.tools.DRYP_rrtools)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io_files.get_list_of_groundwater_files">get_list_of_groundwater_files (class in cuwalid.dryp.components.DRYP_io_files)</a>
+
+      <ul>
+        <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_json_reader.get_list_of_groundwater_files">(class in cuwalid.dryp.components.DRYP_json_reader)</a>
 </li>
+      </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io_files.get_list_of_interception_hillslope_files">get_list_of_interception_hillslope_files (class in cuwalid.dryp.components.DRYP_io_files)</a>
+
+      <ul>
+        <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_json_reader.get_list_of_interception_hillslope_files">(class in cuwalid.dryp.components.DRYP_json_reader)</a>
 </li>
+      </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io_files.get_list_of_interception_riparian_files">get_list_of_interception_riparian_files (class in cuwalid.dryp.components.DRYP_io_files)</a>
+
+      <ul>
+        <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_json_reader.get_list_of_interception_riparian_files">(class in cuwalid.dryp.components.DRYP_json_reader)</a>
 </li>
+      </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_store_functions.get_list_of_length_field_dict">get_list_of_length_field_dict() (in module cuwalid.dryp.components.DRYP_store_functions)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io_files.get_list_of_riparian_soil_files">get_list_of_riparian_soil_files (class in cuwalid.dryp.components.DRYP_io_files)</a>
+
+      <ul>
+        <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_json_reader.get_list_of_riparian_soil_files">(class in cuwalid.dryp.components.DRYP_json_reader)</a>
 </li>
+      </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io_files.get_list_of_soil_files">get_list_of_soil_files (class in cuwalid.dryp.components.DRYP_io_files)</a>
+
+      <ul>
+        <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_json_reader.get_list_of_soil_files">(class in cuwalid.dryp.components.DRYP_json_reader)</a>
 </li>
+      </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io_files.get_list_of_surface_files">get_list_of_surface_files (class in cuwalid.dryp.components.DRYP_io_files)</a>
+
+      <ul>
+        <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_json_reader.get_list_of_surface_files">(class in cuwalid.dryp.components.DRYP_json_reader)</a>
 </li>
-      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.get_mask">get_mask() (in module cuwalid.tools.CUWALID_view_tool)</a>
+      </ul></li>
+      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_json_reader.get_list_of_water_bodies_files">get_list_of_water_bodies_files (class in cuwalid.dryp.components.DRYP_json_reader)</a>
 </li>
+      <li><a href="cuwalid.forecasting.html#cuwalid.forecasting.main_impact_forecast.get_list_places">get_list_places() (in module cuwalid.forecasting.main_impact_forecast)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.get_mask">get_mask() (in module cuwalid.forecasting.components.helper_functions)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.get_mask">(in module cuwalid.tools.CUWALID_view_tool)</a>
+</li>
+      </ul></li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.grid_pptools.get_mean">get_mean() (cuwalid.tools.DRYP_pptools.grid_pptools method)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io_files.get_model_settings">get_model_settings (class in cuwalid.dryp.components.DRYP_io_files)</a>
+
+      <ul>
+        <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_json_reader.get_model_settings">(class in cuwalid.dryp.components.DRYP_json_reader)</a>
 </li>
+      </ul></li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.get_month_first_letter">get_month_first_letter() (in module cuwalid.tools.DRYP_pptools)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_monthly_average_multi_netcdf">get_monthly_average_multi_netcdf() (in module cuwalid.forecasting.components.hindcast)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_name_list_historical_netcdf_files">get_name_list_historical_netcdf_files() (in module cuwalid.forecasting.components.hindcast)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset.get_one_step_dataset">get_one_step_dataset() (cuwalid.dryp.components.DRYP_read_dataset.read_dataset method)</a>
 
@@ -902,9 +1272,15 @@
         <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset_interp.get_one_step_dataset">(cuwalid.dryp.components.DRYP_read_dataset.read_dataset_interp method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.get_output_filenames">get_output_filenames() (in module cuwalid.tools.DRYP_pptools)</a>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.get_output_filenames">get_output_filenames (class in cuwalid.tools.DRYP_pptools)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.read_paths.get_paths">get_paths (class in cuwalid.forecasting.components.read_paths)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.get_percentile_probabilities">get_percentile_probabilities() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_percentiles_multi_files">get_percentiles_multi_files() (in module cuwalid.forecasting.components.hindcast)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.get_percentiles_probabilities_from_netcdf">get_percentiles_probabilities_from_netcdf() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset.get_point_dataset_one_step">get_point_dataset_one_step() (cuwalid.dryp.components.DRYP_read_dataset.read_temporal_dataset method)</a>
 
@@ -913,6 +1289,16 @@
 </li>
       </ul></li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.get_point_from_dataset">get_point_from_dataset() (in module cuwalid.tools.DRYP_pptools)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.get_postprocessed_hydro_variables_mfiles">get_postprocessed_hydro_variables_mfiles() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.get_postprocessed_saturation_mfiles">get_postprocessed_saturation_mfiles() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.get_postprocessed_storage_mfiles">get_postprocessed_storage_mfiles() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_postprocessed_variables_forecast">get_postprocessed_variables_forecast() (in module cuwalid.forecasting.components.forecast)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_probabilistic_tercile_forecast_ensamble">get_probabilistic_tercile_forecast_ensamble() (in module cuwalid.forecasting.components.forecast)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_watershed.get_raster_properties">get_raster_properties() (in module cuwalid.dryp.components.DRYP_watershed)</a>
 
@@ -924,15 +1310,37 @@
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.get_Scmax_from_LAI_and_fcw">get_Scmax_from_LAI_and_fcw() (in module cuwalid.dryp.components.DRYP_interception)</a>
 </li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.get_season_dataset">get_season_dataset() (in module cuwalid.forecasting.components.helper_functions)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.get_season_dataset">(in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
+      </ul></li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.get_season_name">get_season_name() (in module cuwalid.tools.DRYP_pptools)</a>
 </li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.grid_pptools.get_seasonal_average">get_seasonal_average() (cuwalid.tools.DRYP_pptools.grid_pptools method)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_store_parameters.get_store_parameters">get_store_parameters (class in cuwalid.dryp.components.DRYP_store_parameters)</a>
 </li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_tercile_hindcast_extreme_values">get_tercile_hindcast_extreme_values() (in module cuwalid.forecasting.components.forecast)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_tercile_hindcast_fluxes">get_tercile_hindcast_fluxes() (in module cuwalid.forecasting.components.forecast)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.get_tercile_probabilities">get_tercile_probabilities() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.get_tercile_probabilities_from_ensamble_netcdf">get_tercile_probabilities_from_ensamble_netcdf() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.get_tercile_probabilities_from_netcdf">get_tercile_probabilities_from_netcdf() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.get_transform_parameters">get_transform_parameters() (in module cuwalid.tools.DRYP_rrtools)</a>
 </li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.grid_pptools.get_twsa">get_twsa() (cuwalid.tools.DRYP_pptools.grid_pptools method)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_TWSA_from_mult_files">get_TWSA_from_mult_files() (in module cuwalid.forecasting.components.hindcast)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_update_TWSA">get_update_TWSA() (in module cuwalid.forecasting.components.forecast)</a>
+</li>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_updated_TWSA_ensamble">get_updated_TWSA_ensamble() (in module cuwalid.forecasting.components.forecast)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.get_vegetation_factor">get_vegetation_factor() (in module cuwalid.dryp.components.DRYP_interception)</a>
 </li>
@@ -978,16 +1386,26 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting.icpac_mask">icpac_mask() (cuwalid.storm.pdfs_.forecasting method)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.icpac_forecast_preprocessing.icpac_forecast_preprocessing">icpac_forecast_preprocessing() (in module cuwalid.stopet.icpac_forecast_preprocessing)</a>
+
+      <ul>
+        <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.icpac_forecast_preprocessing">(in module cuwalid.stopet.pet_forecast_generation)</a>
+</li>
+      </ul></li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.increase_temp_regional">increase_temp_regional() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.increase_temp_singlepoint">increase_temp_singlepoint() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.index_forecast_with_tercile">index_forecast_with_tercile() (in module cuwalid.stopet.pet_forecast_generation)</a>
 </li>
       <li><a href="cuwalid.storm.html#cuwalid.storm.checks_.welcome.infer_scenario">infer_scenario() (cuwalid.storm.checks_.welcome method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.infiltration">infiltration (class in cuwalid.dryp.components.DRYP_infiltration)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.infiltration_model">infiltration_model() (in module cuwalid.dryp.components.DRYP_infiltration)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.input_datasets_bigfiles">input_datasets_bigfiles (class in cuwalid.dryp.components.DRYP_read_meteo)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.input_datasets_bigfiles_new">input_datasets_bigfiles_new (class in cuwalid.dryp.components.DRYP_read_meteo)</a>
@@ -999,25 +1417,23 @@
   </ul></td>
 </tr></table>
 
-<h2 id="K">K</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.regional.k_regions">k_regions() (cuwalid.storm.pdfs_.regional method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.last_ring">last_ring() (in module cuwalid.storm.rainfall)</a>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_json_builder.last_day_of_month">last_day_of_month() (in module cuwalid.tools.CUWALID_json_builder)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_json_builder.last_day_of_month">(in module cuwalid.tools.DRYP_json_builder)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.loop">loop() (in module cuwalid.storm.rainfall)</a>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.load_config">load_config() (in module cuwalid.forecasting.components.helper_functions)</a>
+
+      <ul>
+        <li><a href="cuwalid.stopet.html#cuwalid.stopet.helper_functions.load_config">(in module cuwalid.stopet.helper_functions)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.lotr">lotr() (in module cuwalid.storm.rainfall)</a>
-</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1030,24 +1446,28 @@
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_routing.Manning_wide_ch">Manning_wide_ch() (in module cuwalid.dryp.components.DRYP_routing)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.masking">masking (class in cuwalid.storm.pdfs_)</a>
+      <li><a href="cuwalid.storm.html#cuwalid.storm.parameters.MAX_DUR">MAX_DUR (in module cuwalid.storm.parameters)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.masking.masks">masks() (cuwalid.storm.pdfs_.masking method)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.mean_shift_rand_values">mean_shift_rand_values() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
 </li>
-      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.merge_xarray_dataset">merge_xarray_dataset() (in module cuwalid.tools.DRYP_pptools)</a>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.merge_xarray_dataset">merge_xarray_dataset() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.merge_xarray_dataset">(in module cuwalid.tools.DRYP_pptools)</a>
 </li>
+      </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Mod_GA">Mod_GA() (in module cuwalid.dryp.components.DRYP_infiltration)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.mode_">mode_() (in module cuwalid.storm.pdfs_)</a>
-</li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.model_environment_status">model_environment_status (class in cuwalid.dryp.components.DRYP_io)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.circular.model_str">model_str() (cuwalid.storm.pdfs_.circular static method)</a>
 </li>
       <li>
     module
 
       <ul>
+        <li><a href="cuwalid.html#module-cuwalid">cuwalid</a>
+</li>
+        <li><a href="cuwalid.dryp.html#module-cuwalid.dryp">cuwalid.dryp</a>
+</li>
         <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components">cuwalid.dryp.components</a>
 </li>
         <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_ABM_connector">cuwalid.dryp.components.DRYP_ABM_connector</a>
@@ -1055,6 +1475,14 @@
         <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_abstractions">cuwalid.dryp.components.DRYP_abstractions</a>
 </li>
         <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_change_input_files">cuwalid.dryp.components.DRYP_change_input_files</a>
+</li>
+        <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_dams">cuwalid.dryp.components.DRYP_dams</a>
+</li>
+        <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_defalut_projections">cuwalid.dryp.components.DRYP_defalut_projections</a>
+</li>
+        <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_default_parameters">cuwalid.dryp.components.DRYP_default_parameters</a>
+</li>
+        <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_default_settings">cuwalid.dryp.components.DRYP_default_settings</a>
 </li>
         <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_flow_accum">cuwalid.dryp.components.DRYP_flow_accum</a>
 </li>
@@ -1074,7 +1502,11 @@
 </li>
         <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_io_files">cuwalid.dryp.components.DRYP_io_files</a>
 </li>
+        <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_json_reader">cuwalid.dryp.components.DRYP_json_reader</a>
+</li>
         <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_plot_fun">cuwalid.dryp.components.DRYP_plot_fun</a>
+</li>
+        <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_ponds">cuwalid.dryp.components.DRYP_ponds</a>
 </li>
         <li><a href="cuwalid.dryp.components.html#module-cuwalid.dryp.components.DRYP_projection">cuwalid.dryp.components.DRYP_projection</a>
 </li>
@@ -1112,19 +1544,57 @@
 </li>
         <li><a href="cuwalid.dryp.html#module-cuwalid.dryp.main_DRYPv2_SS">cuwalid.dryp.main_DRYPv2_SS</a>
 </li>
+        <li><a href="cuwalid.forecasting.html#module-cuwalid.forecasting">cuwalid.forecasting</a>
+</li>
         <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components">cuwalid.forecasting.components</a>
 </li>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.default_parameter_dataset">cuwalid.forecasting.components.default_parameter_dataset</a>
+</li>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.forecast">cuwalid.forecasting.components.forecast</a>
+</li>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.helper_functions">cuwalid.forecasting.components.helper_functions</a>
+</li>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.hindcast">cuwalid.forecasting.components.hindcast</a>
+</li>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.map_properties">cuwalid.forecasting.components.map_properties</a>
+</li>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.plot_hydro_forecast">cuwalid.forecasting.components.plot_hydro_forecast</a>
+</li>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.plot_impact_forecast">cuwalid.forecasting.components.plot_impact_forecast</a>
+</li>
+        <li><a href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.read_paths">cuwalid.forecasting.components.read_paths</a>
+</li>
+        <li><a href="cuwalid.forecasting.html#module-cuwalid.forecasting.main_hydro_forecast">cuwalid.forecasting.main_hydro_forecast</a>
+</li>
+        <li><a href="cuwalid.forecasting.html#module-cuwalid.forecasting.main_impact_forecast">cuwalid.forecasting.main_impact_forecast</a>
+</li>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet">cuwalid.stopet</a>
+</li>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.helper_functions">cuwalid.stopet.helper_functions</a>
+</li>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.icpac_forecast_preprocessing">cuwalid.stopet.icpac_forecast_preprocessing</a>
+</li>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.main_stopet">cuwalid.stopet.main_stopet</a>
+</li>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.pet_forecast_generation">cuwalid.stopet.pet_forecast_generation</a>
+</li>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.run_stoPET_4dryp">cuwalid.stopet.run_stoPET_4dryp</a>
+</li>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.run_stoPET_inHPC">cuwalid.stopet.run_stoPET_inHPC</a>
+</li>
         <li><a href="cuwalid.stopet.stopet_parameters.html#module-cuwalid.stopet.stopet_parameters">cuwalid.stopet.stopet_parameters</a>
+</li>
+        <li><a href="cuwalid.stopet.html#module-cuwalid.stopet.stoPET_v2_4dryp">cuwalid.stopet.stoPET_v2_4dryp</a>
 </li>
         <li><a href="cuwalid.storm.html#module-cuwalid.storm">cuwalid.storm</a>
 </li>
         <li><a href="cuwalid.storm.html#module-cuwalid.storm.checks_">cuwalid.storm.checks_</a>
 </li>
-        <li><a href="cuwalid.storm.html#module-cuwalid.storm.main_storm">cuwalid.storm.main_storm</a>
+        <li><a href="cuwalid.storm.html#module-cuwalid.storm.parameters">cuwalid.storm.parameters</a>
 </li>
-        <li><a href="cuwalid.storm.html#module-cuwalid.storm.pdfs_">cuwalid.storm.pdfs_</a>
+        <li><a href="cuwalid.storm.html#module-cuwalid.storm.storm">cuwalid.storm.storm</a>
 </li>
-        <li><a href="cuwalid.storm.html#module-cuwalid.storm.rainfall">cuwalid.storm.rainfall</a>
+        <li><a href="cuwalid.tests.html#module-cuwalid.tests">cuwalid.tests</a>
 </li>
         <li><a href="cuwalid.tests.dryp.html#module-cuwalid.tests.dryp">cuwalid.tests.dryp</a>
 </li>
@@ -1154,15 +1624,23 @@
 </li>
         <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_infiltration">cuwalid.tests.dryp.scripts.test_infiltration</a>
 </li>
+        <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_ponds">cuwalid.tests.dryp.scripts.test_ponds</a>
+</li>
         <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_precipitation">cuwalid.tests.dryp.scripts.test_precipitation</a>
 </li>
         <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_precipitation_csv">cuwalid.tests.dryp.scripts.test_precipitation_csv</a>
+</li>
+        <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_precipitation_step">cuwalid.tests.dryp.scripts.test_precipitation_step</a>
 </li>
         <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_save_csv">cuwalid.tests.dryp.scripts.test_save_csv</a>
 </li>
         <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_save_necdf">cuwalid.tests.dryp.scripts.test_save_necdf</a>
 </li>
+        <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_save_necdf_maximum">cuwalid.tests.dryp.scripts.test_save_necdf_maximum</a>
+</li>
         <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_soil_layer">cuwalid.tests.dryp.scripts.test_soil_layer</a>
+</li>
+        <li><a href="cuwalid.tests.dryp.scripts.html#module-cuwalid.tests.dryp.scripts.test_soil_layer_drainage">cuwalid.tests.dryp.scripts.test_soil_layer_drainage</a>
 </li>
         <li><a href="cuwalid.tests.forecasting.html#module-cuwalid.tests.forecasting">cuwalid.tests.forecasting</a>
 </li>
@@ -1172,9 +1650,21 @@
 </li>
         <li><a href="cuwalid.tools.html#module-cuwalid.tools">cuwalid.tools</a>
 </li>
+        <li><a href="cuwalid.tools.html#module-cuwalid.tools.CUWALID_json_builder">cuwalid.tools.CUWALID_json_builder</a>
+</li>
+        <li><a href="cuwalid.tools.html#module-cuwalid.tools.CUWALID_make_dirs">cuwalid.tools.CUWALID_make_dirs</a>
+</li>
+        <li><a href="cuwalid.tools.html#module-cuwalid.tools.CUWALID_mfile_tools">cuwalid.tools.CUWALID_mfile_tools</a>
+</li>
         <li><a href="cuwalid.tools.html#module-cuwalid.tools.CUWALID_view_tool">cuwalid.tools.CUWALID_view_tool</a>
 </li>
         <li><a href="cuwalid.tools.html#module-cuwalid.tools.download_data">cuwalid.tools.download_data</a>
+</li>
+        <li><a href="cuwalid.tools.html#module-cuwalid.tools.DRYP_convert">cuwalid.tools.DRYP_convert</a>
+</li>
+        <li><a href="cuwalid.tools.html#module-cuwalid.tools.DRYP_json_builder">cuwalid.tools.DRYP_json_builder</a>
+</li>
+        <li><a href="cuwalid.tools.html#module-cuwalid.tools.DRYP_plot_tools">cuwalid.tools.DRYP_plot_tools</a>
 </li>
         <li><a href="cuwalid.tools.html#module-cuwalid.tools.DRYP_pptools">cuwalid.tools.DRYP_pptools</a>
 </li>
@@ -1182,32 +1672,24 @@
 </li>
       </ul></li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.regional.morphopen">morphopen() (cuwalid.storm.pdfs_.regional method)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.moving_storm">moving_storm() (in module cuwalid.storm.rainfall)</a>
-</li>
-  </ul></td>
 </tr></table>
 
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.regional.n_regions">n_regions() (cuwalid.storm.pdfs_.regional method)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.nc_write">nc_write() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.nc_bytes">nc_bytes() (in module cuwalid.storm.rainfall)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.nc_file_iv">nc_file_iv() (in module cuwalid.storm.rainfall)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.nc_file_v">nc_file_v() (in module cuwalid.storm.rainfall)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.nearest_point">nearest_point() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_routing.Newthon_R_Manning">Newthon_R_Manning() (in module cuwalid.dryp.components.DRYP_routing)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Newthon_Rap_Mod_GA">Newthon_Rap_Mod_GA() (in module cuwalid.dryp.components.DRYP_infiltration)</a>
 </li>
       <li><a href="cuwalid.storm.html#cuwalid.storm.checks_.parse.none_too">none_too() (cuwalid.storm.checks_.parse method)</a>
+</li>
+      <li><a href="cuwalid.storm.html#cuwalid.storm.parameters.NREGIONS">NREGIONS (in module cuwalid.storm.parameters)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1215,8 +1697,6 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.one_vm">one_vm() (in module cuwalid.storm.pdfs_)</a>
-</li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_watershed.open_raster">open_raster() (in module cuwalid.dryp.components.DRYP_watershed)</a>
 
       <ul>
@@ -1233,51 +1713,47 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.copulas.pairing">pairing() (cuwalid.storm.pdfs_.copulas method)</a>
-</li>
       <li><a href="cuwalid.storm.html#cuwalid.storm.checks_.parse">parse (class in cuwalid.storm.checks_)</a>
 </li>
       <li><a href="cuwalid.storm.html#cuwalid.storm.checks_.parse.parsing">parsing() (cuwalid.storm.checks_.parse method)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.betas.pd_base">pd_base() (cuwalid.storm.pdfs_.betas method)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.fit_pdf.pdf_fit">pdf_fit() (cuwalid.storm.pdfs_.fit_pdf static method)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.betas.pf_base">pf_base() (cuwalid.storm.pdfs_.betas method)</a>
-</li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Philip">Philip() (in module cuwalid.dryp.components.DRYP_infiltration)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.clipping.plot">plot() (cuwalid.storm.pdfs_.clipping method)</a>
+      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_plot_fun.DRYP_plot.plot_avg_var">plot_avg_var() (cuwalid.dryp.components.DRYP_plot_fun.DRYP_plot method)</a>
 
       <ul>
-        <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.copulas.plot">(cuwalid.storm.pdfs_.copulas method)</a>
-</li>
-        <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.fit_pdf.plot">(cuwalid.storm.pdfs_.fit_pdf method)</a>
-</li>
-        <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.masking.plot">(cuwalid.storm.pdfs_.masking method)</a>
-</li>
-        <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.scentres.plot">(cuwalid.storm.rainfall.scentres method)</a>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_plot_tools.plot_avg_var">(in module cuwalid.tools.DRYP_plot_tools)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_plot_fun.DRYP_plot.plot_avg_var">plot_avg_var() (cuwalid.dryp.components.DRYP_plot_fun.DRYP_plot method)</a>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.plot_hydro_forecast.plot_deterministic_forecast">plot_deterministic_forecast() (in module cuwalid.forecasting.components.plot_hydro_forecast)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.plot_deterministic_forecast">(in module cuwalid.tools.CUWALID_view_tool)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.circular.plot_bic">plot_bic() (cuwalid.storm.pdfs_.circular method)</a>
-</li>
-      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.plot_deterministic_forecast">plot_deterministic_forecast() (in module cuwalid.tools.CUWALID_view_tool)</a>
-</li>
+      </ul></li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.plot_impact_tercile_forecast">plot_impact_tercile_forecast() (in module cuwalid.tools.CUWALID_view_tool)</a>
 </li>
-      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_plot_fun.DRYP_plot.plot_point_var">plot_point_var() (cuwalid.dryp.components.DRYP_plot_fun.DRYP_plot method)</a>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.plot_impact_forecast.plot_map">plot_map() (in module cuwalid.forecasting.components.plot_impact_forecast)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cuwalid.forecasting.html#cuwalid.forecasting.main_impact_forecast.plot_maps_json">plot_maps_json() (in module cuwalid.forecasting.main_impact_forecast)</a>
+</li>
+      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_plot_fun.DRYP_plot.plot_point_var">plot_point_var() (cuwalid.dryp.components.DRYP_plot_fun.DRYP_plot method)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_plot_tools.plot_point_var">(in module cuwalid.tools.DRYP_plot_tools)</a>
+</li>
+      </ul></li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.plot_probabilistic_tercile_forecast">plot_probabilistic_tercile_forecast() (in module cuwalid.tools.CUWALID_view_tool)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.circular.plot_samples">plot_samples() (cuwalid.storm.pdfs_.circular method)</a>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_plot_tools.plot_profile">plot_profile() (in module cuwalid.tools.DRYP_plot_tools)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.discrete.pmf_fit">pmf_fit() (cuwalid.storm.pdfs_.discrete static method)</a>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.plot_hydro_forecast.plot_tercile_probability_forecast">plot_tercile_probability_forecast() (in module cuwalid.forecasting.components.plot_hydro_forecast)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.surface_parameters.points_output">points_output() (cuwalid.dryp.components.DRYP_io.surface_parameters method)</a>
+</li>
+      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_ponds.ponds">ponds (class in cuwalid.dryp.components.DRYP_ponds)</a>
 </li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.preprocesses_netCDF">preprocesses_netCDF() (in module cuwalid.tools.DRYP_pptools)</a>
 </li>
@@ -1290,34 +1766,42 @@
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accumf90.runoff_routing.Q_ini">Q_ini (cuwalid.dryp.components.DRYP_flow_accumf90.runoff_routing attribute)</a>
 </li>
   </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.quantum_time">quantum_time() (in module cuwalid.storm.rainfall)</a>
-</li>
-  </ul></td>
 </tr></table>
 
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.rain_cube">rain_cube() (in module cuwalid.storm.rainfall)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.rain_cube_dask">rain_cube_dask() (in module cuwalid.storm.rainfall)</a>
-</li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.rainfall">rainfall (class in cuwalid.dryp.components.DRYP_read_meteo)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.rasterize">rasterize() (in module cuwalid.storm.rainfall)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.rand_choice">rand_choice() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
+</li>
+      <li><a href="cuwalid.storm.html#cuwalid.storm.storm.read">read() (in module cuwalid.storm.storm)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset">read_dataset (class in cuwalid.dryp.components.DRYP_read_dataset)</a>
 </li>
-      <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_save_necdf.read_dataset">read_dataset() (in module cuwalid.tests.dryp.scripts.test_save_necdf)</a>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.read_dataset">read_dataset() (in module cuwalid.forecasting.components.forecast)</a>
 
       <ul>
+        <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.read_dataset">(in module cuwalid.forecasting.components.helper_functions)</a>
+</li>
+        <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.read_dataset">(in module cuwalid.forecasting.components.hindcast)</a>
+</li>
+        <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_save_necdf.read_dataset">(in module cuwalid.tests.dryp.scripts.test_save_necdf)</a>
+</li>
+        <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_save_necdf_maximum.read_dataset">(in module cuwalid.tests.dryp.scripts.test_save_necdf_maximum)</a>
+</li>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.read_dataset">(in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
         <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.read_dataset">(in module cuwalid.tools.DRYP_pptools)</a>
 </li>
       </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_dataset.read_dataset_interp">read_dataset_interp (class in cuwalid.dryp.components.DRYP_read_dataset)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.read_pdfs">read_pdfs() (in module cuwalid.storm.rainfall)</a>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.read_paths.read_dataset_list_json">read_dataset_list_json (class in cuwalid.forecasting.components.read_paths)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.read_forecast_pool">read_forecast_pool() (in module cuwalid.stopet.pet_forecast_generation)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_plot_tools.read_json_file">read_json_file() (in module cuwalid.tools.DRYP_plot_tools)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_watershed.read_raster">read_raster() (in module cuwalid.dryp.components.DRYP_watershed)</a>
 </li>
@@ -1330,12 +1814,6 @@
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_store_parameters.reading">reading() (in module cuwalid.dryp.components.DRYP_store_parameters)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.recharge_routing">recharge_routing (class in cuwalid.dryp.components.DRYP_groundwater_EFD)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.region">region (class in cuwalid.storm.pdfs_)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.regional">regional (class in cuwalid.storm.pdfs_)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.regionalisation">regionalisation() (in module cuwalid.storm.rainfall)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.regularization">regularization() (in module cuwalid.dryp.components.DRYP_groundwater_EFD)</a>
 
@@ -1353,34 +1831,32 @@
 </li>
       <li><a href="cuwalid.storm.html#cuwalid.storm.checks_.welcome.replicate">replicate() (cuwalid.storm.checks_.welcome method)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.replicate_">replicate_() (in module cuwalid.storm.rainfall)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.elevation.reproj">reproj() (cuwalid.storm.pdfs_.elevation method)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.field.reproject">reproject() (cuwalid.storm.pdfs_.field static method)</a>
-
-      <ul>
-        <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting.reproject">(cuwalid.storm.pdfs_.forecasting method)</a>
-</li>
-      </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_projection.reproject_dataset">reproject_dataset() (in module cuwalid.dryp.components.DRYP_projection)</a>
 
       <ul>
+        <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.reproject_dataset">(in module cuwalid.forecasting.components.helper_functions)</a>
+</li>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.reproject_dataset">(in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
         <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.reproject_dataset">(in module cuwalid.tools.CUWALID_view_tool)</a>
+</li>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.reproject_dataset">(in module cuwalid.tools.DRYP_pptools)</a>
 </li>
       </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_projection.reproject_dataset_old">reproject_dataset_old() (in module cuwalid.dryp.components.DRYP_projection)</a>
 </li>
-      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.resample_dataset">resample_dataset() (in module cuwalid.tools.DRYP_pptools)</a>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.resample_dataset">resample_dataset() (in module cuwalid.forecasting.components.helper_functions)</a>
+
+      <ul>
+        <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.resample_dataset">(in module cuwalid.forecasting.components.hindcast)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.retrieve_pdf">retrieve_pdf() (in module cuwalid.storm.rainfall)</a>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.resample_dataset">(in module cuwalid.tools.CUWALID_mfile_tools)</a>
 </li>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.resample_dataset">(in module cuwalid.tools.DRYP_pptools)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.elevation.retrieve_z">retrieve_z() (cuwalid.storm.pdfs_.elevation static method)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.elevation.rings">rings() (cuwalid.storm.pdfs_.elevation method)</a>
-</li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.river_flux">river_flux() (in module cuwalid.dryp.components.DRYP_groundwater_EFD)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.RK4Ph">RK4Ph() (in module cuwalid.dryp.components.DRYP_soil_layer)</a>
@@ -1413,6 +1889,8 @@
         <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_groundwater_ss_slopefactor.run_DRYP_SS">(in module cuwalid.tests.dryp.scripts.test_groundwater_ss_slopefactor)</a>
 </li>
       </ul></li>
+      <li><a href="cuwalid.forecasting.html#cuwalid.forecasting.main_hydro_forecast.run_hydro_forecast">run_hydro_forecast() (in module cuwalid.forecasting.main_hydro_forecast)</a>
+</li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.infiltration.run_infiltration_one_step">run_infiltration_one_step() (cuwalid.dryp.components.DRYP_infiltration.infiltration method)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_interception.interception.run_interception_one_step">run_interception_one_step() (cuwalid.dryp.components.DRYP_interception.interception method)</a>
@@ -1420,6 +1898,8 @@
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.gwflow_EFD.run_one_step_gw">run_one_step_gw() (cuwalid.dryp.components.DRYP_groundwater_EFD.gwflow_EFD method)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD_SS.gwflow_EFD.run_one_step_gw_SS">run_one_step_gw_SS() (cuwalid.dryp.components.DRYP_groundwater_EFD_SS.gwflow_EFD method)</a>
+</li>
+      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_ponds.ponds.run_ponds_one_step">run_ponds_one_step() (cuwalid.dryp.components.DRYP_ponds.ponds method)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_read_meteo.rainfall.run_rainfall_one_step">run_rainfall_one_step() (cuwalid.dryp.components.DRYP_read_meteo.rainfall method)</a>
 </li>
@@ -1435,7 +1915,11 @@
       </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.swbm.run_soil_aquifer_one_step">run_soil_aquifer_one_step() (cuwalid.dryp.components.DRYP_soil_layer.swbm method)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.main_storm.run_storm">run_storm() (in module cuwalid.storm.main_storm)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.main_stopet.run_stoPET">run_stoPET() (in module cuwalid.stopet.main_stopet)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.run_stoPET_4dryp.run_stoPET_4_dryp">run_stoPET_4_dryp() (in module cuwalid.stopet.run_stoPET_4dryp)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.run_stoPET_inHPC.run_stoPET_in_hpc">run_stoPET_in_hpc() (in module cuwalid.stopet.run_stoPET_inHPC)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.swbm.run_swbm_one_step">run_swbm_one_step() (cuwalid.dryp.components.DRYP_soil_layer.swbm method)</a>
 </li>
@@ -1449,26 +1933,14 @@
         <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_routing.runoff_routing">(class in cuwalid.dryp.components.DRYP_routing)</a>
 </li>
       </ul></li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.scentres.rvs">rvs() (cuwalid.storm.rainfall.scentres method)</a>
-</li>
   </ul></td>
 </tr></table>
 
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.circular.samples">samples() (cuwalid.storm.pdfs_.circular method)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.sample_with_tercile_strategy">sample_with_tercile_strategy() (in module cuwalid.stopet.pet_forecast_generation)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.circular.save">save() (cuwalid.storm.pdfs_.circular method)</a>
-
-      <ul>
-        <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.copulas.save">(cuwalid.storm.pdfs_.copulas method)</a>
-</li>
-        <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.discrete.save">(cuwalid.storm.pdfs_.discrete method)</a>
-</li>
-        <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.fit_pdf.save">(cuwalid.storm.pdfs_.fit_pdf method)</a>
-</li>
-      </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_store_functions.GlobalGridVar.save_csv_var">save_csv_var() (cuwalid.dryp.components.DRYP_store_functions.GlobalGridVar method)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_store_functions.save_map_to_rastergrid">save_map_to_rastergrid() (in module cuwalid.dryp.components.DRYP_store_functions)</a>
@@ -1483,30 +1955,48 @@
         <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.save_raster">(in module cuwalid.tools.DRYP_rrtools)</a>
 </li>
       </ul></li>
-      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.save_xarray_dataset_as_netcdf">save_xarray_dataset_as_netcdf() (in module cuwalid.tools.DRYP_pptools)</a>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.save_xarray_dataset_as_netcdf">save_xarray_dataset_as_netcdf() (in module cuwalid.forecasting.components.hindcast)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.save_xarray_dataset_as_netcdf">(in module cuwalid.tools.CUWALID_mfile_tools)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.scentres">scentres (class in cuwalid.storm.rainfall)</a>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.save_xarray_dataset_as_netcdf">(in module cuwalid.tools.DRYP_pptools)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.scentros">scentros (class in cuwalid.storm.rainfall)</a>
-</li>
+      </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.SCHAAKE">SCHAAKE() (in module cuwalid.dryp.components.DRYP_infiltration)</a>
 </li>
-      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.season_name_to_number">season_name_to_number() (in module cuwalid.tools.DRYP_pptools)</a>
+      <li><a href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.season_name_to_number">season_name_to_number() (in module cuwalid.forecasting.components.helper_functions)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.season_name_to_number">(in module cuwalid.tools.CUWALID_mfile_tools)</a>
+</li>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.season_name_to_number">(in module cuwalid.tools.DRYP_pptools)</a>
+</li>
+      </ul></li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.seasonal_nc_write">seasonal_nc_write() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.seasonal_pet_for_dryp">seasonal_pet_for_dryp() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.set_initial_conditions">set_initial_conditions() (in module cuwalid.dryp.components.DRYP_io)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.masking.shapsterize">shapsterize() (cuwalid.storm.pdfs_.masking static method)</a>
-</li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.shrink_region">shrink_region() (in module cuwalid.dryp.components.DRYP_groundwater_EFD)</a>
 </li>
-      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.slice_dataset_time">slice_dataset_time() (in module cuwalid.tools.DRYP_pptools)</a>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.slice_dataset_time">slice_dataset_time() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_pptools.slice_dataset_time">(in module cuwalid.tools.DRYP_pptools)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.slice_time">slice_time() (in module cuwalid.storm.rainfall)</a>
-</li>
+      </ul></li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_view_tool.smooth_dataarray">smooth_dataarray() (in module cuwalid.tools.CUWALID_view_tool)</a>
 </li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.smooth_grid_numba_parallel">smooth_grid_numba_parallel() (in module cuwalid.stopet.pet_forecast_generation)</a>
+
+      <ul>
+        <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.smooth_grid_numba_parallel">(in module cuwalid.stopet.stoPET_v2_4dryp)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.smoth_func">smoth_func() (in module cuwalid.dryp.components.DRYP_groundwater_EFD)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.smoth_func_L1">smoth_func_L1() (in module cuwalid.dryp.components.DRYP_groundwater_EFD)</a>
@@ -1517,15 +2007,25 @@
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.soil_parameters">soil_parameters (class in cuwalid.dryp.components.DRYP_io)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.regional.sort_kmeans">sort_kmeans() (cuwalid.storm.pdfs_.regional method)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.sort_with_tercile_indices">sort_with_tercile_indices() (in module cuwalid.stopet.pet_forecast_generation)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting.split_diff">split_diff() (cuwalid.storm.pdfs_.forecasting static method)</a>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_plot_tools.split_text">split_text() (in module cuwalid.tools.DRYP_plot_tools)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.stopet4dryp">stopet4dryp() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.run_stoPET_4dryp.stoPET_model_main">stoPET_model_main() (in module cuwalid.stopet.run_stoPET_4dryp)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.stoPET_wrapper_regional">stoPET_wrapper_regional() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.stoPET_wrapper_singlepoint">stoPET_wrapper_singlepoint() (in module cuwalid.stopet.stoPET_v2_4dryp)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_routing.Storage">Storage() (in module cuwalid.dryp.components.DRYP_routing)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.storage_uz_sz">storage_uz_sz() (in module cuwalid.dryp.components.DRYP_groundwater_EFD)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_store_functions.GlobalGridVar.store_variables">store_variables() (cuwalid.dryp.components.DRYP_store_functions.GlobalGridVar method)</a>
+</li>
+      <li><a href="cuwalid.storm.html#cuwalid.storm.parameters.STORMINESS_SF">STORMINESS_SF (in module cuwalid.storm.parameters)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_store_functions.str2timedelta">str2timedelta() (in module cuwalid.dryp.components.DRYP_store_functions)</a>
 </li>
@@ -1555,6 +2055,10 @@
 </li>
       <li><a href="cuwalid.storm.html#cuwalid.storm.checks_.welcome.tab_storm">tab_storm (cuwalid.storm.checks_.welcome attribute)</a>
 </li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.icpac_forecast_preprocessing.tercileplot">tercileplot() (in module cuwalid.stopet.icpac_forecast_preprocessing)</a>
+</li>
+      <li><a href="cuwalid.storm.html#cuwalid.storm.storm.test">test() (in module cuwalid.storm.storm)</a>
+</li>
       <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_basin_delineation.test_basin_delineation">test_basin_delineation() (in module cuwalid.tests.dryp.scripts.test_basin_delineation)</a>
 </li>
       <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_dryp.test_dryp">test_dryp() (in module cuwalid.tests.dryp.scripts.test_dryp)</a>
@@ -1573,13 +2077,21 @@
 </li>
       <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_infiltration.test_infiltration">test_infiltration() (in module cuwalid.tests.dryp.scripts.test_infiltration)</a>
 </li>
+      <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_ponds.test_ponds">test_ponds() (in module cuwalid.tests.dryp.scripts.test_ponds)</a>
+</li>
       <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_precipitation.test_precipitation">test_precipitation() (in module cuwalid.tests.dryp.scripts.test_precipitation)</a>
 
       <ul>
         <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_precipitation_csv.test_precipitation">(in module cuwalid.tests.dryp.scripts.test_precipitation_csv)</a>
 </li>
+        <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_precipitation_step.test_precipitation">(in module cuwalid.tests.dryp.scripts.test_precipitation_step)</a>
+</li>
       </ul></li>
       <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_flow_accum_fortran.test_runoff">test_runoff() (in module cuwalid.tests.dryp.scripts.test_flow_accum_fortran)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_save_necdf_maximum.test_save_maximum">test_save_maximum() (in module cuwalid.tests.dryp.scripts.test_save_necdf_maximum)</a>
 </li>
       <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_save_csv.test_save_variables">test_save_variables() (in module cuwalid.tests.dryp.scripts.test_save_csv)</a>
 
@@ -1587,17 +2099,15 @@
         <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_save_necdf.test_save_variables">(in module cuwalid.tests.dryp.scripts.test_save_necdf)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_soil_layer.test_soil_layer">test_soil_layer() (in module cuwalid.tests.dryp.scripts.test_soil_layer)</a>
+
+      <ul>
+        <li><a href="cuwalid.tests.dryp.scripts.html#cuwalid.tests.dryp.scripts.test_soil_layer_drainage.test_soil_layer">(in module cuwalid.tests.dryp.scripts.test_soil_layer_drainage)</a>
 </li>
+      </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.time_step">time_step() (in module cuwalid.dryp.components.DRYP_groundwater_EFD)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.time_step_confined">time_step_confined() (in module cuwalid.dryp.components.DRYP_groundwater_EFD)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.regional.to_shp">to_shp() (cuwalid.storm.pdfs_.regional static method)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.totals">totals() (in module cuwalid.storm.pdfs_)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accumf90.runoff_routing.Trans_losses">Trans_losses (cuwalid.dryp.components.DRYP_flow_accumf90.runoff_routing attribute)</a>
 </li>
@@ -1619,9 +2129,7 @@
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_groundwater_EFD.transmissivity_multi_aquifer">transmissivity_multi_aquifer() (in module cuwalid.dryp.components.DRYP_groundwater_EFD)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.truncated_sampling">truncated_sampling() (in module cuwalid.storm.rainfall)</a>
-</li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.betas.tt_base">tt_base() (cuwalid.storm.pdfs_.betas method)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.icpac_forecast_preprocessing.trend_plot_defined">trend_plot_defined() (in module cuwalid.stopet.icpac_forecast_preprocessing)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1633,13 +2141,13 @@
 </li>
       <li><a href="cuwalid.storm.html#cuwalid.storm.checks_.parse.update_arg">update_arg() (cuwalid.storm.checks_.parse method)</a>
 </li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.update_par">update_par() (in module cuwalid.storm.rainfall)</a>
+      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_GW_SW_conector.update_soil">update_soil() (in module cuwalid.dryp.components.DRYP_GW_SW_conector)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_GW_SW_conector.update_soil">update_soil() (in module cuwalid.dryp.components.DRYP_GW_SW_conector)</a>
-</li>
       <li><a href="cuwalid.tools.html#cuwalid.tools.download_data.DownloadProgressBar.update_to">update_to() (cuwalid.tools.download_data.DownloadProgressBar method)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_mfile_tools.update_TWSA">update_TWSA() (in module cuwalid.tools.CUWALID_mfile_tools)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.Upscaled_GA">Upscaled_GA() (in module cuwalid.dryp.components.DRYP_infiltration)</a>
 </li>
@@ -1665,13 +2173,11 @@
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.swbm.water_deficit">water_deficit() (cuwalid.dryp.components.DRYP_soil_layer.swbm method)</a>
 </li>
+      <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_dams.water_management">water_management (class in cuwalid.dryp.components.DRYP_dams)</a>
+</li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_flow_accum.watershed">watershed (class in cuwalid.dryp.components.DRYP_flow_accum)</a>
 </li>
       <li><a href="cuwalid.storm.html#cuwalid.storm.checks_.welcome">welcome (class in cuwalid.storm.checks_)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.wet_days">wet_days() (in module cuwalid.storm.rainfall)</a>
 </li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_ABM_connector.ABMconnector.work_out_stable_timestep">work_out_stable_timestep() (cuwalid.dryp.components.DRYP_ABM_connector.ABMconnector method)</a>
 
@@ -1679,29 +2185,49 @@
         <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_abstractions.abstractions.work_out_stable_timestep">(cuwalid.dryp.components.DRYP_abstractions.abstractions method)</a>
 </li>
       </ul></li>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.rainfall.wrapper">wrapper() (in module cuwalid.storm.rainfall)</a>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.icpac_forecast_preprocessing.wrapper">wrapper() (in module cuwalid.stopet.icpac_forecast_preprocessing)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_json_builder.write_JSON_dryp_file">write_JSON_dryp_file() (in module cuwalid.tools.DRYP_json_builder)</a>
+</li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_json_builder.write_JSON_dryp_files">write_JSON_dryp_files() (in module cuwalid.tools.CUWALID_json_builder)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_json_builder.write_JSON_dryp_files">(in module cuwalid.tools.DRYP_json_builder)</a>
+</li>
+      </ul></li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_json_builder.write_JSON_dtorm_file">write_JSON_dtorm_file() (in module cuwalid.tools.CUWALID_json_builder)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_json_builder.write_JSON_dtorm_file">(in module cuwalid.tools.DRYP_json_builder)</a>
+</li>
+      </ul></li>
+      <li><a href="cuwalid.tools.html#cuwalid.tools.CUWALID_json_builder.write_JSON_stopet_file">write_JSON_stopet_file() (in module cuwalid.tools.CUWALID_json_builder)</a>
+
+      <ul>
+        <li><a href="cuwalid.tools.html#cuwalid.tools.DRYP_json_builder.write_JSON_stopet_file">(in module cuwalid.tools.DRYP_json_builder)</a>
+</li>
+      </ul></li>
       <li><a href="cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_change_input_files.write_sim_file">write_sim_file() (in module cuwalid.dryp.components.DRYP_change_input_files)</a>
+</li>
+      <li><a href="cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.writing_forecast_file">writing_forecast_file() (in module cuwalid.stopet.pet_forecast_generation)</a>
 </li>
   </ul></td>
 </tr></table>
 
-<h2 id="X">X</h2>
+<h2 id="Y">Y</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.forecasting.xport_shp">xport_shp() (cuwalid.storm.pdfs_.forecasting method)</a>
-
-      <ul>
-        <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.regional.xport_shp">(cuwalid.storm.pdfs_.regional method)</a>
+      <li><a href="cuwalid.storm.html#cuwalid.storm.parameters.Y_RES">Y_RES (in module cuwalid.storm.parameters)</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="Z">Z</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cuwalid.storm.html#cuwalid.storm.pdfs_.copulas.z_frame">z_frame() (cuwalid.storm.pdfs_.copulas method)</a>
+      <li><a href="cuwalid.storm.html#cuwalid.storm.parameters.Z_CUTS">Z_CUTS (in module cuwalid.storm.parameters)</a>
 </li>
   </ul></td>
 </tr></table>

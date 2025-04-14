@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EVALUATING STORM’S PERFORMANCE &mdash; CUWALID 0.0.1 documentation</title>
@@ -12,6 +12,8 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
@@ -70,7 +72,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">cuwalid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../Authors.html">Introduction</a></li>
@@ -135,7 +137,7 @@
 </div>
 </div>
 <p>Start by reading the output produced by STORM.</p>
-<p>STORM exports its outputs to the folder <a class="reference external" href="../model_output">model_output</a>.</p>
+<p>STORM exports its outputs to the folder<a class="reference external" href="../model_output">model_output</a>.</p>
 <p>Note: The exercise carried out here is for a (simulated) MAM season.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -1237,7 +1239,7 @@ Attributes:
       dtype=&#x27;int32&#x27;, name=&#x27;x&#x27;, length=408))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-ebd1453a-0b9c-4402-b262-620c491a18bc' class='xr-section-summary-in' type='checkbox'  checked><label for='section-ebd1453a-0b9c-4402-b262-620c491a18bc' class='xr-section-summary' >Attributes: <span>(3)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>grid_mapping :</span></dt><dd>spatial_ref</dd><dt><span>long_name :</span></dt><dd>k-means clusters</dd><dt><span>description :</span></dt><dd>-1 indicates region out of any cluster</dd></dl></div></li></ul></div></div></div>
 </div>
 <div class="line-block">
-<div class="line">We’re not interested here in checking individual storms… that’s what notebook <a class="reference external" href="../for_.ipynb">for_</a> is for (pun! –lol–).</div>
+<div class="line">We’re not interested here in checking individual storms… that’s what notebook<a class="reference external" href="../for_.ipynb">for_</a>is for (pun! –lol–).</div>
 <div class="line">Thus, we aggregate all rainfall across the time-axis to obtain total seasonal rainfall (across the HAD).</div>
 <div class="line">(Computation of the following block is somewhat “time-consuming”)</div>
 </div>
@@ -2690,7 +2692,7 @@ Coordinates:
 <div class="line">We have visually examined STORM’s output… and for better or worse, it does something… even though its stochastic framework hasn’t been parameterized yet.</div>
 <div class="line">But is it possible to somehow quantify the/that/those error(s)?</div>
 </div>
-<p>We’ll need several blocks from notebook <a class="reference internal" href="for_.html"><span class="doc">for_</span></a> (as we need to read and plot the realization again); and from notebook <a class="reference internal" href="tre_.html"><span class="doc">tre_</span></a> (as we’d like to have the HAD’s SHP).</p>
+<p>We’ll need several blocks from notebook<a class="reference internal" href="for_.html"><span class="doc">for_</span></a>(as we need to read and plot the realization again); and from notebook<a class="reference internal" href="tre_.html"><span class="doc">tre_</span></a>(as we’d like to have the HAD’s SHP).</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
@@ -3492,9 +3494,9 @@ Data variables:
 <hr class="docutils" />
 <section id="30-RUNS">
 <h3>30 RUNS<a class="headerlink" href="#30-RUNS" title="Permalink to this heading"></a></h3>
-<p><img alt="rains" src="../../_images/six_rain.jpg" /></p>
-<p><img alt="diffs" src="../../_images/six_diff.jpg" /></p>
-<p>You’re encouraged to: 1) run 30 simulations on STORM; and 2) re-do this notebook for the <a class="reference external" href="../realisation_OND_crs-OK.nc">OND</a> realization
+<img alt="rains" src="../../_images/six_rain.jpg" />
+<img alt="diffs" src="../../_images/six_diff.jpg" />
+<p>You’re encouraged to: 1) run 30 simulations on STORM; and 2) re-do this notebook for the<a class="reference external" href="../realisation_OND_crs-OK.nc">OND</a>realization
 You’d need the code below (which was used to produce the plots above) to aggregate all the seasonal storms for the simulated years given in the (NetCDF) files</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:

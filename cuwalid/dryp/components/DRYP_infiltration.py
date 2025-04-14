@@ -410,7 +410,7 @@ def epsilon_fks(k,t,Sp,P,mu_Y,sigma_Y,ks):
 	epsilon:	Epsilon function
 
 	Example:
-	--------
+	----------
 	>>> k = np.array([0.1, 0.2, 0.3])
 	>>> t = np.array([1, 2, 3])
 	>>> Sp = np.array([0.5, 0.6, 0.7])

@@ -594,7 +594,7 @@ def calculate_saturation_from_netCDF(fname, path_wp, path_sat, fname_out=None,
 		2D time series mean or sum of tne dataset
 
 	Example:
-	--------
+	---------
 	>>> import sys
 	>>> import os
 	>>> import geopandas as gpd
@@ -1190,7 +1190,7 @@ def get_point_from_dataset(dataset, x_coord, y_coord, field):
 	"""Get time series of a point from a netCDF
 	
 	Parameters:
-	----------
+	-----------
 	dataset : dataset
 		dataset from which the mean will be extracted
 	x_coord : list
@@ -1202,7 +1202,7 @@ def get_point_from_dataset(dataset, x_coord, y_coord, field):
 
 	
 	Returns:
-	-------
+	--------
 		dataframe
 		containing the time series of the points
 
@@ -1306,7 +1306,7 @@ def reproject_dataset(data, oldPP, newPP):
 	oldPP and newPP have to be defined first
 	
 	Parameters:
-	----------
+	-----------
 	Data:	Dataset
 		dataset to be reprojected
 	oldPP:	Projection
@@ -1315,7 +1315,7 @@ def reproject_dataset(data, oldPP, newPP):
 		projection of the new dataset
 
 	Returns:
-	-------
+	--------
 	Data:	Dataset
 		reprojected dataset
 		

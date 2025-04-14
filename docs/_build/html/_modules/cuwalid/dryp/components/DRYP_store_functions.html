@@ -10,6 +10,8 @@
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
         <script src="../../../../_static/doctools.js"></script>
         <script src="../../../../_static/sphinx_highlight.js"></script>
@@ -46,7 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">cuwalid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../Authors.html">Introduction</a></li>
@@ -127,9 +129,9 @@
 			<span class="s1">&#39;wte&#39;</span><span class="p">:</span><span class="s1">&#39;water table elevation&#39;</span><span class="p">,</span> <span class="s1">&#39;egw&#39;</span><span class="p">:</span><span class="s1">&#39;groundwater evaporation&#39;</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">:</span><span class="s1">&#39;runoff&#39;</span><span class="p">,</span>
 			<span class="s1">&#39;gdh&#39;</span><span class="p">:</span><span class="s1">&#39;groundwater discharge&#39;</span><span class="p">,</span>
 			<span class="s1">&#39;tht&#39;</span><span class="p">:</span><span class="s1">&#39;soil moisture&#39;</span><span class="p">,</span> <span class="s1">&#39;twsc&#39;</span><span class="p">:</span><span class="s1">&#39;water storage change&#39;</span><span class="p">,</span> <span class="s1">&#39;dis&#39;</span><span class="p">:</span><span class="s1">&#39;discharge&#39;</span><span class="p">,</span>
-			<span class="s2">&quot;vpd&quot;</span> <span class="p">:</span> <span class="s2">&quot;Total volume of water available&quot;</span><span class="p">,</span>
-			<span class="s2">&quot;epd&quot;</span> <span class="p">:</span> <span class="s2">&quot;evaporation&quot;</span><span class="p">,</span>
-			<span class="s2">&quot;apd&quot;</span> <span class="p">:</span><span class="s2">&quot;Total abstractions&quot;</span>
+			<span class="s2">&quot;vpd&quot;</span> <span class="p">:</span> <span class="s2">&quot;Total volume of water available - ponds&quot;</span><span class="p">,</span>
+			<span class="s2">&quot;epd&quot;</span> <span class="p">:</span> <span class="s2">&quot;evaporation - ponds&quot;</span><span class="p">,</span>
+			<span class="s2">&quot;apd&quot;</span> <span class="p">:</span><span class="s2">&quot;Total abstractions - ponds&quot;</span>
 			<span class="p">}</span>
 
 <span class="n">units_var</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pre&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;aet&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;pet&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span> <span class="s1">&#39;inf&#39;</span><span class="p">:</span><span class="s1">&#39;mm/dt&#39;</span><span class="p">,</span>
@@ -148,13 +150,25 @@
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ini_date</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">save_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">store_var</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">store_max</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">nstep_day</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;Create a set of 2D arrays to store spatio-temporal datasets.</span>
 
-<span class="sd">		Parameters</span>
-<span class="sd">		------</span>
+<span class="sd">		Parameters:</span>
+<span class="sd">		----------</span>
+<span class="sd">		ini_date: datetime object</span>
+<span class="sd">			starting date of the simulation</span>
+<span class="sd">		dt: string</span>
+<span class="sd">			delta time step, e.g. 1D, 1H, 1M, 1Y</span>
+<span class="sd">		save_results: bool</span>
+<span class="sd">			flag to save results in a file</span>
+<span class="sd">			True - save results in a file</span>
+<span class="sd">			False - do not save results in a file</span>
+<span class="sd">		store_max: bool</span>
+<span class="sd">			flag to store maximum values over a specified period</span>
 <span class="sd">		store_var:	dictionary</span>
 <span class="sd">			with key containing model name variables and boolean as values</span>
 
-<span class="sd">		Returns</span>
+
+<span class="sd">		Returns:</span>
 <span class="sd">		-------</span>
+<span class="sd">		None</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="c1"># set activate store</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">save_results</span> <span class="o">=</span> <span class="n">save_results</span>
@@ -185,7 +199,7 @@
 		<span class="c1">#self.update_keys = True</span>
 		
 		<span class="c1"># set counter for number of step for max value</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_max</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_max</span> <span class="o">=</span> <span class="mi">1</span>
 
 		<span class="c1"># activate option to save maximum values over a specified period</span>
 		<span class="c1"># this function will only be activated if data is stored in time</span>
@@ -220,14 +234,18 @@
 		<span class="k">pass</span>
 
 <div class="viewcode-block" id="GlobalGridVar.store_variables"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_store_functions.GlobalGridVar.store_variables">[docs]</a>	<span class="k">def</span> <span class="nf">store_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_sim_dt</span><span class="p">,</span> <span class="n">t_date</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
-<span class="w">		</span><span class="sd">&quot;&quot;&quot;stack variables in an 1d-array so store</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;	This function store variables in a 2D array, it will</span>
+<span class="sd">		store the variables in a 2D array, if the time step is greater than</span>
+<span class="sd">		one day, it will store the maximum values for the entire day.</span>
+<span class="sd">		Otherwise, it will store the values for the entire day. It will</span>
+<span class="sd">		stack variables in an 1d-array so store</span>
 
 <span class="sd">		Parameters</span>
 <span class="sd">		----------</span>
-<span class="sd">		date_sim_dt : datetime array</span>
-<span class="sd">			array of dates at results time steps</span>
+<span class="sd">		date_sim_dt :numpy array</span>
+<span class="sd">			1D array of dates at results time steps</span>
 <span class="sd">		t_date :int</span>
-<span class="sd">			array index</span>
+<span class="sd">			index of the date to store</span>
 <span class="sd">		variables :	dict</span>
 <span class="sd">			dictionary containig variables to store</span>
 
@@ -256,7 +274,7 @@
 			
 			<span class="c1"># accumulate variables/create array of variables</span>
 			<span class="n">variables</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
-			
+			<span class="c1">#print(date, self.idate)</span>
 			<span class="k">if</span> <span class="n">date</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">idate</span><span class="p">:</span>
 				<span class="c1"># accumulate variables</span>
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -265,8 +283,8 @@
 				<span class="k">else</span><span class="p">:</span>
 					<span class="c1"># accumulate</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="o">+=</span> <span class="n">variables</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span> <span class="o">+=</span> <span class="mf">1.0</span>
-				
+				<span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span> <span class="o">+=</span> <span class="mi">1</span>
+				<span class="c1">#print(self.daily_steps, self.nsteps, self.nsteps_max)</span>
 				<span class="c1"># Store maximum values at daily time steps</span>
 				<span class="c1"># accumulate values for the entire day</span>
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">store_max</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
@@ -276,6 +294,7 @@
 						<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_maximum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 							<span class="c1"># create variables</span>
 							<span class="bp">self</span><span class="o">.</span><span class="n">var_maximum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+							<span class="c1">#self.var_maximum = np.array(self.var_acummulation)</span>
 
 						<span class="bp">self</span><span class="o">.</span><span class="n">var_maximum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span>
 								<span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span><span class="p">,</span>
@@ -286,13 +305,15 @@
 						<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_max</span> <span class="o">=</span> <span class="mi">0</span>
 
 					<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_max</span> <span class="o">+=</span> <span class="mi">1</span>
-
+					<span class="c1">#print(&quot;Max: &quot;, self.nsteps_max, &quot; - &quot;, self.var_maximum)</span>
 				
 			<span class="k">else</span><span class="p">:</span>
 				<span class="c1"># Store variables at the specified time step</span>
 				<span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
 					<span class="c1"># create variables</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+				<span class="c1">#print(&quot;Store: &quot;, self.var_acummulation)</span>
+				<span class="c1">#print(&quot;Store: &quot;, variables)</span>
 
 				<span class="c1"># Store maximum values at daily time steps</span>
 				<span class="c1"># accumulate values for the entire day</span>
@@ -302,31 +323,40 @@
 					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_maximum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 						<span class="c1"># create variables</span>
 						<span class="bp">self</span><span class="o">.</span><span class="n">var_maximum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+						<span class="c1">#self.var_maximum = np.array(self.var_acummulation)</span>
 					<span class="c1"># get maximum value</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">var_maximum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span>
 							<span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span><span class="p">,</span>
 							<span class="bp">self</span><span class="o">.</span><span class="n">var_maximum</span><span class="p">)</span>
 
 					<span class="c1"># restart daily accumulation counter</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_max</span> <span class="o">=</span> <span class="mi">0</span>
-
+					<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_max</span> <span class="o">=</span> <span class="mi">1</span>
+				
+				<span class="c1"># store variables</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_vector</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span><span class="p">)</span>
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">store_max</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">cumm_variable</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_maximum</span><span class="p">)</span>
 				<span class="k">else</span><span class="p">:</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">cumm_variable</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span><span class="p">)</span>
+				
+				<span class="c1"># reset variables</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">time_grid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pdate</span><span class="p">)</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">pdate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idate</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">idate</span> <span class="o">=</span> <span class="n">addtime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">)</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span> <span class="o">=</span> <span class="mf">1.0</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span> <span class="o">=</span> <span class="mi">1</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="o">=</span> <span class="kc">None</span>
+				<span class="c1">#print(t_date, &quot;Date: &quot;, date, &quot; - &quot;, self.idate)</span>
+				<span class="c1">#print(self.var_maximum)</span>
+				<span class="c1">#if (t_date &lt; len(date_sim_dt)-1):</span>
+					<span class="c1">#print(t_date, &quot;Date: &quot;, date, &quot; - &quot;, self.idate)</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">var_maximum</span> <span class="o">=</span> <span class="kc">None</span>
-			
+			<span class="c1">#print(len(self.cumm_variable))</span>
 			<span class="c1"># check the if the last step has been processed</span>
 			<span class="c1"># check if variable has been accumulated, otherwise</span>
 			<span class="c1"># store the available dataset, skip if it has already</span>
 			<span class="c1"># been added</span>
 			<span class="k">if</span> <span class="p">(</span><span class="n">t_date</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">date_sim_dt</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+				<span class="c1">#print(&quot;Last date: &quot;, t_date, &quot;Date: &quot;, date, &quot; - &quot;, self.idate)</span>
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_acummulation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">nsteps_vector</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nsteps</span><span class="p">)</span>
 					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">store_max</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
@@ -340,7 +370,7 @@
 <div class="viewcode-block" id="GlobalGridVar.save_csv_var"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_store_functions.GlobalGridVar.save_csv_var">[docs]</a>	<span class="k">def</span> <span class="nf">save_csv_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">multi_files</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">		</span><span class="sd">&quot;&quot;&quot;This function save multiple arrays in a csv file</span>
 <span class="sd">		</span>
-<span class="sd">		Parameters</span>
+<span class="sd">		Parameters:</span>
 <span class="sd">		----------</span>
 <span class="sd">		fname : str</span>
 <span class="sd">			filename of csv files to store</span>
@@ -349,7 +379,7 @@
 <span class="sd">			True - save in multiple files</span>
 <span class="sd">			False - save variables in one file</span>
 
-<span class="sd">		Returns</span>
+<span class="sd">		Returns:</span>
 <span class="sd">		-------</span>
 <span class="sd">		csv files</span>
 <span class="sd">			output files in csv format</span>
@@ -462,13 +492,6 @@
 			<span class="n">time</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="s1">&#39;gregorian&#39;</span>
 			<span class="n">lon</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;meters&#39;</span>
 			<span class="n">lat</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;meters&#39;</span>
-
-			<span class="c1"># create dictionary of units</span>
-			<span class="c1">#units_var = {&#39;pre&#39;:&#39;mm/dt&#39;, &#39;aet&#39;:&#39;mm/dt&#39;, &#39;pet&#39;:&#39;mm/dt&#39;, &#39;inf&#39;:&#39;mm/dt&#39;,</span>
-			<span class="c1">#			&#39;tls&#39;:&#39;mm/dt&#39;, &#39;fch&#39;:&#39;mm/dt&#39;, &#39;ssz&#39;:&#39;m3/dt&#39;, &#39;rch&#39;:&#39;mm/dt&#39;,</span>
-			<span class="c1">#			&#39;wte&#39;:&#39;m&#39;, &#39;egw&#39;:&#39;mm/dt&#39;, &#39;run&#39;:&#39;mm/dt&#39;, &#39;gdh&#39;:&#39;m3/dt&#39;,</span>
-			<span class="c1">#			&#39;tht&#39;:&#39;m3/m3&#39;, &#39;twsc&#39;:&#39;mm&#39;, &#39;dis&#39;:&#39;m3/dt&#39;</span>
-			<span class="c1">#			}</span>
 
 			<span class="c1"># create variable</span>
 			<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">store_var_names</span><span class="p">:</span>

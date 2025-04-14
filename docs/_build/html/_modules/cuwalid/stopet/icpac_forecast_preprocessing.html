@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.stopet.icpac_forecast_preprocessing &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cuwalid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Licences.html">Licences</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.stopet.icpac_forecast_preprocessing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.stopet.icpac_forecast_preprocessing</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">num2date</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;Qt5Agg&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span><span class="p">,</span> <span class="n">maskoceans</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mcolors</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">colors</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageChops</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">ImageDraw</span><span class="p">,</span> <span class="n">ImageFont</span>
+
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rcParams</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.weight&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;bold&quot;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.labelweight&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;bold&quot;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;ytick.labelsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;xtick.labelsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span> 
+
+
+<span class="c1"># ================ pre processing ICPAC forecast =============##</span>
+<div class="viewcode-block" id="wrapper"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.icpac_forecast_preprocessing.wrapper">[docs]</a><span class="k">def</span> <span class="nf">wrapper</span><span class="p">():</span>
+    <span class="n">datapath</span> <span class="o">=</span> <span class="s1">&#39;/user/home/fp20123/v2_stopet/icpac_forecast/&#39;</span>
+    <span class="n">fin</span> <span class="o">=</span> <span class="s1">&#39;Ens_Tref_1monLead_JJAS2024_Raw.nc&#39;</span>
+    <span class="n">fout</span> <span class="o">=</span> <span class="s1">&#39;ICPAC_TempF_JJAS2024_HAD.nc&#39;</span>
+    <span class="n">icpac_forecast_preprocessing</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="n">fin</span><span class="p">,</span> <span class="n">fout</span><span class="p">)</span>
+    
+    <span class="n">tercileplot</span><span class="p">(</span><span class="s1">&#39;JJAS&#39;</span><span class="p">,</span> <span class="mi">2024</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="icpac_forecast_preprocessing"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.icpac_forecast_preprocessing.icpac_forecast_preprocessing">[docs]</a><span class="k">def</span> <span class="nf">icpac_forecast_preprocessing</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="n">fin</span><span class="p">,</span> <span class="n">fout</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This function is used to modify the ICPAC forecast data to fit to the STOPET </span>
+<span class="sd">  model domain. But if someone need to use this please change the lat and lon values</span>
+<span class="sd">  so you can extract the exact location you need from the forecast as it inclued the </span>
+<span class="sd">  whole IGAD region.</span>
+<span class="sd">  </span>
+<span class="sd">  In the second step it also invert the latitude as ICPAC normally provide values of latitude</span>
+<span class="sd">  from negative to positive and STOPET nedd it from positive to negative.</span>
+<span class="sd">  </span>
+<span class="sd">  :param datapath: is the pathe where you put your ICPAC forecast files</span>
+<span class="sd">  :param fin is the ICPAC forcast file (.nc)</span>
+<span class="sd">  :param fout is the final file nae of the modified ICPAC forecast.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># split the fin from the extension</span>
+  <span class="n">name</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fin</span><span class="p">)</span>
+  <span class="c1"># step 1 invert lat</span>
+  <span class="n">fin</span> <span class="o">=</span> <span class="n">datapath</span> <span class="o">+</span> <span class="n">fin</span>
+  <span class="n">fout_inv</span> <span class="o">=</span> <span class="n">datapath</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_inv.nc&#39;</span>
+  <span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;cdo invertlat </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">fin</span><span class="p">,</span> <span class="n">fout_inv</span><span class="p">)</span>
+  <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>  
+  
+  <span class="c1"># step 2 slice data to fit existing stoPET</span>
+  <span class="n">fout</span> <span class="o">=</span> <span class="n">datapath</span> <span class="o">+</span> <span class="n">fout</span>
+  <span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;cdo sellonlatbox,31.1,51.92,-6.82,15.9 </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fout_inv</span><span class="p">,</span> <span class="n">fout</span><span class="p">)</span>
+  <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>  
+
+  <span class="c1"># step 3 remove intermidiate files</span>
+  <span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;rm -rf </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">fout_inv</span><span class="p">)</span>
+  <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>  </div>
+
+  
+<div class="viewcode-block" id="tercileplot"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.icpac_forecast_preprocessing.tercileplot">[docs]</a><span class="k">def</span> <span class="nf">tercileplot</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">shapefile</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This function plot the three terciles of ICPAC forecast.</span>
+<span class="sd">  :param datapath: is the pathe where you put your ICPAC forecast file</span>
+<span class="sd">  :param season:  is theseason of the forecast (e. g. &#39;OND&#39;)</span>
+<span class="sd">  :param year: year of the forecast</span>
+<span class="sd">  :param fname: the file name of the forecast</span>
+<span class="sd">  :param shapefile: the shpefile you want to use in the plot (This need to be with out the extension .shp)</span>
+<span class="sd">  :param year: year of the forecast</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+ 
+  <span class="n">nc</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">datapath</span> <span class="o">+</span> <span class="n">fname</span><span class="p">)</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="n">lats</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">][:]</span>
+    <span class="n">lons</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][:]</span>
+  <span class="k">except</span><span class="p">:</span>
+    <span class="n">lats</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;LAT&#39;</span><span class="p">][:]</span>
+    <span class="n">lons</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;LON&#39;</span><span class="p">][:]</span>
+    
+  <span class="n">Adata</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;above&#39;</span><span class="p">][:,:]</span>
+  <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s</span><span class="s1"> Above normal (T)&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">season</span><span class="p">,</span><span class="n">year</span><span class="p">)</span>
+  <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span>
+  <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span>
+  <span class="n">vmax</span><span class="o">=</span><span class="mi">100</span>
+  <span class="n">fname</span><span class="o">=</span><span class="s1">&#39;temp_Above_</span><span class="si">%s</span><span class="s1">.png&#39;</span><span class="o">%</span><span class="n">season</span>
+  <span class="n">trend_plot_defined</span><span class="p">(</span><span class="n">Adata</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;a)&#39;</span><span class="p">,</span> <span class="n">shapefile</span><span class="p">)</span>
+  
+  <span class="n">Ndata</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;normal&#39;</span><span class="p">][:,:]</span>
+  <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s</span><span class="s1"> Near Normal (T)&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">season</span><span class="p">,</span><span class="n">year</span><span class="p">)</span>
+  <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span>
+  <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span>
+  <span class="n">vmax</span><span class="o">=</span><span class="mi">100</span>
+  <span class="n">fname</span><span class="o">=</span><span class="s1">&#39;temp_Normal_</span><span class="si">%s</span><span class="s1">.png&#39;</span><span class="o">%</span><span class="n">season</span>
+  <span class="n">trend_plot_defined</span><span class="p">(</span><span class="n">Ndata</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b)&#39;</span><span class="p">,</span> <span class="n">shapefile</span><span class="p">)</span>
+  
+  <span class="n">Bdata</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;below&#39;</span><span class="p">][:,:]</span>
+  <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s</span><span class="s1"> Below normal (T)&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">season</span><span class="p">,</span><span class="n">year</span><span class="p">)</span>
+  <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span>
+  <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span>
+  <span class="n">vmax</span><span class="o">=</span><span class="mi">100</span>
+  <span class="n">fname</span><span class="o">=</span><span class="s1">&#39;temp_Below_</span><span class="si">%s</span><span class="s1">.png&#39;</span><span class="o">%</span><span class="n">season</span>
+  <span class="n">trend_plot_defined</span><span class="p">(</span><span class="n">Bdata</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;c)&#39;</span><span class="p">,</span> <span class="n">shapefile</span><span class="p">)</span>
+  
+  <span class="c1"># combine image</span>
+  <span class="n">combine_all_plots_horizontal_seasonal</span><span class="p">(</span><span class="n">datapath</span> <span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span>
+ 
+  <span class="c1"># remove intermidiate files</span>
+  <span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;rm -rf temp_*.png&#39;</span>
+  <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>  </div>
+  
+
+
+<div class="viewcode-block" id="trend_plot_defined"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.icpac_forecast_preprocessing.trend_plot_defined">[docs]</a><span class="k">def</span> <span class="nf">trend_plot_defined</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">creverse</span><span class="p">,</span> <span class="n">title2</span><span class="p">,</span> <span class="n">shapefile</span><span class="p">):</span>
+    
+    <span class="n">bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">BoundaryNorm</span><span class="p">(</span><span class="n">boundaries</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">ncolors</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
+
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;RdYlBu_r&#39;</span><span class="p">)</span><span class="c1">##Spectral_r</span>
+<span class="c1">#    cmap.set_under(&#39;silver&#39;, 1.0)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">0.8</span><span class="p">])</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;cyl&#39;</span><span class="p">,</span> <span class="n">llcrnrlat</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">lats</span><span class="p">),</span> <span class="n">urcrnrlat</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">lats</span><span class="p">),</span> <span class="n">llcrnrlon</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">lons</span><span class="p">),</span>
+                <span class="n">urcrnrlon</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">lons</span><span class="p">),</span> <span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;h&#39;</span><span class="p">)</span>
+    <span class="n">cs4</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">[:,:],</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+                     <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">lons</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">lons</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">lats</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">lats</span><span class="p">)],</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span><span class="c1">#vmin=vmin,vmax=vmax) </span>
+    <span class="n">m</span><span class="o">.</span><span class="n">drawcoastlines</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">drawcountries</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">parallels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">90.</span><span class="p">,</span><span class="mf">90.</span><span class="p">,</span><span class="mf">2.4</span><span class="p">)</span>
+    <span class="n">meridians</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">180.</span><span class="p">,</span><span class="mf">180.</span><span class="p">,</span><span class="mf">2.4</span><span class="p">)</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">readshapefile</span><span class="p">(</span><span class="n">shapefile</span><span class="p">,</span><span class="s1">&#39;had_basins&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title2</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+    <span class="n">cb4</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cs4</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="s1">&#39;neither&#39;</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>  
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>   </div>
+
+
+<div class="viewcode-block" id="combine_all_plots_horizontal_seasonal"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.icpac_forecast_preprocessing.combine_all_plots_horizontal_seasonal">[docs]</a><span class="k">def</span> <span class="nf">combine_all_plots_horizontal_seasonal</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function combine all the first horizontally merged figures</span>
+<span class="sd">    vertically.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># the saved three plots will be merged vertically</span>
+    <span class="n">list_im</span> <span class="o">=</span> <span class="p">[</span><span class="n">datapath</span><span class="o">+</span><span class="s1">&#39;temp_Above_</span><span class="si">%s</span><span class="s1">.png&#39;</span><span class="o">%</span><span class="n">season</span><span class="p">,</span> <span class="n">datapath</span><span class="o">+</span><span class="s1">&#39;temp_Normal_</span><span class="si">%s</span><span class="s1">.png&#39;</span><span class="o">%</span><span class="n">season</span><span class="p">,</span> <span class="n">datapath</span><span class="o">+</span><span class="s1">&#39;temp_Below_</span><span class="si">%s</span><span class="s1">.png&#39;</span><span class="o">%</span><span class="n">season</span><span class="p">]</span>
+    <span class="n">imgs</span>    <span class="o">=</span> <span class="p">[</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">list_im</span> <span class="p">]</span>
+    <span class="c1"># pick the image which is the smallest, and resize the others to match it (can be arbitrary image shape here)</span>
+    <span class="n">min_shape</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">i</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">imgs</span><span class="p">])[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">imgs_comb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">min_shape</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">imgs</span><span class="p">])</span><span class="c1">#</span>
+    <span class="c1"># for a vertical stacking it is simple: use vstack</span>
+<span class="c1">#    imgs_comb = np.vstack((np.asarray(i.resize(min_shape)) for i in imgs))</span>
+    <span class="n">imgs_comb</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">imgs_comb</span><span class="p">)</span>
+    <span class="n">imgs_comb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">datapath</span><span class="o">+</span><span class="s1">&#39;Tforecast_</span><span class="si">%s%s</span><span class="s1">.png&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">season</span><span class="p">,</span><span class="n">year</span><span class="p">))</span>  </div>
+    
+
+<span class="c1"># *********************************************** #    </span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span><span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">wrapper</span><span class="p">()</span>
+ 
+
+
+
+  
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

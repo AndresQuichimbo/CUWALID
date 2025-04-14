@@ -33,7 +33,7 @@ def get_flow_path(fname_surface, fname_outlet, fname_out=None,
 		file name of the elevation raster map
 	fname_outlet : str
 		file name of the outflow raster map
-	fname_floedir : str
+	fname_flowdir : str
 		(optional) filename of the flow direction raster map
 	fname_out : str
 		(optional) filename of the output raster file

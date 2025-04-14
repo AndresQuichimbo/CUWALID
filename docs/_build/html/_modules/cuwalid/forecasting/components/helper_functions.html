@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.forecasting.components.helper_functions &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">cuwalid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Licences.html">Licences</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.forecasting.components.helper_functions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.forecasting.components.helper_functions</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">geopy</span>
+<span class="kn">from</span> <span class="nn">geopy.distance</span> <span class="kn">import</span> <span class="n">geodesic</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">patheffects</span>
+<span class="c1">#from bidi import algorithm as bidialg</span>
+<span class="c1">#import arabic_reshaper</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A file containing helper functions to assist with the forecasting element</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># This function loads the configuration from the JSON file</span>
+<div class="viewcode-block" id="load_config"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.load_config">[docs]</a><span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">config</span></div>
+
+<div class="viewcode-block" id="read_dataset"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.read_dataset">[docs]</a><span class="k">def</span> <span class="nf">read_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;tht&#39;</span><span class="p">):</span>
+	<span class="c1"># Open the first netCDF file</span>
+	<span class="c1"># output dataset</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">data</span></div>
+	
+<div class="viewcode-block" id="resample_dataset"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.resample_dataset">[docs]</a><span class="k">def</span> <span class="nf">resample_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">):</span>
+	<span class="c1"># calculate climatological mean</span>
+	<span class="c1"># output an array</span>
+	<span class="k">if</span> <span class="n">mean</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">delt</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">delt</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>	
+	<span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="season_name_to_number"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.season_name_to_number">[docs]</a><span class="k">def</span> <span class="nf">season_name_to_number</span><span class="p">(</span><span class="n">season</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a string representing a season to a list of numbers indicating corresponding months.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    season : str or list or int</span>
+<span class="sd">        The season represented by three capital letters (e.g., &quot;OND&quot;) or a list of month numbers.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        A list of integers representing the months for the given season. If the input is already </span>
+<span class="sd">        a list of months, it is returned as is. If the input is not recognized, it returns </span>
+<span class="sd">        the input wrapped in a list.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Supported season codes:</span>
+<span class="sd">    - &quot;MAM&quot; : March, April, May [3, 4, 5]</span>
+<span class="sd">    - &quot;OND&quot; : October, November, December [10, 11, 12]</span>
+<span class="sd">    - &quot;JJS&quot; : June, July, August [6, 7, 8]</span>
+<span class="sd">    - &quot;JF&quot;  : January, February [1, 2]</span>
+<span class="sd">    - &quot;JJSA&quot;: June, July, August, September [6, 7, 8, 9]</span>
+
+<span class="sd">    If the input is not a string or a list, the function wraps the input in a list.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; season_name_to_number(&quot;MAM&quot;)</span>
+<span class="sd">    [3, 4, 5]</span>
+
+<span class="sd">    &gt;&gt;&gt; season_name_to_number([1, 2, 3])</span>
+<span class="sd">    [1, 2, 3]</span>
+
+<span class="sd">    &gt;&gt;&gt; season_name_to_number(2)</span>
+<span class="sd">    [2]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+	<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">season</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;MAM&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;OND&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;JJS&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;JF&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">season</span> <span class="o">==</span> <span class="s2">&quot;JJSA&quot;</span><span class="p">:</span>
+			<span class="n">season</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">season</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">season</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+			<span class="k">return</span> <span class="n">season</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">[</span><span class="n">season</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="get_season_dataset"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.get_season_dataset">[docs]</a><span class="k">def</span> <span class="nf">get_season_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">season</span><span class="p">):</span>
+	<span class="c1"># get seasson</span>
+	<span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">season_name_to_number</span><span class="p">(</span><span class="n">season</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="reproject_dataset"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.reproject_dataset">[docs]</a><span class="k">def</span> <span class="nf">reproject_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">oldPP</span><span class="p">,</span> <span class="n">newPP</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Transform projection system</span>
+<span class="sd">	oldPP and newPP have to be defined first</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	Data:	Dataset</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	Data:	Dataset</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># check if projection is in ERSG format</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">newPP</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">11</span><span class="p">:</span>
+		<span class="n">newPP</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">CRS</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">newPP</span><span class="p">)</span>
+	
+	<span class="c1"># reprojec dataset</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="s1">&#39;y&#39;</span><span class="p">})</span>  <span class="c1"># new method</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_crs</span><span class="p">(</span><span class="n">oldPP</span><span class="p">)</span> <span class="c1"># write crs</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">reproject</span><span class="p">(</span><span class="n">newPP</span><span class="p">)</span> <span class="c1"># reproject the file</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="s1">&#39;lat&#39;</span><span class="p">})</span>  <span class="c1"># new method</span>
+	
+	<span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="get_mask"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.get_mask">[docs]</a><span class="k">def</span> <span class="nf">get_mask</span><span class="p">(</span><span class="n">fmask</span><span class="p">):</span>
+	<span class="c1"># output an array</span>
+	<span class="c1"># get a mask</span>
+	<span class="n">mask</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fmask</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="c1"># mask values for visualisation</span>
+	<span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+	<span class="n">mask</span><span class="p">[</span><span class="n">mask</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+	<span class="n">mask</span><span class="p">[</span><span class="n">mask</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+	<span class="k">return</span> <span class="n">mask</span></div>
+
+<div class="viewcode-block" id="bounding_box"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.bounding_box">[docs]</a><span class="k">def</span> <span class="nf">bounding_box</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+	<span class="n">lat</span><span class="p">,</span> <span class="n">lon</span> <span class="o">=</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="c1"># sw, ne</span>
+	<span class="n">bearings</span> <span class="o">=</span> <span class="p">[</span><span class="mi">225</span><span class="p">,</span> <span class="mi">45</span><span class="p">]</span>
+	<span class="n">origin</span> <span class="o">=</span> <span class="n">geopy</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">)</span>
+	<span class="n">bbox</span> <span class="o">=</span> <span class="p">[]</span>
+
+	<span class="k">for</span> <span class="n">bearing</span> <span class="ow">in</span> <span class="n">bearings</span><span class="p">:</span>
+		<span class="n">destination</span> <span class="o">=</span> <span class="n">geodesic</span><span class="p">(</span><span class="n">kilometers</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">distance</span><span class="p">)</span><span class="o">.</span><span class="n">destination</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">bearing</span><span class="p">)</span>
+		<span class="n">coords</span> <span class="o">=</span> <span class="n">destination</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">destination</span><span class="o">.</span><span class="n">latitude</span>
+		<span class="n">bbox</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+	<span class="c1"># xmin, ymin, xmax, ymax</span>
+	<span class="k">return</span> <span class="n">bbox</span></div>
+	
+<div class="viewcode-block" id="add_scale_bar"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.add_scale_bar">[docs]</a><span class="k">def</span> <span class="nf">add_scale_bar</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;1 km&#39;</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Add a scale bar to a Matplotlib Axes object.</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	- ax: The Matplotlib Axes object to add the scale bar to.</span>
+<span class="sd">	- length: Length of the scale bar in Axes coordinates (0 to 1).</span>
+<span class="sd">	- location: Tuple indicating the location of the scale bar in Axes coordinates.</span>
+<span class="sd">	- linewidth: The thickness of the scale bar line.</span>
+<span class="sd">	- text: A string with the text label for the scale bar.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Transform from Axes coordinates (0-1) to figure coordinates</span>
+	<span class="n">trans</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span> <span class="o">+</span> <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">transFigure</span><span class="o">.</span><span class="n">inverted</span><span class="p">()</span>
+	<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
+	
+	<span class="c1"># Draw the scale bar</span>
+	<span class="n">bar</span> <span class="o">=</span> <span class="n">mpatches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">length</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">/</span><span class="mi">100</span><span class="p">,</span>
+			<span class="c1">#transform=ax.figure.transFigure,</span>
+			<span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">patches</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">bar</span><span class="p">])</span>
+	
+	<span class="c1"># Add text annotation for the scale bar</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">length</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">linewidth</span><span class="o">/</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+		<span class="n">text</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span>
+		<span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">transFigure</span>
+		<span class="p">)</span></div>
+
+<div class="viewcode-block" id="add_label_features"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.add_label_features">[docs]</a><span class="k">def</span> <span class="nf">add_label_features</span><span class="p">(</span><span class="n">geodata</span><span class="p">,</span> <span class="n">language_font</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">boundbox</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+	<span class="n">fontstyle</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="n">halignament</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+	<span class="n">language</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Add labels to plot from geopandas</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+
+<span class="sd">	geodata: geopandas datasets</span>
+<span class="sd">	language_font: Matplotlib font object</span>
+<span class="sd">	fontsize: int</span>
+<span class="sd">		defalult 6</span>
+<span class="sd">	boundbox :</span>
+<span class="sd">		None</span>
+<span class="sd">	offset: float</span>
+<span class="sd">		distance from the location, default 0</span>
+<span class="sd">	fontstyle:</span>
+<span class="sd">		&quot;normal&quot;</span>
+<span class="sd">	halignament:</span>
+<span class="sd">		&quot;center&quot;</span>
+<span class="sd">	alpha: float</span>
+<span class="sd">		transparency 1.0</span>
+<span class="sd">	color: str</span>
+<span class="sd">		color, default is &quot;k&quot;</span>
+<span class="sd">	language: str</span>
+<span class="sd">		name of the field to plot</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">geodata</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+		<span class="n">geodata</span> <span class="o">=</span> <span class="n">geodata</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+	<span class="c1">#print(geodata.columns)</span>
+	<span class="c1">#print(c)</span>
+	<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">geodata</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+		<span class="n">x_mid</span><span class="p">,</span> <span class="n">y_mid</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+		<span class="n">iname</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+		<span class="c1"># Try and get location labels in selected language</span>
+		<span class="k">if</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">language</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;nan&quot;</span><span class="p">:</span>
+			<span class="n">iname</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">language</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1"># Try and get the english name</span>
+		<span class="k">elif</span> <span class="s2">&quot;name:en&quot;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name:en&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;nan&quot;</span><span class="p">:</span> 
+			<span class="n">iname</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name:en&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1"># Try the defualt name</span>
+		<span class="k">elif</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;nan&quot;</span><span class="p">:</span>
+			<span class="n">iname</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span> <span class="c1"># For debubbing missing labels</span>
+			<span class="c1"># print(&quot;****************&quot;)</span>
+			<span class="c1"># print(&quot;Name not found:&quot;)</span>
+			<span class="c1"># print(row)</span>
+			<span class="c1"># print(&quot;****************&quot;)</span>
+			<span class="k">pass</span>
+
+
+		<span class="c1">#print(x_mid, y_mid, boundbox, iname)</span>
+		<span class="k">if</span> <span class="n">boundbox</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">boundbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">x_mid</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">x_mid</span> <span class="o">&gt;</span> <span class="n">boundbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+				<span class="n">x_mid</span> <span class="o">=</span> <span class="kc">None</span>
+				<span class="n">iname</span> <span class="o">=</span> <span class="kc">None</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">boundbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">y_mid</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">y_mid</span> <span class="o">&gt;</span> <span class="n">boundbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]):</span>
+				<span class="n">y_mid</span> <span class="o">=</span> <span class="kc">None</span>
+				<span class="n">iname</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="c1">#print(x_mid, y_mid, boundbox)</span>
+		<span class="c1">#if boundbox is not None:</span>
+		<span class="c1">#	x_mid = np.max([boundbox[0]+offset, x_mid])</span>
+		<span class="c1">#	y_mid = np.max([boundbox[1]+offset, y_mid])</span>
+		<span class="c1">#	x_mid = np.min([boundbox[2]-offset, x_mid])</span>
+		<span class="c1">#	y_mid = np.min([boundbox[3]-offset, y_mid])</span>
+		<span class="c1">#print(x_mid, y_mid, boundbox)</span>
+		<span class="c1">#print(iname)</span>
+		<span class="k">if</span> <span class="n">iname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="c1">#print(iname)</span>
+			<span class="c1">#iname = bidialg.get_display(iname)</span>
+			<span class="c1">#print(iname)</span>
+
+			<span class="c1"># If language is english remove arabic letters from osm data (prevents boxes for unrecognised characters)</span>
+			<span class="k">if</span> <span class="n">language</span> <span class="o">!=</span> <span class="s2">&quot;name:am&quot;</span><span class="p">:</span>
+				<span class="n">iname_temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^a-zA-Z0-9\s.,!?;:&#39;</span><span class="se">\&quot;</span><span class="s2">()\-]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">iname</span><span class="p">)</span>
+				<span class="n">iname_temp</span> <span class="o">=</span> <span class="n">iname_temp</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">iname_temp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># only update it if the name still is long enoough after strip</span>
+					<span class="n">iname</span> <span class="o">=</span> <span class="n">iname_temp</span>
+
+
+			<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x_mid</span><span class="o">+</span><span class="n">offset</span><span class="p">,</span> <span class="n">y_mid</span><span class="o">+</span><span class="n">offset</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">iname</span><span class="p">,</span>
+				<span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize</span><span class="p">,</span> <span class="n">fontstyle</span><span class="o">=</span><span class="n">fontstyle</span><span class="p">,</span>
+				<span class="n">horizontalalignment</span><span class="o">=</span><span class="n">halignament</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+				<span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+				<span class="n">path_effects</span><span class="o">=</span><span class="p">[</span><span class="n">patheffects</span><span class="o">.</span><span class="n">withStroke</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+                                                        <span class="n">foreground</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)],</span>
+				<span class="n">fontproperties</span><span class="o">=</span><span class="n">language_font</span>									
+				<span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

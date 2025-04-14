@@ -36,6 +36,38 @@ cuwalid.dryp.components.DRYP\_change\_input\_files module
    :undoc-members:
    :show-inheritance:
 
+cuwalid.dryp.components.DRYP\_dams module
+-----------------------------------------
+
+.. automodule:: cuwalid.dryp.components.DRYP_dams
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cuwalid.dryp.components.DRYP\_defalut\_projections module
+---------------------------------------------------------
+
+.. automodule:: cuwalid.dryp.components.DRYP_defalut_projections
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cuwalid.dryp.components.DRYP\_default\_parameters module
+--------------------------------------------------------
+
+.. automodule:: cuwalid.dryp.components.DRYP_default_parameters
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cuwalid.dryp.components.DRYP\_default\_settings module
+------------------------------------------------------
+
+.. automodule:: cuwalid.dryp.components.DRYP_default_settings
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 cuwalid.dryp.components.DRYP\_flow\_accum module
 ------------------------------------------------
 
@@ -100,6 +132,14 @@ cuwalid.dryp.components.DRYP\_io\_files module
    :undoc-members:
    :show-inheritance:
 
+cuwalid.dryp.components.DRYP\_json\_reader module
+-------------------------------------------------
+
+.. automodule:: cuwalid.dryp.components.DRYP_json_reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 cuwalid.dryp.components.DRYP\_plot module
 -----------------------------------------
 
@@ -112,6 +152,14 @@ cuwalid.dryp.components.DRYP\_plot\_fun module
 ----------------------------------------------
 
 .. automodule:: cuwalid.dryp.components.DRYP_plot_fun
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cuwalid.dryp.components.DRYP\_ponds module
+------------------------------------------
+
+.. automodule:: cuwalid.dryp.components.DRYP_ponds
    :members:
    :undoc-members:
    :show-inheritance:

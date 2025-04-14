@@ -176,7 +176,7 @@ def plot_point_var(fname, fields=None, fname_out=None, delta_t='D', mean=True, m
 	--------
 		ax: axes of the plot
 	Example:
-	-------
+	--------
 	>>> import matplotlib.pyplot as plt
 	>>> import pandas as pd
 	>>> import numpy as np
@@ -285,7 +285,7 @@ def plot_profile(dataset, axis=0, time=[0], n=1, dem=None, bathymetry=None, titl
 		ax: axes of the plot
 	
 	Example:
-	-------
+	--------
 	>>> import matplotlib.pyplot as plt
 	>>> import numpy as np
 	>>> import os

@@ -314,7 +314,7 @@ def SWBMh(I, PET, Kc, L0, Droot, fs, fc, wp, c, Ksat):
 	"""Soil water balance
 
 	Parameters:
-	----------
+	-----------
 		I:	Infiltration
 		PET:	Potential evapotranspiration
 		L0:	initial water content

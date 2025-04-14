@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Documentation &mdash; CUWALID 0.0.1 documentation</title>
+  <title>cuwalid &mdash; CUWALID 0.0.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -18,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="cuwalid.html" />
+    <link rel="next" title="cuwalid package" href="cuwalid.html" />
     <link rel="prev" title="DRYP Pre- and post-processing tools" href="dryp_processing.html" /> 
 </head>
 
@@ -49,12 +51,8 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.dryp.html">DRYP Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.stopet.html">StoPET Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.html">Forecasting Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.tests.html">Tests Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.tools.html">Tools Package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">cuwalid</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.html">cuwalid package</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
@@ -78,7 +76,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">API Documentation</li>
+      <li class="breadcrumb-item active">cuwalid</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -88,15 +86,83 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="api-documentation">
-<h1>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this heading"></a></h1>
+  <section id="cuwalid">
+<h1>cuwalid<a class="headerlink" href="#cuwalid" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="cuwalid.dryp.html">DRYP Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cuwalid.stopet.html">StoPET Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cuwalid.forecasting.html">Forecasting Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cuwalid.tests.html">Tests Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cuwalid.tools.html">Tools Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cuwalid.html">cuwalid package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.dryp.html">cuwalid.dryp package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.dryp.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.dryp.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.dryp.html#module-cuwalid.dryp.main_DRYP">cuwalid.dryp.main_DRYP module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.dryp.html#module-cuwalid.dryp.main_DRYP23">cuwalid.dryp.main_DRYP23 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.dryp.html#module-cuwalid.dryp.main_DRYP_SS">cuwalid.dryp.main_DRYP_SS module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.dryp.html#module-cuwalid.dryp.main_DRYPv2_SS">cuwalid.dryp.main_DRYPv2_SS module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.dryp.html#module-cuwalid.dryp">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.html">cuwalid.forecasting package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.forecasting.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.forecasting.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.forecasting.html#module-cuwalid.forecasting.main_hydro_forecast">cuwalid.forecasting.main_hydro_forecast module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.forecasting.html#module-cuwalid.forecasting.main_impact_forecast">cuwalid.forecasting.main_impact_forecast module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.forecasting.html#module-cuwalid.forecasting">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.stopet.html">cuwalid.stopet package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html#module-cuwalid.stopet.helper_functions">cuwalid.stopet.helper_functions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html#module-cuwalid.stopet.icpac_forecast_preprocessing">cuwalid.stopet.icpac_forecast_preprocessing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html#module-cuwalid.stopet.main_stopet">cuwalid.stopet.main_stopet module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html#module-cuwalid.stopet.pet_forecast_generation">cuwalid.stopet.pet_forecast_generation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html#module-cuwalid.stopet.run_stoPET_4dryp">cuwalid.stopet.run_stoPET_4dryp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html#module-cuwalid.stopet.run_stoPET_inHPC">cuwalid.stopet.run_stoPET_inHPC module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html#module-cuwalid.stopet.stoPET_v2_4dryp">cuwalid.stopet.stoPET_v2_4dryp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html#module-cuwalid.stopet">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.storm.html">cuwalid.storm package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.storm.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.storm.html#module-cuwalid.storm.checks_">cuwalid.storm.checks_ module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.storm.html#cuwalid-storm-main-storm-module">cuwalid.storm.main_storm module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.storm.html#module-cuwalid.storm.parameters">cuwalid.storm.parameters module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.storm.html#cuwalid-storm-pdfs-module">cuwalid.storm.pdfs_ module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.storm.html#cuwalid-storm-rainfall-module">cuwalid.storm.rainfall module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.storm.html#module-cuwalid.storm.storm">cuwalid.storm.storm module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.storm.html#module-cuwalid.storm">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.tests.html">cuwalid.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tests.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tests.html#module-cuwalid.tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.tools.html">cuwalid.tools package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#cuwalid-tools-cuwalid-download-data-module">cuwalid.tools.CUWALID_download_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#module-cuwalid.tools.CUWALID_json_builder">cuwalid.tools.CUWALID_json_builder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#module-cuwalid.tools.CUWALID_make_dirs">cuwalid.tools.CUWALID_make_dirs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#module-cuwalid.tools.CUWALID_mfile_tools">cuwalid.tools.CUWALID_mfile_tools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#module-cuwalid.tools.CUWALID_view_tool">cuwalid.tools.CUWALID_view_tool module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#module-cuwalid.tools.DRYP_convert">cuwalid.tools.DRYP_convert module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#module-cuwalid.tools.DRYP_json_builder">cuwalid.tools.DRYP_json_builder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#cuwalid-tools-dryp-libraries-module">cuwalid.tools.DRYP_libraries module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#module-cuwalid.tools.DRYP_plot_tools">cuwalid.tools.DRYP_plot_tools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#module-cuwalid.tools.DRYP_pptools">cuwalid.tools.DRYP_pptools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#module-cuwalid.tools.DRYP_rrtools">cuwalid.tools.DRYP_rrtools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#module-cuwalid.tools.download_data">cuwalid.tools.download_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html#module-cuwalid.tools">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.html#cuwalid-main-cuwalid-module">cuwalid.main_cuwalid module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.html#module-cuwalid">Module contents</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
@@ -106,7 +172,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="dryp_processing.html" class="btn btn-neutral float-left" title="DRYP Pre- and post-processing tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cuwalid.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cuwalid.html" class="btn btn-neutral float-right" title="cuwalid package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

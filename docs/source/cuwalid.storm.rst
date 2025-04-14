@@ -12,18 +12,18 @@ cuwalid.storm.checks\_ module
    :undoc-members:
    :show-inheritance:
 
-cuwalid.storm.chunking module
------------------------------
-
-.. automodule:: cuwalid.storm.chunking
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 cuwalid.storm.main\_storm module
 --------------------------------
 
 .. automodule:: cuwalid.storm.main_storm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cuwalid.storm.parameters module
+-------------------------------
+
+.. automodule:: cuwalid.storm.parameters
    :members:
    :undoc-members:
    :show-inheritance:
@@ -40,6 +40,14 @@ cuwalid.storm.rainfall module
 -----------------------------
 
 .. automodule:: cuwalid.storm.rainfall
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cuwalid.storm.storm module
+--------------------------
+
+.. automodule:: cuwalid.storm.storm
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DRYP: Dryland Water Partitioning model &mdash; CUWALID 0.0.1 documentation</title>
@@ -11,6 +11,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -67,7 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">cuwalid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dryp_developers.html">CUWALID: Workflow for contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Authors.html">Introduction</a></li>
@@ -185,6 +187,76 @@ Units of time depends on model settings, for example months.</p>
 <li><p>groundwater discharge (gdh), m3/month</p></li>
 <li><p>capillary evapotranspiration (egw), mm/month</p></li>
 <li><p>total water storage deviation (twsc), m/month</p></li>
+</ul>
+<p><strong>Grodded temporal data</strong>:</p>
+<p>The user can store the following data as <em>NETCDF</em> format:</p>
+<ul>
+<li><p>Gridded temporal data at hillslope cells, files with the suffix <strong>*_grid*</strong>. By default containing the following variables:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>pre</em> : Precipitaion</p></li>
+<li><p><em>pet</em> : Potential evapotranspiration</p></li>
+<li><p><em>eat</em> : Actual evapotranspiration</p></li>
+<li><p><em>tht</em> : soil water content</p></li>
+<li><p><em>rch</em> : Total groundwater recharge</p></li>
+<li><p><em>wte</em> : Water table elevation</p></li>
+<li><p><em>gdh</em> : Groundwater discharge</p></li>
+<li><p><em>egw</em> : Groundwater Evapotranspiration</p></li>
+<li><p><em>dis</em> : Streamflow</p></li>
+<li><p><em>inf</em> : Infiltration</p></li>
+<li><p><em>run</em> : Runoff</p></li>
+<li><p><em>twsc</em> : Total water storage change</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Gridded temporal data at riparian/stream cells, files with suffix <strong>*_gridrp*</strong>. By default containing the following variables:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>pre</em> : Precipitaion</p></li>
+<li><p><em>pet</em> : Potential evapotranspiration</p></li>
+<li><p><em>eat</em> : Actual evapotranspiration</p></li>
+<li><p><em>tht</em> : soil water content</p></li>
+<li><p><em>rch</em> : Total groundwater recharge</p></li>
+<li><p><em>gdh</em> : Groundwater discharge</p></li>
+<li><p><em>egw</em> : Groundwater Evapotranspiration</p></li>
+<li><p><em>inf</em> : Infiltration</p></li>
+<li><p><em>run</em> : Runoff</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Gridded temporal data maximum daily values at hillslope cells, files with suffix <strong>*_gridvmax*</strong> By default containing the following variables:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>tht</em> : soil water content riparian zone</p></li>
+<li><p><em>rch</em> : Focused groundwater recharge</p></li>
+<li><p><em>eat</em> : Actual evapotranspiration</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Gridded temporal data maximum daily values at riparian/stream cells, files with suffix <strong>*_gridrmax*</strong> By default containing the following variables:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>dis</em> : Streamflow</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><dl class="simple">
+<dt>Gridded temporal data water bodies, files with sufix <strong>*_gridpnd*</strong> By default containg the following variables:</dt><dd><ul class="simple">
+<li><p><em>vpd</em> : Total volume of water available - ponds</p></li>
+<li><p><em>epd</em> : Evaporation - ponds</p></li>
+<li><p><em>apd</em> : Total abstractions - ponds</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p><strong>Rasted data</strong>:</p>
+<p>DRYP stores as raster files <em>.ASC</em>, at the end of the simulation, the following variables:</p>
+<ul class="simple">
+<li><p><em>wte</em> : water table elevation</p></li>
+<li><p><em>tht</em> : soil and riparian water content</p></li>
+<li><p><em>Vo</em> : surface water bodies storage</p></li>
+<li><p><em>Qo</em> : channel storage</p></li>
 </ul>
 </section>
 </section>

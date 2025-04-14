@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.stopet.pet_forecast_generation &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cuwalid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Licences.html">Licences</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.stopet.pet_forecast_generation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.stopet.pet_forecast_generation</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">num2date</span>
+<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span><span class="p">,</span> <span class="n">njit</span><span class="p">,</span> <span class="n">prange</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+
+<span class="kn">from</span> <span class="nn">cuwalid.stopet.helper_functions</span> <span class="kn">import</span> <span class="n">load_config</span>
+<span class="c1"># this imports all the required parameters</span>
+<span class="c1"># ===================================== #</span>
+<span class="c1"># READ ME</span>
+<span class="c1"># This script is prepared to generate the ensemble forecasts for PET</span>
+<span class="c1"># based on the seasonal temperature forecast provided by ICPAC.</span>
+<span class="c1"># Before runnig this script one should have prepared the forecast pools of PET</span>
+<span class="c1"># by runing the stoPET model first. The number of ensembles provided  here </span>
+<span class="c1"># should be equal or less than what is available in each pool of stoPET forecast.</span>
+
+<span class="c1"># changes can be made in the function forecast_wrapper()</span>
+<span class="c1"># locname should be similar to what is provided while runing stoPET but only for one of the tercile categories</span>
+<span class="c1"># for example if locname is TanaBasin then we should provide TanaBasin_A. the script will read this and extract the name from</span>
+<span class="c1"># what is given. This is important to locate the ensemble files in each pool. </span>
+
+<span class="c1"># the other variables should be similar to the stoPET run exactly as they are used to name files.</span>
+
+<span class="c1"># ================ pre processing ICPAC forecast file =============##</span>
+<div class="viewcode-block" id="icpac_forecast_preprocessing"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.icpac_forecast_preprocessing">[docs]</a><span class="k">def</span> <span class="nf">icpac_forecast_preprocessing</span><span class="p">(</span><span class="n">tercile_forecast_file</span><span class="p">,</span> <span class="n">seasonName</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span> <span class="n">temp_path</span><span class="p">):</span>
+    <span class="c1"># Step 1: Invert latitude (invert latitudes in the dataset)</span>
+    <span class="n">tforc_datapath</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">tercile_forecast_file</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">fin</span> <span class="o">=</span> <span class="n">tercile_forecast_file</span>
+    <span class="n">fout</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_path</span><span class="p">,</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_inv.nc&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Open the dataset</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fin</span><span class="p">)</span>
+    
+    <span class="c1"># Invert latitudes (flip the latitude axis)</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># Reverses the latitude axis</span>
+    
+    <span class="c1"># Save the modified dataset</span>
+    <span class="n">ds</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fout</span><span class="p">)</span>
+
+    <span class="c1"># Step 2: Slice the data to fit the existing stoPET (using lat/lon bounding box)</span>
+    <span class="n">fin2</span> <span class="o">=</span> <span class="n">fout</span>
+    <span class="n">fout2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_path</span><span class="p">,</span> <span class="s1">&#39;ICPAC_TempF_</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">.nc&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">seasonName</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">locname</span><span class="p">))</span>
+    
+    <span class="c1"># Open the dataset again</span>
+    <span class="n">ds2</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fin2</span><span class="p">)</span>
+
+    <span class="c1"># Slice the dataset based on the lon/lat box: lon=[31.1, 51.92], lat=[-6.82, 15.9]</span>
+    <span class="n">lon_min</span><span class="p">,</span> <span class="n">lon_max</span> <span class="o">=</span> <span class="mf">31.1</span><span class="p">,</span> <span class="mf">51.92</span>
+    <span class="n">lat_min</span><span class="p">,</span> <span class="n">lat_max</span> <span class="o">=</span> <span class="o">-</span><span class="mf">6.82</span><span class="p">,</span> <span class="mf">15.9</span>
+    
+    <span class="n">ds2</span> <span class="o">=</span> <span class="n">ds2</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">lon</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">lon_min</span><span class="p">,</span> <span class="n">lon_max</span><span class="p">),</span> <span class="n">lat</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">lat_max</span><span class="p">,</span> <span class="n">lat_min</span><span class="p">))</span>  <span class="c1"># Note that latitudes are typically inverted (max to min)</span>
+
+    <span class="c1"># Save the sliced dataset</span>
+    <span class="n">ds2</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fout2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fout2</span></div>
+
+
+<div class="viewcode-block" id="forecast_wrapper"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.forecast_wrapper">[docs]</a><span class="k">def</span> <span class="nf">forecast_wrapper</span><span class="p">(</span><span class="n">tercile_forecast_file</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">startdate</span><span class="p">,</span> <span class="n">enddate</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span> <span class="n">number_ensm</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">seasonName</span><span class="p">,</span> <span class="n">temp_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>  
+
+  <span class="c1"># We need to pre process the ICPAC forecast</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Preprocessing ICPAC forecast ...&#39;</span><span class="p">)</span>
+  <span class="n">temp_tercile_forecast_file</span> <span class="o">=</span> <span class="n">icpac_forecast_preprocessing</span><span class="p">(</span><span class="n">tercile_forecast_file</span><span class="p">,</span> <span class="n">seasonName</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span> <span class="n">temp_path</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Preprocessing ICPAC forecast completed!&#39;</span><span class="p">)</span> 
+  
+  
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PET forecasting started ...&#39;</span><span class="p">)</span>  
+  <span class="c1"># this will read one file from the stoPET output to use as a template for the array length and time</span>
+  <span class="n">temp_output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">startyear</span><span class="p">))</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">temp_output</span><span class="p">):</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">temp_output</span><span class="p">)</span>
+
+  <span class="n">nc</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_output</span><span class="p">,</span> <span class="n">seasonName</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;PET_</span><span class="si">{</span><span class="n">startyear</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">seasonName</span><span class="si">}</span><span class="s1">_ens_0.nc&#39;</span><span class="p">))</span>
+  <span class="n">lats</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">][:]</span>
+  <span class="n">lons</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">][:]</span>
+  <span class="n">time</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
+  <span class="n">tunits</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">units</span>
+  <span class="n">ori_data</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">][:,:,:]</span>
+  
+  <span class="c1"># create array to append data</span>
+  <span class="n">ens_f</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">number_ensm</span><span class="p">,</span> <span class="n">ori_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ori_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ori_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>  <span class="c1">#//2</span>
+  
+  <span class="c1"># Fix the coastal areas by filling empty grid values</span>
+  <span class="n">nc</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">temp_tercile_forecast_file</span><span class="p">)</span> 
+  <span class="n">above</span> <span class="o">=</span> <span class="n">fill_masked_ocean_2d</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;above&#39;</span><span class="p">][:,:],</span> <span class="p">(</span><span class="mf">100.</span><span class="o">/</span><span class="mi">3</span><span class="p">))</span>  
+  <span class="n">normal</span> <span class="o">=</span> <span class="n">fill_masked_ocean_2d</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;normal&#39;</span><span class="p">][:,:],</span> <span class="p">(</span><span class="mf">100.</span><span class="o">/</span><span class="mi">3</span><span class="p">))</span> 
+  <span class="n">below</span> <span class="o">=</span> <span class="n">fill_masked_ocean_2d</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;below&#39;</span><span class="p">][:,:],</span> <span class="p">(</span><span class="mf">100.</span><span class="o">/</span><span class="mi">3</span><span class="p">))</span>  
+  <span class="c1"># below, normal, above    </span>
+  <span class="c1"># first, second, third tercile</span>
+  <span class="n">tercileTf</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">below</span><span class="p">,</span> <span class="n">normal</span><span class="p">,</span> <span class="n">above</span><span class="p">]))))</span> <span class="o">/</span> <span class="mf">100.</span>  <span class="c1"># get the decimals  </span>
+
+  <span class="c1"># estimate the number of files in each tercile</span>
+  <span class="n">fnumbers</span> <span class="o">=</span> <span class="n">get_forecast</span><span class="p">(</span><span class="n">number_ensm</span><span class="p">,</span> <span class="n">tercileTf</span><span class="p">)</span>  <span class="c1"># //2</span>
+  
+  <span class="c1"># Read the entire forecast loop as an array (ensemble, time, lat, lon)</span>
+  <span class="c1"># This is required since the numba jit cant read files but only numpy array</span>
+  <span class="c1"># Since we are reading all the files of pool it requre storage space</span>
+  <span class="n">pool_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_output</span><span class="p">,</span> <span class="n">seasonName</span><span class="p">)</span>
+  <span class="n">ens_A</span> <span class="o">=</span> <span class="n">read_forecast_pool</span><span class="p">(</span><span class="n">number_ensm</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">ori_data</span><span class="p">,</span> <span class="n">pool_dir</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">startdate</span><span class="p">,</span> <span class="n">enddate</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">seasonName</span><span class="p">)</span> <span class="c1"># ensemble number is multiplied by 2</span>
+  
+  <span class="c1"># Generate the tercile cut-off points </span>
+  <span class="n">seasonSum</span><span class="p">,</span> <span class="n">tercile_thresholds_1</span><span class="p">,</span> <span class="n">tercile_thresholds_2</span> <span class="o">=</span> <span class="n">compute_tercile_thresholds</span><span class="p">(</span><span class="n">ens_A</span><span class="p">)</span>
+  
+  <span class="c1"># save seasonal sum if needed</span>
+  <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputpath</span><span class="p">,</span> <span class="s1">&#39;seasonal_sum_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">.npy&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">seasonName</span><span class="p">,</span> <span class="n">startyear</span><span class="p">)),</span> <span class="n">seasonSum</span><span class="p">)</span>
+  <span class="c1"># save the terciles for later plotting</span>
+  <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputpath</span><span class="p">,</span> <span class="s1">&#39;tercile_1_stopet_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">.npy&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">seasonName</span><span class="p">,</span> <span class="n">startyear</span><span class="p">)),</span> <span class="n">tercile_thresholds_1</span><span class="p">)</span>
+  <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputpath</span><span class="p">,</span> <span class="s1">&#39;tercile_2_stopet_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">.npy&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">seasonName</span><span class="p">,</span> <span class="n">startyear</span><span class="p">)),</span> <span class="n">tercile_thresholds_2</span><span class="p">)</span>
+  
+  <span class="c1"># loop through each grid and start extracting the respective timeseries </span>
+  <span class="c1"># make sure the number of files percentage is correct.</span>
+  <span class="c1"># This means when you take 5% of 10 it is 0.5 this means we take 1 file for this category</span>
+  <span class="c1"># this might reduce number of files for the other categories so make sure the sum is equal to </span>
+  <span class="c1"># total number of files we have (this is equal to the ensemble numbers).</span>
+  <span class="c1"># run loop for selecting the forecast and write on a file</span>
+  
+  <span class="c1"># This is a parallel run using numba to redce computational time</span>
+  <span class="c1"># but since we are reading all the files of pool it requre storage space</span>
+  <span class="c1"># This will identify the indices to choose for the forecasting</span>
+  <span class="n">ensemble_indices</span> <span class="o">=</span> <span class="n">index_forecast_with_tercile</span><span class="p">(</span><span class="n">tercileTf</span><span class="p">,</span> <span class="n">number_ensm</span><span class="p">,</span> <span class="n">ens_A</span><span class="p">,</span> <span class="n">fnumbers</span><span class="p">,</span> <span class="n">ens_f</span><span class="p">,</span> <span class="n">tercile_thresholds_1</span><span class="p">,</span> <span class="n">tercile_thresholds_2</span><span class="p">,</span> <span class="n">seasonSum</span><span class="p">)</span>     
+  
+  <span class="c1"># This will create the forecasted PET value </span>
+  <span class="n">ensembleArray</span> <span class="o">=</span> <span class="n">forecast_pet</span><span class="p">(</span><span class="n">ensemble_indices</span><span class="p">,</span> <span class="n">ens_A</span><span class="p">,</span> <span class="n">ens_f</span><span class="p">)</span> 
+  
+  <span class="c1"># Write the output array into files     </span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;writing pet forecast files&quot;</span><span class="p">)</span>                   
+  <span class="n">writing_forecast_file</span><span class="p">(</span><span class="n">ensembleArray</span><span class="p">,</span> <span class="n">seasonName</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">tunits</span><span class="p">)</span> 
+  
+  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PET forecasting completed!&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="forecast_pet"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.forecast_pet">[docs]</a><span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">forecast_pet</span><span class="p">(</span><span class="n">ensemble_indices</span><span class="p">,</span> <span class="n">ens_A</span><span class="p">,</span> <span class="n">ens_f</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">prange</span><span class="p">(</span><span class="n">ens_f</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>  <span class="c1"># loop over rows (I)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ens_f</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]):</span>  <span class="c1"># loop over cols (J)</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ensemble_indices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>  <span class="c1"># loop over ensemble members (30)</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ensemble_indices</span><span class="p">[</span><span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>  <span class="c1"># cast index to int64</span>
+                <span class="n">ens_f</span><span class="p">[</span><span class="n">e</span><span class="p">,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">ens_A</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>  <span class="c1"># assign values from ens_A to ens_f</span>
+    <span class="k">return</span> <span class="n">ens_f</span></div>
+
+
+<div class="viewcode-block" id="fill_masked_ocean_2d"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.fill_masked_ocean_2d">[docs]</a><span class="k">def</span> <span class="nf">fill_masked_ocean_2d</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fillvalue</span><span class="p">):</span>
+    <span class="c1"># fill ocean values with the nearest value</span>
+    <span class="c1"># fill the masked part with nearest grid upto 5 grid in each direction</span>
+    <span class="c1"># the order must be maintained to account for the way the coast is shaped</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> 
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">0</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> 
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">0</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> 
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">0</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">masked_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">data</span><span class="p">)</span>
+    
+    <span class="n">masked_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_invalid</span><span class="p">(</span><span class="n">masked_data</span><span class="p">)</span>
+
+    <span class="c1"># Replace the masked values (NaN) with a specific number, e.g., 99</span>
+    <span class="n">filled_data</span> <span class="o">=</span> <span class="n">masked_data</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">fillvalue</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filled_data</span>  </div>
+
+
+<div class="viewcode-block" id="read_forecast_pool"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.read_forecast_pool">[docs]</a><span class="k">def</span> <span class="nf">read_forecast_pool</span><span class="p">(</span><span class="n">number_ensm</span><span class="p">,</span> <span class="n">ori_data</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">startdate</span><span class="p">,</span> <span class="n">enddate</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">season_Name</span><span class="p">):</span>   
+    <span class="c1"># create array to append data of each ensembles</span>
+    <span class="n">ens_A</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">number_ensm</span><span class="p">,</span> <span class="n">ori_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ori_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ori_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="c1"># file name of the adjusted PET from stopet</span>
+    <span class="c1"># Above</span>
+    <span class="k">for</span> <span class="n">ens</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputpath</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;PET_</span><span class="si">{</span><span class="n">startyear</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">season_Name</span><span class="si">}</span><span class="s1">_ens_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">.nc&#39;</span><span class="p">)</span>
+        <span class="c1"># read the file and append to the 4D array</span>
+        <span class="n">nca</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">pet_A</span> <span class="o">=</span> <span class="n">nca</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">][:,:,:]</span>
+        <span class="n">ens_A</span><span class="p">[</span><span class="n">ens</span><span class="p">,:,:,:]</span> <span class="o">=</span> <span class="n">pet_A</span> 
+    <span class="k">return</span> <span class="n">ens_A</span></div>
+    
+     
+<span class="c1"># numba parallel run function  </span>
+<span class="c1"># decorate the function </span>
+<div class="viewcode-block" id="index_forecast_with_tercile"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.index_forecast_with_tercile">[docs]</a><span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  
+<span class="k">def</span> <span class="nf">index_forecast_with_tercile</span><span class="p">(</span><span class="n">tercileTf</span><span class="p">,</span> <span class="n">number_ensm</span><span class="p">,</span> <span class="n">ens_A</span><span class="p">,</span> <span class="n">fnumbers</span><span class="p">,</span> <span class="n">ens_f</span><span class="p">,</span> <span class="n">tercile_thresholds_1</span><span class="p">,</span> <span class="n">tercile_thresholds_2</span><span class="p">,</span> <span class="n">seasonSum</span><span class="p">):</span>
+    <span class="c1"># Initialize array to store final samples (number_ensm//2, X.shape[1], X.shape[2])</span>
+    <span class="n">final_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_ensm</span><span class="p">,</span> <span class="n">ens_f</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">ens_f</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>    <span class="c1">#//2</span>
+    
+    <span class="c1"># Loop through files and extract array of PET accordingly  </span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">prange</span><span class="p">(</span><span class="n">ens_f</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>  <span class="c1"># row, parallelized outer loop</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ens_f</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]):</span>  <span class="c1"># column</span>
+            
+            <span class="c1"># Extract the values for the current location (i, j)</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">seasonSum</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+            
+            <span class="c1"># Separate the values into terciles using precomputed thresholds</span>
+            <span class="n">tercile_1_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">values</span> <span class="o">&lt;=</span> <span class="n">tercile_thresholds_1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">tercile_2_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">values</span> <span class="o">&gt;</span> <span class="n">tercile_thresholds_1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">values</span> <span class="o">&lt;=</span> <span class="n">tercile_thresholds_2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">tercile_3_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">values</span> <span class="o">&gt;</span> <span class="n">tercile_thresholds_2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            
+            <span class="c1"># Now you have both the values and the corresponding indices</span>
+            <span class="n">tercile_1_values</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">tercile_1_indices</span><span class="p">]</span>
+            <span class="n">tercile_2_values</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">tercile_2_indices</span><span class="p">]</span>
+            <span class="n">tercile_3_values</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">tercile_3_indices</span><span class="p">]</span>
+            
+            <span class="c1"># sort values</span>
+            <span class="n">sorted_indices_t1</span> <span class="o">=</span> <span class="n">sort_with_tercile_indices</span><span class="p">(</span><span class="n">tercile_1_values</span><span class="p">,</span> <span class="n">tercile_1_indices</span><span class="p">)</span>
+            <span class="n">sorted_indices_t2</span> <span class="o">=</span> <span class="n">sort_with_tercile_indices</span><span class="p">(</span><span class="n">tercile_2_values</span><span class="p">,</span> <span class="n">tercile_2_indices</span><span class="p">)</span>
+            <span class="n">sorted_indices_t3</span> <span class="o">=</span> <span class="n">sort_with_tercile_indices</span><span class="p">(</span><span class="n">tercile_3_values</span><span class="p">,</span> <span class="n">tercile_3_indices</span><span class="p">)</span>
+
+            <span class="c1"># Get the number of values needed in each tercile</span>
+            <span class="n">n_1</span> <span class="o">=</span> <span class="n">fnumbers</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>  <span class="c1"># Number for the first tercile</span>
+            <span class="n">n_2</span> <span class="o">=</span> <span class="n">fnumbers</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>  <span class="c1"># Number for the second tercile</span>
+            <span class="n">n_3</span> <span class="o">=</span> <span class="n">fnumbers</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>  <span class="c1"># Number for the third tercile</span>
+
+            <span class="c1"># Initialize an array to store the samples for this (i, j)</span>
+            <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">number_ensm</span> <span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>  <span class="c1"># Using int32 for consistency  // 2</span>
+
+            <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># To track position in the samples array</span>
+            
+            <span class="c1"># Tercile 1 sampling (upper tercile)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tercile_1_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">n_1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">random_samples</span> <span class="o">=</span> <span class="n">sample_with_tercile_strategy</span><span class="p">(</span><span class="n">sorted_indices_t1</span><span class="p">,</span> <span class="n">n_1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">samples</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span><span class="n">idx</span> <span class="o">+</span> <span class="n">n_1</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_samples</span>
+                <span class="n">idx</span> <span class="o">+=</span> <span class="n">n_1</span>
+            
+            <span class="c1"># Tercile 2 sampling (use all available values in the middle tercile)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tercile_2_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">n_2</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">random_samples</span> <span class="o">=</span> <span class="n">sample_with_tercile_strategy</span><span class="p">(</span><span class="n">sorted_indices_t2</span><span class="p">,</span> <span class="n">n_2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">samples</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span><span class="n">idx</span> <span class="o">+</span> <span class="n">n_2</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_samples</span>
+                <span class="n">idx</span> <span class="o">+=</span> <span class="n">n_2</span>
+
+            <span class="c1"># Tercile 3 sampling (lower tercile)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tercile_3_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">n_3</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">random_samples</span> <span class="o">=</span> <span class="n">sample_with_tercile_strategy</span><span class="p">(</span><span class="n">sorted_indices_t3</span><span class="p">,</span> <span class="n">n_3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="n">samples</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span><span class="n">idx</span> <span class="o">+</span> <span class="n">n_3</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_samples</span>
+                <span class="n">idx</span> <span class="o">+=</span> <span class="n">n_3</span>
+
+            <span class="c1"># Shuffle the samples (optional, but may add randomness to the sampling process)</span>
+            <span class="c1"># np.random.shuffle(samples)  # Uncomment if shuffle is needed</span>
+
+            <span class="c1"># Assign the sampled values to the corresponding (i, j) location in the final_samples array</span>
+            <span class="n">final_samples</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples</span>
+
+    <span class="k">return</span> <span class="n">final_samples</span></div>
+
+
+<span class="c1"># Function to compute tercile thresholds outside of Numba function</span>
+<div class="viewcode-block" id="compute_tercile_thresholds"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.compute_tercile_thresholds">[docs]</a><span class="k">def</span> <span class="nf">compute_tercile_thresholds</span><span class="p">(</span><span class="n">ens_A</span><span class="p">):</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ens_A</span><span class="p">[:,:,:,:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># 3d array</span>
+    <span class="n">tercile_thresholds_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">100</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">tercile_thresholds_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">200</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">tercile_thresholds_1</span><span class="p">,</span> <span class="n">tercile_thresholds_2</span></div>
+
+
+<div class="viewcode-block" id="sort_with_tercile_indices"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.sort_with_tercile_indices">[docs]</a><span class="nd">@njit</span>
+<span class="k">def</span> <span class="nf">sort_with_tercile_indices</span><span class="p">(</span><span class="n">tercile_values</span><span class="p">,</span> <span class="n">tercile_indices</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tercile_values</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="c1"># Find the minimum element in the remaining unsorted array</span>
+        <span class="n">min_index</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">tercile_values</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">tercile_values</span><span class="p">[</span><span class="n">min_index</span><span class="p">]:</span>
+                <span class="n">min_index</span> <span class="o">=</span> <span class="n">j</span>
+        
+        <span class="c1"># Swap the found minimum element with the current element in x</span>
+        <span class="n">tercile_values</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">tercile_values</span><span class="p">[</span><span class="n">min_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">tercile_values</span><span class="p">[</span><span class="n">min_index</span><span class="p">],</span> <span class="n">tercile_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        
+        <span class="c1"># Swap the corresponding element in y to match</span>
+        <span class="n">tercile_indices</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">tercile_indices</span><span class="p">[</span><span class="n">min_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">tercile_indices</span><span class="p">[</span><span class="n">min_index</span><span class="p">],</span> <span class="n">tercile_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    
+    <span class="c1"># Return the sorted y</span>
+    <span class="k">return</span> <span class="n">tercile_indices</span></div>
+    
+    
+<div class="viewcode-block" id="sample_with_tercile_strategy"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.sample_with_tercile_strategy">[docs]</a><span class="nd">@njit</span>
+<span class="k">def</span> <span class="nf">sample_with_tercile_strategy</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">,</span> <span class="n">n_needed</span><span class="p">,</span> <span class="n">tercile</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">n_needed</span><span class="p">:</span>  <span class="c1"># Enough values available</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_needed</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="c1"># Strategy based on tercile</span>
+        <span class="k">if</span> <span class="n">tercile</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Upper half</span>
+            <span class="n">result</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sorted_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># pick the smallest value</span>
+            <span class="n">new_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">n_needed</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1">#sorted_indices[:n_needed]</span>
+        <span class="k">elif</span> <span class="n">tercile</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># Random sample</span>
+            <span class="n">result</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sorted_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">new_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">n_needed</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tercile</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># Lower half</span>
+            <span class="n">result</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sorted_indices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>   <span class="c1"># pick the largest value</span>
+            <span class="n">new_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">n_needed</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1">#sorted_indices[-n_needed:]</span>
+
+        <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">n_needed</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_indices</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">remaining_samples</span> <span class="o">=</span> <span class="n">n_needed</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">)</span>
+
+        <span class="c1"># Strategy based on tercile</span>
+        <span class="k">if</span> <span class="n">tercile</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Upper half</span>
+            <span class="n">extra_values</span> <span class="o">=</span> <span class="n">sorted_indices</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:]</span>
+        <span class="k">elif</span> <span class="n">tercile</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># All values</span>
+            <span class="n">extra_values</span> <span class="o">=</span> <span class="n">sorted_indices</span>
+        <span class="k">elif</span> <span class="n">tercile</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># Lower half</span>
+            <span class="n">extra_values</span> <span class="o">=</span> <span class="n">sorted_indices</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_needed</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">)]</span> <span class="o">=</span> <span class="n">sorted_indices</span>
+        <span class="n">result</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">):]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">extra_values</span><span class="p">,</span> <span class="n">remaining_samples</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>          
+<span class="k">def</span> <span class="nf">check_forecast_percentage</span><span class="p">(</span><span class="n">forcvals</span><span class="p">,</span> <span class="n">num_file</span><span class="p">):</span>  
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This function evaluate the forecasts and the number of</span>
+<span class="sd">  files we have and return the exact number of files we need to add </span>
+<span class="sd">  # for the three tercile category.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nextafter</span><span class="p">(</span><span class="n">forcvals</span><span class="p">,</span> <span class="n">forcvals</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+  <span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="n">num_file</span>
+  <span class="k">if</span> <span class="n">z</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">-</span> <span class="n">z</span>  
+  <span class="k">return</span> <span class="n">y</span>
+
+ 
+<div class="viewcode-block" id="writing_forecast_file"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.writing_forecast_file">[docs]</a><span class="k">def</span> <span class="nf">writing_forecast_file</span><span class="p">(</span><span class="n">ensembleArray</span><span class="p">,</span> <span class="n">seasonName</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">tunits</span><span class="p">):</span> 
+      
+  <span class="c1"># write the final ensembles on a netcdf file</span>
+  <span class="c1"># file name of the adjusted PET from stopet </span>
+  <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ensembleArray</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="c1"># read the each ensemble array</span>
+    <span class="n">pet_data</span> <span class="o">=</span> <span class="n">ensembleArray</span><span class="p">[</span><span class="n">f</span><span class="p">,:,:,:]</span>
+    <span class="c1"># Qualiity check </span>
+    <span class="c1"># the newar by grid should be with in 10% diffrence from  the surrounding average</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">smooth_grid_numba_parallel</span><span class="p">(</span><span class="n">pet_data</span><span class="p">)</span>
+    <span class="c1"># write the output files</span>
+
+
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputpath</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Forecast_PET_</span><span class="si">{</span><span class="n">locname</span><span class="si">}</span><span class="s1">_ens_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">startyear</span><span class="p">)</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">seasonName</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="si">}</span><span class="s1">.nc&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;filename: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">varname</span> <span class="o">=</span> <span class="s1">&#39;pet&#39;</span>
+    <span class="n">timevals</span> <span class="o">=</span> <span class="n">time</span><span class="p">[:]</span>
+    <span class="n">forecast_nc_write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">timevals</span><span class="p">,</span> <span class="n">tunits</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+  
+  <span class="k">return</span> <span class="kc">None</span>          </div>
+
+     
+<div class="viewcode-block" id="forecast_nc_write"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.forecast_nc_write">[docs]</a><span class="k">def</span> <span class="nf">forecast_nc_write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">timevals</span><span class="p">,</span> <span class="n">tunits</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    this function write the PET on a netCDF file.</span>
+
+<span class="sd">    :param: data: data to be written (time,lat,lon)</span>
+<span class="sd">    :param: lat: latitude</span>
+<span class="sd">    :param: lon: longitude</span>
+<span class="sd">    :param: varname: name of the variable to be written (e.g. &#39;pet&#39;)</span>
+<span class="sd">    :param: tunits: time units for the data (e.g. &#39;days since 1981-01-01&#39;)</span>
+<span class="sd">    :param:filename: the file name to write the values with .nc extension</span>
+
+<span class="sd">    :return:  produce a netCDF file in the same directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;NETCDF4_CLASSIC&#39;</span><span class="p">)</span>
+
+    <span class="n">time</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">latitude</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lat</span><span class="p">))</span>
+    <span class="n">longitude</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lon</span><span class="p">))</span>
+   
+    <span class="n">time</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,))</span>
+    <span class="n">latitude</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,))</span>
+    <span class="n">longitude</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,))</span>
+
+    <span class="c1"># check if the data is 2d or 3d</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># 4D array</span>
+        <span class="n">pet_val</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;hours&#39;</span><span class="p">,</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">),</span> <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">tunits</span>  
+        <span class="n">time</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="s1">&#39;proleptic_gregorian&#39;</span>
+        <span class="n">time</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">timevals</span>
+        <span class="n">latitude</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">lat</span>
+        <span class="n">longitude</span> <span class="p">[:]</span> <span class="o">=</span> <span class="n">lon</span>
+        <span class="n">pet_val</span><span class="p">[:,:,:,:]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">pet_val</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;mm/hr&#39;</span>
+        <span class="n">latitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_north&#39;</span>
+        <span class="n">longitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_east&#39;</span>
+
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># 3D array</span>
+        <span class="n">pet_val</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">),</span> <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">tunits</span>  
+        <span class="n">time</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="s1">&#39;proleptic_gregorian&#39;</span>
+        <span class="n">time</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">timevals</span>
+        <span class="n">latitude</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">lat</span>
+        <span class="n">longitude</span> <span class="p">[:]</span> <span class="o">=</span> <span class="n">lon</span>
+        <span class="n">pet_val</span><span class="p">[:,:,:]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">pet_val</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;mm/hr&#39;</span>
+        <span class="n">latitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_north&#39;</span>
+        <span class="n">longitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_east&#39;</span>
+    
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># 2D array</span>
+        <span class="n">pet_val</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">),</span> <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">latitude</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">lat</span>
+        <span class="n">longitude</span> <span class="p">[:]</span> <span class="o">=</span> <span class="n">lon</span>
+        <span class="n">pet_val</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">pet_val</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;mm/hr&#39;</span>
+        <span class="n">latitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_north&#39;</span>
+        <span class="n">longitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_east&#39;</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;the function can only write a 2D, 3D and 4D array data!&#39;</span><span class="p">)</span>
+
+    <span class="n">ds</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="kc">None</span>   </div>
+
+
+<div class="viewcode-block" id="get_forecast"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.get_forecast">[docs]</a><span class="k">def</span> <span class="nf">get_forecast</span><span class="p">(</span><span class="n">number_ensm</span><span class="p">,</span> <span class="n">tercileTf</span><span class="p">):</span>  
+    <span class="n">forcvals</span> <span class="o">=</span> <span class="n">tercileTf</span><span class="p">[:,:,:]</span> <span class="o">*</span> <span class="n">number_ensm</span> <span class="c1"># this is the forecast values</span>
+    <span class="c1"># make sure the sum of the the above array is equal to the number of files</span>
+    <span class="c1"># available. Here we need to make the floats rounded but still cant exceed</span>
+    <span class="c1"># the numbe of file. </span>
+    <span class="n">fnumbers</span> <span class="o">=</span> <span class="n">check_forecast_percentage</span><span class="p">(</span><span class="n">forcvals</span><span class="p">,</span> <span class="n">number_ensm</span><span class="p">)</span>
+    <span class="n">fnumbers</span> <span class="o">=</span> <span class="n">fnumbers</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fnumbers</span></div>
+
+
+<div class="viewcode-block" id="check_forecast_percentage"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.check_forecast_percentage">[docs]</a><span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">check_forecast_percentage</span><span class="p">(</span><span class="n">forcvals</span><span class="p">,</span> <span class="n">num_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function evaluates the 3D forecasts along axis 0 and adjusts the</span>
+<span class="sd">    rounded forecast values to ensure that the sum for each (i, j) position</span>
+<span class="sd">    matches num_file[i, j].</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    forcvals: 3D array of forecasted values (shape: (3, 10, 10))</span>
+<span class="sd">    num_file: 2D array representing the number of files required at each (i, j) position (shape: (10, 10))</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">    y: 3D array of rounded forecast values with adjusted sums.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Initialize the result array to store the rounded values</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">forcvals</span><span class="p">)</span>
+    
+    <span class="c1"># Iterate over the (i, j) positions in the 10x10 grid</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">prange</span><span class="p">(</span><span class="n">forcvals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>  <span class="c1"># Loop over the second dimension (10)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">forcvals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>  <span class="c1"># Loop over the third dimension (10)</span>
+            
+            <span class="c1"># Get the forecast values for this (i, j) position along axis 0</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">forcvals</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+            
+            <span class="c1"># Step 1: Round the forecast values</span>
+            <span class="n">rounded_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+            
+            <span class="c1"># Step 2: Calculate the difference between the sum and the desired num_file[i, j]</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rounded_vals</span><span class="p">)</span> <span class="o">-</span> <span class="n">num_file</span>
+            
+            <span class="c1"># Step 3: Adjust the values to ensure the sum matches num_file[i, j]</span>
+            <span class="k">while</span> <span class="n">z</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">z</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># Reduce the largest value by 1 to reduce the sum</span>
+                    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">rounded_vals</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">rounded_vals</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Ensure value does not go negative</span>
+                        <span class="n">rounded_vals</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+                        <span class="n">z</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">z</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># Increase the smallest value by 1 to increase the sum</span>
+                    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">rounded_vals</span><span class="p">)</span>
+                    <span class="n">rounded_vals</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">z</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+            <span class="c1"># Store the adjusted rounded values</span>
+            <span class="n">y</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">rounded_vals</span>
+    
+    <span class="k">return</span> <span class="n">y</span></div>
+
+
+<div class="viewcode-block" id="smooth_grid_numba_parallel"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.pet_forecast_generation.smooth_grid_numba_parallel">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">smooth_grid_numba_parallel</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
+    <span class="c1"># Get the dimensions of the grid</span>
+    <span class="n">depth</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># Create a copy of the grid to store the new values</span>
+    <span class="n">smoothed_grid</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Iterate over the depth (axis 0)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">prange</span><span class="p">(</span><span class="n">depth</span><span class="p">):</span>  <span class="c1"># Parallelize over the depth dimension</span>
+        <span class="c1"># Iterate over the 2D grid at each depth level, skipping the edges (as a 3x3 window can&#39;t be centered on them)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rows</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">cols</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="c1"># Calculate the sum of the surrounding cells in the 3x3 window</span>
+                <span class="n">surrounding_sum</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
+                    <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
+                    <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">surrounding_avg</span> <span class="o">=</span> <span class="n">surrounding_sum</span> <span class="o">/</span> <span class="mf">8.0</span>
+
+                <span class="c1"># Check if the middle value exceeds or less than 10% of the surrounding average</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">1.1</span> <span class="o">*</span> <span class="n">surrounding_avg</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">surrounding_avg</span><span class="p">):</span>
+                    <span class="c1"># Set the middle value to the surrounding average</span>
+                    <span class="n">smoothed_grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">surrounding_avg</span>
+
+    <span class="k">return</span> <span class="n">smoothed_grid</span></div>
+
+<span class="c1"># ======================================================================= #</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Usage: python &lt;script_name.py&gt; &lt;path_to_config.json&gt;&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">config_file</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Seasonal PET forecast in progress ...&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Load configuration file</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+
+    <span class="c1"># Extract parameters from the config</span>
+    <span class="n">outputpath</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;root_outputpath&#39;</span><span class="p">]</span>
+    <span class="n">startyear</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;startyear&#39;</span><span class="p">]</span>
+    <span class="n">startdate</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;startdate&#39;</span><span class="p">]</span>
+    <span class="n">enddate</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;enddate&#39;</span><span class="p">]</span>
+    <span class="n">locname</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;locname&#39;</span><span class="p">]</span>
+    <span class="n">number_ensm</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;number_ensm&#39;</span><span class="p">]</span>
+    <span class="n">tempAdj</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;tempAdj&#39;</span><span class="p">]</span>
+    <span class="n">tercile_forecast_file</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;tercile_forecast_file&#39;</span><span class="p">]</span>
+    <span class="n">seasonName</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;seasonName&#39;</span><span class="p">]</span>
+    
+    <span class="n">forecast_wrapper</span><span class="p">(</span><span class="n">tercile_forecast_file</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">startdate</span><span class="p">,</span> <span class="n">enddate</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span> <span class="n">number_ensm</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">seasonName</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Seasonal PET forecast files finished successfully.&#39;</span><span class="p">)</span>
+    
+    <span class="n">end</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Time of run: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

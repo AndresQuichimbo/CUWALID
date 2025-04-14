@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.tools.DRYP_convert &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cuwalid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Licences.html">Licences</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.tools.DRYP_convert</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.tools.DRYP_convert</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<div class="viewcode-block" id="convert_text_to_json"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_convert.convert_text_to_json">[docs]</a><span class="k">def</span> <span class="nf">convert_text_to_json</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a text file to a JSON file based on its format.</span>
+
+<span class="sd">    This function reads an input text file, determines its format based on the first line, </span>
+<span class="sd">    and parses the content into a predefined JSON structure. The converted JSON is saved </span>
+<span class="sd">    to a specified output file. If the conversion is successful, the original input file </span>
+<span class="sd">    is deleted.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_file : str</span>
+<span class="sd">        Path to the input text file to be converted. The file should be in either DWAPM_SET </span>
+<span class="sd">        or drylandmodel format.</span>
+
+<span class="sd">    output_file : str, optional</span>
+<span class="sd">        Path to the output JSON file. If not provided, the output file is named based on </span>
+<span class="sd">        the input file name with a &#39;.json&#39; extension.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        The function does not return any value. It saves the converted JSON to a file and </span>
+<span class="sd">        may delete the input file if the conversion is successful.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If there is an error during file saving or deletion, an exception is printed.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The function supports two formats:</span>
+<span class="sd">    </span>
+<span class="sd">    - DWAPM_SET: The input file is expected to have settings in a specific format. The </span>
+<span class="sd">      corresponding JSON structure and mappings for this format are predefined.</span>
+<span class="sd">    </span>
+<span class="sd">    - drylandmodel: The input file is expected to describe a dryland model. The function </span>
+<span class="sd">      parses the file into a predefined JSON structure based on mappings for this format.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    convert_text_to_json(&#39;path/to/input_file.txt&#39;, &#39;path/to/output_file.json&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">output_file</span><span class="p">:</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">input_file</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span>
+
+    <span class="c1"># Define JSON structures for different formats</span>
+    <span class="n">json_structure_dryland</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;drylandmodel&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;TERRAIN&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;path_dem&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_Qo&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_fdl&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_riv_decay&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_mask&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_riv_len&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_riv_width&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_riv_elev&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;VEGETATION&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;path_veg_kc&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_veg_lulc&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_veg_nn&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;UNSATURATED&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;path_uz_theta_sat&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_uz_theta_res&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_uz_theta_awc&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_uz_theta_wp&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_uz_root&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_uz_lambda&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_uz_psi&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_uz_ksat&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_uz_sigmaksat&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_uz_theta&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_riv_ksat&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;SATURATED&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;path_sz_mask&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_sz_ksat&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_sz_sy&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_sz_wte&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_sz_bc_flux&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_sz_bc_head&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_sz_bottom&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;METEO&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;path_pre&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_pet&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_aof&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;Other&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;GROUNDWATER&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;path_gw_depth&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_gw_bdd&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_gw_2l_bottom&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_gw_2l_ksat&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_gw_2l_sy&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_gw_2l_ss&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_gw_2l_wte&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_gw_type&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_gw_lake_elev&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_pnds_vmax&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_pnds_shape_par&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;OUTPUT&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;path_out_sz&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_out_uz&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_out_oz&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_output&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;Other&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_setting&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_vg_settings&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_rp_settings&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_of_settings&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;path_projection&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">json_structure_settings</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;SETTINGS&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;start_date&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;end_date&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;dt_of&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;dt_gw&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;READING&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;data_read&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;data_step&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;data_reproject&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;data_interp&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;COMPONENTS&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;method_inf&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;method_gw&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;not used 1&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;not used 2&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;OUTPUT&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;output_csv&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;output_grid&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;output_dt&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;Save discharge in volumetric rate units&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;not used 2&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;not used 3&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;GLOBAL_FACTORS&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;uz_kdt&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;uz_kdroot&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;uz_kawc&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;uz_kkast&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;uz_ksigma&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;riv_kksat&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;riv_kdecay&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;riv_kwidth&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;sz_kksat&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;sz_ksy&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;of_kflow&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">mappings_dryland</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Model name&quot;</span><span class="p">:</span> <span class="s2">&quot;drylandmodel.model_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Topography (DEM)&quot;</span><span class="p">:</span> <span class="s2">&quot;TERRAIN.path_dem&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Flow Direction (fd)&quot;</span><span class="p">:</span> <span class="s2">&quot;TERRAIN.path_fdl&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;River decay parameters&quot;</span><span class="p">:</span> <span class="s2">&quot;TERRAIN.path_riv_decay&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Basin Mask (catchment)&quot;</span><span class="p">:</span> <span class="s2">&quot;TERRAIN.path_mask&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;River length&quot;</span><span class="p">:</span> <span class="s2">&quot;TERRAIN.path_riv_len&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;River width&quot;</span><span class="p">:</span> <span class="s2">&quot;TERRAIN.path_riv_width&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;River bottom elevation&quot;</span><span class="p">:</span> <span class="s2">&quot;TERRAIN.path_riv_elev&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Vegetation type Kc&quot;</span><span class="p">:</span> <span class="s2">&quot;VEGETATION.path_veg_kc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Soil land use&quot;</span><span class="p">:</span> <span class="s2">&quot;VEGETATION.path_veg_lulc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Soil porosity: porosity&quot;</span><span class="p">:</span> <span class="s2">&quot;UNSATURATED.path_uz_theta_sat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Theta residual&quot;</span><span class="p">:</span> <span class="s2">&quot;UNSATURATED.path_uz_theta_res&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Available Water content (AWC)&quot;</span><span class="p">:</span> <span class="s2">&quot;UNSATURATED.path_uz_theta_awc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Wilting Point (wp)&quot;</span><span class="p">:</span> <span class="s2">&quot;UNSATURATED.path_uz_theta_wp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Soil Depth (D)&quot;</span><span class="p">:</span> <span class="s2">&quot;UNSATURATED.path_uz_root&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Soi particle distribution parameter (b)&quot;</span><span class="p">:</span> <span class="s2">&quot;UNSATURATED.path_uz_lambda&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Soil suction head&quot;</span><span class="p">:</span> <span class="s2">&quot;UNSATURATED.path_uz_psi&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Saturated hydraulic conductivity&quot;</span><span class="p">:</span> <span class="s2">&quot;UNSATURATED.path_uz_ksat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sigma_Ksat&quot;</span><span class="p">:</span> <span class="s2">&quot;UNSATURATED.path_uz_sigmaksat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Initial soil water content&quot;</span><span class="p">:</span> <span class="s2">&quot;UNSATURATED.path_uz_theta&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Channel saturated hydraulic conductivity&quot;</span><span class="p">:</span> <span class="s2">&quot;UNSATURATED.path_riv_ksat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Groundwater Boundary condition (domain)&quot;</span><span class="p">:</span> <span class="s2">&quot;SATURATED.path_sz_mask&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Aquifer Sat. Hydraulic Conductivity (Ksat_aq)&quot;</span><span class="p">:</span> <span class="s2">&quot;SATURATED.path_sz_ksat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Specific Yield&quot;</span><span class="p">:</span> <span class="s2">&quot;SATURATED.path_sz_sy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Initial Conditions Water table elevation&quot;</span><span class="p">:</span> <span class="s2">&quot;SATURATED.path_sz_wte&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Flux Boundary Conditions&quot;</span><span class="p">:</span> <span class="s2">&quot;SATURATED.path_sz_bc_flux&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Head Boundary Conditions&quot;</span><span class="p">:</span> <span class="s2">&quot;SATURATED.path_sz_bc_head&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Aquifer bottom elevation&quot;</span><span class="p">:</span> <span class="s2">&quot;SATURATED.path_sz_bottom&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Precipitation&quot;</span><span class="p">:</span> <span class="s2">&quot;METEO.path_pre&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Potential Evapotranspiration&quot;</span><span class="p">:</span> <span class="s2">&quot;METEO.path_pet&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Water abstractions file&quot;</span><span class="p">:</span> <span class="s2">&quot;METEO.path_aof&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Discharge point results&quot;</span><span class="p">:</span> <span class="s2">&quot;OUTPUT.path_out_sz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Soil point results output&quot;</span><span class="p">:</span> <span class="s2">&quot;OUTPUT.path_out_uz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Groundwater point results&quot;</span><span class="p">:</span> <span class="s2">&quot;OUTPUT.path_out_oz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Folder location results&quot;</span><span class="p">:</span> <span class="s2">&quot;OUTPUT.path_output&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;MODEL PARAMETER SETTINGS FILE&quot;</span><span class="p">:</span> <span class="s2">&quot;OUTPUT.path_setting&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;GROUNDWATER ADITIONAL PARAMETER FILES&quot;</span><span class="p">:</span> <span class="s2">&quot;OUTPUT.path_gw_settings&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;INTERCEPTION MODEL&quot;</span><span class="p">:</span> <span class="s2">&quot;OUTPUT.path_vg_settings&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;RIPARIAN PROPERTIES&quot;</span><span class="p">:</span> <span class="s2">&quot;OUTPUT.path_rp_settings&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BOUNDARY CONDITIONS OF&quot;</span><span class="p">:</span> <span class="s2">&quot;OUTPUT.path_of_settings&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;DATASET PROJECTIONS AND COORDINANTES&quot;</span><span class="p">:</span> <span class="s2">&quot;OUTPUT.path_projection&quot;</span>
+    <span class="p">}</span>
+
+    <span class="n">mappings_settings</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;SETTINGS.start_date&quot;</span><span class="p">,</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;SETTINGS.end_date&quot;</span><span class="p">,</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;SETTINGS.dt_of&quot;</span><span class="p">,</span>
+        <span class="mi">8</span><span class="p">:</span> <span class="s2">&quot;SETTINGS.dt_gw&quot;</span><span class="p">,</span>
+        <span class="mi">13</span><span class="p">:</span> <span class="s2">&quot;READING.data_read&quot;</span><span class="p">,</span>
+        <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;READING.data_step&quot;</span><span class="p">,</span>
+        <span class="mi">17</span><span class="p">:</span> <span class="s2">&quot;READING.data_reproject&quot;</span><span class="p">,</span>
+        <span class="mi">19</span><span class="p">:</span> <span class="s2">&quot;READING.data_interp&quot;</span><span class="p">,</span>
+        <span class="mi">22</span><span class="p">:</span> <span class="s2">&quot;COMPONENTS.method_inf&quot;</span><span class="p">,</span>
+        <span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;COMPONENTS.method_gw&quot;</span><span class="p">,</span>
+        <span class="mi">26</span><span class="p">:</span> <span class="s2">&quot;COMPONENTS.not used 1&quot;</span><span class="p">,</span>
+        <span class="mi">28</span><span class="p">:</span> <span class="s2">&quot;COMPONENTS.not used 2&quot;</span><span class="p">,</span>
+        <span class="mi">33</span><span class="p">:</span> <span class="s2">&quot;OUTPUT.output_csv&quot;</span><span class="p">,</span>
+        <span class="mi">35</span><span class="p">:</span> <span class="s2">&quot;OUTPUT.output_grid&quot;</span><span class="p">,</span>
+        <span class="mi">39</span><span class="p">:</span> <span class="s2">&quot;OUTPUT.Save discharge in volumetric rate units&quot;</span><span class="p">,</span>
+        <span class="mi">46</span><span class="p">:</span> <span class="s2">&quot;GLOBAL_FACTORS.uz_kdt&quot;</span><span class="p">,</span>
+        <span class="mi">48</span><span class="p">:</span> <span class="s2">&quot;GLOBAL_FACTORS.uz_kdroot&quot;</span><span class="p">,</span>
+        <span class="mi">50</span><span class="p">:</span> <span class="s2">&quot;GLOBAL_FACTORS.uz_kawc&quot;</span><span class="p">,</span>
+        <span class="mi">52</span><span class="p">:</span> <span class="s2">&quot;GLOBAL_FACTORS.uz_kkast&quot;</span><span class="p">,</span>
+        <span class="mi">54</span><span class="p">:</span> <span class="s2">&quot;GLOBAL_FACTORS.uz_ksigma&quot;</span><span class="p">,</span>
+        <span class="mi">56</span><span class="p">:</span> <span class="s2">&quot;GLOBAL_FACTORS.riv_kksat&quot;</span><span class="p">,</span>
+        <span class="mi">58</span><span class="p">:</span> <span class="s2">&quot;GLOBAL_FACTORS.riv_kdecay&quot;</span><span class="p">,</span>
+        <span class="mi">60</span><span class="p">:</span> <span class="s2">&quot;GLOBAL_FACTORS.riv_kwidth&quot;</span><span class="p">,</span>
+        <span class="mi">62</span><span class="p">:</span> <span class="s2">&quot;GLOBAL_FACTORS.sz_kksat&quot;</span><span class="p">,</span>
+        <span class="mi">64</span><span class="p">:</span> <span class="s2">&quot;GLOBAL_FACTORS.sz_ksy&quot;</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">clean_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+        <span class="c1"># Remove extraneous characters from the key</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[-=]+.*&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">key</span>
+
+    <span class="k">def</span> <span class="nf">parse_dryland</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">json_structure</span><span class="p">,</span> <span class="n">mappings</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">):</span>
+                <span class="c1"># This is a key line</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="k">elif</span> <span class="n">key</span><span class="p">:</span>
+                <span class="c1"># This is the value line</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="c1"># Find the corresponding JSON path and update it</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">clean_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">mappings</span><span class="p">:</span>
+                    <span class="n">json_key</span> <span class="o">=</span> <span class="n">mappings</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                    <span class="n">keys</span> <span class="o">=</span> <span class="n">json_key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+                    <span class="n">d</span> <span class="o">=</span> <span class="n">json_structure</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;MODEL PARAMETER SETTINGS FILE&quot;</span><span class="p">:</span>
+                        <span class="n">base_name</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">base_name</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span>
+                    <span class="n">d</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">value</span>
+
+                <span class="n">key</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">parse_settings</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">json_structure</span><span class="p">,</span> <span class="n">mappings</span><span class="p">):</span>
+        <span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
+            
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="c1"># Skip header lines</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;DWAPM_SET&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;========&quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            
+            <span class="c1"># Check if the line ends with a number in brackets</span>
+            
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(.*?)(?:\((\d+)\))$&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>  <span class="c1"># Extract the number in brackets as the key</span>
+                <span class="c1"># Extract the key part before the number in brackets</span>
+                <span class="n">description</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                
+                <span class="c1"># Look for the value on the next line</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">value_line</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">value_line</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">value_line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                        
+                    <span class="c1"># Find the corresponding JSON path and update it</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">mappings</span><span class="p">:</span>
+                        <span class="n">json_key</span> <span class="o">=</span> <span class="n">mappings</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                        <span class="n">keys</span> <span class="o">=</span> <span class="n">json_key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+                        <span class="n">d</span> <span class="o">=</span> <span class="n">json_structure</span>
+                        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                            <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                        <span class="n">d</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+                    <span class="c1"># Handle the case where there is no following line for value</span>
+                    <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">json_structure</span>
+
+
+    <span class="c1"># Read the input text file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+    <span class="c1"># Determine which format the file is in</span>
+    <span class="n">first_line</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Format determined: </span><span class="si">{</span><span class="n">first_line</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">first_line</span> <span class="o">==</span> <span class="s2">&quot;DWAPM_SET&quot;</span><span class="p">:</span>
+        <span class="c1"># Settings file format</span>
+        <span class="n">parse_settings</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="n">json_structure_settings</span><span class="p">,</span> <span class="n">mappings_settings</span><span class="p">)</span>
+        <span class="n">json_structure</span> <span class="o">=</span> <span class="n">json_structure_settings</span>
+    <span class="k">elif</span> <span class="n">first_line</span> <span class="o">==</span> <span class="s2">&quot;drylandmodel&quot;</span><span class="p">:</span>
+        <span class="c1"># Dryland model file format</span>
+        <span class="n">parse_dryland</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">json_structure_dryland</span><span class="p">,</span> <span class="n">mappings_dryland</span><span class="p">)</span>
+        <span class="n">json_structure</span> <span class="o">=</span> <span class="n">json_structure_dryland</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s1"> format not available for conversion&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Set the output file if not provided</span>
+    <span class="k">if</span> <span class="n">output_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">input_file</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span>
+
+    <span class="c1"># Save the JSON structure to a file</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">json_structure</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Successfully saved JSON to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># Remove the old input file after successful conversion</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Successfully deleted the old file: </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to save JSON or delete old file. Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Usage: python -m path.to.your.module &lt;input_file&gt; [output_file]&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">output_file</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output_file</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">convert_text_to_json</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

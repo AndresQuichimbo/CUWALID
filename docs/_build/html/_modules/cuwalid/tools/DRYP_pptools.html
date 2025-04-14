@@ -10,6 +10,8 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
@@ -46,7 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cuwalid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
@@ -81,11 +83,14 @@
   <h1>Source code for cuwalid.tools.DRYP_pptools</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;DRYP: post-processing tools.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">calendar</span>
 <span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">import</span> <span class="nn">cuwalid.tools.DRYP_rrtools</span> <span class="k">as</span> <span class="nn">rrtools</span>
+<span class="c1">#from cuwalid.dryp.components.DRYP_json_reader import get_model_settings</span>
 
 <div class="viewcode-block" id="grid_pptools"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.grid_pptools">[docs]</a><span class="k">class</span> <span class="nc">grid_pptools</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
@@ -169,8 +174,247 @@
 	
 
 		
-<div class="viewcode-block" id="get_output_filenames"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.get_output_filenames">[docs]</a><span class="k">def</span> <span class="nf">get_output_filenames</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
-<span class="w">	</span><span class="sd">&quot;&quot;&quot;Function to get all names of model outputs&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="get_output_filenames"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.get_output_filenames">[docs]</a><span class="k">class</span> <span class="nc">get_output_filenames</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Function to get all names of model outputs&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_input</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Fuction to generate names of model results. This names are</span>
+<span class="sd">		paths to the model outputs. The function will read the</span>
+<span class="sd">		configuration file and generate the names of the outputs.</span>
+<span class="sd">		path_grid : path to the model grid outputs</span>
+<span class="sd">		path_csv : path to the model csv outputs</span>
+<span class="sd">		path_raster : path to the model raster outputs</span>
+<span class="sd">		</span>
+<span class="sd">		Parameters:</span>
+<span class="sd">		----------</span>
+<span class="sd">		path_input : str</span>
+<span class="sd">			filename including path of the model &quot;input_file&quot;</span>
+<span class="sd">		</span>
+<span class="sd">		Returns:</span>
+<span class="sd">		--------</span>
+<span class="sd">		object containing strings as filenames</span>
+<span class="sd">				</span>
+<span class="sd">		Example:</span>
+<span class="sd">		--------</span>
+<span class="sd">		&gt;&gt;&gt; import DRYP_pptools as pptools</span>
+<span class="sd">		&gt;&gt;&gt; fnames = pptools.get_output_filenames(file_model_input)</span>
+<span class="sd">		&gt;&gt;&gt; fnames.path_csv</span>
+<span class="sd">		&gt;&gt;&gt; fnames.path_csv[&quot;avg&quot;]</span>
+<span class="sd">		&gt;&gt;&gt; fnames.path_csv[&quot;point&quot;][&quot;pre&quot;]</span>
+<span class="sd">		&gt;&gt;&gt; fnames.path_grid</span>
+<span class="sd">		&gt;&gt;&gt; fnames.path_grid[&quot;grid&quot;]</span>
+<span class="sd">		&gt;&gt;&gt; fnames.path_grid[&quot;rp&quot;]</span>
+<span class="sd">		&gt;&gt;&gt; fnames.path_raster</span>
+<span class="sd">		&gt;&gt;&gt; fnames.path_raster[&quot;wte&quot;]</span>
+<span class="sd">		&gt;&gt;&gt; fnames.path_raster[&quot;tht&quot;]</span>
+<span class="sd">		&gt;&gt;&gt; fnames.path_raster[&quot;Qo&quot;]</span>
+<span class="sd">		&gt;&gt;&gt; fnames.path_raster[&quot;Vpnd&quot;]</span>
+<span class="sd">		&gt;&gt;&gt; fnames.path_raster[&quot;thtrp&quot;]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># Output filenames</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_input</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+			<span class="n">dryp_config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+		<span class="n">Mname</span> <span class="o">=</span> <span class="n">dryp_config</span><span class="p">[</span><span class="s2">&quot;model_name&quot;</span><span class="p">]</span>
+		<span class="n">DirOutput</span> <span class="o">=</span> <span class="n">dryp_config</span><span class="p">[</span><span class="s2">&quot;OUTPUT&quot;</span><span class="p">][</span><span class="s2">&quot;path_output&quot;</span><span class="p">]</span>
+
+		<span class="n">fnameTS_grid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DirOutput</span><span class="p">,</span> <span class="n">Mname</span> <span class="o">+</span> <span class="s1">&#39;_grid&#39;</span><span class="p">)</span>
+		<span class="n">fnameTS_point</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DirOutput</span><span class="p">,</span> <span class="n">Mname</span> <span class="o">+</span> <span class="s1">&#39;_p_&#39;</span><span class="p">)</span>
+		<span class="n">fnameTS_UZ</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DirOutput</span><span class="p">,</span> <span class="n">Mname</span> <span class="o">+</span> <span class="s1">&#39;_UZ_&#39;</span><span class="p">)</span>
+		<span class="n">fnameTS_RZ</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DirOutput</span><span class="p">,</span> <span class="n">Mname</span> <span class="o">+</span> <span class="s1">&#39;_RZ_&#39;</span><span class="p">)</span>
+		<span class="n">fnameTS_RZ_avg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DirOutput</span><span class="p">,</span> <span class="n">Mname</span> <span class="o">+</span> <span class="s1">&#39;_RZ_avg&#39;</span><span class="p">)</span>
+		<span class="n">fnameTS_avg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DirOutput</span><span class="p">,</span> <span class="n">Mname</span> <span class="o">+</span> <span class="s1">&#39;_avg&#39;</span><span class="p">)</span>
+
+		<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="s1">&#39;pet&#39;</span><span class="p">,</span> <span class="s1">&#39;dis&#39;</span><span class="p">,</span> <span class="s1">&#39;aet&#39;</span><span class="p">,</span> <span class="s1">&#39;inf&#39;</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="s1">&#39;tht&#39;</span><span class="p">,</span> 
+		   <span class="s1">&#39;rch&#39;</span><span class="p">,</span> <span class="s1">&#39;egw&#39;</span><span class="p">,</span> <span class="s1">&#39;wte&#39;</span><span class="p">,</span> <span class="s1">&#39;gdh&#39;</span><span class="p">,</span> <span class="s1">&#39;twsc&#39;</span><span class="p">]</span>
+
+		<span class="n">point_csv_dict</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="c1"># get directories</span>
+		<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+			<span class="c1"># name csv file names</span>
+			<span class="n">point_csv_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">fnameTS_point</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span>
+
+		<span class="c1"># get directories</span>
+		<span class="c1"># name csv file names</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">path_csv</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s2">&quot;avg&quot;</span> <span class="p">:</span> <span class="n">fnameTS_avg</span><span class="o">+</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;point&quot;</span> <span class="p">:</span> <span class="n">point_csv_dict</span><span class="p">,</span>
+		<span class="s2">&quot;avgrp&quot;</span><span class="p">:</span> <span class="n">fnameTS_avg</span><span class="o">+</span><span class="s1">&#39;rp&#39;</span><span class="o">+</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;avgpnd&quot;</span><span class="p">:</span> <span class="n">fnameTS_avg</span><span class="o">+</span><span class="s1">&#39;pnd&#39;</span><span class="o">+</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span>
+		<span class="p">}</span>
+
+		<span class="c1"># filename of the model grid outputs</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">path_grid</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s2">&quot;grid&quot;</span> <span class="p">:</span> <span class="n">fnameTS_grid</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;rp&quot;</span> <span class="p">:</span> <span class="n">fnameTS_grid</span><span class="o">+</span><span class="s1">&#39;rp.nc&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;pnd&quot;</span> <span class="p">:</span> <span class="n">fnameTS_grid</span><span class="o">+</span><span class="s1">&#39;pnd.nc&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;vmax&quot;</span> <span class="p">:</span> <span class="n">fnameTS_grid</span><span class="o">+</span><span class="s1">&#39;vmax.nc&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;rmax&quot;</span> <span class="p">:</span> <span class="n">fnameTS_grid</span><span class="o">+</span><span class="s1">&#39;rmax.nc&#39;</span><span class="p">,</span>
+		<span class="p">}</span>
+
+		<span class="c1"># name outputs for initial conditions</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">path_raster</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s2">&quot;wte&quot;</span> <span class="p">:</span> <span class="n">fnameTS_avg</span> <span class="o">+</span> <span class="s1">&#39;_wte_ini.asc&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;tht&quot;</span> <span class="p">:</span> <span class="n">fnameTS_avg</span> <span class="o">+</span> <span class="s1">&#39;_tht_ini.asc&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;Qo&quot;</span> <span class="p">:</span><span class="n">fnameTS_avg</span> <span class="o">+</span> <span class="s1">&#39;_Q_ini.asc&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;thtrp&quot;</span> <span class="p">:</span> <span class="n">fnameTS_avg</span> <span class="o">+</span> <span class="s1">&#39;_tht_rp_ini.asc&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;Vpnd&quot;</span> <span class="p">:</span> <span class="n">fnameTS_avg</span> <span class="o">+</span> <span class="s1">&#39;_V_pnd_ini.asc&#39;</span><span class="p">,</span>
+		<span class="p">}</span>
+	<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="calculate_storage_from_files"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_storage_from_files">[docs]</a><span class="k">def</span> <span class="nf">calculate_storage_from_files</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">path_surface</span><span class="p">,</span> <span class="n">path_Droot</span><span class="p">,</span> <span class="n">path_theta_sat</span><span class="p">,</span> <span class="n">path_Sy</span><span class="p">,</span>
+								  <span class="n">path_bathymetry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path_bottom</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+								  <span class="n">start_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fname_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+								  <span class="n">anomalies</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">	</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Calculate storage for all components (surface, subsurface, groundwater)</span>
+<span class="sd">	from model simulations</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	fname :	str</span>
+<span class="sd">		file name of the netcdf (from model outputs)</span>
+<span class="sd">	path_surface :	str</span>
+<span class="sd">		file name of raster surface</span>
+<span class="sd">	path_surface :	str</span>
+<span class="sd">		file name of raster surface</span>
+<span class="sd">	path_bathymetry :	str</span>
+<span class="sd">		file name of raster surface</span>
+<span class="sd">	path_bottom :	str</span>
+<span class="sd">		file name of raster surface</span>
+<span class="sd">	path_Droot :	str</span>
+<span class="sd">		file name of raster surface</span>
+<span class="sd">	path_theta_sat :	str</span>
+<span class="sd">		file name of raster surface</span>
+<span class="sd">	path_Sy :	str</span>
+<span class="sd">		file name of raster surface</span>
+<span class="sd">	start_time : str</span>
+<span class="sd">		starting date for the analysis, &quot;DD-MM-YYYY&quot;.</span>
+<span class="sd">	end_time : str</span>
+<span class="sd">		final date for the analysis, &quot;DD-MM-YYYY&quot;.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">		xarray dataset containing all calculated values		</span>
+<span class="sd">		[&quot;str_uz&quot;, &quot;str_sz&quot;, &quot;str_lakes&quot;]</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+
+	<span class="c1">#fsurface, fbathymetry,</span>
+	<span class="c1">#fbottom, fDroot, ftheta_sat, fSy):</span>
+	
+	<span class="c1">#fsurface = fname_rasters[0]</span>
+	<span class="c1">#fbathymetry = fname_rasters[1]</span>
+	<span class="c1">##fbottom = fname_rasters[0]</span>
+	<span class="c1">#fDroot = fname_rasters[2]</span>
+	<span class="c1">#ftheta_sat = fname_rasters[3]</span>
+	<span class="c1">#fSy = fname_rasters[4]</span>
+	
+	<span class="n">head</span> <span class="o">=</span> <span class="n">preprocesses_netCDF</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;wte&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">deltat</span><span class="o">=</span><span class="s1">&#39;M&#39;</span><span class="p">,</span>
+			<span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="n">end_time</span>
+			<span class="p">)</span>
+	
+	<span class="n">theta</span> <span class="o">=</span> <span class="n">preprocesses_netCDF</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;tht&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">deltat</span><span class="o">=</span><span class="s1">&#39;M&#39;</span><span class="p">,</span>
+			<span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="n">end_time</span>
+			<span class="p">)</span>
+		
+	<span class="n">surface</span> <span class="o">=</span> <span class="n">rrtools</span><span class="o">.</span><span class="n">open_raster</span><span class="p">(</span><span class="n">path_surface</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">if</span> <span class="n">path_bathymetry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">bathymetry</span> <span class="o">=</span> <span class="n">rrtools</span><span class="o">.</span><span class="n">open_raster</span><span class="p">(</span><span class="n">path_bathymetry</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">bathymetry</span> <span class="o">=</span> <span class="n">surface</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+	
+	<span class="k">if</span> <span class="n">path_bottom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">bottom</span> <span class="o">=</span> <span class="n">rrtools</span><span class="o">.</span><span class="n">open_raster</span><span class="p">(</span><span class="n">path_bottom</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">bottom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">surface</span><span class="p">)</span>
+	
+	<span class="n">Droot</span> <span class="o">=</span> <span class="n">rrtools</span><span class="o">.</span><span class="n">open_raster</span><span class="p">(</span><span class="n">path_Droot</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">theta_sat</span> <span class="o">=</span> <span class="n">rrtools</span><span class="o">.</span><span class="n">open_raster</span><span class="p">(</span><span class="n">path_theta_sat</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">Sy</span> <span class="o">=</span> <span class="n">rrtools</span><span class="o">.</span><span class="n">open_raster</span><span class="p">(</span><span class="n">path_Sy</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	
+	<span class="n">str_sz</span><span class="p">,</span> <span class="n">str_uz</span><span class="p">,</span> <span class="n">str_lakes</span> <span class="o">=</span> <span class="n">calculate_storage</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span>
+		<span class="n">bathymetry</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">Droot</span><span class="o">*</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">theta_sat</span><span class="p">,</span> <span class="n">Sy</span><span class="p">)</span>
+	
+	<span class="k">if</span> <span class="n">anomalies</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+		<span class="n">str_sz</span> <span class="o">=</span> <span class="n">str_sz</span><span class="o">-</span><span class="n">str_sz</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+		<span class="n">str_uz</span> <span class="o">=</span> <span class="n">str_uz</span><span class="o">-</span><span class="n">str_uz</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+		<span class="n">str_lakes</span> <span class="o">=</span> <span class="n">str_lakes</span><span class="o">-</span><span class="n">str_lakes</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+	
+	<span class="c1">#save raster dataset as netcdf</span>
+	<span class="c1"># save files</span>
+	<span class="k">if</span> <span class="n">fname_out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">fname_out</span> <span class="o">=</span> <span class="n">fname</span>
+	
+	<span class="c1"># save dataset as netcdf</span>
+	<span class="c1"># unsaturated zone storage</span>
+	<span class="n">fname_out_uz</span> <span class="o">=</span> <span class="n">fname_out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_str_uz.nc&#39;</span>
+	<span class="n">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname_out_uz</span><span class="p">,</span> <span class="n">str_uz</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;str_uz&quot;</span><span class="p">])</span>
+
+	<span class="c1"># saturated zone storage</span>
+	<span class="n">fname_out_sz</span> <span class="o">=</span> <span class="n">fname_out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_str_sz.nc&#39;</span>
+	<span class="n">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname_out_sz</span><span class="p">,</span> <span class="n">str_sz</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;str_sz&quot;</span><span class="p">])</span>
+
+	<span class="c1"># lakes zone storage</span>
+	<span class="n">fname_out_pnd</span> <span class="o">=</span> <span class="n">fname_out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_str_lakes.nc&#39;</span>
+	<span class="n">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname_out_pnd</span><span class="p">,</span> <span class="n">str_lakes</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;str_lakes&quot;</span><span class="p">])</span></div>
+
+	<span class="c1">#return str_sz, str_uz, str_lakes</span>
+
+<div class="viewcode-block" id="calculate_storage"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_storage">[docs]</a><span class="k">def</span> <span class="nf">calculate_storage</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">bathymetry</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span> <span class="n">theta_sat</span><span class="p">,</span>
+		  <span class="n">Sy</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Function to calculate storage for all components of the water balance</span>
+<span class="sd">	calculate the Total storage along the vertical profile of each model cell</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	surface:	surface elevation [m]</span>
+<span class="sd">	bottom:		bottom elevation [m]</span>
+<span class="sd">	bathymetry:	surface elevation of lakes [m] </span>
+<span class="sd">	Droot:		Rooting depth [mm]</span>
+<span class="sd">	theta:		Water content at time t [-]</span>
+<span class="sd">	head:		water table [m]</span>
+<span class="sd">	theta_sat:	Saturated water content [-]</span>
+<span class="sd">	Sy:			Specific yield [-]</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	total:		Volume of water stored in the saturated zone [mm]</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="c1"># water stored in lakes</span>
+	<span class="n">str_lakes</span> <span class="o">=</span> <span class="n">head</span> <span class="o">-</span> <span class="n">bathymetry</span>
+	<span class="c1">#str_lakes[str_lakes &lt; 0.0] = 0.0</span>
+	<span class="n">str_lakes</span> <span class="o">=</span> <span class="n">str_lakes</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">str_lakes</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+	<span class="n">str_lakes</span> <span class="o">=</span> <span class="n">str_lakes</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;str_lakes&quot;</span><span class="p">)</span>
+
+	<span class="c1"># estimate saturated-unsaturated storage</span>
+	<span class="n">z_root</span> <span class="o">=</span> <span class="n">bathymetry</span> <span class="o">-</span> <span class="n">Droot</span>
+	<span class="n">str_usz</span> <span class="o">=</span> <span class="p">(</span><span class="n">head</span> <span class="o">-</span> <span class="n">str_lakes</span> <span class="o">-</span> <span class="n">z_root</span><span class="p">)</span>
+	<span class="c1">#str_usz[str_usz &lt; 0] = 0.0</span>
+	<span class="n">str_usz</span> <span class="o">=</span> <span class="n">str_usz</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">str_usz</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+	
+	<span class="c1"># estimate storage water available in the unsaturated zone</span>
+	<span class="c1"># estimate rooting depth storage</span>
+	<span class="n">str_uz</span> <span class="o">=</span> <span class="n">Droot</span> <span class="o">-</span> <span class="n">str_usz</span>
+	<span class="n">str_uz</span> <span class="o">=</span> <span class="n">str_uz</span><span class="o">*</span><span class="n">theta</span>
+	<span class="n">str_uz</span> <span class="o">=</span> <span class="n">str_uz</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;str_uz&quot;</span><span class="p">)</span>
+	
+	<span class="c1"># estimate saturated storage</span>
+	<span class="n">str_sz</span> <span class="o">=</span> <span class="n">head</span> <span class="o">-</span> <span class="n">str_usz</span> <span class="o">-</span> <span class="n">str_lakes</span> <span class="o">-</span> <span class="n">bottom</span>
+	<span class="n">str_sz</span> <span class="o">=</span> <span class="n">str_sz</span><span class="o">*</span><span class="n">Sy</span> <span class="o">+</span> <span class="n">str_usz</span><span class="o">*</span><span class="n">theta_sat</span>
+	<span class="n">str_sz</span> <span class="o">=</span> <span class="n">str_sz</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;str_sz&quot;</span><span class="p">)</span>
+	<span class="c1"># total storage</span>
+	<span class="c1"># total = storage in saturated zone</span>
+	<span class="c1"># 		+ storage in unsaturated zone + storage in lakes</span>
+	<span class="c1">#total = (str_lakes</span>
+	<span class="c1">#		+ str_uz*theta</span>
+	<span class="c1">#		+ str_usz*theta_sat</span>
+	<span class="c1">#		+ str_sz*Sy</span>
+	<span class="c1">#		)</span>
+	
+	<span class="k">return</span> <span class="n">str_sz</span><span class="p">,</span> <span class="n">str_uz</span><span class="p">,</span> <span class="n">str_lakes</span></div>
+
 
 <div class="viewcode-block" id="calculate_anomalies_from_netCDF"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_anomalies_from_netCDF">[docs]</a><span class="k">def</span> <span class="nf">calculate_anomalies_from_netCDF</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="n">fname_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 			       <span class="n">deltat</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -409,6 +653,76 @@
 		<span class="n">fname_out</span> <span class="o">=</span> <span class="n">fname_pre</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_ai.nc&#39;</span>
 	<span class="n">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;ai&quot;</span><span class="p">])</span></div>
 
+<div class="viewcode-block" id="calculate_saturation_from_netCDF"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_saturation_from_netCDF">[docs]</a><span class="k">def</span> <span class="nf">calculate_saturation_from_netCDF</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">path_wp</span><span class="p">,</span> <span class="n">path_sat</span><span class="p">,</span> <span class="n">fname_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+									 <span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;tht&quot;</span><span class="p">,):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This funtion calculate the saturation from water content from</span>
+<span class="sd">	the dryp model outputs</span>
+<span class="sd">	 </span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	fname :	str</span>
+<span class="sd">		file name of the netcdf (from model outputs)</span>
+<span class="sd">	path_wp :	str</span>
+<span class="sd">		file name of the wilting point raster dataset</span>
+<span class="sd">	path_sat :	str</span>
+<span class="sd">		file name of the soil moisture at saturation as raster</span>
+<span class="sd">	var_name :	str</span>
+<span class="sd">		model variables to process</span>
+<span class="sd">	deltat : str</span>
+<span class="sd">		time interval for temporal aggregation.</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	xarray :</span>
+<span class="sd">		2D time series mean or sum of tne dataset</span>
+
+<span class="sd">	Example:</span>
+<span class="sd">	---------</span>
+<span class="sd">	&gt;&gt;&gt; import sys</span>
+<span class="sd">	&gt;&gt;&gt; import os</span>
+<span class="sd">	&gt;&gt;&gt; import geopandas as gpd</span>
+
+<span class="sd">	&gt;&gt;&gt; import cuwalid.tools.DRYP_pptools as pptools</span>
+
+<span class="sd">	&gt;&gt;&gt;	path_Sy = &quot;path_to_file&quot;</span>
+<span class="sd">	&gt;&gt;&gt;	path_surface = &quot;path_to_file&quot;</span>
+<span class="sd">	&gt;&gt;&gt;	path_bathymetry = &quot;path_to_file&quot;</span>
+<span class="sd">	&gt;&gt;&gt;	path_theta_sat = &quot;path_to_file&quot;</span>
+<span class="sd">	&gt;&gt;&gt;	path_theta_wp = &quot;path_to_file&quot;</span>
+<span class="sd">	&gt;&gt;&gt;	path_Droot = &quot;path_to_file&quot;</span>
+
+
+<span class="sd">	&gt;&gt;&gt;	fname = &quot;path_output_netcdf_file&quot;</span>
+<span class="sd">	&gt;&gt;&gt;	shapefile_path = &quot;path_output_netcdf_file&quot;</span>
+
+<span class="sd">	&gt;&gt;&gt;	region = gpd.read_file(shapefile_path)</span>
+
+<span class="sd">	&gt;&gt;&gt;	pptools.extract_dataset(fname, region, clip_region=False,</span>
+<span class="sd">	&gt;&gt;&gt;		dataPP=None, maskPP=None, bands=[&quot;pre&quot;, &quot;aet&quot;, &quot;rch&quot;, &quot;dis&quot;], save=True)</span>
+
+<span class="sd">	&gt;&gt;&gt;	pptools.calculate_saturation_from_netCDF(fname, path_theta_wp, path_theta_sat,</span>
+<span class="sd">	&gt;&gt;&gt;			fname_out=None, var_name=&quot;tht&quot;)</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="c1"># change variable name to the new dataset</span>
+	<span class="n">dataset</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">var_name</span><span class="p">)</span>
+
+	<span class="c1"># read raster dataset -  wilting point</span>
+	<span class="n">theta_wp</span> <span class="o">=</span> <span class="n">rrtools</span><span class="o">.</span><span class="n">open_raster</span><span class="p">(</span><span class="n">path_wp</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">theta_wp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">theta_wp</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+	<span class="c1"># read raster dataset -  wilting point</span>
+	<span class="n">theta_sat</span> <span class="o">=</span> <span class="n">rrtools</span><span class="o">.</span><span class="n">open_raster</span><span class="p">(</span><span class="n">path_sat</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">theta_sat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">theta_sat</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+	<span class="c1"># calculate saturation</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">calculate_saturation</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">theta_wp</span><span class="p">,</span> <span class="n">theta_sat</span><span class="p">)</span>
+	<span class="c1"># save files</span>
+	<span class="k">if</span> <span class="n">fname_out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">fname_out</span> <span class="o">=</span> <span class="n">fname</span>
+		<span class="n">fname_out</span> <span class="o">=</span> <span class="n">fname_out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_tht_sat.nc&#39;</span>
+	<span class="n">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;tht&quot;</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="calculate_seasonal_average_from_netCDF"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_seasonal_average_from_netCDF">[docs]</a><span class="k">def</span> <span class="nf">calculate_seasonal_average_from_netCDF</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="s2">&quot;OND&quot;</span><span class="p">,</span>
 			       <span class="n">fname_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -454,6 +768,116 @@
 		<span class="n">fname_out</span> <span class="o">=</span> <span class="n">fname_out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">season</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span>
 	<span class="n">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="n">var_name</span><span class="p">])</span></div>
 
+<div class="viewcode-block" id="extract_dataset"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.extract_dataset">[docs]</a><span class="k">def</span> <span class="nf">extract_dataset</span><span class="p">(</span><span class="n">netcdf_path</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">clip_region</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+	<span class="n">dataPP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">maskPP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fname_out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pre&quot;</span><span class="p">]):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function clip netcdf files by region, projection should</span>
+<span class="sd">	match WGS84, otherwise it will raise an error.</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	netcdf_path : str</span>
+<span class="sd">		list of paths</span>
+<span class="sd">	region : geodataframe</span>
+<span class="sd">		name of variable to process</span>
+<span class="sd">	region_clip: bool</span>
+<span class="sd">		make values outside the region NaN, default true</span>
+<span class="sd">	save: bool</span>
+<span class="sd">		activate save option, default true</span>
+<span class="sd">	fname_out : str</span>
+<span class="sd">		path of outputs</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	dataset : xarray dataset</span>
+<span class="sd">		concatenated datasets</span>
+<span class="sd">	</span>
+<span class="sd">	Example:</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; import geopandas as gpd</span>
+<span class="sd">	&gt;&gt;&gt; import cuwalid.tools.DRYP_pptools as pptools</span>
+
+<span class="sd">	&gt;&gt;&gt;	fname = &quot;path_output_netcdf_file&quot;</span>
+<span class="sd">	&gt;&gt;&gt;	shapefile_path = &quot;path_output_netcdf_file&quot;</span>
+
+<span class="sd">	&gt;&gt;&gt;	region = gpd.read_file(shapefile_path)</span>
+
+<span class="sd">	&gt;&gt;&gt;	pptools.extract_dataset(fname, region, clip_region=False,</span>
+<span class="sd">	&gt;&gt;&gt;		dataPP=None, maskPP=None, bands=[&quot;pre&quot;, &quot;aet&quot;, &quot;rch&quot;, &quot;dis&quot;], save=True)</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># SPECIFY projection</span>
+	<span class="c1"># define new projection (output) #!with.PYPROJ.library</span>
+	<span class="n">newPP</span><span class="p">,</span> <span class="n">oldPP</span> <span class="o">=</span> <span class="n">maskPP</span><span class="p">,</span> <span class="n">dataPP</span>
+
+	<span class="k">if</span> <span class="n">dataPP</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">oldPP</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">CRS</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+		<span class="s2">&quot;+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs&quot;</span>
+		<span class="p">)</span>
+	
+	<span class="k">if</span> <span class="n">maskPP</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="c1"># define current projection (input)</span>
+		<span class="n">newPP</span> <span class="o">=</span> <span class="s1">&#39;EPSG:4326&#39;</span>
+		
+	<span class="c1"># get bounding boxfrom shapefile</span>
+	<span class="n">bbox</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">total_bounds</span>
+	
+	<span class="c1"># create new dataset by extracting the specified area/extend</span>
+	<span class="n">first_read</span> <span class="o">=</span> <span class="kc">True</span>
+	<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">:</span>
+		<span class="c1"># Open dataset of model outputs</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">netcdf_path</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">ivar</span><span class="p">)</span>
+		
+		<span class="c1"># reproject estimated probabilistic forecasting</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">reproject_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">oldPP</span><span class="p">,</span> <span class="n">newPP</span><span class="p">)</span>
+		
+		<span class="c1"># clip area</span>
+		<span class="k">if</span> <span class="n">clip_region</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">region_ds</span> <span class="o">=</span> <span class="n">clip_dataset_by_region</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">region</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">region_ds</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
+				<span class="n">lat</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+				<span class="n">lon</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+				<span class="p">)</span>
+		
+		<span class="k">if</span> <span class="n">first_read</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">dataset</span> <span class="o">=</span> <span class="n">region_ds</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+			<span class="n">first_read</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">dataset</span><span class="p">,</span> <span class="n">region_ds</span><span class="p">])</span>
+	
+	<span class="c1"># save season as netcdf file</span>
+	<span class="k">if</span> <span class="n">save</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+		<span class="c1"># save files</span>
+		<span class="k">if</span> <span class="n">fname_out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">fname_out</span> <span class="o">=</span> <span class="n">netcdf_path</span>
+			<span class="n">fname_out</span> <span class="o">=</span> <span class="n">fname_out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="s1">&#39;clipped.nc&#39;</span>
+
+		<span class="n">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">bands</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">dataset</span></div>
+
+<div class="viewcode-block" id="clip_dataset_by_region"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.clip_dataset_by_region">[docs]</a><span class="k">def</span> <span class="nf">clip_dataset_by_region</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">region</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function clip netcdf files by region, projection should</span>
+<span class="sd">	match WGS84, otherwise it will raise an error.</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	dataset : data xarray</span>
+<span class="sd">		dataset</span>
+<span class="sd">	region : geodataframe</span>
+<span class="sd">		name of variable to process</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	dataset : xarray dataset</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Clip the data model</span>
+	<span class="n">ds_clipped</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">region</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">region</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">ds_clipped</span></div>
+	
+
 <div class="viewcode-block" id="calculate_aridity_index"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_aridity_index">[docs]</a><span class="k">def</span> <span class="nf">calculate_aridity_index</span><span class="p">(</span><span class="n">dataset_pre</span><span class="p">,</span> <span class="n">dataset_pet</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Calculate the aridity index based on the UNEP:</span>
 <span class="sd">	UNEP. World atlas of desertification - Second Edition. vol. SECOND </span>
@@ -472,6 +896,29 @@
 <span class="sd">		Aridity index</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">return</span> <span class="n">dataset_pre</span><span class="o">/</span><span class="n">dataset_pet</span></div>
+
+<div class="viewcode-block" id="calculate_saturation"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.calculate_saturation">[docs]</a><span class="k">def</span> <span class="nf">calculate_saturation</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">theta_wp</span><span class="p">,</span> <span class="n">theta_sat</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Calculate the saturation from soil water content, normalization</span>
+<span class="sd">	of water content in relation to saturation</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	dataset : Dataxarray</span>
+<span class="sd">		soil moisture dataset</span>
+<span class="sd">	theta_wp : numpy array</span>
+<span class="sd">		soil moisture at wilting point</span>
+<span class="sd">	theta_sat : numpy array</span>
+<span class="sd">		soil moisture at saturation point (porosity)</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	DataArray</span>
+<span class="sd">		saturation</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Calculate saturation</span>
+	<span class="n">saturation</span> <span class="o">=</span> <span class="p">(</span><span class="n">dataset</span> <span class="o">-</span> <span class="n">theta_wp</span><span class="p">)</span><span class="o">/</span><span class="n">theta_sat</span>
+
+	<span class="k">return</span> <span class="n">saturation</span></div>
 
 <div class="viewcode-block" id="preprocesses_netCDF"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.preprocesses_netCDF">[docs]</a><span class="k">def</span> <span class="nf">preprocesses_netCDF</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">deltat</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span>
 			<span class="n">start_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -823,6 +1270,36 @@
 	<span class="k">return</span> <span class="n">df</span></div>
 
 <div class="viewcode-block" id="get_point_from_dataset"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.get_point_from_dataset">[docs]</a><span class="k">def</span> <span class="nf">get_point_from_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">x_coord</span><span class="p">,</span> <span class="n">y_coord</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Get time series of a point from a netCDF</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	dataset : dataset</span>
+<span class="sd">		dataset from which the mean will be extracted</span>
+<span class="sd">	x_coord : list</span>
+<span class="sd">		x coordinates of the points</span>
+<span class="sd">	y_coord : list</span>
+<span class="sd">		y coordinates of the points</span>
+<span class="sd">	field : list</span>
+<span class="sd">		name of the field to get values (default: dis)</span>
+
+<span class="sd">	</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">		dataframe</span>
+<span class="sd">		containing the time series of the points</span>
+
+<span class="sd">	Example:</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; import cuwalid.tools.DRYP_pptools as pptools</span>
+<span class="sd">	&gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">	&gt;&gt;&gt; import xarray as xr</span>
+<span class="sd">	&gt;&gt;&gt; import os</span>
+<span class="sd">	&gt;&gt;&gt; import numpy as np</span>
+<span class="sd">	&gt;&gt;&gt; import rasterio</span>
+
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># read model dataset</span>
 	<span class="n">data</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">field</span><span class="p">]</span>
 	<span class="n">time</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
@@ -907,6 +1384,42 @@
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">return</span> <span class="n">dataset</span></div>
 
+<div class="viewcode-block" id="reproject_dataset"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_pptools.reproject_dataset">[docs]</a><span class="k">def</span> <span class="nf">reproject_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">oldPP</span><span class="p">,</span> <span class="n">newPP</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Transform projection system</span>
+<span class="sd">	oldPP and newPP have to be defined first</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	Data:	Dataset</span>
+<span class="sd">		dataset to be reprojected</span>
+<span class="sd">	oldPP:	Projection</span>
+<span class="sd">		projection of the dataset</span>
+<span class="sd">	newPP:	Projection</span>
+<span class="sd">		projection of the new dataset</span>
+
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	Data:	Dataset</span>
+<span class="sd">		reprojected dataset</span>
+<span class="sd">		</span>
+<span class="sd">	Example:</span>
+<span class="sd">	&gt;&gt;&gt; import cuwalid.tools.DRYP_pptools as pptools</span>
+<span class="sd">	&gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">	&gt;&gt;&gt; import xarray as xr</span>
+<span class="sd">	&gt;&gt;&gt; import os</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># check if projection is in ERSG format</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">newPP</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">11</span><span class="p">:</span>
+		<span class="n">newPP</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">CRS</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">newPP</span><span class="p">)</span>
+	
+	<span class="c1"># reprojec dataset</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="s1">&#39;y&#39;</span><span class="p">})</span>  <span class="c1"># new method</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">write_crs</span><span class="p">(</span><span class="n">oldPP</span><span class="p">)</span> <span class="c1"># write crs</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rio</span><span class="o">.</span><span class="n">reproject</span><span class="p">(</span><span class="n">newPP</span><span class="p">)</span> <span class="c1"># reproject the file</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="s1">&#39;lat&#39;</span><span class="p">})</span>  <span class="c1"># new method</span>
+	
+	<span class="k">return</span> <span class="n">data</span></div>
 </pre></div>
 
            </div>

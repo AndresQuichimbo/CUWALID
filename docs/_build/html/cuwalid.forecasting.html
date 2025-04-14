@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Forecasting Package &mdash; CUWALID 0.0.1 documentation</title>
+  <title>cuwalid.forecasting package &mdash; CUWALID 0.0.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -19,7 +21,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cuwalid.forecasting.components package" href="cuwalid.forecasting.components.html" />
-    <link rel="prev" title="cuwalid.stopet.stopet_parameters package" href="cuwalid.stopet.stopet_parameters.html" /> 
+    <link rel="prev" title="cuwalid.dryp.example package" href="cuwalid.dryp.example.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,20 +51,22 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Documentation</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.dryp.html">DRYP Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.stopet.html">StoPET Package</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Forecasting Package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="cuwalid.forecasting.components.html">cuwalid.forecasting.components package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">cuwalid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="cuwalid.html">cuwalid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cuwalid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.dryp.html">cuwalid.dryp package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cuwalid.forecasting package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html">cuwalid.stopet package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.storm.html">cuwalid.storm package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tests.html">cuwalid.tests package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html">cuwalid.tools package</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cuwalid-forecasting-main-forecast-module">cuwalid.forecasting.Main_forecast module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#cuwalid-main-cuwalid-module">cuwalid.main_cuwalid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#module-cuwalid">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.tests.html">Tests Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.tools.html">Tools Package</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
@@ -86,9 +90,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">API Documentation</a></li>
-          <li class="breadcrumb-item"><a href="cuwalid.html">&lt;no title&gt;</a></li>
-      <li class="breadcrumb-item active">Forecasting Package</li>
+          <li class="breadcrumb-item"><a href="modules.html">cuwalid</a></li>
+          <li class="breadcrumb-item"><a href="cuwalid.html">cuwalid package</a></li>
+      <li class="breadcrumb-item active">cuwalid.forecasting package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/cuwalid.forecasting.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -98,32 +102,73 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="forecasting-package">
-<h1>Forecasting Package<a class="headerlink" href="#forecasting-package" title="Permalink to this heading"></a></h1>
+  <section id="cuwalid-forecasting-package">
+<h1>cuwalid.forecasting package<a class="headerlink" href="#cuwalid-forecasting-package" title="Permalink to this heading"></a></h1>
 <section id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="cuwalid.forecasting.components.html">cuwalid.forecasting.components package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n00-cuwalid-had-get-csv-ts-files-from-multi-csv-module">cuwalid.forecasting.components.N00_cuwalid_HAD_get_csv_TS_files_from_multi_CSV module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n01a-cuwalid-had-get-twsa-from-mult-files-module">cuwalid.forecasting.components.N01a_cuwalid_HAD_get_TWSA_from_mult_files module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n01b-cuwalid-had-get-additional-variables-multi-netcdf-module">cuwalid.forecasting.components.N01b_cuwalid_HAD_get_additional_variables_multi_netcdf module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n02a-cuwalid-had-get-percentiles-multi-files-module">cuwalid.forecasting.components.N02a_cuwalid_HAD_get_percentiles_multi_files module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n02c-cuwalid-had-get-extremes-quantiles-multi-netcdf-module">cuwalid.forecasting.components.N02c_cuwalid_HAD_get_extremes_quantiles_multi_netcdf module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n02d-cuwalid-had-get-average-multi-netcdf-module">cuwalid.forecasting.components.N02d_cuwalid_HAD_get_average_multi_netcdf module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n03-cuwalid-had-get-anomalies-multi-netcdf-module">cuwalid.forecasting.components.N03_cuwalid_HAD_get_anomalies_multi_netcdf module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n04a-cuwalid-had-get-tercile-hindcast-fluxes-module">cuwalid.forecasting.components.N04a_cuwalid_HAD_get_tercile_hindcast_fluxes module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n04b-cuwalid-had-get-tercile-hindcast-extreme-values-module">cuwalid.forecasting.components.N04b_cuwalid_HAD_get_tercile_hindcast_extreme_values module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n05-cuwalid-had-extract-forecasting-variable-module">cuwalid.forecasting.components.N05_cuwalid_HAD_extract_forecasting_variable module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n06-cuwalid-had-get-areas-terciles-module">cuwalid.forecasting.components.N06_cuwalid_HAD_get_areas_terciles module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n07-cuwalid-had-get-update-twsa-module">cuwalid.forecasting.components.N07_cuwalid_HAD_get_update_TWSA module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n08-cuwalid-had-get-updated-twsa-ensamble-module">cuwalid.forecasting.components.N08_cuwalid_HAD_get_updated_TWSA_ensamble module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n09-cuwalid-had-get-ensamble-forecasting-module">cuwalid.forecasting.components.N09_cuwalid_HAD_get_ensamble_forecasting module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n10a-cuwalid-had-get-probabilistic-tercile-forecast-ensamble-module">cuwalid.forecasting.components.N10a_cuwalid_HAD_get_probabilistic_tercile_forecast_ensamble module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n10b-cuwalid-had-get-deterministic-forecast-ensamble-module">cuwalid.forecasting.components.N10b_cuwalid_HAD_get_deterministic_forecast_ensamble module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n11a-cuwalid-had-plot-tercile-probability-forecast-module">cuwalid.forecasting.components.N11a_cuwalid_HAD_plot_tercile_probability_forecast module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid-forecasting-components-n11b-cuwalid-had-plot-deterministic-forecast-module">cuwalid.forecasting.components.N11b_cuwalid_HAD_plot_deterministic_forecast module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.default_parameter_dataset">cuwalid.forecasting.components.default_parameter_dataset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.forecast">cuwalid.forecasting.components.forecast module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.extract_forecasting_variable"><code class="docutils literal notranslate"><span class="pre">extract_forecasting_variable()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_areas_terciles"><code class="docutils literal notranslate"><span class="pre">get_areas_terciles()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_deterministic_forecast_ensamble"><code class="docutils literal notranslate"><span class="pre">get_deterministic_forecast_ensamble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_ensamble_forecasting"><code class="docutils literal notranslate"><span class="pre">get_ensamble_forecasting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_postprocessed_variables_forecast"><code class="docutils literal notranslate"><span class="pre">get_postprocessed_variables_forecast()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_probabilistic_tercile_forecast_ensamble"><code class="docutils literal notranslate"><span class="pre">get_probabilistic_tercile_forecast_ensamble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_tercile_hindcast_extreme_values"><code class="docutils literal notranslate"><span class="pre">get_tercile_hindcast_extreme_values()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_tercile_hindcast_fluxes"><code class="docutils literal notranslate"><span class="pre">get_tercile_hindcast_fluxes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_update_TWSA"><code class="docutils literal notranslate"><span class="pre">get_update_TWSA()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_updated_TWSA_ensamble"><code class="docutils literal notranslate"><span class="pre">get_updated_TWSA_ensamble()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.read_dataset"><code class="docutils literal notranslate"><span class="pre">read_dataset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.helper_functions">cuwalid.forecasting.components.helper_functions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.add_label_features"><code class="docutils literal notranslate"><span class="pre">add_label_features()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.add_scale_bar"><code class="docutils literal notranslate"><span class="pre">add_scale_bar()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.bounding_box"><code class="docutils literal notranslate"><span class="pre">bounding_box()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.get_mask"><code class="docutils literal notranslate"><span class="pre">get_mask()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.get_season_dataset"><code class="docutils literal notranslate"><span class="pre">get_season_dataset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.load_config"><code class="docutils literal notranslate"><span class="pre">load_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.read_dataset"><code class="docutils literal notranslate"><span class="pre">read_dataset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.reproject_dataset"><code class="docutils literal notranslate"><span class="pre">reproject_dataset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.resample_dataset"><code class="docutils literal notranslate"><span class="pre">resample_dataset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.helper_functions.season_name_to_number"><code class="docutils literal notranslate"><span class="pre">season_name_to_number()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.hindcast">cuwalid.forecasting.components.hindcast module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_TWSA_from_mult_files"><code class="docutils literal notranslate"><span class="pre">get_TWSA_from_mult_files()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_additional_variables_multi_netcdf"><code class="docutils literal notranslate"><span class="pre">get_additional_variables_multi_netcdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_anomalies_multi_netcdf"><code class="docutils literal notranslate"><span class="pre">get_anomalies_multi_netcdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_average_multi_netcdf"><code class="docutils literal notranslate"><span class="pre">get_average_multi_netcdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_csv_TS_files_from_multi_CSV"><code class="docutils literal notranslate"><span class="pre">get_csv_TS_files_from_multi_CSV()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_extremes_quantiles_multi_netcdf"><code class="docutils literal notranslate"><span class="pre">get_extremes_quantiles_multi_netcdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_monthly_average_multi_netcdf"><code class="docutils literal notranslate"><span class="pre">get_monthly_average_multi_netcdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_name_list_historical_netcdf_files"><code class="docutils literal notranslate"><span class="pre">get_name_list_historical_netcdf_files()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_percentiles_multi_files"><code class="docutils literal notranslate"><span class="pre">get_percentiles_multi_files()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.read_dataset"><code class="docutils literal notranslate"><span class="pre">read_dataset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.resample_dataset"><code class="docutils literal notranslate"><span class="pre">resample_dataset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.save_xarray_dataset_as_netcdf"><code class="docutils literal notranslate"><span class="pre">save_xarray_dataset_as_netcdf()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.map_properties">cuwalid.forecasting.components.map_properties module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.plot_hydro_forecast">cuwalid.forecasting.components.plot_hydro_forecast module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.plot_hydro_forecast.plot_deterministic_forecast"><code class="docutils literal notranslate"><span class="pre">plot_deterministic_forecast()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.plot_hydro_forecast.plot_tercile_probability_forecast"><code class="docutils literal notranslate"><span class="pre">plot_tercile_probability_forecast()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.plot_impact_forecast">cuwalid.forecasting.components.plot_impact_forecast module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.plot_impact_forecast.get_labels_by_lenguage"><code class="docutils literal notranslate"><span class="pre">get_labels_by_lenguage()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.plot_impact_forecast.plot_map"><code class="docutils literal notranslate"><span class="pre">plot_map()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components.read_paths">cuwalid.forecasting.components.read_paths module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.read_paths.get_paths"><code class="docutils literal notranslate"><span class="pre">get_paths</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.forecasting.components.html#cuwalid.forecasting.components.read_paths.read_dataset_list_json"><code class="docutils literal notranslate"><span class="pre">read_dataset_list_json</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.components.html#module-cuwalid.forecasting.components">Module contents</a></li>
 </ul>
 </li>
@@ -133,8 +178,154 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
-<section id="cuwalid-forecasting-main-forecast-module">
-<h2>cuwalid.forecasting.Main_forecast module<a class="headerlink" href="#cuwalid-forecasting-main-forecast-module" title="Permalink to this heading"></a></h2>
+<section id="module-cuwalid.forecasting.main_hydro_forecast">
+<span id="cuwalid-forecasting-main-hydro-forecast-module"></span><h2>cuwalid.forecasting.main_hydro_forecast module<a class="headerlink" href="#module-cuwalid.forecasting.main_hydro_forecast" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.main_hydro_forecast.run_hydro_forecast">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.main_hydro_forecast.</span></span><span class="sig-name descname"><span class="pre">run_hydro_forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/main_hydro_forecast.html#run_hydro_forecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.main_hydro_forecast.run_hydro_forecast" title="Permalink to this definition"></a></dt>
+<dd><p>This function run the forecasting analysis, if historical analyais has
+not been activated, the forecasting will use results specified in the
+model path files.</p>
+</dd></dl>
+
+</section>
+<section id="module-cuwalid.forecasting.main_impact_forecast">
+<span id="cuwalid-forecasting-main-impact-forecast-module"></span><h2>cuwalid.forecasting.main_impact_forecast module<a class="headerlink" href="#module-cuwalid.forecasting.main_impact_forecast" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.main_impact_forecast.call_plot_maps">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.main_impact_forecast.</span></span><span class="sig-name descname"><span class="pre">call_plot_maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_scales</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['Zoom']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Kenya'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'KE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">place_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">place_codes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['MAM']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">water_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['Flood']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2010</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'output'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['English']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netcdf_path_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">river_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/main_impact_forecast.html#call_plot_maps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.main_impact_forecast.call_plot_maps" title="Permalink to this definition"></a></dt>
+<dd><p>Function to call the map plotting function for specified regions and conditions.</p>
+<p>This function generates maps based on various geographic and environmental conditions.
+It loops through the provided parameters and calls the <cite>plot_map</cite> function to create maps for
+specific places (counties), seasons, water statuses, and scales. You can use this function to
+generate maps for one or multiple places across different conditions.</p>
+<p>You can run this function from the Anaconda command prompt using the following command:
+&gt;&gt;&gt; python aux_HAD_plot_forecasting_maps.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_scales</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – A list of zoom levels or plot scales for the maps (e.g., “Zoom”, “National”, “Regional”).
+Defaults to [“Zoom”].</p></li>
+<li><p><strong>country_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The name of the country for which the maps are being generated. Defaults to “Kenya”.</p></li>
+<li><p><strong>place_names</strong> (<em>list</em><em> of </em><em>str</em><em> or </em><em>[</em><em>None</em><em>]</em><em>, </em><em>optional</em>) – A list of specific places (e.g., counties) for which maps will be created.
+If [None], maps will be created for all counties in the country. Defaults to [None].</p></li>
+<li><p><strong>seasons</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – A list of seasons for which the maps will be generated. Examples include “MAM” (March-April-May)
+and “OND” (October-November-December). Defaults to [“MAM”].</p></li>
+<li><p><strong>water_status</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Water condition or status, such as “Flood”, “Drought”, etc. Defaults to [“Flood”].</p></li>
+<li><p><strong>year</strong> (<em>int</em><em>, </em><em>optional</em>) – The year for which the maps are generated. Defaults to 2010.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – The directory where the generated maps will be saved. Defaults to “output”.</p></li>
+<li><p><strong>language</strong> (<em>str</em><em>, </em><em>optional</em>) – The language for the map labels and outputs. Defaults to “English”.</p></li>
+<li><p><strong>netcdf_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the NetCDF file containing climate or forecast data. Defaults to None.</p></li>
+<li><p><strong>threshold_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the threshold file used to determine warning or risk levels. Defaults to None.</p></li>
+<li><p><strong>mask_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the file containing mask data for areas that should be excluded from the maps.
+Defaults to None.</p></li>
+<li><p><strong>river_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the file containing river data to be overlaid on the map. Defaults to None.</p></li>
+<li><p><strong>shape_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the optional shape file to overide built in shape files for HAD region. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>This function does not return any values. It generates the specified maps and saves them
+to the output directory.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">call_plot_maps</span><span class="p">(</span>
+<span class="go">                plot_scales=[&quot;Zoom&quot;],</span>
+<span class="go">                country_name=&quot;Kenya&quot;,</span>
+<span class="go">                place_names=[&quot;Isiolo&quot;, &quot;Nairobi&quot;],</span>
+<span class="go">                seasons=[&quot;MAM&quot;, &quot;OND&quot;],</span>
+<span class="go">                water_status=[&quot;Flood&quot;, &quot;Drought&quot;],</span>
+<span class="go">                year=2020,</span>
+<span class="go">                output_dir=&quot;output&quot;,</span>
+<span class="go">                language=&quot;English&quot;,</span>
+<span class="go">                netcdf_path=&quot;/path/to/netcdf_file.nc&quot;,</span>
+<span class="go">                threshold_path=&quot;/path/to/threshold_file.csv&quot;,</span>
+<span class="go">                mask_path=&quot;/path/to/mask_file.shp&quot;,</span>
+<span class="go">                river_path=&quot;/path/to/river_file.shp&quot;,</span>
+<span class="go">                shape_path=&quot;/path/to/shape_path.shp&quot;,</span>
+<span class="go">        )</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>This function loops through all combinations of the provided parameters (plot scales, places, seasons,
+and water statuses) and generates a map for each combination.</p></li>
+<li><p>If <cite>place_names</cite> is set to [None], the function will automatically generate maps for all counties
+within the specified country.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.main_impact_forecast.get_list_places">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.main_impact_forecast.</span></span><span class="sig-name descname"><span class="pre">get_list_places</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapefile_level_1_dic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_county_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_county_shp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_short_country</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/main_impact_forecast.html#get_list_places"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.main_impact_forecast.get_list_places" title="Permalink to this definition"></a></dt>
+<dd><p>Function to get list of countries and places to print and plot</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>country_names: list</dt><dd><p>list of countries</p>
+</dd>
+<dt>place_name<span class="classifier">list</span></dt><dd><p>list of places</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.forecasting.main_impact_forecast.plot_maps_json">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.forecasting.main_impact_forecast.</span></span><span class="sig-name descname"><span class="pre">plot_maps_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/forecasting/main_impact_forecast.html#plot_maps_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.forecasting.main_impact_forecast.plot_maps_json" title="Permalink to this definition"></a></dt>
+<dd><p>Function to read a JSON config file and call the map plotting function.</p>
+<p>This function reads a configuration file in JSON format to extract the parameters
+needed to plot maps, including plot scales, country names, place names, seasons,
+water status, year, output directory, and other file paths. It then either creates
+maps for specified places or generates maps for all counties within the specified
+country if no place names are given.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_file</strong> (<em>str</em><em> or </em><em>dictionary</em><em> (</em><em>that represents the json input structure</em><em>)</em>) – The path to the JSON configuration file that contains the input parameters.</p></li>
+<li><p><strong>Keys</strong> (<em>JSON Configuration</em>) – </p></li>
+<li><p><strong>------------------------</strong> – </p></li>
+<li><p><strong>plot_scales</strong> (<em>[</em><em>str</em><em>]</em>) – Scales for plotting the maps. Defaults to [“Zoom”] if not provided.</p></li>
+<li><p><strong>country_name</strong> (<em>[</em><em>str</em><em>]</em>) – List of country names. Defaults to [“Kenya”] if not provided.</p></li>
+<li><p><strong>place_names</strong> (<em>[</em><em>str</em><em>]</em>) – List of specific place names. Defaults to [None], meaning maps will be created
+for all counties in the specified country.</p></li>
+<li><p><strong>seasons</strong> (<em>[</em><em>str</em><em>]</em>) – Seasons for which the maps are being plotted (e.g., “MAM”, “OND”). Defaults to [“OND”].</p></li>
+<li><p><strong>water_status</strong> (<em>[</em><em>str</em><em>]</em>) – Status of water conditions (e.g., “Flood”, “Drought”). Defaults to [“Flood”].</p></li>
+<li><p><strong>year</strong> (<em>int</em>) – Year for which the maps are generated.</p></li>
+<li><p><strong>language</strong> (<em>str</em>) – The language used in the output maps. Defaults to “English”.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – Directory where the output maps will be saved. Defaults to “output”.</p></li>
+<li><p><strong>netcdf_path</strong> (<em>str</em>) – Path to the NetCDF file containing the climate data.</p></li>
+<li><p><strong>threshold_path</strong> (<em>str</em>) – Path to the file containing the threshold data.</p></li>
+<li><p><strong>mask_path</strong> (<em>str</em>) – Path to the file that contains mask data.</p></li>
+<li><p><strong>river_path</strong> (<em>str</em>) – Path to the file containing river data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>This function does not return a value but calls the plotting function to generate maps.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_maps_json</span><span class="p">(</span><span class="s2">&quot;config.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>If no place names are provided (i.e., place_names == [None]), the function generates maps
+for all counties within the specified countries.</p></li>
+<li><p>If attempting to create maps for multiple countries at once, ensure that place_names is not
+specified in the JSON file, as this will cause an error.</p></li>
+</ul>
+</dd></dl>
+
+</section>
+<section id="module-cuwalid.forecasting">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cuwalid.forecasting" title="Permalink to this heading"></a></h2>
 </section>
 </section>
 
@@ -142,7 +333,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cuwalid.stopet.stopet_parameters.html" class="btn btn-neutral float-left" title="cuwalid.stopet.stopet_parameters package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuwalid.dryp.example.html" class="btn btn-neutral float-left" title="cuwalid.dryp.example package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="cuwalid.forecasting.components.html" class="btn btn-neutral float-right" title="cuwalid.forecasting.components package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
