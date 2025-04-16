@@ -287,7 +287,7 @@ class GlobalGridVar:
 	def save_csv_var(self, fname, multi_files=True):
 		"""This function save multiple arrays in a csv file
 		
-		Parameters:
+		Parameters
 		----------
 		fname : str
 			filename of csv files to store
@@ -296,7 +296,7 @@ class GlobalGridVar:
 			True - save in multiple files
 			False - save variables in one file
 
-		Returns:
+		Returns
 		-------
 		csv files
 			output files in csv format
