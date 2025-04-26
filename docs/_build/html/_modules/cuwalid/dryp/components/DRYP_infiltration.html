@@ -10,6 +10,8 @@
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
         <script src="../../../../_static/doctools.js"></script>
         <script src="../../../../_static/sphinx_highlight.js"></script>
@@ -46,7 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">cuwalid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../Authors.html">Introduction</a></li>
@@ -476,6 +478,36 @@
 
 <span class="c1"># Epsilon funtion for upscaled GA infiltration	</span>
 <div class="viewcode-block" id="epsilon_fks"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.epsilon_fks">[docs]</a><span class="k">def</span> <span class="nf">epsilon_fks</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">mu_Y</span><span class="p">,</span><span class="n">sigma_Y</span><span class="p">,</span><span class="n">ks</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Epsilon function for upscaled GA infiltration</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	k:		Dimensionless time</span>
+<span class="sd">	t:		Cummulative event time</span>
+<span class="sd">	Sp:		Sorptivity (keep the same sorptivity for one event)</span>
+<span class="sd">	P:		Precipitation</span>
+<span class="sd">	mu_Y:	Mean of the log-normal distribution</span>
+<span class="sd">	sigma_Y:	Standard deviation of the log-normal distribution</span>
+<span class="sd">	ks:		Sat. Hydraulic Conductivity</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	epsilon:	Epsilon function</span>
+
+<span class="sd">	Example:</span>
+<span class="sd">	----------</span>
+<span class="sd">	&gt;&gt;&gt; k = np.array([0.1, 0.2, 0.3])</span>
+<span class="sd">	&gt;&gt;&gt; t = np.array([1, 2, 3])</span>
+<span class="sd">	&gt;&gt;&gt; Sp = np.array([0.5, 0.6, 0.7])</span>
+<span class="sd">	&gt;&gt;&gt; P = np.array([10, 20, 30])</span>
+<span class="sd">	&gt;&gt;&gt; mu_Y = np.array([0.1, 0.2, 0.3])</span>
+<span class="sd">	&gt;&gt;&gt; sigma_Y = np.array([0.1, 0.2, 0.3])</span>
+<span class="sd">	&gt;&gt;&gt; ks = np.array([0.1, 0.2, 0.3])</span>
+<span class="sd">	&gt;&gt;&gt; epsilon = epsilon_fks(k,t,Sp,P,mu_Y,sigma_Y,ks)</span>
+<span class="sd">	&gt;&gt;&gt; print(epsilon)</span>
+<span class="sd">	[0.1 0.2 0.3]</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+
 	<span class="n">X</span> <span class="o">=</span> <span class="n">getX</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">P</span><span class="p">)</span>
 	<span class="n">kp</span> <span class="o">=</span> <span class="n">ks</span><span class="o">/</span><span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">X</span><span class="p">)</span>
 	<span class="n">fks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">k</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,(</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">sigma_Y</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">-</span><span class="n">mu_Y</span><span class="p">)</span><span class="o">/</span><span class="n">sigma_Y</span><span class="p">,</span><span class="mi">2</span><span class="p">))))</span>
@@ -486,6 +518,27 @@
 
 <span class="c1"># Dimentionless time parameter	</span>
 <div class="viewcode-block" id="getX"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_infiltration.getX">[docs]</a><span class="k">def</span> <span class="nf">getX</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Sp</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Get the dimensionless time parameter for upscaled GA infiltration</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	t:	int</span>
+<span class="sd">		Cummulative event time</span>
+<span class="sd">	Sp: float</span>
+<span class="sd">		Sorptivity (keep the same sorptivity for one event)</span>
+<span class="sd">	P:	float</span>
+<span class="sd">		Precipitation</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	X:		Dimensionless time parameter</span>
+<span class="sd">	Example:</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; t = np.array([1, 2, 3])</span>
+<span class="sd">	&gt;&gt;&gt; Sp = np.array([0.5, 0.6, 0.7])</span>
+<span class="sd">	&gt;&gt;&gt; P = np.array([10, 20, 30])</span>
+<span class="sd">	&gt;&gt;&gt; X = getX(t, Sp, P)</span>
+<span class="sd">	&gt;&gt;&gt; print(X)</span>
+<span class="sd">	[0.1 0.2 0.3]</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">X_aux</span> <span class="o">=</span> <span class="n">P</span><span class="o">*</span><span class="n">t</span><span class="o">/</span><span class="n">Sp</span>
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">X_aux</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="n">X_aux</span><span class="p">))</span></div>
 

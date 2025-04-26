@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.dryp.components package &mdash; CUWALID 0.0.1 documentation</title>
@@ -11,6 +11,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -19,7 +21,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cuwalid.dryp.example package" href="cuwalid.dryp.example.html" />
-    <link rel="prev" title="DRYP Package" href="cuwalid.dryp.html" /> 
+    <link rel="prev" title="cuwalid.dryp package" href="cuwalid.dryp.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,24 +51,22 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Documentation</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="cuwalid.dryp.html">DRYP Package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="cuwalid.dryp.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4 current"><a class="current reference internal" href="#">cuwalid.dryp.components package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="cuwalid.dryp.example.html">cuwalid.dryp.example package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">cuwalid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="cuwalid.html">cuwalid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cuwalid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="cuwalid.dryp.html">cuwalid.dryp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.forecasting.html">cuwalid.forecasting package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html">cuwalid.stopet package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.storm.html">cuwalid.storm package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tests.html">cuwalid.tests package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html">cuwalid.tools package</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="cuwalid.dryp.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cuwalid.dryp.html#module-cuwalid.dryp.main_DRYP">cuwalid.dryp.main_DRYP module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cuwalid.dryp.html#module-cuwalid.dryp.main_DRYP23">cuwalid.dryp.main_DRYP23 module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cuwalid.dryp.html#module-cuwalid.dryp.main_DRYP_SS">cuwalid.dryp.main_DRYP_SS module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cuwalid.dryp.html#module-cuwalid.dryp.main_DRYPv2_SS">cuwalid.dryp.main_DRYPv2_SS module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#cuwalid-main-cuwalid-module">cuwalid.main_cuwalid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#module-cuwalid">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.stopet.html">StoPET Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.html">Forecasting Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.tests.html">Tests Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.tools.html">Tools Package</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
@@ -90,9 +90,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">API Documentation</a></li>
-          <li class="breadcrumb-item"><a href="cuwalid.html">&lt;no title&gt;</a></li>
-          <li class="breadcrumb-item"><a href="cuwalid.dryp.html">DRYP Package</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">cuwalid</a></li>
+          <li class="breadcrumb-item"><a href="cuwalid.html">cuwalid package</a></li>
+          <li class="breadcrumb-item"><a href="cuwalid.dryp.html">cuwalid.dryp package</a></li>
       <li class="breadcrumb-item active">cuwalid.dryp.components package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/cuwalid.dryp.components.rst.txt" rel="nofollow"> View page source</a>
@@ -265,6 +265,40 @@ make a copy of the original files</p>
 </dl>
 </dd></dl>
 
+</section>
+<section id="module-cuwalid.dryp.components.DRYP_dams">
+<span id="cuwalid-dryp-components-dryp-dams-module"></span><h2>cuwalid.dryp.components.DRYP_dams module<a class="headerlink" href="#module-cuwalid.dryp.components.DRYP_dams" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_dams.get_excess_storage">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_dams.</span></span><span class="sig-name descname"><span class="pre">get_excess_storage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">storage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extraction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_dams.html#get_excess_storage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_dams.get_excess_storage" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the amount of storage available in the cell and update the
+extraction to match the current available dataset</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_dams.water_management">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_dams.</span></span><span class="sig-name descname"><span class="pre">water_management</span></span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_dams.html#water_management"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_dams.water_management" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_dams.water_management.get_abstractions">
+<span class="sig-name descname"><span class="pre">get_abstractions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">storage_water_bodies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abstractions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_dams.html#water_management.get_abstractions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_dams.water_management.get_abstractions" title="Permalink to this definition"></a></dt>
+<dd><p>This component calculate the amount of water available for
+abstractions from reservoirs and dams</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cuwalid.dryp.components.DRYP_defalut_projections">
+<span id="cuwalid-dryp-components-dryp-defalut-projections-module"></span><h2>cuwalid.dryp.components.DRYP_defalut_projections module<a class="headerlink" href="#module-cuwalid.dryp.components.DRYP_defalut_projections" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-cuwalid.dryp.components.DRYP_default_parameters">
+<span id="cuwalid-dryp-components-dryp-default-parameters-module"></span><h2>cuwalid.dryp.components.DRYP_default_parameters module<a class="headerlink" href="#module-cuwalid.dryp.components.DRYP_default_parameters" title="Permalink to this heading"></a></h2>
+<p>DRYP_default_parameters</p>
+</section>
+<section id="module-cuwalid.dryp.components.DRYP_default_settings">
+<span id="cuwalid-dryp-components-dryp-default-settings-module"></span><h2>cuwalid.dryp.components.DRYP_default_settings module<a class="headerlink" href="#module-cuwalid.dryp.components.DRYP_default_settings" title="Permalink to this heading"></a></h2>
+<p>DRYP_default_settings</p>
 </section>
 <section id="module-cuwalid.dryp.components.DRYP_flow_accum">
 <span id="cuwalid-dryp-components-dryp-flow-accum-module"></span><h2>cuwalid.dryp.components.DRYP_flow_accum module<a class="headerlink" href="#module-cuwalid.dryp.components.DRYP_flow_accum" title="Permalink to this heading"></a></h2>
@@ -1381,7 +1415,35 @@ Required Gauss2p, epsilon, and getX</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_infiltration.epsilon_fks">
 <span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_infiltration.</span></span><span class="sig-name descname"><span class="pre">epsilon_fks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Sp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ks</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_infiltration.html#epsilon_fks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_infiltration.epsilon_fks" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Epsilon function for upscaled GA infiltration
+Parameters:
+———–
+k:              Dimensionless time
+t:              Cummulative event time
+Sp:             Sorptivity (keep the same sorptivity for one event)
+P:              Precipitation
+mu_Y:   Mean of the log-normal distribution
+sigma_Y:        Standard deviation of the log-normal distribution
+ks:             Sat. Hydraulic Conductivity
+Returns:
+——–
+epsilon:        Epsilon function</p>
+<section id="example">
+<h3>Example:<a class="headerlink" href="#example" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Sp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mu_Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sigma_Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">epsilon_fks</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">Sp</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">mu_Y</span><span class="p">,</span><span class="n">sigma_Y</span><span class="p">,</span><span class="n">ks</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">epsilon</span><span class="p">)</span>
+<span class="go">[0.1 0.2 0.3]</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_infiltration.f_GA">
@@ -1391,7 +1453,32 @@ Required Gauss2p, epsilon, and getX</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_infiltration.getX">
 <span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_infiltration.</span></span><span class="sig-name descname"><span class="pre">getX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Sp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_infiltration.html#getX"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_infiltration.getX" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Get the dimensionless time parameter for upscaled GA infiltration
+Parameters:
+———–
+t:      int</p>
+<blockquote>
+<div><p>Cummulative event time</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Sp: float</dt><dd><p>Sorptivity (keep the same sorptivity for one event)</p>
+</dd>
+<dt>P:      float</dt><dd><p>Precipitation</p>
+</dd>
+</dl>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h3>
+<p>X:              Dimensionless time parameter
+Example:
+——–
+&gt;&gt;&gt; t = np.array([1, 2, 3])
+&gt;&gt;&gt; Sp = np.array([0.5, 0.6, 0.7])
+&gt;&gt;&gt; P = np.array([10, 20, 30])
+&gt;&gt;&gt; X = getX(t, Sp, P)
+&gt;&gt;&gt; print(X)
+[0.1 0.2 0.3]</p>
+</section>
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_infiltration.infiltration">
@@ -1619,7 +1706,7 @@ using in other components</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_io.extract_id_from_coords">
-<span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_io.</span></span><span class="sig-name descname"><span class="pre">extract_id_from_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_io.html#extract_id_from_coords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_io.extract_id_from_coords" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_io.</span></span><span class="sig-name descname"><span class="pre">extract_id_from_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'East'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'North'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_io.html#extract_id_from_coords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_io.extract_id_from_coords" title="Permalink to this definition"></a></dt>
 <dd><p>extract nodes from a csv file
 this component uses the landlab funtion “find_nearest_node</p>
 <dl class="field-list simple">
@@ -1832,6 +1919,69 @@ GW: saturated component
 </dd></dl>
 
 </section>
+<section id="module-cuwalid.dryp.components.DRYP_json_reader">
+<span id="cuwalid-dryp-components-dryp-json-reader-module"></span><h2>cuwalid.dryp.components.DRYP_json_reader module<a class="headerlink" href="#module-cuwalid.dryp.components.DRYP_json_reader" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_json_reader.clean_input">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_json_reader.</span></span><span class="sig-name descname"><span class="pre">clean_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_json_reader.html#clean_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_json_reader.clean_input" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_json_reader.get_list_of_groundwater_files">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_json_reader.</span></span><span class="sig-name descname"><span class="pre">get_list_of_groundwater_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dryp_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_json_reader.html#get_list_of_groundwater_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_json_reader.get_list_of_groundwater_files" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>get list of file names for reading parameters</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_json_reader.get_list_of_interception_hillslope_files">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_json_reader.</span></span><span class="sig-name descname"><span class="pre">get_list_of_interception_hillslope_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dryp_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_json_reader.html#get_list_of_interception_hillslope_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_json_reader.get_list_of_interception_hillslope_files" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>get list of file names for reading parameters</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_json_reader.get_list_of_interception_riparian_files">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_json_reader.</span></span><span class="sig-name descname"><span class="pre">get_list_of_interception_riparian_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dryp_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_json_reader.html#get_list_of_interception_riparian_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_json_reader.get_list_of_interception_riparian_files" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>get list of file names for reading parameters</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_json_reader.get_list_of_riparian_soil_files">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_json_reader.</span></span><span class="sig-name descname"><span class="pre">get_list_of_riparian_soil_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dryp_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_json_reader.html#get_list_of_riparian_soil_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_json_reader.get_list_of_riparian_soil_files" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>get list of file names for reading parameters</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_json_reader.get_list_of_soil_files">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_json_reader.</span></span><span class="sig-name descname"><span class="pre">get_list_of_soil_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dryp_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_json_reader.html#get_list_of_soil_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_json_reader.get_list_of_soil_files" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>get list of file names for reading parameters</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_json_reader.get_list_of_surface_files">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_json_reader.</span></span><span class="sig-name descname"><span class="pre">get_list_of_surface_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dryp_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_json_reader.html#get_list_of_surface_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_json_reader.get_list_of_surface_files" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>get list of file names for reading parameters</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_json_reader.get_list_of_water_bodies_files">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_json_reader.</span></span><span class="sig-name descname"><span class="pre">get_list_of_water_bodies_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dryp_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_json_reader.html#get_list_of_water_bodies_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_json_reader.get_list_of_water_bodies_files" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>get list of file names for reading parameters</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_json_reader.get_model_settings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_json_reader.</span></span><span class="sig-name descname"><span class="pre">get_model_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_read</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_json_reader.html#get_model_settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_json_reader.get_model_settings" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</section>
 <section id="cuwalid-dryp-components-dryp-plot-module">
 <h2>cuwalid.dryp.components.DRYP_plot module<a class="headerlink" href="#cuwalid-dryp-components-dryp-plot-module" title="Permalink to this heading"></a></h2>
 </section>
@@ -1850,6 +2000,41 @@ GW: saturated component
 <dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_plot_fun.DRYP_plot.plot_point_var">
 <span class="sig-name descname"><span class="pre">plot_point_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_plot_fun.html#DRYP_plot.plot_point_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_plot_fun.DRYP_plot.plot_point_var" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-cuwalid.dryp.components.DRYP_ponds">
+<span id="cuwalid-dryp-components-dryp-ponds-module"></span><h2>cuwalid.dryp.components.DRYP_ponds module<a class="headerlink" href="#module-cuwalid.dryp.components.DRYP_ponds" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_ponds.ponds">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_ponds.</span></span><span class="sig-name descname"><span class="pre">ponds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Amax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hmax</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_ponds.html#ponds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_ponds.ponds" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_ponds.ponds.run_ponds_one_step">
+<span class="sig-name descname"><span class="pre">run_ponds_one_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Vo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Aoz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_ponds.html#ponds.run_ponds_one_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_ponds.ponds.run_ponds_one_step" title="Permalink to this definition"></a></dt>
+<dd><p>This funciton calcu;ate one step of the water balance at
+ponds.  at the begining f the time step</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Vo</strong> (<em>numpy array</em>) – initial volume of water [m3]</p></li>
+<li><p><strong>P</strong> (<em>numpy array</em>) – precipitation [mm/h]</p></li>
+<li><p><strong>PET</strong> (<em>numpy array</em>) – potential evapotranspiration [mm/h]</p></li>
+<li><p><strong>Aoz</strong> (<em>numpy array</em>) – Water abstractions in [m3]</p></li>
+<li><p><strong>cell_area</strong> (<em>numpy array</em>) – grid cell area [m2]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>V</strong> (<em>numpy array</em>) – volume of water available at the end of time step [m3]</p></li>
+<li><p><strong>et</strong> (<em>numpy array</em>) – evaporation from pounds [m3]</p></li>
+<li><p><strong>Aoz</strong> (<em>numpy array</em>) – Total abstraction [m3]</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -2376,34 +2561,34 @@ L:              Water content</p>
 <dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_soil_layer.SWBMh">
 <span class="sig-prename descclassname"><span class="pre">cuwalid.dryp.components.DRYP_soil_layer.</span></span><span class="sig-name descname"><span class="pre">SWBMh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">I</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PET</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Droot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ksat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_soil_layer.html#SWBMh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_soil_layer.SWBMh" title="Permalink to this definition"></a></dt>
 <dd><p>Soil water balance</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h3>
+<blockquote>
+<div><p>I:      Infiltration
+PET:    Potential evapotranspiration
+L0:     initial water content
+SMD_0:Initial soil moisture deficit
+z_soil:Soil depth variation
+fs:     Soil moisture at saturated conditions
+fc:     Soil moisture at field capacity
+wp:     Soil moisture at wilting point
+c:      Exponential recession term estimated as
+d:      Soil parameter par_swb for reducing time steps
+z:    Surface elevation
+h:    Water table elevation
+Droot:Soil rooting depth
+Lsat:   Water content at saturated condition</p>
+</div></blockquote>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>I</strong> (<em>Infiltration</em>) – </p></li>
-<li><p><strong>PET</strong> (<em>Potential evapotranspiration</em>) – </p></li>
-<li><p><strong>L0</strong> (<em>initial water content</em>) – </p></li>
-<li><p><strong>SMD_0</strong> (<em>Initial soil moisture deficit</em>) – </p></li>
-<li><p><strong>z_soil</strong> (<em>Soil depth variation</em>) – </p></li>
-<li><p><strong>fs</strong> (<em>Soil moisture at saturated conditions</em>) – </p></li>
-<li><p><strong>fc</strong> (<em>Soil moisture at field capacity</em>) – </p></li>
-<li><p><strong>wp</strong> (<em>Soil moisture at wilting point</em>) – </p></li>
-<li><p><strong>c</strong> (<em>Exponential recession term estimated as</em>) – </p></li>
-<li><p><strong>d</strong> (<em>Soil parameter par_swb for reducing time steps</em>) – </p></li>
-<li><p><strong>z</strong> (<em>Surface elevation</em>) – </p></li>
-<li><p><strong>h</strong> (<em>Water table elevation</em>) – </p></li>
-<li><p><strong>Droot</strong> (<em>Soil rooting depth</em>) – </p></li>
-<li><p><strong>Lsat</strong> (<em>Water content at saturated condition</em>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
 <li><p><strong>AET</strong> (<em>Actual evpotranspiration</em>)</p></li>
 <li><p><strong>D</strong> (<em>Drainage</em>)</p></li>
 <li><p><strong>L</strong> (<em>Water content</em>)</p></li>
 </ul>
-</p>
 </dd>
 </dl>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -2547,22 +2732,24 @@ Returns</p>
 <dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_store_functions.GlobalGridVar.save_csv_var">
 <span class="sig-name descname"><span class="pre">save_csv_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_store_functions.html#GlobalGridVar.save_csv_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_store_functions.GlobalGridVar.save_csv_var" title="Permalink to this definition"></a></dt>
 <dd><p>This function save multiple arrays in a csv file</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>fname</strong> (<em>str</em>) – filename of csv files to store</p></li>
-<li><p><strong>multi_files</strong> (<em>bool</em>) – flag to save variables in one file or in multiple files
+<section id="id1">
+<h3>Parameters:<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>fname<span class="classifier">str</span></dt><dd><p>filename of csv files to store</p>
+</dd>
+<dt>multi_files<span class="classifier">bool</span></dt><dd><p>flag to save variables in one file or in multiple files
 True - save in multiple files
-False - save variables in one file</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>output files in csv format</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>csv files</p>
+False - save variables in one file</p>
 </dd>
 </dl>
+</section>
+<section id="id2">
+<h3>Returns:<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>csv files</dt><dd><p>output files in csv format</p>
+</dd>
+</dl>
+</section>
 </dd></dl>
 
 <dl class="py method">
@@ -2592,12 +2779,16 @@ False - save variables in one file</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="cuwalid.dryp.components.DRYP_store_functions.GlobalGridVar.store_variables">
 <span class="sig-name descname"><span class="pre">store_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_sim_dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/dryp/components/DRYP_store_functions.html#GlobalGridVar.store_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.dryp.components.DRYP_store_functions.GlobalGridVar.store_variables" title="Permalink to this definition"></a></dt>
-<dd><p>stack variables in an 1d-array so store</p>
+<dd><p>This function store variables in a 2D array, it will
+store the variables in a 2D array, if the time step is greater than
+one day, it will store the maximum values for the entire day.
+Otherwise, it will store the values for the entire day. It will
+stack variables in an 1d-array so store</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>date_sim_dt</strong> (<em>datetime array</em>) – array of dates at results time steps</p></li>
-<li><p><strong>t_date</strong> (<em>int</em>) – array index</p></li>
+<li><p><strong>date_sim_dt</strong> (<em>numpy array</em>) – 1D array of dates at results time steps</p></li>
+<li><p><strong>t_date</strong> (<em>int</em>) – index of the date to store</p></li>
 <li><p><strong>variables</strong> (<em>dict</em>) – dictionary containig variables to store</p></li>
 </ul>
 </dd>
@@ -2743,7 +2934,7 @@ output files if post processing directory is not provided.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fname_surface</strong> (<em>str</em>) – file name of the elevation raster map</p></li>
 <li><p><strong>fname_outlet</strong> (<em>str</em>) – file name of the outflow raster map</p></li>
-<li><p><strong>fname_floedir</strong> (<em>str</em>) – (optional) filename of the flow direction raster map</p></li>
+<li><p><strong>fname_flowdir</strong> (<em>str</em>) – (optional) filename of the flow direction raster map</p></li>
 <li><p><strong>fname_out</strong> (<em>str</em>) – (optional) filename of the output raster file</p></li>
 </ul>
 </dd>
@@ -2900,7 +3091,7 @@ Fortran 90/95 modules:</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cuwalid.dryp.html" class="btn btn-neutral float-left" title="DRYP Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuwalid.dryp.html" class="btn btn-neutral float-left" title="cuwalid.dryp package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="cuwalid.dryp.example.html" class="btn btn-neutral float-right" title="cuwalid.dryp.example package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

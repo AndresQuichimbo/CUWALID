@@ -46,9 +46,9 @@ long_name = {'pre':'precipitation', 'aet':'actual evapotranspiration', 'pet':'po
 			'wte':'water table elevation', 'egw':'groundwater evaporation', 'run':'runoff',
 			'gdh':'groundwater discharge',
 			'tht':'soil moisture', 'twsc':'water storage change', 'dis':'discharge',
-			"vpd" : "Total volume of water available",
-			"epd" : "evaporation",
-			"apd" :"Total abstractions"
+			"vpd" : "Total volume of water available - ponds",
+			"epd" : "evaporation - ponds",
+			"apd" :"Total abstractions - ponds"
 			}
 
 units_var = {'pre':'mm/dt', 'aet':'mm/dt', 'pet':'mm/dt', 'inf':'mm/dt',
@@ -67,13 +67,25 @@ class GlobalGridVar:
 	def __init__(self, ini_date, dt, save_results=True, store_var=None, store_max=False, nstep_day=None):
 		"""Create a set of 2D arrays to store spatio-temporal datasets.
 
-		Parameters
-		------
+		Parameters:
+		----------
+		ini_date: datetime object
+			starting date of the simulation
+		dt: string
+			delta time step, e.g. 1D, 1H, 1M, 1Y
+		save_results: bool
+			flag to save results in a file
+			True - save results in a file
+			False - do not save results in a file
+		store_max: bool
+			flag to store maximum values over a specified period
 		store_var:	dictionary
 			with key containing model name variables and boolean as values
 
-		Returns
+
+		Returns:
 		-------
+		None
 		"""
 		# set activate store
 		self.save_results = save_results
@@ -104,7 +116,7 @@ class GlobalGridVar:
 		#self.update_keys = True
 		
 		# set counter for number of step for max value
-		self.nsteps_max = 0
+		self.nsteps_max = 1
 
 		# activate option to save maximum values over a specified period
 		# this function will only be activated if data is stored in time
@@ -139,14 +151,18 @@ class GlobalGridVar:
 		pass
 
 	def store_variables(self, date_sim_dt, t_date, variables):
-		"""stack variables in an 1d-array so store
+		"""	This function store variables in a 2D array, it will
+		store the variables in a 2D array, if the time step is greater than
+		one day, it will store the maximum values for the entire day.
+		Otherwise, it will store the values for the entire day. It will
+		stack variables in an 1d-array so store
 
 		Parameters
 		----------
-		date_sim_dt : datetime array
-			array of dates at results time steps
+		date_sim_dt :numpy array
+			1D array of dates at results time steps
 		t_date :int
-			array index
+			index of the date to store
 		variables :	dict
 			dictionary containig variables to store
 
@@ -175,7 +191,7 @@ class GlobalGridVar:
 			
 			# accumulate variables/create array of variables
 			variables = np.concatenate(variables)
-			
+			#print(date, self.idate)
 			if date < self.idate:
 				# accumulate variables
 				if self.var_acummulation is None:
@@ -184,8 +200,8 @@ class GlobalGridVar:
 				else:
 					# accumulate
 					self.var_acummulation += variables
-				self.nsteps += 1.0
-				
+				self.nsteps += 1
+				#print(self.daily_steps, self.nsteps, self.nsteps_max)
 				# Store maximum values at daily time steps
 				# accumulate values for the entire day
 				if self.store_max is True:
@@ -195,6 +211,7 @@ class GlobalGridVar:
 						if self.var_maximum is None:
 							# create variables
 							self.var_maximum = np.array(variables)
+							#self.var_maximum = np.array(self.var_acummulation)
 
 						self.var_maximum = np.maximum(
 								self.var_acummulation,
@@ -205,13 +222,15 @@ class GlobalGridVar:
 						self.nsteps_max = 0
 
 					self.nsteps_max += 1
-
+					#print("Max: ", self.nsteps_max, " - ", self.var_maximum)
 				
 			else:
 				# Store variables at the specified time step
 				if (self.var_acummulation is None):
 					# create variables
 					self.var_acummulation = np.array(variables)
+				#print("Store: ", self.var_acummulation)
+				#print("Store: ", variables)
 
 				# Store maximum values at daily time steps
 				# accumulate values for the entire day
@@ -221,31 +240,40 @@ class GlobalGridVar:
 					if self.var_maximum is None:
 						# create variables
 						self.var_maximum = np.array(variables)
+						#self.var_maximum = np.array(self.var_acummulation)
 					# get maximum value
 					self.var_maximum = np.maximum(
 							self.var_acummulation,
 							self.var_maximum)
 
 					# restart daily accumulation counter
-					self.nsteps_max = 0
-
+					self.nsteps_max = 1
+				
+				# store variables
 				self.nsteps_vector.append(self.nsteps)
 				if self.store_max is True:
 					self.cumm_variable.append(self.var_maximum)
 				else:
 					self.cumm_variable.append(self.var_acummulation)
+				
+				# reset variables
 				self.time_grid.append(self.pdate)
 				self.pdate = self.idate
 				self.idate = addtime(self.idate, self.delta)
-				self.nsteps = 1.0
+				self.nsteps = 1
 				self.var_acummulation = None
+				#print(t_date, "Date: ", date, " - ", self.idate)
+				#print(self.var_maximum)
+				#if (t_date < len(date_sim_dt)-1):
+					#print(t_date, "Date: ", date, " - ", self.idate)
 				self.var_maximum = None
-			
+			#print(len(self.cumm_variable))
 			# check the if the last step has been processed
 			# check if variable has been accumulated, otherwise
 			# store the available dataset, skip if it has already
 			# been added
 			if (t_date == len(date_sim_dt)-1):
+				#print("Last date: ", t_date, "Date: ", date, " - ", self.idate)
 				if self.var_acummulation is not None:
 					self.nsteps_vector.append(self.nsteps)
 					if self.store_max is True:
@@ -259,7 +287,7 @@ class GlobalGridVar:
 	def save_csv_var(self, fname, multi_files=True):
 		"""This function save multiple arrays in a csv file
 		
-		Parameters
+		Parameters:
 		----------
 		fname : str
 			filename of csv files to store
@@ -268,7 +296,7 @@ class GlobalGridVar:
 			True - save in multiple files
 			False - save variables in one file
 
-		Returns
+		Returns:
 		-------
 		csv files
 			output files in csv format
@@ -381,13 +409,6 @@ class GlobalGridVar:
 			time.calendar = 'gregorian'
 			lon.units = 'meters'
 			lat.units = 'meters'
-
-			# create dictionary of units
-			#units_var = {'pre':'mm/dt', 'aet':'mm/dt', 'pet':'mm/dt', 'inf':'mm/dt',
-			#			'tls':'mm/dt', 'fch':'mm/dt', 'ssz':'m3/dt', 'rch':'mm/dt',
-			#			'wte':'m', 'egw':'mm/dt', 'run':'mm/dt', 'gdh':'m3/dt',
-			#			'tht':'m3/m3', 'twsc':'mm', 'dis':'m3/dt'
-			#			}
 
 			# create variable
 			for ivar in self.store_var_names:

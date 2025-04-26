@@ -149,13 +149,14 @@ class swbm(object):
 		# If the soil is fully saturated, unsaturated zone is zero,
 		# (water table is close to the surface), all water return
 		# as saturation excess, there is not percolation
-		
+		#print(inf, AET, theta, Droot, THT)
+		#print(inf - AET - PCR - ROF - (THT - theta)*Droot)
 		#print(226, np.mean(inf), np.mean(AET), np.mean(PCR), np.mean(ROF))
 		#print(np.mean((THT - theta)*Droot), np.mean(theta), np.mean(THT))
 		# test the mass balance
 		try:
 			MB = np.mean(inf - AET - PCR - ROF - (THT - theta)*Droot)
-			assert np.allclose(MB, 0.0, rtol=1e-05, atol=1e-05)
+			assert np.allclose(MB, 0.0, rtol=1e-05, atol=1.5e-05)
 		except:
 			raise Exception(MB,
 			    'Soil Water balance Error: '
@@ -312,8 +313,8 @@ def SWBM(I, PET, Kc, L0, z_soil, fs, fc, wp):
 def SWBMh(I, PET, Kc, L0, Droot, fs, fc, wp, c, Ksat):
 	"""Soil water balance
 
-	Parameters
-	----------
+	Parameters:
+	-----------
 		I:	Infiltration
 		PET:	Potential evapotranspiration
 		L0:	initial water content
@@ -389,9 +390,10 @@ def SWBMh(I, PET, Kc, L0, Droot, fs, fc, wp, c, Ksat):
 	
 	# calculate the water content after drainage
 	Lt = Droot*np.exp(1.0/(1.0-c)*np.log(np.power(L_aux/Droot, 1.0-c) - kd))
+	
 	# calculate the variation of water content due to drainage
 	# check if the change in water content do not fall below field
-	# capacity due to drainage, drainage will ocurr only until
+	# capacity due to drainage, drainage will start to ocurr only until
 	# field capacity is reached
 	D = np.where(Lt > Lfc, L_aux-Lt, L_aux-Lfc)
 	

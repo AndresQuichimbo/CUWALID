@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StoPET Package &mdash; CUWALID 0.0.1 documentation</title>
+  <title>cuwalid.stopet package &mdash; CUWALID 0.0.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -19,7 +21,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cuwalid.stopet.stopet_parameters package" href="cuwalid.stopet.stopet_parameters.html" />
-    <link rel="prev" title="cuwalid.dryp.example package" href="cuwalid.dryp.example.html" /> 
+    <link rel="prev" title="cuwalid.forecasting.components package" href="cuwalid.forecasting.components.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,21 +51,22 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Documentation</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.dryp.html">DRYP Package</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">StoPET Package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.stopet_parameters.html">cuwalid.stopet.stopet_parameters package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">cuwalid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="cuwalid.html">cuwalid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cuwalid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.dryp.html">cuwalid.dryp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.forecasting.html">cuwalid.forecasting package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">cuwalid.stopet package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.storm.html">cuwalid.storm package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tests.html">cuwalid.tests package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html">cuwalid.tools package</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cuwalid-stopet-main-stopet-module">cuwalid.stopet.main_stoPET module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cuwalid-stopet-stopet-v1-module">cuwalid.stopet.stoPET_v1 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#cuwalid-main-cuwalid-module">cuwalid.main_cuwalid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#module-cuwalid">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.html">Forecasting Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.tests.html">Tests Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.tools.html">Tools Package</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
@@ -87,9 +90,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">API Documentation</a></li>
-          <li class="breadcrumb-item"><a href="cuwalid.html">&lt;no title&gt;</a></li>
-      <li class="breadcrumb-item active">StoPET Package</li>
+          <li class="breadcrumb-item"><a href="modules.html">cuwalid</a></li>
+          <li class="breadcrumb-item"><a href="cuwalid.html">cuwalid package</a></li>
+      <li class="breadcrumb-item active">cuwalid.stopet package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/cuwalid.stopet.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -99,8 +102,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="stopet-package">
-<h1>StoPET Package<a class="headerlink" href="#stopet-package" title="Permalink to this heading"></a></h1>
+  <section id="cuwalid-stopet-package">
+<h1>cuwalid.stopet package<a class="headerlink" href="#cuwalid-stopet-package" title="Permalink to this heading"></a></h1>
 <section id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
 <div class="toctree-wrapper compound">
@@ -115,11 +118,438 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
-<section id="cuwalid-stopet-main-stopet-module">
-<h2>cuwalid.stopet.main_stoPET module<a class="headerlink" href="#cuwalid-stopet-main-stopet-module" title="Permalink to this heading"></a></h2>
+<section id="module-cuwalid.stopet.helper_functions">
+<span id="cuwalid-stopet-helper-functions-module"></span><h2>cuwalid.stopet.helper_functions module<a class="headerlink" href="#module-cuwalid.stopet.helper_functions" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.helper_functions.check_missing_files">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.helper_functions.</span></span><span class="sig-name descname"><span class="pre">check_missing_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/helper_functions.html#check_missing_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.helper_functions.check_missing_files" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.helper_functions.create_output_folder">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.helper_functions.</span></span><span class="sig-name descname"><span class="pre">create_output_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root_outputpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trial_number</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/helper_functions.html#create_output_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.helper_functions.create_output_folder" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.helper_functions.load_config">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.helper_functions.</span></span><span class="sig-name descname"><span class="pre">load_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/helper_functions.html#load_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.helper_functions.load_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="cuwalid-stopet-stopet-v1-module">
-<h2>cuwalid.stopet.stoPET_v1 module<a class="headerlink" href="#cuwalid-stopet-stopet-v1-module" title="Permalink to this heading"></a></h2>
+<section id="module-cuwalid.stopet.icpac_forecast_preprocessing">
+<span id="cuwalid-stopet-icpac-forecast-preprocessing-module"></span><h2>cuwalid.stopet.icpac_forecast_preprocessing module<a class="headerlink" href="#module-cuwalid.stopet.icpac_forecast_preprocessing" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.icpac_forecast_preprocessing.combine_all_plots_horizontal_seasonal">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.icpac_forecast_preprocessing.</span></span><span class="sig-name descname"><span class="pre">combine_all_plots_horizontal_seasonal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/icpac_forecast_preprocessing.html#combine_all_plots_horizontal_seasonal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.icpac_forecast_preprocessing.combine_all_plots_horizontal_seasonal" title="Permalink to this definition"></a></dt>
+<dd><p>This function combine all the first horizontally merged figures
+vertically.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.icpac_forecast_preprocessing.icpac_forecast_preprocessing">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.icpac_forecast_preprocessing.</span></span><span class="sig-name descname"><span class="pre">icpac_forecast_preprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/icpac_forecast_preprocessing.html#icpac_forecast_preprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.icpac_forecast_preprocessing.icpac_forecast_preprocessing" title="Permalink to this definition"></a></dt>
+<dd><p>This function is used to modify the ICPAC forecast data to fit to the STOPET
+model domain. But if someone need to use this please change the lat and lon values
+so you can extract the exact location you need from the forecast as it inclued the
+whole IGAD region.</p>
+<p>In the second step it also invert the latitude as ICPAC normally provide values of latitude
+from negative to positive and STOPET nedd it from positive to negative.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>datapath</strong> – is the pathe where you put your ICPAC forecast files</p>
+</dd>
+</dl>
+<p>:param fin is the ICPAC forcast file (.nc)
+:param fout is the final file nae of the modified ICPAC forecast.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.icpac_forecast_preprocessing.tercileplot">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.icpac_forecast_preprocessing.</span></span><span class="sig-name descname"><span class="pre">tercileplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapefile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/icpac_forecast_preprocessing.html#tercileplot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.icpac_forecast_preprocessing.tercileplot" title="Permalink to this definition"></a></dt>
+<dd><p>This function plot the three terciles of ICPAC forecast.
+:param datapath: is the pathe where you put your ICPAC forecast file
+:param season:  is theseason of the forecast (e. g. ‘OND’)
+:param year: year of the forecast
+:param fname: the file name of the forecast
+:param shapefile: the shpefile you want to use in the plot (This need to be with out the extension .shp)
+:param year: year of the forecast</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.icpac_forecast_preprocessing.trend_plot_defined">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.icpac_forecast_preprocessing.</span></span><span class="sig-name descname"><span class="pre">trend_plot_defined</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">creverse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapefile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/icpac_forecast_preprocessing.html#trend_plot_defined"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.icpac_forecast_preprocessing.trend_plot_defined" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.icpac_forecast_preprocessing.wrapper">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.icpac_forecast_preprocessing.</span></span><span class="sig-name descname"><span class="pre">wrapper</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/icpac_forecast_preprocessing.html#wrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.icpac_forecast_preprocessing.wrapper" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cuwalid.stopet.main_stopet">
+<span id="cuwalid-stopet-main-stopet-module"></span><h2>cuwalid.stopet.main_stopet module<a class="headerlink" href="#module-cuwalid.stopet.main_stopet" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.main_stopet.run_stoPET">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.main_stopet.</span></span><span class="sig-name descname"><span class="pre">run_stoPET</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/main_stopet.html#run_stoPET"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.main_stopet.run_stoPET" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cuwalid.stopet.pet_forecast_generation">
+<span id="cuwalid-stopet-pet-forecast-generation-module"></span><h2>cuwalid.stopet.pet_forecast_generation module<a class="headerlink" href="#module-cuwalid.stopet.pet_forecast_generation" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.check_forecast_percentage">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">check_forecast_percentage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">forcvals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#check_forecast_percentage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.check_forecast_percentage" title="Permalink to this definition"></a></dt>
+<dd><p>This function evaluates the 3D forecasts along axis 0 and adjusts the
+rounded forecast values to ensure that the sum for each (i, j) position
+matches num_file[i, j].</p>
+<p>Parameters:
+forcvals: 3D array of forecasted values (shape: (3, 10, 10))
+num_file: 2D array representing the number of files required at each (i, j) position (shape: (10, 10))</p>
+<p>Returns:
+y: 3D array of rounded forecast values with adjusted sums.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.compute_tercile_thresholds">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">compute_tercile_thresholds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ens_A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#compute_tercile_thresholds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.compute_tercile_thresholds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.fill_masked_ocean_2d">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">fill_masked_ocean_2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fillvalue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#fill_masked_ocean_2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.fill_masked_ocean_2d" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.forecast_nc_write">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">forecast_nc_write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timevals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tunits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#forecast_nc_write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.forecast_nc_write" title="Permalink to this definition"></a></dt>
+<dd><p>this function write the PET on a netCDF file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>data: data to be written (time,lat,lon)</p>
+</dd>
+<dt class="field-even">Param<span class="colon">:</span></dt>
+<dd class="field-even"><p>lat: latitude</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>lon: longitude</p>
+</dd>
+<dt class="field-even">Param<span class="colon">:</span></dt>
+<dd class="field-even"><p>varname: name of the variable to be written (e.g. ‘pet’)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tunits: time units for the data (e.g. ‘days since 1981-01-01’)</p>
+</dd>
+<dt class="field-even">Param:filename<span class="colon">:</span></dt>
+<dd class="field-even"><p>the file name to write the values with .nc extension</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>produce a netCDF file in the same directory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.forecast_pet">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">forecast_pet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ens_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ens_f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#forecast_pet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.forecast_pet" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.forecast_wrapper">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">forecast_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tercile_forecast_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_ensm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempAdj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasonName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#forecast_wrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.forecast_wrapper" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.get_forecast">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">get_forecast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_ensm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tercileTf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#get_forecast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.get_forecast" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.icpac_forecast_preprocessing">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">icpac_forecast_preprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tercile_forecast_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasonName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#icpac_forecast_preprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.icpac_forecast_preprocessing" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.index_forecast_with_tercile">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">index_forecast_with_tercile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tercileTf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_ensm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ens_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnumbers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ens_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tercile_thresholds_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tercile_thresholds_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasonSum</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#index_forecast_with_tercile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.index_forecast_with_tercile" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.read_forecast_pool">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">read_forecast_pool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_ensm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ori_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempAdj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season_Name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#read_forecast_pool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.read_forecast_pool" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.sample_with_tercile_strategy">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">sample_with_tercile_strategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sorted_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_needed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tercile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#sample_with_tercile_strategy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.sample_with_tercile_strategy" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.smooth_grid_numba_parallel">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">smooth_grid_numba_parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#smooth_grid_numba_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.smooth_grid_numba_parallel" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.sort_with_tercile_indices">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">sort_with_tercile_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tercile_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tercile_indices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#sort_with_tercile_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.sort_with_tercile_indices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.pet_forecast_generation.writing_forecast_file">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.pet_forecast_generation.</span></span><span class="sig-name descname"><span class="pre">writing_forecast_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensembleArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasonName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tunits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/pet_forecast_generation.html#writing_forecast_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.pet_forecast_generation.writing_forecast_file" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cuwalid.stopet.run_stoPET_4dryp">
+<span id="cuwalid-stopet-run-stopet-4dryp-module"></span><h2>cuwalid.stopet.run_stoPET_4dryp module<a class="headerlink" href="#module-cuwalid.stopet.run_stoPET_4dryp" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.run_stoPET_4dryp.run_stoPET_4_dryp">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.run_stoPET_4dryp.</span></span><span class="sig-name descname"><span class="pre">run_stoPET_4_dryp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasonswitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_ensm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempAdj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">udpi_pet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_only</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/run_stoPET_4dryp.html#run_stoPET_4_dryp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.run_stoPET_4dryp.run_stoPET_4_dryp" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.run_stoPET_4dryp.stoPET_model_main">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.run_stoPET_4dryp.</span></span><span class="sig-name descname"><span class="pre">stoPET_model_main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasonswitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_ensm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempAdj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">udpi_pet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_only</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/run_stoPET_4dryp.html#stoPET_model_main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.run_stoPET_4dryp.stoPET_model_main" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cuwalid.stopet.run_stoPET_inHPC">
+<span id="cuwalid-stopet-run-stopet-inhpc-module"></span><h2>cuwalid.stopet.run_stoPET_inHPC module<a class="headerlink" href="#module-cuwalid.stopet.run_stoPET_inHPC" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.run_stoPET_inHPC.run_stoPET_in_hpc">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.run_stoPET_inHPC.</span></span><span class="sig-name descname"><span class="pre">run_stoPET_in_hpc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasonswitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_ensm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempAdj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">udpi_pet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_only</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/run_stoPET_inHPC.html#run_stoPET_in_hpc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.run_stoPET_inHPC.run_stoPET_in_hpc" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cuwalid.stopet.stoPET_v2_4dryp">
+<span id="cuwalid-stopet-stopet-v2-4dryp-module"></span><h2>cuwalid.stopet.stoPET_v2_4dryp module<a class="headerlink" href="#module-cuwalid.stopet.stoPET_v2_4dryp" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.adjust_pet">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">adjust_pet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stoch_pet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stoch_pet_adj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope_vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpetdt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcont_vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latind_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latind_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonind_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonind_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempAdj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endyear</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#adjust_pet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.adjust_pet" title="Permalink to this definition"></a></dt>
+<dd><p>This function is used to adjust the PET for the provided temprature adjustment method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stoch_pet</strong> – the PET values generated stochastically</p></li>
+<li><p><strong>stoch_pet_adj</strong> – an empty array used to store the adjusted PET values</p></li>
+<li><p><strong>slope_vals</strong> – the slope of the temperature change</p></li>
+<li><p><strong>dpetdt</strong> – the annual PET change per unit change in temperature</p></li>
+<li><p><strong>mcont_vals</strong> – the monthly contribution of PET from each month</p></li>
+<li><p><strong>latind_max</strong> – the maximum latitude</p></li>
+<li><p><strong>latind_min</strong> – the minimum latitude</p></li>
+<li><p><strong>lonind_min</strong> – the minimum longitude</p></li>
+<li><p><strong>lonind_max</strong> – the maximum longitude</p></li>
+<li><p><strong>tempAdj</strong> – the temperature adjusting method</p></li>
+<li><p><strong>deltat</strong> – the temperature change value</p></li>
+<li><p><strong>yr</strong> – the year considered</p></li>
+<li><p><strong>startyear</strong> – the start of the year for generating PET values</p></li>
+<li><p><strong>endyear</strong> – the end of the year for generating PET values</p></li>
+</ul>
+</dd>
+</dl>
+<p>:return two arrays of stoPET and Adjusted stoPET</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.fill_masked_ocean_2d">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">fill_masked_ocean_2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fillvalue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#fill_masked_ocean_2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.fill_masked_ocean_2d" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.fill_masked_ocean_3d">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">fill_masked_ocean_3d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fillvalue</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#fill_masked_ocean_3d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.fill_masked_ocean_3d" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.future_pet_ts_generate_regional">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">future_pet_ts_generate_regional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ampl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope_vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcont_vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ens_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempAdj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpetdt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">randnoise</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#future_pet_ts_generate_regional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.future_pet_ts_generate_regional" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.future_pet_ts_generate_singlepoint">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">future_pet_ts_generate_singlepoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ampl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope_vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcont_vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ens_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempAdj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpetdt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#future_pet_ts_generate_singlepoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.future_pet_ts_generate_singlepoint" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.increase_temp_regional">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">increase_temp_regional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcont</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stoch_pet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempAdj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpetdt_val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#increase_temp_regional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.increase_temp_regional" title="Permalink to this definition"></a></dt>
+<dd><p>This function increase the stochastically generated PET accounting
+for the specified temperature increase. The increase is based on
+a linear regression model where the total annual PET is used as a
+independent variable to identify the rte of change for a unit increase of
+temperature. Once the amount of PET increase due to a unit change is identified
+it will be multiplied by the specified change in temperature as the rate of change
+of PET due to temperature is identified to be more or less constant.
+The annual change in PET is then distributed to each month based on the climatological
+percentage contribution of each month. Then the monthly contribution is equally
+divided for the number of days and hours within each month.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>slope: the slope of the linear model</p>
+</dd>
+<dt class="field-even">Param<span class="colon">:</span></dt>
+<dd class="field-even"><p>mcont: the percentage contribution of each month (based on 40 years climatology)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>totalpet: the annual PET generated by stoPET without change in temperature</p>
+</dd>
+<dt class="field-even">Param<span class="colon">:</span></dt>
+<dd class="field-even"><p>deltat: user defined change in the temperature</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>stochatic PET accounted for the change in temperature.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.increase_temp_singlepoint">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">increase_temp_singlepoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcont</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annual_pet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempAdj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpetdt_val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#increase_temp_singlepoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.increase_temp_singlepoint" title="Permalink to this definition"></a></dt>
+<dd><p>This function increase the stochastically generated PET accounting
+for the specified temperature increase. The increase is based on
+a linear regression model where the total annual PET is used as a
+independent variable to identify the rte of change for a unit increase of
+temperature. Once the amount of PET increase due to a unit change is identified
+it will be multiplied by the specified change in temperature as the rate of change
+of PET due to temperature is identified to be more or less constant.
+The annual change in PET is then distributed to each month based on the climatological
+percentage contribution of each month. Then the monthly contribution is equally
+divided for the number of days and hours within each month.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>slope: the slope of the linear model</p>
+</dd>
+<dt class="field-even">Param<span class="colon">:</span></dt>
+<dd class="field-even"><p>mcont: the percentage contribution of each month (based on 40 years climatology)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>totalpet: the annual PET generated by stoPET without change in temperature</p>
+</dd>
+<dt class="field-even">Param<span class="colon">:</span></dt>
+<dd class="field-even"><p>deltat: user defined change in the temperature</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>stochatic PET accounted for the change in temperature.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.mean_shift_rand_values">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">mean_shift_rand_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_ensm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endyear</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#mean_shift_rand_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.mean_shift_rand_values" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.nc_write">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">nc_write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tunits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#nc_write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.nc_write" title="Permalink to this definition"></a></dt>
+<dd><p>this function write the PET on a netCDF file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>data: data to be written (time,lat,lon)</p>
+</dd>
+<dt class="field-even">Param<span class="colon">:</span></dt>
+<dd class="field-even"><p>lat: latitude</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>lon: longitude</p>
+</dd>
+<dt class="field-even">Param<span class="colon">:</span></dt>
+<dd class="field-even"><p>varname: name of the variable to be written (e.g. ‘pet’)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tunits: time units for the data (e.g. ‘days since 1981-01-01’)</p>
+</dd>
+<dt class="field-even">Param:filename<span class="colon">:</span></dt>
+<dd class="field-even"><p>the file name to write the values with .nc extension</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>produce a netCDF file in the same directory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.nearest_point">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">nearest_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lons</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#nearest_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.nearest_point" title="Permalink to this definition"></a></dt>
+<dd><p>This function identify the nearest grid location index for a specific lat-lon
+point.
+:param lat_var: the latitude
+:param lon_var: the longitude
+:param lats: all available latitude locations in the data
+:param lons: all available longitude locations in the data
+:return: the lat_index and lon_index</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.rand_choice">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">rand_choice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_clipped</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subset_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#rand_choice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.rand_choice" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.seasonal_nc_write">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">seasonal_nc_write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tunits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#seasonal_nc_write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.seasonal_nc_write" title="Permalink to this definition"></a></dt>
+<dd><p>this function write the PET on a netCDF file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>data: data to be written (time,lat,lon)</p>
+</dd>
+<dt class="field-even">Param<span class="colon">:</span></dt>
+<dd class="field-even"><p>lat: latitude</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>lon: longitude</p>
+</dd>
+<dt class="field-even">Param<span class="colon">:</span></dt>
+<dd class="field-even"><p>varname: name of the variable to be written (e.g. ‘pet’)</p>
+</dd>
+<dt class="field-odd">Param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tunits: time units for the data (e.g. ‘days since 1981-01-01’)</p>
+</dd>
+<dt class="field-even">Param:filename<span class="colon">:</span></dt>
+<dd class="field-even"><p>the file name to write the values with .nc extension</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>produce a netCDF file in the same directory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.seasonal_pet_for_dryp">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">seasonal_pet_for_dryp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_ensm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempAdj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasonswitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#seasonal_pet_for_dryp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.seasonal_pet_for_dryp" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.smooth_grid_numba_parallel">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">smooth_grid_numba_parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#smooth_grid_numba_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.smooth_grid_numba_parallel" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.stoPET_wrapper_regional">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">stoPET_wrapper_regional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ens_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempAdj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">udpi_pet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasonswitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">randnoise</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#stoPET_wrapper_regional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.stoPET_wrapper_regional" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.stoPET_wrapper_singlepoint">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">stoPET_wrapper_singlepoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endyear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ens_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datapath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tempAdj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">udpi_pet</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#stoPET_wrapper_singlepoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.stoPET_wrapper_singlepoint" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.stopet.stoPET_v2_4dryp.stopet4dryp">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.stopet.stoPET_v2_4dryp.</span></span><span class="sig-name descname"><span class="pre">stopet4dryp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasonswitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">season_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/stopet/stoPET_v2_4dryp.html#stopet4dryp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.stopet.stoPET_v2_4dryp.stopet4dryp" title="Permalink to this definition"></a></dt>
+<dd><p>This function reshape and rename the stoPET output to fit into the DRYP
+model input requirement of PET.
+The first requirment is the data need to be a 3D vale with (time, lat,lon).
+The secoond requiremnt is the file name sould have a prefix_year.nc format.</p>
+<p>param fname: the file name for the output of the stoPET model PET
+param seasonswithch: this is a switch  0 for all year and 1 to choose a season period
+param startdate: the starting day of year for the seaosn needed
+param enddate: the end day of year for the season needed
+output data: The file containing the required dimention and file name for DRYP model</p>
+</dd></dl>
+
+</section>
+<section id="module-cuwalid.stopet">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cuwalid.stopet" title="Permalink to this heading"></a></h2>
 </section>
 </section>
 
@@ -127,7 +557,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cuwalid.dryp.example.html" class="btn btn-neutral float-left" title="cuwalid.dryp.example package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cuwalid.forecasting.components.html" class="btn btn-neutral float-left" title="cuwalid.forecasting.components package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="cuwalid.stopet.stopet_parameters.html" class="btn btn-neutral float-right" title="cuwalid.stopet.stopet_parameters package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

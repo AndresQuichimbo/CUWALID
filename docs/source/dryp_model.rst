@@ -101,6 +101,62 @@ Units of time depends on model settings, for example months.
 * capillary evapotranspiration (egw), mm/month
 * total water storage deviation (twsc), m/month
 
+**Grodded temporal data**:
+
+The user can store the following data as *NETCDF* format:
+
+* Gridded temporal data at hillslope cells, files with the suffix ***_grid***. By default containing the following variables:
+
+	* *pre* : Precipitaion
+	* *pet* : Potential evapotranspiration
+	* *eat* : Actual evapotranspiration
+	* *tht* : soil water content
+	* *rch* : Total groundwater recharge
+	* *wte* : Water table elevation
+	* *gdh* : Groundwater discharge
+	* *egw* : Groundwater Evapotranspiration
+	* *dis* : Streamflow
+	* *inf* : Infiltration
+	* *run* : Runoff
+	* *twsc* : Total water storage change
+
+* Gridded temporal data at riparian/stream cells, files with suffix ***_gridrp***. By default containing the following variables:
+
+	* *pre* : Precipitaion
+	* *pet* : Potential evapotranspiration
+	* *eat* : Actual evapotranspiration
+	* *tht* : soil water content
+	* *rch* : Total groundwater recharge
+	* *gdh* : Groundwater discharge
+	* *egw* : Groundwater Evapotranspiration
+	* *inf* : Infiltration
+	* *run* : Runoff
+
+* Gridded temporal data maximum daily values at hillslope cells, files with suffix ***_gridvmax*** By default containing the following variables:
+
+	* *tht* : soil water content riparian zone
+	* *rch* : Focused groundwater recharge
+	* *eat* : Actual evapotranspiration
+
+* Gridded temporal data maximum daily values at riparian/stream cells, files with suffix ***_gridrmax*** By default containing the following variables:
+
+	* *dis* : Streamflow
+
+* Gridded temporal data water bodies, files with sufix ***_gridpnd*** By default containg the following variables:
+	* *vpd* : Total volume of water available - ponds
+	* *epd* : Evaporation - ponds
+	* *apd* : Total abstractions - ponds
+
+**Rasted data**:
+
+DRYP stores as raster files *.ASC*, at the end of the simulation, the following variables:
+
+* *wte* : water table elevation
+* *tht* : soil and riparian water content
+* *Vo* : surface water bodies storage
+* *Qo* : channel storage
+
+
 .. _dryp_parameters:
 
 Model parameters and setting files

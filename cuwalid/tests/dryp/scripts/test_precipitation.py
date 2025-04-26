@@ -28,7 +28,7 @@ def create_test_dataset(fname):
 	# Define the time range
 	start_date = pd.Timestamp('2000-01-01')
 	end_date = pd.Timestamp('2000-01-30')
-	dates = pd.date_range(start=start_date, end=end_date, freq='H')
+	dates = pd.date_range(start=start_date, end=end_date, freq='h')
 
 	# Create sample data
 	lon = np.linspace(-6.0, -5.80, 10)  # Longitude values
@@ -57,8 +57,8 @@ def test_precipitation():
 	ini_date = datetime(2000,1,1,0,0,0)
 	end_date = datetime(2000,1,30,0,0,0)
 	data_reading = 1 # read precipitation as netcdf
-	reproject_pre = 1 # activate reprojection
-	interpolate_pre = 1 # activate interpolation
+	reproject_pre = True # activate reprojection
+	interpolate_pre = True # activate interpolation
 	
 	# specify grid parameters
 	grid_ncols = 12
@@ -115,6 +115,9 @@ def test_precipitation():
 				# get rainfall				
 				rain = PRE.get_one_step_dataset(t_pre, fname, 'pre')
 				# accumulate values of precipitaiton
+				if rain.size != grid_ncols * grid_nrows:
+					raise ValueError(f"Mismatch in dimensions: rain size {rain.size} does not match grid size {grid_ncols * grid_nrows}")
+				
 				pre += rain.reshape((grid_ncols, grid_nrows))
 				
 				t_pre += 1
@@ -125,11 +128,12 @@ def test_precipitation():
 	
 	# evaluate the result
 	assert np.allclose(pre, answer)
-	
+
+	print('Precipitation: Test completed successfully')
+
 	# remove the test dataset created
 	os.remove(fname) if os.path.exists(fname) else None
 
-	print('Precipitation: Test runs successfully')
 
 if __name__ == '__main__':
 	test_precipitation()

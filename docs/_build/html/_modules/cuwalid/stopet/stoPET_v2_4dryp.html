@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.stopet.stoPET_v2_4dryp &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cuwalid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Licences.html">Licences</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.stopet.stoPET_v2_4dryp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.stopet.stoPET_v2_4dryp</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Import reqired modules</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
+<span class="c1">#import metpy.calc as mpcalc</span>
+<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span><span class="p">,</span> <span class="n">njit</span><span class="p">,</span> <span class="n">prange</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+
+<span class="c1">##np.random.seed(seed=369)</span>
+<span class="c1">## ----------------------------------------------------------##</span>
+<span class="c1">## Regional stoPET </span>
+<span class="c1">## ----------------------------------------------------------##</span>
+<div class="viewcode-block" id="stoPET_wrapper_regional"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.stoPET_wrapper_regional">[docs]</a><span class="k">def</span> <span class="nf">stoPET_wrapper_regional</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval_min</span><span class="p">,</span> <span class="n">latval_max</span><span class="p">,</span> <span class="n">lonval_min</span><span class="p">,</span> <span class="n">lonval_max</span><span class="p">,</span>
+                            <span class="n">locname</span><span class="p">,</span> <span class="n">ens_num</span><span class="p">,</span> <span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">,</span> 
+                            <span class="n">seasonswitch</span><span class="p">,</span> <span class="n">randnoise</span><span class="p">,</span> <span class="n">temp_path</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;stoPET running ...&#39;</span><span class="p">)</span>
+
+    <span class="n">data</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;stopet_parameters.nc&#39;</span><span class="p">))</span> <span class="c1">#&#39;month_1_params.nc&#39;</span>
+    <span class="c1">##print(data_uob.variables)</span>
+    <span class="n">lats</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">][:]</span>
+    <span class="n">lons</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">][:]</span>
+   
+    <span class="n">ampl</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;amplitude&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">omega</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;omega&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">phase</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">shift</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;shift&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">sr</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;sunrise&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">ss</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;sunset&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">skew</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;a_estimate&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">loc</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;loc_estimate&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">scale</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;scale_estimate&#39;</span><span class="p">][:,:,:]</span>
+    
+    <span class="c1"># Fill 5 grid s of the ocean to be used for boundary condiction if needed</span>
+    <span class="n">ampl</span> <span class="o">=</span> <span class="n">fill_masked_ocean_3d</span><span class="p">(</span><span class="n">ampl</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+    <span class="n">omega</span> <span class="o">=</span> <span class="n">fill_masked_ocean_3d</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+    <span class="n">phase</span> <span class="o">=</span> <span class="n">fill_masked_ocean_3d</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+    <span class="n">shift</span> <span class="o">=</span> <span class="n">fill_masked_ocean_3d</span><span class="p">(</span><span class="n">shift</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+    <span class="n">sr</span> <span class="o">=</span> <span class="n">fill_masked_ocean_3d</span><span class="p">(</span><span class="n">sr</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+    <span class="n">ss</span> <span class="o">=</span> <span class="n">fill_masked_ocean_3d</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+    <span class="n">skew</span> <span class="o">=</span> <span class="n">fill_masked_ocean_3d</span><span class="p">(</span><span class="n">skew</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+    <span class="n">loc</span> <span class="o">=</span> <span class="n">fill_masked_ocean_3d</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">fill_masked_ocean_3d</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+    
+    <span class="c1"># deltaT parameters</span>
+    <span class="k">if</span> <span class="n">tempAdj</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># method 1: user defined percentage increase</span>
+        <span class="c1"># for the single point user provide only one sope and one intercept</span>
+        <span class="c1"># to mainain the array dimentions in the code we replicate these values</span>
+        <span class="c1"># to the same dimentinon as the rest of the input data</span>
+        <span class="n">slope_vals</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">ampl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">ampl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span> <span class="o">*</span> <span class="n">udpi_pet</span>
+        <span class="n">slope_vals</span> <span class="o">=</span> <span class="n">fill_masked_ocean_2d</span><span class="p">(</span><span class="n">slope_vals</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+
+        <span class="n">dpetbydt</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;dpetdt.nc&#39;</span><span class="p">))</span>
+        <span class="n">dpetdt</span> <span class="o">=</span> <span class="n">dpetbydt</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;dpetdt&#39;</span><span class="p">][:,:]</span>
+        <span class="n">dpetdt</span> <span class="o">=</span> <span class="n">fill_masked_ocean_2d</span><span class="p">(</span><span class="n">dpetdt</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+        
+    <span class="k">elif</span> <span class="n">tempAdj</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># method 3: user defined temperature increase </span>
+        <span class="n">deltat_slope</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;hpet_slope.nc&#39;</span><span class="p">))</span> 
+        <span class="n">slope_vals</span> <span class="o">=</span> <span class="n">deltat_slope</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;slope&#39;</span><span class="p">][:,:]</span>
+        <span class="n">slope_vals</span> <span class="o">=</span> <span class="n">fill_masked_ocean_2d</span><span class="p">(</span><span class="n">slope_vals</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+
+        <span class="n">dpetbydt</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;dpetdt.nc&#39;</span><span class="p">))</span>
+        <span class="n">dpetdt</span> <span class="o">=</span> <span class="n">dpetbydt</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;dpetdt&#39;</span><span class="p">][:,:]</span>
+        <span class="n">dpetdt</span> <span class="o">=</span> <span class="n">fill_masked_ocean_2d</span><span class="p">(</span><span class="n">dpetdt</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">tempAdj</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># progressive change based on hPET trend </span>
+        <span class="n">deltat_slope</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;hpet_slope.nc&#39;</span><span class="p">))</span> 
+        <span class="n">slope_vals</span> <span class="o">=</span> <span class="n">deltat_slope</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;slope&#39;</span><span class="p">][:,:]</span>
+        <span class="n">slope_vals</span> <span class="o">=</span> <span class="n">fill_masked_ocean_2d</span><span class="p">(</span><span class="n">slope_vals</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+
+        <span class="n">dpetbydt</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;dpetdt.nc&#39;</span><span class="p">))</span>
+        <span class="n">dpetdt</span> <span class="o">=</span> <span class="n">dpetbydt</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;dpetdt&#39;</span><span class="p">][:,:]</span>
+        <span class="n">dpetdt</span> <span class="o">=</span> <span class="n">fill_masked_ocean_2d</span><span class="p">(</span><span class="n">dpetdt</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+        
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;tempAdj only takes values 1,2,3 please check!&#39;</span><span class="p">)</span>
+    <span class="c1"># monthly contribution percentage</span>
+    <span class="n">mpercent</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;monthly_cont_percentage.nc&#39;</span><span class="p">))</span> 
+    <span class="n">mcont_vals</span> <span class="o">=</span> <span class="n">mpercent</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;mcontper&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">mcont_vals</span> <span class="o">=</span> <span class="n">fill_masked_ocean_3d</span><span class="p">(</span><span class="n">mcont_vals</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+
+    <span class="c1"># generate stoPET PET values (hourly values for each year)</span>
+    <span class="n">stopet</span> <span class="o">=</span> <span class="n">future_pet_ts_generate_regional</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval_min</span><span class="p">,</span><span class="n">latval_max</span><span class="p">,</span> <span class="n">lonval_min</span><span class="p">,</span><span class="n">lonval_max</span><span class="p">,</span>
+                                             <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span> <span class="n">ampl</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">skew</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span>
+                                             <span class="n">slope_vals</span><span class="p">,</span> <span class="n">mcont_vals</span><span class="p">,</span><span class="n">ens_num</span><span class="p">,</span> <span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> 
+                                             <span class="n">dpetdt</span><span class="p">,</span> <span class="n">randnoise</span><span class="p">,</span> <span class="n">temp_path</span><span class="p">)</span>
+
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;stoPET finished successfully.&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="adjust_pet"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.adjust_pet">[docs]</a><span class="k">def</span> <span class="nf">adjust_pet</span><span class="p">(</span><span class="n">stoch_pet</span><span class="p">,</span> <span class="n">stoch_pet_adj</span><span class="p">,</span> <span class="n">slope_vals</span><span class="p">,</span> <span class="n">dpetdt</span><span class="p">,</span> <span class="n">mcont_vals</span><span class="p">,</span> <span class="n">latind_max</span><span class="p">,</span> <span class="n">latind_min</span><span class="p">,</span> 
+                <span class="n">lonind_min</span><span class="p">,</span> <span class="n">lonind_max</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">yr</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">):</span>    
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is used to adjust the PET for the provided temprature adjustment method.</span>
+<span class="sd">    </span>
+<span class="sd">    :param stoch_pet: the PET values generated stochastically</span>
+<span class="sd">    :param stoch_pet_adj: an empty array used to store the adjusted PET values</span>
+<span class="sd">    :param slope_vals: the slope of the temperature change</span>
+<span class="sd">    :param dpetdt: the annual PET change per unit change in temperature</span>
+<span class="sd">    :param mcont_vals: the monthly contribution of PET from each month</span>
+<span class="sd">    :param latind_max: the maximum latitude</span>
+<span class="sd">    :param latind_min: the minimum latitude </span>
+<span class="sd">    :param lonind_min: the minimum longitude</span>
+<span class="sd">    :param lonind_max: the maximum longitude</span>
+<span class="sd">    :param tempAdj: the temperature adjusting method </span>
+<span class="sd">    :param deltat: the temperature change value</span>
+<span class="sd">    :param yr: the year considered</span>
+<span class="sd">    :param startyear: the start of the year for generating PET values</span>
+<span class="sd">    :param endyear: the end of the year for generating PET values</span>
+<span class="sd">    </span>
+<span class="sd">    :return two arrays of stoPET and Adjusted stoPET</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="c1"># change the stochastic pet to array</span>
+    <span class="n">stoch_pet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stoch_pet</span><span class="p">)</span>
+    <span class="c1"># here make the adjustment for change in temperature</span>
+    <span class="c1"># deltaT parameters</span>
+    <span class="n">slope</span> <span class="o">=</span> <span class="n">slope_vals</span><span class="p">[</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+
+    <span class="n">dpetdt_val</span> <span class="o">=</span> <span class="n">dpetdt</span><span class="p">[</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+
+    <span class="c1"># monthly contribution percentage values</span>
+    <span class="n">mcont</span> <span class="o">=</span> <span class="n">mcont_vals</span><span class="p">[:,</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+    <span class="c1"># adjusted pet value for temperture increase</span>
+    <span class="n">stoch_pet_adj</span> <span class="o">=</span> <span class="n">increase_temp_regional</span><span class="p">(</span><span class="n">slope</span><span class="p">,</span> <span class="n">mcont</span><span class="p">,</span> <span class="n">stoch_pet</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">yr</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">dpetdt_val</span><span class="p">)</span>
+
+    <span class="c1"># mask ocean values</span>
+    <span class="n">stoch_pet</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">stoch_pet</span><span class="o">&gt;</span><span class="mf">1e5</span><span class="p">,</span><span class="o">-</span><span class="mf">99.0</span><span class="p">,</span><span class="n">stoch_pet</span><span class="p">)</span>
+    <span class="n">stoch_pet_adj</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">stoch_pet_adj</span><span class="o">&gt;</span><span class="mf">1e5</span><span class="p">,</span><span class="o">-</span><span class="mf">99.0</span><span class="p">,</span><span class="n">stoch_pet_adj</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">stoch_pet</span><span class="p">,</span> <span class="n">stoch_pet_adj</span></div>
+
+
+<div class="viewcode-block" id="future_pet_ts_generate_regional"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.future_pet_ts_generate_regional">[docs]</a><span class="k">def</span> <span class="nf">future_pet_ts_generate_regional</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval_min</span><span class="p">,</span><span class="n">latval_max</span><span class="p">,</span> <span class="n">lonval_min</span><span class="p">,</span><span class="n">lonval_max</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span>
+                                    <span class="n">ampl</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">skew</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">slope_vals</span><span class="p">,</span> <span class="n">mcont_vals</span><span class="p">,</span><span class="n">ens_num</span><span class="p">,</span>
+                                    <span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span><span class="n">deltat</span><span class="p">,</span> <span class="n">dpetdt</span><span class="p">,</span> <span class="n">randnoise</span><span class="p">,</span> <span class="n">temp_path</span><span class="p">):</span>
+
+
+    <span class="c1"># generate the hourly time series period</span>
+    <span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span><span class="n">endyear</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># generate the stochastic pet values</span>
+    <span class="n">latind_min</span><span class="p">,</span> <span class="n">lonind_min</span> <span class="o">=</span> <span class="n">nearest_point</span><span class="p">(</span><span class="n">latval_min</span><span class="p">,</span> <span class="n">lonval_min</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">)</span>
+    <span class="n">latind_max</span><span class="p">,</span> <span class="n">lonind_max</span> <span class="o">=</span> <span class="n">nearest_point</span><span class="p">(</span><span class="n">latval_max</span><span class="p">,</span> <span class="n">lonval_max</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">)</span>
+
+    <span class="n">latlen</span> <span class="o">=</span> <span class="n">lats</span><span class="p">[</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">]</span>
+    <span class="n">lonlen</span> <span class="o">=</span> <span class="n">lons</span><span class="p">[</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">years</span><span class="p">)):</span>
+        <span class="c1"># here we extract the year values of the randnoise</span>
+        <span class="n">randnoise_yr</span> <span class="o">=</span> <span class="n">randnoise</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:,:]</span> <span class="c1"># the year, months, lat,lon</span>
+        
+        <span class="n">stoch_pet</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">stoch_pet_adj</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">yr</span> <span class="o">=</span> <span class="n">years</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># create a folder to save the data</span>
+        <span class="n">temp_year_output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">yr</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">temp_year_output</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">temp_year_output</span><span class="p">)</span>
+
+
+        <span class="k">if</span> <span class="n">yr</span><span class="o">%</span><span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">yr</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">yr</span> <span class="o">%</span> <span class="mi">400</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span><span class="mi">29</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">]</span>
+               
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span><span class="mi">28</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">]</span>
+
+        <span class="n">add</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">13</span><span class="p">):</span>
+            <span class="c1"># read the sine function parameters</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="n">ampl</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">omega</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">shift</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+            <span class="n">sunrise</span> <span class="o">=</span> <span class="n">sr</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+            <span class="n">sunset</span> <span class="o">=</span> <span class="n">ss</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+            <span class="n">a_estimate</span> <span class="o">=</span> <span class="n">skew</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+            <span class="n">loc_estimate</span> <span class="o">=</span> <span class="n">loc</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+            <span class="n">scale_estimate</span> <span class="o">=</span> <span class="n">scale</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+            <span class="c1"># here we extract the location from the globe and chose the month</span>
+            <span class="n">shift_noise_month</span> <span class="o">=</span> <span class="n">randnoise_yr</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+            <span class="c1"># estimate the pet values from sine function</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">24</span><span class="p">)</span>
+            
+            <span class="c1"># expand the array to match the shape</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">t</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">t</span><span class="p">[:,:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="c1"># estimate the values of PET from the sine function   </span>
+            <span class="n">res0</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">w</span><span class="o">*</span><span class="n">t</span> <span class="o">+</span> <span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span>
+            
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="n">xx</span> <span class="o">=</span> <span class="n">res0</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sunrise</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">])),</span><span class="n">xx</span><span class="p">[:(</span><span class="nb">int</span><span class="p">(</span><span class="n">sunset</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">sunrise</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">])</span><span class="o">+</span> <span class="n">add</span><span class="p">)],</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">24</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">sunset</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">])</span> <span class="o">-</span> <span class="n">add</span><span class="p">)])</span>
+                        <span class="n">res0</span><span class="p">[:,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">yy</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="k">pass</span>
+      
+            <span class="c1">#res0 = np.hstack([np.zeros(int(sunrise)),res0[:int(sunset-sunrise)+ add, :, :],np.zeros(24 - int(sunset) - add)])</span>
+            <span class="c1"># Here we need to adjust the mean based on the hPET mean shift</span>
+            <span class="n">loc_estimate</span> <span class="o">=</span> <span class="n">loc_estimate</span> <span class="o">+</span> <span class="p">(</span><span class="n">loc_estimate</span> <span class="o">*</span> <span class="n">shift_noise_month</span><span class="p">)</span> <span class="c1"># shift the mean values and make ensemble speread</span>
+            <span class="c1"># skewed normal distribution</span>
+            <span class="n">noise_all</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">skewnorm</span><span class="p">(</span><span class="n">a_estimate</span><span class="p">,</span> <span class="n">loc_estimate</span><span class="p">,</span> <span class="n">scale_estimate</span><span class="p">)</span><span class="o">.</span><span class="n">rvs</span><span class="p">((</span><span class="mi">1000</span><span class="p">,</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            
+            <span class="c1"># Apply the parallel smoothing function with Numba</span>
+            <span class="n">noise_all</span> <span class="o">=</span> <span class="n">smooth_grid_numba_parallel</span><span class="p">(</span><span class="n">noise_all</span><span class="p">)</span>
+            <span class="c1"># random choice of noise ratio based on the number of days in a month</span>
+            <span class="n">noise_all</span> <span class="o">=</span> <span class="n">rand_choice</span><span class="p">(</span><span class="n">noise_all</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            
+            <span class="c1"># Randomly select 31 indices from the first axis (axis 0)</span>
+            <span class="c1">#indices = np.random.choice(noise_all.shape[0], size=m[month-1], replace=False)</span>
+            <span class="c1"># Use the selected indices to create the new array</span>
+            <span class="c1">#noise_all = noise_all[indices, :, :]           </span>
+            <span class="c1"># This is to avoide high values over the ocean where it creates problem while</span>
+            <span class="c1"># interpolating values resulting in coastal areas being out of value.</span>
+            <span class="n">noise_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">noise_all</span> <span class="o">&gt;</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">noise_all</span><span class="p">)</span> <span class="c1"># this is to control extreme values</span>
+            <span class="n">noise_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">noise_all</span> <span class="o">&lt;=</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">noise_all</span><span class="p">)</span> <span class="c1"># this is to control negative values</span>
+            
+            <span class="c1"># randoumly preterb the data to generate month lenght value</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">m</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="c1"># generate a random value for each day</span>
+                <span class="c1"># minumum and maximum are seleced from the peak hour value of the ratio </span>
+                <span class="n">noise</span> <span class="o">=</span> <span class="n">noise_all</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span>
+                <span class="c1">#noise = noise_ori #smoothing_func(noise_ori, smoother, N, npass)</span>
+                <span class="n">spet</span> <span class="o">=</span> <span class="n">noise</span> <span class="o">*</span> <span class="n">res0</span>
+                <span class="c1"># Here we need to check if the daily PET exceeds some value</span>
+                
+                <span class="c1">#spet = np.hstack([np.zeros(int(sunrise)),spet[int(sunrise):int(sunset) + add],np.zeros(24 - int(sunset) - add)])</span>
+                <span class="n">spet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">spet</span><span class="o">&lt;</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">spet</span><span class="p">)</span> <span class="c1"># remove negative values</span>
+                <span class="n">stoch_pet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spet</span><span class="p">)</span>
+
+        <span class="c1"># change the stochastic pet to array</span>
+        <span class="n">stoch_pet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stoch_pet</span><span class="p">)</span>
+        <span class="c1"># here make the adjustment for change in temperature</span>
+        <span class="c1"># deltaT parameters</span>
+        <span class="n">slope</span> <span class="o">=</span> <span class="n">slope_vals</span><span class="p">[</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+
+        <span class="n">dpetdt_val</span> <span class="o">=</span> <span class="n">dpetdt</span><span class="p">[</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+
+        <span class="c1"># monthly contribution percentage values</span>
+        <span class="n">mcont</span> <span class="o">=</span> <span class="n">mcont_vals</span><span class="p">[:,</span><span class="n">latind_max</span><span class="p">:</span><span class="n">latind_min</span><span class="p">,</span><span class="n">lonind_min</span><span class="p">:</span><span class="n">lonind_max</span><span class="p">]</span>
+        <span class="c1"># adjusted pet value for temperture increase</span>
+        <span class="n">stoch_pet_adj</span> <span class="o">=</span> <span class="n">increase_temp_regional</span><span class="p">(</span><span class="n">slope</span><span class="p">,</span> <span class="n">mcont</span><span class="p">,</span> <span class="n">stoch_pet</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">yr</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">dpetdt_val</span><span class="p">)</span>
+
+        <span class="c1"># mask ocean values</span>
+        <span class="n">stoch_pet</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">stoch_pet</span><span class="o">&gt;</span><span class="mf">1e5</span><span class="p">,</span><span class="o">-</span><span class="mf">99.0</span><span class="p">,</span><span class="n">stoch_pet</span><span class="p">)</span>
+        <span class="n">stoch_pet_adj</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">stoch_pet_adj</span><span class="o">&gt;</span><span class="mf">1e5</span><span class="p">,</span><span class="o">-</span><span class="mf">99.0</span><span class="p">,</span><span class="n">stoch_pet_adj</span><span class="p">)</span>
+        
+        <span class="c1"># save each year value separately (.nc)</span>
+        <span class="n">tunits</span> <span class="o">=</span> <span class="s1">&#39;days since &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">yr</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;-01-01&#39;</span> 
+        <span class="c1"># PET values jgenerated without any adjustment</span>
+        <span class="n">filename1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_year_output</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;E_</span><span class="si">{</span><span class="n">ens_num</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">locname</span><span class="si">}</span><span class="s1">_ens_</span><span class="si">{</span><span class="n">yr</span><span class="si">}</span><span class="s1">.nc&#39;</span><span class="p">)</span>      
+        <span class="n">nc_write</span><span class="p">(</span><span class="n">stoch_pet</span><span class="p">,</span> <span class="n">latlen</span><span class="p">,</span> <span class="n">lonlen</span><span class="p">,</span> <span class="s1">&#39;pet&#39;</span><span class="p">,</span> <span class="n">tunits</span><span class="p">,</span> <span class="n">filename1</span><span class="p">)</span>
+        
+        <span class="c1"># Temperature adjusted PET (This is deactivated for ICPAC as we don&#39;t need the data) it will sve space.</span>
+<span class="c1">##        filename2 = outputpath+locname+&#39;_E&#39;+str(ens_num)+&#39;_StoPET/&#39;+str(yr)+&#39;_&#39;+str(tempAdj)+&#39;_AdjstoPET.nc&#39;</span>
+<span class="c1">##        nc_write(stoch_pet_adj, latlen, lonlen, &#39;pet&#39;, tunits, filename2)</span>
+
+        <span class="c1"># delete the array for next year</span>
+        <span class="k">del</span> <span class="n">stoch_pet</span>
+        <span class="k">del</span> <span class="n">stoch_pet_adj</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">yr</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+   
+<div class="viewcode-block" id="increase_temp_regional"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.increase_temp_regional">[docs]</a><span class="k">def</span> <span class="nf">increase_temp_regional</span><span class="p">(</span><span class="n">slope</span><span class="p">,</span> <span class="n">mcont</span><span class="p">,</span> <span class="n">stoch_pet</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">yr</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">dpetdt_val</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function increase the stochastically generated PET accounting</span>
+<span class="sd">    for the specified temperature increase. The increase is based on</span>
+<span class="sd">    a linear regression model where the total annual PET is used as a</span>
+<span class="sd">    independent variable to identify the rte of change for a unit increase of</span>
+<span class="sd">    temperature. Once the amount of PET increase due to a unit change is identified</span>
+<span class="sd">    it will be multiplied by the specified change in temperature as the rate of change</span>
+<span class="sd">    of PET due to temperature is identified to be more or less constant.</span>
+<span class="sd">    The annual change in PET is then distributed to each month based on the climatological</span>
+<span class="sd">    percentage contribution of each month. Then the monthly contribution is equally</span>
+<span class="sd">    divided for the number of days and hours within each month.</span>
+
+<span class="sd">    :param: slope: the slope of the linear model</span>
+<span class="sd">    :param: mcont: the percentage contribution of each month (based on 40 years climatology)</span>
+<span class="sd">    :param: totalpet: the annual PET generated by stoPET without change in temperature</span>
+<span class="sd">    :param: deltat: user defined change in the temperature</span>
+
+<span class="sd">    :return:  stochatic PET accounted for the change in temperature.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># number of years and index of the year running</span>
+    <span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">years</span> <span class="o">==</span> <span class="n">yr</span><span class="p">)</span>
+    <span class="c1"># calculate the annual pet </span>
+    <span class="n">totalpet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">stoch_pet</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+    <span class="c1"># based on the method used to account for temperature increase</span>
+    <span class="c1"># the total amount of PET increase per year is calculated here.</span>
+    <span class="c1"># NOTICE for the first two methods a simple linear model is used</span>
+    <span class="c1"># however for the thired method the linear model is multiplied</span>
+    <span class="c1"># by the deltat value. this is because the slope and intercepts are calcualted for</span>
+    <span class="c1"># a unit increase inteperature so if the temprature increase is below one or above</span>
+    <span class="c1"># one we needed to adjust for that.</span>
+    <span class="k">if</span> <span class="n">tempAdj</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># linear trend that use the year as independent variable</span>
+        <span class="n">delta_annual_pet</span> <span class="o">=</span>  <span class="n">totalpet</span> <span class="o">*</span> <span class="p">(</span><span class="n">slope</span> <span class="o">/</span> <span class="mf">100.</span><span class="p">)</span>   
+        <span class="n">delta_month_pet</span> <span class="o">=</span> <span class="p">(</span><span class="n">mcont</span> <span class="o">*</span> <span class="n">delta_annual_pet</span><span class="p">)</span> 
+
+    <span class="k">elif</span> <span class="n">tempAdj</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># use the delta PET/ delta T value for the unit T increase and multiply by given delta T</span>
+        <span class="n">delta_annual_pet</span> <span class="o">=</span> <span class="n">dpetdt_val</span> <span class="o">*</span> <span class="n">deltat</span>
+        <span class="c1"># calculate the monthly changes</span>
+        <span class="n">delta_month_pet</span> <span class="o">=</span> <span class="p">(</span><span class="n">mcont</span> <span class="o">*</span> <span class="n">delta_annual_pet</span><span class="p">)</span> 
+
+    <span class="k">elif</span> <span class="n">tempAdj</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="c1"># add a new method where we only add the slope trend to existing</span>
+        <span class="c1"># stoPET keeping the first year the same</span>
+        <span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">delta_annual_pet</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">delta_annual_pet</span> <span class="o">=</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">ind</span>
+        <span class="c1"># make the monthly contributions</span>
+        <span class="n">delta_month_pet</span> <span class="o">=</span> <span class="p">(</span><span class="n">mcont</span> <span class="o">*</span> <span class="n">delta_annual_pet</span><span class="p">)</span>
+        
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;tempAdj only takes values 1,2,3 please check!&#39;</span><span class="p">)</span>
+
+    <span class="c1"># add each month change in pet equaly for each day and hour.</span>
+    <span class="c1"># pet is added only for the day time</span>
+    <span class="c1"># identify the array count for each month </span>
+    <span class="k">if</span> <span class="n">yr</span><span class="o">%</span><span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">yr</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">yr</span> <span class="o">%</span> <span class="mi">400</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">31</span><span class="p">,</span>  <span class="mi">60</span><span class="p">,</span>  <span class="mi">91</span><span class="p">,</span> <span class="mi">121</span><span class="p">,</span> <span class="mi">152</span><span class="p">,</span> <span class="mi">182</span><span class="p">,</span> <span class="mi">213</span><span class="p">,</span> <span class="mi">244</span><span class="p">,</span> <span class="mi">274</span><span class="p">,</span> <span class="mi">305</span><span class="p">,</span> <span class="mi">335</span><span class="p">,</span> <span class="mi">366</span><span class="p">]</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span><span class="mi">29</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">31</span><span class="p">,</span>  <span class="mi">59</span><span class="p">,</span>  <span class="mi">90</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">151</span><span class="p">,</span> <span class="mi">181</span><span class="p">,</span> <span class="mi">212</span><span class="p">,</span> <span class="mi">243</span><span class="p">,</span> <span class="mi">273</span><span class="p">,</span> <span class="mi">304</span><span class="p">,</span> <span class="mi">334</span><span class="p">,</span> <span class="mi">365</span><span class="p">]</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span><span class="mi">28</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">]</span>
+
+    <span class="n">adj_stopet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">stoch_pet</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">stoch_pet</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">stoch_pet</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">stoch_pet</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="c1"># extract the pet for each month</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">stoch_pet</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,:]</span>
+        <span class="c1"># make average</span>
+        <span class="n">y_av</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># make sum</span>
+        <span class="n">y_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_av</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># find cont</span>
+        <span class="n">cont</span> <span class="o">=</span> <span class="n">y_av</span> <span class="o">/</span> <span class="n">y_sum</span>
+        <span class="c1"># repeat the cont</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">cont</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,:,</span>  <span class="p">:,</span> <span class="p">:],</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># find the hourly increase</span>
+        <span class="n">delta_hour_pet</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta_month_pet</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span> <span class="o">/</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">adj_x</span> <span class="o">=</span> <span class="n">x</span>  <span class="o">+</span> <span class="n">delta_hour_pet</span>
+        <span class="c1"># append the adjusted values</span>
+        <span class="n">adj_stopet</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">,:,:,:]</span> <span class="o">=</span> <span class="n">adj_x</span>
+        
+    <span class="k">return</span> <span class="n">adj_stopet</span></div>
+
+
+<span class="c1">## ----------------------------------------------------------##</span>
+<span class="c1">## Single point stoPET </span>
+<span class="c1">## ----------------------------------------------------------##</span>
+<div class="viewcode-block" id="stoPET_wrapper_singlepoint"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.stoPET_wrapper_singlepoint">[docs]</a><span class="k">def</span> <span class="nf">stoPET_wrapper_singlepoint</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span><span class="n">ens_num</span><span class="p">,</span>
+                               <span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;stoPET running ...&#39;</span><span class="p">)</span>
+
+    <span class="n">data</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;stopet_parameters.nc&#39;</span><span class="p">))</span> 
+    <span class="c1">##print(data_uob.variables)</span>
+    <span class="n">lats</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">][:]</span>
+    <span class="n">lons</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">][:]</span>
+   
+    <span class="n">ampl</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;amplitude&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">omega</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;omega&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">phase</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">shift</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;shift&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">sr</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;sunrise&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">ss</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;sunset&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">skew</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;a_estimate&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">loc</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;loc_estimate&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">scale</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;scale_estimate&#39;</span><span class="p">][:,:,:]</span>
+
+    <span class="c1"># deltaT parameters</span>
+    <span class="k">if</span> <span class="n">tempAdj</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># method 1: user defined percentage increase</span>
+        <span class="c1"># for the single point user provide the percentage with which to increase the annual PET</span>
+        <span class="c1"># to mainain the array dimentions in the code we replicate these values</span>
+        <span class="c1"># to the same dimentinon as the rest of the input data</span>
+        <span class="n">slope_vals</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">ampl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">ampl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span> <span class="o">*</span> <span class="n">udpi_pet</span>
+
+        <span class="n">dpetbydt</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;dpetdt.nc&#39;</span><span class="p">))</span>
+        <span class="n">dpetdt</span> <span class="o">=</span> <span class="n">dpetbydt</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;dpetdt&#39;</span><span class="p">][:,:]</span>
+        
+    <span class="k">elif</span> <span class="n">tempAdj</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># method 2: user defined temperature increase (the hPET data dpetdt.nc)</span>
+        <span class="n">deltat_slope</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;hpet_slope.nc&#39;</span><span class="p">))</span> 
+        <span class="n">slope_vals</span> <span class="o">=</span> <span class="n">deltat_slope</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;slope&#39;</span><span class="p">][:,:]</span>
+
+        <span class="n">dpetbydt</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;dpetdt.nc&#39;</span><span class="p">))</span>
+        <span class="n">dpetdt</span> <span class="o">=</span> <span class="n">dpetbydt</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;dpetdt&#39;</span><span class="p">][:,:]</span>
+
+    <span class="k">elif</span> <span class="n">tempAdj</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># method 3: progressive change based on hPET trend </span>
+        <span class="n">deltat_slope</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;hpet_slope.nc&#39;</span><span class="p">))</span> 
+        <span class="n">slope_vals</span> <span class="o">=</span> <span class="n">deltat_slope</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;slope&#39;</span><span class="p">][:,:]</span>
+
+        <span class="n">dpetbydt</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;dpetdt.nc&#39;</span><span class="p">))</span>
+        <span class="n">dpetdt</span> <span class="o">=</span> <span class="n">dpetbydt</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;dpetdt&#39;</span><span class="p">][:,:]</span>
+   
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;tempAdj only takes values 1,2,3 ... please check!&#39;</span><span class="p">)</span>
+    <span class="c1"># monthly contribution percentage</span>
+    <span class="n">mpercent</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;monthly_cont_percentage.nc&#39;</span><span class="p">))</span> 
+    <span class="n">mcont_vals</span> <span class="o">=</span> <span class="n">mpercent</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;mcontper&#39;</span><span class="p">][:,:,:]</span>
+
+    <span class="c1"># Run the stoPET generation</span>
+    <span class="n">stopet</span> <span class="o">=</span> <span class="n">future_pet_ts_generate_singlepoint</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span>
+                                                <span class="n">ampl</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">skew</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span>
+                                                <span class="n">slope_vals</span><span class="p">,</span> <span class="n">mcont_vals</span><span class="p">,</span> <span class="n">ens_num</span><span class="p">,</span> <span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span>
+                                                <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">dpetdt</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;stoPET finished successfully.&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="future_pet_ts_generate_singlepoint"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.future_pet_ts_generate_singlepoint">[docs]</a><span class="k">def</span> <span class="nf">future_pet_ts_generate_singlepoint</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span>
+                                       <span class="n">ampl</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">skew</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span>
+                                       <span class="n">slope_vals</span><span class="p">,</span> <span class="n">mcont_vals</span><span class="p">,</span><span class="n">ens_num</span><span class="p">,</span> <span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span>
+                                       <span class="n">tempAdj</span><span class="p">,</span><span class="n">deltat</span><span class="p">,</span> <span class="n">dpetdt</span><span class="p">):</span>
+
+
+    <span class="c1"># generate the hourly time series period</span>
+    <span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span><span class="n">endyear</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># generate the stochastic pet values</span>
+    <span class="n">latind</span><span class="p">,</span> <span class="n">lonind</span> <span class="o">=</span> <span class="n">nearest_point</span><span class="p">(</span><span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">years</span><span class="p">)):</span>
+        <span class="c1"># put the early values here first</span>
+        <span class="n">stoch_pet</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">annual_pet</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">yr</span> <span class="o">=</span> <span class="n">years</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+       
+        <span class="k">if</span> <span class="n">yr</span><span class="o">%</span><span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">yr</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">yr</span> <span class="o">%</span> <span class="mi">400</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span><span class="mi">29</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">]</span>
+               
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span><span class="mi">28</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">]</span>
+
+        <span class="n">add</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">13</span><span class="p">):</span>
+            <span class="c1"># read the sine function parameters</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="n">ampl</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind</span><span class="p">,</span><span class="n">lonind</span><span class="p">]</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">omega</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind</span><span class="p">,</span><span class="n">lonind</span><span class="p">]</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind</span><span class="p">,</span><span class="n">lonind</span><span class="p">]</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">shift</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind</span><span class="p">,</span><span class="n">lonind</span><span class="p">]</span>
+            <span class="n">sunrise</span> <span class="o">=</span> <span class="n">sr</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind</span><span class="p">,</span><span class="n">lonind</span><span class="p">]</span>
+            <span class="n">sunset</span> <span class="o">=</span> <span class="n">ss</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind</span><span class="p">,</span><span class="n">lonind</span><span class="p">]</span>
+            <span class="n">a_estimate</span> <span class="o">=</span> <span class="n">skew</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind</span><span class="p">,</span><span class="n">lonind</span><span class="p">]</span>
+            <span class="n">loc_estimate</span> <span class="o">=</span> <span class="n">loc</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind</span><span class="p">,</span><span class="n">lonind</span><span class="p">]</span>
+            <span class="n">scale_estimate</span> <span class="o">=</span> <span class="n">scale</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">latind</span><span class="p">,</span><span class="n">lonind</span><span class="p">]</span>
+            <span class="c1"># estimate the pet values from sine function</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">24</span><span class="p">)</span>
+            <span class="n">res0</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">w</span><span class="o">*</span><span class="n">t</span> <span class="o">+</span> <span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span>
+            <span class="n">res0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sunrise</span><span class="p">)),</span><span class="n">res0</span><span class="p">[:</span><span class="nb">int</span><span class="p">(</span><span class="n">sunset</span><span class="o">-</span><span class="n">sunrise</span><span class="p">)</span><span class="o">+</span> <span class="n">add</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">24</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">sunset</span><span class="p">)</span> <span class="o">-</span> <span class="n">add</span><span class="p">)])</span>
+
+            <span class="c1"># skewed normal distribution</span>
+            <span class="n">noise_all</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">skewnorm</span><span class="p">(</span><span class="n">a_estimate</span><span class="p">,</span> <span class="n">loc_estimate</span><span class="p">,</span> <span class="n">scale_estimate</span><span class="p">)</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            
+            <span class="c1"># randoumly preterb the data to generate month lenght value</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">m</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="c1"># generate a random value for each day</span>
+                <span class="c1"># minumum and maximum are seleced from the peak hour value of the ratio </span>
+                <span class="n">noise</span> <span class="o">=</span> <span class="n">noise_all</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>      <span class="c1">#np.random.uniform(mi, mx)                </span>
+                <span class="n">spet</span> <span class="o">=</span> <span class="n">noise</span> <span class="o">*</span> <span class="n">res0</span>  
+                <span class="n">spet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sunrise</span><span class="p">)),</span><span class="n">spet</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">sunrise</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="n">sunset</span><span class="p">)</span> <span class="o">+</span> <span class="n">add</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">24</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">sunset</span><span class="p">)</span> <span class="o">-</span> <span class="n">add</span><span class="p">)])</span>
+                <span class="n">spet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">spet</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">spet</span><span class="p">)</span> <span class="c1"># remove negative values</span>
+                <span class="c1"># Here we save the stochastic pet generated in two arrays</span>
+                <span class="c1"># the first one is to save the stopet values with outn no adjustment</span>
+                <span class="c1"># the second one is the same values to be adjusted latter down in the model.</span>
+                <span class="c1"># this is ucessary to have two values one with and without change in temperature</span>
+                <span class="c1"># so that if user wants to compare the two values the stocastically generated</span>
+                <span class="c1"># pet values are generated from similar seeds.</span>
+                <span class="n">stoch_pet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stoch_pet</span><span class="p">,</span> <span class="n">spet</span><span class="p">)</span> <span class="c1"># append the stopet with out adjustment</span>
+                <span class="n">annual_pet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">annual_pet</span><span class="p">,</span> <span class="n">spet</span><span class="p">)</span> <span class="c1"># append stopet for later adjustment</span>
+
+        <span class="c1"># save each year generated pet timeseries in a text file</span>
+        <span class="n">filename1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputpath</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">yr</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">latval</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">lonval</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tempAdj</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_stoPET.txt&#39;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">filename1</span><span class="p">,</span> <span class="n">stoch_pet</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%0.5f</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># here make the adjustment for change in temperature</span>
+        <span class="c1"># deltaT parameters</span>
+        <span class="n">slope</span> <span class="o">=</span> <span class="n">slope_vals</span><span class="p">[</span><span class="n">latind</span><span class="p">,</span><span class="n">lonind</span><span class="p">]</span>
+
+        <span class="n">dpetdt_val</span> <span class="o">=</span> <span class="n">dpetdt</span><span class="p">[</span><span class="n">latind</span><span class="p">,</span><span class="n">lonind</span><span class="p">]</span>
+
+        <span class="c1"># monthly contribution percentage values</span>
+        <span class="n">mcont</span> <span class="o">=</span> <span class="n">mcont_vals</span><span class="p">[:,</span><span class="n">latind</span><span class="p">,</span><span class="n">lonind</span><span class="p">]</span>
+        <span class="c1"># annual PET</span>
+        <span class="n">adj_stopet</span> <span class="o">=</span> <span class="n">increase_temp_singlepoint</span><span class="p">(</span><span class="n">slope</span><span class="p">,</span> <span class="n">mcont</span><span class="p">,</span> <span class="n">annual_pet</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">yr</span><span class="p">,</span> 
+                                               <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span><span class="n">dpetdt_val</span><span class="p">)</span>
+        <span class="c1"># save the adjusted pet timeseries in a text file</span>
+        <span class="n">filename2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outputpath</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">yr</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">latval</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">lonval</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tempAdj</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_AdjstoPET.txt&#39;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">filename2</span><span class="p">,</span> <span class="n">adj_stopet</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%0.5f</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">yr</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="increase_temp_singlepoint"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.increase_temp_singlepoint">[docs]</a><span class="k">def</span> <span class="nf">increase_temp_singlepoint</span><span class="p">(</span><span class="n">slope</span><span class="p">,</span> <span class="n">mcont</span><span class="p">,</span> <span class="n">annual_pet</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">yr</span><span class="p">,</span> 
+                              <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span><span class="n">dpetdt_val</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function increase the stochastically generated PET accounting</span>
+<span class="sd">    for the specified temperature increase. The increase is based on</span>
+<span class="sd">    a linear regression model where the total annual PET is used as a</span>
+<span class="sd">    independent variable to identify the rte of change for a unit increase of</span>
+<span class="sd">    temperature. Once the amount of PET increase due to a unit change is identified</span>
+<span class="sd">    it will be multiplied by the specified change in temperature as the rate of change</span>
+<span class="sd">    of PET due to temperature is identified to be more or less constant.</span>
+<span class="sd">    The annual change in PET is then distributed to each month based on the climatological</span>
+<span class="sd">    percentage contribution of each month. Then the monthly contribution is equally</span>
+<span class="sd">    divided for the number of days and hours within each month.</span>
+
+<span class="sd">    :param: slope: the slope of the linear model</span>
+<span class="sd">    :param: mcont: the percentage contribution of each month (based on 40 years climatology)</span>
+<span class="sd">    :param: totalpet: the annual PET generated by stoPET without change in temperature</span>
+<span class="sd">    :param: deltat: user defined change in the temperature</span>
+
+<span class="sd">    :return:  stochatic PET accounted for the change in temperature.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># number of years and index of the year running</span>
+    <span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">years</span> <span class="o">==</span> <span class="n">yr</span><span class="p">)</span>
+    
+    <span class="c1"># calculate the annual pet </span>
+    <span class="n">totalpet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">annual_pet</span><span class="p">)</span>
+    <span class="c1"># based on the method used to account for temperature increase</span>
+    <span class="c1"># the total amount of PET increase per year is calculated here.</span>
+    <span class="c1"># NOTICE for the first two methods a simple linear model is used</span>
+    <span class="c1"># however for the thired method the linear model is multiplied</span>
+    <span class="c1"># by the deltat value. this is because the slope and intercepts are calcualted for</span>
+    <span class="c1"># a unit increase inteperature so if the temprature increase is below one or above</span>
+    <span class="c1"># one we needed to adjust for that.</span>
+    <span class="k">if</span> <span class="n">tempAdj</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">delta_annual_pet</span> <span class="o">=</span> <span class="p">(</span><span class="n">totalpet</span> <span class="o">*</span> <span class="p">(</span><span class="n">slope</span> <span class="o">/</span> <span class="mf">100.</span><span class="p">))</span>   <span class="c1">#((slope*ind)  + intercept) </span>
+        <span class="n">delta_month_pet</span> <span class="o">=</span> <span class="p">(</span><span class="n">mcont</span> <span class="o">*</span> <span class="n">delta_annual_pet</span><span class="p">)</span> 
+
+    <span class="k">elif</span> <span class="n">tempAdj</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">delta_annual_pet</span> <span class="o">=</span> <span class="n">dpetdt_val</span> <span class="o">*</span> <span class="n">deltat</span>
+        <span class="c1"># calculate the monthly changes</span>
+        <span class="n">delta_month_pet</span> <span class="o">=</span> <span class="p">(</span><span class="n">mcont</span> <span class="o">*</span> <span class="n">delta_annual_pet</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">tempAdj</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">delta_annual_pet</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">delta_annual_pet</span> <span class="o">=</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># make the monthly contributions</span>
+        <span class="n">delta_month_pet</span> <span class="o">=</span> <span class="p">(</span><span class="n">mcont</span> <span class="o">*</span> <span class="n">delta_annual_pet</span><span class="p">)</span>     
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;tempAdj only takes values 1,2,3 please check!&#39;</span><span class="p">)</span>
+
+    <span class="c1"># add each month change in pet equaly for each day and hour.</span>
+    <span class="c1"># pet is added only for the day time</span>
+    <span class="c1"># identify the array count for each month</span>
+    <span class="k">if</span> <span class="n">yr</span><span class="o">%</span><span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">yr</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">yr</span> <span class="o">%</span> <span class="mi">400</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">744</span><span class="p">,</span> <span class="mi">1440</span><span class="p">,</span> <span class="mi">2184</span><span class="p">,</span> <span class="mi">2904</span><span class="p">,</span> <span class="mi">3648</span><span class="p">,</span> <span class="mi">4368</span><span class="p">,</span> <span class="mi">5112</span><span class="p">,</span> <span class="mi">5856</span><span class="p">,</span> <span class="mi">6576</span><span class="p">,</span> <span class="mi">7320</span><span class="p">,</span> <span class="mi">8040</span><span class="p">,</span> <span class="mi">8784</span><span class="p">]</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span><span class="mi">29</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">744</span><span class="p">,</span> <span class="mi">1416</span><span class="p">,</span> <span class="mi">2160</span><span class="p">,</span> <span class="mi">2880</span><span class="p">,</span> <span class="mi">3624</span><span class="p">,</span> <span class="mi">4344</span><span class="p">,</span> <span class="mi">5088</span><span class="p">,</span> <span class="mi">5832</span><span class="p">,</span> <span class="mi">6552</span><span class="p">,</span> <span class="mi">7296</span><span class="p">,</span> <span class="mi">8016</span><span class="p">,</span> <span class="mi">8760</span><span class="p">]</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span><span class="mi">28</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">]</span>
+
+    <span class="n">adj_stopet</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="c1"># extract the pet for each month</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">annual_pet</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+        <span class="c1"># estimate the average contribution of each hour</span>
+        <span class="c1"># to the daily pet</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,(</span><span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="mi">24</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">y_av</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">y_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_av</span><span class="p">)</span>
+        <span class="c1"># this is the average hourly contribution</span>
+        <span class="n">cont</span> <span class="o">=</span> <span class="n">y_av</span> <span class="o">/</span> <span class="n">y_sum</span>
+        <span class="c1"># repeat this to much the number of days</span>
+        <span class="n">cont_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">cont</span><span class="p">,</span><span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="c1"># find the number of hours with above zero pet</span>
+        <span class="c1">#numhours = np.count_nonzero(x)</span>
+        <span class="c1"># divide the monthly pet increase to those hours</span>
+        <span class="n">delta_hour_pet</span> <span class="o">=</span> <span class="n">delta_month_pet</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">cont_all</span> <span class="o">/</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="c1"># / numhours</span>
+        <span class="c1"># add the increase to the day time hours only</span>
+        <span class="n">adj_x</span> <span class="o">=</span> <span class="n">x</span>  <span class="o">+</span> <span class="n">delta_hour_pet</span>    <span class="c1"># np.where(x &gt; 0., x  + delta_hour_pet, x)</span>
+        <span class="n">adj_stopet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adj_stopet</span><span class="p">,</span><span class="n">adj_x</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">adj_stopet</span></div>
+
+<span class="c1">##-------------- SUPPLENENTARY FUNCTONS ----------------------------------##</span>
+<div class="viewcode-block" id="seasonal_pet_for_dryp"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.seasonal_pet_for_dryp">[docs]</a><span class="k">def</span> <span class="nf">seasonal_pet_for_dryp</span><span class="p">(</span><span class="n">outputpath</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span> <span class="n">number_ensm</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">startdate</span><span class="p">,</span> <span class="n">enddate</span><span class="p">,</span> <span class="n">seasonswitch</span><span class="p">,</span> <span class="n">season_name</span><span class="p">,</span> <span class="n">temp_path</span><span class="p">):</span>
+    <span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span><span class="n">endyear</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>  
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">years</span><span class="p">)):</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="n">years</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>                   
+        <span class="c1"># old naming</span>
+        <span class="c1"># fname1 = &#39;%s_%s_stoPET.nc&#39;%(year, tempAdj)</span>
+        <span class="n">fname1</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;E_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">locname</span><span class="si">}</span><span class="s1">_ens_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)</span><span class="si">}</span><span class="s1">.nc&#39;</span>
+        <span class="n">temp_output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">))</span>
+        <span class="n">stopet4dryp</span><span class="p">(</span><span class="n">temp_output</span><span class="p">,</span> <span class="n">fname1</span><span class="p">,</span> <span class="n">seasonswitch</span><span class="p">,</span> <span class="n">startdate</span><span class="p">,</span> <span class="n">enddate</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">season_name</span><span class="p">)</span></div>
+        
+<span class="c1">##        fname2 = &#39;%s_%s_AdjstoPET.nc&#39;%(year, tempAdj)</span>
+<span class="c1">##        stopet4dryp(filepath, fname2, seasonswitch, startdate, enddate, i)</span>
+        <span class="c1"># remove the previous yearly file</span>
+ <span class="c1">##       os.remove(filepath+fname1)</span>
+ <span class="c1">##       os.remove(filepath+fname2)</span>
+
+
+<div class="viewcode-block" id="stopet4dryp"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.stopet4dryp">[docs]</a><span class="k">def</span> <span class="nf">stopet4dryp</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">seasonswitch</span><span class="p">,</span> <span class="n">startdate</span><span class="p">,</span> <span class="n">enddate</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">season_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function reshape and rename the stoPET output to fit into the DRYP</span>
+<span class="sd">    model input requirement of PET.</span>
+<span class="sd">    The first requirment is the data need to be a 3D vale with (time, lat,lon).</span>
+<span class="sd">    The secoond requiremnt is the file name sould have a prefix_year.nc format.</span>
+<span class="sd">    </span>
+<span class="sd">    param fname: the file name for the output of the stoPET model PET</span>
+<span class="sd">    param seasonswithch: this is a switch  0 for all year and 1 to choose a season period  </span>
+<span class="sd">    param startdate: the starting day of year for the seaosn needed</span>
+<span class="sd">    param enddate: the end day of year for the season needed</span>
+<span class="sd">    output data: The file containing the required dimention and file name for DRYP model </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># reasd the variables</span>
+    <span class="c1"># here we need to cut out row from top and botom </span>
+    <span class="c1"># and one column from left and right</span>
+    <span class="c1"># this is done because the smoothing don&#39;t work on thos grid cells.</span>
+    <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">fname</span><span class="p">))</span> <span class="k">as</span> <span class="n">nc</span><span class="p">:</span>
+        <span class="n">lats</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">lons</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">pet</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;pet&#39;</span><span class="p">][:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="c1"># extract season values</span>
+    <span class="k">if</span> <span class="n">seasonswitch</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="c1">## start date is reduced by one as python start count from 0</span>
+      <span class="n">pet</span> <span class="o">=</span> <span class="n">pet</span><span class="p">[</span><span class="n">startdate</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">enddate</span><span class="p">,:,:,:]</span>  
+    <span class="k">elif</span> <span class="n">seasonswitch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="c1">## start date is reduced by one as python start count from 0</span>
+      <span class="n">pet</span> <span class="o">=</span> <span class="n">pet</span><span class="p">[</span><span class="n">startdate</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">enddate</span><span class="p">,:,:,:]</span>  
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">pass</span>
+    
+    <span class="c1"># change the dimention to (time, lat,lon)</span>
+    <span class="c1"># flatten the first two dimensions (day, hour)</span>
+    <span class="n">new_pet</span> <span class="o">=</span> <span class="n">pet</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">pet</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+    
+    <span class="c1"># write the new PET value to netcdf file</span>
+    <span class="c1"># split the file name</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">suffix</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="n">seasonal_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">season_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">seasonal_folder</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">seasonal_folder</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">seasonswitch</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seasonal_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;PET_</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">season_name</span><span class="si">}</span><span class="s1">_ens_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">.nc&#39;</span><span class="p">)</span> 
+    <span class="k">elif</span> <span class="n">seasonswitch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seasonal_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;PET_</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">season_name</span><span class="si">}</span><span class="s1">_ens_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">.nc&#39;</span><span class="p">)</span> 
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seasonal_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;PET_</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">season_name</span><span class="si">}</span><span class="s1">_ens_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">.nc&#39;</span><span class="p">)</span> 
+
+    <span class="c1"># Previous file naming for reference</span>
+    <span class="c1"># if seasonswitch == 1:</span>
+    <span class="c1">#   filename = filepath + &#39;E_%s_%s_%s_%s_%s_%s.nc&#39;%(i, suffix, method, startdate, enddate, year)</span>
+    <span class="c1"># elif seasonswitch == 0:</span>
+    <span class="c1">#   filename = filepath + &#39;E_%s_%s_%s_%s_%s_%s.nc&#39;%(i, suffix, method, startdate, enddate, year)</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#   filename = filepath + &#39;%s_%s_%s.nc&#39;%(suffix, method, year)</span>
+    <span class="n">tunits</span> <span class="o">=</span> <span class="s1">&#39;hours since </span><span class="si">%s</span><span class="s1">-01-01 00:00&#39;</span><span class="o">%</span><span class="n">year</span>    
+    <span class="c1"># mask values above 10 in the new_pet. This is the ocean</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">new_pet</span> <span class="o">&gt;</span> <span class="mf">10.</span><span class="p">,</span> <span class="n">new_pet</span><span class="p">)</span>
+    
+    <span class="n">seasonal_nc_write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="s1">&#39;pet&#39;</span><span class="p">,</span> <span class="n">tunits</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">startdate</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">year</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="seasonal_nc_write"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.seasonal_nc_write">[docs]</a><span class="k">def</span> <span class="nf">seasonal_nc_write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">tunits</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">startdate</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    this function write the PET on a netCDF file.</span>
+
+<span class="sd">    :param: data: data to be written (time,lat,lon)</span>
+<span class="sd">    :param: lat: latitude</span>
+<span class="sd">    :param: lon: longitude</span>
+<span class="sd">    :param: varname: name of the variable to be written (e.g. &#39;pet&#39;)</span>
+<span class="sd">    :param: tunits: time units for the data (e.g. &#39;days since 1981-01-01&#39;)</span>
+<span class="sd">    :param:filename: the file name to write the values with .nc extension</span>
+
+<span class="sd">    :return:  produce a netCDF file in the same directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;NETCDF4_CLASSIC&#39;</span><span class="p">)</span>
+
+    <span class="n">time</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">latitude</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lat</span><span class="p">))</span>
+    <span class="n">longitude</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lon</span><span class="p">))</span>
+    
+    <span class="n">time</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,))</span>
+    <span class="n">latitude</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,))</span>
+    <span class="n">longitude</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,))</span>
+    <span class="c1"># to coreectly write the dates in the file</span>
+    <span class="k">if</span> <span class="n">year</span><span class="o">%</span><span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">year</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">year</span> <span class="o">%</span> <span class="mi">400</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+      <span class="n">tvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(((</span><span class="n">startdate</span><span class="p">)</span><span class="o">*</span><span class="mi">24</span><span class="p">),(((</span><span class="n">startdate</span><span class="p">)</span><span class="o">*</span><span class="mi">24</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">tvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(((</span><span class="n">startdate</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">24</span><span class="p">),(((</span><span class="n">startdate</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">24</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
+         
+    <span class="c1"># check if the data is 2d or 3d</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># 4D array</span>
+        <span class="n">pet_val</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;hours&#39;</span><span class="p">,</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">),</span> <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">tunits</span>  
+        <span class="n">time</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="s1">&#39;proleptic_gregorian&#39;</span>
+        <span class="n">time</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">tvals</span>
+<span class="c1">#        hours[:] = np.arange(data.shape[1])</span>
+        <span class="n">latitude</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">lat</span>
+        <span class="n">longitude</span> <span class="p">[:]</span> <span class="o">=</span> <span class="n">lon</span>
+        <span class="n">pet_val</span><span class="p">[:,:,:,:]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">pet_val</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;mm/hr&#39;</span>
+        <span class="n">latitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_north&#39;</span>
+        <span class="n">longitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_east&#39;</span>
+
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># 3D array</span>
+        <span class="n">pet_val</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">),</span> <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">tunits</span>  
+        <span class="n">time</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="s1">&#39;proleptic_gregorian&#39;</span>
+        <span class="n">time</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">tvals</span>
+        <span class="n">latitude</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">lat</span>
+        <span class="n">longitude</span> <span class="p">[:]</span> <span class="o">=</span> <span class="n">lon</span>
+        <span class="n">pet_val</span><span class="p">[:,:,:]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">pet_val</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;mm/hr&#39;</span>
+        <span class="n">latitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_north&#39;</span>
+        <span class="n">longitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_east&#39;</span>
+    
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># 2D array</span>
+        <span class="n">pet_val</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">),</span> <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">latitude</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">lat</span>
+        <span class="n">longitude</span> <span class="p">[:]</span> <span class="o">=</span> <span class="n">lon</span>
+        <span class="n">pet_val</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">pet_val</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;mm/hr&#39;</span>
+        <span class="n">latitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_north&#39;</span>
+        <span class="n">longitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_east&#39;</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;the function can only write a 2D, 3D and 4D array data!&#39;</span><span class="p">)</span>
+
+    <span class="n">ds</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="kc">None</span>    </div>
+
+
+<div class="viewcode-block" id="nc_write"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.nc_write">[docs]</a><span class="k">def</span> <span class="nf">nc_write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">tunits</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    this function write the PET on a netCDF file.</span>
+
+<span class="sd">    :param: data: data to be written (time,lat,lon)</span>
+<span class="sd">    :param: lat: latitude</span>
+<span class="sd">    :param: lon: longitude</span>
+<span class="sd">    :param: varname: name of the variable to be written (e.g. &#39;pet&#39;)</span>
+<span class="sd">    :param: tunits: time units for the data (e.g. &#39;days since 1981-01-01&#39;)</span>
+<span class="sd">    :param:filename: the file name to write the values with .nc extension</span>
+
+<span class="sd">    :return:  produce a netCDF file in the same directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;NETCDF4_CLASSIC&#39;</span><span class="p">)</span>
+
+    <span class="n">time</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">latitude</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lat</span><span class="p">))</span>
+    <span class="n">longitude</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lon</span><span class="p">))</span>
+    <span class="n">hours</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;hours&#39;</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+   
+    <span class="n">time</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,))</span>
+    <span class="n">hours</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;hours&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;hours&#39;</span><span class="p">,))</span>
+    <span class="n">latitude</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,))</span>
+    <span class="n">longitude</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,))</span>
+
+    <span class="c1"># check if the data is 2d or 3d</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># 4D array</span>
+        <span class="n">pet_val</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;hours&#39;</span><span class="p">,</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">),</span> <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">tunits</span>  
+        <span class="n">time</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="s1">&#39;proleptic_gregorian&#39;</span>
+        <span class="n">time</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">hours</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">latitude</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">lat</span>
+        <span class="n">longitude</span> <span class="p">[:]</span> <span class="o">=</span> <span class="n">lon</span>
+        <span class="n">pet_val</span><span class="p">[:,:,:,:]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">pet_val</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;mm/hr&#39;</span>
+        <span class="n">latitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_north&#39;</span>
+        <span class="n">longitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_east&#39;</span>
+
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># 3D array</span>
+        <span class="n">pet_val</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">),</span> <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">tunits</span>  
+        <span class="n">time</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="s1">&#39;proleptic_gregorian&#39;</span>
+        <span class="n">time</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">latitude</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">lat</span>
+        <span class="n">longitude</span> <span class="p">[:]</span> <span class="o">=</span> <span class="n">lon</span>
+        <span class="n">pet_val</span><span class="p">[:,:,:]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">pet_val</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;mm/hr&#39;</span>
+        <span class="n">latitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_north&#39;</span>
+        <span class="n">longitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_east&#39;</span>
+    
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># 2D array</span>
+        <span class="n">pet_val</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="s1">&#39;f4&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">),</span> <span class="n">zlib</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">latitude</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">lat</span>
+        <span class="n">longitude</span> <span class="p">[:]</span> <span class="o">=</span> <span class="n">lon</span>
+        <span class="n">pet_val</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">pet_val</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;mm/hr&#39;</span>
+        <span class="n">latitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_north&#39;</span>
+        <span class="n">longitude</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;degrees_east&#39;</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;the function can only write a 2D, 3D and 4D array data!&#39;</span><span class="p">)</span>
+
+    <span class="n">ds</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="kc">None</span>    </div>
+
+
+<div class="viewcode-block" id="nearest_point"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.nearest_point">[docs]</a><span class="k">def</span> <span class="nf">nearest_point</span><span class="p">(</span><span class="n">lat_var</span><span class="p">,</span> <span class="n">lon_var</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function identify the nearest grid location index for a specific lat-lon</span>
+<span class="sd">    point.</span>
+<span class="sd">    :param lat_var: the latitude</span>
+<span class="sd">    :param lon_var: the longitude</span>
+<span class="sd">    :param lats: all available latitude locations in the data</span>
+<span class="sd">    :param lons: all available longitude locations in the data</span>
+<span class="sd">    :return: the lat_index and lon_index</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># this part is to handle if lons are givn 0-360 or -180-180</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">lons</span> <span class="o">&gt;</span> <span class="mf">180.0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">lon_var</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">):</span>
+        <span class="n">lon_var</span> <span class="o">=</span> <span class="n">lon_var</span> <span class="o">+</span> <span class="mf">360.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lon_var</span> <span class="o">=</span> <span class="n">lon_var</span>
+        
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">lats</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">lons</span>
+
+    <span class="k">if</span> <span class="n">lat</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">lat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">lon</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">lon</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">index_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lat</span> <span class="o">&gt;=</span> <span class="n">lat_var</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">index_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lat</span> <span class="o">&lt;=</span> <span class="n">lat_var</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lat</span><span class="p">[</span><span class="n">index_a</span><span class="p">]</span> <span class="o">-</span> <span class="n">lat_var</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lat</span><span class="p">[</span><span class="n">index_b</span><span class="p">]</span> <span class="o">-</span> <span class="n">lat_var</span><span class="p">):</span>
+        <span class="n">index_lat</span> <span class="o">=</span> <span class="n">index_b</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">index_lat</span> <span class="o">=</span> <span class="n">index_a</span>
+
+    <span class="n">index_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lon</span> <span class="o">&gt;=</span> <span class="n">lon_var</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">index_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lon</span> <span class="o">&lt;=</span> <span class="n">lon_var</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lon</span><span class="p">[</span><span class="n">index_a</span><span class="p">]</span> <span class="o">-</span> <span class="n">lon_var</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">lon</span><span class="p">[</span><span class="n">index_b</span><span class="p">]</span> <span class="o">-</span> <span class="n">lon_var</span><span class="p">):</span>
+        <span class="n">index_lon</span> <span class="o">=</span> <span class="n">index_b</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">index_lon</span> <span class="o">=</span> <span class="n">index_a</span>
+
+    <span class="k">return</span> <span class="n">index_lat</span><span class="p">,</span> <span class="n">index_lon</span></div>
+
+
+<div class="viewcode-block" id="smooth_grid_numba_parallel"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.smooth_grid_numba_parallel">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">smooth_grid_numba_parallel</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
+    <span class="c1"># Get the dimensions of the grid</span>
+    <span class="n">depth</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># Create a copy of the grid to store the new values</span>
+    <span class="n">smoothed_grid</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Iterate over the depth (axis 0)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">prange</span><span class="p">(</span><span class="n">depth</span><span class="p">):</span>  <span class="c1"># Parallelize over the depth dimension</span>
+        <span class="c1"># Iterate over the 2D grid at each depth level, skipping the edges (as a 3x3 window can&#39;t be centered on them)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rows</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">cols</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="c1"># Calculate the sum of the surrounding cells in the 3x3 window</span>
+                <span class="n">surrounding_sum</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
+                    <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
+                    <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">surrounding_avg</span> <span class="o">=</span> <span class="n">surrounding_sum</span> <span class="o">/</span> <span class="mf">8.0</span>
+
+                <span class="c1"># Check if the middle value exceeds or less than 10% of the surrounding average</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">1.05</span> <span class="o">*</span> <span class="n">surrounding_avg</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.95</span> <span class="o">*</span> <span class="n">surrounding_avg</span><span class="p">):</span>
+                    <span class="c1"># Set the middle value to the surrounding average</span>
+                    <span class="n">smoothed_grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">surrounding_avg</span>
+
+    <span class="k">return</span> <span class="n">smoothed_grid</span></div>
+
+
+<div class="viewcode-block" id="rand_choice"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.rand_choice">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">rand_choice</span><span class="p">(</span><span class="n">data_clipped</span><span class="p">,</span> <span class="n">subset_size</span><span class="p">):</span>
+    <span class="n">sampled_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">subset_size</span><span class="p">,</span><span class="n">data_clipped</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">data_clipped</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">prange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">data_clipped</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+      <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">data_clipped</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data_clipped</span><span class="p">[:,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+        <span class="n">sampled_data</span><span class="p">[:,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">subset_size</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">sampled_data</span></div>
+
+
+<div class="viewcode-block" id="mean_shift_rand_values"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.mean_shift_rand_values">[docs]</a><span class="k">def</span> <span class="nf">mean_shift_rand_values</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="n">number_ensm</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">):</span>
+    <span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span><span class="n">endyear</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Read the mean shift and the std shift</span>
+    <span class="n">ncmean</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;meanshift_had.nc&#39;</span><span class="p">))</span>
+    <span class="n">mean</span><span class="o">=</span><span class="n">ncmean</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;meanshift&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">ncstd</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="s1">&#39;stdshift_had.nc&#39;</span><span class="p">))</span>
+    <span class="n">std</span><span class="o">=</span><span class="n">ncstd</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;stdshift&#39;</span><span class="p">][:,:,:]</span>
+    <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">years</span><span class="p">),</span> <span class="n">number_ensm</span><span class="p">,</span> <span class="n">mean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">years</span><span class="p">)):</span>
+      <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">mean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">mean_val</span> <span class="o">=</span> <span class="n">mean</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:,:]</span>
+        <span class="n">std_val</span> <span class="o">=</span> <span class="n">std</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:,:]</span> <span class="o">*</span> <span class="mf">0.85</span>  <span class="c1"># reduce the std by 15%</span>
+        <span class="n">extra_noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">mean_val</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">std_val</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">number_ensm</span><span class="p">,</span><span class="n">mean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">mean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">,:,</span><span class="n">j</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">extra_noise</span>
+    <span class="k">return</span> <span class="n">array</span></div>
+
+
+<div class="viewcode-block" id="fill_masked_ocean_3d"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.fill_masked_ocean_3d">[docs]</a><span class="k">def</span> <span class="nf">fill_masked_ocean_3d</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fillvalue</span><span class="p">):</span>
+    <span class="c1"># fill ocean values with the nearest value</span>
+    <span class="c1"># fill the masked part with nearest grid upto 5 grid in each direction</span>
+    <span class="c1"># the order must be maintained to account for the way the coast is shaped</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">2</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> 
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">2</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> 
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">2</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> 
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">masked_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">data</span><span class="p">)</span>
+    
+    <span class="n">masked_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_invalid</span><span class="p">(</span><span class="n">masked_data</span><span class="p">)</span>
+
+    <span class="c1"># Replace the masked values (NaN) with a specific number, e.g., 99</span>
+    <span class="n">filled_data</span> <span class="o">=</span> <span class="n">masked_data</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">fillvalue</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filled_data</span>    </div>
+
+
+<div class="viewcode-block" id="fill_masked_ocean_2d"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.stoPET_v2_4dryp.fill_masked_ocean_2d">[docs]</a><span class="k">def</span> <span class="nf">fill_masked_ocean_2d</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fillvalue</span><span class="p">):</span>
+    <span class="c1"># fill ocean values with the nearest value</span>
+    <span class="c1"># fill the masked part with nearest grid upto 5 grid in each direction</span>
+    <span class="c1"># the order must be maintained to account for the way the coast is shaped</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> 
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">0</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> 
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">0</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> 
+    <span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_</span><span class="si">{</span><span class="mi">0</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">masked_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">data</span><span class="p">)</span>
+    
+    <span class="n">masked_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_invalid</span><span class="p">(</span><span class="n">masked_data</span><span class="p">)</span>
+
+    <span class="c1"># Replace the masked values (NaN) with a specific number, e.g., 99</span>
+    <span class="n">filled_data</span> <span class="o">=</span> <span class="n">masked_data</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">fillvalue</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filled_data</span>  </div>
+
+<span class="c1">## ------------------ END OF SCRIPT ------------------------------##</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

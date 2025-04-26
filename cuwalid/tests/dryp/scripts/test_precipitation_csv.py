@@ -119,7 +119,7 @@ def test_precipitation():
 	# remove the test dataset created
 	os.remove(fname) if os.path.exists(fname) else None
 
-	print('Precipitation read csv: Test runs successfully')
+	print('Precipitation read csv: Test completed successfully')
 
 if __name__ == '__main__':
 	test_precipitation()

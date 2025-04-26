@@ -10,6 +10,8 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
@@ -46,7 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cuwalid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
@@ -98,8 +100,8 @@
 <div class="viewcode-block" id="create_raster_soil_parameters"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.create_raster_soil_parameters">[docs]</a><span class="k">def</span> <span class="nf">create_raster_soil_parameters</span><span class="p">(</span><span class="n">fname_porosity</span><span class="p">,</span> <span class="n">fname_psi</span><span class="p">,</span> <span class="n">fname_lambda</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Calculate soil water content at field capacity and available water content</span>
 <span class="sd">	</span>
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
 <span class="sd">	fname_porosity : str</span>
 <span class="sd">		raster file name of porosity</span>
 <span class="sd">	fname_psi : str</span>
@@ -107,11 +109,20 @@
 <span class="sd">	fname_lambda : str</span>
 <span class="sd">		raster file name of soil particle distribution</span>
 
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-
-<span class="sd">	Examples</span>
+<span class="sd">	Returns:</span>
 <span class="sd">	--------</span>
+<span class="sd">	None</span>
+<span class="sd">		None, but creates three raster files with the following names:</span>
+
+<span class="sd">	Examples:</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; fname_porosity = &quot;porosity.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; fname_psi = &quot;psi.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; fname_lambda = &quot;lambda.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda)</span>
+<span class="sd">	&gt;&gt;&gt; # This will create three raster files: &quot;field_capacity.asc&quot;, &quot;wilting_point.asc&quot;, and &quot;available_water_content.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; # with the calculated soil water content values.</span>
+<span class="sd">	&gt;&gt;&gt; # The function does not return any values, but it saves the results as raster files.</span>
 <span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># read raster files</span>
@@ -133,32 +144,59 @@
 	<span class="n">save_raster</span><span class="p">(</span><span class="n">fname_wp</span><span class="p">,</span> <span class="n">wilting_point</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
 	<span class="n">save_raster</span><span class="p">(</span><span class="n">fname_awc</span><span class="p">,</span> <span class="n">available_water_content</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="create_raster_flowdirection_dryp"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.create_raster_flowdirection_dryp">[docs]</a><span class="k">def</span> <span class="nf">create_raster_flowdirection_dryp</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">fname_out</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="create_raster_flowdirection_dryp"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.create_raster_flowdirection_dryp">[docs]</a><span class="k">def</span> <span class="nf">create_raster_flowdirection_dryp</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">fname_out</span><span class="p">,</span> <span class="n">translate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">format_data</span><span class="o">=</span><span class="s2">&quot;D8&quot;</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Create raster file from a raster D8 flow direction map</span>
 <span class="sd">	</span>
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
 <span class="sd">	fname : str</span>
 <span class="sd">		filename path of the flow direction map, the raster</span>
 <span class="sd">		file has to be in D8 direction format</span>
-<span class="sd">	fname_out : stra</span>
+<span class="sd">	translate : bool</span>
+<span class="sd">		True if the flow direction map is in D8 format, False if it is in Landlab format</span>
+<span class="sd">	fname_out : str</span>
 <span class="sd">		filename of the output file</span>
+<span class="sd">		The output raster file will be created with the specified name.</span>
+<span class="sd">		The output raster file will contain the flow direction values.</span>
+<span class="sd">		Make sure to provide the correct file path and name for the output raster file.</span>
+<span class="sd">		Example: &quot;path/to/output_raster.tif&quot;</span>
+<span class="sd">		Note: The output raster file will be created in the same format as the input raster file.</span>
+<span class="sd">	format_data : str</span>
+<span class="sd">		format of the data, D8 or D* format</span>
+<span class="sd">		- D8: D8 format (default)</span>
+<span class="sd">		- LDD: LDD format</span>
+<span class="sd">		- GRASS: GRASS format</span>
+<span class="sd">		- AGNPS: AGNPS format</span>
+<span class="sd">		- i-digit: i-digit format</span>
 
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	raster</span>
-<span class="sd">		raster file with firection specified in landlab format</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	None</span>
+<span class="sd">		None, but creates a raster file with the specified name.</span>
+<span class="sd">		The raster file will contain the flow direction values in Landlab format.</span>
+<span class="sd">		Note: The function does not return any values, but it saves the</span>
+<span class="sd">		raster file with the specified name.</span>
+
+<span class="sd">	Example:</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; fname = &quot;flow_direction.asc</span>
+<span class="sd">	&gt;&gt;&gt; fname_out = &quot;flow_direction_landlab.asc</span>
+<span class="sd">	&gt;&gt;&gt; create_raster_flowdirection_dryp(fname, fname_out, translate=True)</span>
+<span class="sd">	&gt;&gt;&gt; # This will create a raster file named &quot;flow_direction_landlab.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; # with the flow direction values in Landlab format.</span>
+<span class="sd">	&gt;&gt;&gt; # The function does not return any values, but it saves the raster file.</span>
+<span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># read raster dataset</span>
 	<span class="n">flowdird8</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">transform</span> <span class="o">=</span> <span class="n">open_raster</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> 
 	
-	<span class="k">if</span> <span class="n">transform</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+	<span class="k">if</span> <span class="n">translate</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
 		<span class="c1">## save data tuype</span>
 		<span class="c1">#dtype = flowdird8.dtype</span>
 
 		<span class="c1"># calculate flow direction</span>
 		<span class="n">flowdir</span> <span class="o">=</span> <span class="n">transform_flowdirection_d8_to_landlab_array</span><span class="p">(</span>
-			<span class="n">flowdird8</span><span class="p">,</span> <span class="n">format_data</span><span class="o">=</span><span class="s2">&quot;D8&quot;</span><span class="p">)</span>
+			<span class="n">flowdird8</span><span class="p">,</span> <span class="n">format_data</span><span class="o">=</span><span class="n">format_data</span><span class="p">)</span>
 
 		<span class="c1">## assign data type</span>
 		<span class="c1">#flowdir = np.array(flowdir, dtype=dtype)</span>
@@ -204,8 +242,8 @@
 <span class="sd">	river network will be created from a flow accumulation map and a </span>
 <span class="sd">	threshold specified for the minimm number of cells or minimum area.</span>
 <span class="sd">	</span>
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
 <span class="sd">	fname : str</span>
 <span class="sd">		filename path of the flow accumulation map, this file raster</span>
 <span class="sd">		file can be created by get_watershed_area() funtion</span>
@@ -219,10 +257,25 @@
 <span class="sd">	fill_value : float</span>
 <span class="sd">		river lenght [meters]</span>
 
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	raster</span>
-<span class="sd">		raster file with firection specified in landlab format</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	None</span>
+<span class="sd">		None, but creates a raster file with the specified name.</span>
+<span class="sd">		The raster file will contain the river network values in Landlab format.</span>
+<span class="sd">		Note: The function does not return any values, but it saves the</span>
+<span class="sd">		raster file with the specified name.</span>
+<span class="sd">	</span>
+<span class="sd">	Example:</span>
+<span class="sd">	--------</span>
+
+<span class="sd">	&gt;&gt;&gt; fname = &quot;flow_accumulation.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; threshold = 1000	# number of cells or area in square meters</span>
+<span class="sd">	&gt;&gt;&gt; fname_out = &quot;river_network.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; create_raster_river_network(fname, threshold, fname_out, cell_area=False, fill_value=None)</span>
+<span class="sd">	&gt;&gt;&gt; # This will create a raster file named &quot;river_network.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; # with the river network values in Landlab format.</span>
+<span class="sd">	&gt;&gt;&gt; # The function does not return any values, but it saves the raster file.</span>
+<span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># read raster dataset</span>
 	<span class="n">raster</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">transform</span> <span class="o">=</span> <span class="n">open_raster</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> 
@@ -254,16 +307,49 @@
 <span class="sd">	the raster, the remained values are assined -9999</span>
 <span class="sd">	(non data values in DRYP).</span>
 <span class="sd">	</span>
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
 <span class="sd">	fname_wte : str</span>
-<span class="sd">		file path</span>
-<span class="sd">	fname_head : str</span>
-<span class="sd">		file path of point list</span>
+<span class="sd">		file path of the raster file</span>
+<span class="sd">		The raster file should be in a format supported by rasterio (e.g., GeoTIFF).</span>
+<span class="sd">		The raster file should contain the values that you want to extract at the specified locations.</span>
+<span class="sd">		For example, if you have a raster file representing water table elevation, provide the path to that file.</span>
+<span class="sd">		Make sure to provide the correct file path to the raster file.</span>
+<span class="sd">		Example: &quot;path/to/raster_file.tif&quot;</span>
+<span class="sd">	fname_bc_head : str</span>
+<span class="sd">		file path of the point list</span>
+<span class="sd">		coordinates of the points to be extracted from the raster</span>
+<span class="sd">		are specified in the file. The file must contain two columns:</span>
+<span class="sd">		&#39;East&#39; and &#39;North&#39;, which represent the coordinates of the points.</span>
+<span class="sd">		These coordinates should be in the same coordinate system as the raster file.</span>
+<span class="sd">		For example, if the raster file is in UTM coordinates, the coordinates in the file should also be in UTM.</span>
+<span class="sd">		Make sure to provide the correct file path to the point list.</span>
+<span class="sd">		Example: &quot;path/to/point_list.csv&quot;</span>
+<span class="sd">	fname_out : str</span>
+<span class="sd">		file path of the output raster file</span>
+<span class="sd">		The output raster file will be created with the specified name.</span>
+<span class="sd">		The output raster file will contain the values at the specified locations.</span>
+<span class="sd">		Make sure to provide the correct file path and name for the output raster file.</span>
+<span class="sd">		Example: &quot;path/to/output_raster.tif&quot;</span>
+<span class="sd">		Note: The output raster file will be created in the same format as the input raster file.</span>
 
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	raster file</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	None</span>
+<span class="sd">		None, but creates a raster file with the specified name.</span>
+<span class="sd">		The raster file will contain the values at the specified locations.</span>
+<span class="sd">		Note: The function does not return any values, but it saves the</span>
+<span class="sd">		raster file with the specified name.</span>
+<span class="sd">	</span>
+<span class="sd">	Example:</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; fname_wte = &quot;water_table_elevation.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; fname_bc_head = &quot;boundary_conditions.csv&quot;</span>
+<span class="sd">	&gt;&gt;&gt; fname_out = &quot;boundary_conditions_raster.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; create_raster_bc_at_point(fname_wte, fname_bc_head, fname_out)</span>
+<span class="sd">	&gt;&gt;&gt; # This will create a raster file named &quot;boundary_conditions_raster.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; # with the values at the specified locations.</span>
+<span class="sd">	&gt;&gt;&gt; # The function does not return any values, but it saves the raster file.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># read list of xy coordinates as dataframe</span>
@@ -300,17 +386,20 @@
 <span class="sd">	to create a new raster containing the shapefile geometry</span>
 <span class="sd">	as mask</span>
 <span class="sd">	</span>
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
 <span class="sd">	fname_shp : str</span>
 <span class="sd">		file path of shapefile</span>
 <span class="sd">	fname_raster : str</span>
 <span class="sd">		file path of raster file</span>
 
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	raster file</span>
-
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	None</span>
+<span class="sd">		None, but creates a raster file with the specified name.</span>
+<span class="sd">		The raster file will contain the shapefile geometry as a mask.</span>
+<span class="sd">		Note: The function does not return any values, but it saves the</span>
+<span class="sd">		raster file with the specified name.</span>
 
 <span class="sd">	Example</span>
 <span class="sd">	-------</span>
@@ -318,6 +407,11 @@
 <span class="sd">	&gt;&gt;&gt; shapefile_path = &#39;test.shp&#39;</span>
 <span class="sd">	&gt;&gt;&gt; fname_raster = &quot;test.asc&quot;</span>
 <span class="sd">	&gt;&gt;&gt; fname_out = &quot;mask.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; create_raster_from_shapefile(shapefile_path, fname_raster, fname_out)</span>
+<span class="sd">	&gt;&gt;&gt; # This will create a raster file named &quot;mask.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; # with the shapefile geometry as a mask.</span>
+<span class="sd">	&gt;&gt;&gt; # The function does not return any values, but it saves the raster file.</span>
+
 
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># Load the shapefile as a GeoDataFrame</span>
@@ -344,10 +438,24 @@
 <span class="sd">	fname : str</span>
 <span class="sd">		path of raster file</span>
 <span class="sd">		</span>
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	file</span>
-<span class="sd">		idnodes raster file with name fname_out</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	None</span>
+<span class="sd">		None, but creates a raster file with the specified name.</span>
+<span class="sd">		The raster file will contain the idnodes values in Landlab format.</span>
+<span class="sd">		Note: The function does not return any values, but it saves the</span>
+<span class="sd">		raster file with the specified name.</span>
+
+<span class="sd">	Example:</span>
+<span class="sd">	--------</span>
+
+<span class="sd">	&gt;&gt;&gt; fname = &quot;raster.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; fname_out = &quot;idnodes.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; create_raster_landlab_idnodes(fname, fname_out)</span>
+<span class="sd">	&gt;&gt;&gt; # This will create a raster file named &quot;idnodes.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; # with the idnodes values in Landlab format.</span>
+<span class="sd">	&gt;&gt;&gt; # The function does not return any values, but it saves the raster file.</span>
+<span class="sd">			</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># get raster properties</span>
 	<span class="n">raster</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">transform</span> <span class="o">=</span> <span class="n">open_raster</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
@@ -429,6 +537,66 @@
 	<span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">transform</span></div>
 
 <div class="viewcode-block" id="save_raster"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.save_raster">[docs]</a><span class="k">def</span> <span class="nf">save_raster</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">transform</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function saves a raster file with the specified name.</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	fname : str</span>
+<span class="sd">		file name of the raster</span>
+<span class="sd">		The raster file will be created with the specified name.</span>
+<span class="sd">		The raster file will contain the data and properties specified in the profile.</span>
+<span class="sd">		Make sure to provide the correct file path and name for the raster file.</span>
+<span class="sd">		Example: &quot;path/to/raster_file.tif&quot;</span>
+<span class="sd">		Note: The raster file will be created in the same format as the input raster file.</span>
+<span class="sd">	</span>
+<span class="sd">	data : numpy array</span>
+<span class="sd">		raster values</span>
+<span class="sd">		The data array contains the raster values that you want to save.</span>
+<span class="sd">		The data array should be a 2D numpy array representing the raster data.</span>
+<span class="sd">		The data array should have the same dimensions as the raster file.</span>
+<span class="sd">		For example, if you have a 100x100 raster, the data array should be of shape (100, 100).</span>
+<span class="sd">		Make sure to provide the correct data array for the raster file.</span>
+<span class="sd">		Example: np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])</span>
+<span class="sd">		Note: The data array should be in the same format as the input raster file.</span>
+<span class="sd">		For example, if the input raster file is in GeoTIFF format, the data array should be in GeoTIFF format.</span>
+<span class="sd">		Make sure to provide the correct data array for the raster file.</span>
+<span class="sd">		</span>
+<span class="sd">	profile : object</span>
+<span class="sd">		raster properties</span>
+<span class="sd">		The profile object contains the metadata and properties of the raster file.</span>
+<span class="sd">		It should be obtained from the input raster file using rasterio.</span>
+<span class="sd">		The profile object should include information such as data type, dimensions, and coordinate reference system.</span>
+
+
+<span class="sd">	transform : object</span>
+<span class="sd">		transformation parameters</span>
+<span class="sd">		The transform object contains the affine transformation parameters for the raster file.</span>
+<span class="sd">		It should be obtained from the input raster file using rasterio.</span>
+<span class="sd">		The transform object should include information such as pixel size and origin coordinates.</span>
+
+
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	None</span>
+<span class="sd">		None, but creates a raster file with the specified name.</span>
+<span class="sd">		The raster file will contain the data and properties specified in the profile.</span>
+<span class="sd">		Note: The function does not return any values, but it saves the raster file with the specified name.</span>
+
+<span class="sd">	Example:</span>
+<span class="sd">	--------</span>
+
+<span class="sd">	&gt;&gt;&gt; fname = &quot;output_raster.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; data = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])</span>
+<span class="sd">	&gt;&gt;&gt; profile = {}</span>
+<span class="sd">	&gt;&gt;&gt; transform = Affine(1, 0, 0, 0, -1, 0)</span>
+<span class="sd">	&gt;&gt;&gt; save_raster(fname, data, profile, transform)</span>
+<span class="sd">	&gt;&gt;&gt; # This will create a raster file named &quot;output_raster.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; # with the specified data and properties.</span>
+<span class="sd">	&gt;&gt;&gt; # The function does not return any values, but it saves the raster file.</span>
+
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Update the profile with the new data type and dimensions</span>
 	<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
 	<span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
 		<span class="c1"># Write the modified raster data</span>
@@ -438,6 +606,40 @@
 		<span class="n">dst</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span></div>
 
 <div class="viewcode-block" id="get_raster_properties"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.get_raster_properties">[docs]</a><span class="k">def</span> <span class="nf">get_raster_properties</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function gets the properties of a raster file.</span>
+
+<span class="sd">	</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	fname : str</span>
+<span class="sd">		file name of the raster</span>
+<span class="sd">		The raster file should be in a format supported by rasterio (e.g., GeoTIFF).</span>
+<span class="sd">		The raster file should contain the data that you want to extract properties from.</span>
+<span class="sd">		For example, if you have a raster file representing elevation, provide the path to that file.</span>
+<span class="sd">		Make sure to provide the correct file path to the raster file.</span>
+<span class="sd">		Example: &quot;path/to/raster_file.tif&quot;</span>
+<span class="sd">	</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	grid_ncols : int</span>
+<span class="sd">		number of columns in the raster file</span>
+<span class="sd">		The number of columns in the raster file.</span>
+<span class="sd">		This value represents the number of pixels along the x-axis of the raster.</span>
+<span class="sd">		Example: 100 (for a raster with 100 columns)</span>
+<span class="sd">		grid_nrows : int</span>
+<span class="sd">		number of rows in the raster file</span>
+<span class="sd">		The number of rows in the raster file.</span>
+<span class="sd">		This value represents the number of pixels along the y-axis of the raster.</span>
+<span class="sd">		Example: 100 (for a raster with 100 rows)</span>
+<span class="sd">		grid_cellsize : float</span>
+<span class="sd">		cell size of the raster file</span>
+<span class="sd">		The cell size of the raster file.</span>
+<span class="sd">		This value represents the size of each pixel in the raster.</span>
+<span class="sd">		Example: 30.0 (for a raster with a cell size of 30 meters)</span>
+<span class="sd">		Note: The cell size is the same for both x and y axes in a square raster.</span>
+<span class="sd">		Make sure to provide the correct cell size for the raster file.</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">domain</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
 	<span class="n">grid_ncols</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">width</span>
 	<span class="n">grid_nrows</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">height</span>
@@ -491,8 +693,8 @@
 <span class="sd">	files must have the same size, otherwise and error will raise.</span>
 <span class="sd">	The output file will be </span>
 
-<span class="sd">	Parameters</span>
-<span class="sd">	----------    </span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------    </span>
 <span class="sd">	fname : str</span>
 <span class="sd">		raster file name</span>
 <span class="sd">	fname_mask : str</span>
@@ -500,10 +702,20 @@
 <span class="sd">	fname_out : str</span>
 <span class="sd">		file name for the clipped raster dataset</span>
 
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
 <span class="sd">	file</span>
 <span class="sd">		clipped raster file</span>
+<span class="sd">	</span>
+<span class="sd">	Examples:</span>
+<span class="sd">	--------</span>
+
+<span class="sd">	&gt;&gt;&gt; fname = &quot;raster.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; fname_mask = &quot;mask.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; fname_output = &quot;clipped_raster.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; clip_raster_by_mask(fname, fname_mask, fname_output)</span>
+<span class="sd">	&gt;&gt;&gt; # This will create a raster file named &quot;clipped_raster.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; # with the clipped raster values.</span>
 <span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -527,8 +739,8 @@
 <div class="viewcode-block" id="clip_raster_by_extent"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.clip_raster_by_extent">[docs]</a><span class="k">def</span> <span class="nf">clip_raster_by_extent</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">fname_output</span><span class="p">,</span> <span class="n">extent</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Function to clip raster files by extent.</span>
 <span class="sd">	</span>
-<span class="sd">	Parameters</span>
-<span class="sd">	----------    </span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------    </span>
 <span class="sd">	fname : str</span>
 <span class="sd">		raster file name</span>
 <span class="sd">	fname_out : str</span>
@@ -536,10 +748,23 @@
 <span class="sd">	extent : list of floats</span>
 <span class="sd">		list of boundaries to clip, [xmin, ymin, xmax, ymax]</span>
 <span class="sd">	</span>
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	file</span>
-<span class="sd">		clipped raster file</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">	None</span>
+<span class="sd">		None, but creates a raster file with the specified name.</span>
+<span class="sd">		The raster file will contain the clipped raster values.</span>
+<span class="sd">		Note: The function does not return any values, but it saves the</span>
+<span class="sd">		raster file with the specified name.</span>
+
+<span class="sd">	Example:</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; fname = &quot;raster.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; fname_output = &quot;clipped_raster.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; extent = [xmin, ymin, xmax, ymax]</span>
+<span class="sd">	&gt;&gt;&gt; clip_raster_by_extent(fname, fname_output, extent)</span>
+<span class="sd">	&gt;&gt;&gt; # This will create a raster file named &quot;clipped_raster.asc&quot;</span>
+<span class="sd">	&gt;&gt;&gt; # with the clipped raster values.</span>
+<span class="sd">	&gt;&gt;&gt; # The function does not return any values, but it saves the raster file.</span>
 <span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># Open the raster file</span>
@@ -583,15 +808,30 @@
 <span class="sd">	a 2D numpy array. Region must be specified with values greater</span>
 <span class="sd">	than zero.</span>
 
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
 <span class="sd">	array : numpy array</span>
 <span class="sd">		2D numpy array (e.g.: from a raster file)</span>
 <span class="sd">	</span>
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-<span class="sd">	list of int</span>
-<span class="sd">		min_row, max_row, min_col, max_col</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
+<span class="sd">		min_row, max_row, min_col, max_col : int</span>
+<span class="sd">		indices of the region in the array</span>
+<span class="sd">		These indices represent the minimum and maximum row and column indices</span>
+<span class="sd">		of the region in the 2D array.</span>
+<span class="sd">		The values are returned as a tuple of four integers.</span>
+<span class="sd">		For example, if the region is found between rows 10 and 20 and columns 5 and 15,</span>
+<span class="sd">		the function will return (10, 20, 5, 15).</span>
+<span class="sd">		Note: The indices are zero-based, meaning that the first row and column have an index of 0.</span>
+<span class="sd">		Make sure to provide the correct 2D array for the function to work properly.</span>
+
+<span class="sd">		Example: (10, 20, 5, 15)</span>
+<span class="sd">		Note: The indices are returned as a tuple of four integers.</span>
+<span class="sd">	</span>
+<span class="sd">		Example: (min_row, max_row, min_col, max_col)</span>
+<span class="sd">		Note: The indices are returned as a tuple of four integers.</span>
+<span class="sd">		For example, if the region is found between rows 10 and 20 and columns 5 and 15,</span>
+<span class="sd">		the function will return (10, 20, 5, 15).</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># Find the indices of non-zero elements of a 2d array</span>
 	<span class="n">nonzero_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
@@ -804,7 +1044,22 @@
 <div class="viewcode-block" id="transform_flowdirection_d8_to_landlab_array"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.DRYP_rrtools.transform_flowdirection_d8_to_landlab_array">[docs]</a><span class="k">def</span> <span class="nf">transform_flowdirection_d8_to_landlab_array</span><span class="p">(</span><span class="n">flowdir</span><span class="p">,</span> <span class="n">format_data</span><span class="o">=</span><span class="s2">&quot;D8&quot;</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Function to get flow direction in landlab format from a D8</span>
 <span class="sd">	direction map.</span>
-<span class="sd">	</span>
+
+<span class="sd">	GRASS pcraster format:</span>
+<span class="sd">		135  90  45</span>
+<span class="sd">		180   0 360</span>
+<span class="sd">		225 270 315</span>
+
+<span class="sd">	AGNPS pcraster format: Agricultural Non-Point Source Pollution Model</span>
+<span class="sd">		8 1 2</span>
+<span class="sd">		7 0 3</span>
+<span class="sd">		6 5 4</span>
+
+<span class="sd">	LDD pcraster format</span>
+<span class="sd">		7 8 9</span>
+<span class="sd">		4 0 6</span>
+<span class="sd">		1 2 3</span>
+
 <span class="sd">	D8 direction format</span>
 <span class="sd">		32 64 128</span>
 <span class="sd">		16 0  1</span>
@@ -820,17 +1075,24 @@
 <span class="sd">		3 4 5</span>
 <span class="sd">		0 1 2</span>
 
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
 <span class="sd">	flowdir : numpy array of int</span>
 <span class="sd">		flow direction map in D8 format</span>
+<span class="sd">	format_data : str</span>
+<span class="sd">		format of the data, D8 or D* format</span>
+<span class="sd">		- D8: D8 format (default)</span>
+<span class="sd">		- LDD: LDD format</span>
+<span class="sd">		- GRASS: GRASS format</span>
+<span class="sd">		- AGNPS: AGNPS format</span>
+<span class="sd">		- i-digit: i-digit format</span>
 
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	--------</span>
 <span class="sd">	drinodes: numpy array of ints</span>
 <span class="sd">		flow direction map in landlab format</span>
 
-<span class="sd">	Examples</span>
+<span class="sd">	Examples:</span>
 <span class="sd">	--------</span>
 <span class="sd">	&gt;&gt;&gt; from DRYP_rrtools import get_landlab_flowdirection_from_d8_format</span>
 <span class="sd">	&gt;&gt;&gt; D8_direction = [		</span>
@@ -867,6 +1129,12 @@
 	<span class="c1"># create an array of D* direction codes</span>
 	<span class="k">if</span> <span class="n">format_data</span> <span class="o">==</span> <span class="s2">&quot;D8&quot;</span><span class="p">:</span>
 		<span class="n">dir_code</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+	<span class="k">elif</span> <span class="n">format_data</span> <span class="o">==</span> <span class="s2">&quot;LDD&quot;</span><span class="p">:</span>
+		<span class="n">dir_code</span><span class="o">=</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+	<span class="k">elif</span> <span class="n">format_data</span> <span class="o">==</span> <span class="s2">&quot;GRASS&quot;</span><span class="p">:</span>
+		<span class="n">dir_code</span><span class="o">=</span><span class="p">[</span><span class="mi">360</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="mi">270</span><span class="p">,</span> <span class="mi">315</span><span class="p">]</span>
+	<span class="k">elif</span> <span class="n">format_data</span> <span class="o">==</span> <span class="s2">&quot;AGNPS&quot;</span><span class="p">:</span>
+		<span class="n">dir_code</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="n">dir_code</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span>
 	

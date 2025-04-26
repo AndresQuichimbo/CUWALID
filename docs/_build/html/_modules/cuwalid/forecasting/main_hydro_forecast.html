@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.forecasting.main_hydro_forecast &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cuwalid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Licences.html">Licences</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.forecasting.main_hydro_forecast</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.forecasting.main_hydro_forecast</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.helper_functions</span> <span class="kn">import</span> <span class="n">load_config</span>
+<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.hindcast</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.forecast</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">cuwalid.forecasting.components.plot_hydro_forecast</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="run_hydro_forecast"><a class="viewcode-back" href="../../../cuwalid.forecasting.html#cuwalid.forecasting.main_hydro_forecast.run_hydro_forecast">[docs]</a><span class="k">def</span> <span class="nf">run_hydro_forecast</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function run the forecasting analysis, if historical analyais has</span>
+<span class="sd">    not been activated, the forecasting will use results specified in the</span>
+<span class="sd">    model path files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Load configuration file</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">config_path</span>
+
+    <span class="c1">## Load JSON data from the config_path</span>
+    <span class="c1">#with open(config_path, &#39;r&#39;) as file:</span>
+    <span class="c1">#    config = json.load(file)</span>
+
+    <span class="n">include_hincast</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;run_historical&quot;</span><span class="p">]</span>
+    <span class="n">include_forecast</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;run_forecast&quot;</span><span class="p">]</span>
+    <span class="n">include_plotting</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;run_plotting&quot;</span><span class="p">]</span>
+    <span class="n">multi_files</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;multi_files&quot;</span><span class="p">]</span>
+
+    <span class="c1"># read historical paths</span>
+    <span class="n">historical_model_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;historical&quot;</span><span class="p">][</span><span class="s1">&#39;model_name&#39;</span><span class="p">]</span>
+    <span class="n">historical_model_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;historical&quot;</span><span class="p">][</span><span class="s1">&#39;model_path&#39;</span><span class="p">]</span>
+    <span class="n">historical_postpp_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;historical&quot;</span><span class="p">][</span><span class="s1">&#39;postpp_path&#39;</span><span class="p">]</span>
+    
+    <span class="c1"># read forecasting parameters</span>
+    <span class="n">forecast_model_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;forecasting&quot;</span><span class="p">][</span><span class="s1">&#39;model_name&#39;</span><span class="p">]</span>
+    <span class="n">forecast_model_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;forecasting&quot;</span><span class="p">][</span><span class="s1">&#39;model_path&#39;</span><span class="p">]</span>
+    <span class="n">forecast_postpp_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;forecasting&quot;</span><span class="p">][</span><span class="s1">&#39;postpp_path&#39;</span><span class="p">]</span>
+    
+    <span class="c1">#/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGcv_sim83_MAM_extremes_quantiles.nc</span>
+    <span class="c1">#/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGcv_sim83_OND_mean.nc</span>
+    <span class="c1">#/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGcv_sim83_OND_quantiles.nc</span>
+
+    <span class="c1">#threshold_path = config[&quot;threshold_path&quot;]</span>
+    <span class="c1">#threshold_path = os.path.join(historical_postpp_path, &quot;netcdf&quot;, historical_model_name + &quot;_SSS_extremes_quantiles.nc&quot;)</span>
+    <span class="n">threshold_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">historical_postpp_path</span><span class="p">,</span> <span class="s2">&quot;netcdf&quot;</span><span class="p">,</span> <span class="n">historical_model_name</span> <span class="o">+</span> <span class="s2">&quot;_SSS_quantiles.nc&quot;</span><span class="p">)</span>
+    <span class="n">season</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;season&#39;</span><span class="p">]</span>
+    <span class="n">start_year</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;start_year&#39;</span><span class="p">]</span>
+    <span class="n">end_year</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;end_year&#39;</span><span class="p">]</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">]</span>
+    <span class="n">iyear</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span>
+    <span class="c1">#nsim = config[&quot;nsim&quot;]</span>
+
+
+    <span class="c1"># ----------------------HINDCAST-----------------------</span>
+
+    <span class="k">if</span> <span class="n">include_hincast</span><span class="p">:</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;========================== Processing historical simulation ==========================&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: A new folder will &#39;/netcdf/&#39; will be created inside &#39;/postpp/&#39;&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;to store new variables if it does not exist&quot;</span><span class="p">)</span>
+              
+        <span class="c1"># check if folder exist postpp/netcdf</span>
+        <span class="c1"># print(&quot;to store new variables if it does not exist&quot;)</span>
+
+        <span class="c1"># Getting hindcast configuration</span>
+        <span class="c1">#hindcast_model_name = config[&#39;run_historical&#39;]</span>
+        
+        <span class="k">if</span> <span class="n">multi_files</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;******Processing yearly-files of model outputs******&quot;</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step 1: Concatenate multiple csv historical files&quot;</span><span class="p">)</span>
+            <span class="n">get_csv_TS_files_from_multi_CSV</span><span class="p">(</span><span class="n">historical_model_path</span><span class="p">,</span>
+                                            <span class="n">historical_model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step 2: Processing TWSA from storage change&quot;</span><span class="p">)</span>
+            <span class="n">get_TWSA_from_mult_files</span><span class="p">(</span><span class="n">historical_model_path</span><span class="p">,</span>
+                                     <span class="n">historical_model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step 3: Processing WRSI&quot;</span><span class="p">)</span>
+            <span class="n">get_additional_variables_multi_netcdf</span><span class="p">(</span><span class="n">historical_model_path</span><span class="p">,</span>
+                                                  <span class="n">historical_model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step 4: Getting monthly mean values for all variables&quot;</span><span class="p">)</span>
+            <span class="n">get_monthly_average_multi_netcdf</span><span class="p">(</span><span class="n">historical_model_path</span><span class="p">,</span>
+                                             <span class="n">historical_model_name</span><span class="p">,</span>
+                                             <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span>
+                                             <span class="n">historical_postpp_path</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step 5: Getting terciles from historical simulations&quot;</span><span class="p">)</span>
+            <span class="n">get_percentiles_multi_files</span><span class="p">(</span><span class="n">historical_model_path</span><span class="p">,</span>
+                                        <span class="n">historical_model_name</span><span class="p">,</span>
+                                        <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span>
+                                        <span class="n">historical_postpp_path</span><span class="p">)</span>
+
+            <span class="c1">#print(&quot;Step 6: Getting quatiles 05, 33, 50, 66, 95 form historical simulations&quot;)</span>
+            <span class="c1">#get_extremes_quantiles_multi_netcdf(historical_model_path,</span>
+            <span class="c1">#                                    historical_model_name,</span>
+            <span class="c1">#                                    start_year, end_year, season, variables,</span>
+            <span class="c1">#                                    historical_postpp_path)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step 6: Getting average values from historical simualations&quot;</span><span class="p">)</span>
+            <span class="n">get_average_multi_netcdf</span><span class="p">(</span><span class="n">historical_model_path</span><span class="p">,</span>
+                                     <span class="n">historical_model_name</span><span class="p">,</span>
+                                     <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span>
+                                     <span class="n">historical_postpp_path</span><span class="p">)</span>
+
+            <span class="c1">#print(&quot;Step 7: Getting anomalies from historical simulations&quot;)</span>
+            <span class="c1">#get_anomalies_multi_netcdf(historical_model_path,</span>
+            <span class="c1">#                           historical_model_name,</span>
+            <span class="c1">#                           start_year, end_year, season, variables,</span>
+            <span class="c1">#                           historical_postpp_path)</span>
+
+
+    <span class="c1"># ----------------------FORECASTING-----------------------    </span>
+
+    <span class="k">if</span> <span class="n">include_forecast</span><span class="p">:</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;================================ Running forecasting ================================&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARINING! before runing the forecast make sure the historical analysis has been&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;performed before. There is no need to perform the historical analysis if there &quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;is not updates on the historical simulations&quot;</span><span class="p">)</span>
+        <span class="c1"># check if folder exist postpp/netcdf</span>
+        <span class="c1"># print(&quot;to store new variables if it does not exist&quot;)</span>
+
+        <span class="c1"># Getting forecast config</span>
+        <span class="c1">#forecast_model_name = config[&#39;forecast_model_name&#39;]</span>
+
+        <span class="c1">#print(&quot;Step 9&quot;)</span>
+        <span class="c1">#get_tercile_hindcast_fluxes(model_path, forecast_model_name, season, variables, postpp_path)</span>
+
+        <span class="c1">#print(&quot;Step 10&quot;)</span>
+        <span class="c1">#get_tercile_hindcast_extreme_values(model_path, forecast_model_name, season, variables, postpp_path)</span>
+
+        <span class="c1"># this function will be moved to another file, this ones corresponds</span>
+        <span class="c1"># to the impact forecasting not to the hydrological forecasting</span>
+        <span class="c1">#print(&quot;Step 11&quot;)</span>
+        <span class="c1"># function to get netcdf files from regional files at each selected place</span>
+        <span class="c1">#extract_forecasting_variable(model_path, forecast_model_name, season, variables, postpp_path)</span>
+
+        <span class="c1">#print(&quot;Step 12&quot;)</span>
+        <span class="c1"># funtion to calculate areas for county provided in the list</span>
+        <span class="c1">#get_areas_terciles(model_path, forecast_model_name, season, variables, postpp_path)</span>
+
+        <span class="c1">#print(&quot;Step 1: Update TWSA&quot;) </span>
+        <span class="c1">#get_update_TWSA(historical_model_path, historical_model_name, iyear=iyear)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step 1: Processing hydrological realizations&quot;</span><span class="p">)</span> 
+        <span class="n">get_postprocessed_variables_forecast</span><span class="p">(</span><span class="n">forecast_model_path</span><span class="p">,</span> <span class="n">forecast_model_name</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step 2: Update TWSA of hydrological realizations&quot;</span><span class="p">)</span> 
+        <span class="k">for</span> <span class="n">iseason</span> <span class="ow">in</span> <span class="n">season</span><span class="p">:</span>
+            <span class="n">get_updated_TWSA_ensamble</span><span class="p">(</span><span class="n">forecast_model_path</span><span class="p">,</span> <span class="n">forecast_model_name</span><span class="p">,</span>
+                                  <span class="n">historical_model_name</span><span class="p">,</span>
+                                  <span class="n">historical_postpp_path</span><span class="p">,</span>
+                                  <span class="n">season</span><span class="o">=</span><span class="n">iseason</span><span class="p">,</span> <span class="n">iyear</span><span class="o">=</span><span class="n">iyear</span><span class="p">)</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step 3: Creating ensamble of hydrological realizations&quot;</span><span class="p">)</span>   
+        <span class="n">get_ensamble_forecasting</span><span class="p">(</span><span class="n">forecast_model_path</span><span class="p">,</span>
+                                 <span class="n">forecast_model_name</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span>
+                                 <span class="n">forecast_postpp_path</span><span class="p">)</span>
+
+        <span class="c1"># Forecasting estimation</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step 4: Processing probabilistic forecasting&quot;</span><span class="p">)</span>  
+        <span class="n">get_probabilistic_tercile_forecast_ensamble</span><span class="p">(</span><span class="n">forecast_model_path</span><span class="p">,</span>
+                                                    <span class="n">forecast_model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span>
+                                                    <span class="n">forecast_postpp_path</span><span class="p">,</span>
+                                                    <span class="n">threshold_path</span><span class="p">,</span> <span class="n">iyear</span><span class="o">=</span><span class="n">iyear</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step 5: Processing deterministic forecasting&quot;</span><span class="p">)</span>
+        <span class="n">get_deterministic_forecast_ensamble</span><span class="p">(</span><span class="n">forecast_model_path</span><span class="p">,</span>
+                                            <span class="n">forecast_model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span>
+                                            <span class="n">forecast_postpp_path</span><span class="p">,</span>
+                                            <span class="n">threshold_path</span><span class="p">,</span> <span class="n">iyear</span><span class="o">=</span><span class="n">iyear</span><span class="p">)</span>
+
+
+    <span class="c1"># ----------------------PLOTTING-----------------------</span>
+
+    <span class="k">if</span> <span class="n">include_plotting</span><span class="p">:</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;============================== Ploting forecasting outputs ==============================&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step 1: Plot probabilistic tercile forecasting&quot;</span><span class="p">)</span>
+        <span class="n">plot_tercile_probability_forecast</span><span class="p">(</span><span class="n">forecast_model_path</span><span class="p">,</span>
+                                          <span class="n">forecast_model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span>
+                                          <span class="n">forecast_postpp_path</span><span class="p">,</span>
+                                          <span class="n">iyear</span><span class="o">=</span><span class="n">iyear</span>
+                                          <span class="p">)</span></div>
+
+        <span class="c1">#print(&quot;Step 2: Plot deterministic forecasting&quot;)</span>
+        <span class="c1">#plot_deterministic_forecast(forecast_model_path,</span>
+        <span class="c1">#                            forecast_model_name, season, variables,</span>
+        <span class="c1">#                            forecast_postpp_path</span>
+        <span class="c1">#                            )</span>
+
+
+<span class="c1"># Main function to handle command-line arguments</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="c1"># Set up argument parser to get the JSON config file from command line</span>
+	<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Plot hydrological forecast based on JSON configuration.&quot;</span><span class="p">)</span>
+	<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;config_file&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Path to the JSON configuration file&#39;</span><span class="p">)</span>
+
+	<span class="c1"># Parse command line arguments</span>
+	<span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+	<span class="c1"># Run the plot_maps_json function with the config file provided by the user</span>
+	<span class="n">run_hydro_forecast</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config_file</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

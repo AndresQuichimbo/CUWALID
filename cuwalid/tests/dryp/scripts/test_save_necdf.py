@@ -22,7 +22,7 @@ def test_save_variables():
     grid_size = ncols*nrows
 
     ini_date = datetime.strptime("2000 1 1", '%Y %m %d')
-    end_date = datetime.strptime("2000 2 5", '%Y %m %d')
+    end_date = datetime.strptime("2001 1 1", '%Y %m %d')
 		
     dt = 1440
     dt_results = 'M'
@@ -75,7 +75,7 @@ def test_save_variables():
     out = read_dataset(fname, var_name='pre').values[0]
     
     assert np.allclose(out, answer, equal_nan=True)
-    print('Save Dataset: Test runs successfully')
+    print('Save Dataset: Test completed successfully')
     
     # remove the test dataset created
     os.remove(fname) if os.path.exists(fname) else None

@@ -52,7 +52,7 @@ def test_basin_delineation():
        ]
 
 	assert np.allclose(out, answer)
-	print('Basin delineation: Test runs successfully')
+	print('Basin delineation: Test completed successfully')
 	
 if __name__ == '__main__':
 	test_basin_delineation()

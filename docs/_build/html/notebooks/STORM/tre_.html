@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MODELING ONE STORM &mdash; CUWALID 0.0.1 documentation</title>
@@ -12,6 +12,8 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
@@ -70,7 +72,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">cuwalid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../maintenance.html">Developer Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../Authors.html">Introduction</a></li>
@@ -124,7 +126,7 @@ end{equation}` where <span class="math notranslate nohighlight">\(I\big(r\big)\)
 </dl>
 </li>
 </ol>
-<p>For a plethora of mathematical background on these and other components of STORM, you’re encouraged to visit <a class="reference external" href="https://gmd.copernicus.org/preprints/gmd-2023-98/">this link</a>.</p>
+<p>For a plethora of mathematical background on these and other components of STORM, you’re encouraged to visit<a class="reference external" href="https://gmd.copernicus.org/preprints/gmd-2023-98/">this link</a>.</p>
 <hr class="docutils" />
 <p>Rainfall estimation and rasterization is done by STORM through the functions: COPULA_SAMPLING, LAST_RING, LOTR, and RASTERIZE of the <a class="reference external" href="../rainfall.py">rainfall.py</a> module.</p>
 <hr class="docutils" />
@@ -224,7 +226,7 @@ end{equation}` where <span class="math notranslate nohighlight">\(I\big(r\big)\)
 <h3>1. COMPUTE PDFs<a class="headerlink" href="#1.-COMPUTE-PDFs" title="Permalink to this heading"></a></h3>
 <div class="line-block">
 <div class="line">One storm is constructed from 5 PDFs.</div>
-<div class="line">(Check out notebook <a class="reference internal" href="one_.html"><span class="doc">one_</span></a>)</div>
+<div class="line">(Check out notebook<a class="reference internal" href="one_.html"><span class="doc">one_</span></a>)</div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -454,7 +456,7 @@ end{equation}` where <span class="math notranslate nohighlight">\(I\big(r\big)\)
 </section>
 <section id="3.-SAMPLE-STORM-CENTRES">
 <h3>3. SAMPLE STORM CENTRES<a class="headerlink" href="#3.-SAMPLE-STORM-CENTRES" title="Permalink to this heading"></a></h3>
-<p>(Check out notebook <a class="reference internal" href="two_.html"><span class="doc">two_</span></a>)</p>
+<p>(Check out notebook<a class="reference internal" href="two_.html"><span class="doc">two_</span></a>)</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
@@ -501,7 +503,7 @@ end{equation}` where <span class="math notranslate nohighlight">\(I\big(r\big)\)
 </div>
 <div class="line-block">
 <div class="line">For every sampled center, several distances (spaced every <strong>RINGS_DIS</strong>-km) are estimated between storm center and storm radius.</div>
-<div class="line">Note that the distances increase from almost the storm center to storm (maximum) radius (see variable RADII above).</div>
+<div class="line">Note that the distances increase from almost the storm center to storm (maximum) radius (see variableRADIIabove).</div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
@@ -531,7 +533,7 @@ end{equation}` where <span class="math notranslate nohighlight">\(I\big(r\big)\)
 </div>
 <div class="line-block">
 <div class="line">Then, rain is computed using (via FORMUKA 1) for the previous several distances.</div>
-<div class="line">Note now that rainfall intensity decreases from almost the storm center to storm (maximum) radius (consistent with what Equation (1) proposes).</div>
+<div class="line">Note now that rainfall intensity decreases from almost the storm center to storm (maximum) radius (consistent with whatEquation (1)proposes).</div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
@@ -831,7 +833,7 @@ C:\Users\manuel\AppData\Local\Temp\ipykernel_41720\590111119.py:8: UserWarning: 
 <hr class="docutils" />
 <section id="INTERMEZZO:-EXPORT-CATCHMENT-AS-NUMPY">
 <h3><em>INTERMEZZO: EXPORT CATCHMENT AS NUMPY</em><a class="headerlink" href="#INTERMEZZO:-EXPORT-CATCHMENT-AS-NUMPY" title="Permalink to this heading"></a></h3>
-<p>(while we’re at it… it will be used later in notebook <a class="reference internal" href="for_.html"><span class="doc">for_</span></a>)</p>
+<p>(while we’re at it… it will be used later in notebook<a class="reference internal" href="for_.html"><span class="doc">for_</span></a>)</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>

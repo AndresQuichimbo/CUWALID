@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>cuwalid.tests.dryp.scripts package &mdash; CUWALID 0.0.1 documentation</title>
@@ -11,6 +11,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -18,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Tools Package" href="cuwalid.tools.html" />
+    <link rel="next" title="cuwalid.tests.forecasting package" href="cuwalid.tests.forecasting.html" />
     <link rel="prev" title="cuwalid.tests.dryp package" href="cuwalid.tests.dryp.html" /> 
 </head>
 
@@ -49,18 +51,22 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="processing.html">Processing</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Documentation</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.dryp.html">DRYP Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.stopet.html">StoPET Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.forecasting.html">Forecasting Package</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="cuwalid.tests.html">Tests Package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="cuwalid.tests.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="cuwalid.tests.dryp.html">cuwalid.tests.dryp package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">cuwalid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="cuwalid.html">cuwalid package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="cuwalid.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.dryp.html">cuwalid.dryp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.forecasting.html">cuwalid.forecasting package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.stopet.html">cuwalid.stopet package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.storm.html">cuwalid.storm package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="cuwalid.tests.html">cuwalid.tests package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cuwalid.tools.html">cuwalid.tools package</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#cuwalid-main-cuwalid-module">cuwalid.main_cuwalid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cuwalid.html#module-cuwalid">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="cuwalid.tools.html">Tools Package</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance.html">Developer Maintenance</a></li>
@@ -84,9 +90,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">API Documentation</a></li>
-          <li class="breadcrumb-item"><a href="cuwalid.html">&lt;no title&gt;</a></li>
-          <li class="breadcrumb-item"><a href="cuwalid.tests.html">Tests Package</a></li>
+          <li class="breadcrumb-item"><a href="modules.html">cuwalid</a></li>
+          <li class="breadcrumb-item"><a href="cuwalid.html">cuwalid package</a></li>
+          <li class="breadcrumb-item"><a href="cuwalid.tests.html">cuwalid.tests package</a></li>
           <li class="breadcrumb-item"><a href="cuwalid.tests.dryp.html">cuwalid.tests.dryp package</a></li>
       <li class="breadcrumb-item active">cuwalid.tests.dryp.scripts package</li>
       <li class="wy-breadcrumbs-aside">
@@ -102,9 +108,6 @@
 <h1>cuwalid.tests.dryp.scripts package<a class="headerlink" href="#cuwalid-tests-dryp-scripts-package" title="Permalink to this heading"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
-</section>
-<section id="cuwalid-tests-dryp-scripts-context-module">
-<h2>cuwalid.tests.dryp.scripts.context module<a class="headerlink" href="#cuwalid-tests-dryp-scripts-context-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-cuwalid.tests.dryp.scripts.test_basin_delineation">
 <span id="cuwalid-tests-dryp-scripts-test-basin-delineation-module"></span><h2>cuwalid.tests.dryp.scripts.test_basin_delineation module<a class="headerlink" href="#module-cuwalid.tests.dryp.scripts.test_basin_delineation" title="Permalink to this heading"></a></h2>
@@ -227,6 +230,22 @@ compiled during the model installation</p>
 <dd></dd></dl>
 
 </section>
+<section id="module-cuwalid.tests.dryp.scripts.test_ponds">
+<span id="cuwalid-tests-dryp-scripts-test-ponds-module"></span><h2>cuwalid.tests.dryp.scripts.test_ponds module<a class="headerlink" href="#module-cuwalid.tests.dryp.scripts.test_ponds" title="Permalink to this heading"></a></h2>
+<p>Test ponds</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.tests.dryp.scripts.test_ponds.test_ponds">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.tests.dryp.scripts.test_ponds.</span></span><span class="sig-name descname"><span class="pre">test_ponds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tests/dryp/scripts/test_ponds.html#test_ponds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tests.dryp.scripts.test_ponds.test_ponds" title="Permalink to this definition"></a></dt>
+<dd><p>run test functions
+Parameterization of ponds:
+Given the maximum extend and the maximum depth
+for hmax -&gt; Amax -&gt; Vmax
+Amax = pi*hmax^(2a)
+a = 1/2*(log{Amax/pi}/log{hmax})
+Vmax = hmax^{2a+1}*(pi/{2a+1})</p>
+</dd></dl>
+
+</section>
 <section id="module-cuwalid.tests.dryp.scripts.test_precipitation">
 <span id="cuwalid-tests-dryp-scripts-test-precipitation-module"></span><h2>cuwalid.tests.dryp.scripts.test_precipitation module<a class="headerlink" href="#module-cuwalid.tests.dryp.scripts.test_precipitation" title="Permalink to this heading"></a></h2>
 <p>Test precipitation component of DRYP model
@@ -271,6 +290,28 @@ value of ndays*pre*(number_of_hours_day = 24) = 696 mm</p>
 <dd></dd></dl>
 
 </section>
+<section id="module-cuwalid.tests.dryp.scripts.test_precipitation_step">
+<span id="cuwalid-tests-dryp-scripts-test-precipitation-step-module"></span><h2>cuwalid.tests.dryp.scripts.test_precipitation_step module<a class="headerlink" href="#module-cuwalid.tests.dryp.scripts.test_precipitation_step" title="Permalink to this heading"></a></h2>
+<p>Test precipitation component of DRYP model
+Test read a unit precipitation and accumualate the precipitation
+over the especified period (ndays=29 days)</p>
+<p>This script first create a netcdf file of hourly dataset filled
+with a precipitation of 1 mm per hour.</p>
+<p>The result at the end of the simulatio should be the cummulative
+value of ndays*pre*(number_of_hours_day = 24) = 696 mm</p>
+<p>Information related to projection is arbitrary</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.tests.dryp.scripts.test_precipitation_step.create_test_dataset">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.tests.dryp.scripts.test_precipitation_step.</span></span><span class="sig-name descname"><span class="pre">create_test_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tests/dryp/scripts/test_precipitation_step.html#create_test_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tests.dryp.scripts.test_precipitation_step.create_test_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Create dataset for resting the precipitation component</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.tests.dryp.scripts.test_precipitation_step.test_precipitation">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.tests.dryp.scripts.test_precipitation_step.</span></span><span class="sig-name descname"><span class="pre">test_precipitation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tests/dryp/scripts/test_precipitation_step.html#test_precipitation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tests.dryp.scripts.test_precipitation_step.test_precipitation" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
 <section id="module-cuwalid.tests.dryp.scripts.test_save_csv">
 <span id="cuwalid-tests-dryp-scripts-test-save-csv-module"></span><h2>cuwalid.tests.dryp.scripts.test_save_csv module<a class="headerlink" href="#module-cuwalid.tests.dryp.scripts.test_save_csv" title="Permalink to this heading"></a></h2>
 <dl class="py function">
@@ -292,12 +333,34 @@ value of ndays*pre*(number_of_hours_day = 24) = 696 mm</p>
 <dd></dd></dl>
 
 </section>
+<section id="module-cuwalid.tests.dryp.scripts.test_save_necdf_maximum">
+<span id="cuwalid-tests-dryp-scripts-test-save-necdf-maximum-module"></span><h2>cuwalid.tests.dryp.scripts.test_save_necdf_maximum module<a class="headerlink" href="#module-cuwalid.tests.dryp.scripts.test_save_necdf_maximum" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.tests.dryp.scripts.test_save_necdf_maximum.read_dataset">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.tests.dryp.scripts.test_save_necdf_maximum.</span></span><span class="sig-name descname"><span class="pre">read_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tht'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tests/dryp/scripts/test_save_necdf_maximum.html#read_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tests.dryp.scripts.test_save_necdf_maximum.read_dataset" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.tests.dryp.scripts.test_save_necdf_maximum.test_save_maximum">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.tests.dryp.scripts.test_save_necdf_maximum.</span></span><span class="sig-name descname"><span class="pre">test_save_maximum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tests/dryp/scripts/test_save_necdf_maximum.html#test_save_maximum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tests.dryp.scripts.test_save_necdf_maximum.test_save_maximum" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
 <section id="module-cuwalid.tests.dryp.scripts.test_soil_layer">
 <span id="cuwalid-tests-dryp-scripts-test-soil-layer-module"></span><h2>cuwalid.tests.dryp.scripts.test_soil_layer module<a class="headerlink" href="#module-cuwalid.tests.dryp.scripts.test_soil_layer" title="Permalink to this heading"></a></h2>
 <p>Test Infiltration model</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="cuwalid.tests.dryp.scripts.test_soil_layer.test_soil_layer">
 <span class="sig-prename descclassname"><span class="pre">cuwalid.tests.dryp.scripts.test_soil_layer.</span></span><span class="sig-name descname"><span class="pre">test_soil_layer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tests/dryp/scripts/test_soil_layer.html#test_soil_layer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tests.dryp.scripts.test_soil_layer.test_soil_layer" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-cuwalid.tests.dryp.scripts.test_soil_layer_drainage">
+<span id="cuwalid-tests-dryp-scripts-test-soil-layer-drainage-module"></span><h2>cuwalid.tests.dryp.scripts.test_soil_layer_drainage module<a class="headerlink" href="#module-cuwalid.tests.dryp.scripts.test_soil_layer_drainage" title="Permalink to this heading"></a></h2>
+<p>Test Infiltration model</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cuwalid.tests.dryp.scripts.test_soil_layer_drainage.test_soil_layer">
+<span class="sig-prename descclassname"><span class="pre">cuwalid.tests.dryp.scripts.test_soil_layer_drainage.</span></span><span class="sig-name descname"><span class="pre">test_soil_layer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cuwalid/tests/dryp/scripts/test_soil_layer_drainage.html#test_soil_layer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cuwalid.tests.dryp.scripts.test_soil_layer_drainage.test_soil_layer" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
@@ -311,7 +374,7 @@ value of ndays*pre*(number_of_hours_day = 24) = 696 mm</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="cuwalid.tests.dryp.html" class="btn btn-neutral float-left" title="cuwalid.tests.dryp package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="cuwalid.tools.html" class="btn btn-neutral float-right" title="Tools Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cuwalid.tests.forecasting.html" class="btn btn-neutral float-right" title="cuwalid.tests.forecasting package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

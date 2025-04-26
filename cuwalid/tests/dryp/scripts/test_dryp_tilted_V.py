@@ -37,7 +37,7 @@ def test_dryp():
 	
 	assert np.allclose(out, ans)
 
-	print('Tilted-V catchment model: Test runs successfully')
+	print('Tilted-V catchment model: Test completed successfully')
 
 if __name__ == '__main__':
 	test_dryp()

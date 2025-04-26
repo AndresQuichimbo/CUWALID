@@ -285,10 +285,10 @@ class gwflow_EFD(object):
 				elif self.method == 3:
 					# saturated thickness for multiaquifer conditions
 					# update thikness for aquifers with linear transmissinity
-					idnodes = np.where(inodetype == 3)
+					idnodes = np.where(inodetype == 1)
 					thickness_sat[idnodes] = head[idnodes] - bottom[idnodes]
 					# updates thickness of aquiferes with exponential transmissivity
-					idnodes = np.where(inodetype == 1)
+					idnodes = np.where(inodetype == 2)
 					thickness_sat[idnodes] = exponential(thickness[idnodes],
 								surface[idnodes]-thickness[idnodes],
 								head[idnodes])
@@ -332,9 +332,9 @@ class gwflow_EFD(object):
 			#outer_links_at_lake = grid.links_at_node[inner_lake_nodes] # select lake links
 			
 			#T[outer_links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.01 # reduce transmissivity
-			T[links_at_lake] = T[links_at_lake]*0.025 # reduce transmissivity
+			#T[links_at_lake] = T[links_at_lake]*0.025 # reduce transmissivity
 			#T[links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.025 # reduce transmissivity
-			T[inner_links_at_lake] = grid.dx*grid.dx # reduce transmissivity
+			T[inner_links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.05 # reduce transmissivity
 			
 			#Sy_aux = Sy[act_nodes]
 			Sy_aux = Sy.copy()

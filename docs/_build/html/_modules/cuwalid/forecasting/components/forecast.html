@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.forecasting.components.forecast &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">cuwalid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Licences.html">Licences</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.forecasting.components.forecast</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.forecasting.components.forecast</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">cuwalid.tools.CUWALID_mfile_tools</span> <span class="k">as</span> <span class="nn">cuwalid</span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<div class="viewcode-block" id="get_tercile_hindcast_fluxes"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_tercile_hindcast_fluxes">[docs]</a><span class="k">def</span> <span class="nf">get_tercile_hindcast_fluxes</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function calculates the probabilistic forecasting using the tercile approach</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">iyear</span> <span class="o">=</span> <span class="mi">2022</span>
+	<span class="c1">#ivar = &quot;dis&quot;</span>
+	<span class="c1">#iseason = &quot;MAM&quot;</span>
+	<span class="c1">#iseason = &quot;OND&quot;</span>
+
+	<span class="c1"># specified fields</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">drop_false_keys</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+	<span class="c1">#season = [&quot;MAM&quot;, &quot;OND&quot;]</span>
+
+
+	<span class="n">fname_var</span> <span class="o">=</span> <span class="n">model_path</span><span class="o">+</span><span class="n">model_name</span><span class="o">+</span><span class="s2">&quot;_YYYY_grid_VVV.nc&quot;</span>
+	<span class="n">fname_threshold</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">postpp_path</span><span class="p">,</span><span class="s2">&quot;netcdf&quot;</span><span class="p">,</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_SSS_quantiles.nc&quot;</span><span class="p">)</span>
+	<span class="c1">#fname_threshold = postpp_path+&quot;netcdf/&quot; + model_name + &quot;_SSS_extremes_quantiles.nc&quot;</span>
+	<span class="c1">#fname_var = &quot;/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_YYYY_grid_VVV.nc&quot;</span>
+	<span class="c1">#fname_var = &quot;/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_YYYY_grid.nc&quot;</span>
+	<span class="c1">#fname_threshold = &quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_SSS_quantiles.nc&quot;</span>
+	<span class="c1">#fname_q = &quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_mean.nc</span>
+
+	<span class="n">fname_var</span> <span class="o">=</span> <span class="n">fname_var</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;YYYY&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">))</span>
+
+	<span class="k">for</span> <span class="n">iseason</span> <span class="ow">in</span> <span class="n">season</span><span class="p">:</span>
+		<span class="c1">#for ivar in [&quot;dis&quot;, &quot;twsc&quot;, &quot;tht&quot;, &quot;wrsi&quot;]:</span>
+		<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+			<span class="c1"># choose path depending on variable</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s2">&quot;twsc&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s2">&quot;wrsi&quot;</span><span class="p">):</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">fname_var</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;VVV&quot;</span><span class="p">,</span> <span class="n">ivar</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">fname_var</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_VVV&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+			
+			<span class="c1"># chose path depending on the season</span>
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">ifname_threshold</span> <span class="o">=</span> <span class="n">fname_threshold</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_SSS&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">ifname_threshold</span> <span class="o">=</span> <span class="n">fname_threshold</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;SSS&quot;</span><span class="p">,</span> <span class="n">iseason</span><span class="p">)</span>
+						
+			<span class="c1"># specify path for dataset</span>
+			<span class="c1">#netcdf_path = &quot;D:/HAD/output/HAD_IMERGb_sim_&quot;+ str(iyear)+&quot;_grid.nc&quot;</span>
+			
+			<span class="c1"># specify paht for threshold dataset</span>
+			<span class="c1">#nc_path_threshold = &quot;D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_&quot; + iseason + &quot;_quantiles.nc&quot;</span>
+			
+			<span class="c1"># get tercile forecasting</span>
+			<span class="n">tercile</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">get_tercile_probabilities_from_netcdf</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="n">ifname_threshold</span><span class="p">,</span>
+					<span class="n">var</span><span class="o">=</span><span class="n">ivar</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="n">iseason</span><span class="p">)</span>
+
+			<span class="n">directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">postpp_path</span><span class="p">,</span><span class="s2">&quot;netcdf&quot;</span><span class="p">))</span>
+			
+			<span class="c1"># save as NETCDF files</span>
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">postpp_path</span><span class="p">,</span><span class="s2">&quot;netcdf&quot;</span><span class="p">,</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span><span class="n">ivar</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_probabilistic_tercile_forecast.nc&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="c1">#fname_out = &quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_&quot;+ivar+&quot;_&quot;+iseason+&quot;_&quot;+str(iyear)+&quot;_probabilistic_tercile_forecast.nc&quot;</span>
+				<span class="c1">#fname = &quot;D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_&quot; + iseason + &quot;_probabilistic_tercile_forecast.nc&quot;</span>
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">postpp_path</span><span class="p">,</span><span class="s2">&quot;netcdf&quot;</span><span class="p">,</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span><span class="n">ivar</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="n">iseason</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_probabilistic_tercile_forecast.nc&quot;</span><span class="p">)</span>
+			
+			<span class="c1"># save probabilistic forecast as netcdf</span>
+			<span class="n">tercile</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_tercile_hindcast_extreme_values"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_tercile_hindcast_extreme_values">[docs]</a><span class="k">def</span> <span class="nf">get_tercile_hindcast_extreme_values</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function calculates the probabilistic forecasting using the tercile approach</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">iyear</span> <span class="o">=</span> <span class="mi">2022</span>
+	<span class="c1">#ivar = &quot;dis&quot;</span>
+	<span class="c1">#iseason = &quot;MAM&quot;</span>
+	<span class="c1">#iseason = &quot;OND&quot;</span>
+
+	<span class="c1"># specified fields</span>
+	<span class="c1">#field = cuwalid.drop_false_keys(variables)</span>
+
+	<span class="n">fname_var</span> <span class="o">=</span> <span class="n">model_path</span><span class="o">+</span><span class="n">model_name</span><span class="o">+</span><span class="s2">&quot;_YYYY_grid_VVV.nc&quot;</span>
+	<span class="c1">#fname_threshold = postpp_path+&quot;netcdf/&quot; + model_name + &quot;_SSS_extremes_quantiles.nc&quot;</span>
+	<span class="n">fname_threshold</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_SSS_quantiles.nc&quot;</span>
+
+	
+
+	<span class="c1">#fname_var = &quot;/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_YYYY_grid_VVV.nc&quot;</span>
+	<span class="c1">#fname_var = &quot;/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_YYYY_grid.nc&quot;</span>
+	<span class="c1">#fname_threshold = &quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_SSS_quantiles.nc&quot;</span>
+	<span class="c1">#fname_q = &quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_mean.nc</span>
+
+	<span class="n">fname_var</span> <span class="o">=</span> <span class="n">fname_var</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;YYYY&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">))</span>
+
+	<span class="c1">#var = [&quot;dis&quot;, &quot;twsc&quot;, &quot;tht&quot;]</span>
+	<span class="c1">#var = [&quot;dis&quot;]#, &quot;twsc&quot;, &quot;tht&quot;]</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">drop_false_keys</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">iseason</span> <span class="ow">in</span> <span class="n">season</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+			<span class="c1"># choose path depending on variable</span>
+			<span class="k">if</span> <span class="n">ivar</span> <span class="o">==</span> <span class="s2">&quot;twsc&quot;</span><span class="p">:</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">fname_var</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;VVV&quot;</span><span class="p">,</span> <span class="n">ivar</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">fname_var</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_VVV&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+			
+			<span class="c1"># chose path depending on the season</span>
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">ifname_threshold</span> <span class="o">=</span> <span class="n">fname_threshold</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_SSS&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">ifname_threshold</span> <span class="o">=</span> <span class="n">fname_threshold</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;SSS&quot;</span><span class="p">,</span> <span class="n">iseason</span><span class="p">)</span>
+						
+			<span class="c1"># specify path for dataset</span>
+			<span class="c1">#netcdf_path = &quot;D:/HAD/output/HAD_IMERGb_sim_&quot;+ str(iyear)+&quot;_grid.nc&quot;</span>
+			
+			<span class="c1"># specify paht for threshold dataset</span>
+			<span class="c1">#nc_path_threshold = &quot;D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_&quot; + iseason + &quot;_quantiles.nc&quot;</span>
+			
+			<span class="c1"># get tercile forecasting</span>
+			<span class="n">tercile</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">get_tercile_probabilities_from_netcdf</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="n">ifname_threshold</span><span class="p">,</span>
+					<span class="n">var</span><span class="o">=</span><span class="n">ivar</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="n">iseason</span><span class="p">,</span> <span class="n">idtercile</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">extremes</span><span class="o">=</span><span class="s2">&quot;max&quot;</span><span class="p">)</span>
+			
+			<span class="c1"># save as NETCDF files</span>
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="c1">#fname_out = postpp_path+&quot;netcdf/&quot; + model_name + &quot;_&quot; +ivar+&quot;_&quot;+str(iyear)+&quot;_probabilistic_tercile_forecast.nc&quot;</span>
+				
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">postpp_path</span><span class="p">,</span><span class="s2">&quot;netcdf/&quot;</span><span class="p">,</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_flow_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_probabilistic_tercile_forecast.nc&quot;</span><span class="p">)</span>
+			
+			<span class="k">else</span><span class="p">:</span>
+				<span class="c1">#fname_out = &quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_&quot;+ivar+&quot;_&quot;+iseason+&quot;_&quot;+str(iyear)+&quot;_probabilistic_tercile_forecast.nc&quot;</span>
+				<span class="c1">#fname = &quot;D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_&quot; + iseason + &quot;_probabilistic_tercile_forecast.nc&quot;</span>
+				<span class="c1">#fname_out = postpp_path+&quot;netcdf/&quot; + model_name + &quot;_&quot; +ivar+&quot;_&quot;+iseason+&quot;_&quot;+str(iyear)+&quot;_probabilistic_tercile_forecast.nc&quot;</span>
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_flow_&quot;</span><span class="o">+</span><span class="n">iseason</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_probabilistic_tercile_forecast.nc&quot;</span>
+			
+			<span class="c1"># save probabilistic forecast as netcdf</span>
+			<span class="n">tercile</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="extract_forecasting_variable"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.extract_forecasting_variable">[docs]</a><span class="k">def</span> <span class="nf">extract_forecasting_variable</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span>
+								<span class="c1">#model_path,</span>
+								<span class="n">plot_scale</span><span class="p">,</span>
+								<span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span>
+								<span class="n">postpp_path</span><span class="p">,</span>
+								<span class="n">netcdf_path_list</span><span class="p">,</span>
+								<span class="n">shapefile_path</span><span class="p">,</span>
+								<span class="n">place_name</span><span class="p">,</span>
+								<span class="n">place_code</span><span class="p">,</span>
+								<span class="n">icode_field_shp</span><span class="p">,</span>
+								<span class="n">iname_field_shp</span><span class="p">,</span>
+								<span class="n">save_nc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+								<span class="n">iyear</span><span class="o">=</span><span class="mi">2022</span>
+								<span class="p">):</span>
+
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Function to get a set netCDF files for each place listed in place_name</span>
+<span class="sd">	Each file is cliped only for the area whithin the boundaries of each place</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	model_name: str</span>
+<span class="sd">	model_path: str</span>
+<span class="sd">	plot_scale: str</span>
+<span class="sd">	season: list</span>
+<span class="sd">	variables: list</span>
+<span class="sd">	postpp_path: str</span>
+<span class="sd">	netcdf_path: str</span>
+<span class="sd">	shapefile_path: str</span>
+<span class="sd">	place_name: list</span>
+<span class="sd">	name_field_shp: str</span>
+
+<span class="sd">	plot_scales : list of str, optional</span>
+<span class="sd">		A list of zoom levels or plot scales for the maps (e.g., &quot;Zoom&quot;, &quot;National&quot;, &quot;Regional&quot;).</span>
+<span class="sd">		Defaults to [&quot;Zoom&quot;].</span>
+<span class="sd">		</span>
+<span class="sd">	country_name : str, optional</span>
+<span class="sd">		The name of the country for which the maps are being generated. Defaults to &quot;Kenya&quot;.</span>
+<span class="sd">		</span>
+<span class="sd">	place_names : list of str or [None], optional</span>
+<span class="sd">		A list of specific places (e.g., counties) for which maps will be created.</span>
+<span class="sd">		If [None], maps will be created for all counties in the country. Defaults to [None].</span>
+<span class="sd">		</span>
+<span class="sd">	seasons : list of str, optional</span>
+<span class="sd">		A list of seasons for which the maps will be generated. Examples include &quot;MAM&quot; (March-April-May) </span>
+<span class="sd">		and &quot;OND&quot; (October-November-December). Defaults to [&quot;MAM&quot;].</span>
+<span class="sd">		</span>
+<span class="sd">	water_status : list of str, optional</span>
+<span class="sd">		Water condition or status, such as &quot;Flood&quot;, &quot;Drought&quot;, etc. Defaults to [&quot;Flood&quot;].</span>
+<span class="sd">		</span>
+<span class="sd">	year : int, optional</span>
+<span class="sd">		The year for which the maps are generated. Defaults to 2010.</span>
+<span class="sd">		</span>
+<span class="sd">	output_dir : str, optional</span>
+<span class="sd">		The directory where the generated maps will be saved. Defaults to &quot;output&quot;.</span>
+<span class="sd">		</span>
+<span class="sd">	language : str, optional</span>
+<span class="sd">		The language for the map labels and outputs. Defaults to &quot;English&quot;.</span>
+<span class="sd">		</span>
+<span class="sd">	netcdf_path : str, optional</span>
+<span class="sd">		Path to the NetCDF file containing climate or forecast data. Defaults to None.</span>
+<span class="sd">		</span>
+<span class="sd">	threshold_path : str, optional</span>
+<span class="sd">		Path to the threshold file used to determine warning or risk levels. Defaults to None.</span>
+<span class="sd">		</span>
+<span class="sd">	mask_path : str, optional</span>
+<span class="sd">		Path to the file containing mask data for areas that should be excluded from the maps.</span>
+<span class="sd">		Defaults to None.</span>
+<span class="sd">		</span>
+<span class="sd">	river_path : str, optional</span>
+<span class="sd">		Path to the file containing river data to be overlaid on the map. Defaults to None.</span>
+
+<span class="sd">	shape_path : str, optional</span>
+<span class="sd">		Path to the optional shape file to overide built in shape files for HAD region. Defaults to None.</span>
+
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># PLOT TYPE</span>
+	<span class="c1">#plot_scale = &quot;Country&quot;</span>
+	<span class="c1">#plot_scale = &quot;County&quot;</span>
+	<span class="c1">#plot_scale = &quot;Ward&quot;</span>
+
+	<span class="c1"># SELECT WARD</span>
+	<span class="c1">#place_name = &quot;Isiolo&quot;</span>
+	<span class="c1">#place_name = &quot;Meru&quot;</span>
+	<span class="c1">#place_name = &quot;Samburu&quot;</span>
+	<span class="c1">#place_name = &quot;Laikipia&quot;</span>
+	<span class="c1">#place_name = &quot;Kinna&quot;</span>
+	<span class="c1">#place_name = &quot;Burat&quot;</span>
+	<span class="c1">#place_name = &quot;Somalia&quot;</span>
+	<span class="c1">#place_name = &quot;Kenya&quot;</span>
+
+	<span class="c1">#place_name = {</span>
+	<span class="c1">#	&quot;Isiolo&quot;,</span>
+	<span class="c1">#	&quot;Meru&quot;,</span>
+	<span class="c1">#	&quot;Samburu&quot;,</span>
+	<span class="c1">#	&quot;Laikipia&quot;,</span>
+	<span class="c1">#	}</span>
+
+	<span class="c1"># SELCT TIME STEP TO PRINT AS EXAMPLE</span>
+	<span class="c1">#time_plot = 15 # Example contain only 24 months</span>
+
+	<span class="c1">## do not change this</span>
+	<span class="c1">#name_field_shp = {</span>
+	<span class="c1">#	&quot;Zoom&quot;: &quot;IEBC_WARDS&quot;,</span>
+	<span class="c1">#	&quot;Ward&quot;: &quot;IEBC_WARDS&quot;,</span>
+	<span class="c1">#	&quot;County&quot;: &quot;county&quot;,</span>
+	<span class="c1">#	&quot;Country&quot;: &quot;NAME&quot;,	</span>
+	<span class="c1">#	}</span>
+
+	<span class="c1">#var = [&quot;dis&quot;, &quot;twsc&quot;, &quot;tht&quot;, &quot;wrsi&quot;, &quot;flow&quot;]</span>
+	<span class="c1">#field = cuwalid.drop_false_keys(variables)</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="n">variables</span>
+	<span class="c1">#print(plot_scale, name_field_shp)</span>
+	<span class="c1">#iname_field_shp = name_field_shp[plot_scale]</span>
+
+	<span class="c1"># SPECIFY PATHS - GEOGRAPHICAL UNITS WGS64</span>
+	<span class="c1"># Load the polygon shapefile using geopandas</span>
+	<span class="c1">#shapefile_country = &quot;D:/HAD/data/gis/Horn_Africa/Horn_africa_contry.shp&quot;</span>
+	<span class="c1">#shapefile_county = &#39;D:/kenya/GIS/kenya-county/ke_county.shp&#39;</span>
+
+	<span class="c1">#shapefile_country = &quot;/home/c1755103/WS/HAD/Data/gis/wgs84/Horn_africa_contry.shp&quot;</span>
+	<span class="c1">#shapefile_path = &quot;/home/c1755103/WS/HAD/Data/gis/wgs84/kenya/kenya-county/ke_county.shp&quot;</span>
+
+	<span class="c1">#netcdf_path = &quot;D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_&quot; + iseason + &quot;_probabilistic_tercile_forecast.nc&quot;</span>
+	<span class="c1">#&quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_&quot;+ivar+&quot;_&quot;+iseason+&quot;_&quot;+str(iyear)+&quot;_probabilistic_tercile_forecast.nc&quot;</span>
+	<span class="c1">#netcdf_path = &quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_VVV_SSS_2022_probabilistic_tercile_forecast.nc&quot;</span>
+	
+	<span class="c1"># list of labels for of the terciles</span>
+	<span class="n">tercile</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AN&quot;</span><span class="p">,</span> <span class="s2">&quot;NN&quot;</span><span class="p">,</span> <span class="s2">&quot;BN&quot;</span><span class="p">]</span>
+	<span class="c1">#print(season, place_code, place_name)</span>
+
+	<span class="k">for</span> <span class="n">iseason</span> <span class="ow">in</span> <span class="n">season</span><span class="p">:</span>
+		<span class="c1"># create list to store data</span>
+		<span class="c1"># name list</span>
+		<span class="c1">#fname = []</span>
+		<span class="c1"># season list</span>
+		<span class="n">season_list</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="c1"># store variable</span>
+		<span class="n">variable_list</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="c1"># store place name</span>
+		<span class="n">place_list</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="c1"># store place name</span>
+		<span class="n">code_list</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="c1"># water status</span>
+		<span class="n">status_list</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="c1"># name code list</span>
+		<span class="n">code_name_list</span> <span class="o">=</span> <span class="p">[]</span>		
+		<span class="c1"># loop over list of files</span>
+		<span class="n">area_list</span> <span class="o">=</span> <span class="p">[]</span>
+	
+		<span class="k">for</span> <span class="n">iplace_name</span><span class="p">,</span> <span class="n">iplace_code</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">place_name</span><span class="p">,</span> <span class="n">place_code</span><span class="p">):</span>
+			<span class="c1"># field should match the list of netCDF files</span>
+			<span class="k">for</span> <span class="n">ivar</span><span class="p">,</span> <span class="n">inetcdf_path</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">netcdf_path_list</span><span class="p">):</span>
+				<span class="c1"># read shapefile and select area/region</span>
+				<span class="k">if</span> <span class="n">plot_scale</span> <span class="o">==</span> <span class="s2">&quot;County&quot;</span><span class="p">:</span>
+					<span class="n">region</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">shapefile_path</span><span class="p">)</span>
+				<span class="c1">#print(shapefile_path, iname_field_shp)</span>
+				<span class="c1">#print(region)</span>
+				<span class="k">if</span> <span class="n">iplace_code</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="n">region</span> <span class="o">=</span> <span class="n">region</span><span class="p">[(</span><span class="n">region</span><span class="p">[</span><span class="n">iname_field_shp</span><span class="p">]</span> <span class="o">==</span> <span class="n">iplace_name</span><span class="p">)]</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">region</span> <span class="o">=</span> <span class="n">region</span><span class="p">[(</span><span class="n">region</span><span class="p">[</span><span class="n">icode_field_shp</span><span class="p">]</span> <span class="o">==</span> <span class="n">iplace_code</span><span class="p">)]</span>
+				<span class="c1">#print(region, iplace_code, iplace_name)</span>
+				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">region</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="c1"># chose path depending on the season</span>
+					<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+						<span class="n">inetcdf_path</span> <span class="o">=</span> <span class="n">inetcdf_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_SSS&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">inetcdf_path</span> <span class="o">=</span> <span class="n">inetcdf_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;SSS&quot;</span><span class="p">,</span> <span class="n">iseason</span><span class="p">)</span>
+
+					<span class="c1">#print(iplace_code, iplace_name)</span>
+					<span class="c1">#print(len(region.index), iplace_code, iplace_name)</span>
+					<span class="c1">#print(region, iplace_code)</span>
+					<span class="c1">#print(inetcdf_path)</span>
+					<span class="n">inetcdf_path</span> <span class="o">=</span> <span class="n">inetcdf_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;VVV&quot;</span><span class="p">,</span> <span class="n">ivar</span><span class="p">)</span>
+					<span class="n">dataset</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">extract_dataset</span><span class="p">(</span><span class="n">inetcdf_path</span><span class="p">,</span> <span class="n">region</span><span class="p">)</span>
+					<span class="c1">#print(region, iplace_code)</span>
+
+					<span class="k">if</span> <span class="n">save_nc</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+						<span class="c1"># save dataset as netcdf</span>
+						<span class="n">fname_nc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+							<span class="n">postpp_path</span><span class="p">,</span>
+							<span class="s2">&quot;netcdf&quot;</span><span class="p">,</span>
+							<span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">iseason</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">iplace_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">ivar</span><span class="si">}</span><span class="s2">_probabilistic_tercile_forecast_region.nc&quot;</span>
+						<span class="p">)</span>
+
+						<span class="c1">#fname = &quot;D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_&quot; + iseason + &quot;_probabilistic_tercile_forecast_region.nc&quot;</span>
+
+						<span class="n">dataset</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fname_nc</span><span class="p">)</span>
+
+					<span class="c1"># store season</span>
+					<span class="n">season_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iseason</span><span class="p">)</span>
+					<span class="c1"># store variable</span>
+					<span class="n">variable_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ivar</span><span class="p">)</span>
+					<span class="c1"># store place name</span>
+					<span class="n">place_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iplace_name</span><span class="p">)</span>
+					<span class="c1"># store place name</span>
+					<span class="n">code_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iplace_code</span><span class="p">)</span>
+					<span class="c1"># store code name list</span>
+					<span class="n">code_name_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_name</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iplace_code</span><span class="p">))</span>
+
+					<span class="c1"># CALUCATE AREAS FOR EACH TERCILE</span>
+					<span class="n">area</span> <span class="o">=</span> <span class="p">[]</span>
+					<span class="k">for</span> <span class="n">itercile</span> <span class="ow">in</span> <span class="n">tercile</span><span class="p">:</span>
+						<span class="c1"># read tercile</span>
+						<span class="c1">#data = read_dataset(ifname, var_name=itercile).values</span>
+						<span class="n">data</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">itercile</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+						<span class="c1"># count terciles with higher probability</span>
+						<span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mf">0.33</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+						<span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">&lt;=</span> <span class="mf">0.33</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+						<span class="c1"># create list areas</span>
+						<span class="n">area</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+					<span class="c1"># calculate percentages</span>
+					<span class="n">area_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">area</span><span class="o">*</span><span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">area</span><span class="p">))</span>
+
+					<span class="c1"># get status value</span>
+					<span class="k">if</span> <span class="n">ivar</span> <span class="o">==</span> <span class="s2">&quot;Flood&quot;</span><span class="p">:</span>
+						<span class="n">status_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">2</span><span class="o">-</span><span class="n">area</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">area</span><span class="p">)))</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">status_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">area</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">area</span><span class="p">)))</span>
+
+				
+			<span class="c1"># change to numpy array</span>
+			<span class="n">area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">area_list</span><span class="p">)</span>
+			<span class="c1"># save as dataframe</span>
+
+
+		<span class="c1"># create dataframe of contributin areas</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">code_name_list</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;place&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">place_list</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;season&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">season_list</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;variable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">variable_list</span>
+		<span class="n">df</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">status_list</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">itercile</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tercile</span><span class="p">):</span>
+			<span class="n">df</span><span class="p">[</span><span class="n">itercile</span><span class="p">]</span> <span class="o">=</span> <span class="n">area</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+
+		<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+			<span class="n">postpp_path</span><span class="p">,</span>
+			<span class="s2">&quot;csv&quot;</span><span class="p">,</span>
+			<span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">iseason</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">iyear</span><span class="si">}</span><span class="s2">_county_areas.csv&quot;</span>
+		<span class="p">)</span>
+		<span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+				
+
+<div class="viewcode-block" id="read_dataset"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.read_dataset">[docs]</a><span class="k">def</span> <span class="nf">read_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;tht&#39;</span><span class="p">):</span>
+	<span class="c1"># Open the first netCDF file</span>
+	<span class="c1"># output dataset</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="get_areas_terciles"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_areas_terciles">[docs]</a><span class="k">def</span> <span class="nf">get_areas_terciles</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Function to extract values form selected areas</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	model_path: str</span>
+<span class="sd">		paht for model netcdf file</span>
+<span class="sd">	model_name: str</span>
+<span class="sd">		model name</span>
+<span class="sd">	season: str</span>
+<span class="sd">		season eg. OND</span>
+<span class="sd">	variables: str</span>
+<span class="sd">		variables to plot</span>
+<span class="sd">	postpp_path: str</span>
+<span class="sd">		paht for storing outputs</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+		
+	<span class="c1"># ==================================================</span>
+
+	<span class="c1">#fname = &quot;D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_&quot; + iseason + &quot;_probabilistic_tercile_forecast_region.nc&quot;</span>
+	<span class="c1">#fname = &quot;D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_MAM_Laikipia_dis_2022_probabilistic_binary_forecast_region.nc&quot;</span>
+	<span class="n">tercile</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AN&quot;</span><span class="p">,</span> <span class="s2">&quot;NN&quot;</span><span class="p">,</span> <span class="s2">&quot;BN&quot;</span><span class="p">]</span>
+	<span class="c1">#tercile = [&quot;AN&quot;, &quot;BN&quot;]</span>
+
+	<span class="n">place_name</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s2">&quot;Isiolo&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;Meru&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;Samburu&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;Laikipia&quot;</span><span class="p">,</span>
+		<span class="p">}</span>
+
+	<span class="c1"># create list of names</span>
+	<span class="c1">#var = [&quot;dis&quot;, &quot;twsc&quot;, &quot;tht&quot;, &quot;wrsi&quot;, &quot;flow&quot;]</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">drop_false_keys</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+	<span class="c1"># name list</span>
+	<span class="n">fname</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="c1"># season list</span>
+	<span class="n">season_list</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="c1"># store variable</span>
+	<span class="n">variable_list</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="c1"># store place name</span>
+	<span class="n">place_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+	<span class="c1"># create list of names and places</span>
+	<span class="k">for</span> <span class="n">iseason</span> <span class="ow">in</span> <span class="n">season</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">iplace_name</span> <span class="ow">in</span> <span class="n">place_name</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+				<span class="c1"># create name</span>
+				<span class="n">fname</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">postpp_path</span> <span class="o">+</span> <span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span>
+						<span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span>
+						<span class="n">iseason</span> <span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="n">iplace_name</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="n">ivar</span><span class="o">+</span>
+						<span class="s2">&quot;_probabilistic_tercile_forecast_region.nc&quot;</span>
+						<span class="p">)</span>
+				<span class="c1"># store season</span>
+				<span class="n">season_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iseason</span><span class="p">)</span>
+				<span class="c1"># store variable</span>
+				<span class="n">variable_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ivar</span><span class="p">)</span>
+				<span class="c1"># store place name</span>
+				<span class="n">place_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iplace_name</span><span class="p">)</span>
+				
+	<span class="c1"># CALUCATE AREAS FOR EACH TERCILE</span>
+	<span class="c1"># loop over list of files</span>
+	<span class="n">area_list</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname</span><span class="p">:</span>
+		<span class="c1"># read dataset and extract selected tercile</span>
+		<span class="n">area</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">itercile</span> <span class="ow">in</span> <span class="n">tercile</span><span class="p">:</span>
+			<span class="c1"># read tercile</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">itercile</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+			<span class="c1"># count terciles with higher probability</span>
+			<span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mf">0.33</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+			<span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">&lt;=</span> <span class="mf">0.33</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="c1"># create list areas</span>
+			<span class="n">area</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+		
+		<span class="c1"># calculate percentages</span>
+		<span class="n">area_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">area</span><span class="o">*</span><span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">area</span><span class="p">))</span>
+		
+	<span class="c1"># change to numpy array</span>
+	<span class="n">area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">area_list</span><span class="p">)</span>
+	<span class="c1"># save as dataframe</span>
+
+
+	<span class="c1"># create dataframe of contributin areas</span>
+	<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+	<span class="n">df</span><span class="p">[</span><span class="s2">&quot;place&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">place_list</span>
+	<span class="n">df</span><span class="p">[</span><span class="s2">&quot;season&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">season_list</span>
+	<span class="n">df</span><span class="p">[</span><span class="s2">&quot;variable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">variable_list</span>
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">itercile</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tercile</span><span class="p">):</span>
+		<span class="n">df</span><span class="p">[</span><span class="n">itercile</span><span class="p">]</span> <span class="o">=</span> <span class="n">area</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+
+	<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">os</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">postpp_path</span><span class="p">,</span> <span class="s2">&quot;csv/&quot;</span><span class="p">,</span> <span class="n">model_name</span><span class="o">+</span><span class="s2">&quot;_county_areas.csv&quot;</span><span class="p">)</span>
+	<span class="n">directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+	<span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span></div>
+	<span class="c1">#print(area)</span>
+	
+
+<div class="viewcode-block" id="get_update_TWSA"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_update_TWSA">[docs]</a><span class="k">def</span> <span class="nf">get_update_TWSA</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">iyear</span><span class="o">=</span><span class="mi">2022</span><span class="p">):</span>
+
+    <span class="c1"># Path of model output files</span>
+    <span class="c1">#model_path = &quot;D:\HAD\training\forecast\regional\outputs/&quot;</span>
+    <span class="c1">#model_path = &quot;/home/c1755103/HAD/HAD_output/&quot;</span>
+    <span class="c1">#model_path = &quot;/home/cuwalid/training/historical/regional/outputs/&quot;#_13_grid.nc</span>
+
+    <span class="c1"># path for post processing files, i.g. forecasting</span>
+    <span class="c1"># Specific folders will be created inside this paht to store different</span>
+    <span class="c1"># types of lie formats</span>
+    <span class="c1"># /fig: for any king of figure</span>
+    <span class="c1"># /netcdf: for *.nc files</span>
+    <span class="c1"># /raster: for *.asc files</span>
+    <span class="c1"># /csv: for comma delimited files, i.g. *.csv</span>
+    <span class="c1">#postpp_path = &quot;D:\HAD\training\forecast\regional\postpp/&quot;</span>
+    <span class="c1">#postpp_path = &quot;/home/c1755103/HAD/HAD_postpp/&quot;</span>
+    <span class="c1">#postpp_path = &quot;/home/cuwalid/training/historical/regional/postpp/&quot;</span>
+
+    <span class="c1">#iyear = 2022</span>
+
+    <span class="n">ifield</span> <span class="o">=</span> <span class="s2">&quot;twsc&quot;</span>
+	
+    <span class="c1"># specify current simulation path</span>
+    <span class="c1">#fname_current = model_path+model_name+&#39;_grid.nc&#39;# comment this line for yearly data</span>
+    <span class="n">fname_current</span> <span class="o">=</span> <span class="n">model_path</span><span class="o">+</span><span class="n">model_name</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;_grid.nc&#39;</span> <span class="c1"># imcomment this line for yealy data</span>
+
+	<span class="c1"># check the most current year</span>
+    <span class="c1">#current_year = 0</span>
+    <span class="c1">#available_year = False</span>
+    <span class="c1">#while available_year:</span>
+    <span class="c1">#    if os.path.exists(fname_current):</span>
+    <span class="c1">#        available_year = True</span>
+    <span class="c1">#    else:</span>
+    <span class="c1">#        iyear = iyear-1</span>
+    <span class="c1">#        fname_current = model_path+model_name+&quot;_&quot;+ str(iyear-1) +&#39;_grid.nc&#39; # imcomment this line for yealy data</span>
+    <span class="c1">#        current_year += 1</span>
+
+
+    <span class="c1"># specify previous TWSC accumulated</span>
+    <span class="n">fname_previous</span> <span class="o">=</span> <span class="n">model_path</span><span class="o">+</span><span class="n">model_name</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;_grid_twsc.nc&#39;</span>
+
+    <span class="c1"># read dataset</span>
+    <span class="n">data_current</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">read_dataset</span><span class="p">(</span><span class="n">fname_current</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;twsc&#39;</span><span class="p">)</span>
+
+    <span class="n">data_previous</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">read_dataset</span><span class="p">(</span><span class="n">fname_previous</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;twsc&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Update datasets</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">update_TWSA</span><span class="p">(</span><span class="n">data_current</span><span class="p">,</span> <span class="n">data_previous</span><span class="p">)</span>
+
+    <span class="c1"># save dataset as netcdf file</span>
+    <span class="n">fname_current</span> <span class="o">=</span> <span class="n">fname_current</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">ifield</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span>
+
+    <span class="n">data</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fname_current</span><span class="p">)</span></div>
+	
+
+<div class="viewcode-block" id="get_updated_TWSA_ensamble"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_updated_TWSA_ensamble">[docs]</a><span class="k">def</span> <span class="nf">get_updated_TWSA_ensamble</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model_name_historical</span><span class="p">,</span> <span class="n">postpp_path_historical</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">iyear</span><span class="o">=</span><span class="mi">2022</span><span class="p">,</span> <span class="n">nsim</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_path : str</span>
+<span class="sd">        Path to the directory containing the model data.</span>
+<span class="sd">    model_name : str</span>
+<span class="sd">        Name of the model to retrieve forecasts from.</span>
+<span class="sd">    season : str</span>
+<span class="sd">        Season for which the forecasts are required (e.g., &#39;OND&#39;, &#39;MAM&#39;).</span>
+<span class="sd">    variables : list of str</span>
+<span class="sd">        List of variable names to include in the forecast (e.g., [&#39;pet&#39;, &#39;pre&#39;]).</span>
+<span class="sd">    postpp_path : str</span>
+<span class="sd">        Path to the post-processing configuration or scripts.</span>
+<span class="sd">    threshold_path : str</span>
+<span class="sd">        Path to the file containing threshold values for the variables.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xarray</span>
+<span class="sd">        A dictionary containing processed deterministic forecasts for each ensemble member. The structure </span>
+<span class="sd">        typically includes ensemble members, their corresponding forecasts, and any additional post-processed </span>
+<span class="sd">        data.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - Ensure that the `model_path` contains the necessary data files for the specified `model_name`.</span>
+<span class="sd">    - The `postpp_path` should point to valid configurations or scripts for applying post-processing methods.</span>
+<span class="sd">    - Thresholds provided in `threshold_path` should match the variables specified.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; forecasts = get_deterministic_forecast_ensemble(</span>
+<span class="sd">    ...     model_path=&quot;/data/models/&quot;,</span>
+<span class="sd">    ...     model_name=&quot;GFS&quot;,</span>
+<span class="sd">    ...     season=&quot;OND&quot;,</span>
+<span class="sd">    ...     variables=[&quot;pre&quot;, &quot;pet&quot;],</span>
+<span class="sd">    ...     postpp_path=&quot;/config/postprocessing/&quot;,</span>
+<span class="sd">    ...     threshold_path=&quot;/config/thresholds/&quot;</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; print(forecasts[&quot;mean&quot;])</span>
+<span class="sd">    [0.5, 0.2, 0.8]</span>
+<span class="sd">	</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># get initial initial conditions for TWSA</span>
+	<span class="n">imonth</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">season_name_to_number</span><span class="p">(</span><span class="n">season</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
+	<span class="k">if</span> <span class="n">imonth</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">imonth</span> <span class="o">=</span> <span class="mi">12</span>
+	<span class="c1"># Specify model name, This will be the root name for the forecasting</span>
+	<span class="c1">#model_name = &quot;HAD_IMERGba_sim0&quot;</span>
+
+	<span class="c1"># model name previous step</span>
+	<span class="c1">#model_name_historical = &quot;HAD_IMERGba_sim0_2022_ini_MAM&quot;</span>
+
+
+	<span class="c1"># Path of model output files</span>
+	<span class="c1">#model_path = &quot;D:\HAD\training\forecast\regional\outputs/&quot;</span>
+	<span class="c1">#model_path = &quot;/home/c1755103/HAD/HAD_output/&quot;</span>
+	<span class="c1">#model_path = &quot;/home/cuwalid/training/historical/regional/outputs/&quot;#_13_grid.nc</span>
+	<span class="c1">#model_path_previous = &quot;/home/cuwalid/training/historical/regional/outputs/&quot;#_13_grid.nc</span>
+
+	<span class="c1"># path for post processing files, i.g. forecasting</span>
+	<span class="c1"># Specific folders will be created inside this paht to store different</span>
+	<span class="c1"># types of lie formats</span>
+	<span class="c1"># /fig: for any king of figure</span>
+	<span class="c1"># /netcdf: for *.nc files</span>
+	<span class="c1"># /raster: for *.asc files</span>
+	<span class="c1"># /csv: for comma delimited files, i.g. *.csv</span>
+	<span class="c1">#postpp_path = &quot;D:\HAD\training\forecast\regional\postpp/&quot;</span>
+	<span class="c1">#postpp_path = &quot;/home/c1755103/HAD/HAD_postpp/&quot;</span>
+	<span class="c1">#postpp_path = &quot;/home/cuwalid/training/historical/regional/postpp/&quot;</span>
+
+	<span class="c1">#iyear = 2022</span>
+
+	<span class="c1">#nsim = 30</span>
+	<span class="n">nini</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">ifield</span> <span class="o">=</span> <span class="s2">&quot;twsc&quot;</span>
+	<span class="c1"># specify previous TWSC accumulated</span>
+	<span class="c1">#fname_previous = model_path+model_name+&quot;_&quot;+ str(iyear-1) +&#39;_grid_twsc.nc&#39;</span>
+	<span class="c1">#fname_previous = model_path_historical+model_name_historical+&#39;_grid_twsc.nc&#39;</span>
+	<span class="c1">#fname_previous = model_path_historical+model_name_historical+&quot;_&quot;+ str(iyear-1) +&#39;_grid_twsc.nc&#39;</span>
+	<span class="c1">#fname_current = fname_current.split(&#39;.&#39;)[0]+&#39;_&#39;+ifield+&#39;.nc&#39;</span>
+	<span class="n">fname_previous</span> <span class="o">=</span> <span class="n">postpp_path_historical</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name_historical</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">imonth</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_monthly_mean.nc&quot;</span>
+
+	<span class="c1"># check the most current year</span>
+	<span class="n">fname</span>  <span class="o">=</span> <span class="p">[</span>
+	<span class="n">model_path</span><span class="o">+</span><span class="n">model_name</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;_grid.nc&#39;</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nini</span><span class="p">,</span> <span class="n">nsim</span><span class="p">)</span>
+	<span class="p">]</span>
+
+	<span class="n">data_previous</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">read_dataset</span><span class="p">(</span><span class="n">fname_previous</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;twsc&#39;</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">ifname_ensamble</span> <span class="ow">in</span> <span class="n">fname</span><span class="p">:</span><span class="c1">#for isim in range(nsim):</span>
+		<span class="c1"># test if file exist</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ifname_ensamble</span><span class="p">):</span>
+			<span class="c1"># specify current simulation path</span>
+			<span class="c1">#fname_current = model_path+model_name+&quot;_&quot;+ str(iyear-1) +&#39;_grid.nc&#39;</span>
+
+			<span class="c1"># read dataset</span>
+			<span class="n">data_current</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname_ensamble</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;twsc&#39;</span><span class="p">)</span>
+
+			<span class="c1"># Update datasets</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">update_TWSA</span><span class="p">(</span><span class="n">data_current</span><span class="p">,</span> <span class="n">data_previous</span><span class="p">)</span>
+
+			<span class="c1"># save dataset as netcdf file</span>
+			<span class="n">fname_current</span> <span class="o">=</span> <span class="n">ifname_ensamble</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">ifield</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span>
+
+			<span class="n">data</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fname_current</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="n">ifname_ensamble</span><span class="o">+</span><span class="s2">&quot; File does not found, skip this file from the analysis&quot;</span><span class="p">)</span></div>
+<span class="c1"># ==============================================================</span>
+<div class="viewcode-block" id="get_ensamble_forecasting"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_ensamble_forecasting">[docs]</a><span class="k">def</span> <span class="nf">get_ensamble_forecasting</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">,</span> <span class="n">nsim</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This funtion create an ensamble of model simulation for each</span>
+<span class="sd">	variable especify in the &#39;config_forecasting.py&#39; file.</span>
+
+<span class="sd">	WARNING! Values of total water storage needs to be updated for</span>
+<span class="sd">	all the simulations</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_path : str</span>
+<span class="sd">        Path to the directory containing the model data.</span>
+<span class="sd">    model_name : str</span>
+<span class="sd">        Name of the model to retrieve forecasts from.</span>
+<span class="sd">    season : str</span>
+<span class="sd">        Season for which the forecasts are required (e.g., &#39;OND&#39;, &#39;MAM&#39;).</span>
+<span class="sd">    variables : list of str</span>
+<span class="sd">        List of variable names to include in the forecast (e.g., [&#39;pet&#39;, &#39;pre&#39;]).</span>
+<span class="sd">    postpp_path : str</span>
+<span class="sd">        Path to the post-processing configuration or scripts.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xarray</span>
+<span class="sd">        A dictionary containing processed deterministic forecasts for each ensemble member. The structure </span>
+<span class="sd">        typically includes ensemble members, their corresponding forecasts, and any additional post-processed </span>
+<span class="sd">        data.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - Ensure that the `model_path` contains the necessary data files for the specified `model_name`.</span>
+<span class="sd">    - The `postpp_path` should point to valid configurations or scripts for applying post-processing methods.</span>
+<span class="sd">    - Thresholds provided in `threshold_path` should match the variables specified.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; forecasts = get_deterministic_forecast_ensemble(</span>
+<span class="sd">    ...     model_path=&quot;/data/models/&quot;,</span>
+<span class="sd">    ...     model_name=&quot;GFS&quot;,</span>
+<span class="sd">    ...     season=&quot;OND&quot;,</span>
+<span class="sd">    ...     variables=[&quot;pre&quot;, &quot;pet&quot;],</span>
+<span class="sd">    ...     postpp_path=&quot;/config/postprocessing/&quot;,</span>
+<span class="sd">    ...     threshold_path=&quot;/config/thresholds/&quot;</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; print(forecasts[&quot;mean&quot;])</span>
+<span class="sd">    [0.5, 0.2, 0.8]</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1">#model_name = &quot;MAM_2022_realization&quot;</span>
+
+	<span class="c1">#model_path = &quot;/home/cuwalid/training/forecast/regional/outputs/&quot;#_13_grid.nc</span>
+
+	<span class="c1">#postpp_path = &quot;/home/cuwalid/training/forecast/regional/postpp/&quot;</span>
+
+	<span class="c1">#nsim = 30</span>
+	<span class="c1"># get and save mean average values from netcdf</span>
+	<span class="n">nini</span> <span class="o">=</span> <span class="mi">0</span>
+
+	<span class="n">fname</span>  <span class="o">=</span> <span class="p">[</span>
+	<span class="n">model_path</span><span class="o">+</span><span class="n">model_name</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;_grid.nc&#39;</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nini</span><span class="p">,</span> <span class="n">nsim</span><span class="p">)</span>
+	<span class="c1">#&#39;/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_&#39;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(2003, 2023)</span>
+	<span class="c1">#&#39;/user/work/km19051/HAD_output/HAD_1k_10y_gw_ch_ksat_1_v2_IMERG_sim_28_grid.nc&#39;,</span>
+	<span class="p">]</span>
+
+	<span class="c1">#season = [&quot;MAM&quot;]#, &quot;OND&quot;]</span>
+
+	<span class="c1"># specified fields</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">drop_false_keys</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+	<span class="c1">#field = [#&#39;pre&#39;, &#39;pet&#39;,</span>
+	<span class="c1">#	#&#39;aet&#39;, &#39;tht&#39;, &#39;egw&#39;,</span>
+	<span class="c1">#	#&#39;inf&#39;, &#39;run&#39;,</span>
+	<span class="c1">#	#&#39;rch&#39;, &#39;fch&#39;, #&#39;gdh&#39;,</span>
+	<span class="c1">#	#&#39;dis&#39;,</span>
+	<span class="c1">#	&#39;tls&#39;,# &#39;wte&#39;,</span>
+	<span class="c1">#	#&quot;twsc&quot;,</span>
+	<span class="c1">#	]</span>
+
+	<span class="k">for</span> <span class="n">iseason</span> <span class="ow">in</span> <span class="n">season</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+			
+			<span class="n">fname_list</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+			<span class="c1"># check if is the riparian area</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s1">&#39;fch&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s1">&#39;tls&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s1">&#39;ssz&#39;</span><span class="p">):</span>
+				<span class="n">fname_list</span> <span class="o">=</span> <span class="p">[</span>
+					<span class="n">ifname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;rp.nc&#39;</span> <span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname_list</span>
+					<span class="p">]</span>
+					
+			<span class="k">if</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s1">&#39;twsc&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s1">&#39;wrsi&#39;</span><span class="p">):</span><span class="c1"># or (ivar == &#39;ssz&#39;):</span>
+				<span class="n">fname_list</span> <span class="o">=</span> <span class="p">[</span>
+					<span class="n">ifname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">ivar</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span> <span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname_list</span>
+					<span class="p">]</span>
+			<span class="k">if</span> <span class="n">ivar</span> <span class="o">==</span> <span class="s1">&#39;flood&#39;</span><span class="p">:</span>
+				<span class="n">fname_list</span> <span class="o">=</span> <span class="p">[</span>
+					<span class="n">ifname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;max.nc&#39;</span> <span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname_list</span>
+					<span class="p">]</span>
+			<span class="c1">#print(fname_list)</span>
+			<span class="n">mean</span> <span class="o">=</span> <span class="kc">False</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s1">&#39;tht&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s1">&#39;wte&#39;</span><span class="p">):</span>
+				<span class="n">mean</span> <span class="o">=</span> <span class="kc">True</span>
+			<span class="c1"># get average values for all variables from a list of netcdf files</span>
+			<span class="k">if</span> <span class="n">ivar</span> <span class="o">==</span> <span class="s2">&quot;flood&quot;</span><span class="p">:</span>
+				<span class="n">dataset</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">get_ensamble_from_netcdf_list</span><span class="p">(</span><span class="n">fname_list</span><span class="p">,</span>
+									<span class="s2">&quot;dis&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+									<span class="n">delta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="n">iseason</span><span class="p">,</span>
+									<span class="n">fname_output</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+				<span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;flood&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">dataset</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">get_ensamble_from_netcdf_list</span><span class="p">(</span><span class="n">fname_list</span><span class="p">,</span>
+									<span class="n">ivar</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+									<span class="n">delta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="n">iseason</span><span class="p">,</span>
+									<span class="n">fname_output</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+		
+
+			<span class="c1"># save files</span>
+			<span class="c1">#fname_out = &#39;/user/work/km19051/HAD_postpp/netcfd/HAD_&#39;+imodel+&#39;_wte_mean.nc&#39;</span>
+			<span class="c1">#fname_out = &quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_&quot; + imodel + &quot;_mean.nc&quot;</span>
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">ivar</span> <span class="o">+</span> <span class="s2">&quot;_ensamble.nc&quot;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">iseason</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">ivar</span> <span class="o">+</span><span class="s2">&quot;_ensamble.nc&quot;</span>
+			<span class="c1">#cuwalid.save_xarray_dataset_as_netcdf(fname_out, dataset, field)</span>
+			<span class="n">dataset</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_postprocessed_variables_forecast"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_postprocessed_variables_forecast">[docs]</a><span class="k">def</span> <span class="nf">get_postprocessed_variables_forecast</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">nsim</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Get WRSI water satisfaction index and total evapotranspiration</span>
+<span class="sd">	</span>
+
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	model_path: path (str)</span>
+<span class="sd">		folder path of model outputs files</span>
+<span class="sd">	model_name: str</span>
+<span class="sd">		model name</span>
+<span class="sd">	start_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+<span class="sd">	end_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">nini</span> <span class="o">=</span> <span class="mi">0</span>
+
+	<span class="n">fname</span>  <span class="o">=</span> <span class="p">[</span>
+	<span class="n">model_path</span><span class="o">+</span><span class="n">model_name</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">isim</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;_grid.nc&#39;</span> <span class="k">for</span> <span class="n">isim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nini</span><span class="p">,</span> <span class="n">nsim</span><span class="p">)</span>
+	<span class="p">]</span>
+
+	<span class="c1"># specified fields</span>
+	<span class="c1">#field = cuwalid.drop_false_keys(variables)</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;wrsi&quot;</span><span class="p">,</span> <span class="s2">&quot;aet&quot;</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+		
+		<span class="n">fname_list</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+		<span class="c1"># check if is the riparian area</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s1">&#39;fch&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s1">&#39;tls&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s1">&#39;ssz&#39;</span><span class="p">):</span>
+			<span class="n">fname_list</span> <span class="o">=</span> <span class="p">[</span>
+				<span class="n">ifname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;rp.nc&#39;</span> <span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname_list</span>
+				<span class="p">]</span>
+				
+		<span class="k">if</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s1">&#39;twsc&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ivar</span> <span class="o">==</span> <span class="s1">&#39;wrsi&#39;</span><span class="p">):</span><span class="c1"># or (ivar == &#39;ssz&#39;):</span>
+			<span class="n">fname_list</span> <span class="o">=</span> <span class="p">[</span>
+				<span class="n">ifname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">ivar</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span> <span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname_list</span>
+				<span class="p">]</span>
+
+	<span class="c1"># DO NOT MODIFY FROM HERE ---------------------------------------</span>
+	<span class="n">cuwalid</span><span class="o">.</span><span class="n">get_postprocessed_hydro_variables_mfiles</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_probabilistic_tercile_forecast_ensamble"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_probabilistic_tercile_forecast_ensamble">[docs]</a><span class="k">def</span> <span class="nf">get_probabilistic_tercile_forecast_ensamble</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">,</span> <span class="n">threshold_path</span><span class="p">,</span> <span class="n">iyear</span><span class="o">=</span><span class="mi">2022</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function calculates the probabilistic forecasting using the tercile approach</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_path : str</span>
+<span class="sd">        Path to the directory containing the model data.</span>
+<span class="sd">    model_name : str</span>
+<span class="sd">        Name of the model to retrieve forecasts from.</span>
+<span class="sd">    season : str</span>
+<span class="sd">        Season for which the forecasts are required (e.g., &#39;OND&#39;, &#39;MAM&#39;).</span>
+<span class="sd">    variables : list of str</span>
+<span class="sd">        List of variable names to include in the forecast (e.g., [&#39;pet&#39;, &#39;pre&#39;]).</span>
+<span class="sd">    postpp_path : str</span>
+<span class="sd">        Path to the post-processing configuration or scripts.</span>
+<span class="sd">    threshold_path : str</span>
+<span class="sd">        Path to the file containing threshold values for the variables.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xarray</span>
+<span class="sd">        A dictionary containing processed deterministic forecasts for each ensemble member. The structure </span>
+<span class="sd">        typically includes ensemble members, their corresponding forecasts, and any additional post-processed </span>
+<span class="sd">        data.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - Ensure that the `model_path` contains the necessary data files for the specified `model_name`.</span>
+<span class="sd">    - The `postpp_path` should point to valid configurations or scripts for applying post-processing methods.</span>
+<span class="sd">    - Thresholds provided in `threshold_path` should match the variables specified.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; forecasts = get_deterministic_forecast_ensemble(</span>
+<span class="sd">    ...     model_path=&quot;/data/models/&quot;,</span>
+<span class="sd">    ...     model_name=&quot;GFS&quot;,</span>
+<span class="sd">    ...     season=&quot;OND&quot;,</span>
+<span class="sd">    ...     variables=[&quot;pre&quot;, &quot;pet&quot;],</span>
+<span class="sd">    ...     postpp_path=&quot;/config/postprocessing/&quot;,</span>
+<span class="sd">    ...     threshold_path=&quot;/config/thresholds/&quot;</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; print(forecasts[&quot;mean&quot;])</span>
+<span class="sd">    [0.5, 0.2, 0.8]</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1">#model_name = &quot;MAM_2022_realization&quot;</span>
+
+	<span class="c1">#iyear = 2022</span>
+	<span class="c1">#ivar = &quot;dis&quot;</span>
+	<span class="c1">#iseason = &quot;MAM&quot;</span>
+	<span class="c1">#iseason = &quot;OND&quot;</span>
+
+	<span class="c1"># specified fields</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">drop_false_keys</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+	<span class="c1">#season = [&quot;MAM&quot;, &quot;OND&quot;]</span>
+	<span class="c1">#season = [&quot;MAM&quot;]</span>
+
+	<span class="c1">#model_path = &quot;/home/cuwalid/training/forecast/regional/outputs/&quot;#_13_grid.nc</span>
+
+	<span class="c1">#postpp_path = &quot;/home/cuwalid/training/forecast/regional/postpp/&quot;</span>
+
+	<span class="n">fname_ensamble</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_SSS_VVV_ensamble.nc&quot;</span>
+
+	<span class="c1"># filename path of threshold</span>
+	<span class="c1">#threshold_path = &quot;/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGba_sim0_MAM_extremes_quantiles.nc&quot;</span>
+	<span class="c1">#threshold_path = threshold_path+&quot;HAD_IMERGba_sim0_MAM_extremes_quantiles.nc&quot;</span>
+
+
+	<span class="c1">#fname_var = fname_var.replace(&quot;YYYY&quot;, str(iyear))</span>
+	<span class="k">for</span> <span class="n">iseason</span> <span class="ow">in</span> <span class="n">season</span><span class="p">:</span>
+		<span class="c1">#for ivar in [&quot;dis&quot;, &quot;twsc&quot;, &quot;tht&quot;, &quot;wrsi&quot;]:</span>
+		<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+			<span class="c1">## choose path depending on variable</span>
+			<span class="c1">#if (ivar == &quot;twsc&quot;) or (ivar == &quot;wrsi&quot;):</span>
+			<span class="c1">#	ifname = fname_ensamble.replace(&quot;VVV&quot;, ivar)</span>
+			<span class="c1">#else:</span>
+			<span class="c1">#	ifname = fname_ensamble.replace(&quot;_VVV&quot;, &quot;&quot;)</span>
+			
+			<span class="c1"># chose path depending on the season</span>
+			<span class="c1">#fname_threshold = threshold_path.copy()</span>
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">ifname_threshold</span> <span class="o">=</span> <span class="n">threshold_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_SSS&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">fname_ensamble</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_VVV&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">ifname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_SSS&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">ifname_threshold</span> <span class="o">=</span> <span class="n">threshold_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;SSS&quot;</span><span class="p">,</span> <span class="n">iseason</span><span class="p">)</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">fname_ensamble</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;VVV&quot;</span><span class="p">,</span> <span class="n">ivar</span><span class="p">)</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">ifname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;SSS&quot;</span><span class="p">,</span> <span class="n">iseason</span><span class="p">)</span>
+						
+			<span class="c1"># specify path for dataset</span>
+			<span class="c1">#netcdf_path = &quot;D:/HAD/output/HAD_IMERGb_sim_&quot;+ str(iyear)+&quot;_grid.nc&quot;</span>
+			
+			<span class="c1"># specify paht for threshold dataset</span>
+			<span class="c1">#nc_path_threshold = &quot;D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_&quot; + iseason + &quot;_quantiles.nc&quot;</span>
+			
+			<span class="c1"># get tercile forecasting</span>
+			<span class="n">tercile</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">get_tercile_probabilities_from_ensamble_netcdf</span><span class="p">(</span>
+					<span class="n">ifname</span><span class="p">,</span> <span class="n">ifname_threshold</span><span class="p">,</span>
+					<span class="n">var</span><span class="o">=</span><span class="n">ivar</span><span class="p">,</span> <span class="n">season</span><span class="o">=</span><span class="n">iseason</span><span class="p">)</span>
+			
+			<span class="c1"># save as NETCDF files</span>
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span><span class="n">ivar</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_probabilistic_tercile_forecast.nc&quot;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="c1">#fname_out = &quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGba_sim0_&quot;+ivar+&quot;_&quot;+iseason+&quot;_&quot;+str(iyear)+&quot;_probabilistic_tercile_forecast.nc&quot;</span>
+				<span class="c1">#fname = &quot;D:/HAD/postpp/netcdf/HAD_IMERGb_D2E_sim_&quot; + iseason + &quot;_probabilistic_tercile_forecast.nc&quot;</span>
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span><span class="n">ivar</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="n">iseason</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_probabilistic_tercile_forecast.nc&quot;</span>
+			
+			<span class="c1"># save probabilistic forecast as netcdf</span>
+			<span class="n">tercile</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">)</span></div>
+			
+
+<div class="viewcode-block" id="get_deterministic_forecast_ensamble"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.forecast.get_deterministic_forecast_ensamble">[docs]</a><span class="k">def</span> <span class="nf">get_deterministic_forecast_ensamble</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">,</span> <span class="n">threshold_path</span><span class="p">,</span> <span class="n">iyear</span><span class="o">=</span><span class="mi">2022</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;This function calculates the probabilistic forecasting using the tercile approach</span>
+<span class="sd">	from the ensamble dataset. It will create a file for each analised variable</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_path : str</span>
+<span class="sd">        Path to the directory containing the model data.</span>
+<span class="sd">    model_name : str</span>
+<span class="sd">        Name of the model to retrieve forecasts from.</span>
+<span class="sd">    season : str</span>
+<span class="sd">        Season for which the forecasts are required (e.g., &#39;OND&#39;, &#39;MAM&#39;).</span>
+<span class="sd">    variables : list of str</span>
+<span class="sd">        List of variable names to include in the forecast (e.g., [&#39;pet&#39;, &#39;pre&#39;]).</span>
+<span class="sd">    postpp_path : str</span>
+<span class="sd">        Path to the post-processing configuration or scripts.</span>
+<span class="sd">    threshold_path : str</span>
+<span class="sd">        Path to the file containing threshold values for the variables.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xarray</span>
+<span class="sd">        A dictionary containing processed deterministic forecasts for each ensemble member. The structure </span>
+<span class="sd">        typically includes ensemble members, their corresponding forecasts, and any additional post-processed </span>
+<span class="sd">        data.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - Ensure that the `model_path` contains the necessary data files for the specified `model_name`.</span>
+<span class="sd">    - The `postpp_path` should point to valid configurations or scripts for applying post-processing methods.</span>
+<span class="sd">    - Thresholds provided in `threshold_path` should match the variables specified.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; forecasts = get_deterministic_forecast_ensemble(</span>
+<span class="sd">    ...     model_path=&quot;/data/models/&quot;,</span>
+<span class="sd">    ...     model_name=&quot;GFS&quot;,</span>
+<span class="sd">    ...     season=&quot;OND&quot;,</span>
+<span class="sd">    ...     variables=[&quot;pre&quot;, &quot;pet&quot;],</span>
+<span class="sd">    ...     postpp_path=&quot;/config/postprocessing/&quot;,</span>
+<span class="sd">    ...     threshold_path=&quot;/config/thresholds/&quot;</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; print(forecasts[&quot;mean&quot;])</span>
+<span class="sd">    [0.5, 0.2, 0.8]</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1">#iyear = 2022</span>
+
+	<span class="c1">#season = [&quot;MAM&quot;, &quot;OND&quot;]</span>
+	<span class="c1">#ivar = &quot;dis&quot;</span>
+	<span class="c1">#iseason = &quot;MAM&quot;</span>
+	<span class="c1">#iseason = &quot;OND&quot;</span>
+
+	<span class="c1"># model name</span>
+	<span class="c1">#model_name = &quot;MAM_2022_realization&quot;</span>
+
+	<span class="c1"># list of season to calculate</span>
+	<span class="c1">#season = [&quot;MAM&quot;]</span>
+
+	<span class="c1"># specified fields</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">drop_false_keys</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+	<span class="c1"># model simulation results path</span>
+	<span class="c1">#model_path = &quot;/home/cuwalid/training/forecast/regional/outputs/&quot;#_13_grid.nc</span>
+
+	<span class="c1"># path of postprocessing</span>
+	<span class="c1">#postpp_path = &quot;/home/cuwalid/training/forecast/regional/postpp/&quot;</span>
+
+	<span class="c1"># get ensamble name</span>
+	<span class="n">fname_ensamble</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_SSS_VVV_ensamble.nc&quot;</span>
+
+	<span class="c1"># filename path of threshold</span>
+	<span class="c1">#threshold_path = &quot;/home/cuwalid/training/historical/regional/postpp/netcdf/HAD_IMERGba_sim0_SSS_mean.nc&quot;</span>
+
+	<span class="c1"># replace year</span>
+	<span class="c1">#postpp_path = postpp_path.replace(&quot;YYYY&quot;, str(iyear))</span>
+	<span class="c1">#threshold_path = threshold_path.replace(&quot;YYYY&quot;, str(iyear))</span>
+
+	<span class="k">for</span> <span class="n">iseason</span> <span class="ow">in</span> <span class="n">season</span><span class="p">:</span>
+		<span class="c1">#for ivar in [&quot;dis&quot;, &quot;twsc&quot;, &quot;tht&quot;, &quot;wrsi&quot;]:</span>
+		<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+			<span class="c1">## choose path depending on variable</span>
+			<span class="c1">#if (ivar == &quot;twsc&quot;) or (ivar == &quot;wrsi&quot;):</span>
+			<span class="c1">#	ifname = fname_ensamble.replace(&quot;VVV&quot;, ivar)</span>
+			<span class="c1">#else:</span>
+			<span class="c1">#	ifname = fname_ensamble.replace(&quot;_VVV&quot;, &quot;&quot;)</span>
+			
+			<span class="c1"># chose path depending on the season</span>
+			<span class="c1">#fname_threshold = threshold_path.copy()</span>
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">ifname_threshold</span> <span class="o">=</span> <span class="n">threshold_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_SSS&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">fname_ensamble</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_VVV&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">ifname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_SSS&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">ifname_threshold</span> <span class="o">=</span> <span class="n">threshold_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;SSS&quot;</span><span class="p">,</span> <span class="n">iseason</span><span class="p">)</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">fname_ensamble</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;VVV&quot;</span><span class="p">,</span> <span class="n">ivar</span><span class="p">)</span>
+				<span class="n">ifname</span> <span class="o">=</span> <span class="n">ifname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;SSS&quot;</span><span class="p">,</span> <span class="n">iseason</span><span class="p">)</span>
+						
+			<span class="c1"># get mean values</span>
+			<span class="n">mean</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">ivar</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s2">&quot;sim&quot;</span><span class="p">)</span>
+			<span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;average&quot;</span><span class="p">)</span>
+			<span class="c1">#print(mean)</span>
+			<span class="c1">#print(cuwalid.read_dataset(ifname_threshold, var_name=ivar))</span>
+			<span class="c1"># get anomaly</span>
+			<span class="n">anomaly</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">-</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname_threshold</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">ivar</span><span class="p">)</span>
+			<span class="n">anomaly</span> <span class="o">=</span> <span class="n">anomaly</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;anomaly&quot;</span><span class="p">)</span>
+			<span class="c1">#print(anomaly)</span>
+			<span class="c1"># get variability</span>
+			<span class="n">std</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">ivar</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s2">&quot;sim&quot;</span><span class="p">)</span>
+			<span class="n">std</span> <span class="o">=</span> <span class="n">std</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;Variability&quot;</span><span class="p">)</span>
+			<span class="c1">#print(std)</span>
+			<span class="c1"># store all variables in one netcdf file</span>
+			<span class="n">det_forecast</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">mean</span><span class="p">,</span> <span class="n">anomaly</span><span class="p">,</span> <span class="n">std</span><span class="p">])</span>
+			
+			<span class="c1"># save as NETCDF files</span>
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span><span class="n">ivar</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_deterministic_forecast.nc&quot;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span><span class="n">ivar</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="n">iseason</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_deterministic_forecast.nc&quot;</span>
+			
+			<span class="c1"># save probabilistic forecast as netcdf</span>
+			<span class="n">det_forecast</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

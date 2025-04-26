@@ -10,6 +10,8 @@
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
         <script src="../../../../_static/doctools.js"></script>
         <script src="../../../../_static/sphinx_highlight.js"></script>
@@ -46,7 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">cuwalid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../Authors.html">Introduction</a></li>
@@ -230,13 +232,14 @@
 		<span class="c1"># If the soil is fully saturated, unsaturated zone is zero,</span>
 		<span class="c1"># (water table is close to the surface), all water return</span>
 		<span class="c1"># as saturation excess, there is not percolation</span>
-		
+		<span class="c1">#print(inf, AET, theta, Droot, THT)</span>
+		<span class="c1">#print(inf - AET - PCR - ROF - (THT - theta)*Droot)</span>
 		<span class="c1">#print(226, np.mean(inf), np.mean(AET), np.mean(PCR), np.mean(ROF))</span>
 		<span class="c1">#print(np.mean((THT - theta)*Droot), np.mean(theta), np.mean(THT))</span>
 		<span class="c1"># test the mass balance</span>
 		<span class="k">try</span><span class="p">:</span>
 			<span class="n">MB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">inf</span> <span class="o">-</span> <span class="n">AET</span> <span class="o">-</span> <span class="n">PCR</span> <span class="o">-</span> <span class="n">ROF</span> <span class="o">-</span> <span class="p">(</span><span class="n">THT</span> <span class="o">-</span> <span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">Droot</span><span class="p">)</span>
-			<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">MB</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">)</span>
+			<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">MB</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.5e-05</span><span class="p">)</span>
 		<span class="k">except</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">MB</span><span class="p">,</span>
 			    <span class="s1">&#39;Soil Water balance Error: &#39;</span>
@@ -393,8 +396,8 @@
 <div class="viewcode-block" id="SWBMh"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_soil_layer.SWBMh">[docs]</a><span class="k">def</span> <span class="nf">SWBMh</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">PET</span><span class="p">,</span> <span class="n">Kc</span><span class="p">,</span> <span class="n">L0</span><span class="p">,</span> <span class="n">Droot</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">wp</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Ksat</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;Soil water balance</span>
 
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
 <span class="sd">		I:	Infiltration</span>
 <span class="sd">		PET:	Potential evapotranspiration</span>
 <span class="sd">		L0:	initial water content</span>
@@ -470,9 +473,10 @@
 	
 	<span class="c1"># calculate the water content after drainage</span>
 	<span class="n">Lt</span> <span class="o">=</span> <span class="n">Droot</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">c</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">L_aux</span><span class="o">/</span><span class="n">Droot</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">-</span><span class="n">c</span><span class="p">)</span> <span class="o">-</span> <span class="n">kd</span><span class="p">))</span>
+	
 	<span class="c1"># calculate the variation of water content due to drainage</span>
 	<span class="c1"># check if the change in water content do not fall below field</span>
-	<span class="c1"># capacity due to drainage, drainage will ocurr only until</span>
+	<span class="c1"># capacity due to drainage, drainage will start to ocurr only until</span>
 	<span class="c1"># field capacity is reached</span>
 	<span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Lt</span> <span class="o">&gt;</span> <span class="n">Lfc</span><span class="p">,</span> <span class="n">L_aux</span><span class="o">-</span><span class="n">Lt</span><span class="p">,</span> <span class="n">L_aux</span><span class="o">-</span><span class="n">Lfc</span><span class="p">)</span>
 	

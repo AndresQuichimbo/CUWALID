@@ -10,6 +10,8 @@
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
         <script src="../../../../_static/doctools.js"></script>
         <script src="../../../../_static/sphinx_highlight.js"></script>
@@ -46,7 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">cuwalid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../Authors.html">Introduction</a></li>
@@ -846,7 +848,7 @@
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">id_nodes</span> <span class="o">=</span> <span class="n">id_nodes</span></div>
 
-<div class="viewcode-block" id="extract_id_from_coords"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.extract_id_from_coords">[docs]</a><span class="k">def</span> <span class="nf">extract_id_from_coords</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="extract_id_from_coords"><a class="viewcode-back" href="../../../../cuwalid.dryp.components.html#cuwalid.dryp.components.DRYP_io.extract_id_from_coords">[docs]</a><span class="k">def</span> <span class="nf">extract_id_from_coords</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;East&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;North&quot;</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot; extract nodes from a csv file</span>
 <span class="sd">	this component uses the landlab funtion &quot;find_nearest_node</span>
 
@@ -880,8 +882,8 @@
 	<span class="k">for</span> <span class="n">ndis</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">npoints</span><span class="p">):</span>
 		<span class="c1"># find the nearest point in the grid</span>
 		<span class="n">point</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">find_nearest_node</span><span class="p">(</span>
-			<span class="p">[</span><span class="n">datapoints</span><span class="p">[</span><span class="s1">&#39;East&#39;</span><span class="p">][</span><span class="n">ndis</span><span class="p">],</span>
-			<span class="n">datapoints</span><span class="p">[</span><span class="s1">&#39;North&#39;</span><span class="p">][</span><span class="n">ndis</span><span class="p">]])</span>
+			<span class="p">[</span><span class="n">datapoints</span><span class="p">[</span><span class="n">xlabel</span><span class="p">][</span><span class="n">ndis</span><span class="p">],</span>
+			<span class="n">datapoints</span><span class="p">[</span><span class="n">ylabel</span><span class="p">][</span><span class="n">ndis</span><span class="p">]])</span>
 		<span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">status_at_node</span><span class="p">[</span><span class="n">point</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 			<span class="c1"># store id only if it is an active node</span>
 			<span class="n">idpoint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>

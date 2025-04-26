@@ -83,7 +83,7 @@ def test_soil_layer():
 	#plt.show()
 	
 	assert np.allclose(out, answer)
-	print('Soil Layer Drainage: Test runs successfully')
+	print('Soil Layer Drainage: Test completed successfully')
 
 if __name__ == '__main__':
 	test_soil_layer()

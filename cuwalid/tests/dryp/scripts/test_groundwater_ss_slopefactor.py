@@ -191,7 +191,7 @@ def run_DRYP_SS():
 	
 	#print(iter)
 	#print(head[act_nodes])
-	print('T Function Groundwater: Test runs successfully')
+	print('T Function Groundwater: Test completed successfully')
 	
 if __name__ == '__main__':
 	run_DRYP_SS()

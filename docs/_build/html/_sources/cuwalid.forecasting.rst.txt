@@ -1,5 +1,5 @@
-Forecasting Package
-===================
+cuwalid.forecasting package
+===========================
 
 Subpackages
 -----------
@@ -12,12 +12,26 @@ Subpackages
 Submodules
 ----------
 
-cuwalid.forecasting.Main\_forecast module
------------------------------------------
+cuwalid.forecasting.main\_hydro\_forecast module
+------------------------------------------------
 
-.. automodule:: cuwalid.forecasting.Main_forecast
+.. automodule:: cuwalid.forecasting.main_hydro_forecast
    :members:
    :undoc-members:
    :show-inheritance:
 
+cuwalid.forecasting.main\_impact\_forecast module
+-------------------------------------------------
 
+.. automodule:: cuwalid.forecasting.main_impact_forecast
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: cuwalid.forecasting
+   :members:
+   :undoc-members:
+   :show-inheritance:

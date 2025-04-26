@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.stopet.run_stoPET_inHPC &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cuwalid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Licences.html">Licences</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.stopet.run_stoPET_inHPC</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.stopet.run_stoPET_inHPC</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">cuwalid.stopet.stoPET_v2_4dryp</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># READ ME</span>
+<span class="c1"># In order to make the ensemble forecasts for running DRYP </span>
+<span class="c1"># here we produce the ensemble pools for the PET </span>
+<span class="c1"># to do this we need to run the model multiple times (Realizations) (e.g. 30)</span>
+<span class="c1"># at each run the model will produce 30 ensembles of PET. This will give</span>
+<span class="c1"># us 30 x 30 ensembles but each realization will be treated separately </span>
+<span class="c1"># to produce a weighted average of PET ensemble using the ICPAC tercile forecasts.</span>
+
+<span class="c1"># N. B. Use realization number that you want the final number of ensebles to be.</span>
+<span class="c1"># the number of ensebles should be DIVISIBLE by 3.</span>
+
+<span class="c1"># other changes can be made inside the run_stoPET() function </span>
+<div class="viewcode-block" id="run_stoPET_in_hpc"><a class="viewcode-back" href="../../../cuwalid.stopet.html#cuwalid.stopet.run_stoPET_inHPC.run_stoPET_in_hpc">[docs]</a><span class="k">def</span> <span class="nf">run_stoPET_in_hpc</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">runtype</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">seasonswitch</span><span class="p">,</span> <span class="n">startdate</span><span class="p">,</span> <span class="n">enddate</span><span class="p">,</span> 
+                 <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">latval_min</span><span class="p">,</span> <span class="n">latval_max</span><span class="p">,</span> <span class="n">lonval_min</span><span class="p">,</span> <span class="n">lonval_max</span><span class="p">,</span><span class="n">locname</span><span class="p">,</span> <span class="n">number_ensm</span><span class="p">,</span> 
+                 <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">,</span> <span class="n">slice_only</span><span class="p">,</span> <span class="n">season_name</span><span class="p">,</span> <span class="n">temp_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+
+    
+    <span class="c1">## ------ NO CHANGES BELLOW THIS -------------##</span>
+    <span class="c1"># here we need to duble the number of ensembles to generate more values for </span>
+    <span class="c1"># the pool.</span>
+    <span class="n">number_ensm</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">number_ensm</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Here we generate the random normal distribution values based on</span>
+    <span class="c1"># mean shif and the between (hpet and stopetv1) and we use the variabbility</span>
+    <span class="c1"># from hpet to produce values distribution is similar to the distribution of hpet (2000 - 2023)</span>
+    <span class="c1"># currently this only works for african continet only.</span>
+    <span class="c1"># set the randomnes always to be constant</span>
+<span class="c1">#    np.random.seed(21)  # Set the seed to 21</span>
+    
+    <span class="n">extra_noise</span> <span class="o">=</span> <span class="n">mean_shift_rand_values</span><span class="p">(</span><span class="n">datapath</span><span class="p">,</span> <span class="n">number_ensm</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">)</span>
+    
+    <span class="c1"># Once this mean shift are completed reset the radomness to None</span>
+<span class="c1">#    np.random.seed(None)  # Reset the seed (None ensures randomness)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Generating the mean shift completed!&#39;</span><span class="p">)</span>
+ 
+    <span class="c1"># ************************</span>
+    <span class="k">if</span> <span class="n">seasonswitch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">runtype</span> <span class="o">==</span> <span class="s1">&#39;single&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ens_num</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+                    <span class="n">stoPET_wrapper_singlepoint</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span>
+                            <span class="n">ens_num</span><span class="p">,</span><span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">)</span>  <span class="c1">#, seasonswitch, startdate, enddate</span>
+      <span class="k">elif</span> <span class="n">runtype</span> <span class="o">==</span> <span class="s1">&#39;regional&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ens_num</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+                    <span class="c1"># select the gererated mean shift for the ensemble</span>
+                    <span class="n">randnoise</span> <span class="o">=</span> <span class="n">extra_noise</span><span class="p">[:,</span> <span class="n">ens_num</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+                    <span class="n">stoPET_wrapper_regional</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval_min</span><span class="p">,</span> <span class="n">latval_max</span><span class="p">,</span> <span class="n">lonval_min</span><span class="p">,</span> <span class="n">lonval_max</span><span class="p">,</span>
+                            <span class="n">locname</span><span class="p">,</span> <span class="n">ens_num</span><span class="p">,</span> <span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">,</span> <span class="n">seasonswitch</span><span class="p">,</span> <span class="n">randnoise</span><span class="p">,</span> <span class="n">temp_path</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;runtype only takes single and regional ... please check!&#39;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">seasonswitch</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">runtype</span> <span class="o">==</span> <span class="s1">&#39;single&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ens_num</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+                    <span class="n">stoPET_wrapper_singlepoint</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval</span><span class="p">,</span> <span class="n">lonval</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span>
+                            <span class="n">ens_num</span><span class="p">,</span><span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">)</span>  <span class="c1">#, seasonswitch, startdate, enddate</span>
+      <span class="k">elif</span> <span class="n">runtype</span> <span class="o">==</span> <span class="s1">&#39;regional&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">slice_only</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+              <span class="k">for</span> <span class="n">ens_num</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">number_ensm</span><span class="p">):</span>
+                    <span class="c1"># select the gererated mean shift for the ensemble</span>
+                    <span class="n">randnoise</span> <span class="o">=</span> <span class="n">extra_noise</span><span class="p">[:,</span> <span class="n">ens_num</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span>
+                    <span class="n">stoPET_wrapper_regional</span><span class="p">(</span><span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">latval_min</span><span class="p">,</span> <span class="n">latval_max</span><span class="p">,</span> <span class="n">lonval_min</span><span class="p">,</span> <span class="n">lonval_max</span><span class="p">,</span>
+                            <span class="n">locname</span><span class="p">,</span> <span class="n">ens_num</span><span class="p">,</span> <span class="n">datapath</span><span class="p">,</span> <span class="n">outputpath</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">deltat</span><span class="p">,</span> <span class="n">udpi_pet</span><span class="p">,</span> <span class="n">seasonswitch</span><span class="p">,</span> <span class="n">randnoise</span><span class="p">,</span> <span class="n">temp_path</span><span class="p">)</span>
+              <span class="c1"># extract seasonal value and remove the annual files</span>
+              <span class="c1"># prepare the files for the DRYP model input format</span>
+              <span class="c1"># this only works for regional data as DRYP requires a catchment to run </span>
+              <span class="n">seasonal_pet_for_dryp</span><span class="p">(</span><span class="n">outputpath</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span> <span class="n">number_ensm</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">startdate</span><span class="p">,</span> <span class="n">enddate</span><span class="p">,</span> <span class="n">seasonswitch</span><span class="p">,</span> <span class="n">season_name</span><span class="p">,</span> <span class="n">temp_path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+              <span class="c1"># extract seasonal value and remove the annual files</span>
+              <span class="c1"># prepare the files for the DRYP model input format</span>
+              <span class="c1"># this only works for regional data as DRYP requires a catchment to run </span>
+              <span class="n">seasonal_pet_for_dryp</span><span class="p">(</span><span class="n">outputpath</span><span class="p">,</span> <span class="n">locname</span><span class="p">,</span> <span class="n">number_ensm</span><span class="p">,</span> <span class="n">tempAdj</span><span class="p">,</span> <span class="n">startyear</span><span class="p">,</span> <span class="n">endyear</span><span class="p">,</span> <span class="n">startdate</span><span class="p">,</span> <span class="n">enddate</span><span class="p">,</span> <span class="n">seasonswitch</span><span class="p">,</span> <span class="n">season_name</span><span class="p">,</span> <span class="n">temp_path</span><span class="p">)</span>
+            
+      <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;runtype only takes single and regional ... please check!&#39;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

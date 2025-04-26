@@ -58,8 +58,8 @@ def test_precipitation():
 	ini_date = datetime(2000,1,1,0,0,0)
 	end_date = datetime(2000,1,30,0,0,0)
 	data_reading = 3 # read precipitation monthly netcdf
-	reproject_pre = 1 # activate reprojection
-	interpolate_pre = 1 # activate interpolation
+	reproject_pre = True # activate reprojection
+	interpolate_pre = True # activate interpolation
 	
 	# specify grid parameters
 	grid_ncols = 12
@@ -128,7 +128,7 @@ def test_precipitation():
 	# evaluate the result
 	assert np.allclose(pre, answer)
 	
-	print('Precipitation step function: Test runs successfully')
+	print('Precipitation step function: Test completed successfully')
 
 	# remove the test dataset created
 	fname = "HAD_test_precipitation_01.nc"

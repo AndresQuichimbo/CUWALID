@@ -1,10 +1,13 @@
 """DRYP: post-processing tools."""
 import os
+import json
 import xarray as xr
 import numpy as np
 import pandas as pd
 import calendar
 import rasterio
+import cuwalid.tools.DRYP_rrtools as rrtools
+#from cuwalid.dryp.components.DRYP_json_reader import get_model_settings
 
 class grid_pptools(object):
 	"""
@@ -88,8 +91,247 @@ class grid_pptools(object):
 	
 
 		
-def get_output_filenames(fname):
+class get_output_filenames(object):
 	"""Function to get all names of model outputs"""
+	def __init__(self, path_input):
+		"""Fuction to generate names of model results. This names are
+		paths to the model outputs. The function will read the
+		configuration file and generate the names of the outputs.
+		path_grid : path to the model grid outputs
+		path_csv : path to the model csv outputs
+		path_raster : path to the model raster outputs
+		
+		Parameters:
+		----------
+		path_input : str
+			filename including path of the model "input_file"
+		
+		Returns:
+		--------
+		object containing strings as filenames
+				
+		Example:
+		--------
+		>>> import DRYP_pptools as pptools
+		>>> fnames = pptools.get_output_filenames(file_model_input)
+		>>> fnames.path_csv
+		>>> fnames.path_csv["avg"]
+		>>> fnames.path_csv["point"]["pre"]
+		>>> fnames.path_grid
+		>>> fnames.path_grid["grid"]
+		>>> fnames.path_grid["rp"]
+		>>> fnames.path_raster
+		>>> fnames.path_raster["wte"]
+		>>> fnames.path_raster["tht"]
+		>>> fnames.path_raster["Qo"]
+		>>> fnames.path_raster["Vpnd"]
+		>>> fnames.path_raster["thtrp"]
+		"""
+		# Output filenames
+		with open(path_input, 'r') as f:
+			dryp_config = json.load(f)
+
+		Mname = dryp_config["model_name"]
+		DirOutput = dryp_config["OUTPUT"]["path_output"]
+
+		fnameTS_grid = os.path.join(DirOutput, Mname + '_grid')
+		fnameTS_point = os.path.join(DirOutput, Mname + '_p_')
+		fnameTS_UZ = os.path.join(DirOutput, Mname + '_UZ_')
+		fnameTS_RZ = os.path.join(DirOutput, Mname + '_RZ_')
+		fnameTS_RZ_avg = os.path.join(DirOutput, Mname + '_RZ_avg')
+		fnameTS_avg = os.path.join(DirOutput, Mname + '_avg')
+
+		labels = ['pre', 'pet', 'dis', 'aet', 'inf', 'run', 'tht', 
+		   'rch', 'egw', 'wte', 'gdh', 'twsc']
+
+		point_csv_dict = {}
+		# get directories
+		for key in labels:
+			# name csv file names
+			point_csv_dict[key] = fnameTS_point + key + '.csv'
+
+		# get directories
+		# name csv file names
+		self.path_csv = {
+		"avg" : fnameTS_avg+".csv",
+		"point" : point_csv_dict,
+		"avgrp": fnameTS_avg+'rp'+".csv",
+		"avgpnd": fnameTS_avg+'pnd'+".csv",
+		}
+
+		# filename of the model grid outputs
+		self.path_grid = {
+		"grid" : fnameTS_grid+'.nc',
+		"rp" : fnameTS_grid+'rp.nc',
+		"pnd" : fnameTS_grid+'pnd.nc',
+		"vmax" : fnameTS_grid+'vmax.nc',
+		"rmax" : fnameTS_grid+'rmax.nc',
+		}
+
+		# name outputs for initial conditions
+		self.path_raster = {
+		"wte" : fnameTS_avg + '_wte_ini.asc',
+		"tht" : fnameTS_avg + '_tht_ini.asc',
+		"Qo" :fnameTS_avg + '_Q_ini.asc',
+		"thtrp" : fnameTS_avg + '_tht_rp_ini.asc',
+		"Vpnd" : fnameTS_avg + '_V_pnd_ini.asc',
+		}
+	pass
+
+def calculate_storage_from_files(fname, path_surface, path_Droot, path_theta_sat, path_Sy,
+								  path_bathymetry=None, path_bottom=None,
+								  start_time=None, end_time=None, fname_out=None,
+								  anomalies=True):
+	
+	"""Calculate storage for all components (surface, subsurface, groundwater)
+	from model simulations
+	
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	path_surface :	str
+		file name of raster surface
+	path_surface :	str
+		file name of raster surface
+	path_bathymetry :	str
+		file name of raster surface
+	path_bottom :	str
+		file name of raster surface
+	path_Droot :	str
+		file name of raster surface
+	path_theta_sat :	str
+		file name of raster surface
+	path_Sy :	str
+		file name of raster surface
+	start_time : str
+		starting date for the analysis, "DD-MM-YYYY".
+	end_time : str
+		final date for the analysis, "DD-MM-YYYY".
+
+	Returns
+	-------
+		xarray dataset containing all calculated values		
+		["str_uz", "str_sz", "str_lakes"]
+
+	"""
+
+
+	#fsurface, fbathymetry,
+	#fbottom, fDroot, ftheta_sat, fSy):
+	
+	#fsurface = fname_rasters[0]
+	#fbathymetry = fname_rasters[1]
+	##fbottom = fname_rasters[0]
+	#fDroot = fname_rasters[2]
+	#ftheta_sat = fname_rasters[3]
+	#fSy = fname_rasters[4]
+	
+	head = preprocesses_netCDF(fname, "wte", mean=True, deltat='M',
+			start_time=start_time, end_time=end_time
+			)
+	
+	theta = preprocesses_netCDF(fname, "tht", mean=True, deltat='M',
+			start_time=start_time, end_time=end_time
+			)
+		
+	surface = rrtools.open_raster(path_surface)[0]
+	if path_bathymetry is not None:
+		bathymetry = rrtools.open_raster(path_bathymetry)[0]
+	else:
+		bathymetry = surface.copy()
+	
+	if path_bottom is not None:
+		bottom = rrtools.open_raster(path_bottom)[0]
+	else:
+		bottom = np.zeros_like(surface)
+	
+	Droot = rrtools.open_raster(path_Droot)[0]
+	theta_sat = rrtools.open_raster(path_theta_sat)[0]
+	Sy = rrtools.open_raster(path_Sy)[0]
+	
+	str_sz, str_uz, str_lakes = calculate_storage(head, theta, surface,
+		bathymetry, bottom, Droot*0.001, theta_sat, Sy)
+	
+	if anomalies is True:
+		str_sz = str_sz-str_sz.mean(dim="time")
+		str_uz = str_uz-str_uz.mean(dim="time")
+		str_lakes = str_lakes-str_lakes.mean(dim="time")
+	
+	#save raster dataset as netcdf
+	# save files
+	if fname_out is None:
+		fname_out = fname
+	
+	# save dataset as netcdf
+	# unsaturated zone storage
+	fname_out_uz = fname_out.split('.')[0]+'_str_uz.nc'
+	save_xarray_dataset_as_netcdf(fname_out_uz, str_uz, ["str_uz"])
+
+	# saturated zone storage
+	fname_out_sz = fname_out.split('.')[0]+'_str_sz.nc'
+	save_xarray_dataset_as_netcdf(fname_out_sz, str_sz, ["str_sz"])
+
+	# lakes zone storage
+	fname_out_pnd = fname_out.split('.')[0]+'_str_lakes.nc'
+	save_xarray_dataset_as_netcdf(fname_out_pnd, str_lakes, ["str_lakes"])
+
+	#return str_sz, str_uz, str_lakes
+
+def calculate_storage(head, theta, surface, bathymetry, bottom, Droot, theta_sat,
+		  Sy):
+	"""Function to calculate storage for all components of the water balance
+	calculate the Total storage along the vertical profile of each model cell
+	
+	Parameters
+	----------
+	surface:	surface elevation [m]
+	bottom:		bottom elevation [m]
+	bathymetry:	surface elevation of lakes [m] 
+	Droot:		Rooting depth [mm]
+	theta:		Water content at time t [-]
+	head:		water table [m]
+	theta_sat:	Saturated water content [-]
+	Sy:			Specific yield [-]
+	
+	Returns
+	-------
+	total:		Volume of water stored in the saturated zone [mm]
+	"""
+	
+	# water stored in lakes
+	str_lakes = head - bathymetry
+	#str_lakes[str_lakes < 0.0] = 0.0
+	str_lakes = str_lakes.where(str_lakes < 0.0, 0.0)
+	str_lakes = str_lakes.rename("str_lakes")
+
+	# estimate saturated-unsaturated storage
+	z_root = bathymetry - Droot
+	str_usz = (head - str_lakes - z_root)
+	#str_usz[str_usz < 0] = 0.0
+	str_usz = str_usz.where(str_usz < 0.0, 0.0)
+	
+	# estimate storage water available in the unsaturated zone
+	# estimate rooting depth storage
+	str_uz = Droot - str_usz
+	str_uz = str_uz*theta
+	str_uz = str_uz.rename("str_uz")
+	
+	# estimate saturated storage
+	str_sz = head - str_usz - str_lakes - bottom
+	str_sz = str_sz*Sy + str_usz*theta_sat
+	str_sz = str_sz.rename("str_sz")
+	# total storage
+	# total = storage in saturated zone
+	# 		+ storage in unsaturated zone + storage in lakes
+	#total = (str_lakes
+	#		+ str_uz*theta
+	#		+ str_usz*theta_sat
+	#		+ str_sz*Sy
+	#		)
+	
+	return str_sz, str_uz, str_lakes
+
 
 def calculate_anomalies_from_netCDF(fname, field='pre', fname_out=None,
 			       deltat='Y', start_time=None, end_time=None):
@@ -328,6 +570,76 @@ def calculate_AI_from_netCDF(fname_pre, fname_pet, fname_out=None,
 		fname_out = fname_pre.split('.')[0]+'_ai.nc'
 	save_xarray_dataset_as_netcdf(fname_out, dataset, ["ai"])
 
+def calculate_saturation_from_netCDF(fname, path_wp, path_sat, fname_out=None,
+									 var_name="tht",):
+	"""This funtion calculate the saturation from water content from
+	the dryp model outputs
+	 
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	path_wp :	str
+		file name of the wilting point raster dataset
+	path_sat :	str
+		file name of the soil moisture at saturation as raster
+	var_name :	str
+		model variables to process
+	deltat : str
+		time interval for temporal aggregation.
+	
+	Returns
+	-------
+	xarray :
+		2D time series mean or sum of tne dataset
+
+	Example:
+	---------
+	>>> import sys
+	>>> import os
+	>>> import geopandas as gpd
+
+	>>> import cuwalid.tools.DRYP_pptools as pptools
+
+	>>>	path_Sy = "path_to_file"
+	>>>	path_surface = "path_to_file"
+	>>>	path_bathymetry = "path_to_file"
+	>>>	path_theta_sat = "path_to_file"
+	>>>	path_theta_wp = "path_to_file"
+	>>>	path_Droot = "path_to_file"
+
+
+	>>>	fname = "path_output_netcdf_file"
+	>>>	shapefile_path = "path_output_netcdf_file"
+
+	>>>	region = gpd.read_file(shapefile_path)
+
+	>>>	pptools.extract_dataset(fname, region, clip_region=False,
+	>>>		dataPP=None, maskPP=None, bands=["pre", "aet", "rch", "dis"], save=True)
+
+	>>>	pptools.calculate_saturation_from_netCDF(fname, path_theta_wp, path_theta_sat,
+	>>>			fname_out=None, var_name="tht")
+
+	"""
+	
+	# change variable name to the new dataset
+	dataset = read_dataset(fname, var_name=var_name)
+
+	# read raster dataset -  wilting point
+	theta_wp = rrtools.open_raster(path_wp)[0]
+	theta_wp = np.array(np.flip(theta_wp, 0), dtype=float)
+
+	# read raster dataset -  wilting point
+	theta_sat = rrtools.open_raster(path_sat)[0]
+	theta_sat = np.array(np.flip(theta_sat, 0), dtype=float)
+
+	# calculate saturation
+	data = calculate_saturation(dataset, theta_wp, theta_sat)
+	# save files
+	if fname_out is None:
+		fname_out = fname
+		fname_out = fname_out.split('.')[0]+'_tht_sat.nc'
+	save_xarray_dataset_as_netcdf(fname_out, data, ["tht"])
 
 def calculate_seasonal_average_from_netCDF(fname, var_name='pre', season="OND",
 			       fname_out=None, mean=False,
@@ -373,6 +685,116 @@ def calculate_seasonal_average_from_netCDF(fname, var_name='pre', season="OND",
 		fname_out = fname_out.split('.')[0]+'_'+season+'.nc'
 	save_xarray_dataset_as_netcdf(fname_out, data, [var_name])
 
+def extract_dataset(netcdf_path, region, clip_region=True,
+	dataPP=None, maskPP=None, fname_out=None, save=False, bands=["pre"]):
+	"""This function clip netcdf files by region, projection should
+	match WGS84, otherwise it will raise an error.
+	
+	Parameters
+	----------
+	netcdf_path : str
+		list of paths
+	region : geodataframe
+		name of variable to process
+	region_clip: bool
+		make values outside the region NaN, default true
+	save: bool
+		activate save option, default true
+	fname_out : str
+		path of outputs
+
+	Returns
+	-------
+	dataset : xarray dataset
+		concatenated datasets
+	
+	Example:
+	--------
+	>>> import geopandas as gpd
+	>>> import cuwalid.tools.DRYP_pptools as pptools
+
+	>>>	fname = "path_output_netcdf_file"
+	>>>	shapefile_path = "path_output_netcdf_file"
+
+	>>>	region = gpd.read_file(shapefile_path)
+
+	>>>	pptools.extract_dataset(fname, region, clip_region=False,
+	>>>		dataPP=None, maskPP=None, bands=["pre", "aet", "rch", "dis"], save=True)
+
+	"""
+	# SPECIFY projection
+	# define new projection (output) #!with.PYPROJ.library
+	newPP, oldPP = maskPP, dataPP
+
+	if dataPP is None:
+		oldPP = rasterio.crs.CRS.from_string(
+		"+proj=laea +lat_0=5 +lon_0=20 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+		)
+	
+	if maskPP is None:
+		# define current projection (input)
+		newPP = 'EPSG:4326'
+		
+	# get bounding boxfrom shapefile
+	bbox = region.total_bounds
+	
+	# create new dataset by extracting the specified area/extend
+	first_read = True
+	for ivar in bands:
+		# Open dataset of model outputs
+		data = read_dataset(netcdf_path, var_name=ivar)
+		
+		# reproject estimated probabilistic forecasting
+		data = reproject_dataset(data, oldPP, newPP)
+		
+		# clip area
+		if clip_region is True:
+			region_ds = clip_dataset_by_region(data, region)
+		else:
+			region_ds = data.sel(
+				lat=slice(bbox[3], bbox[1]),
+				lon=slice(bbox[0], bbox[2])
+				)
+		
+		if first_read is True:
+			dataset = region_ds.copy()
+			first_read = False
+		else:
+			dataset = xr.merge([dataset, region_ds])
+	
+	# save season as netcdf file
+	if save is True:
+		# save files
+		if fname_out is None:
+			fname_out = netcdf_path
+			fname_out = fname_out.split('.')[0]+'_'+'clipped.nc'
+
+		save_xarray_dataset_as_netcdf(fname_out, dataset, bands)
+	else:
+		return dataset
+
+def clip_dataset_by_region(ds, region):
+	"""This function clip netcdf files by region, projection should
+	match WGS84, otherwise it will raise an error.
+	
+	Parameters
+	----------
+	dataset : data xarray
+		dataset
+	region : geodataframe
+		name of variable to process
+
+	Returns
+	-------
+	dataset : xarray dataset
+	
+	"""
+	# Clip the data model
+	ds_clipped = ds.rio.clip(region.geometry.values, region.crs)
+
+	return ds_clipped
+	
+
 def calculate_aridity_index(dataset_pre, dataset_pet):
 	"""Calculate the aridity index based on the UNEP:
 	UNEP. World atlas of desertification - Second Edition. vol. SECOND 
@@ -391,6 +813,29 @@ def calculate_aridity_index(dataset_pre, dataset_pet):
 		Aridity index
 	"""
 	return dataset_pre/dataset_pet
+
+def calculate_saturation(dataset, theta_wp, theta_sat):
+	"""Calculate the saturation from soil water content, normalization
+	of water content in relation to saturation
+	
+	Parameters
+	----------
+	dataset : Dataxarray
+		soil moisture dataset
+	theta_wp : numpy array
+		soil moisture at wilting point
+	theta_sat : numpy array
+		soil moisture at saturation point (porosity)
+
+	Returns
+	-------
+	DataArray
+		saturation
+	"""
+	# Calculate saturation
+	saturation = (dataset - theta_wp)/theta_sat
+
+	return saturation
 
 def preprocesses_netCDF(fname, var_name, mean=True, deltat='Y',
 			start_time=None, end_time=None):
@@ -742,6 +1187,36 @@ def get_dataframe_zone_from_netcdf(fname, fname_mask, field=['twsc'], regionid=N
 	return df
 
 def get_point_from_dataset(dataset, x_coord, y_coord, field):
+	"""Get time series of a point from a netCDF
+	
+	Parameters:
+	-----------
+	dataset : dataset
+		dataset from which the mean will be extracted
+	x_coord : list
+		x coordinates of the points
+	y_coord : list
+		y coordinates of the points
+	field : list
+		name of the field to get values (default: dis)
+
+	
+	Returns:
+	--------
+		dataframe
+		containing the time series of the points
+
+	Example:
+	--------
+	>>> import cuwalid.tools.DRYP_pptools as pptools
+	>>> import pandas as pd
+	>>> import xarray as xr
+	>>> import os
+	>>> import numpy as np
+	>>> import rasterio
+
+	
+	"""
 	# read model dataset
 	data = dataset[field]
 	time = dataset['time']
@@ -826,3 +1301,39 @@ def get_ensamble_from_netcdf_list(fname_list, var_name, mean=True, save=True,
 	else:
 		return dataset
 
+def reproject_dataset(data, oldPP, newPP):
+	"""Transform projection system
+	oldPP and newPP have to be defined first
+	
+	Parameters:
+	-----------
+	Data:	Dataset
+		dataset to be reprojected
+	oldPP:	Projection
+		projection of the dataset
+	newPP:	Projection
+		projection of the new dataset
+
+	Returns:
+	--------
+	Data:	Dataset
+		reprojected dataset
+		
+	Example:
+	>>> import cuwalid.tools.DRYP_pptools as pptools
+	>>> import pandas as pd
+	>>> import xarray as xr
+	>>> import os
+	
+	"""
+	# check if projection is in ERSG format
+	if len(newPP) > 11:
+		newPP = rasterio.crs.CRS.from_string(newPP)
+	
+	# reprojec dataset
+	data = data.rename({'lon': 'x', 'lat': 'y'})  # new method
+	data = data.rio.write_crs(oldPP) # write crs
+	data = data.rio.reproject(newPP) # reproject the file
+	data = data.rename({'x': 'lon', 'y': 'lat'})  # new method
+	
+	return data

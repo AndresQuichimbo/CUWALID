@@ -56,7 +56,7 @@ def test_save_variables():
     out = np.array(df.iloc[0].values[1:])
     
     assert np.allclose(list(out), list(answer))
-    print('Save csv files: Test runs successfully')
+    print('Save csv files: Test completed successfully')
 
     # remove the test dataset created
     os.remove(fname+'.csv') if os.path.exists(fname+'.csv') else None

@@ -88,7 +88,7 @@ def test_groundwater():
 	out = head[act_nodes]
 	
 	assert np.allclose(out, answer)
-	print('Groundwater: Test runs successfully')
+	print('Groundwater: Test completed successfully')
 	
 if __name__ == '__main__':
 	test_groundwater()

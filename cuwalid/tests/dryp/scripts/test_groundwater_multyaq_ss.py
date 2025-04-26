@@ -189,7 +189,7 @@ def run_DRYP_SS():
 	#print(iter)
 	#print(head[act_nodes])
 
-	print('SS Multi-aquifer:Test runs successfully')
+	print('SS Multi-aquifer:Test completed successfully')
 	
 	
 if __name__ == '__main__':

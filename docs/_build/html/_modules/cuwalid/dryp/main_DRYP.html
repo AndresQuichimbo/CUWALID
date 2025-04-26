@@ -10,6 +10,8 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
@@ -46,7 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cuwalid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
@@ -141,7 +143,8 @@
 <span class="kn">from</span> <span class="nn">cuwalid.dryp.components.DRYP_store_functions</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">GlobalGridVar</span><span class="p">,</span>
 	<span class="n">save_map_to_rastergrid</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">cuwalid.dryp.components.DRYP_ponds</span> <span class="kn">import</span> <span class="n">ponds</span>											
+<span class="kn">from</span> <span class="nn">cuwalid.dryp.components.DRYP_ponds</span> <span class="kn">import</span> <span class="n">ponds</span>
+<span class="kn">from</span> <span class="nn">cuwalid.dryp.components.DRYP_dams</span> <span class="kn">import</span> <span class="n">water_management</span>										
 
 <span class="c1"># ---------------------------------------------------------------------</span>
 <span class="c1"># Version and algorithm information</span>
@@ -202,6 +205,10 @@
 	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading water body parameters&quot;</span><span class="p">)</span>
 	<span class="n">water_bodies</span> <span class="o">=</span> <span class="n">water_body_parameters</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
 				<span class="n">data_in</span><span class="o">.</span><span class="n">fname_water_bodies</span><span class="p">)</span>
+	
+	<span class="c1"># read water bodies management fluxes</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading water body management&quot;</span><span class="p">)</span>
+	<span class="n">water_bodies_management</span> <span class="o">=</span> <span class="n">water_management</span><span class="p">()</span>
 
 	<span class="c1"># setting location and model results</span>
 	<span class="c1">#env_state.set_output_dir(data_in)</span>
@@ -345,6 +352,16 @@
 			<span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
 			<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
 			<span class="p">)</span>
+
+	<span class="c1"># read water bodies flow boundary condition units should be in m3 s-1</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====== &gt; Reading reservoirs flux boundary conditions&quot;</span><span class="p">)</span>
+	<span class="n">fluxWB</span> <span class="o">=</span> <span class="n">read_temporal_dataset</span><span class="p">(</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">fname_TSWB</span><span class="p">,</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;fluxWB&#39;</span><span class="p">],</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
+			<span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
+			<span class="p">)</span>
 	
 	<span class="c1"># add variable saturated component</span>
 	<span class="n">Qusz</span> <span class="o">=</span> <span class="n">recharge_routing</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
@@ -409,6 +426,17 @@
 		<span class="c1">#		env_state.grid,</span>
 		<span class="c1">#		data_in.filename_OF_points</span>
 		<span class="c1">#		)</span>
+	
+	<span class="k">if</span> <span class="n">fluxWB</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="c1">#print(data_in.fname_aquifer.fname_sz_bc_flux)</span>
+		<span class="k">if</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;fluxWB&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="n">idFluxWB</span><span class="p">,</span> <span class="n">idFluxWB_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span>
+				<span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_water_bodies</span><span class="o">.</span><span class="n">fname_wb_bc_flux</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">data_in</span><span class="o">.</span><span class="n">data_reading</span><span class="p">[</span><span class="s1">&#39;fluxWB&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="n">idFluxWBout</span><span class="p">,</span> <span class="n">idFluxWBout_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span>
+				<span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_water_bodies</span><span class="o">.</span><span class="n">fname_wb_bc_flux</span><span class="p">,</span>
+				<span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;East_out&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;North_out&quot;</span>
+				<span class="p">)</span>
 	
 	<span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>	
 	<span class="n">t_eto</span> <span class="o">=</span> <span class="mi">0</span>	
@@ -480,9 +508,9 @@
 	<span class="n">AOF_threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">topo</span><span class="o">.</span><span class="n">grid_size</span><span class="p">)</span>
 	
 	<span class="c1"># Output variables and location</span>
-	<span class="n">idOF</span><span class="p">,</span> <span class="n">idOF_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_DISpoints</span><span class="p">)</span>	<span class="c1"># Discharge points</span>
-	<span class="n">idUZ</span><span class="p">,</span> <span class="n">idUZ_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_SMDpoints</span><span class="p">)</span>	<span class="c1"># Soil moisture points</span>
-	<span class="n">idGW</span><span class="p">,</span> <span class="n">idGW_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_GWpoints</span><span class="p">)</span>
+	<span class="n">idOF</span><span class="p">,</span> <span class="n">idOF_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_DISpoints</span><span class="p">)</span>	<span class="c1"># Discharge monitoring points</span>
+	<span class="n">idUZ</span><span class="p">,</span> <span class="n">idUZ_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_SMDpoints</span><span class="p">)</span>	<span class="c1"># Soil moisture monitoring points</span>
+	<span class="n">idGW</span><span class="p">,</span> <span class="n">idGW_act</span> <span class="o">=</span> <span class="n">extract_id_from_coords</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">fname_GWpoints</span><span class="p">)</span> <span class="c1"># groundwater monitoring points</span>
 	
 	<span class="c1"># initialize array to store model results</span>
 	<span class="n">point_var</span> <span class="o">=</span> <span class="n">GlobalGridVar</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
@@ -491,10 +519,14 @@
 	<span class="n">grid_var</span> <span class="o">=</span> <span class="n">GlobalGridVar</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
 			   <span class="n">data_in</span><span class="o">.</span><span class="n">dt_results</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">save_netcdf</span><span class="p">,</span>
 			   <span class="n">data_in</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">var_grid</span><span class="p">)</span>
-	<span class="n">grid_max</span> <span class="o">=</span> <span class="n">GlobalGridVar</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
+	<span class="n">grid_rmax</span> <span class="o">=</span> <span class="n">GlobalGridVar</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
 			   <span class="n">data_in</span><span class="o">.</span><span class="n">dt_results</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">save_netcdf</span><span class="p">,</span>
 			   <span class="n">data_in</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">var_grid</span><span class="p">,</span>
-			   <span class="n">store_max</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">store_max</span><span class="p">,</span> <span class="n">nstep_day</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">nstep_day</span><span class="p">)</span>
+			   <span class="n">store_max</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">store_rmax</span><span class="p">,</span> <span class="n">nstep_day</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">nstep_day</span><span class="p">)</span>
+	<span class="n">grid_vmax</span> <span class="o">=</span> <span class="n">GlobalGridVar</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
+			   <span class="n">data_in</span><span class="o">.</span><span class="n">dt_results</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">save_netcdf</span><span class="p">,</span>
+			   <span class="n">data_in</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">var_grid</span><span class="p">,</span>
+			   <span class="n">store_max</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">store_vmax</span><span class="p">,</span> <span class="n">nstep_day</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">nstep_day</span><span class="p">)</span>
 	<span class="n">total_var</span> <span class="o">=</span> <span class="n">GlobalGridVar</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">ini_date</span><span class="p">,</span>
 			   <span class="n">data_in</span><span class="o">.</span><span class="n">dt_results</span><span class="p">,</span> <span class="n">data_in</span><span class="o">.</span><span class="n">save_results</span><span class="p">,</span>
 			   <span class="n">data_in</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">var_avg</span><span class="p">)</span>
@@ -664,6 +696,26 @@
 						<span class="n">theta</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span>
 						<span class="p">)</span>
 				
+				<span class="c1"># calculate maximum water available to extract from water bodies</span>
+				<span class="c1"># select row from dataframe and add to the excess component</span>
+				<span class="c1"># units of abstractions should be in flux/volume (m3)</span>
+				<span class="k">if</span> <span class="n">fluxWB</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="c1"># read datasets				</span>
+					<span class="n">maximum_flux_wb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fluxWB</span><span class="o">.</span><span class="n">get_point_dataset_one_step</span><span class="p">(</span><span class="n">t_abs</span><span class="p">))</span>
+					
+					<span class="c1"># change units from m3 to m</span>
+					<span class="n">maximum_flux_wb</span> <span class="o">=</span> <span class="n">maximum_flux_wb</span><span class="o">/</span><span class="n">topo</span><span class="o">.</span><span class="n">area_cells</span>
+
+					<span class="c1"># calculate storage of water bodies (meters)</span>
+					<span class="c1"># storage can not be negative</span>
+					<span class="n">storage_wb</span> <span class="o">=</span> <span class="n">head</span><span class="p">[</span><span class="n">idFluxWB</span><span class="p">]</span> <span class="o">-</span> <span class="n">topo</span><span class="o">.</span><span class="n">bathymetry</span><span class="p">[</span><span class="n">idFluxWB</span><span class="p">]</span>
+					<span class="n">storage_wb</span><span class="p">[</span><span class="n">storage_wb</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+					<span class="c1"># calculate maximum abstractions</span>
+					<span class="n">maximum_flux_wb</span> <span class="o">=</span> <span class="n">water_bodies_management</span><span class="o">.</span><span class="n">get_abstractions</span><span class="p">(</span>
+						<span class="n">storage_wb</span><span class="p">,</span> <span class="n">maximum_flux_wb</span><span class="p">)</span>
+					<span class="c1">#print(maximum_flux_wb)</span>
+				
 				<span class="c1"># ratio of Etp, units of procesing are in meters</span>
 				<span class="n">ratio_etp</span> <span class="o">=</span> <span class="n">head</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span> <span class="o">-</span> <span class="n">z_extintion</span>
 				<span class="n">ratio_etp</span><span class="p">[</span><span class="n">ratio_etp</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -686,7 +738,7 @@
 				<span class="c1"># potential evapotranspiration for unsaturated zone</span>
 				<span class="c1">#PETuz = PETh - PETsz</span>
 				<span class="n">PETuz</span> <span class="o">=</span> <span class="n">PETh</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="c1"># - PETsz</span>
-				<span class="c1">#print(PETuz)</span>
+				<span class="c1">#print(INF)</span>
 				<span class="c1"># SOIL WATER BALANCE: Mestimate soil water balance-------</span>
 				<span class="c1"># Units for fluxes are in mm, units of soil moisture [--]</span>
 				<span class="n">AET</span><span class="p">,</span> <span class="n">PCR</span><span class="p">,</span> <span class="n">theta</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span> <span class="n">ROF</span><span class="o">=</span> <span class="n">swb</span><span class="o">.</span><span class="n">run_swbm_one_step</span><span class="p">(</span>
@@ -750,14 +802,20 @@
 				<span class="n">runoff</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span> <span class="o">=</span> <span class="n">EXS</span> <span class="o">+</span> <span class="n">ROF</span> <span class="o">+</span> <span class="n">baseflow</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">]</span><span class="o">*</span><span class="mf">1000.0</span>
 				
 				<span class="c1"># add data abstractions/sink/source points</span>
-				<span class="c1"># all units should be in m3 (ubic meters)</span>
+				<span class="c1"># all abstractions units should be in m3 (cubic meters)</span>
 				<span class="c1"># positive values indicate flow in the river/pond</span>
 				<span class="c1"># negative values indicate flow out of the river/ponds</span>
 				<span class="k">if</span> <span class="n">fluxOF</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>					
 					<span class="c1"># select row from dataframe and add to the excess component</span>
-					<span class="c1"># change units of flow rate to depth</span>
+					<span class="c1"># change units of flow rate to depth (m3 to m)</span>
 					<span class="n">runoff</span><span class="p">[</span><span class="n">idFluxOF</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fluxOF</span><span class="o">.</span><span class="n">get_point_dataset_one_step</span><span class="p">(</span><span class="n">t_abs</span><span class="p">)</span><span class="o">*</span><span class="mf">1000.00</span><span class="o">/</span><span class="n">topo</span><span class="o">.</span><span class="n">area_cells</span>
 				
+				<span class="c1"># add flux (abstractions) from water bodies to streams	</span>
+				<span class="k">if</span> <span class="n">fluxWB</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>					
+					<span class="c1"># select row from dataframe and add to the excess component</span>
+					<span class="c1"># units should be in m</span>
+					<span class="n">runoff</span><span class="p">[</span><span class="n">idFluxWBout</span><span class="p">]</span> <span class="o">+=</span> <span class="n">maximum_flux_wb</span>
+					<span class="c1">#print(maximum_flux_wb)</span>
 				<span class="c1"># RUNOFF: estimate runoff---------------------------------------</span>
 				<span class="c1"># all variables with containing length must be changed to meters [m]</span>
 				<span class="n">ro</span><span class="o">.</span><span class="n">run_runoff_one_step</span><span class="p">(</span>
@@ -807,6 +865,12 @@
 
 					<span class="c1"># update total recharge, umits [mm/dt]</span>
 					<span class="n">recharge</span><span class="p">[</span><span class="n">riv_nodes</span><span class="p">]</span> <span class="o">+=</span> <span class="n">rPCR</span>
+
+					<span class="c1"># update recharge with abstractions for water bodies</span>
+					<span class="c1"># add flux (abstractions) from water bodies to streams	</span>
+					<span class="k">if</span> <span class="n">fluxWB</span><span class="o">.</span><span class="n">data_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>					
+						<span class="c1"># select row from dataframe and add to the excess component</span>
+						<span class="n">recharge</span><span class="p">[</span><span class="n">idFluxWB</span><span class="p">]</span> <span class="o">+=</span> <span class="o">-</span><span class="n">maximum_flux_wb</span>
 				
 				<span class="c1"># correct hill slop fluxes to grid cells</span>
 				<span class="c1">#swb.pcl_dt *= env_state.hill_factor</span>
@@ -932,9 +996,18 @@
 					<span class="p">})</span>
 				
 				<span class="c1"># store maximum values</span>
-				<span class="k">if</span> <span class="n">grid_max</span><span class="o">.</span><span class="n">store_max</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">grid_vmax</span><span class="o">.</span><span class="n">store_max</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+					<span class="n">grid_vmax</span><span class="o">.</span><span class="n">store_variables</span><span class="p">(</span><span class="n">PRE</span><span class="o">.</span><span class="n">date_sim_dt</span><span class="p">,</span> <span class="n">t_pre</span><span class="p">,</span>
+			      			<span class="p">{</span><span class="s2">&quot;pre&quot;</span><span class="p">:</span> <span class="n">rain</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span> <span class="s2">&quot;pet&quot;</span><span class="p">:</span> <span class="n">PET</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span>
+	   						<span class="s2">&quot;aet&quot;</span><span class="p">:</span> <span class="n">AET</span><span class="p">,</span> <span class="s2">&quot;inf&quot;</span><span class="p">:</span> <span class="n">INF</span><span class="p">,</span> <span class="s2">&quot;run&quot;</span><span class="p">:</span> <span class="n">runoff</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span>
+							<span class="s2">&quot;rch&quot;</span><span class="p">:</span> <span class="n">recharge</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span> <span class="s2">&quot;egw&quot;</span><span class="p">:</span> <span class="n">PETsz</span><span class="p">,</span>
+							<span class="s2">&quot;gdh&quot;</span><span class="p">:</span> <span class="n">baseflow</span><span class="p">[</span><span class="n">act_nodes</span><span class="p">],</span>
+							<span class="p">}</span>
+							<span class="p">)</span>
+				<span class="c1"># store maximum values at streams locations</span>
+				<span class="k">if</span> <span class="n">grid_rmax</span><span class="o">.</span><span class="n">store_max</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
 					<span class="k">if</span> <span class="n">riv_nodes</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-						<span class="n">grid_max</span><span class="o">.</span><span class="n">store_variables</span><span class="p">(</span><span class="n">PRE</span><span class="o">.</span><span class="n">date_sim_dt</span><span class="p">,</span> <span class="n">t_pre</span><span class="p">,</span>
+						<span class="n">grid_rmax</span><span class="o">.</span><span class="n">store_variables</span><span class="p">(</span><span class="n">PRE</span><span class="o">.</span><span class="n">date_sim_dt</span><span class="p">,</span> <span class="n">t_pre</span><span class="p">,</span>
 			      			<span class="p">{</span><span class="s2">&quot;dis&quot;</span><span class="p">:</span> <span class="n">ro</span><span class="o">.</span><span class="n">discharge</span><span class="p">[</span><span class="n">riv_nodes</span><span class="p">]}</span>
 							<span class="p">)</span>
 
@@ -1054,13 +1127,21 @@
 	<span class="n">grid_var</span><span class="o">.</span><span class="n">save_netCDF_var</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">fnameTS_grid</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span><span class="p">,</span>
 			   <span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span> <span class="n">act_nodes</span><span class="p">,</span><span class="c1"># var_name</span>
 			   <span class="p">)</span>
-	<span class="c1"># save grided model result datasets </span>
-	<span class="k">if</span> <span class="n">grid_max</span><span class="o">.</span><span class="n">store_max</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&lt;==== saving model temporal maximum values outputs&quot;</span><span class="p">)</span>
+	<span class="c1"># save grided model maximum values at streams - result datasets </span>
+	<span class="k">if</span> <span class="n">grid_rmax</span><span class="o">.</span><span class="n">store_max</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&lt;==== saving model temporal maximum values at streams outputs&quot;</span><span class="p">)</span>
 		<span class="k">if</span> <span class="n">riv_nodes</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-			<span class="n">grid_max</span><span class="o">.</span><span class="n">save_netCDF_var</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">fnameTS_grid</span><span class="o">+</span><span class="s1">&#39;max.nc&#39;</span><span class="p">,</span>
+			<span class="n">grid_rmax</span><span class="o">.</span><span class="n">save_netCDF_var</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">fnameTS_grid</span><span class="o">+</span><span class="s1">&#39;rmax.nc&#39;</span><span class="p">,</span>
 			   <span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span> <span class="n">riv_nodes</span><span class="p">,</span><span class="c1"># var_name</span>
 			   <span class="p">)</span>
+	
+	<span class="c1"># save maximum grided model result datasets </span>
+	<span class="k">if</span> <span class="n">grid_vmax</span><span class="o">.</span><span class="n">store_max</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&lt;==== saving model temporal maximum values outputs&quot;</span><span class="p">)</span>
+		<span class="n">grid_vmax</span><span class="o">.</span><span class="n">save_netCDF_var</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">fnameTS_grid</span><span class="o">+</span><span class="s1">&#39;vmax.nc&#39;</span><span class="p">,</span>
+			   <span class="n">topo</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span> <span class="n">topo</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span> <span class="n">act_nodes</span><span class="p">,</span><span class="c1"># var_name</span>
+			   <span class="p">)</span>
+	
 
 	<span class="c1"># SAVE VARIABLES FROM THE RIPARIAN ZONE</span>
 	<span class="c1"># save average riparian zone variables in a csv file</span>

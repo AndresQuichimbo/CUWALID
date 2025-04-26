@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.forecasting.components.hindcast &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">cuwalid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Licences.html">Licences</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.forecasting.components.hindcast</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.forecasting.components.hindcast</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">cuwalid.tools.CUWALID_mfile_tools</span> <span class="k">as</span> <span class="nn">cuwalid</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<div class="viewcode-block" id="get_csv_TS_files_from_multi_CSV"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_csv_TS_files_from_multi_CSV">[docs]</a><span class="k">def</span> <span class="nf">get_csv_TS_files_from_multi_CSV</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">):</span>
+	<span class="n">csv_file</span> <span class="o">=</span> <span class="p">[</span>
+	<span class="s2">&quot;_avgrp.csv&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;_avgpnd.csv&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;_p_wte.csv&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;_p_tht.csv&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;_p_ssz.csv&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;_p_rch.csv&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;_p_inf.csv&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;_p_gdh.csv&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;_p_dis.csv&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;_p_aet.csv&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;_avg.csv&quot;</span><span class="p">,</span>
+	<span class="p">]</span>
+
+	<span class="k">for</span> <span class="n">icsv_file</span> <span class="ow">in</span> <span class="n">csv_file</span><span class="p">:</span>
+		<span class="n">fname</span> <span class="o">=</span> <span class="p">[</span>
+			<span class="c1">#&quot;/user/work/km19051/HAD_output/HAD_IMERG_sim_84_&quot;+str(year)+&quot;_avg.csv&quot; for year in range(2000, 2006)</span>
+			<span class="c1">#&quot;/user/work/km19051/HAD_output/HAD_IMERG_sim_84_&quot;+str(year)+&quot;_p_dis.csv&quot; for year in range(2000, 2006)</span>
+			<span class="n">model_path</span><span class="o">+</span><span class="n">model_name</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span> <span class="o">+</span> <span class="n">icsv_file</span> <span class="k">for</span> <span class="n">iyear</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+			<span class="p">]</span>
+		<span class="n">first_read</span> <span class="o">=</span> <span class="kc">True</span>
+		<span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">first_read</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+				<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ifname</span><span class="p">)</span>
+				<span class="n">first_read</span> <span class="o">=</span> <span class="kc">False</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ifname</span><span class="p">)],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		
+		<span class="c1">#fname = &quot;/home/c1755103/HAD/HAD_output/HAD_IMERG_sim_73_p_dis.csv&quot;</span>
+		<span class="n">fname</span> <span class="o">=</span> <span class="n">model_path</span><span class="o">+</span><span class="n">model_name</span><span class="o">+</span><span class="n">icsv_file</span>
+		<span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+		
+<div class="viewcode-block" id="get_TWSA_from_mult_files"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_TWSA_from_mult_files">[docs]</a><span class="k">def</span> <span class="nf">get_TWSA_from_mult_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Get TWSA - total water storage anomalies form multiple netcdf files</span>
+
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	model_path: path (str)</span>
+<span class="sd">		folder path of model outputs files</span>
+<span class="sd">	model_name: str</span>
+<span class="sd">		model name</span>
+<span class="sd">	start_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+<span class="sd">	end_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">fname</span> <span class="o">=</span> <span class="n">get_name_list_historical_netcdf_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+	<span class="c1">#fname  = [</span>
+	<span class="c1">#&#39;/home/c1755103/HAD/HAD_output/HAD_IMERG_sim_28b_&#39;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(2003, 2022)</span>
+	<span class="c1">#&#39;/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_&#39;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(2001, 2023)</span>
+	<span class="c1">#model_path+model_name+&quot;_&quot;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(start_year, end_year)</span>
+	<span class="c1">#]</span>
+
+	<span class="c1">#imodel = &quot;IMERGb_D2E_sim&quot;</span>
+
+	<span class="n">field</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;twsc&#39;</span><span class="p">]</span>
+
+	<span class="c1"># DO NOT MODIFY FROM HERE ---------------------------------------</span>
+
+	<span class="k">for</span> <span class="n">ifield</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+			
+		<span class="c1"># concatenate dataset at selected fields</span>
+		<span class="n">data_concat</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">concatenate_netCDF</span><span class="p">(</span>
+			<span class="n">fname</span><span class="p">,</span> <span class="n">ifield</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span>
+			<span class="p">)</span>
+		
+		<span class="c1"># accummulate dataset, just in case of TWSA</span>
+		<span class="k">if</span> <span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;twsc&#39;</span><span class="p">:</span>
+			<span class="n">data_concat</span> <span class="o">=</span> <span class="n">data_concat</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+
+			<span class="c1"># Define the path for the yearly NetCDF file</span>
+			<span class="n">fname_list</span> <span class="o">=</span> <span class="p">[</span>
+				<span class="n">ifname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">ifield</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span> <span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname</span>
+				<span class="p">]</span>
+		
+		<span class="c1"># Group by year and create a new dataset for each year</span>
+		<span class="n">grouped</span> <span class="o">=</span> <span class="n">data_concat</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;time.year&#39;</span><span class="p">)</span>
+		
+		<span class="c1"># loop over years</span>
+		<span class="n">idfname</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">for</span> <span class="n">year</span><span class="p">,</span> <span class="n">yearly_data</span> <span class="ow">in</span> <span class="n">grouped</span><span class="p">:</span>
+			<span class="c1"># Adjust the path and filename format as needed</span>
+			<span class="c1">#output_filename = &quot;/home/c1755103/HAD/HAD_output/HAD_IMERGb_sim_&quot; + ifield + &quot;_&quot;+str(year)+&quot;.nc&quot;</span>
+			
+			<span class="c1"># Save the yearly data to a NetCDF file</span>
+			<span class="n">output_filename</span> <span class="o">=</span> <span class="n">fname_list</span><span class="p">[</span><span class="n">idfname</span><span class="p">]</span>
+			<span class="n">yearly_data</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">output_filename</span><span class="p">)</span>
+			<span class="n">idfname</span> <span class="o">+=</span> <span class="mi">1</span></div>
+			
+<div class="viewcode-block" id="get_additional_variables_multi_netcdf"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_additional_variables_multi_netcdf">[docs]</a><span class="k">def</span> <span class="nf">get_additional_variables_multi_netcdf</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Get WRSI water satisfaction index and total evapotranspiration</span>
+<span class="sd">	</span>
+
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	model_path: path (str)</span>
+<span class="sd">		folder path of model outputs files</span>
+<span class="sd">	model_name: str</span>
+<span class="sd">		model name</span>
+<span class="sd">	start_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+<span class="sd">	end_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># get list of name</span>
+	<span class="n">fname</span> <span class="o">=</span> <span class="n">get_name_list_historical_netcdf_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+		
+	<span class="c1">#fname  = [</span>
+	<span class="c1">#&#39;/home/c1755103/HAD/HAD_output/HAD_IMERG_sim_28b_&#39;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(2003, 2022)</span>
+	<span class="c1">#&#39;/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_&#39;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(2001, 2023)</span>
+	<span class="c1">#model_path+model_name+&quot;_&quot;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(start_year, end_year)</span>
+	<span class="c1">#]</span>
+
+	<span class="c1">#imodel = &quot;IMERGb_D2E_sim&quot;</span>
+
+	<span class="n">field</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;wrsi&quot;</span><span class="p">,</span> <span class="s2">&quot;aet&quot;</span><span class="p">]</span>
+
+	<span class="c1"># DO NOT MODIFY FROM HERE ---------------------------------------</span>
+	<span class="n">cuwalid</span><span class="o">.</span><span class="n">get_postprocessed_hydro_variables_mfiles</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span></div>
+	<span class="c1">#for ifield in field:</span>
+	<span class="c1">#	</span>
+	<span class="c1">#	for ifname in fname:</span>
+	<span class="c1">#		if ifield == &quot;wrsi&quot;:</span>
+	<span class="c1">#			# Calculate WRSI </span>
+	<span class="c1">#			data = cuwalid.read_dataset(ifname, &quot;aet&quot;)/cuwalid.read_dataset(ifname, &quot;pet&quot;)</span>
+	<span class="c1">#			data = data.rename(&quot;wrsi&quot;)</span>
+	<span class="c1">#		else:</span>
+	<span class="c1">#			# Calculate total evaporation</span>
+	<span class="c1">#			data = cuwalid.read_dataset(ifname, &quot;aet&quot;)+cuwalid.read_dataset(ifname, &quot;egw&quot;)</span>
+	<span class="c1">#			data = data.rename(&quot;aet&quot;)</span>
+
+	<span class="c1">#		# Define the path for the yearly NetCDF file</span>
+	<span class="c1">#		fname_output = ifname.split(&#39;.&#39;)[0]+&#39;_&#39;+ifield+&#39;.nc&#39;</span>
+	<span class="c1">#		</span>
+	<span class="c1">#		# Group by year and create a new dataset for each year</span>
+	<span class="c1">#		</span>
+	<span class="c1">#		# loop over years</span>
+	<span class="c1">#		data.to_netcdf(fname_output)</span>
+			
+
+<div class="viewcode-block" id="get_percentiles_multi_files"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_percentiles_multi_files">[docs]</a><span class="k">def</span> <span class="nf">get_percentiles_multi_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Get TWSA - total water storage anomalies form multiple netcdf files</span>
+
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	model_path: path (str)</span>
+<span class="sd">		folder path of model outputs files</span>
+<span class="sd">	model_name: str</span>
+<span class="sd">		model name</span>
+<span class="sd">	start_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+<span class="sd">	end_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1">#fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)</span>
+	
+	<span class="c1"># ==============================================================</span>
+	<span class="c1"># DO NOT MODIFY FROM HERE -------------------------------------</span>
+	<span class="c1"># get and save mean average values from netcdf</span>
+	<span class="c1">#fname  = [</span>
+	<span class="c1">#model_path+model_name+&quot;_&quot;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(start_year, end_year)</span>
+	<span class="c1">#&#39;/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_&#39;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(2003, 2023)</span>
+	<span class="c1">#]</span>
+
+	<span class="c1">#model_name = &quot;IMERGba_sim0&quot;</span>
+
+	<span class="c1"># specified fields</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">drop_false_keys</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+
+	<span class="c1">#field = [&#39;pre&#39;, &#39;pet&#39;,</span>
+	<span class="c1">#	&#39;aet&#39;, &#39;tht&#39;, &#39;egw&#39;,</span>
+	<span class="c1">#	#&#39;inf&#39;, &#39;run&#39;,</span>
+	<span class="c1">#	&#39;rch&#39;, &#39;fch&#39;, #&#39;gdh&#39;,</span>
+	<span class="c1">#	&#39;dis&#39;, &#39;tls&#39;, &#39;wte&#39;,</span>
+	<span class="c1">#	&quot;twsc&quot;,</span>
+	<span class="c1">#	]</span>
+
+	<span class="c1"># loop over all specified variables</span>
+	<span class="n">q1</span> <span class="o">=</span> <span class="mf">0.33</span>
+	<span class="n">q2</span> <span class="o">=</span> <span class="mf">0.50</span>
+	<span class="n">q3</span> <span class="o">=</span> <span class="mf">0.66</span>
+
+	<span class="c1">#season = [None, &#39;MAM&#39;, &#39;OND&#39;]</span>
+
+	<span class="k">for</span> <span class="n">iseason</span> <span class="ow">in</span> <span class="n">season</span><span class="p">:</span>
+		
+		<span class="n">first_read</span> <span class="o">=</span> <span class="kc">True</span>
+		<span class="k">for</span> <span class="n">ifield</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+			
+			<span class="c1"># CHANGE NAMES TO ADD MORE VARIABLES</span>
+			<span class="c1"># using anomalies</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s2">&quot;twsc&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s2">&quot;wrsi&quot;</span><span class="p">):</span><span class="c1"># or (ifield == &quot;flood&quot;):</span>
+				<span class="n">fname</span> <span class="o">=</span> <span class="n">get_name_list_historical_netcdf_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span>
+												  <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span>
+												  <span class="n">ifield</span><span class="o">=</span><span class="n">ifield</span>
+												  <span class="p">)</span>
+
+				<span class="c1">#fname_list = [</span>
+				<span class="c1">#	ifname.split(&#39;.&#39;)[0]+&#39;_&#39;+ifield+&#39;.nc&#39; for ifname in fname</span>
+				<span class="c1">#	]</span>
+
+				<span class="c1"># concatenate dataset at selected fields</span>
+				<span class="c1">#data_concat = cuwalid.concatenate_netCDF(</span>
+				<span class="c1">#	fname_list, ifield, agg=&quot;M&quot;, dim=&#39;time&#39;</span>
+				<span class="c1">#	)</span>
+			<span class="c1">#elif ifield == &quot;flood&quot;:</span>
+			<span class="c1">#	fname = get_name_list_historical_netcdf_files(model_path, model_name,</span>
+			<span class="c1">#									  start_year, end_year,</span>
+			<span class="c1">#									  ifield=ifield</span>
+			<span class="c1">#									  )</span>
+			<span class="k">else</span><span class="p">:</span><span class="c1"># or (ifield == &quot;flood&quot;)</span>
+				<span class="n">fname</span> <span class="o">=</span> <span class="n">get_name_list_historical_netcdf_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span>
+												  <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+	
+
+			<span class="c1"># concatenate dataset at selected fields</span>
+			<span class="k">if</span>  <span class="n">ifield</span> <span class="o">==</span> <span class="s2">&quot;flood&quot;</span><span class="p">:</span>
+				<span class="n">data_concat</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">concatenate_netCDF</span><span class="p">(</span>
+						<span class="n">fname</span><span class="p">,</span> <span class="n">ifield</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span>
+						<span class="p">)</span>
+				<span class="c1"># rename variable</span>
+				<span class="n">data_concat</span> <span class="o">=</span> <span class="n">data_concat</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;flood&#39;</span><span class="p">)</span>
+
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">data_concat</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">concatenate_netCDF</span><span class="p">(</span>
+						<span class="n">fname</span><span class="p">,</span> <span class="n">ifield</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span>
+						<span class="p">)</span>
+			
+			<span class="c1"># accummulate dataset, just in case of TWSA</span>
+			<span class="k">if</span> <span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;twsc&#39;</span><span class="p">:</span>
+				<span class="n">data_concat</span> <span class="o">=</span> <span class="n">data_concat</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+			
+			<span class="n">mean</span> <span class="o">=</span> <span class="kc">False</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;tht&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;wte&#39;</span><span class="p">):</span>
+				<span class="n">mean</span> <span class="o">=</span> <span class="kc">True</span>
+			
+			<span class="k">if</span>  <span class="n">ifield</span> <span class="o">!=</span> <span class="s2">&quot;flood&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="c1"># get seasson</span>
+					<span class="n">data_concat</span> <span class="o">=</span> <span class="n">data_concat</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+						<span class="n">data_concat</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+						<span class="n">cuwalid</span><span class="o">.</span><span class="n">season_name_to_number</span><span class="p">(</span><span class="n">iseason</span><span class="p">)))</span>
+				
+			<span class="c1"># resample dataset</span>
+			<span class="k">if</span>  <span class="n">ifield</span> <span class="o">==</span> <span class="s2">&quot;flood&quot;</span><span class="p">:</span>
+				<span class="n">data_concat</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">resample_dataset</span><span class="p">(</span><span class="n">data_concat</span><span class="p">,</span>
+						<span class="n">extremes</span><span class="o">=</span><span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span>
+						<span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">data_concat</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">resample_dataset</span><span class="p">(</span><span class="n">data_concat</span><span class="p">,</span>
+						<span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span>
+						<span class="p">)</span>
+			
+			<span class="c1"># calculate quantiles values of each variable, and store</span>
+			<span class="c1"># it as dataset</span>
+			<span class="n">data_concat</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">data_concat</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">),</span>
+								<span class="n">data_concat</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">),</span>
+								<span class="n">data_concat</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q3</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)],</span>
+								<span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+			
+			<span class="k">if</span> <span class="n">first_read</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+				<span class="n">dataset</span> <span class="o">=</span> <span class="n">data_concat</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+				<span class="n">first_read</span> <span class="o">=</span> <span class="kc">False</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">dataset</span><span class="p">,</span> <span class="n">data_concat</span><span class="p">])</span>
+			
+		<span class="c1"># save as NETCDF files</span>
+		<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="c1">#fname_out = &#39;/user/work/km19051/HAD_postpp/netcfd/HAD_&#39;+imodel+&#39;_wte_mean.nc&#39;</span>
+			<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_quantiles.nc&quot;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1">#fname_out = &#39;/user/work/km19051/HAD_postpp/netcfd/HAD_&#39;+imodel+&#39;_wte_mean.nc&#39;</span>
+			<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">iseason</span> <span class="o">+</span> <span class="s2">&quot;_quantiles.nc&quot;</span>
+		
+		<span class="n">cuwalid</span><span class="o">.</span><span class="n">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span></div>
+
+			
+<div class="viewcode-block" id="get_extremes_quantiles_multi_netcdf"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_extremes_quantiles_multi_netcdf">[docs]</a><span class="k">def</span> <span class="nf">get_extremes_quantiles_multi_netcdf</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Get TWSA - total water storage anomalies form multiple netcdf files</span>
+
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	model_path: path (str)</span>
+<span class="sd">		folder path of model outputs files</span>
+<span class="sd">	model_name: str</span>
+<span class="sd">		model name</span>
+<span class="sd">	start_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+<span class="sd">	end_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1">#fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)</span>
+	
+			
+	<span class="c1"># ==============================================================</span>
+	<span class="c1"># DO NOT MODIFY FROM HERE -------------------------------------</span>
+	<span class="c1"># get and save mean average values from netcdf</span>
+	<span class="c1">#fname  = [</span>
+	<span class="c1">#model_path+model_name+&quot;_&quot;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(start_year, end_year)</span>
+	<span class="c1">#&#39;/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_&#39;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(2003, 2023)</span>
+	<span class="c1">#]</span>
+
+	<span class="c1">#model_name = &quot;IMERGba_sim0&quot;</span>
+
+	<span class="c1"># specified fields</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">drop_false_keys</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+
+	<span class="c1">#field = [&#39;pre&#39;, &#39;pet&#39;,</span>
+	<span class="c1">#	&#39;aet&#39;, &#39;tht&#39;, &#39;egw&#39;,</span>
+	<span class="c1">#	#&#39;inf&#39;, &#39;run&#39;,</span>
+	<span class="c1">#	&#39;rch&#39;, &#39;fch&#39;, #&#39;gdh&#39;,</span>
+	<span class="c1">#	&#39;dis&#39;, #&#39;tls&#39;, &#39;wte&#39;,</span>
+	<span class="c1">#	&quot;twsc&quot;,</span>
+	<span class="c1">#	]</span>
+
+	<span class="c1"># loop over all specified variables</span>
+	<span class="n">q1</span> <span class="o">=</span> <span class="mf">0.33</span>
+	<span class="n">q2</span> <span class="o">=</span> <span class="mf">0.50</span>
+	<span class="n">q3</span> <span class="o">=</span> <span class="mf">0.66</span>
+	<span class="n">q4</span> <span class="o">=</span> <span class="mf">0.05</span>
+	<span class="n">q5</span> <span class="o">=</span> <span class="mf">0.95</span>
+
+	<span class="c1">#season = [None, &#39;MAM&#39;, &#39;OND&#39;]</span>
+	<span class="c1">#season = [&#39;MAM&#39;]#, &#39;OND&#39;]</span>
+
+	<span class="k">for</span> <span class="n">iseason</span> <span class="ow">in</span> <span class="n">season</span><span class="p">:</span>
+		
+		<span class="n">first_read</span> <span class="o">=</span> <span class="kc">True</span>
+		<span class="k">for</span> <span class="n">ifield</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+			<span class="c1"># CHANGE NAMES TO ADD MORE VARIABLES</span>
+			<span class="c1"># using anomalies</span>
+			<span class="c1">#fname_list = fname.copy()</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s2">&quot;twsc&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s2">&quot;wrsi&quot;</span><span class="p">):</span>
+				<span class="n">fname</span> <span class="o">=</span> <span class="n">get_name_list_historical_netcdf_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span>
+												  <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span>
+												  <span class="n">ifield</span><span class="o">=</span><span class="n">ifield</span>
+												  <span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">fname</span> <span class="o">=</span> <span class="n">get_name_list_historical_netcdf_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span>
+												  <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>	
+
+				<span class="c1">#fname_list = [</span>
+				<span class="c1">#	ifname.split(&#39;.&#39;)[0]+&#39;_&#39;+ifield+&#39;.nc&#39; for ifname in fname</span>
+				<span class="c1">#	]</span>
+			
+			<span class="c1"># concatenate dataset at selected fields</span>
+			<span class="n">data_concat</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">concatenate_netCDF</span><span class="p">(</span>
+				<span class="n">fname</span><span class="p">,</span> <span class="n">ifield</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span>
+				<span class="p">)</span>
+			
+			<span class="c1">## accummulate dataset, just in case of TWSA</span>
+			<span class="c1">#if ifield == &#39;twsc&#39;:</span>
+			<span class="c1">#	data_concat = data_concat.cumsum(dim=&#39;time&#39;)</span>
+			
+			<span class="n">mean</span> <span class="o">=</span> <span class="kc">False</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;tht&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;wte&#39;</span><span class="p">):</span>
+				<span class="n">mean</span> <span class="o">=</span> <span class="kc">True</span>
+			
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="c1"># get seasson</span>
+				<span class="n">data_concat</span> <span class="o">=</span> <span class="n">data_concat</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+					<span class="n">data_concat</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+					<span class="n">cuwalid</span><span class="o">.</span><span class="n">season_name_to_number</span><span class="p">(</span><span class="n">iseason</span><span class="p">)))</span>
+				
+			<span class="c1"># resample dataset</span>
+			<span class="n">data_concat</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">resample_dataset</span><span class="p">(</span><span class="n">data_concat</span><span class="p">,</span>
+						<span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span>
+						<span class="p">)</span>
+			
+			<span class="c1"># calculate quantiles values of each variable, and store</span>
+			<span class="c1"># it as dataset</span>
+			<span class="n">data_concat</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span>
+								<span class="n">data_concat</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">),</span>
+								<span class="n">data_concat</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">),</span>
+								<span class="n">data_concat</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q3</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">),</span>
+								<span class="n">data_concat</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q4</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">),</span>
+								<span class="n">data_concat</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q5</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+								<span class="p">],</span>
+								<span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+			
+			<span class="k">if</span> <span class="n">first_read</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+				<span class="n">dataset</span> <span class="o">=</span> <span class="n">data_concat</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+				<span class="n">first_read</span> <span class="o">=</span> <span class="kc">False</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">dataset</span><span class="p">,</span> <span class="n">data_concat</span><span class="p">])</span>
+			
+		<span class="c1"># save as NETCDF files</span>
+		<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="c1">#fname_out = &#39;/user/work/km19051/HAD_postpp/netcfd/HAD_&#39;+imodel+&#39;_wte_mean.nc&#39;</span>
+			<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_extremes_quantiles.nc&quot;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1">#fname_out = &#39;/user/work/km19051/HAD_postpp/netcfd/HAD_&#39;+imodel+&#39;_wte_mean.nc&#39;</span>
+			<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">iseason</span> <span class="o">+</span> <span class="s2">&quot;_extremes_quantiles.nc&quot;</span>
+		
+		<span class="n">cuwalid</span><span class="o">.</span><span class="n">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span></div>
+
+			
+<div class="viewcode-block" id="get_average_multi_netcdf"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_average_multi_netcdf">[docs]</a><span class="k">def</span> <span class="nf">get_average_multi_netcdf</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Get TWSA - total water storage anomalies form multiple netcdf files</span>
+
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	model_path: path (str)</span>
+<span class="sd">		folder path of model outputs files</span>
+<span class="sd">	model_name: str</span>
+<span class="sd">		model name</span>
+<span class="sd">	start_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+<span class="sd">	end_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">fname</span> <span class="o">=</span> <span class="n">get_name_list_historical_netcdf_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+	
+	
+	<span class="c1"># get and save mean average values from netcdf</span>
+	<span class="c1">#fname  = [</span>
+	<span class="c1">#model_path+model_name+&quot;_&quot;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(start_year, end_year)</span>
+	<span class="c1">#&#39;/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_&#39;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(2003, 2023)</span>
+	<span class="c1">#&#39;/user/work/km19051/HAD_output/HAD_1k_10y_gw_ch_ksat_1_v2_IMERG_sim_28_grid.nc&#39;,</span>
+	<span class="c1">#]</span>
+
+	<span class="c1">#imodel = &quot;IMERGba_sim0&quot;</span>
+
+	<span class="c1"># specified fields</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">drop_false_keys</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+	<span class="c1">#field = [&#39;pre&#39;, &#39;pet&#39;,</span>
+	<span class="c1">#	&#39;aet&#39;, &#39;tht&#39;, &#39;egw&#39;,</span>
+	<span class="c1">#	#&#39;inf&#39;, &#39;run&#39;,</span>
+	<span class="c1">#	&#39;rch&#39;, &#39;fch&#39;, #&#39;gdh&#39;,</span>
+	<span class="c1">#	&#39;dis&#39;, &#39;tls&#39;, &#39;wte&#39;,</span>
+	<span class="c1">#	&quot;twsc&quot;,</span>
+	<span class="c1">#	]</span>
+
+	<span class="k">for</span> <span class="n">iseason</span> <span class="ow">in</span> <span class="n">season</span><span class="p">:</span>
+		<span class="c1"># get average values for all variables from a list of netcdf files</span>
+		<span class="n">dataset</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">get_average_all_variables_from_list</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">iseason</span><span class="p">)</span>
+		
+		<span class="c1"># save files</span>
+		<span class="c1">#fname_out = &#39;/user/work/km19051/HAD_postpp/netcfd/HAD_&#39;+imodel+&#39;_wte_mean.nc&#39;</span>
+		<span class="c1">#fname_out = &quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_&quot; + imodel + &quot;_mean.nc&quot;</span>
+		<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_mean.nc&quot;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">iseason</span> <span class="o">+</span> <span class="s2">&quot;_mean.nc&quot;</span>
+		<span class="n">cuwalid</span><span class="o">.</span><span class="n">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_anomalies_multi_netcdf"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_anomalies_multi_netcdf">[docs]</a><span class="k">def</span> <span class="nf">get_anomalies_multi_netcdf</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">season</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Get TWSA - total water storage anomalies form multiple netcdf files</span>
+
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	model_path: path (str)</span>
+<span class="sd">		folder path of model outputs files</span>
+<span class="sd">	model_name: str</span>
+<span class="sd">		model name</span>
+<span class="sd">	start_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+<span class="sd">	end_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">fname</span> <span class="o">=</span> <span class="n">get_name_list_historical_netcdf_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+	
+	
+	<span class="c1"># ===============================================================</span>
+
+	<span class="c1"># path of simulation files</span>
+	<span class="c1">#fname  = [</span>
+	<span class="c1">#	model_path+model_name+&quot;_&quot;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(start_year, end_year)</span>
+	<span class="c1">#]</span>
+
+	<span class="c1">#fname_lta = &quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_IMERGag_sim0_mean.nc&quot;</span>
+
+	<span class="c1"># path of mean values</span>
+	<span class="c1">#var = [&#39;pre&#39;, &#39;inf&#39;, &#39;pet&#39;, &#39;rch&#39;, &#39;aet&#39;, &#39;gdh&#39;, &#39;egw&#39;, &#39;fch&#39;, &#39;twsc&#39;, &#39;run&#39;]</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="s1">&#39;pet&#39;</span><span class="p">,</span>
+		<span class="s1">&#39;aet&#39;</span><span class="p">,</span> <span class="s1">&#39;tht&#39;</span><span class="p">,</span> <span class="s1">&#39;egw&#39;</span><span class="p">,</span>
+		<span class="c1">#&#39;inf&#39;, &#39;run&#39;,</span>
+		<span class="s1">&#39;rch&#39;</span><span class="p">,</span> <span class="s1">&#39;fch&#39;</span><span class="p">,</span>
+		<span class="c1">#&#39;gdh&#39;,</span>
+		<span class="s1">&#39;dis&#39;</span><span class="p">,</span> <span class="s1">&#39;tls&#39;</span><span class="p">,</span>
+		<span class="s1">&#39;wte&#39;</span><span class="p">,</span>
+		<span class="s2">&quot;twsc&quot;</span><span class="p">,</span>
+		<span class="p">]</span>
+
+	<span class="c1">#months = [None, [3,4,5], [10,11,12]]</span>
+
+	<span class="c1"># loop </span>
+	<span class="k">for</span> <span class="n">ifield</span> <span class="ow">in</span> <span class="n">field</span><span class="p">:</span>
+		<span class="c1"># read dataset</span>
+		<span class="n">mean</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;tht&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;wte&#39;</span><span class="p">):</span>
+			<span class="n">mean</span> <span class="o">=</span> <span class="kc">True</span>
+		
+		<span class="n">accum</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">if</span> <span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;twsc&#39;</span><span class="p">:</span>
+			<span class="n">accum</span> <span class="o">=</span> <span class="kc">True</span>
+		
+		<span class="n">delta</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="k">if</span> <span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;twsc&#39;</span><span class="p">:</span>
+			<span class="n">accum</span> <span class="o">=</span> <span class="s2">&quot;Y&quot;</span>
+		
+		<span class="c1">#for iseason, imonths in zip(season, months):</span>
+		<span class="k">for</span> <span class="n">iseason</span> <span class="ow">in</span> <span class="n">season</span><span class="p">:</span>
+
+			<span class="c1"># read datasets</span>
+			<span class="c1"># read long term average values</span>
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="c1">#fname_lta = &#39;/user/work/km19051/HAD_postpp/netcfd/HAD_&#39;+imodel+&#39;_wte_mean.nc&#39;</span>
+				<span class="n">fname_lta</span> <span class="o">=</span> <span class="s2">&quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_mean.nc&quot;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="c1">#fname_lta = &#39;/user/work/km19051/HAD_postpp/netcfd/HAD_&#39;+imodel+&#39;_wte_mean.nc&#39;</span>
+				<span class="n">fname_lta</span> <span class="o">=</span> <span class="s2">&quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">iseason</span> <span class="o">+</span> <span class="s2">&quot;_mean.nc&quot;</span>
+			
+			<span class="n">lta</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">fname_lta</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">ifield</span><span class="p">)</span>	
+			
+			<span class="c1"># check if is the riparian area</span>
+			<span class="n">fname_list</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;fch&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;tls&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ifield</span> <span class="o">==</span> <span class="s1">&#39;ssz&#39;</span><span class="p">):</span>
+				<span class="n">fname_list</span> <span class="o">=</span> <span class="p">[</span>
+					<span class="n">ifname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;rp.nc&#39;</span> <span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname_list</span>
+					<span class="p">]</span>
+			<span class="k">if</span> <span class="n">ifield</span> <span class="o">==</span> <span class="s2">&quot;twsc&quot;</span><span class="p">:</span>
+				<span class="n">fname_list</span> <span class="o">=</span> <span class="p">[</span>
+					<span class="n">ifname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">ifield</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span> <span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname_list</span>
+					<span class="p">]</span>
+			
+			<span class="c1"># loop over all continues simulation files</span>
+			<span class="n">concat_first_read</span> <span class="o">=</span> <span class="kc">True</span>
+			<span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname_list</span><span class="p">:</span>
+				<span class="c1"># read season</span>
+				<span class="n">data</span> <span class="o">=</span> <span class="n">read_dataset</span><span class="p">(</span><span class="n">ifname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">ifield</span><span class="p">)</span>
+				
+				<span class="c1"># if seasonal average, select months</span>
+				<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+							<span class="n">cuwalid</span><span class="o">.</span><span class="n">season_name_to_number</span><span class="p">(</span><span class="n">iseason</span><span class="p">))</span>
+							<span class="p">)</span>
+				<span class="c1"># calculate annual average to reduce the use of memory</span>
+				<span class="n">data</span> <span class="o">=</span> <span class="n">resample_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+				
+				<span class="c1"># calculate anomalies</span>
+				<span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">-</span> <span class="n">lta</span>
+				
+				<span class="c1"># aggregate into one array</span>
+				<span class="k">if</span> <span class="n">concat_first_read</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+					<span class="n">dataconcatenat</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+					<span class="n">concat_first_read</span> <span class="o">=</span> <span class="kc">False</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">dataconcatenat</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">dataconcatenat</span><span class="p">,</span> <span class="n">data</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+				
+			<span class="c1"># save files</span>
+			<span class="k">if</span> <span class="n">iseason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="c1">#fname_out = &#39;/user/work/km19051/HAD_postpp/netcfd/HAD_&#39;+imodel+&#39;_wte_mean.nc&#39;</span>
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="s2">&quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">ifield</span> <span class="o">+</span> <span class="s2">&quot;_anomalies.nc&quot;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="c1">#fname_out = &#39;/user/work/km19051/HAD_postpp/netcfd/HAD_&#39;+imodel+&#39;_season_mean.nc&#39;</span>
+				<span class="n">fname_out</span> <span class="o">=</span> <span class="s2">&quot;/home/c1755103/HAD/HAD_postpp/netcdf/HAD_&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">iseason</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">ifield</span> <span class="o">+</span><span class="s2">&quot;_anomalies.nc&quot;</span>
+			<span class="c1">#print(fname_out)</span>
+			<span class="n">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">,</span> <span class="n">dataconcatenat</span><span class="p">,</span> <span class="p">[</span><span class="n">ifield</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="get_monthly_average_multi_netcdf"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_monthly_average_multi_netcdf">[docs]</a><span class="k">def</span> <span class="nf">get_monthly_average_multi_netcdf</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">postpp_path</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;Function to ger files with monthly average values of each variable from</span>
+<span class="sd">	multi-files model simulation</span>
+<span class="sd">	Parameter</span>
+<span class="sd">	---------</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">		</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># get list of files</span>
+	<span class="n">fname</span> <span class="o">=</span> <span class="n">get_name_list_historical_netcdf_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+	
+	<span class="c1"># specified fields</span>
+	<span class="n">field</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">drop_false_keys</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+	<span class="c1"># loop through all months</span>
+	<span class="k">for</span> <span class="n">imonth</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">13</span><span class="p">):</span>
+		<span class="c1"># Open the NetCDF file</span>
+		<span class="n">variables_file</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+		
+		<span class="c1"># get average values for all variables from a list of netcdf files</span>
+		<span class="c1">#dataset = cuwalid.get_average_all_variables_from_list(fname, variables_file, imonth)</span>
+		<span class="n">dataset</span> <span class="o">=</span> <span class="n">cuwalid</span><span class="o">.</span><span class="n">get_average_all_variables_from_list</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">imonth</span><span class="p">)</span>
+		
+		<span class="c1">## get average of additional files</span>
+		<span class="c1">#if variables[&quot;wrsi&quot;] is True:</span>
+		<span class="c1">#	fname_aux = get_name_list_historical_netcdf_files(model_path, model_name,</span>
+		<span class="c1">#										 start_year, end_year, ifield=&quot;wrsi&quot;)</span>
+		<span class="c1">#	</span>
+		<span class="c1">#	# get average values for all variables from a list of netcdf files</span>
+		<span class="c1">#	dataset_aux = cuwalid.get_average_all_variables_from_list(fname_aux, [&quot;wrsi&quot;], imonth)</span>
+		<span class="c1">#	</span>
+		<span class="c1">#	dataset = xr.merge([dataset, dataset_aux])</span>
+		<span class="c1"># save results</span>
+		<span class="n">fname_out</span> <span class="o">=</span> <span class="n">postpp_path</span><span class="o">+</span><span class="s2">&quot;netcdf/&quot;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">imonth</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_monthly_mean.nc&quot;</span>
+		<span class="n">cuwalid</span><span class="o">.</span><span class="n">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname_out</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+
+	<span class="k">return</span></div>
+
+<div class="viewcode-block" id="save_xarray_dataset_as_netcdf"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.save_xarray_dataset_as_netcdf">[docs]</a><span class="k">def</span> <span class="nf">save_xarray_dataset_as_netcdf</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">var_name</span><span class="p">):</span>
+	<span class="c1"># data has to be in the same dimentions</span>
+	<span class="c1"># Create a xarray DataArray</span>
+	<span class="c1">#ds = xr.DataArray(data, coords={&quot;time&quot;: time}, dims=[&quot;time&quot;, &quot;lon&quot;])</span>
+
+	<span class="c1"># Set the compression format</span>
+	<span class="n">encoding</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">ivar</span> <span class="ow">in</span> <span class="n">var_name</span><span class="p">:</span>
+		<span class="n">encoding</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">ivar</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;zlib&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;complevel&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">}})</span>
+
+	<span class="c1"># Save the dataset to a netcdf file</span>
+	<span class="n">data</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="read_dataset"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.read_dataset">[docs]</a><span class="k">def</span> <span class="nf">read_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;tht&#39;</span><span class="p">):</span>
+	<span class="c1"># Open the first netCDF file</span>
+	<span class="c1"># output dataset</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="resample_dataset"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.resample_dataset">[docs]</a><span class="k">def</span> <span class="nf">resample_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">):</span>
+	<span class="c1"># calculate climatological mean</span>
+	<span class="c1"># output an array</span>
+	<span class="k">if</span> <span class="n">mean</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">delt</span><span class="p">,</span> <span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">delt</span><span class="p">,</span> <span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="get_name_list_historical_netcdf_files"><a class="viewcode-back" href="../../../../cuwalid.forecasting.components.html#cuwalid.forecasting.components.hindcast.get_name_list_historical_netcdf_files">[docs]</a><span class="k">def</span> <span class="nf">get_name_list_historical_netcdf_files</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">ifield</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; Get list of name of historical files when multiple files are</span>
+<span class="sd">	are analysed</span>
+
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	model_path: path (str)</span>
+<span class="sd">		folder path of model outputs files</span>
+<span class="sd">	model_name: str</span>
+<span class="sd">		model name</span>
+<span class="sd">	start_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+<span class="sd">	end_year: int</span>
+<span class="sd">		starting year of the analysis</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">fname</span>  <span class="o">=</span> <span class="p">[</span>
+	<span class="c1">#&#39;/home/c1755103/HAD/HAD_output/HAD_IMERG_sim_28b_&#39;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(2003, 2022)</span>
+	<span class="c1">#&#39;/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_&#39;+ str(iyear) +&#39;_grid.nc&#39; for iyear in range(2001, 2023)</span>
+	<span class="n">model_path</span><span class="o">+</span><span class="n">model_name</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iyear</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;_grid.nc&#39;</span> <span class="k">for</span> <span class="n">iyear</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">)</span>
+	<span class="p">]</span>
+
+	<span class="k">if</span> <span class="n">ifield</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">fname</span> <span class="o">=</span> <span class="p">[</span><span class="n">ifname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">ifield</span><span class="o">+</span><span class="s1">&#39;.nc&#39;</span> <span class="k">for</span> <span class="n">ifname</span> <span class="ow">in</span> <span class="n">fname</span><span class="p">]</span>
+	
+	<span class="c1">#if ifield == &quot;flood&quot;:</span>
+	<span class="c1">#	fname = [ifname.split(&#39;.&#39;)[0]+&#39;max.nc&#39; for ifname in fname]</span>
+		
+	<span class="k">return</span> <span class="n">fname</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cuwalid.tools.CUWALID_json_builder &mdash; CUWALID 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CUWALID
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models_info.html">Models Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../training.html">Training Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">cuwalid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../maintenance.html">Developer Maintenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dryp_developers.html">CUWALID: Workflow for contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Authors.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Acknowledgements.html">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Licences.html">Licences</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CUWALID</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cuwalid.tools.CUWALID_json_builder</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cuwalid.tools.CUWALID_json_builder</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">calendar</span>
+
+<div class="viewcode-block" id="write_JSON_dryp_files"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_json_builder.write_JSON_dryp_files">[docs]</a><span class="k">def</span> <span class="nf">write_JSON_dryp_files</span><span class="p">(</span><span class="n">json_template</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">path_pre</span><span class="p">,</span> <span class="n">path_pet</span><span class="p">,</span> <span class="n">json_destination</span><span class="p">,</span> <span class="n">dryp_output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+						   <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2024 03 01&quot;</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;2024 05 31&quot;</span><span class="p">,</span> <span class="n">new_setting_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; This function create the simulation and setting file for running DRYP. New</span>
+<span class="sd">	files are created  based on files provided as original files, this function</span>
+<span class="sd">	changes the model name, precipitation and potential evapotranspiration</span>
+<span class="sd">	paths.</span>
+<span class="sd">	WARNING: if no new filename is provided it will replace the original file</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	json_template : string</span>
+<span class="sd">			model input, as a dictionary</span>
+<span class="sd">	model_name : string</span>
+<span class="sd">			model name for the new file</span>
+<span class="sd">	path_pre : string</span>
+<span class="sd">			precipitation dataset name, including path</span>
+<span class="sd">	path_pet : string</span>
+<span class="sd">			potential evapotranspiration dataset name, including path</span>
+<span class="sd">	start_date : string</span>
+<span class="sd">			date in the following format &quot;YYYY-MM-DD&quot; (e.g. 2002-01-01)</span>
+<span class="sd">	end_date : string</span>
+<span class="sd">			date in the following format &quot;YYYY-MM-DD&quot; (e.g. 2002-03-01)</span>
+<span class="sd">	new_setting_file : bool</span>
+<span class="sd">			If True it create the setting dryp file</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1"># Change necesarry variables in template</span>
+	<span class="n">json_template</span><span class="p">[</span><span class="s2">&quot;model_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_name</span>
+	<span class="n">json_template</span><span class="p">[</span><span class="s2">&quot;METEO&quot;</span><span class="p">][</span><span class="s2">&quot;path_pre&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path_pre</span>
+	<span class="n">json_template</span><span class="p">[</span><span class="s2">&quot;METEO&quot;</span><span class="p">][</span><span class="s2">&quot;path_pet&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path_pet</span>
+
+	<span class="k">if</span> <span class="n">dryp_output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">json_template</span><span class="p">[</span><span class="s2">&quot;OUTPUT&quot;</span><span class="p">][</span><span class="s2">&quot;path_output&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dryp_output</span>
+	
+	
+	<span class="c1"># create new settings file</span>
+	<span class="k">if</span> <span class="n">new_setting_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+		<span class="c1"># Get input file as dictionary</span>
+		<span class="n">settings_file_path</span> <span class="o">=</span> <span class="n">json_template</span><span class="p">[</span><span class="s2">&quot;OUTPUT&quot;</span><span class="p">][</span><span class="s2">&quot;path_setting&quot;</span><span class="p">]</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">settings_file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+			<span class="n">settings_file_template</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+		<span class="c1"># Change settings file location</span>
+		<span class="n">json_template</span><span class="p">[</span><span class="s2">&quot;OUTPUT&quot;</span><span class="p">][</span><span class="s2">&quot;path_setting&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_setting_file</span>
+		
+		<span class="c1">## Change variables in settings file</span>
+		<span class="c1">#json_template[&quot;dryp_settings&quot;][&quot;SIMULATION_PERIOD&quot;][&quot;start_date&quot;] = start_date</span>
+		<span class="c1">#json_template[&quot;dryp_settings&quot;][&quot;SIMULATION_PERIOD&quot;][&quot;end_date&quot;] = end_date</span>
+		<span class="n">settings_file_template</span><span class="p">[</span><span class="s2">&quot;SIMULATION_PERIOD&quot;</span><span class="p">][</span><span class="s2">&quot;start_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_date</span>
+		<span class="n">settings_file_template</span><span class="p">[</span><span class="s2">&quot;SIMULATION_PERIOD&quot;</span><span class="p">][</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_date</span>
+
+
+	<span class="c1"># Save the `dryp` part to the json_destination file</span>
+	<span class="c1">#dryp_data = json_template[&quot;dryp&quot;]</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_destination</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dest_file</span><span class="p">:</span>
+		<span class="c1">#json.dump(dryp_data, dest_file, indent=4)</span>
+		<span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">json_template</span><span class="p">,</span> <span class="n">dest_file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+	<span class="c1"># Save the `dryp_settings` part to the new settings file</span>
+	<span class="k">if</span> <span class="n">new_setting_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="c1">#dryp_settings_data = settings_file_template[&quot;dryp_settings&quot;]</span>
+		<span class="c1">#dryp_settings_data = json_template[&quot;dryp_settings&quot;]</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">new_setting_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">settings_file</span><span class="p">:</span>
+			<span class="c1">#json.dump(dryp_settings_data, settings_file, indent=4)</span>
+			<span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">settings_file_template</span><span class="p">,</span> <span class="n">settings_file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="write_JSON_dtorm_file"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_json_builder.write_JSON_dtorm_file">[docs]</a><span class="k">def</span> <span class="nf">write_JSON_dtorm_file</span><span class="p">(</span><span class="n">json_template</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">path_pre</span><span class="p">,</span> <span class="n">path_pet</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2024 03 01&quot;</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;2024 05 31&quot;</span><span class="p">,</span> <span class="n">new_setting_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; This function create the simulation and setting file for running DRYP. New</span>
+<span class="sd">	files are created  based on files provided as original files, this function</span>
+<span class="sd">	changes the model name, precipitation and potential evapotranspiration</span>
+<span class="sd">	paths.</span>
+<span class="sd">	WARNING: if no new filename is provided it will replace the original file</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	json_template : string</span>
+<span class="sd">			model input, as a dictionary</span>
+<span class="sd">	model_name : string</span>
+<span class="sd">			model name for the new file</span>
+<span class="sd">	path_pre : string</span>
+<span class="sd">			precipitation dataset name, including path</span>
+<span class="sd">	path_pet : string</span>
+<span class="sd">			potential evapotranspiration dataset name, including path</span>
+<span class="sd">	start_date : string</span>
+<span class="sd">			date in the following format &quot;YYYY-MM-DD&quot; (e.g. 2002-01-01)</span>
+<span class="sd">	end_date : string</span>
+<span class="sd">			date in the following format &quot;YYYY-MM-DD&quot; (e.g. 2002-03-01)</span>
+<span class="sd">	new_setting_file : bool</span>
+<span class="sd">			If True it create the setting dryp file</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="write_JSON_stopet_file"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_json_builder.write_JSON_stopet_file">[docs]</a><span class="k">def</span> <span class="nf">write_JSON_stopet_file</span><span class="p">(</span><span class="n">json_template</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">path_pre</span><span class="p">,</span> <span class="n">path_pet</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2024 03 01&quot;</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;2024 05 31&quot;</span><span class="p">,</span> <span class="n">new_setting_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot; This function create the simulation and setting file for running DRYP. New</span>
+<span class="sd">	files are created  based on files provided as original files, this function</span>
+<span class="sd">	changes the model name, precipitation and potential evapotranspiration</span>
+<span class="sd">	paths.</span>
+<span class="sd">	WARNING: if no new filename is provided it will replace the original file</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters:</span>
+<span class="sd">	-----------</span>
+<span class="sd">	json_template : string</span>
+<span class="sd">			model input, as a dictionary</span>
+<span class="sd">	model_name : string</span>
+<span class="sd">			model name for the new file</span>
+<span class="sd">	path_pre : string</span>
+<span class="sd">			precipitation dataset name, including path</span>
+<span class="sd">	path_pet : string</span>
+<span class="sd">			potential evapotranspiration dataset name, including path</span>
+<span class="sd">	start_date : string</span>
+<span class="sd">			date in the following format &quot;YYYY-MM-DD&quot; (e.g. 2002-01-01)</span>
+<span class="sd">	end_date : string</span>
+<span class="sd">			date in the following format &quot;YYYY-MM-DD&quot; (e.g. 2002-03-01)</span>
+<span class="sd">	new_setting_file : bool</span>
+<span class="sd">			If True it create the setting dryp file</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="create_ensamble"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_json_builder.create_ensamble">[docs]</a><span class="k">def</span> <span class="nf">create_ensamble</span><span class="p">(</span><span class="n">pools</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	-----------</span>
+<span class="sd">	forecast_pet: path-list for forecasted evapotranspiration</span>
+<span class="sd">	forecast_pet: path-list for forecasted precipitation</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1">#print(sorted(glob.glob(f&#39;{forecast_pet}/*_MAM_*.nc&#39;)))</span>
+	<span class="c1">#pools = list(map(lambda x: sorted(glob.glob(f&#39;{x}/*_MAM_*.nc&#39;)), [forecast_pet, forecast_pre]))</span>
+	<span class="c1">#print(pools)</span>
+	<span class="n">plist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">+</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">+&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+	<span class="c1"># the sampling is done here</span>
+	<span class="c1">#what_ = np.random.default_rng().choice(plist, size=nsamples, replace=False).tolist()</span>
+	<span class="n">what_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">plist</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nsamples</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+	<span class="c1"># returns a list of nsamples-pairs, e.g., [[&#39;pet_20&#39;, &#39;pre_1&#39;], [&#39;pet_0&#39;, &#39;pre_29&#39;], [...], ...]</span>
+	<span class="n">pairs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">),</span> <span class="n">what_</span><span class="p">))</span>
+	<span class="k">return</span> <span class="n">pairs</span></div>
+
+
+
+<div class="viewcode-block" id="last_day_of_month"><a class="viewcode-back" href="../../../cuwalid.tools.html#cuwalid.tools.CUWALID_json_builder.last_day_of_month">[docs]</a><span class="k">def</span> <span class="nf">last_day_of_month</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">):</span>
+    <span class="n">last_day</span> <span class="o">=</span> <span class="n">calendar</span><span class="o">.</span><span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">last_day</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Down2Earth Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

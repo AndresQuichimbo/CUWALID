@@ -71,6 +71,12 @@ class get_model_settings(object):
 
 		# Save netcdf files of model results
 		self.save_netcdf = bool(settings_config["OUTPUT"]["output_grid"])
+		
+		# Save netcdf files of maximum values at stream model results
+		self.store_rmax = bool(settings_config["OUTPUT"]["output_grid_rmax"])
+
+		# Save netcdf files of maximum values of model results
+		self.store_vmax = bool(settings_config["OUTPUT"]["output_grid_vmax"])
 
 		# Save results
 		self.save_results = True
@@ -122,11 +128,21 @@ class get_model_settings(object):
 		self.nstep_day = 1440/self.dt
 		
 		# specify if maximum values are stored
-		self.store_max = False
-		if self.nstep_day <= 24:
-			self.store_max = True
-			if self.dt_results == "1D":
-				self.store_max = False
+		if self.store_vmax is True:
+			self.store_vmax = False
+			if self.nstep_day <= 24:
+				self.store_vmax = True
+				if self.dt_results == "1D":
+					self.store_vmax = False
+
+		# specify if maximum values are stored at streams
+		if self.store_rmax is True:
+			self.store_rmax = False
+			if self.nstep_day <= 24:
+				self.store_rmax = True
+				if self.dt_results == "1D":
+					self.store_rmax = False
+
 
 		# set up units
 		self.unit_change_manning = (1 / (self.dt * 60)) ** (3 / 5)
@@ -187,9 +203,9 @@ class get_model_settings(object):
 
 		# Output files maps
 		self.DirOutput = dryp_config["OUTPUT"]["path_output"]
-		self.fname_DISpoints = dryp_config["OUTPUT"]["path_out_sz"]
+		self.fname_DISpoints = dryp_config["OUTPUT"]["path_out_oz"]
 		self.fname_SMDpoints = dryp_config["OUTPUT"]["path_out_uz"]
-		self.fname_GWpoints = dryp_config["OUTPUT"]["path_out_oz"]
+		self.fname_GWpoints = dryp_config["OUTPUT"]["path_out_sz"]
 
 		print("Model Name: ", self.Mname)
 

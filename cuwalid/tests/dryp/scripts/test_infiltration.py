@@ -51,7 +51,7 @@ def test_infiltration():
 	
 	assert np.allclose(out, answer)
 
-	print('Infiltration: Test runs successfully')
+	print('Infiltration: Test completed successfully')
 
 if __name__ == '__main__':
 	test_infiltration()

@@ -1,7 +1,7 @@
-API Documentation
-=================
+cuwalid
+=======
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 4
 
    cuwalid

@@ -62,7 +62,7 @@ def test_soil_layer():
 		out.append(mass_balance)
 		
 	assert np.allclose(out, answer)
-	print('Soil Layer: Test runs successfully')
+	print('Soil Layer: Test completed successfully')
 
 if __name__ == '__main__':
 	test_soil_layer()

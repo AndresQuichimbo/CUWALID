@@ -14,5 +14,5 @@ if __name__ == '__main__':
     run_stoPET(input_file_path)
     
     end = time.time()
-    print("Test run successfully")
+    print("Test completed successfully")
     print('Time of run: %s' % (end - start))
