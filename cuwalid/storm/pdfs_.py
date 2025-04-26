@@ -97,6 +97,11 @@ class masking:
         Input: ->
         *SHP_FILE* : str; path to catchment shape-file
         **kwargs\n
+        catchment: shp; shapefile.
+        wkt_prj: char; WKT (well-known text) of the local CRS.
+        buffer: float; buffer (in meters) to expand the shapefile.
+        x_res: float; spatial resolution (in meters) along the X-dimension.
+        y_res: float; spatial resolution (in meters) along the Y-dimension.
         initValues: int/float; default value to pre-empt the raster (with).
         burn_tag: char; geoPandas.GeoDataFrame column used as burning values.\n
         Output -> a class having the buffer & catchment rasters.
@@ -620,8 +625,8 @@ class regional:
 
         # grouping to retrieve just the CLUSTER.masks (the output is a Series)
     # nasks = feats.groupby(by='region').apply(lambda x: x.unary_union, include_groups=False)
-
-        nasks = feats.groupby(by='region').apply(lambda x: x.unary_union)
+        nasks = feats.groupby(by='region').apply(
+            lambda x: x.union_all(), include_groups=False)
         # nasks[0] ; nasks[1] ; nasks[2] ; nasks[3]
 
         # turn-back them into GeoPandas
@@ -1708,9 +1713,9 @@ class fit_pdf:
         # betas
         self._f_norm = [
             'anglit', 'burr', 'chi', 'chi2', 'cosine', 'exponweib', 'hypsecant',
-            'jf_skew_t', 'johnsonsb', 'logistic', 'maxwell', 'ncx2',
-            'nct', 'norm', 'powerlognorm', 'powernorm', 't', 'weibull_max',
-            # 'nakagami', 'norminvgauss',
+            'johnsonsb', 'logistic', 'maxwell', 'ncx2', 'nct', 'norm',
+            'powerlognorm', 'powernorm', 't', 'weibull_max',
+            # 'jf_skew_t', 'nakagami', 'norminvgauss',
             ]
         # exponential-like (decrease) distros
         self._f_expn = [
@@ -1998,34 +2003,17 @@ def totals(set_tot, area_km):
 
 # # reading MONTHLY.IMERG (for a given season)
 # # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# sdic = {'MAM': [3, 4, 5], 'OND': [10, 11, 12]}
-
-# def imorg(year):  # year=2000; year=2021
-#     flist = glob(f'../SETS/imerg_m/3B-MO*{year}*')
-#     ix = np.isin(list(map(lambda x: int(x.split('E235959')[1][1:3]), flist)), sdic[SEASON_TAG])
-#     flist = [value for bool_, value in zip(ix, flist) if bool_]
-#     if len(flist)!=0:
-#         imerg_mo = xr.open_mfdataset(
-#             flist, combine='nested', concat_dim='time', decode_times=True,
-#             use_cftime=True, decode_cf=True,  # data_vars=['precipitation'],
-#             mask_and_scale=True , parallel=False).transpose('time', 'lat', 'lon')
-#         daysim = imerg_mo.time.dt.days_in_month
-#         seas_rain = (imerg_mo * daysim * 24).sum(dim='time').compute()
-#         seas_rain['precipitationQualityIndex'] =\
-#             imerg_mo['precipitationQualityIndex'].mean(dim='time').compute()
-#         seas_rain.rio.write_crs(CRS('EPSG:4326'),
-#                                 grid_mapping_name='spatial_ref', inplace=True)
-#         # seas_rain.precipitation.plot(robust=True, cmap='gist_ncar')
-#         # seas_rain.precipitationQualityIndex.plot(robust=True, cmap='turbo')
-#     else:
-#         seas_rain = []
-#     return seas_rain
-
-# ilis = list(map(imorg, np.r_[2000:2022]))
-# # remove.voids.in.a.list (no tracking of voids!)
-# # https://stackoverflow.com/a/40598286/5885810
-# seasonal_monthly_imerg = xr.concat(
-#     list(filter(None, ilis)), 'time', compat='override', coords='minimal')
+# seasonal_monthly_imerg = xr.open_dataset(
+#     f'./model_input/rainfall_{SEASON_TAG}.nc', decode_times=True,
+#     decode_cf=True,  # data_vars=['precipitation'],
+#     mask_and_scale=True,).transpose('time', 'lat', 'lon')
+# seasonal_monthly_imerg.rio.write_crs(
+#     CRS(seasonal_monthly_imerg.spatial_ref.attrs['spatial_ref']),
+#     grid_mapping_name='spatial_ref', inplace=True
+#     )
+# seasonal_monthly_imerg = seasonal_monthly_imerg.mean(dim='time')
+# # seasonal_monthly_imerg.rain.plot(robust=True, cmap='gist_ncar')
+# # seasonal_monthly_imerg.mean_precipitationQualityIndex.plot(robust=True, cmap='turbo')
 
 
 # %% icpacs casting
@@ -2217,10 +2205,13 @@ def compute(space, RAIN_MAP, SEASON_TAG, PDF_FILE, ZON_FILE):  # space = masking
     # if reading SEASONAL.MAP with XARRAY
     seas = xr.open_dataset(
         abspath(join(parent_d, RAIN_MAP, SEASON_TAG)),
-        chunks='auto', decode_cf=True, use_cftime=True,
+        chunks='auto', decode_cf=True, # use_cftime=True,
         decode_coords='all',  # "decode_coords" helps to interpret CRS
         )
-    seas = seas.drop_vars('spatial_ref').rename({'lat': 'y', 'lon': 'x'})
+    seas = seas.mean(dim='time')
+    # # seas = seas.drop_vars('spatial_ref').rename({'lat': 'y', 'lon': 'x'})
+    # seas = seas.drop_vars('mean_precipitationQualityIndex')
+    seas = seas.rename({'lat': 'y', 'lon': 'x'})
     # seas.rain.plot(cmap='gist_ncar', robust=True)
 
     rain_ = field(seas, space.xs, space.ys)
@@ -2266,13 +2257,15 @@ def compute(space, RAIN_MAP, SEASON_TAG, PDF_FILE, ZON_FILE):  # space = masking
         # tots = totals(fset.clip_set, (one_area.region.area_m / 1e6).values)
         tots = totals(fset.clip_set, npix)
         # tots.total.mean()  # tots.total.values
+        # # JF: 69.8485;  MAM: 382.8558; JJAS: 414.04797; OND: 181.234
 
         # # checking against IMERG_monthly
         # # first run "seasonal_monthly_imerg" in [discrete xtras]
         # mo_clip = seasonal_monthly_imerg.rio.clip(one_area.region.geometry,)
-        # # mo_clip.precipitation[0,:].plot(cmap='turbo')
-        # avgs = mo_clip.precipitation.sum(dim=('lat', 'lon')) / mo_clip.precipitation.count(dim=('lat', 'lon'))
+        # # mo_clip.rain.plot(cmap='turbo')
+        # avgs = mo_clip.rain.sum(dim=('lat', 'lon')) / mo_clip.rain.count(dim=('lat', 'lon'))
         # avgs.mean().data  # avgs.data
+        # # JF: 136.397; MAM: 399.67787; JJAS: 619.1562; OND: 277.369
 
         fit_tot = fit_pdf(tots.total, family='lskm',)
         # fit_tot = fit_pdf(tots.total, family='norm',)
@@ -2386,7 +2379,7 @@ def compute(space, RAIN_MAP, SEASON_TAG, PDF_FILE, ZON_FILE):  # space = masking
 # 17. TIME of DAY [CIRCULAR]
         tod = dset.clip_set.start_basetime.load()
         tod = (tod.dt.hour + tod.dt.minute / 60 + tod.dt.second / 3600).data
-        tod_c = circular(tod, data_type='tod', met_cap=.93)
+        tod_c = circular(tod, data_type='tod', met_cap=.91)
         # tod_c._vmtab, tod_c._vmtab.sum(), tod_c._vmini, tod_c._vmini.sum()
         # tod_c.plot_samples(data_type='tod', bins=50)
         # tod_c.plot_bic()
@@ -2394,7 +2387,7 @@ def compute(space, RAIN_MAP, SEASON_TAG, PDF_FILE, ZON_FILE):  # space = masking
 
 # 18. DAY of YEAR [CIRCULAR]
         doy = (dset.clip_set.start_basetime.dt.dayofyear + tod / 24).compute().data
-        doy_c = circular(doy, data_type='doy', met_cap=.83)
+        doy_c = circular(doy, data_type='doy', met_cap=.90)
         # doy_c._vmtab, doy_c._vmtab.sum()
         # doy_c.plot_samples(data_type='doy', bins=20)
         # doy_c.plot_bic()
@@ -2437,4 +2430,4 @@ if __name__ == '__main__':
 
     space = masking(catchment=config["SHP_FILE"])  # space.plot()
     
-    compute_icpac(space, config["TER_FILE"], config["TER_YEAR"], config["SEASON_TAG"]) if ICPAC_ONLY == 1 else compute(space, config["RAIN_MAP"], config["SEASON_TAG"])
+    compute_icpac(space, config["TER_FILE"], config["TER_YEAR"], config["SEASON_TAG"])

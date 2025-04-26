@@ -47,3 +47,4 @@ aux_plot_maps_parallel.py
 test/
 *.log
 docs/source/notebooks/DRYP/.ipynb_checkpoints
+storm_output_test/
