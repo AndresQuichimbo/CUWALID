@@ -1,3 +1,4 @@
+import multiprocessing
 import os
 import warnings
 
@@ -223,7 +224,7 @@ def nc_bytes():
         MINIMUM = 0.
 
 
-def nc_file_iv(nc, **kwargs):
+def nc_file_iv(nc, SPACE, **kwargs):
     """
     skeletons the common variables/dimensions of the (output) nc-file.\n
     Input ->
@@ -233,7 +234,7 @@ def nc_file_iv(nc, **kwargs):
     sref_name : char; name of the variable storing the CRS.
     Output -> tuple; nc.group storing the nsim-run + xy_tags-dim_indexers.
     """
-    xpace = kwargs.get('space', SPACE)
+    xpace = SPACE
     sref_name = kwargs.get('sref_name', 'spatial_ref')
 
     # define common dimensions
@@ -406,7 +407,7 @@ parameters to generate some consistency when reading future? random rain-fields.
     return nc, yy.getncattr("coordinates"), xx.getncattr("coordinates")
 
 
-def nc_file_v(nc, iyear, times, ytag, xtag, **kwargs):
+def nc_file_v(nc, iyear, times, ytag, xtag, SPACE, **kwargs):
     """
     skeletons the unique sub-group vars/dims of the (output) nc-file.\n
     Input ->
@@ -422,7 +423,7 @@ def nc_file_v(nc, iyear, times, ytag, xtag, **kwargs):
     Output -> nc.sub_group; nc variable storing the simulated-year.
     """
     dateo = kwargs.get('date_origin', date_origen)
-    xpace = kwargs.get('space', SPACE)
+    xpace = SPACE
     rname = kwargs.get('rain_var_n', RAIN_NAME)
 
     # define SUB.GROUP and its dimensions
@@ -1194,18 +1195,17 @@ def lotr(radius, decay, i0, lapse, centre, **kwargs):
     return rain_ring
 
 
-def rasterize(ring_set, outer_ring, **kwargs):
+def rasterize(ring_set, outer_ring, space):
 # j=363; ring_set=c_ring[j]; outer_ring=last_r[j]; xpace=SPACE
     """
     rasterize linerings/polygons and interpolate rainfall (between rings).\n
     Input ->
     *ring_set* : geopandas.GeoDataFrame; linerings geometry with rain.
     *outer_ring* : pandas.Series; polygon geometry with outermost (rain) ring.
-    **kwargs ->
-    space : class; class where spatial variables are defined.\n
+    *space* : class; class where spatial variables are defined.\n
     Output -> 2D-numpy of floats representing a circular storm.
     """
-    xpace = kwargs.get('space', SPACE)
+    xpace = space
 
     # burn the 'ring_set' (for one storm-centre)
     fall = masking.shapsterize(
@@ -1257,7 +1257,7 @@ def rasterize(ring_set, outer_ring, **kwargs):
     return ok_field
 
 
-def rain_cube(c_ring, last_r, t_stamp, np_mask, **kwargs):
+def rain_cube(c_ring, last_r, t_stamp, np_mask, SPACE, max_val, ADD, SCL):
 # t_stamp=list(time_idx.keys()); space=SPACE; max_=iMAX
     """
     creates a rainfall cube (potentially) with regional rain already achieved.\n
@@ -1266,14 +1266,13 @@ def rain_cube(c_ring, last_r, t_stamp, np_mask, **kwargs):
     *last_r* : tuple; pandas.Series; polygon geometry with outermost (rain) ring.
     *t_stamp* : list; numpy integers representing time-steps since origin.
     *np_mask* : numpy; 2D-numpy with 1's representing the rain-region.\n
-    **kwargs ->
-    space : class; class where spatial variables are defined.
-    max_val : float; maximum value for rainfall allowed.\n
+    *space* : class; class where spatial variables are defined.
+    *max_val* : float; maximum value for rainfall allowed.\n
     Output -> tuple; xarray.DataArray(s) with rounded rainfall (first) and \
         total rainfall (within n-region) for every time-stamp (last).
     """
-    space = kwargs.get('space', SPACE)
-    max_ = kwargs.get('max_val', iMAX)
+    space = SPACE
+    max_ = max_val
 
     tot_pix = np_mask.sum()  # pixels in mask
     # create empty xarray
@@ -1291,7 +1290,7 @@ def rain_cube(c_ring, last_r, t_stamp, np_mask, **kwargs):
     suma = []
     # fill the void.array with rasterize rainfall
     for i in range(void.shape[0]):
-        tmp_rain = rasterize(c_ring[i], last_r[i],)
+        tmp_rain = rasterize(c_ring[i], last_r[i], SPACE)
         tmp_rain = base_round(tmp_rain, method='nearest', base=PRECISION)  # round=4
         tmp_rain[tmp_rain > max_] = max_  # capping above maxima
         # only keep rainfall inside the mask
@@ -1313,7 +1312,7 @@ def rain_cube(c_ring, last_r, t_stamp, np_mask, **kwargs):
     return void, suma_
 
 
-def rain_cube_dask(c_ring, last_r, t_stamp, np_mask, **kwargs):
+def rain_cube_dask(c_ring, last_r, t_stamp, np_mask, SPACE, **kwargs):
 # t_stamp=list(time_idx.keys()); space=SPACE; max_=iMAX
     """
     creates a rainfall cube (potentially) with regional rain already achieved.\n
@@ -1321,9 +1320,9 @@ def rain_cube_dask(c_ring, last_r, t_stamp, np_mask, **kwargs):
     *c_ring* : tuple; geopandas.GeoDataFrame linerings geometry with rain.
     *last_r* : tuple; pandas.Series; polygon geometry with outermost (rain) ring.
     *t_stamp* : list; numpy integers representing time-steps since origin.
-    *np_mask* : numpy; 2D-numpy with 1's representing the rain-region.\n
+    *np_mask* : numpy; 2D-numpy with 1's representing the rain-region.
+    *space* : class; class where spatial variables are defined.\n
     **kwargs ->
-    space : class; class where spatial variables are defined.
     max_val : float; maximum value for rainfall allowed.\n
     Output -> tuple; xarray.DataArray(s) with rounded rainfall (first) and \
         total rainfall (within n-region) for every time-stamp (last).
@@ -1343,7 +1342,7 @@ def rain_cube_dask(c_ring, last_r, t_stamp, np_mask, **kwargs):
     suma = []
     dain = []
     for i in np.r_[0:5]:  # i=0
-        tmpslice = rasterize(c_ring[i], last_r[i],)
+        tmpslice = rasterize(c_ring[i], last_r[i], SPACE)
         tmpslice = array.from_array(tmpslice.astype('f4'), chunks='auto',) # chunks='0.09 MiB',
         # my_ufunc  = array.gufunc(base_round, signature='()->()',
         #                          output_dtypes='f4', vectorize=False,)
@@ -1379,7 +1378,7 @@ def rain_cube_dask(c_ring, last_r, t_stamp, np_mask, **kwargs):
 
 # %% main loop
 
-def loop(train, mask_shp, np_mask, nsim, simy, nreg, mlen, upd_max, maxima, date_pool):
+def loop(train, mask_shp, np_mask, nsim, simy, nreg, mlen, upd_max, maxima, date_pool, SPACE, iMAX, ADD, SCL):
 # train=reg_tot; mask_shp=region_s['mask'].iloc[nreg]; np_mask=region_s['npma'][nreg]
     """
     calls children-functions to compute storms until seasonal rain is reached.\n
@@ -1413,7 +1412,7 @@ def loop(train, mask_shp, np_mask, nsim, simy, nreg, mlen, upd_max, maxima, date
     while CUM_S < train and NUM_S >= 2:
     # while contar_int < 1 and NUM_S >= 2:  # does the cycle 1x maximum!
         collect()
-#%%
+
         # sample random storm centres
         CENT = scentres(mask_shp, NUM_S)  # CENT.plot()
         # # 561 ms ± 10.5 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
@@ -1520,11 +1519,11 @@ def loop(train, mask_shp, np_mask, nsim, simy, nreg, mlen, upd_max, maxima, date
         # # # https://stackoverflow.com/a/38679861/5885810  (itemgetter)
         # # # ... but it did NOT allow for pd.concat (when only having one)
         # # c_ring = list(map(lambda x: pd.concat(itemgetter(*x)(rings), ignore_index=True), ...))
-#%%
+
         # returns a time-sorted & void.trimmed (xarray) rainfall cube
         # the minimum value in the cube is the data.resolution (i.e., NO ZEROS)
-        rain, suma = rain_cube(c_ring, last_r, list(time_idx.keys()), np_mask)
-#%%
+        rain, suma = rain_cube(c_ring, last_r, list(time_idx.keys()), np_mask, SPACE, iMAX, ADD, SCL)
+
         # aggregate RAIN over iterations
         lrain.append(rain)
         lsuma.append(suma)
@@ -1642,245 +1641,160 @@ def loop(train, mask_shp, np_mask, nsim, simy, nreg, mlen, upd_max, maxima, date
     return lrain[0], kum_s
 
 
-# %% wrapper
+def wrapper(NC_NAMES, year_z, NUMSIMS, NUMSIMYRS, SEASON_TAG, TER_FILE,
+            PDF_FILE, SHP_FILE, ZON_FILE, sim_in_parallel):
 
-def wrapper(NC_NAMES, year_z, NUMSIMS, NUMSIMYRS, SEASON_TAG, TER_FILE, PDF_FILE, SHP_FILE, ZON_FILE):
-#%%
-    global SPACE
-
-    n_sim_y = replicate_(NUMSIMS, NUMSIMYRS)
-
-    # set globals for INTEGER rainfall-NC-output
+    n_sim_y_indicator = replicate_(NUMSIMS, NUMSIMYRS)
     nc_bytes()
 
     upd_max = np.min((MAXD_RAIN, iMAX)) if capmax_or_not == 1 else iMAX
-    # upd_max = np.nanmin(np.array([MAXD_RAIN, iMAX], dtype='f4')) if\
-    #     capmax_or_not == 1 else iMAX  # no need for NP.NANMIN; + is slower
     maxima = np.array(((upd_max - ADD) / SCL) + MINIMUM, dtype=RAINFMT)
-    # transform to INTEGER the global rainfall maxima
 
-    PDFS = read_pdfs(PDF_FILE, SEASON_TAG)  # reads (and checks) the PDF-parameters
+    PDFS = read_pdfs(PDF_FILE, SEASON_TAG)
     construct_pdfs(PDFS)
-    # pdfx = read_pdfs('./model_input/ProbabilityDensityFunctions_OND_3r.csv')
-    # construct_pdfs(pdfx, tactic=2)
 
-    SPACE = masking(SHP_FILE)  # SPACE.plot()  # SPACE = masking(catchment=SHP_FILE)
+    SPACE = masking(SHP_FILE)
 
-    region_s = regionalisation(
-        # ZON_FILE.replace('.shp', f'_{SEASON_TAG}_{NREGIONS}kc.shp'),
-        ZON_FILE.replace('.shp', f'_{SEASON_TAG}_{NREGIONS}r.shp'),
-        'region', 'u_rain', SPACE,  # there is NO 'u_rain_ in KC.SHP
-        )
-    # plt.imshow(region_s['kmeans'], interpolation='none', cmap='turbo')
-    # plt.imshow(region_s['npma'][-1], interpolation='none', cmap='plasma_r')
+    region_s = regionalisation(ZON_FILE.replace('.shp', f'_{SEASON_TAG}_{NREGIONS}r.shp'),
+                                 'region', 'u_rain', SPACE)
 
     if TER_FILE:
         icpac_s = regionalisation(TER_FILE, 'region', 'tercile', SPACE, add=-2)
-        # plt.imshow(icpac_s['kmeans'], interpolation='none', cmap='turbo')
-        # plt.imshow(icpac_s['npma'][-1], interpolation='none', cmap='plasma_r')
     else:
-        # masks 1s to make.it icpac.compatible
         icpac_s = {'npma': [region_s['npma'][0].copy()]}
         icpac_s['npma'][0][:] = 1
 
+    if sim_in_parallel:
+        processes = []
+        for idx, sim_file in enumerate(NC_NAMES):
+            process = multiprocessing.Process(
+                target=run_single_simulation,
+                args=(idx, sim_file, NC_NAMES, SPACE, PDFS, year_z, NUMSIMYRS, SEASON_TAG, TER_FILE,
+                      region_s, icpac_s, n_sim_y_indicator, maxima, upd_max, PTOT_SC, PTOT_SF, iMAX, 
+                      ADD, SCL),
+                name=f"Simulation-{idx}"
+            )
+            processes.append(process)
+            process.start()
 
-#%%
-    # FOR EVERY FILE/SIMULATION
-    for nsim, sim_file in enumerate(NC_NAMES):
-    # nsim=0; sim_file=NC_NAMES[nsim]
+        print("All simulation processes started. Waiting for them to complete...")
+        for process in processes:
+            process.join()
+            print(f"{process.name} finished.")
+        print("All parallel simulations completed.")
 
-        print(f'\tRUN: {"{:02d}".format(nsim + 1)}/{"{:02d}".format(len(NC_NAMES))}')
-        print('progress')
-        print('********')
+    else:
+        for idx, sim_file in enumerate(NC_NAMES):
+            run_single_simulation(idx, sim_file, NC_NAMES, SPACE, PDFS, year_z, NUMSIMYRS,
+                                  SEASON_TAG, TER_FILE, region_s, icpac_s, n_sim_y_indicator, 
+                                  maxima, upd_max, PTOT_SC, PTOT_SF, iMAX, ADD, SCL)
 
-        nc = nc4.Dataset(sim_file, 'w', engine='h5netcdf')#, format='NETCDF4',)#set_auto_mask=False)
-        nc.created_on = datetime.now(tzlocal()).strftime('%Y-%m-%d %H:%M:%S %Z')#%z
+    print("Wrapper function finished.")
 
-        # # 1ST FILL OF THE NC.FILE (defining global vars & CRS)
-        # sub_grp, tag_y, tag_x = nc_file_i(nc, nsim,)
-        nc, tag_y, tag_x = nc_file_iv(nc,)
-        nc['regions'][:] = region_s['kmeans'].astype('i1')
+
+def run_single_simulation(sim_idx, sim_file, NC_NAMES, SPACE, PDFS, year_z, NUMSIMYRS, SEASON_TAG, TER_FILE,
+                          region_s, icpac_s, n_sim_y_indicator, maxima, upd_max,
+                          ptot_sc_local, ptot_sf_local, iMAX, ADD, SCL): 
+
+    print(f'\tRUN: {"{:02d}".format(sim_idx + 1)}/{"{:02d}".format(len(NC_NAMES))}')
+    print('progress')
+    print('********')
+
+    construct_pdfs(PDFS)
+
+    nc = nc4.Dataset(sim_file, 'w', engine='h5netcdf')
+    nc.created_on = datetime.now(tzlocal()).strftime('%Y-%m-%d %H:%M:%S %Z')
+    nc, tag_y, tag_x = nc_file_iv(nc, SPACE)
+    nc['regions'][:] = region_s['kmeans'].astype('i1')
+    nc.close()
+
+    for simy in tqdm(range(NUMSIMYRS), ncols=50):
+        iyear = year_z + simy
+        mlen, date_pool = wet_days(iyear, SEASON_TAG)
+
+        time_seas = ((pd.date_range(date_pool[0], date_pool[1], freq=f'{T_RES}min',
+                                    inclusive='left', tz=TIME_ZONE) - date_origen
+                      ).total_seconds() * TIME_DICT_[TIME_OUTNC]).astype(TIMEINT).values
+
+        nc = nc4.Dataset(sim_file, 'a', engine='h5netcdf')
+        sub_grp = nc_file_v(nc, iyear, time_seas, tag_y, tag_x, SPACE)
+        sub_grp[RAIN_NAME].set_auto_mask(False)
+
+        # Generate seasonal rainfall
+        if ptot_or_kmean == 1:
+            if TER_FILE:
+                terlim = [[0., 1/3], [1/3, 2/3], [2/3, 1.]]
+                rtg = npr.Generator(npr.PCG64())
+                tercil = icpac_s['rain'].apply(lambda x: np.array(list(map(float, x.split('_')))))
+                tercil = tercil.apply(forecasting.split_diff)
+                wat = tercil.apply(lambda x: rtg.choice(3, size=1) if np.isnan(x).all()
+                                   else rtg.choice(3, size=1, p=x / 100))
+                seas_rain = [[truncated_sampling(i, limits=terlim[j[0]], type_l='prob') for j in wat]
+                             for i in TOTALP]
+            else:
+                seas_rain = [[truncated_sampling(i, limits=(NO_RAIN, np.inf))] for i in TOTALP]
+        else:
+            seas_rain = [[x] for x in list(map(np.asarray, region_s['rain'].tolist()))]
+
+        C_OUT = []
+
+        # Loop over regions
+        for nreg, srain in enumerate(tqdm(seas_rain, ncols=50)):
+            for jter, ireg in enumerate(tqdm(icpac_s['npma'], ncols=50)):
+                micro_mask = region_s['npma'][nreg] * ireg
+                if micro_mask.sum() > 999:
+                    if n_sim_y_indicator == 'nsim':
+                        index_to_use = sim_idx
+                    elif n_sim_y_indicator == 'simy':
+                        index_to_use = simy
+                    else:
+                        raise ValueError(f"Unexpected n_sim_y_indicator: {n_sim_y_indicator}")
+
+                    reg_tot = srain[jter] * (1 + ptot_sc_local[index_to_use] + (simy * ptot_sf_local[index_to_use]))
+
+                    reg_rain, cum_out = loop(
+                        reg_tot,
+                        region_s['mask'].iloc[nreg],
+                        micro_mask,
+                        sim_idx,
+                        simy,
+                        nreg,
+                        mlen,
+                        upd_max,
+                        maxima,
+                        date_pool,
+                        SPACE,
+                        iMAX,
+                        ADD,
+                        SCL
+                    )
+
+                    reg_rain = reg_rain.reindex({'time': time_seas}, fill_value=0)
+                    sub_grp[RAIN_NAME][:] = reg_rain + sub_grp[RAIN_NAME][:].astype(RAINFMT)
+
+                    collect()
+                    C_OUT.append(cum_out[-1].data)
+
+        if RAINFMT[0] != 'f':
+            sub_grp[RAIN_NAME].scale_factor = SCL
+            sub_grp[RAIN_NAME].add_offset = ADD
 
         nc.close()
+        collect()
 
-#%%
-        # FOR EVERY YEAR of the SIMULATION
-        for simy in tqdm(range(NUMSIMYRS), ncols=50):  # simy=0; year_z=2024
-
-            iyear = year_z + simy
-            mlen, date_pool = wet_days(iyear, SEASON_TAG)
-            # seasonal time.index
-            time_seas = ((
-                pd.date_range(date_pool[0], date_pool[1], freq=f'{T_RES}min',
-                              inclusive='left', tz=TIME_ZONE) - date_origen
-                ).total_seconds() * TIME_DICT_[TIME_OUTNC]).astype(TIMEINT).values
-
-            # # 2ND FILL OF THE NC.FILE (creating the TIME & RAIN vars)
-            nc = nc4.Dataset(sim_file, 'a', engine='h5netcdf')#, format='NETCDF4',)#set_auto_mask=False)
-
-            sub_grp = nc_file_v(nc, iyear, time_seas, tag_y, tag_x,)
-            sub_grp[RAIN_NAME].set_auto_mask(False)  # CRUCIAL for SPEED
-
-            # sampling/updating total seasonal rainfall
-
-            # # delete!!!
-            # if ptot_or_kmean == 1:
-            #     region_s['rain'] = pd.Series(np.ravel(list(map(
-            #         lambda x: truncated_sampling(TOTALP[x], limits=(NO_RAIN, np.inf)),
-            #         range(len(TOTALP))))), name='s_rain',)
-
-            if ptot_or_kmean == 1:
-                if TER_FILE:
-                    # the lower.lim of 1st.element could lead to ZERO.rainfall!!
-                    terlim = [[0., 1/3], [1/3, 2/3], [2/3, 1.]]
-                    # https://numpy.org/doc/stable/reference/random/bit_generators/index.html
-                    rtg = npr.Generator(npr.PCG64())
-                    tercil = icpac_s['rain'].apply(lambda x: np.array(list(map(float, x.split('_')))))
-                    tercil = tercil.apply(forecasting.split_diff)
-                    wat = tercil.apply(lambda x: rtg.choice(3, size=1) if np.isnan(x).all() else rtg.choice(3, size=1, p=x / 100))
-                    seas_rain = [[truncated_sampling(i, limits=terlim[j[0]], type_l='prob',) for j in wat] for i in TOTALP]
-                else:
-                    seas_rain = [[truncated_sampling(i, limits=(NO_RAIN, np.inf),)] for i in TOTALP]
-            else:
-                seas_rain = [[x] for x in list(map(np.asarray, region_s['rain'].tolist()))]
-
-            C_OUT = []  # meaningless array to collect reached cums
-
-            # FOR EVERY N_REGION
-            for nreg, srain in enumerate(tqdm(seas_rain, ncols=50)):
-            # nreg=2; srain=seas_rain[nreg]
-                # print(nreg, srain)
-                for jter, ireg in enumerate(tqdm(icpac_s['npma'], ncols=50)):
-                # jter=1; ireg=icpac_s['npma'][jter]
-                    micro_mask = region_s['npma'][nreg] * ireg
-                    # plt.imshow(micro_mask, cmap='turbo', interpolation='none')
-                # the region must be "large" enough to compute rainfall
-                    if micro_mask.sum() > 999:
-
-                        # scale (or not) the total seasonal rainfall
-                        # using '(simy + 1)' starts the increase right from the first year
-                        reg_tot = srain[jter] *\
-                            (1 + PTOT_SC[eval(n_sim_y)] + (simy * PTOT_SF[eval(n_sim_y)]))
-                            # (1 + PTOT_SC[simy] + (simy * PTOT_SF[simy]))
-                        # reg_tot = 1e-1  # for testing!
-
-                        reg_rain, cum_out = loop(
-                            reg_tot, region_s['mask'].iloc[nreg], micro_mask,
-                            nsim, simy, nreg, mlen, upd_max, maxima, date_pool,
-                            )
-
-                        # # where the rain must be placed
-                        # what = np.intersect1d(time_seas, reg_rain['time'],
-                        #                       assume_unique=True, return_indices=True)
-                        # sub_grp[RAIN_NAME][what[1], :, :] = reg_rain.data +\
-                        #     sub_grp[RAIN_NAME][what[1], :, :].astype(RAINFMT)
-                        # # sub_grp[RAIN_NAME][sub_grp[RAIN_NAME] == 0] = 1
-
-                        reg_rain = reg_rain.reindex({'time': time_seas}, fill_value=0)
-                        sub_grp[RAIN_NAME][:] = reg_rain + sub_grp[RAIN_NAME][:].astype(RAINFMT)
-                        # # having assigned the 'rain' name
-                        # reg_rain.to_netcdf('./model_output/zdos.nc', engine='h5netcdf',
-                        #     encoding={'rain':{'dtype':'u2', 'zlib':True, 'complevel':9}},
-                        #     # encoding={'rain':{'dtype':'u2', 'compression':'gzip', "compression_opts": 9}},
-                        #     )
-
-                        collect()
-                        # the line below should be removed??
-                        C_OUT.append(cum_out[-1].data)
-
-            # # FOR EVERY N_REGION
-            # for nreg in tqdm(range(NREGIONS), ncols=50):  # nreg=2
-            # # for nreg in tqdm(range(1), ncols=50):  # nreg=0  # for testing!
-
-            #     # scale (or not) the total seasonal rainfall
-            #     # using '(simy + 1)' starts the increase right from the first year
-            #     reg_tot = region_s['rain'].iloc[nreg] *\
-            #         (1 + PTOT_SC[eval(n_sim_y)] + (simy * PTOT_SF[eval(n_sim_y)]))
-            #         # (1 + PTOT_SC[simy] + (simy * PTOT_SF[simy]))
-            #     # reg_tot = 10.  # for testing!
-
-            #     reg_rain, cum_out = loop(
-            #         reg_tot, region_s['mask'].iloc[nreg], region_s['npma'][nreg],
-            #         nsim, simy, nreg, mlen, upd_max, maxima, date_pool,
-            #         )
-
-            #     # # where the rain must be placed
-            #     # what = np.intersect1d(time_seas, reg_rain['time'],
-            #     #                       assume_unique=True, return_indices=True)
-            #     # sub_grp[RAIN_NAME][what[1], :, :] = reg_rain.data +\
-            #     #     sub_grp[RAIN_NAME][what[1], :, :].astype(RAINFMT)
-            #     # # sub_grp[RAIN_NAME][sub_grp[RAIN_NAME] == 0] = 1
-
-            #     reg_rain = reg_rain.reindex({'time': time_seas}, fill_value=0)
-            #     sub_grp[RAIN_NAME][:] = reg_rain + sub_grp[RAIN_NAME][:].astype(RAINFMT)
-            #     # # having assigned the 'rain' name
-            #     # reg_rain.to_netcdf('./model_output/zdos.nc', engine='h5netcdf',
-            #     #     encoding={'rain':{'dtype':'u2', 'zlib':True, 'complevel':9}},
-            #     #     # encoding={'rain':{'dtype':'u2', 'compression':'gzip', "compression_opts": 9}},
-            #     #     )
-
-            #     collect()
-
-            #     C_OUT.append(cum_out[-1].data)
-
-            # MAYBE THE 1.MASK SHOULD HAPPEN HERE
-
-            """
-            this is the only right place to assign the SCL and ADD attributes\
-            to the 'sub_grp[RAIN_NAME]' variable. ONLY HERE, and only after the\
-            the whole variable has been set and filled up.
-            you'd have serious problems (i.e., errors in the variable.values\
-            when reading them (back) from the nc.file). please DO NOT be stupid!
-            """
-            if RAINFMT[0] != 'f':
-                sub_grp[RAIN_NAME].scale_factor = SCL
-                sub_grp[RAIN_NAME].add_offset = ADD
-
-            nc.close()
-            collect()
-#%%
-
-            # store.mean.stats as CSV.file (less memory when using INT)
-            if output_stats_ == 1:
-                zumaz = xr.DataArray(sub_grp[RAIN_NAME][:])
-                # zumaz = zumaz.where(zumaz >= 2, 0)  # if storing 1's (ones)
-                zumaz = zumaz.sum(dim='dim_0').astype('u4')
-                zumaz = zumaz * SCL + ADD
-                zumaz = zumaz.where(zumaz >= 0., 0.).round(3)  # if storing 0's
-                cum_nc = []
-                for rr in region_s['npma']:
-                    cum_nc.append(zumaz.data[rr.astype(bool)].sum() / rr.sum())
-                pd.DataFrame({
-                    'y': np.repeat(iyear, NREGIONS),
-                    'k': range(NREGIONS),
-                    'mean_in': region_s['rain'].round(4),
-                    'mean_out': [x.round(4) for x in C_OUT],
-                    'mean_nc': [x.round(4) for x in cum_nc],
-                    }).to_csv(sim_file.replace('.nc', '_stats.csv'), sep=',',
-                              mode='a', index=False)
-
-
-# def whopper(NC_NAMOS):
-#     global SPACE
-#     nc_bytes()
-#     PDFS = read_pdfs()
-#     construct_pdfs(PDFS)
-#     SPACE = masking()
-#     print('\nRUN PROGRESS')
-#     print('************')
-#     for nsim, sim_file in enumerate(NC_NAMOS):
-#         nc = nc4.Dataset(sim_file, 'w', format='NETCDF4')
-#         nc.created_on = datetime.now(tzlocal()).strftime('%Y-%m-%d %H:%M:%S %Z')#%z
-#         nc, tag_y, tag_x = nc_file_iv(nc,)
-#         for simy in tqdm(range(3), ncols=50):
-#             iyear = year_z + simy
-#             mlen, date_pool = wet_days(iyear)
-#             time_seas = ((
-#                 pd.date_range(date_pool[0], date_pool[1], freq=f'{T_RES}min',
-#                               inclusive='left', tz=TIME_ZONE) - date_origen
-#                 ).total_seconds() * TIME_DICT_[TIME_OUTNC]).astype(TIMEINT).values
-#             # sub_grp = nc_file_iii(nc, iyear, time_seas,)
-#             sub_grp = nc_file_v(nc, iyear, time_seas, tag_y, tag_x,)
-#         nc.close()
-
-
+        # Save stats if requested
+        if output_stats_ == 1:
+            zumaz = xr.DataArray(sub_grp[RAIN_NAME][:])
+            zumaz = zumaz.sum(dim='dim_0').astype('u4')
+            zumaz = zumaz * SCL + ADD
+            zumaz = zumaz.where(zumaz >= 0., 0.).round(3)
+            cum_nc = []
+            for rr in region_s['npma']:
+                cum_nc.append(zumaz.data[rr.astype(bool)].sum() / rr.sum())
+            pd.DataFrame({
+                'y': np.repeat(iyear, NREGIONS),
+                'k': range(NREGIONS),
+                'mean_in': region_s['rain'].round(4),
+                'mean_out': [x.round(4) for x in C_OUT],
+                'mean_nc': [x.round(4) for x in cum_nc],
+            }).to_csv(sim_file.replace('.nc', '_stats.csv'), sep=',', mode='a', index=False)

@@ -2,7 +2,6 @@ import os
 import datetime as dt
 import sys
 from cuwalid.stopet.helper_functions import check_missing_files, load_config
-from cuwalid.stopet.run_stoPET_4dryp import run_stoPET_4_dryp
 from cuwalid.stopet.run_stoPET_inHPC import run_stoPET_in_hpc
 
 def run_stoPET(config_file):
@@ -32,11 +31,10 @@ def run_stoPET(config_file):
     else:
         config = config_file
 
-    execution_type = config['execution_type']
+    execution_type = config.get('execution_type', None)
 
-    if execution_type not in ['dryp', 'hpc']:
-        print("Error: Invalid 'execution_type'. Please choose 'dryp' or 'hpc'.")
-        sys.exit(1)
+    if execution_type:
+        print("Execution type is not depreciated as both methods are combined now. Please feel free to delete it from the config file.")
 
     # Extract parameters from the config
     slice_only = config.get('slice_only', 1)
@@ -61,54 +59,30 @@ def run_stoPET(config_file):
     season_name = config['seasonName']
     temp_path = config.get("temp_path", "")
 
-    if execution_type == 'dryp':
-        run_stoPET_4_dryp(
-            datapath=datapath,
-            outputpath=outputpath,
-            runtype=runtype,
-            startyear=startyear,
-            endyear=endyear,
-            seasonswitch=seasonswitch,
-            startdate=startdate,
-            enddate=enddate,
-            latval=latval,
-            lonval=lonval,
-            latval_min=latval_min,
-            latval_max=latval_max,
-            lonval_min=lonval_min,
-            lonval_max=lonval_max,
-            locname=locname,
-            number_ensm=number_ensm,
-            tempAdj=tempAdj,
-            deltat=deltat,
-            udpi_pet=udpi_pet,
-            slice_only=slice_only
-        )
-    elif execution_type == 'hpc':
-        run_stoPET_in_hpc(
-            datapath=datapath,
-            outputpath=outputpath,
-            runtype=runtype,
-            startyear=startyear,
-            endyear=endyear,
-            seasonswitch=seasonswitch,
-            startdate=startdate,
-            enddate=enddate,
-            latval=latval,
-            lonval=lonval,
-            latval_min=latval_min,
-            latval_max=latval_max,
-            lonval_min=lonval_min,
-            lonval_max=lonval_max,
-            locname=locname,
-            number_ensm=number_ensm,
-            tempAdj=tempAdj,
-            deltat=deltat,
-            udpi_pet=udpi_pet,
-            slice_only=slice_only,
-            season_name=season_name,
-            temp_path = temp_path
-        )
+    run_stoPET_in_hpc(
+        datapath=datapath,
+        outputpath=outputpath,
+        runtype=runtype,
+        startyear=startyear,
+        endyear=endyear,
+        seasonswitch=seasonswitch,
+        startdate=startdate,
+        enddate=enddate,
+        latval=latval,
+        lonval=lonval,
+        latval_min=latval_min,
+        latval_max=latval_max,
+        lonval_min=lonval_min,
+        lonval_max=lonval_max,
+        locname=locname,
+        number_ensm=number_ensm,
+        tempAdj=tempAdj,
+        deltat=deltat,
+        udpi_pet=udpi_pet,
+        slice_only=slice_only,
+        season_name=season_name,
+        temp_path = temp_path
+    )
 
     print('Seasonal PET extraction finished successfully.')
 
