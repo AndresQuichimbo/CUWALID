@@ -4,7 +4,7 @@ from cuwalid.storm.rainfall import wrapper
 from cuwalid.storm.checks_ import welcome, assertion
 from cuwalid.storm.parameters import *
 
-def run_storm(json_input):
+def run_storm(json_input, sim_in_parallel=False):
 
     if type(json_input) == str:
         # Load JSON data
@@ -30,7 +30,7 @@ def run_storm(json_input):
     NC_NAMES = willkommen.ncs
     
     wrapper(
-        NC_NAMES, SEED_YEAR, NUMSIMS, NUMSIMYRS, SEASON_TAG, TER_FILE, PDF_FILE, SHP_FILE, ZON_FILE
+        NC_NAMES, SEED_YEAR, NUMSIMS, NUMSIMYRS, SEASON_TAG, TER_FILE, PDF_FILE, SHP_FILE, ZON_FILE, sim_in_parallel
     )
 
 

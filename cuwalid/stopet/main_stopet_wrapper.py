@@ -3,10 +3,11 @@ import datetime as dt
 import sys
 from cuwalid.stopet.helper_functions import check_missing_files, load_config
 from cuwalid.stopet.run_stoPET_inHPC import run_stoPET_in_hpc
+from cuwalid.stopet.pet_forecast_generation import forecast_wrapper
 
 def run_stoPET(config_file):
     start = dt.datetime.now()
-    
+
     # Get stopet parameter files
     script_dir = os.path.dirname(os.path.abspath(__file__))
     datapath = os.path.join(script_dir, 'stopet_parameters')
@@ -59,6 +60,7 @@ def run_stoPET(config_file):
     season_name = config['seasonName']
     temp_path = config.get("temp_path", "")
 
+    # Run StoPET
     run_stoPET_in_hpc(
         datapath=datapath,
         outputpath=outputpath,
@@ -86,9 +88,31 @@ def run_stoPET(config_file):
 
     print('Seasonal PET extraction finished successfully.')
 
+    # === Postprocessing ===
+    print("Converting StoPET output into files for DRYP...")
+
+
+    # Convert the StoPET output files for DRYP
+    forecast_path_stopet_output = config['outputpath']  # Example path
+    season = config['seasonName']
+    iyear = config['startyear']  # or whatever year is needed
+    start_day = config['startdate']
+    end_day = config['enddate']
+    nsim = config['number_ensm']
+    forecast_wrapper(
+        config["tercile_forecast_file"], 
+        forecast_path_stopet_output, 
+        iyear, start_day, end_day,  # Dates
+        config["locname"],  # Location name
+        nsim, config["tempAdj"],  # Temperature adjustments
+        season, config["temp_path"]
+    )
+
+    print("Postprocessing completed.")
+
     # End the run and print the runtime
     end = dt.datetime.now()
-    print('Time of run: %s' % (end - start))
+    print('Total runtime: %s' % (end - start))
 
 
 # Command-line execution

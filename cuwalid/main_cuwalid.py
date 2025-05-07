@@ -80,7 +80,7 @@ def run_cuwalid(cuwalid_input):
 		compute_icpac(space, storm_tercile_file, storm_input["TER_FILE"], storm_input["ZON_FILE"])
 		print("Finished creating shp file")
 
-		run_storm(storm_input)
+		run_storm(storm_input, sim_in_parallel)
 
 	else:
 		print("storm is not executed")
@@ -271,6 +271,7 @@ def run_cuwalid(cuwalid_input):
 		else: # plot maps in sequence
 			print("Running map plotting in sequence")
 			fcast.plot_maps_json(ImCast_input)
+
 
 if __name__ == '__main__':
 	# Set up argument parser to get the JSON config file from command line
