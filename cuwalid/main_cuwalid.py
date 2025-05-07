@@ -272,6 +272,7 @@ def run_cuwalid(cuwalid_input):
 			print("Running map plotting in sequence")
 			fcast.plot_maps_json(ImCast_input)
 
+
 if __name__ == '__main__':
 	# Set up argument parser to get the JSON config file from command line
 	parser = argparse.ArgumentParser(description="Execute CUWALID based on JSON configuration.")
