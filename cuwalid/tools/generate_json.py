@@ -6,6 +6,7 @@ import cuwalid.tools.CUWALID_json_builder as JSON_builder
 import cuwalid.tools.CUWALID_mfile_tools as cuwalid_mtools
 from cuwalid.tools.CUWALID_make_dirs import create_directory_structure
 from cuwalid.storm.pdfs_ import compute_icpac, masking
+from cuwalid.tools.generate_bash_scripts import write_bash
 
 def generate_jsons(config_path):
     with open(config_path, 'r') as file:
@@ -116,6 +117,18 @@ def generate_jsons(config_path):
     write_list_file(dryp_jsons, os.path.join(forecast_path, "dryp_jsons.txt"))
 
     print("All JSONs generated and file lists saved.")
+
+    # === Generate bash scripts for job submission ===
+    print("Generating bash scripts for job submission...")
+    os.makedirs("bSub_runMe", exist_ok=True)
+    os.makedirs("bSub_logMe", exist_ok=True)
+
+    # Only run STORM and StoPET jobs, since post-processing is now integrated
+    write_bash("storm", "python -m cuwalid.storm.main_storm input_storm.json")
+    write_bash("stopet", "python -m cuwalid.stopet.main_stopet_wrapper input_stopet.json")
+
+    # DRYP jobs will be generated later when `dryp_jsons.txt` is available
+    print("Run `submit_all.sh` after generating dryp_jsons.txt.")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Generate JSON files for STORM, StoPET, and DRYP.")
