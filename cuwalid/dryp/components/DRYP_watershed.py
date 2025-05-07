@@ -235,6 +235,7 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 			try:
 				flow_unit_rate = flow_unit_rate[field].values.flatten()
 			except:
+				print('Field not found. unit values used instead')
 				flow_unit_rate = flow_unit_rate.values.flatten()
 			#flow_unit_rate = np.flip(flow_unit_rate, 0)
 
