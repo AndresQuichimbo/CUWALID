@@ -614,17 +614,10 @@ def seasonal_pet_for_dryp(outputpath, locname, number_ensm, tempAdj, startyear, 
     for i in range(0,number_ensm):
       for j in range(0,len(years)):
         year = years[j]                   
-        # old naming
-        # fname1 = '%s_%s_stoPET.nc'%(year, tempAdj)
         fname1 = f'E_{str(i)}_{locname}_ens_{str(year)}.nc'
         temp_output = os.path.join(temp_path, str(year))
         stopet4dryp(temp_output, fname1, seasonswitch, startdate, enddate, i, season_name)
         
-##        fname2 = '%s_%s_AdjstoPET.nc'%(year, tempAdj)
-##        stopet4dryp(filepath, fname2, seasonswitch, startdate, enddate, i)
-        # remove the previous yearly file
- ##       os.remove(filepath+fname1)
- ##       os.remove(filepath+fname2)
 
 
 def stopet4dryp(filepath, fname, seasonswitch, startdate, enddate, i, season_name):

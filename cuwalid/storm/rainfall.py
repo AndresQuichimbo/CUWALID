@@ -1,5 +1,6 @@
 import multiprocessing
 import os
+import time
 import warnings
 
 # # https://stackoverflow.com/a/9134842/5885810     (supress warning by message)
@@ -1671,11 +1672,13 @@ def wrapper(NC_NAMES, year_z, NUMSIMS, NUMSIMYRS, SEASON_TAG, TER_FILE,
                 target=run_single_simulation,
                 args=(idx, sim_file, NC_NAMES, SPACE, PDFS, year_z, NUMSIMYRS, SEASON_TAG, TER_FILE,
                       region_s, icpac_s, n_sim_y_indicator, maxima, upd_max, PTOT_SC, PTOT_SF, iMAX, 
-                      ADD, SCL),
+                      ADD, SCL, True),
                 name=f"Simulation-{idx}"
             )
             processes.append(process)
             process.start()
+            print(f"Started {process.name} for simulation {idx + 1}/{len(NC_NAMES)}")
+            time.sleep(5)  # Optional: Add a small delay to stagger the start of processes
 
         print("All simulation processes started. Waiting for them to complete...")
         for process in processes:
@@ -1687,18 +1690,71 @@ def wrapper(NC_NAMES, year_z, NUMSIMS, NUMSIMYRS, SEASON_TAG, TER_FILE,
         for idx, sim_file in enumerate(NC_NAMES):
             run_single_simulation(idx, sim_file, NC_NAMES, SPACE, PDFS, year_z, NUMSIMYRS,
                                   SEASON_TAG, TER_FILE, region_s, icpac_s, n_sim_y_indicator, 
-                                  maxima, upd_max, PTOT_SC, PTOT_SF, iMAX, ADD, SCL)
+                                  maxima, upd_max, PTOT_SC, PTOT_SF, iMAX, ADD, SCL, disable_tqdm=False)
 
     print("Wrapper function finished.")
 
 
 def run_single_simulation(sim_idx, sim_file, NC_NAMES, SPACE, PDFS, year_z, NUMSIMYRS, SEASON_TAG, TER_FILE,
                           region_s, icpac_s, n_sim_y_indicator, maxima, upd_max,
-                          ptot_sc_local, ptot_sf_local, iMAX, ADD, SCL): 
+                          ptot_sc_local, ptot_sf_local, iMAX, ADD, SCL, disable_tqdm=False): 
+    """
+    Simulates seasonal rainfall for a single ensemble member and writes output to a NetCDF file.
 
-    print(f'\tRUN: {"{:02d}".format(sim_idx + 1)}/{"{:02d}".format(len(NC_NAMES))}')
-    print('progress')
-    print('********')
+    Parameters
+    ----------
+    sim_idx : int
+        Index of the current ensemble simulation.
+    sim_file : str
+        Path to the NetCDF file where results will be saved.
+    NC_NAMES : list of str
+        List of all NetCDF file paths for the ensemble simulations.
+    SPACE : dict
+        Spatial configuration of the simulation grid.
+    PDFS : dict
+        Probability density functions used for sampling rainfall.
+    year_z : int
+        Base forecast year.
+    NUMSIMYRS : int
+        Number of simulation years to generate.
+    SEASON_TAG : str
+        Seasonal identifier tag (e.g., 'OND', 'MAM').
+    TER_FILE : str or None
+        Path to file containing tercile forecasts. If None, k-means clustering is used instead.
+    region_s : dict
+        Regionalisation data, including masks and region rainfall values.
+    icpac_s : dict
+        ICPAC tercile classification data or default masks if not used.
+    n_sim_y_indicator : str
+        Simulation indexing mode: either 'nsim' (index by simulation) or 'simy' (index by year).
+    maxima : np.ndarray
+        Array of precomputed rainfall maxima per grid cell.
+    upd_max : float
+        Upper limit for rainfall sampling.
+    ptot_sc_local : list or np.ndarray
+        Scaling coefficients for rainfall anomalies (static).
+    ptot_sf_local : list or np.ndarray
+        Scaling coefficients for rainfall anomalies (yearly trend).
+    iMAX : int
+        Maximum number of rain events per year.
+    ADD : float
+        Offset to apply when writing rainfall data.
+    SCL : float
+        Scaling factor for rainfall data.
+    disable_tqdm : bool, optional (default=False)
+        If True, disables tqdm progress bars (useful for parallel runs or logging to file).
+
+    Returns
+    -------
+    None
+        The function writes directly to NetCDF files and optionally to CSVs.
+    """
+    
+    if not disable_tqdm:
+
+        print(f'\tRUN: {"{:02d}".format(sim_idx + 1)}/{"{:02d}".format(len(NC_NAMES))}')
+        print('progress')
+        print('********')
 
     construct_pdfs(PDFS)
 
@@ -1708,7 +1764,9 @@ def run_single_simulation(sim_idx, sim_file, NC_NAMES, SPACE, PDFS, year_z, NUMS
     nc['regions'][:] = region_s['kmeans'].astype('i1')
     nc.close()
 
-    for simy in tqdm(range(NUMSIMYRS), ncols=50):
+    for simy in tqdm(range(NUMSIMYRS), ncols=50, disable=disable_tqdm):
+        if disable_tqdm and (simy % 5 == 0 or simy == NUMSIMYRS - 1): # Logging without tqdm for parrelel processing
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] Sim {sim_idx+1} - Year {simy+1}/{NUMSIMYRS}")
         iyear = year_z + simy
         mlen, date_pool = wet_days(iyear, SEASON_TAG)
 
@@ -1739,8 +1797,8 @@ def run_single_simulation(sim_idx, sim_file, NC_NAMES, SPACE, PDFS, year_z, NUMS
         C_OUT = []
 
         # Loop over regions
-        for nreg, srain in enumerate(tqdm(seas_rain, ncols=50)):
-            for jter, ireg in enumerate(tqdm(icpac_s['npma'], ncols=50)):
+        for nreg, srain in enumerate(tqdm(seas_rain, ncols=50, disable=True)): # Disable tqdm clarity
+            for jter, ireg in enumerate(tqdm(icpac_s['npma'], ncols=50, disable=True)): # Disable tqdm clarity
                 micro_mask = region_s['npma'][nreg] * ireg
                 if micro_mask.sum() > 999:
                     if n_sim_y_indicator == 'nsim':
