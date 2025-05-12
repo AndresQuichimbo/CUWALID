@@ -4,7 +4,7 @@ from cuwalid.storm.rainfall import wrapper
 from cuwalid.storm.checks_ import welcome, assertion
 from cuwalid.storm.parameters import *
 
-def run_storm(json_input, sim_in_parallel=False):
+def run_storm(json_input):
 
     if type(json_input) == str:
         # Load JSON data
@@ -23,6 +23,9 @@ def run_storm(json_input, sim_in_parallel=False):
     DEM_FILE = config["DEM_FILE"]
     SHP_FILE = config["SHP_FILE"]
     ZON_FILE = config["ZON_FILE"]
+    
+    # Get option for parallel processing
+    sim_in_parallel = config.get("sim_in_parallel", False)
 
 
     willkommen = welcome(NUMSIMS, NUMSIMYRS, SEED_YEAR, SEASON_TAG, OUT_PATH)

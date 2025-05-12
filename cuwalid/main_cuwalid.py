@@ -42,7 +42,7 @@ def run_cuwalid(cuwalid_input):
 	start_day, end_day = cuwalid_mtools.date_to_day_of_year(start_date), cuwalid_mtools.date_to_day_of_year(end_date)
 
 	# Find if the user wants to run in parallel when possible
-	sim_in_parallel = cuwalid_config.get("sim_in_parallel", True)
+	sim_in_parallel = cuwalid_config.get("sim_in_parallel", False)
 
 	# Create directory structure for cuwalid system where user ran code
 	create_directory_structure(forecast_path, season, iyear)
@@ -69,6 +69,7 @@ def run_cuwalid(cuwalid_input):
 		storm_input["SEED_YEAR"] = iyear
 		storm_input["NUMSIMS"] = nsim
 		storm_input["OUT_PATH"] = forecast_path_storm_output
+		storm_input["sim_in_parallel"] = sim_in_parallel
 
 		# Create path for converted .shp file and set this to the new TER_FILE
 		shp_output = os.path.join(forecast_path_storm_output, f"tercilesICPAC_{storm_input['SEASON_TAG']}_{storm_input['SEED_YEAR']}.shp")
@@ -80,7 +81,7 @@ def run_cuwalid(cuwalid_input):
 		compute_icpac(space, storm_tercile_file, storm_input["TER_FILE"], storm_input["ZON_FILE"])
 		print("Finished creating shp file")
 
-		run_storm(storm_input, sim_in_parallel)
+		run_storm(storm_input)
 
 	else:
 		print("storm is not executed")
