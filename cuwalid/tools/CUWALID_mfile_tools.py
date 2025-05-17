@@ -59,7 +59,7 @@ def season_name_to_number(season):
     - "OND" : October, November, December [10, 11, 12]
     - "JJS" : June, July, August [6, 7, 8]
     - "JF"  : January, February [1, 2]
-    - "JJSA": June, July, August, September [6, 7, 8, 9]
+    - "JJAS": June, July, August, September [6, 7, 8, 9]
 
     If the input is not a string or a list, the function wraps the input in a list.
 
@@ -84,7 +84,7 @@ def season_name_to_number(season):
 			season = [6,7,8]
 		elif season == "JF":
 			season = [1,2]
-		elif season == "JJSA":
+		elif season == "JJAS":
 			season = [6,7,8,9]
 		return season
 	else:
