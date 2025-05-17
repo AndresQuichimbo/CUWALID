@@ -22,7 +22,7 @@ def run_storm(json_input):
     PDF_FILE = config["PDF_FILE"]
     DEM_FILE = config["DEM_FILE"]
     SHP_FILE = config["SHP_FILE"]
-    ZON_FILE = config["ZON_FILE"]
+    ZON_FILE = config.get("ZON_FILE", "./model_input/regions.shp")
     
     # Get option for parallel processing
     sim_in_parallel = config.get("sim_in_parallel", False)
