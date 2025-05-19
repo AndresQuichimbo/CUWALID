@@ -26,28 +26,55 @@ oldPP = 'EPSG:4326'
 #old_new_pp = pp.Transformer.from_proj(oldPP, newPP)
 
 def reproject_dataset(data, oldPP, newPP):
-	"""Transform projection system
-	oldPP and newPP have to be defined first
-	
-	Parameters
-	----------
-	Data:	Dataset
-	
-	Returns
-	-------
-	Data:	Dataset
-	"""
-	# check if projection is in ERSG format
-	if len(newPP) > 11:
-		newPP = rasterio.crs.CRS.from_string(newPP)
-	
-	# reprojec dataset
-	data = data.rename({'lon': 'x', 'lat': 'y'})  # new method
-	data = data.rio.write_crs(oldPP) # write crs
-	data = data.rio.reproject(newPP) # reproject the file
-	data = data.rename({'x': 'lon', 'y': 'lat'})  # new method
-	
-	return data
+    """
+    Transform projection system.
+    oldPP and newPP have to be defined first.
+
+    Parameters
+    ----------
+    data : xarray.Dataset
+        The input dataset with coordinate variables.
+    oldPP : str or CRS
+        The original projection (EPSG code or CRS object).
+    newPP : str or CRS
+        The new projection to transform to (EPSG code or CRS object).
+
+    Returns
+    -------
+    data : xarray.Dataset
+        Reprojected dataset.
+    """
+    # Check if projection is in ERSG format
+    if isinstance(newPP, str) and len(newPP) > 11:
+        newPP = rasterio.crs.CRS.from_string(newPP)
+
+    # Rename coordinates based on known patterns
+    if 'lat' in list(data.coords):
+        data = data.rename({'lat': 'y', 'lon': 'x'})
+        revert = {'x': 'lon', 'y': 'lat'}
+    elif 'LAT' in list(data.coords):
+        data = data.rename({'LAT': 'y', 'LON': 'x'})
+        revert = {'x': 'LON', 'y': 'LAT'}
+    elif 'latitude' in list(data.coords):
+        data = data.rename({'latitude': 'y', 'longitude': 'x'})
+        revert = {'x': 'longitude', 'y': 'latitude'}
+    elif 'Y' in list(data.coords):
+        data = data.rename({'Y': 'y', 'X': 'x'})
+        revert = {'x': 'X', 'y': 'Y'}
+    elif 'x' in list(data.coords) and 'y' in list(data.coords):
+        revert = {'x': 'x', 'y': 'y'}  # already in correct format
+    else:
+        raise ValueError("❌ ERROR: coordinate names not recognized. Please rename them to use standard forms like 'lon/lat' or 'x/y'.")
+
+    # Apply projection
+    data = data.rio.write_crs(oldPP)
+    data = data.rio.reproject(newPP)
+
+    # Rename back to original names
+    data = data.rename(revert)
+
+    return data
+
 
 def reproject_dataset_old(data, keys):
 	""" reproject netcdf files to a new reference system
