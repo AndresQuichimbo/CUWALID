@@ -134,6 +134,9 @@ def run_cuwalid(cuwalid_input):
 		with open(dryp_input_path, 'r') as file:
 			dryp_input = json.load(file)
 
+		dryp_settings_path = cuwalid_config["MODELS"]["DRYP"]["settings"]
+		dryp_input["OUTPUT"]["path_setting"] = dryp_settings_path
+
 		fname_pet = [forecast_path_stopet_output + "Forecast_PET_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
 		fname_pre = [forecast_path_storm_output + "Forecast_PRE_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
 		forcing_list = np.array(JSON_builder.create_ensamble([fname_pet, fname_pre], nsamples=nsim))

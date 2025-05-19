@@ -13,7 +13,7 @@ def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, json_de
 	
 	Parameters:
 	-----------
-	json_template : string
+	json_template : dict
 			model input, as a dictionary
 	model_name : string
 			model name for the new file
@@ -25,8 +25,8 @@ def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, json_de
 			date in the following format "YYYY-MM-DD" (e.g. 2002-01-01)
 	end_date : string
 			date in the following format "YYYY-MM-DD" (e.g. 2002-03-01)
-	new_setting_file : bool
-			If True it create the setting dryp file
+	new_setting_file : string
+			If passed it will create a new dryp settings file with the provided name
 	"""
 
 	# Change necesarry variables in template
@@ -41,7 +41,6 @@ def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, json_de
 	# create new settings file
 	if new_setting_file is not None:
 
-		# Get input file as dictionary
 		settings_file_path = json_template["OUTPUT"]["path_setting"]
 		with open(settings_file_path, 'r') as file:
 			settings_file_template = json.load(file)
@@ -49,24 +48,17 @@ def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, json_de
 		json_template["OUTPUT"]["path_setting"] = new_setting_file
 		
 		## Change variables in settings file
-		#json_template["dryp_settings"]["SIMULATION_PERIOD"]["start_date"] = start_date
-		#json_template["dryp_settings"]["SIMULATION_PERIOD"]["end_date"] = end_date
 		settings_file_template["SIMULATION_PERIOD"]["start_date"] = start_date
 		settings_file_template["SIMULATION_PERIOD"]["end_date"] = end_date
 
 
 	# Save the `dryp` part to the json_destination file
-	#dryp_data = json_template["dryp"]
 	with open(json_destination, "w") as dest_file:
-		#json.dump(dryp_data, dest_file, indent=4)
 		json.dump(json_template, dest_file, indent=4)
 
 	# Save the `dryp_settings` part to the new settings file
 	if new_setting_file is not None:
-		#dryp_settings_data = settings_file_template["dryp_settings"]
-		#dryp_settings_data = json_template["dryp_settings"]
 		with open(new_setting_file, "w") as settings_file:
-			#json.dump(dryp_settings_data, settings_file, indent=4)
 			json.dump(settings_file_template, settings_file, indent=4)
 
 

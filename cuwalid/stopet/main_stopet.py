@@ -34,7 +34,7 @@ def run_stoPET(config_file):
     execution_type = config.get('execution_type', None)
 
     if execution_type:
-        print("Execution type is not depreciated as both methods are combined now. Please feel free to delete it from the config file.")
+        print("Execution type is depreciated as both methods are combined now. Please feel free to delete it from the config file.")
 
     # Extract parameters from the config
     slice_only = config.get('slice_only', 1)

@@ -37,6 +37,7 @@ from scipy import stats
 from scipy.ndimage import gaussian_filter, uniform_filter
 from numpy import random as npr
 from statsmodels.distributions.copula.api import GaussianCopula
+from shapely.geometry import MultiPolygon, Polygon
 
 # import dask.array as da
 from dask import array, delayed
@@ -499,9 +500,6 @@ def nc_file_v(nc, iyear, times, ytag, xtag, SPACE, **kwargs):
 
     return sub_grp
 
-
-# %% regionalisation
-
 def regionalisation(file_zon, tag, val, xpace, **kwargs):
     """
     arrange into a dictionary shp-regions.\n
@@ -801,30 +799,33 @@ class scentres:
     !!the more REALIZATIONS and more POINTS, the slower it gets!!
     """
 
-    def rvs(self,):
+    def rvs(self):
         """
-        random sampling.\n
-        Input: none.\n
-        Output -> np.array; 2D-numpy with X-Y (column) coordinates.
+        Random sampling.
+
+        Returns:
+            np.array: 2D array with X-Y (column) coordinates.
         """
-        # transform SHAPELY into PYSAL
-        tmp = [np.array(
-            self.shp_series['geometry'].geoms[i].exterior.coords.xy).T.tolist()
-            for i in range(len(self.shp_series['geometry'].geoms))]
+        # Ensure geometry is a MultiPolygon
+        geom = self.shp_series['geometry']
+        if isinstance(geom, Polygon): # Ensures all Polygons are processed as MultiPolygon
+            geom = MultiPolygon([geom])
+        elif not isinstance(geom, MultiPolygon):
+            raise TypeError(f"Unsupported geometry type: {type(geom)}")
+
+        # Transform SHAPELY into PYSAL format
+        tmp = [np.array(poly.exterior.coords.xy).T.tolist() for poly in geom.geoms]
         sal_shp = ps.cg.Polygon(tmp)
-        # (sal_shp.len, sal_shp.holes)
-        # transform the PYSAL into a WINDOW
+
+        # Create spatial window
         wndw_bffr = Window(sal_shp.parts)
 
+        # Sample points
         samples = PoissonPointProcess(
             window=wndw_bffr, n=self.size, samples=self.n_real,
             conditioning=self.condition, asPP=self.aspp
-            )
-        # # 565 ms ± 27.7 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
-        # # visualization
-        # samples.realizations[0].plot(window=True, title='point pattern')  # if asPP=True
-        # PointPattern(samples.realizations[0]).plot(window=False, hull=False,
-        #                                            title='point series')  # if asPP=False
+        )
+
         return samples
 
     def plot(self, **kwargs):
@@ -1376,8 +1377,6 @@ def rain_cube_dask(c_ring, last_r, t_stamp, np_mask, SPACE, **kwargs):
     # suma = (void.sum(dim=('x', 'y')) * SCL + ADD) / tot_pix
     return void, suma_
 
-
-# %% main loop
 
 def loop(train, mask_shp, np_mask, nsim, simy, nreg, mlen, upd_max, maxima, date_pool, SPACE, iMAX, ADD, SCL):
 # train=reg_tot; mask_shp=region_s['mask'].iloc[nreg]; np_mask=region_s['npma'][nreg]
