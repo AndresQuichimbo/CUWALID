@@ -51,6 +51,10 @@ def write_JSON_dryp_files(json_template, model_name, path_pre, path_pet, json_de
 		settings_file_template["SIMULATION_PERIOD"]["start_date"] = start_date
 		settings_file_template["SIMULATION_PERIOD"]["end_date"] = end_date
 
+		# Set default values for netcdf per storm/stoPET output
+		settings_file_template["READING"]["data_reading"]["pre"] = 5
+		settings_file_template["READING"]["data_reading"]["pet"] = 1
+
 
 	# Save the `dryp` part to the json_destination file
 	with open(json_destination, "w") as dest_file:

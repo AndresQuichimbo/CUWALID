@@ -182,7 +182,7 @@ def run_cuwalid(cuwalid_input):
 			if sim_in_parallel: # run simulations in paralell using nohup
 				process = subprocess.Popen(command, shell=True)
 				processes.append(process)
-				time.sleep(2)
+				time.sleep(5)
 			else: # Run in sequence
 				run_DRYP(command)
 
