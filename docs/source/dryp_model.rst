@@ -72,6 +72,16 @@ DRYP requires time series as model forcing datasets. Precipitation and potential
 in order to run the model, otherwise it will throw an error. Dataset can be spatially variable data
 as netCDF files, or uniform values over the whole model domain by providing a csv file.
 
+Within the DRYP Settings file under "READING"-"data_reading" then "pre"/"pet, you can specify the type of METEO file you are using as such:
+- 0 for csv files
+- 1 for netCDF files
+- 2 for YEARLY netCDF files
+- 3 for MONTHLY netCDF files
+- 4 for DAILY netCDF files
+- 5 for ensamble netCDF files
+
+It should be noted that if you are running the main cuwalid system (e.g. run_cuwalid() function), these settings will be changed automatically to match what is required from the output of Storm and stoPET.
+
 Model outputs
 ^^^^^^^^^^^^^^
 
