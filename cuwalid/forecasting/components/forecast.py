@@ -755,7 +755,7 @@ def get_ensamble_forecasting(model_path, model_name, variables, season, postpp_p
 					]
 			if ivar == 'flood':
 				fname_list = [
-					ifname.split('.')[0]+'max.nc' for ifname in fname_list
+					ifname.split('.')[0]+'rmax.nc' for ifname in fname_list
 					]
 			#print(fname_list)
 			mean = False
