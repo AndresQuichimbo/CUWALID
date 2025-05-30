@@ -5,76 +5,39 @@ https://wiki.openstreetmap.org/wiki/Nominatim/Country_Codes
 
 """
 
-# Set the correct name field dependent on the country inputed
-name_short_country = {
-		"kenya":'KE',
-		"ethiopia":'ET',
-		"somalia":'SO',
-	}
+import os
 
-name_field_county_shp = {
-		"kenya":'ADM1_EN',
-		"ethiopia":'NAME_2',
-		"somalia":'NAME',
-	}
+# Base path: resolve to the parent directory of this file (where forecasting_dataset is located)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+def get_full_path(path): return os.path.join(BASE_DIR, path)
 
-code_county_shp = {
-		"kenya":'CODE',
-		"ethiopia":'OBJECTID',
-		"somalia":'REGN_NO',
-	}
-
-name_county_shp = {
-		"kenya":'ADM1_EN',
-		"ethiopia":'NAME_2',
-		"somalia":'NAME',
-	}
-
-#name_field_shp = {
-#	"Zoom": "IEBC_WARDS",
-#	"Ward": "IEBC_WARDS",
-#	"County": None,
-#	"Country": "NAME",	
-#	}
 
 shapefile_country_dic = {
-	"region": "forecasting_dataset/HAD/gis/Horn_Africa/Horn_africa_contry.shp"
-	}
+    "region": get_full_path("forecasting_dataset/HAD/gis/Horn_Africa/Horn_africa_contry.shp")
+}
 
 shapefile_level_1_dic = {
-	"kenya": 'forecasting_dataset/kenya/kenya-county/ke_county.shp',
-	"ethiopia": 'forecasting_dataset/ethiopia/Export_admin2.shp',
-	"somalia": 'forecasting_dataset/somalia/somalia_regions.shp',
-	}
+    "kenya": get_full_path('forecasting_dataset/kenya/kenya-county/ke_county.shp'),
+    "ethiopia": get_full_path('forecasting_dataset/ethiopia/Export_admin2.shp'),
+    "somalia": get_full_path('forecasting_dataset/somalia/somalia_regions.shp'),
+}
 
 shapefile_level_2_dic = {
-	"kenya": 'forecasting_dataset/kenya/kenya-county/ke_county.shp',
-	"ethiopia": 'forecasting_dataset/ethiopia/Export_admin2.shp',
-	"somalia": 'forecasting_dataset/somalia/somalia_regions.shp',
-	}
+    "kenya": get_full_path('forecasting_dataset/kenya/kenya-county/ke_county.shp'),
+    "ethiopia": get_full_path('forecasting_dataset/ethiopia/Export_admin2.shp'),
+    "somalia": get_full_path('forecasting_dataset/somalia/somalia_regions.shp'),
+}
 
 shapefile_wards_dic = {
-	"kenya": 'forecasting_dataset/kenya/kenya_wards/Kenya wards.shp'
-	}
+    "kenya": get_full_path('forecasting_dataset/kenya/kenya_wards/Kenya wards.shp')
+}
 
 fname_places_list_file = {
-	"kenya": 'forecasting_dataset/kenya/kenya-county/KE_Kenya_county.csv',
-	"ethiopia": 'forecasting_dataset/ethiopia/ET_Ethiopia_region.csv',
-	"somalia": 'forecasting_dataset/somalia/SO_Somalia_region.csv',
-	}
+    "kenya": get_full_path('forecasting_dataset/kenya/kenya-county/KE_Kenya_county.csv'),
+    "ethiopia": get_full_path('forecasting_dataset/ethiopia/ET_Ethiopia_region.csv'),
+    "somalia": get_full_path('forecasting_dataset/somalia/SO_Somalia_region.csv'),
+}
 
-fname_mask_dic = {
-    "Soil": None,
-	"Evaporation": None,
-	"Groundwater": None,
-	"Surface": None,
-	"Flood": None,
-	"Crop": None,
-	"Pasture": None,
-	}
+rivers_shape_path = get_full_path('forecasting_dataset/NaturalEarth/ne_10m_rivers_lake_centerlines.shp')
 
-# Rivers shape path
-rivers_shape_path = 'forecasting_dataset/NaturalEarth/ne_10m_rivers_lake_centerlines.shp'
-
-# Default netcdf path (YYYY represents the year to be replaced by the users input)
-default_netcdf = "forecasting_dataset/HAD/output/HAD_IMERGba_sim0_YYYY_grid.nc"
+default_netcdf = get_full_path("forecasting_dataset/HAD/output/HAD_IMERGba_sim0_YYYY_grid.nc")

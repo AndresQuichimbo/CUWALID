@@ -118,8 +118,7 @@ def plot_maps_json(config_file):
 
 	print(f"testing {dataset_parameter_list}")
 	#print(dataset_parameter_list)
-	if dataset_parameter_list is not None:
-		dataset_parameters = paths.read_dataset_list_json(dataset_parameter_list)
+	dataset_parameters = paths.read_dataset_list_json(dataset_parameter_list)
 		#print(dataset_parameters.code_county_shp,dataset_parameters.shapefile_level_1_dic,
 		#						dataset_parameters.name_county_shp)
 

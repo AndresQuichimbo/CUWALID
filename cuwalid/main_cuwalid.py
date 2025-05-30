@@ -257,6 +257,7 @@ def run_cuwalid(cuwalid_input):
 						iImCast_input["country"] = [icountry]
 						
 						forecasting_folder = os.path.join(temp_folder, "plot_jsons")
+						os.makedirs(forecasting_folder, exist_ok=True)  
 						ifsim_forecasting_file = os.path.join(forecasting_folder, f"map_input_{icountry}_{iwater}_{ilanguage}.json")
 						print("Creating map for:")
 						print(icountry, iwater, ilanguage)
@@ -266,7 +267,7 @@ def run_cuwalid(cuwalid_input):
 							#json.dump(dryp_data, dest_file, indent=4)
 							json.dump(iImCast_input, ImCast_input_file, indent=4)
 						
-						time.sleep(2)
+						time.sleep(5)
 						# Command to run the DRYP simulation in the background
 						command = f"nohup python -u -m cuwalid.forecasting.main_impact_forecast {ifsim_forecasting_file} > {flog}&"
 						print(f"Executing: {command}")
