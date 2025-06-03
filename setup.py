@@ -6,7 +6,11 @@ with open("README.md", "r") as fh:
 setup(
     name="cuwalid",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     version="1.1.40", 
+=======
+    version="1.1.42", 
+>>>>>>> Stashed changes
 =======
     version="1.1.42", 
 >>>>>>> Stashed changes
