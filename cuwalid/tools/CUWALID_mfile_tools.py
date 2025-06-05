@@ -568,8 +568,23 @@ def get_ensamble_from_netcdf_list(fname_list, var_name, mean=True,
 	else:
 		return dataset
 
-def get_postprocessed_hydro_variables_mfiles(fname, field=["wrsi", "aet"]):#, "tht"]):
-	"""Function for post processing hydrological variables such as WRSI"""
+def get_postprocessed_hydro_variables_mfiles(fname, field=["wrsi", "aet", "dch"]):#, "tht"]):
+	"""Function for post processing hydrological variables such as WRSI,
+	total evaporation, and diffuse recharge.
+	
+	Parameters
+	----------
+	fname : str
+		file name of the netcdf (from model outputs)
+	field : list
+		list of fields to calculate, default is ["wrsi", "aet"]
+	
+	Returns
+	-------
+	data : xarray dataset
+		containing all calculated values
+	"""
+	
 	for ifield in field:
 		
 		for ifname in fname:
@@ -577,24 +592,26 @@ def get_postprocessed_hydro_variables_mfiles(fname, field=["wrsi", "aet"]):#, "t
 			if os.path.exists(ifname):
 				if ifield == "wrsi":
 					# Calculate WRSI 
-					data = read_dataset(ifname, "aet")/read_dataset(ifname, "pet")
-					data = data.rename("wrsi")
+					#data = read_dataset(ifname, "aet")/read_dataset(ifname, "pet")
+					#data = data.rename("wrsi")
+					pptools.calculate_WRSI_from_netCDF(ifname)
+
+				elif ifield == "dch":
+					# Calculate diffuse recharge
+					pptools.calculate_dch_from_files(ifname)
+
 				elif ifield == "aet":
 					# Calculate total evaporation
 					data = read_dataset(ifname, "aet") + read_dataset(ifname, "egw")
 					data = data.rename("aet")
-				#elif ifield == "tht":
-				#	data = pptools.calculate_saturation_from_netCDF()
 
-				# Define the path for the yearly NetCDF file
-				fname_output = ifname.split('.')[0]+'_'+ifield+'.nc'
+					# Define the path for the yearly NetCDF file
+					fname_output = ifname.split('.')[0]+'_'+ifield+'.nc'
 
-				# Group by year and create a new dataset for each year
-
-				# loop over years
-				data.to_netcdf(fname_output)
+					# Save the dataset to a NetCDF file
+					data.to_netcdf(fname_output)
 			else:
-				print(ifname+" File does not found, skip this file from the analysis")
+				print(ifname+"\nFile does not found, skip this file from the analysis")
 
 def get_postprocessed_storage_mfiles(fname_list,path_surface, path_Droot, path_theta_sat, path_Sy,
 								  path_bathymetry=None, path_bottom=None,

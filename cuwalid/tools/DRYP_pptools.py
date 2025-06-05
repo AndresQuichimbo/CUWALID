@@ -431,7 +431,7 @@ def calculate_mean_from_netCDF(fname, field, fname_out=None,
 		fname_out = fname_out.split('.')[0]+'_mean.nc'
 	save_xarray_dataset_as_netcdf(fname_out, dataset, field)
 
-def calculate_WRSI_from_netCDF(fname, fname_out=None, deltat='Y',
+def calculate_WRSI_from_netCDF(fname, fname_out=None, deltat='M',
 			       start_time=None, end_time=None):
 	"""Get mean average values from dataset.
 
@@ -475,6 +475,46 @@ def calculate_WRSI_from_netCDF(fname, fname_out=None, deltat='Y',
 		fname_out = fname
 		fname_out = fname.split('.')[0]+'_wrsi.nc'
 	save_xarray_dataset_as_netcdf(fname_out, dataset, ["wsri"])
+
+def calculate_dch_from_files(fname, path_rp=None, fname_out=None):
+	"""This function calculates diffuse recharge.
+	
+	Parameters
+	----------
+	fname :	str
+		file name of the netcdf (from model outputs)
+	path_rp :	str
+		file name of the riparian area dataset
+	fname_out :	str
+		file name of the output netcdf file
+
+	Returns
+	-------
+	xarray :
+		2D time series mean or sum of tne dataset
+
+	 """
+
+	if path_rp is None:
+		# if no riparian area is provided, use the default value
+		path_rp = fname.split('.')[0]+'rp.nc'
+
+	# read dataset - diffuse recharge
+	data = preprocesses_netCDF(fname, "rch", mean=True, deltat='M')
+
+	# read dataset - diffuse recharge
+	datarp = preprocesses_netCDF(path_rp, "fch", mean=True, deltat='M')
+
+	# calculate diffuse recharge
+	dch = data - datarp	
+	# change variable name to the new dataset
+	dch = dch.rename("dch")
+
+	# save files
+	if fname_out is None:
+		fname_out = fname
+		fname_out = fname.split('.')[0]+'_dch.nc'
+	save_xarray_dataset_as_netcdf(fname_out, dch, ["dch"])
 
 def calculate_twsa_from_netCDF(fname, fname_out=None, var_name="twsc",
 			       start_time=None, end_time=None):
@@ -836,6 +876,23 @@ def calculate_saturation(dataset, theta_wp, theta_sat):
 	saturation = (dataset - theta_wp)/theta_sat
 
 	return saturation
+
+def calulate_diffuse_recharge(dataset, dataset_rp):
+	"""Calculate diffuse recharge from the model outputs.
+	
+	Parameters
+	----------
+	dataset : DataArray
+		dataset with recharge content
+	dataset_rp : DataArray
+		dataset with riparian area focused recharge
+
+	Returns
+	-------
+	DataArray
+		diffuse recharge
+	"""
+	return dataset - dataset_rp
 
 def preprocesses_netCDF(fname, var_name, mean=True, deltat='Y',
 			start_time=None, end_time=None):
