@@ -506,7 +506,7 @@ def calculate_dch_from_files(fname, path_rp=None, fname_out=None):
 	datarp = preprocesses_netCDF(path_rp, "fch", mean=True, deltat='M')
 
 	# calculate diffuse recharge
-	dch = data - datarp	
+	dch = data - datarp.fillna(0)
 	# change variable name to the new dataset
 	dch = dch.rename("dch")
 
