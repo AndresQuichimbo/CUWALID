@@ -82,13 +82,6 @@ def initialize_optional_components_and_flux_ids(data_in, grid, water_bodies,
             idFluxWBout, idFluxWBout_act)
 
 def initialize_simulation_state_variables(data_in, topo, grid, aquifer, soil, vegetation, ro):
-    t = 0
-    t_eto = 0
-    t_pre = 0
-    t_savi = 0
-    t_kc = 0
-    t_av = 0
-    t_abs = 0
 
     gws_mb = []
 
@@ -158,8 +151,7 @@ def initialize_simulation_state_variables(data_in, topo, grid, aquifer, soil, ve
     baseflow = np.zeros(topo.grid_size)
     AOF_threshold = np.ones(topo.grid_size)
 
-    return (t, t_eto, t_pre, t_savi, t_kc, t_av, t_abs, gws_mb,
-            etg_agg, rch_agg, dt_GW, act_nodes, riv_nodes, act_riv_nodes,
+    return (gws_mb, etg_agg, rch_agg, dt_GW, act_nodes, riv_nodes, act_riv_nodes,
             id_lakes, head, theta, river_sat_deficit, save_rz_var, rtheta,
             Duz0, z_extintion, Ft0, SORP0, t_0, dry_day,
             runoff, recharge, baseflow, AOF_threshold)

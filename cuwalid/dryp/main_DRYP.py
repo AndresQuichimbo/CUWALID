@@ -7,11 +7,11 @@ __author__ = 'Andres Quichimbo (andresquichimbo@gmail.com)'
 __library__ = 'dryp'
 
 General command line:
-    python run_drp_input.py filename_input.json
-        
+	python run_drp_input.py filename_input.json
+		
 Parameters:
-    -input_file : string
-        path to input json as described in documentation which can be found at https://cuwalid.github.io/model-info/dryp-model
+	-input_file : string
+		path to input json as described in documentation which can be found at https://cuwalid.github.io/model-info/dryp-model
 Version(s):
 20191130 (1.0.0) --> Development of application for version 2.0.0 of Cuwalid models
 """
@@ -60,7 +60,7 @@ def run_DRYP(filename_input):
 	print("***************************** READING MODEL PARAMETERS *****************************")
 
 	data_in, topo, soil, rsoil, aquifer, vegetation, water_bodies, water_bodies_management = \
-        read_model_parameters_and_settings(filename_input)
+		read_model_parameters_and_settings(filename_input)
 	
 	# READING FORCING DATASET -------------------------------------------
 	# Read precipitation
@@ -81,8 +81,10 @@ def run_DRYP(filename_input):
 		data_in, grid, water_bodies, fluxOF, fluxUZ, fluxSZ, fluxWB
 	)
 
-	(t, t_eto, t_pre, t_savi, t_kc, t_av, t_abs, gws_mb,
-	etg_agg, rch_agg, dt_GW, act_nodes, riv_nodes, act_riv_nodes,
+	# Initialise time step variables
+	t = t_eto = t_pre = t_savi = t_kc = t_av = t_abs= 0
+
+	(gws_mb, etg_agg, rch_agg, dt_GW, act_nodes, riv_nodes, act_riv_nodes,
 	id_lakes, head, theta, river_sat_deficit, save_rz_var, rtheta,
 	Duz0, z_extintion, Ft0, SORP0, t_0, dry_day,
 	runoff, recharge, baseflow, AOF_threshold) = initialize_simulation_state_variables(
@@ -95,11 +97,11 @@ def run_DRYP(filename_input):
 		data_in, grid, riv_nodes, water_bodies
 	)
 
-	# Initialize the progress bar
+	# Initialise the progress bar
 	print("****************************** SIMULATION IN PROGRESS ******************************")
 	progress_bar = tqdm(total=data_in.ndays, unit='days')
 	while t < data_in.ndays:
-	
+
 		for UZ_ti in range(data_in.dt_hourly):
 			
 			for dt_pre_sub in range(data_in.dt_sub_hourly):
@@ -327,7 +329,7 @@ def run_DRYP(filename_input):
 					# update groundwater discharge at river cells
 					# change units from mm to m
 					baseflow[riv_nodes] = (qriv*
-			    			topo.rip_to_cell_area_factor[riv_nodes]*0.001)
+							topo.rip_to_cell_area_factor[riv_nodes]*0.001)
 				
 				# update infiltration excess to considers lakes
 				# precipitation over lakes is directly added to the total storage
@@ -523,7 +525,7 @@ def run_DRYP(filename_input):
 				twsc[act_nodes] = storage_uz_sz(
 						topo.surface[act_nodes],
 						topo.bathymetry[act_nodes],
-				    	aquifer.bottom[act_nodes],
+						aquifer.bottom[act_nodes],
 						soil.Droot[act_nodes]*0.001,
 						soil.theta_sat[act_nodes],
 						aquifer.Sy[act_nodes],
@@ -532,7 +534,7 @@ def run_DRYP(filename_input):
 							
 				# get all state and flux variables to grid storage
 				grid_var.store_variables(PRE.date_sim_dt, t_pre,
-			      	{"pre": rain[act_nodes], "pet": PET[act_nodes],
+				  	{"pre": rain[act_nodes], "pet": PET[act_nodes],
 	   				"dis": ro.discharge[act_nodes],
 					"aet": AET, "inf": INF, "run": runoff[act_nodes],
 					"tht": theta[act_nodes],
@@ -544,7 +546,7 @@ def run_DRYP(filename_input):
 				# store maximum values
 				if grid_vmax.store_max is True:
 					grid_vmax.store_variables(PRE.date_sim_dt, t_pre,
-			      			{"pre": rain[act_nodes], "pet": PET[act_nodes],
+				  			{"pre": rain[act_nodes], "pet": PET[act_nodes],
 	   						"aet": AET, "inf": INF, "run": runoff[act_nodes],
 							"rch": recharge[act_nodes], "egw": PETsz,
 							"gdh": baseflow[act_nodes],
@@ -554,12 +556,12 @@ def run_DRYP(filename_input):
 				if grid_rmax.store_max is True:
 					if riv_nodes.size > 0:
 						grid_rmax.store_variables(PRE.date_sim_dt, t_pre,
-			      			{"dis": ro.discharge[riv_nodes]}
+				  			{"dis": ro.discharge[riv_nodes]}
 							)
 
 				# get all fluxes and states at sampling points
 				point_var.store_variables(PRE.date_sim_dt, t_pre,
-			      	{"aet": AET[idOF_act], "inf": INF[idOF_act],
+				  	{"aet": AET[idOF_act], "inf": INF[idOF_act],
 			  		"dis": ro.discharge[idOF], "tht": theta[idUZ],
 					"rch": recharge[idGW], "wte": head[idGW],
 					"gdh": baseflow[idGW], "ssz": ro.SSZ[idOF],}
@@ -567,7 +569,7 @@ def run_DRYP(filename_input):
 				
 				# get mean total values for each flux and state
 				total_var.store_variables(PRE.date_sim_dt, t_pre,
-			      	{"pre":[np.mean(rain[act_nodes])],
+				  	{"pre":[np.mean(rain[act_nodes])],
 	   				"pet":[np.mean(PET[act_nodes])],
 	   				"run":[np.mean(runoff[act_nodes])],
 	   				"aet":[np.mean(AET)],
@@ -585,32 +587,32 @@ def run_DRYP(filename_input):
 				# get mean total values for each flux and state of the riparian zone
 				if riv_nodes.size > 0:
 					total_rpvar.store_variables(PRE.date_sim_dt, t_pre,
-			    	  	{"aet": [np.mean(rAET)],
-	    				"fch": [np.mean(rPCR)],
-	    				"tls": [np.mean(ro.trans_losses[riv_nodes])],
+					  	{"aet": [np.mean(rAET)],
+						"fch": [np.mean(rPCR)],
+						"tls": [np.mean(ro.trans_losses[riv_nodes])],
 						"tht": [np.mean(rtheta)],
 						"ssz": [np.mean(ro.SSZ[riv_nodes])]}
 						)
 					
 					grid_rpvar.store_variables(PRE.date_sim_dt, t_pre,
-			      		{"aet": rAET, "fch": rPCR,
-	    				"tls": ro.trans_losses[riv_nodes],
+				  		{"aet": rAET, "fch": rPCR,
+						"tls": ro.trans_losses[riv_nodes],
 						"tht": rtheta,
-	    				"ssz": ro.SSZ[riv_nodes]}
+						"ssz": ro.SSZ[riv_nodes]}
 						)
 
 				# get mean total values for each flux and state of water bodies
 				if water_bodies.id_nodes is not None:
 					total_pndvar.store_variables(PRE.date_sim_dt, t_pre,
-			    	  	{"epd": [np.mean(et_pnds)],
-	    				"vpd": [np.mean(water_bodies.pnds_Vo)],
-	    				"apd": [np.mean(aoz_pnds)],
+					  	{"epd": [np.mean(et_pnds)],
+						"vpd": [np.mean(water_bodies.pnds_Vo)],
+						"apd": [np.mean(aoz_pnds)],
 						}
 						)
 					
 					grid_pndvar.store_variables(PRE.date_sim_dt, t_pre,
-			      		{"epd": et_pnds,
-	    				"vpd": water_bodies.pnds_Vo,
+				  		{"epd": et_pnds,
+						"vpd": water_bodies.pnds_Vo,
 						"apd": aoz_pnds,
 						}
 						)
@@ -649,9 +651,9 @@ def run_DRYP(filename_input):
 	
 	print("********************************** SAVING RESULTS **********************************")
 	save_model_outputs(data_in, total_var, point_var, grid_var, grid_rmax,
-                   grid_vmax, grid_rpvar, total_rpvar, grid_pndvar, total_pndvar,
-                   water_bodies, grid, head, theta, ro, rtheta, topo,
-                   act_nodes, riv_nodes)
+				   grid_vmax, grid_rpvar, total_rpvar, grid_pndvar, total_pndvar,
+				   water_bodies, grid, head, theta, ro, rtheta, topo,
+				   act_nodes, riv_nodes)
 	print("======================= ALL PROCESSES COMPLETED SUCCESSFULLY =======================")
 # ---------------------------------------------------------------------
 # Call script from external library	
