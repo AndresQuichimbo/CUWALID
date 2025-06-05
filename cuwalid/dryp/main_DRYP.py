@@ -7,61 +7,24 @@ __author__ = 'Andres Quichimbo (andresquichimbo@gmail.com)'
 __library__ = 'dryp'
 
 General command line:
-    python run_drp_input.py filename_input
+    python run_drp_input.py filename_input.json
         
 Parameters:
     -input_file : string
-        model name and model parameter filenames in plain txt format
-    -settings_parameters : string
-        model parameter settings in plain txt format
-    -riparian_additional_parameters : string
-        model parameter settings in plain txt format
-    -groundwater_additional_parameters : string
-        model parameter settings in plain txt format
-    -projection_additional_parameters : string
-        model parameter settings in plain txt format
-    -inception_additional_parameters : string
-        model parameter settings in plain txt format
-    -overlandflow_additional_parameters : string
-        model parameter settings in plain txt format
-    
+        path to input json as described in documentation which can be found at https://cuwalid.github.io/model-info/dryp-model
 Version(s):
 20191130 (1.0.0) --> Development of application for version 2.0.0 of Cuwalid models
 """
 
-
 import argparse
 import numpy as np
-#import pandas as pd
 from tqdm import tqdm
 from cuwalid.dryp.components.DRYP_json_reader import get_model_settings
-from cuwalid.dryp.components.DRYP_io import (
-	grid_environment,
-	surface_parameters,
-	model_environment_status,
-	soil_parameters,
-	groundwater_parameters,
-	interception_parameters,
-	water_body_parameters,
-	set_initial_conditions,
-	extract_id_from_coords)
-from cuwalid.dryp.components.DRYP_infiltration import infiltration
-from cuwalid.dryp.components.DRYP_interception import interception
-from cuwalid.dryp.components.DRYP_read_dataset import (
-	read_temporal_dataset, read_dataset, read_dataset_interp)
-from cuwalid.dryp.components.DRYP_soil_layer import swbm
-from cuwalid.dryp.components.DRYP_ABM_connector import ABMconnector
-#from cuwalid.dryp.components.DRYP_routing import runoff_routing
-#from cuwalid.dryp.components.DRYP_flow_accum import runoff_routing
-from cuwalid.dryp.components.DRYP_flow_accumf90 import runoff_routing
-from cuwalid.dryp.components.DRYP_groundwater_EFD import (
-	gwflow_EFD,	storage_uz_sz,
-	recharge_routing)
-from cuwalid.dryp.components.DRYP_store_functions import (
-	GlobalGridVar,
-	save_map_to_rastergrid)
-from cuwalid.dryp.components.DRYP_ponds import ponds
-from cuwalid.dryp.components.DRYP_dams import water_management										
+from cuwalid.dryp.components.DRYP_groundwater_EFD import storage_uz_sz
+from cuwalid.dryp.components.assemble_model_components import initialize_core_hydrology_components, initialize_optional_components_and_flux_ids, initialize_simulation_state_variables, setup_output_and_monitoring
+from cuwalid.dryp.components.read_model_parameters import read_model_parameters_and_settings
+from cuwalid.dryp.components.read_temporal_datasets import read_temporal_datasets_and_grid
+from cuwalid.dryp.components.save_model_output import save_model_outputs										
 
 # ---------------------------------------------------------------------
 # Version and algorithm information
@@ -95,376 +58,42 @@ def run_DRYP(filename_input):
 	data_in = get_model_settings(filename_input)
 
 	print("***************************** READING MODEL PARAMETERS *****************************")
-	
-	# read topography and channel characteristics
-	print("====== > Reading surface and river network parameters")
-	topo = surface_parameters(data_in.fname_surface)
-	
-	# read soil paramters
-	print("====== > Reading hillslope soil hydraulic parameters")
-	soil = soil_parameters(topo.grid_size, data_in.fname_soil)
 
-	# read soil paramters
-	print("====== > Reading riparian soil hydraulic parameters")
-	rsoil = soil_parameters(topo.grid_size, data_in.fname_riparian)
-
-	# read aquifer parameters
-	print("====== > Reading groundwater aquifer hydraulic parameters")
-	aquifer = groundwater_parameters(topo.grid_size,
-				data_in.fname_aquifer)
-	
-	# read interception paramters
-	print("====== > Reading interception parameters")
-	vegetation = interception_parameters(topo.grid_size,
-				data_in.fname_interception_hillslope)
-
-	# read pond paramters
-	print("====== > Reading water body parameters")
-	water_bodies = water_body_parameters(topo.grid_size,
-				data_in.fname_water_bodies)
-	
-	# read water bodies management fluxes
-	print("====== > Reading water body management")
-	water_bodies_management = water_management()
-
-	# setting location and model results
-	#env_state.set_output_dir(data_in)
-	#env_state.points_output(data_in)
+	data_in, topo, soil, rsoil, aquifer, vegetation, water_bodies, water_bodies_management = \
+        read_model_parameters_and_settings(filename_input)
 	
 	# READING FORCING DATASET -------------------------------------------
 	# Read precipitation
 	print("***************************** READING TEMPORAL DATASETS ****************************")
-	print("====== > Reading precipitation")
-	PRE = read_dataset_interp(data_in.dt, data_in.data_step['pre'],
-		data_in.ini_date, data_in.end_date,
-		data_in.data_reading['pre'],
-		data_in.data_reproject['pre'],
-		data_in.data_interpolate['pre'],
-		topo.grid_size,
-		topo.lat,
-		topo.lon,
-		proj=data_in.data_projection['pre'],
-		proj_model=data_in.PROJECTION,
-		)
-	print("====== > Reading evapoptranspiration")
-	# Read reference potential evapotranspiration
-	ET0 = read_dataset_interp(data_in.dt, data_in.data_step['pet'],
-		data_in.ini_date, data_in.end_date,
-		data_in.data_reading['pet'],
-		data_in.data_reproject['pet'],
-		data_in.data_interpolate['pet'],
-		topo.grid_size,
-		topo.lat,
-		topo.lon,
-		proj=data_in.data_projection['pet'],
-		proj_model=data_in.PROJECTION,
-		)
-	
-	# Read SAVI
-	print("====== > Reading vegetation SAVI")
-	SAVI = read_dataset_interp(data_in.dt, data_in.data_step['savi'],
-		data_in.ini_date, data_in.end_date,
-		data_in.data_reading['savi'],
-		data_in.data_reproject['savi'],
-		data_in.data_interpolate['savi'],
-		topo.grid_size,
-		topo.lat,
-		topo.lon,
-		proj=data_in.data_projection['savi'],
-		proj_model=data_in.PROJECTION,
-		step_func=True,
-		noskip=False
-		)
-	
-	# Read LAI (Leaf Area Index)
-	print("====== > Reading vegetation LAI")
-	LAI = read_dataset_interp(data_in.dt, data_in.data_step['lai'],
-		data_in.ini_date, data_in.end_date,
-		data_in.data_reading['lai'],
-		data_in.data_reproject['lai'],
-		data_in.data_interpolate['lai'],
-		topo.grid_size,
-		topo.lat,
-		topo.lon,
-		proj=data_in.data_projection['lai'],
-		proj_model=data_in.PROJECTION,
-		step_func=True,
-		noskip=False
-		)
-	
-	# Read Kc: Crop coeficient factor
-	print("====== > Reading vegetation Kc")
-	Kc = read_dataset_interp(data_in.dt, data_in.data_step['kc'],
-		data_in.ini_date, data_in.end_date,
-		data_in.data_reading['kc'],
-		data_in.data_reproject['kc'],
-		data_in.data_interpolate['kc'],
-		topo.grid_size,
-		topo.lat,
-		topo.lon,
-		proj=data_in.data_projection['kc'],
-		proj_model=data_in.PROJECTION,
-		step_func=True,
-		noskip=False
-		)
-	
-	print("====== > Reading vegetation fraction")
-	av = read_dataset_interp(data_in.dt, data_in.data_step['av'],
-		data_in.ini_date, data_in.end_date,
-		data_in.data_reading['av'],
-		data_in.data_reproject['av'],
-		data_in.data_interpolate['av'],
-		topo.grid_size,
-		topo.lat,
-		topo.lon,
-		proj=data_in.data_projection['av'],
-		proj_model=data_in.PROJECTION,
-		step_func=True,
-		noskip=False
-		)
 
-	# Read SAVI minimum value
-	SAVImin = read_dataset(data_in.dt, data_in.data_step['savi_min'],
-		data_in.ini_date, data_in.end_date,
-		data_in.data_reading['savi_min'],
-		data_in.data_reproject['savi_min'],
-		data_in.data_interpolate['savi_min'],
-		topo.grid_size)
-	
-	# Read SAVI maximum value
-	SAVImax = read_dataset(data_in.dt, data_in.data_step['savi_max'],
-		data_in.ini_date, data_in.end_date,
-		data_in.data_reading['savi_max'],
-		data_in.data_reproject['savi_max'],
-		data_in.data_interpolate['savi_max'],
-		topo.grid_size)
-	
-	
-	# read overland flow boundary condition
-	print("====== > Reading surface flux boundary conditions")
-	fluxOF = read_temporal_dataset(
-			data_in.fname_TSOF,
-			data_in.data_reading['fluxOF'],
-			data_in.dt,
-			data_in.end_date,
-			data_in.ini_date,
-			)
-
-	# read unsaturated zone flow boundary condition
-	print("====== > Reading unsaturated flux boundary conditions")
-	fluxUZ = read_temporal_dataset(
-			data_in.fname_TSUZ,
-			data_in.data_reading['fluxUZ'],
-			data_in.dt,
-			data_in.end_date,
-			data_in.ini_date,
-			)
-	
-	# read saturated zone flow boundary condition units should be in m3 s-1
-	print("====== > Reading saturated flux boundary conditions")
-	fluxSZ = read_temporal_dataset(
-			data_in.fname_TSSZ,
-			data_in.data_reading['fluxSZ'],
-			data_in.dt,
-			data_in.end_date,
-			data_in.ini_date,
-			)
-
-	# read water bodies flow boundary condition units should be in m3 s-1
-	print("====== > Reading reservoirs flux boundary conditions")
-	fluxWB = read_temporal_dataset(
-			data_in.fname_TSWB,
-			data_in.data_reading['fluxWB'],
-			data_in.dt,
-			data_in.end_date,
-			data_in.ini_date,
-			)
-	
-	# add variable saturated component
-	Qusz = recharge_routing(topo.grid_size)
-
-	# BUILD GRID DOMAIN -----------------------------------------------------
-	# create a raster grid environment, landlab grid
-	grid = grid_environment().create_grid(
-		topo.grid_ncols,
-		topo.grid_nrows,
-		topo.grid_xllcorner,
-		topo.grid_yllcorner,
-		topo.grid_cellsize,
-		topo.mask
-		)
-	
-	# setting model fluxes and state variables
-	#env_state = model_environment_status(data_in)
+	PRE, ET0, SAVI, LAI, Kc, av, SAVImin, SAVImax, fluxOF, fluxUZ, fluxSZ, fluxWB, Qusz, grid = read_temporal_datasets_and_grid(data_in, topo)
 
 	# MODEL COMPONENTS ------------------------------------------------------
 	print("*************************** ASSEMBLING MODEL COMPONENTS ****************************")
-	abc = ABMconnector()
-	inf = infiltration(data_in.inf_method)
-	cnp = interception()
-	swb = swbm(data_in.dt) # soil layer
-	swb_rip = swbm(data_in.dt) # riparian layer
-	ro = runoff_routing(grid,
-		 	topo.grid_size,
-			topo.surface[:], 
-			topo.FlowDir,
-			topo.Ksat,
-			topo.decay,
-			topo.riv_width,
-			topo.riv_length)
-	gw = gwflow_EFD(grid,
-			aquifer.Ksat,
-			topo.area_river,
-			aquifer.CHB,
-			data_in.gw_func)
-	
-	if water_bodies.id_nodes is not None:
-		pnds = ponds(water_bodies.pnds_Amax, water_bodies.pnds_hmax) # ponds	
-	
-	# read location of point boundary conditions
-	if fluxOF.data_set is not None:
-		if data_in.data_reading['fluxOF'] == 0:
-			idFluxOF, idFluxOF_act = extract_id_from_coords(
-				grid, data_in.fname_surface.fname_of_bc_flux)
 
-	if fluxUZ.data_set is not None:
-		if data_in.data_reading['fluxUZ'] == 0:
-			idFluxUZ, idFluxUZ_act = extract_id_from_coords(
-				grid, data_in.fname_soil.fname_uz_bc_flux)
+	abc, inf, cnp, swb, swb_rip, ro, gw = initialize_core_hydrology_components(
+		data_in, grid, topo, aquifer
+	)
 
-	if fluxSZ.data_set is not None:
-		#print(data_in.fname_aquifer.fname_sz_bc_flux)
-		if data_in.data_reading['fluxSZ'] == 0:
-			idFluxSZ, idFluxSZ_act = extract_id_from_coords(
-				grid, data_in.fname_aquifer.fname_sz_bc_flux)
-			
-		#elif data_in.data_reading['abs'] == 2:
-		#	idFluxOF = extract_id_from_raster(
-		#		env_state.grid,
-		#		data_in.filename_OF_points
-		#		)
-	
-	if fluxWB.data_set is not None:
-		#print(data_in.fname_aquifer.fname_sz_bc_flux)
-		if data_in.data_reading['fluxWB'] == 0:
-			idFluxWB, idFluxWB_act = extract_id_from_coords(
-				grid, data_in.fname_water_bodies.fname_wb_bc_flux)
-		if data_in.data_reading['fluxWB'] == 0:
-			idFluxWBout, idFluxWBout_act = extract_id_from_coords(
-				grid, data_in.fname_water_bodies.fname_wb_bc_flux,
-				xlabel="East_out", ylabel="North_out"
-				)
-	
-	t = 0	
-	t_eto = 0	
-	t_pre = 0
-	t_savi = 0
-	t_kc = 0
-	t_av = 0
-	t_abs = 0
-	
-	gws_mb = []
-	
-	etg_agg = np.zeros(topo.grid_size)
-	rch_agg = np.zeros(topo.grid_size)
-	dt_GW = int(data_in.dt)
-	
-	# nodes to perform calculation
-	act_nodes = grid.core_nodes[:]
-	riv_nodes = np.zeros(topo.grid_size)
-	riv_nodes[act_nodes] = 1
-	topo.river_cells = riv_nodes*topo.river_cells
-		
-	riv_nodes = np.array(np.where(topo.river_cells > 0)[0], dtype=int)
-	# nodes to transfer information from river grid
-	# to core nodes grid (active nodes)
-	if riv_nodes.size > 0:
-		act_riv_nodes = np.where(topo.river_cells[act_nodes] > 0)[0]
-	
-	# find location of lakes
-	id_lakes = topo.surface[act_nodes] - topo.bathymetry[act_nodes]
-	#print(id_lakes)
-	id_lakes = np.where(id_lakes > 0)[0]
-	#print(id_lakes)
-	
-	# locations ponds
-	#id_ponds = None				 
-	
-	# INITIAL CONDITIONS =========
-	# surface water
-	ro.SSZ = topo.Qo[:]
+	(pnds, idFluxOF, idFluxOF_act, idFluxUZ, idFluxUZ_act,
+	idFluxSZ, idFluxSZ_act, idFluxWB, idFluxWB_act,
+	idFluxWBout, idFluxWBout_act) = initialize_optional_components_and_flux_ids(
+		data_in, grid, water_bodies, fluxOF, fluxUZ, fluxSZ, fluxWB
+	)
 
-	# set initial conditions for soil and groundwater
-	head = aquifer.head[:]
-	theta = soil.theta[:]
-	river_sat_deficit = np.zeros(topo.grid_size)
-	
-	save_rz_var = False
-	if riv_nodes.size > 0:
-		save_rz_var = True
-		rtheta = soil.theta[riv_nodes]
-		
-	# update initial conditions
-	head[act_nodes], Duz0, z_extintion, river_sat_deficit[act_nodes], Ft0, SORP0, t_0, dry_day = (
-		set_initial_conditions(
-				topo.grid_size, soil.Droot[act_nodes],
-				head[act_nodes],
-				topo.surface[act_nodes], 
-			    topo.bathymetry[act_nodes],
-				vegetation.extintion_depth[act_nodes],
-				topo.grid_cellsize,
-				data_in.run_GW)
-		)
-	
-	#if riv_nodes.size > 0:
-	#	river_sat_deficit = river_sat_deficit[act_riv_nodes]
+	(t, t_eto, t_pre, t_savi, t_kc, t_av, t_abs, gws_mb,
+	etg_agg, rch_agg, dt_GW, act_nodes, riv_nodes, act_riv_nodes,
+	id_lakes, head, theta, river_sat_deficit, save_rz_var, rtheta,
+	Duz0, z_extintion, Ft0, SORP0, t_0, dry_day,
+	runoff, recharge, baseflow, AOF_threshold) = initialize_simulation_state_variables(
+		data_in, topo, grid, aquifer, soil, vegetation, ro
+	)
 
-	runoff = np.zeros(topo.grid_size)
-	recharge = np.zeros(topo.grid_size)
-	baseflow = np.zeros(topo.grid_size)
-	AOF_threshold = np.ones(topo.grid_size)
-	
-	# Output variables and location
-	idOF, idOF_act = extract_id_from_coords(grid, data_in.fname_DISpoints)	# Discharge monitoring points
-	idUZ, idUZ_act = extract_id_from_coords(grid, data_in.fname_SMDpoints)	# Soil moisture monitoring points
-	idGW, idGW_act = extract_id_from_coords(grid, data_in.fname_GWpoints) # groundwater monitoring points
-	
-	# initialize array to store model results
-	point_var = GlobalGridVar(data_in.ini_date,
-			   data_in.dt_results_csv, data_in.save_results,
-			   data_in.store.var_point)
-	grid_var = GlobalGridVar(data_in.ini_date,
-			   data_in.dt_results, data_in.save_netcdf,
-			   data_in.store.var_grid)
-	grid_rmax = GlobalGridVar(data_in.ini_date,
-			   data_in.dt_results, data_in.save_netcdf,
-			   data_in.store.var_grid,
-			   store_max=data_in.store_rmax, nstep_day=data_in.nstep_day)
-	grid_vmax = GlobalGridVar(data_in.ini_date,
-			   data_in.dt_results, data_in.save_netcdf,
-			   data_in.store.var_grid,
-			   store_max=data_in.store_vmax, nstep_day=data_in.nstep_day)
-	total_var = GlobalGridVar(data_in.ini_date,
-			   data_in.dt_results, data_in.save_results,
-			   data_in.store.var_avg)
-	
-	# create grid and average results from the riparian area
-	if riv_nodes.size > 0:
-		grid_rpvar = GlobalGridVar(data_in.ini_date,
-			   data_in.dt_results, data_in.save_netcdf,
-			   data_in.store.var_grid_rp)
-		total_rpvar = GlobalGridVar(data_in.ini_date,
-			   data_in.dt_results, data_in.save_results,
-			   data_in.store.var_grid_rp)
-
-	# create grid and average results from the water bodies (ponds)
-	if water_bodies.id_nodes is not None:
-		grid_pndvar = GlobalGridVar(data_in.ini_date,
-			   data_in.dt_results, data_in.save_netcdf,
-			   data_in.store.var_grid_pnd)
-		total_pndvar = GlobalGridVar(data_in.ini_date,
-			   data_in.dt_results, data_in.save_results,
-			   data_in.store.var_grid_pnd)
+	(idOF, idOF_act, idUZ, idUZ_act, idGW, idGW_act,
+	point_var, grid_var, grid_rmax, grid_vmax, total_var,
+	grid_rpvar, total_rpvar, grid_pndvar, total_pndvar) = setup_output_and_monitoring(
+		data_in, grid, riv_nodes, water_bodies
+	)
 
 	# Initialize the progress bar
 	print("****************************** SIMULATION IN PROGRESS ******************************")
@@ -1019,108 +648,10 @@ def run_DRYP(filename_input):
 	progress_bar.close()
 	
 	print("********************************** SAVING RESULTS **********************************")
-	# SAVE AVERAGE VALUES OF VARIABLES: CSV-FILES
-	#var_name = ['pre', 'pet', 'run', 'aet', 'inf', 'tht',
-	#    'rch', 'egw', 'wte', 'gdh', 'twsc', 'chb', 'tls']
-	#length_var = np.ones(len(var_name), dtype=int)
-	total_var.save_csv_var(data_in.fnameTS_avg,# var_name,
-			#length_var,
-			multi_files=False)
-
-	print("<==== saving model temporal outputs")
-	# SAVE VARIABLES AT POINT LOCATION: CSV-FILES
-	# name of variables to store
-	#var_name = ['aet', 'inf', 'dis', 'tht', 'rch', 'wte', 'gdh', 'ssz']
-	#length_var = [len(idOF_act), len(idOF_act), len(idOF),
-	#   			len(idUZ), len(idGW), len(idGW), len(idGW),
-	#			len(idOF),]
-	point_var.save_csv_var(data_in.fnameTS_point)#, var_name, length_var)
-
-	# SAVE VARIABLES AS GRIDS-NETCDF FILES
-	# name of variables to store as grid
-	#var_name = ['pre', 'pet', 'dis', 'aet', 'inf', 'run', 'tht',
-	#    'rch', 'egw', 'wte', 'gdh', 'twsc']					
-	# save grided model result datasets 
-	grid_var.save_netCDF_var(data_in.fnameTS_grid+'.nc',
-			   topo.lat, topo.lon, act_nodes,# var_name
-			   )
-	# save grided model maximum values at streams - result datasets 
-	if grid_rmax.store_max is True:
-		print("<==== saving model temporal maximum values at streams outputs")
-		if riv_nodes.size > 0:
-			grid_rmax.save_netCDF_var(data_in.fnameTS_grid+'rmax.nc',
-			   topo.lat, topo.lon, riv_nodes,# var_name
-			   )
-	
-	# save maximum grided model result datasets 
-	if grid_vmax.store_max is True:
-		print("<==== saving model temporal maximum values outputs")
-		grid_vmax.save_netCDF_var(data_in.fnameTS_grid+'vmax.nc',
-			   topo.lat, topo.lon, act_nodes,# var_name
-			   )
-	
-
-	# SAVE VARIABLES FROM THE RIPARIAN ZONE
-	# save average riparian zone variables in a csv file
-	if riv_nodes.size > 0:
-		print("<==== saving riparian zone temporal outputs")
-		# variables names
-		#var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
-		
-		# save grided model result datasets 
-		grid_rpvar.save_netCDF_var(data_in.fnameTS_grid+'rp.nc',
-			   topo.lat, topo.lon, riv_nodes,# var_name
-			   )
-		
-		#save average values in csv
-		#length_var = np.ones(len(var_name), dtype=int)
-		total_rpvar.save_csv_var(data_in.fnameTS_avg+'rp',# var_name,
-			#length_var,
-			multi_files=False)
-
-	# SAVE VARIABLES FROM PONDS
-	# save average riparian zone variables in a csv file
-	print("<==== saving water bodies temporal outputs")
-	if water_bodies.id_nodes is not None:
-		# variables names
-		#var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
-		#print(grid_pndvar)
-		# save grided model result datasets 
-		grid_pndvar.save_netCDF_var(data_in.fnameTS_grid+'pnd.nc',
-			   topo.lat, topo.lon, water_bodies.id_nodes,# var_name
-			   )
-		
-		#save average values in csv
-		#length_var = np.ones(len(var_name), dtype=int)
-		total_pndvar.save_csv_var(data_in.fnameTS_avg+'pnd',# var_name,
-			#length_var,
-			multi_files=False)
-		
-	# SAVE RASTER FILES FOR INITIAL CONDITIONS
-	# Save water table for initial conditions
-	print("<==== saving raster files for initial conditions")
-	save_map_to_rastergrid(grid, head,
-			data_in.fnameTS_avg + '_wte_ini.asc')
-	
-	# Save soil moisture for initial conditions
-	save_map_to_rastergrid(grid, theta,
-			data_in.fnameTS_avg + '_tht_ini.asc')
-	
-	# save channel flow initial conditions
-	save_map_to_rastergrid(grid, ro.SSZ,
-			data_in.fnameTS_avg + '_Q_ini.asc')
-	
-	if riv_nodes.size > 0:
-		# Save riparian soil moisture for initial conditions
-		theta[riv_nodes] = rtheta
-		save_map_to_rastergrid(grid, theta,
-				data_in.fnameTS_avg + '_tht_rp_ini.asc')
-	if water_bodies.id_nodes is not None:
-		# Save riparian soil moisture for initial conditions
-		theta[:] = -9999
-		theta[water_bodies.id_nodes] = water_bodies.pnds_Vo
-		save_map_to_rastergrid(grid, theta,
-				data_in.fnameTS_avg + '_V_pnd_ini.asc')
+	save_model_outputs(data_in, total_var, point_var, grid_var, grid_rmax,
+                   grid_vmax, grid_rpvar, total_rpvar, grid_pndvar, total_pndvar,
+                   water_bodies, grid, head, theta, ro, rtheta, topo,
+                   act_nodes, riv_nodes)
 	print("======================= ALL PROCESSES COMPLETED SUCCESSFULLY =======================")
 # ---------------------------------------------------------------------
 # Call script from external library	
