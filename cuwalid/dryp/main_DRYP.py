@@ -66,7 +66,8 @@ def run_DRYP(filename_input):
 	# Read precipitation
 	print("***************************** READING TEMPORAL DATASETS ****************************")
 
-	PRE, ET0, SAVI, LAI, Kc, av, SAVImin, SAVImax, fluxOF, fluxUZ, fluxSZ, fluxWB, Qusz, grid = read_temporal_datasets_and_grid(data_in, topo)
+	PRE, ET0, SAVI, LAI, Kc, av, SAVImin, SAVImax, fluxOF, fluxUZ, fluxSZ, fluxWB, Qusz, grid = \
+		read_temporal_datasets_and_grid(data_in, topo)
 
 	# MODEL COMPONENTS ------------------------------------------------------
 	print("*************************** ASSEMBLING MODEL COMPONENTS ****************************")
