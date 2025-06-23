@@ -6,6 +6,7 @@ from landlab.grid.mappers import (
 		map_max_of_node_links_to_node)
 
 #from components.DRYP_GW_SW_conector import update_soil
+from cuwalid.dryp.components.DRYP_GW_SW_conector import update_soil
 import cuwalid.dryp.components.lakesf90 as lakes
 
 #import time
