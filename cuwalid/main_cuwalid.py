@@ -37,7 +37,14 @@ def run_cuwalid(cuwalid_input):
 
 	season = cuwalid_config['season'][0]
 	iyear = cuwalid_config["year"]
-	nsim = cuwalid_config["NSIM"]
+	nsim_meteo = cuwalid_config["NSIM"]
+	# check if cowalid_config has the variable "nsim_dryp" otherwise add that variable
+	if "NSIM_HYDRO" in cuwalid_config:
+		nsim_hydro = cuwalid_config["NSIM_HYDRO"]
+	else:
+		cuwalid_config["NSIM_HYDRO"] = nsim_meteo
+		nsim_hydro = nsim_meteo
+
 	start_date, end_date = cuwalid_mtools.get_dates_season(season, iyear)
 	start_day, end_day = cuwalid_mtools.date_to_day_of_year(start_date), cuwalid_mtools.date_to_day_of_year(end_date)
 
@@ -67,7 +74,7 @@ def run_cuwalid(cuwalid_input):
 		# Change storms input based on cuwalid inputs settings
 		storm_input["SEASON_TAG"] = season
 		storm_input["SEED_YEAR"] = iyear
-		storm_input["NUMSIMS"] = nsim
+		storm_input["NUMSIMS"] = nsim_meteo
 		storm_input["OUT_PATH"] = forecast_path_storm_output
 		storm_input["sim_in_parallel"] = sim_in_parallel
 
@@ -100,7 +107,7 @@ def run_cuwalid(cuwalid_input):
 		stoPET_input["endyear"] = iyear
 		stoPET_input["startdate"] = start_day
 		stoPET_input["enddate"] = end_day
-		stoPET_input["number_ensm"] = nsim
+		stoPET_input["number_ensm"] = nsim_meteo
 		stoPET_input["seasonName"] = season
 		stoPET_input["tercile_forecast_file"] = stopet_tercile_file
 
@@ -110,7 +117,7 @@ def run_cuwalid(cuwalid_input):
 		print("Converting stopet output into files for dryp")
 		print(f"tercile file {stoPET_input['tercile_forecast_file']}")
 		if stoPET_input["tercile_forecast_file"]:
-			forecast_wrapper(stoPET_input["tercile_forecast_file"], forecast_path_stopet_output, iyear, start_day, end_day, stoPET_input["locname"], nsim, stoPET_input["tempAdj"], season, stoPET_input["temp_path"])
+			forecast_wrapper(stoPET_input["tercile_forecast_file"], forecast_path_stopet_output, iyear, start_day, end_day, stoPET_input["locname"], nsim_meteo, stoPET_input["tempAdj"], season, stoPET_input["temp_path"])
 
 	else:
 		print("stoPET is not executed")
@@ -118,11 +125,11 @@ def run_cuwalid(cuwalid_input):
 	
 	# set DRYP model simulations
 	# create model names
-	mname = [season + "_" + str(iyear) + "_realization_" + str(isim) for isim in range(nsim)]
+	mname = [season + "_" + str(iyear) + "_realization_" + str(isim) for isim in range(nsim_hydro)]
 	# create model settings file names for realizations
 	fname_setting_file = os.path.join(forecast_path_dryp_model,"Hydro_model_forecast_settings_"+season+"_"+str(iyear)+".json")
 	# create model parameter file names for realizations
-	fsim_forecasting = [os.path.join(forecast_path_dryp_model,"Hydro_model_forecast_input_"+ season +"_"+str(iyear)+ "_" +str(isim)+".json") for isim in range(nsim)]
+	fsim_forecasting = [os.path.join(forecast_path_dryp_model,"Hydro_model_forecast_input_"+ season +"_"+str(iyear)+ "_" +str(isim)+".json") for isim in range(nsim_hydro)]
 	
 	# forecasting dryp model name
 	forecast_model_name = season + "_" + str(iyear) + "_realization"
@@ -137,9 +144,9 @@ def run_cuwalid(cuwalid_input):
 		dryp_settings_path = cuwalid_config["MODELS"]["DRYP"]["settings"]
 		dryp_input["OUTPUT"]["path_setting"] = dryp_settings_path
 
-		fname_pet = [forecast_path_stopet_output + "Forecast_PET_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
-		fname_pre = [forecast_path_storm_output + "Forecast_PRE_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim)]
-		forcing_list = np.array(JSON_builder.create_ensamble([fname_pet, fname_pre], nsamples=nsim))
+		fname_pet = [forecast_path_stopet_output + "Forecast_PET_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim_meteo)]
+		fname_pre = [forecast_path_storm_output + "Forecast_PRE_HAD_ens_" + str(iyear) + "_" + season + "_" + str(isim) + ".nc" for isim in range(nsim_meteo)]
+		forcing_list = np.array(JSON_builder.create_ensamble([fname_pet, fname_pre], nsamples=nsim_hydro))
 
 		# Create the list of commands for each simulation
 		commands = []
@@ -226,7 +233,8 @@ def run_cuwalid(cuwalid_input):
 		#HyCast_input["start_year"] = cuwalid_config["start_year"]
 		#HyCast_input["end_year"] = cuwalid_config["end_year"]
 		HyCast_input["year"] = cuwalid_config["year"]
-		HyCast_input["nsim"] = cuwalid_config["NSIM"]
+		#HyCast_input["nsim"] = cuwalid_config["NSIM"]
+		HyCast_input["nsim"] = cuwalid_config["NSIM_HYDRO"]
 
 		run_hydro_forecast(HyCast_input)
 		
@@ -245,7 +253,7 @@ def run_cuwalid(cuwalid_input):
 		iImCast_input = ImCast_input.copy()
 
 
-		if sim_in_parallel: # parallelise the map plotting for speed
+		if sim_in_parallel: # parallelise the map plotting for speeding up map generation
 			print("Running map plotting in parallel")
 			for icountry in ImCast_input["country"]:
 				for iwater in ImCast_input["water_status"]:
