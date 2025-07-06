@@ -449,8 +449,8 @@ class get_list_of_groundwater_files(object):
         self.fname_GWini = dryp_config["SATURATED"]["path_sz_wte"]  # Initial water table
         self.fname_DEM = dryp_config["TERRAIN"]["path_dem"]
         
-        self.kKsat = float(factors["GLOBAL_FACTORS"]["uz_kkast"])  # k for hydraulic conductivity
-        self.kSy = float(factors["GLOBAL_FACTORS"]["uz_ksigma"])  # k for specific yield
+        self.kKsat = float(factors["GLOBAL_FACTORS"]["sz_kksat"])  # k for hydraulic conductivity
+        self.kSy = float(factors["GLOBAL_FACTORS"]["sz_ksy"])  # k for specific yield
 
 class get_list_of_water_bodies_files(object):
     """get list of file names for reading parameters"""
