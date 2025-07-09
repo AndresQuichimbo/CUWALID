@@ -886,9 +886,10 @@ def regularization_T(zm, hm, f, dq, r):
 	float numpy array 
 		regularization
 	"""
-	aux = (hm-zm)/f+1	
-	aux = np.where(aux > 0,aux,0)
-	return np.exp((aux-1)/r)*dq*np.where(dq > 0,1,0)
+	# calculate ratio of smoothing
+	aux = (hm-zm)/f+1
+	aux = np.where(aux > 0, aux, 0)
+	return np.exp((aux-1)/r)*dq*np.where(dq > 0, 1, 0)
 	
 def exponential(f, z, h):
 	"""Calculate aquifer transmissivity following
