@@ -459,6 +459,7 @@ class get_list_of_water_bodies_files(object):
         """Model parameter settings and input file names and location"""
 
         # water bodies component
+        self.fname_lks_ids = dryp_config["WATER_BODIES"]["path_lake_ids"]
         self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depth"]
         self.fname_pnd_hmax = dryp_config["WATER_BODIES"]["path_pnd_hmax"]
         self.fname_pnd_Amax = dryp_config["WATER_BODIES"]["path_pnd_Amax"]

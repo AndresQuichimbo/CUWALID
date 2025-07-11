@@ -129,6 +129,7 @@ default_input = {
    },
 
    "WATER_BODIES": {
+      "path_lake_ids": None, # lakes labels as integers
       "path_lake_depth": None, # lakes bathymetry
       "path_pnd_hmax": None, # ponds max depth
       "path_pnd_Amax": None, # ponds maximum extend
