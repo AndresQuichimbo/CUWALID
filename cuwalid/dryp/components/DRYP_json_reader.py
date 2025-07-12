@@ -421,7 +421,10 @@ class get_list_of_groundwater_files(object):
         self.fname_b_aq = dryp_config["SATURATED"]["path_sz_bdd"]
         self.fname_aquifertype = dryp_config["SATURATED"]["path_sz_type"]
         #self.fname_bathymetry = dryp_config["GROUNDWATER"]["path_gw_lake_elev"]
+		# get paht to bathymetry for lakes
         self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depth"]
+		# get path of bodies ids
+        self.fname_lks_name = dryp_config["WATER_BODIES"]["path_lake_ids"]
 
 		# read boundary conditions 
         self.fname_sz_bc_flux = dryp_config["SATURATED"]["path_sz_bc_flux"]
@@ -459,7 +462,7 @@ class get_list_of_water_bodies_files(object):
         """Model parameter settings and input file names and location"""
 
         # water bodies component
-        self.fname_lks_ids = dryp_config["WATER_BODIES"]["path_lake_ids"]
+        self.fname_lks_name = dryp_config["WATER_BODIES"]["path_lake_ids"]
         self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depth"]
         self.fname_pnd_hmax = dryp_config["WATER_BODIES"]["path_pnd_hmax"]
         self.fname_pnd_Amax = dryp_config["WATER_BODIES"]["path_pnd_Amax"]
