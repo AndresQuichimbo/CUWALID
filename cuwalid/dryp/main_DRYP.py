@@ -480,7 +480,7 @@ def run_DRYP(filename_input):
 							#	swb.tht_dt,	env_state.Droot*0.001)
 						#else:
 						head, baseflow = gw.run_one_step_gw(grid,
-								topo.surface[:],
+								topo.surface.values,
 								aquifer.bottom,
 								aquifer.thickness,
 								topo.bathymetry,
@@ -496,7 +496,10 @@ def run_DRYP(filename_input):
 								head,
 								(rch_agg - etg_agg)*0.001, #[mm/dt]recharge,
 								ro.stage,
-								data_in.dtSZ/60
+								data_in.dtSZ/60,
+								ids_lks=water_bodies.ids_lks,
+								sizes_lks=water_bodies.size_lks,
+								ids_max_depth_lks=water_bodies.ids_max_depth_lks,
 								)
 							#gw.run_one_step_gw(env_state.grid, data_in.dtSZ/60,
 							#	swb.tht_dt,	env_state.Droot*0.001)
