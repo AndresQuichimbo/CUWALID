@@ -9,6 +9,8 @@ from landlab import RasterModelGrid
 #from netCDF4 import Dataset, num2date, date2num
 #from landlab.components import FlowDirectorSteepest, FlowAccumulator
 import rasterio
+from scipy.ndimage import label
+
 # Global parameters
 ABC_RIVER = 0.2 # River abstraction parameter
 		
@@ -556,6 +558,7 @@ class groundwater_parameters(object):
 			#SZ_CHBa = read_esri_ascii(inputfile.fname_a_aq,
 			#	name='SZ_a_aq', grid=gw)[1]
 		
+
 		#gw.at_node['SZ_a_aq'][:] += np.array(rg.at_node['Soil_depth']*0.001)
 		
 		# Read aquifer parameter b for calculating effective thickness
@@ -765,6 +768,65 @@ class water_body_parameters(object):
 
 		self.id_nodes = id_nodes
 
+		## read water bodies ids and postptocess all required variables
+		#if inputfile.fname_lks_name != None and os.path.exists(inputfile.fname_lks_name):
+		#	# read lake names
+		#	name_lks = np.flip(rasterio.open(inputfile.fname_lks_name).read(1), 0).flatten()
+		#else:
+		#	print('Lake names.......................................... not provided')
+		#	name_lks = None
+
+		# read water bodies ids and postptocess all required variables
+		if inputfile.fname_lks_depth != None and os.path.exists(inputfile.fname_lks_depth):
+			#print('Processing lakes parameters')
+			# STEP 1: Read and identify lake
+			# read lake names, preserve the order, do not flatten
+			depth_lks = np.flip(rasterio.open(inputfile.fname_lks_depth).read(1), 0)#.flatten()
+
+			# mask lakes from depth
+			name_lks = depth_lks > 0
+			name_lks = name_lks.astype(int)
+
+			# label lakes
+			name_lks, num_features = label(name_lks)
+
+			# flatten the name array to match the grid
+			name_lks = name_lks.flatten()
+
+			# POST-PROCESSING LAKES VARIABLES		
+			# Step 2: For each label, collect flat indices (len=number of lakes)
+			ids_group_by_label = []
+			for label_num in range(1, num_features + 1):
+				flat_indices = list(np.where(name_lks == label_num)[0])
+				ids_group_by_label.append(flat_indices)
+			
+			# Step 3: Get length of each lake (number of cells)
+			size_lks = list(map(len, ids_group_by_label))
+			
+			# Step 4: Get index of all lakes
+			ids_lks = list(np.where(name_lks > 0)[0])
+
+			# Step 5: Get index of the maximum depth for each lake
+			ids_max_depth_lks = numpy_argmin_reduceat(-depth_lks.flatten()[ids_lks],
+									np.append([0], np.cumsum(size_lks)[:-1])
+									)
+			
+			# transfer variables to the class
+			#self.name_lks = name_lks
+			self.ids_lks = ids_lks
+			self.size_lks = size_lks
+			self.ids_max_depth_lks = ids_max_depth_lks
+			
+			
+		else:
+			print('Processing lakes parameters is not active')
+			#print('Initial water body volume........not provided. Global value 0 [m3]')
+			#self.name_lks = None
+			self.ids_lks = None
+			self.size_lks = None
+			self.ids_max_depth_lks = None
+		
+
 def extract_id_from_coords(grid, filename, xlabel="East", ylabel="North"):
 	""" extract nodes from a csv file
 	this component uses the landlab funtion "find_nearest_node
@@ -869,4 +931,62 @@ def create_coordinate_array(xllcorner, yllcorner, grid_nrows, grid_ncols, cellsi
 	lon_end = yllcorner + cellsize*grid_ncols
 	lon = np.arange(yllcorner, lon_end, cellsize)
 	return lon, lat
+
+# Getting the min Index 
+def numpy_argmin_reduceat(a, index):
+	"""Get the index of the minimum value in each group of a 1D array.
+	Parameters
+	----------
+	a : numpy array
+		1D array of values.
+	index : numpy array
+		1D array of number of elements that define the groups.
+	Returns
+	-------
+	min_idx : numpy array
+		1D array of indices of the minimum value in each group.
+	"""
+	# Ensure the input is a numpy array
+	n = a.max() + 1  # limit-offset
+	# Create an array to hold the group indices
+	id_arr = np.zeros(a.size, dtype=int)
+	# Assign group indices based on the input index array
+	id_arr[index] = 1
+	# Cumulative sum to create unique group identifiers
+	shift = n*id_arr.cumsum()
+	# Shift the original array by the group indices
+	sortidx = (a+shift).argsort()
+	grp_shifted_argmin = index
+	idx =sortidx[grp_shifted_argmin] - index
+	min_idx = idx + index
+	return min_idx
+
+# Getting the min Index 
+def numpy_argmax_reduceat(a, index):
+	"""Get the index of the minimum value in each group of a 1D array.
+	Parameters
+	----------
+	a : numpy array
+		1D array of values.
+	index : numpy array
+		1D array of number of elements that define the groups.
+	Returns
+	-------
+	min_idx : numpy array
+		1D array of indices of the minimum value in each group.
+	"""
+	# Ensure the input is a numpy array
+	n = a.max() + 1  # limit-offset
+	# Create an array to hold the group indices
+	id_arr = np.zeros(a.size, dtype=int)
+	# Assign group indices based on the input index array
+	id_arr[index] = 1
+	# Cumulative sum to create unique group identifiers
+	shift = n*id_arr.cumsum()
+	# Shift the original array by the group indices
+	sortidx = (a+shift).argsort()
+	grp_shifted_argmin = index
+	idx =sortidx[grp_shifted_argmin] - index
+	min_idx = idx + index
+	return min_idx
 		
