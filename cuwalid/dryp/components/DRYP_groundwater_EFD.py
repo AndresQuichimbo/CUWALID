@@ -136,7 +136,9 @@ class gwflow_EFD(object):
 	def run_one_step_gw(self, grid, surface, bottom, thickness,
 		     bathymetry, riv_elevation, riv_nodes, Sy, Droot,
 			 conductivity, inodetype, theta_sat, theta_fc, theta_dt,
-			 head, recharge, stage, dt):
+			 head, recharge, stage, dt,
+			 ids_lks=None, sizes_lks=None, ids_max_depth_lks=None
+			 ):
 		"""Function to update water table depending on the
 		unsaturated zone.
 		
@@ -185,6 +187,9 @@ class gwflow_EFD(object):
 		"""
 		# Calculate time step ---------------------------------------------------
 		#print('===============================================================')
+		# create a copy of the surface elevation
+		surface_i = surface.copy()
+		
 		# select active link of model domain
 		act_links = grid.active_links[:]
 		# select active nodes
@@ -307,55 +312,75 @@ class gwflow_EFD(object):
 			# calculate transmissivity            
 			T[act_links] = self.Ksat[act_links]*thickness_link[act_links]
 			
-			#---------------------------------------------------------------
-			# change transmisivity at lakes nodes and links
-			# identify links at lake nodes that have water table depth above
-			# the surface
-			#aux_Tr = T.copy() # create a copy of transmissivity
+			# LAKES
+			###---------------------------------------------------------------
+			### Additional requirements for lakes
+			# list of lake id nodes: ids_lks
+			# list of number of cells per lake: sizes_lks 
+			# list of lakes id maximum depths: ids_max_depth_lks
+
+			# Check if lakes are active
+			#if self.ids_lakes is not None:
+			# Create an array of maximum lake depth
+			z_lks = np.repeat(head[ids_max_depth_lks], sizes_lks)
 			
-			lake_nodes = head - bathymetry # find lake with water
-			
-			inner_lake_nodes = lake_nodes.reshape(
-					grid.number_of_node_rows,
-					grid.number_of_node_columns
-					)
-			
-			inner_lake_nodes = np.where(
-				shrink_region(inner_lake_nodes).reshape(-1) > 0)
-			
-			#outer_lake_nodes = np.where(
-			#	expand_region(inner_lake_nodes).reshape(-1) > 0)
-			
-			lake_nodes = np.where(lake_nodes > 0) # select lake nodes with water 
-			#print(lake_nodes,len(lake_nodes))
-			links_at_lake = grid.links_at_node[lake_nodes] # select lake links
-			inner_links_at_lake = grid.links_at_node[inner_lake_nodes] # select lake links
-			#outer_links_at_lake = grid.links_at_node[inner_lake_nodes] # select lake links
-			
-			#T[outer_links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.01 # reduce transmissivity
-			#T[links_at_lake] = T[links_at_lake]*0.025 # reduce transmissivity
-			#T[links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.025 # reduce transmissivity
-			T[inner_links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.05 # reduce transmissivity
-			
-			#Sy_aux = Sy[act_nodes]
-			Sy_aux = Sy.copy()
-			Sy_aux[lake_nodes] = 1.0
-			#Sy_aux[inner_lake_nodes] = 1.0
-			#Sy_aux[outer_lake_nodes] = 1.0
-			#print(Sy, Sy_aux)
-			
-			#try:
-			#	if inner_lake_nodes[0]:
-			#	#print("len", inner_lake_nodes)
-			#		print("time",
-		   	#			time_step_confined(1, Sy_aux[lake_nodes],
-			#			map_max_of_node_links_to_node(grid, T)[lake_nodes], grid.dx
-			#			#time_step_confined(1, Sy_aux[inner_lake_nodes],
-			#			#map_max_of_node_links_to_node(grid, T)[inner_lake_nodes], grid.dx
-			#		))
-			#		print(map_max_of_node_links_to_node(grid, T)[inner_lake_nodes])
-			#except:
-			#	a = 1
+			# Check if head is above the bottom elevation of the lakes
+			z_lks = np.where(
+				head[ids_lks] > bathymetry[ids_lks], z_lks, bathymetry[ids_lks]
+				)
+
+			# FIRST DISABLE THE FOLLOWING CODE BLOCK IF YOU ARE NOT USING LAKES
+			# THERE IS NO NEED TO CHANGE THE TRANSMISIVITY AT LAKE NODES SINCE
+			# LAKE STAGE VARIATION IS REDISTRIBUTED OVER THE WET LAKE CELLS
+			###---------------------------------------------------------------
+			### change transmisivity at lakes nodes and links
+			### identify links at lake nodes that have water table depth above
+			### the surface
+			###aux_Tr = T.copy() # create a copy of transmissivity
+			##
+			##lake_nodes = head - bathymetry # find lake with water
+			##
+			##inner_lake_nodes = lake_nodes.reshape(
+			##		grid.number_of_node_rows,
+			##		grid.number_of_node_columns
+			##		)
+			##
+			##inner_lake_nodes = np.where(
+			##	shrink_region(inner_lake_nodes).reshape(-1) > 0)
+			##
+			###outer_lake_nodes = np.where(
+			###	expand_region(inner_lake_nodes).reshape(-1) > 0)
+			##
+			##lake_nodes = np.where(lake_nodes > 0) # select lake nodes with water 
+			###print(lake_nodes,len(lake_nodes))
+			##links_at_lake = grid.links_at_node[lake_nodes] # select lake links
+			##inner_links_at_lake = grid.links_at_node[inner_lake_nodes] # select lake links
+			###outer_links_at_lake = grid.links_at_node[inner_lake_nodes] # select lake links
+			##
+			###T[outer_links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.01 # reduce transmissivity
+			###T[links_at_lake] = T[links_at_lake]*0.025 # reduce transmissivity
+			###T[links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.025 # reduce transmissivity
+			##T[inner_links_at_lake] = COURANT_2D*grid.dx*grid.dx*0.05 # reduce transmissivity
+			##
+			###Sy_aux = Sy[act_nodes]
+			##Sy_aux = Sy.copy()
+			##Sy_aux[lake_nodes] = 1.0
+			###Sy_aux[inner_lake_nodes] = 1.0
+			###Sy_aux[outer_lake_nodes] = 1.0
+			###print(Sy, Sy_aux)
+			##
+			###try:
+			###	if inner_lake_nodes[0]:
+			###	#print("len", inner_lake_nodes)
+			###		print("time",
+		   	###			time_step_confined(1, Sy_aux[lake_nodes],
+			###			map_max_of_node_links_to_node(grid, T)[lake_nodes], grid.dx
+			###			#time_step_confined(1, Sy_aux[inner_lake_nodes],
+			###			#map_max_of_node_links_to_node(grid, T)[inner_lake_nodes], grid.dx
+			###		))
+			###		print(map_max_of_node_links_to_node(grid, T)[inner_lake_nodes])
+			###except:
+			###	a = 1
 
 			# --------------------------------------------------------------
 			# Calculate the hydraulic gradients
@@ -430,27 +455,21 @@ class gwflow_EFD(object):
 				#dqsdxy[riv_nodes] += -self.kaq*dqs_riv
 				dqsdxy[riv_nodes] += -self.kaq*qs_riv
 			
-			# Regularization approach for aquifer cells
-			# calculate aquifer thickness
-			
-			#if env_state.func == 1 or  env_state.func == 2:
-			dqs[act_nodes] = regularization_T(surface[act_nodes], head[act_nodes],
+			# REGULARIZATION APPROACH
+			# check if lakes are active
+			if ids_lks is not None:
+				surface_i[ids_lks] = z_lks
+			# calculate regularization for aquifer cells
+			dqs[act_nodes] = regularization_T(surface_i[act_nodes], head[act_nodes],
 				thickness[act_nodes], dqsdxy[act_nodes], REG_FACTOR)
-					
-			#else:
-			#	dqs = regularization(
-			#		env_state.SZgrid.at_node['topographic__elevation'],
-			#		env_state.SZgrid.at_node['water_table__elevation'],
-			#		env_state.SZgrid.at_node['BOT'],
-			#		dqsdxy, REG_FACTOR)
-			
+		
 			# Calculate storage change			
 			water_storage_change[act_nodes] = (dqsdxy[act_nodes]-dqs[act_nodes])*dtsp
 			
 			# calculate total storage change to evaluate mass balance
 			total_storage_change += np.mean(water_storage_change[act_nodes])
 			
-			# update river ghost cell
+			# UPDATE HEAD AT ACTIVE NODES FOR SOIL-GW INTERACTIONS
 			# enable lakes layer
 			if self.lakes_is_active == 0:
 				#print('No Lakes')
@@ -505,7 +524,33 @@ class gwflow_EFD(object):
 						head[act_nodes],#h0
 						Sy[act_nodes],#Sy
 						))
-									
+					
+			# UPDATE HEAD AT LAKE NODES
+			# check if lakes are active
+			# if not, skip this part
+			if ids_lks is None or sizes_lks is None or ids_max_depth_lks is None:
+				# create a mask of wet cell lakes
+				wet_msk_lks = np.where(head[ids_lks] > bathymetry[ids_lks],	1, 0)
+
+				# Calculate anomaly in water table depth at lake nodes
+				dh_lks = head[ids_lks] - z_lks
+
+				# Mask out dry cell lakes (dry cells become zero)
+				dh_lks = dh_lks*wet_msk_lks
+
+				# redistribute the water table depth anomaly to the links at lake nodes
+				# calculate the sum of water table depth anomaly at lake nodes
+				sum_dh_lks = np.add.reduceat(dh_lks, np.append([0], np.cumsum(sizes_lks)[:-1]))
+				# count the number of wet cells in each lake
+				sum_wet_lks = np.add.reduceat(wet_msk_lks, np.append([0], np.cumsum(sizes_lks)[:-1]))
+				# calculate the average water table depth anomaly at lake nodes
+				avg_dh_lks = np.divide(sum_dh_lks, sum_wet_lks,
+							  out=np.zeros_like(sum_dh_lks),
+							  where=sum_wet_lks!=0
+							  )
+				# assign maximum lake depth to the head at lake nodes
+				head[ids_lks] = z_lks + avg_dh_lks
+			
 			#print(env_state.SZgrid.at_node['water_table__elevation'][219])#[act_node[40]])
 			# accumulate discharge
 			if len(riv_nodes) > 0:
@@ -515,8 +560,8 @@ class gwflow_EFD(object):
 			discharge[act_nodes] += dqs[act_nodes]*dtsp
 			#print('discharge',env_state.SZgrid.at_node['discharge'][219])
 			# Calculate maximum time step
-			#dtsp = time_step_confined(COURANT_2D, Sy[act_nodes],
-			dtsp = time_step_confined(COURANT_2D, Sy_aux[act_nodes],
+			dtsp = time_step_confined(COURANT_2D, Sy[act_nodes],
+			#dtsp = time_step_confined(COURANT_2D, Sy_aux[act_nodes],
 				map_max_of_node_links_to_node(grid, T)[act_nodes], grid.dx
 				)
 			
