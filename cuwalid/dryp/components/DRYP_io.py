@@ -761,7 +761,7 @@ class water_body_parameters(object):
 					self.pnds_Vo = None
 
 		else:
-			print('Water body parameters is not active')
+			print('Pond water body parameters are not available')
 			self.pnds_Amax = None
 			self.pnds_hmax = None
 			self.pnds_Vo = None
@@ -777,11 +777,11 @@ class water_body_parameters(object):
 		#	name_lks = None
 
 		# read water bodies ids and postptocess all required variables
-		if inputfile.fname_lks_depth != None and os.path.exists(inputfile.fname_lks_depth):
+		if inputfile.fname_bathymetry != None and os.path.exists(inputfile.fname_bathymetry):
 			#print('Processing lakes parameters')
 			# STEP 1: Read and identify lake
 			# read lake names, preserve the order, do not flatten
-			depth_lks = np.flip(rasterio.open(inputfile.fname_lks_depth).read(1), 0)#.flatten()
+			depth_lks = np.flip(rasterio.open(inputfile.fname_bathymetry).read(1), 0)#.flatten()
 
 			# mask lakes from depth
 			name_lks = depth_lks > 0
@@ -810,7 +810,9 @@ class water_body_parameters(object):
 			ids_max_depth_lks = numpy_argmin_reduceat(-depth_lks.flatten()[ids_lks],
 									np.append([0], np.cumsum(size_lks)[:-1])
 									)
-			
+			# map the indices to the original ids_lks
+			ids_max_depth_lks = [ids_lks[i] for i in ids_max_depth_lks]
+
 			# transfer variables to the class
 			#self.name_lks = name_lks
 			self.ids_lks = ids_lks
@@ -819,7 +821,7 @@ class water_body_parameters(object):
 			
 			
 		else:
-			print('Processing lakes parameters is not active')
+			print('Lakes parameters is not active')
 			#print('Initial water body volume........not provided. Global value 0 [m3]')
 			#self.name_lks = None
 			self.ids_lks = None

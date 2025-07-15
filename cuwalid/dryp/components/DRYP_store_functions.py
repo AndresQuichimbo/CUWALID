@@ -142,6 +142,8 @@ class GlobalGridVar:
 				self.store_max = False
 		else:
 			self.store_max = False
+
+		self.start_storing = False
 		#print(self.store_max)
 		#if store_max is True:
 		#	self.store_max = True
@@ -191,8 +193,9 @@ class GlobalGridVar:
 			
 			# accumulate variables/create array of variables
 			variables = np.concatenate(variables)
-			#print(date, self.idate)
+			#print(date, self.idate, t_date)
 			if date < self.idate:
+				#print("Date: ", date, " - ", self.idate)
 				# accumulate variables
 				if self.var_acummulation is None:
 					# create variables
@@ -202,6 +205,7 @@ class GlobalGridVar:
 					self.var_acummulation += variables
 				self.nsteps += 1
 				#print(self.daily_steps, self.nsteps, self.nsteps_max)
+				#print("Store: ", self.var_acummulation)
 				# Store maximum values at daily time steps
 				# accumulate values for the entire day
 				if self.store_max is True:
@@ -225,10 +229,18 @@ class GlobalGridVar:
 					#print("Max: ", self.nsteps_max, " - ", self.var_maximum)
 				
 			else:
+				#self.nsteps += 1
+				#print('max', self.daily_steps)
 				# Store variables at the specified time step
 				if (self.var_acummulation is None):
 					# create variables
 					self.var_acummulation = np.array(variables)
+				else:
+					# accumulate
+					if self.start_storing is True:
+						if date <= self.idate:
+							self.var_acummulation += variables
+					self.start_storing = True	
 				#print("Store: ", self.var_acummulation)
 				#print("Store: ", variables)
 
@@ -248,7 +260,8 @@ class GlobalGridVar:
 
 					# restart daily accumulation counter
 					self.nsteps_max = 1
-				
+				#print(self.daily_steps, self.nsteps, self.nsteps_max)
+				#print('Accum2: ', self.var_acummulation)
 				# store variables
 				self.nsteps_vector.append(self.nsteps)
 				if self.store_max is True:
@@ -268,6 +281,7 @@ class GlobalGridVar:
 					#print(t_date, "Date: ", date, " - ", self.idate)
 				self.var_maximum = None
 			#print(len(self.cumm_variable))
+			#print('Accum: ', self.var_acummulation)
 			# check the if the last step has been processed
 			# check if variable has been accumulated, otherwise
 			# store the available dataset, skip if it has already
@@ -327,11 +341,13 @@ class GlobalGridVar:
 					if (iname == 'tht') or (iname == "wte") or (iname == "ssz"):
 						#print(self.nsteps_vector)
 						factor = np.array(self.nsteps_vector, dtype=float)
+						#print("Factor: ", factor)
 						factor = 1/factor
 						data = data.T
 						data = factor*data[np.newaxis,:]
 						data = data[0]
 						data = data.T
+						#print("Factor: ", factor)
 						
 					# create list of comuns name
 					columname = [self.store_var_names[i] + '_'+ str(k) for k in range(var_size)]
@@ -409,7 +425,7 @@ class GlobalGridVar:
 			time.calendar = 'gregorian'
 			lon.units = 'meters'
 			lat.units = 'meters'
-
+			#print(self.nsteps_vector)
 			# create variable
 			for ivar in self.store_var_names:
 				dataset.createVariable(ivar, np.float32, ('time', 'lat', 'lon'), fill_value=-9999., zlib=True)
@@ -426,7 +442,7 @@ class GlobalGridVar:
 						factor = 1.0
 						if (iname == 'tht') or (iname == "wte") or (iname == "ssz"):
 							factor = 1.0/self.nsteps_vector[j]
-						
+							
 						# selec nodes of the whole variable array 
 						inodes = range(isize, isize+var_size)
 						

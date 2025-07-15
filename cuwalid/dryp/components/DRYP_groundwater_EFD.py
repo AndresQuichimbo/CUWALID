@@ -275,6 +275,7 @@ class gwflow_EFD(object):
 			if self.id_CHB is not None:
 				#self.ch_boundaries = bc[self.id_CHB]
 				head[self.id_CHB] = self.ch_boundaries
+
 			# calculate aquifer saturated thickness at nodes
 			# for models with exponential function assign effective depth
 			# skip this for first iiteration
@@ -315,20 +316,24 @@ class gwflow_EFD(object):
 			# LAKES
 			###---------------------------------------------------------------
 			### Additional requirements for lakes
-			# list of lake id nodes: ids_lks
-			# list of number of cells per lake: sizes_lks 
-			# list of lakes id maximum depths: ids_max_depth_lks
+			#print(ids_lks)# list of lake id nodes: ids_lks
+			#print(sizes_lks)# list of number of cells per lake: sizes_lks 
+			#print(ids_max_depth_lks)# list of lakes id maximum depths: ids_max_depth_lks
 
 			# Check if lakes are active
 			#if self.ids_lakes is not None:
 			# Create an array of maximum lake depth
-			z_lks = np.repeat(head[ids_max_depth_lks], sizes_lks)
-			
-			# Check if head is above the bottom elevation of the lakes
-			z_lks = np.where(
-				head[ids_lks] > bathymetry[ids_lks], z_lks, bathymetry[ids_lks]
-				)
+			if ids_lks is not None:
+				z_lks = np.repeat(head[ids_max_depth_lks], sizes_lks)
 
+				# Check if head is above the bottom elevation of the lakes
+				z_lks = np.where(
+					z_lks >= bathymetry[ids_lks], z_lks, bathymetry[ids_lks]
+					#head[ids_lks] >= bathymetry[ids_lks], z_lks, bathymetry[ids_lks]
+					)
+			#print('head', head[27:36])
+			#print('bathy', bathymetry[27:36])
+			#print('stage',z_lks)
 			# FIRST DISABLE THE FOLLOWING CODE BLOCK IF YOU ARE NOT USING LAKES
 			# THERE IS NO NEED TO CHANGE THE TRANSMISIVITY AT LAKE NODES SINCE
 			# LAKE STAGE VARIATION IS REDISTRIBUTED OVER THE WET LAKE CELLS
@@ -369,18 +374,6 @@ class gwflow_EFD(object):
 			###Sy_aux[outer_lake_nodes] = 1.0
 			###print(Sy, Sy_aux)
 			##
-			###try:
-			###	if inner_lake_nodes[0]:
-			###	#print("len", inner_lake_nodes)
-			###		print("time",
-		   	###			time_step_confined(1, Sy_aux[lake_nodes],
-			###			map_max_of_node_links_to_node(grid, T)[lake_nodes], grid.dx
-			###			#time_step_confined(1, Sy_aux[inner_lake_nodes],
-			###			#map_max_of_node_links_to_node(grid, T)[inner_lake_nodes], grid.dx
-			###		))
-			###		print(map_max_of_node_links_to_node(grid, T)[inner_lake_nodes])
-			###except:
-			###	a = 1
 
 			# --------------------------------------------------------------
 			# Calculate the hydraulic gradients
@@ -417,7 +410,11 @@ class gwflow_EFD(object):
 			# Calculate flux gradient
 			dqsdxy = (-grid.calc_flux_div_at_node(qs)#- dfhbc 
 					+ recharge/dt)
-			
+			#print('dqsdxy0', dqsdxy[27:36])
+			#print('time step', dtsp)
+
+			# CALCULATE FLUX AT RIVER CELLS*************************
+			# check if river cells are available
 			# if river cells available, caluculate the flux accorss the channel
 			if len(riv_nodes) > 0:
 				# Calculate channel cell conductivity
@@ -455,19 +452,63 @@ class gwflow_EFD(object):
 				#dqsdxy[riv_nodes] += -self.kaq*dqs_riv
 				dqsdxy[riv_nodes] += -self.kaq*qs_riv
 			
-			# REGULARIZATION APPROACH
+			# REGULARIZATION APPROACH **************************
+			# calculate regularization for aquifer cells
 			# check if lakes are active
 			if ids_lks is not None:
 				surface_i[ids_lks] = z_lks
 			# calculate regularization for aquifer cells
 			dqs[act_nodes] = regularization_T(surface_i[act_nodes], head[act_nodes],
 				thickness[act_nodes], dqsdxy[act_nodes], REG_FACTOR)
-		
+			#print('surface', surface_i[27:36])
+			#print('dqs', dqs[27:36])
+			#print('dqsdxy', dqsdxy[27:36])
+			
+			#print('head_no', head[27:36])
+			# UPDATE HEAD AT LAKE NODES *************************
+			# check if lakes are active
+			# if not, skip this part
+			if ids_lks is not None:
+				# create a mask of wet cell lakes
+				wet_msk_lks = np.where(head[ids_lks] >= bathymetry[ids_lks], 1, 0)
+				#print('wet', wet_msk_lks)
+				# Calculate anomaly in water table depth at lake nodes
+				dh_lks = head[ids_lks] - z_lks
+				#print('dh_lks', dh_lks)
+				# Mask out dry cell lakes (dry cells become zero)
+				dh_lks = dh_lks*wet_msk_lks
+				#print('dh_lks_masked', dh_lks)
+
+				# redistribute the water table depth anomaly to the links at lake nodes
+				# calculate the sum of water table depth anomaly at lake nodes
+				sum_dh_lks = np.add.reduceat(dh_lks, np.append([0], np.cumsum(sizes_lks)[:-1]))
+				# count the number of wet cells in each lake
+				sum_wet_lks = np.add.reduceat(wet_msk_lks, np.append([0], np.cumsum(sizes_lks)[:-1]))
+				# calculate the average water table depth anomaly at lake nodes
+				avg_dh_lks = np.divide(sum_dh_lks, sum_wet_lks,
+							  out=np.zeros_like(sum_dh_lks),
+							  where=sum_wet_lks!=0
+							  )
+				#print('avg_dh_lks', avg_dh_lks)
+				# assign maximum lake depth to the head at lake nodes
+				#head[ids_lks] = z_lks + avg_dh_lks
+				head[ids_lks] = head[ids_lks]*(1-wet_msk_lks) + wet_msk_lks*z_lks + avg_dh_lks
+
+				# modify storage change at lake nodes
+				# calculate the change in water storage at lake nodes
+				# if storage chang eis positive, and seepage is positive, accumulate the seepage to
+				# the water storage change at lake nodes
+				dqs[ids_lks] = dqs[ids_lks]*(1-wet_msk_lks)# + wet_msk_lks*avg_dh_lks
+				#print('dqs', dqs[27:36])
+			#print('head_lks', head[27:36])
+			
 			# Calculate storage change			
 			water_storage_change[act_nodes] = (dqsdxy[act_nodes]-dqs[act_nodes])*dtsp
+			#print('water_storage_change', water_storage_change[27:36])
 			
 			# calculate total storage change to evaluate mass balance
 			total_storage_change += np.mean(water_storage_change[act_nodes])
+			
 			
 			# UPDATE HEAD AT ACTIVE NODES FOR SOIL-GW INTERACTIONS
 			# enable lakes layer
@@ -524,34 +565,9 @@ class gwflow_EFD(object):
 						head[act_nodes],#h0
 						Sy[act_nodes],#Sy
 						))
-					
-			# UPDATE HEAD AT LAKE NODES
-			# check if lakes are active
-			# if not, skip this part
-			if ids_lks is None or sizes_lks is None or ids_max_depth_lks is None:
-				# create a mask of wet cell lakes
-				wet_msk_lks = np.where(head[ids_lks] > bathymetry[ids_lks],	1, 0)
-
-				# Calculate anomaly in water table depth at lake nodes
-				dh_lks = head[ids_lks] - z_lks
-
-				# Mask out dry cell lakes (dry cells become zero)
-				dh_lks = dh_lks*wet_msk_lks
-
-				# redistribute the water table depth anomaly to the links at lake nodes
-				# calculate the sum of water table depth anomaly at lake nodes
-				sum_dh_lks = np.add.reduceat(dh_lks, np.append([0], np.cumsum(sizes_lks)[:-1]))
-				# count the number of wet cells in each lake
-				sum_wet_lks = np.add.reduceat(wet_msk_lks, np.append([0], np.cumsum(sizes_lks)[:-1]))
-				# calculate the average water table depth anomaly at lake nodes
-				avg_dh_lks = np.divide(sum_dh_lks, sum_wet_lks,
-							  out=np.zeros_like(sum_dh_lks),
-							  where=sum_wet_lks!=0
-							  )
-				# assign maximum lake depth to the head at lake nodes
-				head[ids_lks] = z_lks + avg_dh_lks
+			#print('head_uz', head[27:36])
 			
-			#print(env_state.SZgrid.at_node['water_table__elevation'][219])#[act_node[40]])
+			
 			# accumulate discharge
 			if len(riv_nodes) > 0:
 				discharge[riv_nodes] += qs_riv*self.kaq*dtsp
@@ -572,6 +588,8 @@ class gwflow_EFD(object):
 			# WARNING! this could lead to increases in mass balance errors
 			#grid.at_node['water_table__elevation'][:] = np.minimum(
 			head = np.minimum(surface, head) # time step could be very small
+			#print('head_final', head[27:36])
+			#print('head_final', head[ids_lks])
 			#print("t", dtsp)
 			# Update time step
 			if dtsp <= 0:
@@ -931,9 +949,9 @@ def regularization_T(zm, hm, f, dq, r):
 	float numpy array 
 		regularization
 	"""
-	aux = (hm-zm)/f#+1
-	aux = np.where(aux > 1, 1, aux) + 1	
+	aux = (hm-zm)/f+1
 	aux = np.where(aux > 0,aux,0)
+	aux = np.where(aux > 1, 1, aux)
 	return np.exp((aux-1)/r)*dq*np.where(dq > 0,1,0)
 	
 def exponential(f, z, h):
