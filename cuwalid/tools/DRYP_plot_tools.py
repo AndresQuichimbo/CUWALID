@@ -76,7 +76,8 @@ def split_text(text, max_len=1):
 	return text
 
 
-def plot_avg_var(fname, fname_out=None, fields=None, delta_t='D', max_subplots=None):
+def plot_avg_var(fname, fname_out=None, fields=None, delta_t='D',
+				 date_start=None, date_end=None, max_subplots=None):
 	"""Plot average variables from a csv file.
 	
 	Parameters:
@@ -88,8 +89,16 @@ def plot_avg_var(fname, fname_out=None, fields=None, delta_t='D', max_subplots=N
 	fields: list
 		list of fields to plot (optional)
 		if None, all fields will be plotted
-	delta_t: time interval for resampling (default is daily 'D')
-	
+	delta_t:
+		time interval for resampling (default is daily 'D')
+	date_start: str
+		start date in the format 'YYYY-MM-DD' (optional)
+	date_end: str
+		end date in the format 'YYYY-MM-DD' (optional)
+	max_subplots: int
+		maximum number of subplots to create (optional)
+		only the first max_subplots fields will be plotted
+
 	Returns:
 	--------
 		ax: axes of the plot
@@ -120,6 +129,8 @@ def plot_avg_var(fname, fname_out=None, fields=None, delta_t='D', max_subplots=N
 	df["Date"] = pd.to_datetime(df['Date'])		
 	df.index = pd.DatetimeIndex(df['Date'])
 
+	# check if the date_start and date_end are provided
+	df = slice_dataframe(df, date_start, date_end)
 	# resample the data to the specified time interval
 	# and calculate the mean for each field
 	try:
@@ -157,7 +168,9 @@ def plot_avg_var(fname, fname_out=None, fields=None, delta_t='D', max_subplots=N
 		plt.savefig(fname_out,dpi = 300)
 	return ax
 	
-def plot_point_var(fname, fields=None, fname_out=None, delta_t='D', mean=True, max_nfields=None):
+def plot_point_var(fname, fields=None, fname_out=None, delta_t='D',
+				   date_start=None, date_end=None, mean=True,
+				   max_nfields=None):
 	"""Plot point variables from a csv file."
 	Parameters:
 	-----------
@@ -172,6 +185,13 @@ def plot_point_var(fname, fields=None, fname_out=None, delta_t='D', mean=True, m
 		time interval for resampling (default is daily 'D')
 	mean: bool
 		if True, plot the mean of the fields (default is True)
+	max_nfields: int
+		maximum number of fields to plot (optional)
+	date_start: str
+		start date in the format 'YYYY-MM-DD' (optional)
+	date_end: str
+		end date in the format 'YYYY-MM-DD' (optional)
+
 	Returns:
 	--------
 		ax: axes of the plot
@@ -206,6 +226,8 @@ def plot_point_var(fname, fields=None, fname_out=None, delta_t='D', mean=True, m
 	df["Date"] = pd.to_datetime(df['Date'])		
 	df.index = pd.DatetimeIndex(df['Date'])
 
+	# check if the date_start and date_end are provided
+	df = slice_dataframe(df, date_start, date_end)
 	# resample the data to the specified time interval
 	# and calculate the mean for each field
 	if mean is True:
@@ -362,3 +384,44 @@ def plot_profile(dataset, axis=0, time=[0], n=1, dem=None, bathymetry=None, titl
 		plt.savefig(fname_out,dpi = 300)
 
 	return ax
+
+def slice_dataframe(df, date_start, date_end):
+	"""Slice a dataframe along a time axes.
+
+	Parameters:
+	-----------	
+	df: pandas DataFrame
+		dataframe to slice
+	date_start: str
+		start date in the format 'YYYY-MM-DD'
+	date_end: str
+		end date in the format 'YYYY-MM-DD'
+	Returns:
+	--------
+		sliced_df: pandas DataFrame
+			sliced dataframe with the specified date range
+	Example:
+	>>> import pandas as pd
+	>>> import cuwalid.tools.DRYP_plot_tools as plotcwld
+	>>> data = {'Date': ['2023-01-01', '2023-01-02', '2023-01-03'],
+	...         'Value': [1, 2, 3]}
+	>>> df = pd.DataFrame(data)
+	>>> date_start = '2023-01-01'
+	>>> date_end = '2023-01-02'
+	>>> sliced_df = plotcwld.slice_dataframe(df, date_start, date_end)
+	>>> print(sliced_df)
+	        Date  Value
+	0  2023-01-01      1
+	1  2023-01-02      2
+	"""
+	if not isinstance(df, pd.DataFrame):
+		raise ValueError("Input must be a pandas DataFrame")
+	if 'Date' not in df.columns:
+		raise ValueError("DataFrame must contain a 'Date' column")
+	# Convert 'Date' column to datetime if it is not already
+	df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+	if not isinstance(date_start, str) or not isinstance(date_end, str):
+		raise ValueError("Start and end dates must be strings in 'YYYY-MM-DD' format")
+	else:
+		df = df[(df['Date'] >= date_start) & (df['Date'] <= date_end)]
+	return df.reset_index(drop=True)
