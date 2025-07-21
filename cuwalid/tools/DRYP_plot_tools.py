@@ -76,7 +76,7 @@ def split_text(text, max_len=1):
 	return text
 
 
-def plot_avg_var(fname, fname_out=None, fields=None, delta_t='D',
+def plot_avg_var(fname, fname_out=None, fields=None, delta_t='1D',
 				 date_start=None, date_end=None, max_subplots=None):
 	"""Plot average variables from a csv file.
 	
@@ -280,7 +280,8 @@ def plot_point_var(fname, fields=None, fname_out=None, delta_t='D',
 	
 	return ax
 
-def plot_profile(dataset, axis=0, time=[0], n=1, dem=None, bathymetry=None, title=None, fname_out=None):
+def plot_profile(dataset, axis=0, time=[0], n=1, dem=None,
+				 bathymetry=None, title=None, fname_out=None):
 	"""Plot a profile of the dataset along a specified axis (0 or 1).
 	
 	Parameters:
@@ -420,8 +421,9 @@ def slice_dataframe(df, date_start, date_end):
 		raise ValueError("DataFrame must contain a 'Date' column")
 	# Convert 'Date' column to datetime if it is not already
 	df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
-	if not isinstance(date_start, str) or not isinstance(date_end, str):
-		raise ValueError("Start and end dates must be strings in 'YYYY-MM-DD' format")
-	else:
+#	if not isinstance(date_start, str) or not isinstance(date_end, str):
+#		raise ValueError("Start and end dates must be strings in 'YYYY-MM-DD' format")
+#	else:
+	if date_start is not None and date_end is not None:
 		df = df[(df['Date'] >= date_start) & (df['Date'] <= date_end)]
-	return df.reset_index(drop=True)
+	return df#.reset_index(drop=True)
