@@ -64,7 +64,10 @@ def run_cuwalid(cuwalid_input):
 	forecast_path_dryp_postpp = os.path.join(forecast_path, f"{season}_{str(iyear)}", "postpp")
 
 	# RUN MODEL COMPONENTS AND ANY ADDITIONAL PROCESS
+
+	# =====================================================================
 	# Run storm
+	# =====================================================================
 	if cuwalid_config["run_STORM"] is True:
 		print("Run STORM simulation")
 		storm_input_path = cuwalid_config["MODELS"]["STORM"]["input"]
@@ -93,8 +96,9 @@ def run_cuwalid(cuwalid_input):
 	else:
 		print("storm is not executed")
 
-	
+	# =====================================================================
 	# Run StoPET
+	# =====================================================================
 	if cuwalid_config["run_stoPET"] is True:
 		print("Run stoPET simulation")
 		stopet_input_path = cuwalid_config["MODELS"]["stoPET"]["input"]
@@ -122,8 +126,9 @@ def run_cuwalid(cuwalid_input):
 	else:
 		print("stoPET is not executed")
 
-	
+	# =====================================================================
 	# set DRYP model simulations
+	# =====================================================================
 	# create model names
 	mname = [season + "_" + str(iyear) + "_realization_" + str(isim) for isim in range(nsim_hydro)]
 	# create model settings file names for realizations
@@ -198,13 +203,17 @@ def run_cuwalid(cuwalid_input):
 		print("DRYP is not executed")
 
 
-
+	# =====================================================================
 	# print add water forecasting entry
+	# =====================================================================
 	if cuwalid_config["run_WaterCast"] is True:
 		print("Executing Water forecasting: WaterCast")
 		HyCast_input_path = cuwalid_config["MODELS"]["WaterCast"]["HyCast"]
 		ImCast_input_path = cuwalid_config["MODELS"]["WaterCast"]["ImCast"]
 
+		# =====================================================================
+		# Run hydrological forecasting
+		# =====================================================================
 		print("Executing hydrological forecasting: HyCast")
 		# Open json config
 		with open(HyCast_input_path, 'r') as file:
@@ -237,7 +246,10 @@ def run_cuwalid(cuwalid_input):
 		HyCast_input["nsim"] = cuwalid_config["NSIM_HYDRO"]
 
 		run_hydro_forecast(HyCast_input)
-		
+
+		# =====================================================================
+		# Run impact forecasting
+		# =====================================================================
 		print("Executing Impact-based water forecasting: ImCast")
 		# Open json config
 		with open(ImCast_input_path, 'r') as file:
@@ -251,7 +263,6 @@ def run_cuwalid(cuwalid_input):
 
 		# make a copy of impact forecast files
 		iImCast_input = ImCast_input.copy()
-
 
 		if sim_in_parallel: # parallelise the map plotting for speeding up map generation
 			print("Running map plotting in parallel")

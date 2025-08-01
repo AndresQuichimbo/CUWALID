@@ -510,16 +510,17 @@ def get_anomalies_multi_netcdf(model_path, model_name, start_year, end_year, sea
 
 	# path of mean values
 	#var = ['pre', 'inf', 'pet', 'rch', 'aet', 'gdh', 'egw', 'fch', 'twsc', 'run']
-	field = ['pre', 'pet',
-		'aet', 'tht', 'egw',
-		#'inf', 'run',
-		'rch', 'fch',
-		#'gdh',
-		'dis', 'tls',
-		'wte',
-		"twsc",
-		]
-
+	#field = ['pre', 'pet',
+	#	'aet', 'tht', 'egw',
+	#	#'inf', 'run',
+	#	'rch', 'fch',
+	#	#'gdh',
+	#	'dis', 'tls',
+	#	'wte',
+	#	"twsc",
+	#	]
+	# specified fields
+	field = cuwalid.drop_false_keys(variables)
 	#months = [None, [3,4,5], [10,11,12]]
 
 	# loop 
@@ -544,10 +545,10 @@ def get_anomalies_multi_netcdf(model_path, model_name, start_year, end_year, sea
 			# read long term average values
 			if iseason is None:
 				#fname_lta = '/user/work/km19051/HAD_postpp/netcfd/HAD_'+imodel+'_wte_mean.nc'
-				fname_lta = "/home/c1755103/HAD/HAD_postpp/netcdf/HAD_" + model_name + "_mean.nc"
+				fname_lta = os.path.join(postpp_path,"netcdf/", model_name + "_mean.nc")
 			else:
 				#fname_lta = '/user/work/km19051/HAD_postpp/netcfd/HAD_'+imodel+'_wte_mean.nc'
-				fname_lta = "/home/c1755103/HAD/HAD_postpp/netcdf/HAD_" + model_name + '_' + iseason + "_mean.nc"
+				fname_lta = os.path.join(postpp_path,"netcdf/", model_name + '_' + iseason + "_mean.nc")
 			
 			lta = read_dataset(fname_lta, var_name=ifield)	
 			
@@ -589,10 +590,10 @@ def get_anomalies_multi_netcdf(model_path, model_name, start_year, end_year, sea
 			# save files
 			if iseason is None:
 				#fname_out = '/user/work/km19051/HAD_postpp/netcfd/HAD_'+imodel+'_wte_mean.nc'
-				fname_out = "/home/c1755103/HAD/HAD_postpp/netcdf/HAD_" + model_name + "_" + ifield + "_anomalies.nc"
+				fname_out = os.path.join(postpp_path,"netcdf/", model_name + "_" + ifield + "_anomalies.nc")
 			else:
 				#fname_out = '/user/work/km19051/HAD_postpp/netcfd/HAD_'+imodel+'_season_mean.nc'
-				fname_out = "/home/c1755103/HAD/HAD_postpp/netcdf/HAD_" + model_name + "_" + iseason + "_" + ifield +"_anomalies.nc"
+				fname_out = os.path.join(postpp_path,"netcdf/", model_name + "_" + iseason + "_" + ifield +"_anomalies.nc")
 			#print(fname_out)
 			save_xarray_dataset_as_netcdf(fname_out, dataconcatenat, [ifield])
 
