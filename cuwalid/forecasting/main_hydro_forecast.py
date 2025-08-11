@@ -105,7 +105,7 @@ def run_hydro_forecast(config_path):
                                      start_year, end_year, season, variables,
                                      historical_postpp_path)
 
-            #print("Step 7: Getting anomalies from historical simulations")
+            print("Step 7: Getting anomalies from historical simulations")
             #get_anomalies_multi_netcdf(historical_model_path,
             #                           historical_model_name,
             #                           start_year, end_year, season, variables,

@@ -392,7 +392,7 @@ def get_extremes_quantiles_multi_netcdf(model_path, model_name, start_year, end_
 				
 			# resample dataset
 			data_concat = cuwalid.resample_dataset(data_concat,
-						mean=mean, delt='Y'
+						mean=mean, delt='YE'
 						)
 			
 			# calculate quantiles values of each variable, and store
@@ -497,7 +497,7 @@ def get_anomalies_multi_netcdf(model_path, model_name, start_year, end_year, sea
 
 	"""
 	fname = get_name_list_historical_netcdf_files(model_path, model_name, start_year, end_year)
-	
+	print("fname: ", fname)
 	
 	# ===============================================================
 
@@ -575,7 +575,7 @@ def get_anomalies_multi_netcdf(model_path, model_name, start_year, end_year, sea
 							cuwalid.season_name_to_number(iseason))
 							)
 				# calculate annual average to reduce the use of memory
-				data = resample_dataset(data, mean=mean, delt='Y')
+				data = resample_dataset(data, mean=mean, delt='YE')
 				
 				# calculate anomalies
 				data = data - lta
@@ -633,7 +633,7 @@ def get_monthly_average_multi_netcdf(model_path, model_name, start_year, end_yea
 		#	
 		#	dataset = xr.merge([dataset, dataset_aux])
 		# save results
-		fname_out = postpp_path+"netcdf/" + model_name + "_" + str(imonth) + "_monthly_mean.nc"
+		fname_out = os.path.join(postpp_path,"netcdf/", model_name + "_" + str(imonth) + "_monthly_mean.nc")
 		cuwalid.save_xarray_dataset_as_netcdf(fname_out, dataset, field)
 
 	return
@@ -689,7 +689,7 @@ def get_name_list_historical_netcdf_files(model_path, model_name, start_year, en
 	fname  = [
 	#'/home/c1755103/HAD/HAD_output/HAD_IMERG_sim_28b_'+ str(iyear) +'_grid.nc' for iyear in range(2003, 2022)
 	#'/home/c1755103/HAD/HAD_output/HAD_IMERGba_sim0_'+ str(iyear) +'_grid.nc' for iyear in range(2001, 2023)
-	model_path+model_name+"_"+ str(iyear) +'_grid.nc' for iyear in range(start_year, end_year)
+	os.path.join(model_path, model_name+"_"+ str(iyear) +'_grid.nc') for iyear in range(start_year, end_year)
 	]
 
 	if ifield is not None:
@@ -698,4 +698,55 @@ def get_name_list_historical_netcdf_files(model_path, model_name, start_year, en
 	#if ifield == "flood":
 	#	fname = [ifname.split('.')[0]+'max.nc' for ifname in fname]
 		
+	return fname
+
+def get_dryp_name_list_multi_netcdf_files(model_path, model_name, start_year, end_year, ifield=None, ftype=None):
+	""" Get list of name of historical files when multiple files are
+	are analysed
+
+	Parameters:
+	-----------
+	model_path: path (str)
+		folder path of model outputs files
+	model_name: str
+		model name
+	start_year: int
+		starting year of the analysis
+	end_year: int
+		starting year of the analysis
+	ftype: str
+		type of file to be read, e.g. hs_max, rp_max, rp, pond, etc.
+	ifield: str
+		field to be read, e.g. twsc, aet, tht,
+		egw, inf, rch, fch, dis, tls, wte, etc.
+
+
+	Returns
+	-------
+
+	"""
+	
+	typefiles = {
+	"hs_max" : "gridvmax",
+	"rp_max" : "gridrmax",
+	"rp" : "gridrp",
+	"pond" : "gridpnd",
+	}
+		
+	if ftype is not None:
+		# get list of files depending on the component
+		fname  = [
+			os.path.join(model_path, model_name+"_"+ str(iyear) +'_' + typefiles[ftype] + '.nc') for iyear in range(start_year, end_year)
+			]
+	
+	else:
+		# get list of gridded output
+		fname  = [
+			os.path.join(model_path, model_name+"_"+ str(iyear) +'_grid.nc') for iyear in range(start_year, end_year)
+			]
+		
+		# get list of postprocessed files
+		if ifield is not None:
+			fname = [ifname.split('.')[0]+'_'+ifield+'.nc' for ifname in fname]
+			
 	return fname
