@@ -331,7 +331,7 @@ class gwflow_EFD(object):
 					z_lks >= bathymetry[ids_lks], z_lks, bathymetry[ids_lks]
 					#head[ids_lks] >= bathymetry[ids_lks], z_lks, bathymetry[ids_lks]
 					)
-			#print('head', head[27:36])
+				#print('head', head[27:36])
 			#print('bathy', bathymetry[27:36])
 			#print('stage',z_lks)
 			# FIRST DISABLE THE FOLLOWING CODE BLOCK IF YOU ARE NOT USING LAKES

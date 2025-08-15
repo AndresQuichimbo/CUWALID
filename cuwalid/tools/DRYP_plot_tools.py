@@ -144,9 +144,11 @@ def plot_avg_var(fname, fname_out=None, fields=None, delta_t='1D',
 	if max_subplots is not None:
 		if len(fields) > max_subplots:
 			fields = fields[:max_subplots]
-	# create a figure with subplots for each field		
-	fig, ax = plt.subplots(len(fields), 1, sharex = True)
-	fig.set_size_inches(9, len(fields)*1.25)
+	
+	# create a figure with subplots for each field
+	if ax is None:	
+		fig, ax = plt.subplots(len(fields), 1, sharex = True)
+		fig.set_size_inches(9, len(fields)*1.25)
 	
 	for ilabel, iax in zip(fields, fig.axes):
 		# plot the data for each field
@@ -170,7 +172,7 @@ def plot_avg_var(fname, fname_out=None, fields=None, delta_t='1D',
 	
 def plot_point_var(fname, fields=None, fname_out=None, delta_t='D',
 				   date_start=None, date_end=None, mean=True,
-				   max_nfields=None):
+				   max_nfields=None, ax=None):
 	"""Plot point variables from a csv file."
 	Parameters:
 	-----------
@@ -241,9 +243,10 @@ def plot_point_var(fname, fields=None, fname_out=None, delta_t='D',
 		except:
 			df = df.resample(delta_t).sum(numeric_only=True).reset_index()
 	
-
-	fig, ax = plt.subplots(1, 1, sharex=True)		
-	fig.set_size_inches(8, 2.5)		
+	# create a figure with subplots for each field
+	if ax is None:
+		fig, ax = plt.subplots(1, 1, sharex=True)		
+		fig.set_size_inches(8, 2.5)		
 	
 	for ilabel in fields:
 		# plot the data for each field
@@ -272,7 +275,7 @@ def plot_point_var(fname, fields=None, fname_out=None, delta_t='D',
 	ax.set_ylabel(ylabel)
 	ax.set_xlabel('Date')
 		
-	fig.tight_layout()
+	#fig.tight_layout()
 	
 	
 	if fname_out is not None:
@@ -281,7 +284,7 @@ def plot_point_var(fname, fields=None, fname_out=None, delta_t='D',
 	return ax
 
 def plot_profile(dataset, axis=0, time=[0], n=1, dem=None,
-				 bathymetry=None, title=None, fname_out=None):
+				 bathymetry=None, title=None, fname_out=None, ax=None, plot_step=False):
 	"""Plot a profile of the dataset along a specified axis (0 or 1).
 	
 	Parameters:
@@ -302,6 +305,8 @@ def plot_profile(dataset, axis=0, time=[0], n=1, dem=None,
 		title of the plot (optional)
 	fname_out: str
 		output file name for the plot (optional)
+	ax: matplotlib axes
+		axes to plot on (optional)
 	
 	Returns:
 	--------
@@ -327,18 +332,54 @@ def plot_profile(dataset, axis=0, time=[0], n=1, dem=None,
 	>>> plt.show()
 	"""
 	
-	fig, ax = plt.subplots()#3, 5, sharex=True, sharey=True)
-	fig.set_size_inches(10., 7.2)
+	#check if the axis is valid
+	nlat, nlon = dataset['lat'].shape[0], dataset['lon'].shape[0] 
+	nlatr, nlonr = np.shape(dem)
+	nlatb, nlonb = np.shape(bathymetry)
 
-	for kk in time:
-		if axis == 0:
+	# check that nlat and nlon are the same as the dem and bathymetry
+	if dem is not None:
+		if nlat != nlatr or nlon != nlonr:
+			raise ValueError("The shape of the dem does not match the dataset")
+	if bathymetry is not None:
+		if nlat != nlatb or nlon != nlonb:
+			raise ValueError("The shape of the bathymetry does not match the dataset")
+
+	# check if value of n is valid
+	if axis == 0:
+		if n < 0 or n >= nlon:
+			raise ValueError("The value of n must be between 0 and " + str(nlon-1))
+	elif axis == 1:
+		if n < 0 or n >= nlat:
+			raise ValueError("The value of n must be between 0 and " + str(nlat-1))		
+
+	if ax is None:
+		# create a new figure and axes if ax is not provided
+		fig, ax = plt.subplots()
+		fig.set_size_inches(10., 7.2)
+	colors = plt.rcParams['axes.prop_cycle'].by_key()['color']	
+	for kk, icolor in zip(time, colors):
+		try:
+			datelabel = pd.to_datetime(dataset['time'][kk].item()).strftime('%Y-%m-%d')
+		except:
+			datelabel = str(kk)
+		
+		if axis == 0: # plot along latitude
 			ax.plot(dataset['lat'].values, dataset.isel(time=kk, lon=[n]).values.reshape(-1),
-				'.-', label=str(kk)
+				'.-', label=datelabel, alpha=0.7, color=icolor#label=str(kk)
 				)
-		else:
+			if plot_step is True:
+				ax.step(dataset['lat'].values, dataset.isel(time=kk, lon=[n]).values.reshape(-1),
+					'o--', label=datelabel, alpha=0.4, where='mid', color=icolor#label=str(kk)
+				)
+		else: # plot along longitude
 			ax.plot(dataset['lon'].values, dataset.isel(time=kk, lat=[n]).values.reshape(-1),
-				'.-', label=str(kk)
+				'.-', label=datelabel, alpha=0.7, color=icolor#label=str(kk)
 				)
+			if plot_step is True:
+				ax.step(dataset['lon'].values, dataset.isel(time=kk, lat=[n]).values.reshape(-1),
+					'o--', label=datelabel, alpha=0.4, where='mid', color=icolor#label=str(kk)
+					)
 
 	if dem is not None:
 		dem[dem < 0] = np.nan
@@ -346,20 +387,20 @@ def plot_profile(dataset, axis=0, time=[0], n=1, dem=None,
 		bathymetry[bathymetry < 0] = np.nan
 	# check if the axis is 0 or 1
 	# if axis is 0, plot the profile along the latitude
-	if axis == 0:
-		if dem is not None:
-			ax.plot(dataset['lat'], dem[:, n][::-1], 'k')
+	if axis == 0: # plot along latitude
+		if dem is not None: #acces has to be flipped
+			ax.plot(dataset['lat'], dem[:, n][::-1], 'gray', ls='-', alpha=0.7)
 			
 		if bathymetry is not None:
-			ax.plot(dataset['lat'], bathymetry[:, n][::-1], 'gray')
+			ax.plot(dataset['lat'], bathymetry[:, n][::-1], 'k', alpha=0.7)
 		
 		ax.set_xlabel('Latitude')
 
 	else:
 		if dem is not None:
-			ax.plot(dataset['lon'], dem[-n], 'k')
+			ax.plot(dataset['lon'], dem[n], 'gray', ls='-', alpha=0.7)
 		if bathymetry is not None:
-			ax.plot(dataset['lon'], bathymetry[-n], 'gray')
+			ax.plot(dataset['lon'], bathymetry[n], 'k', alpha=0.7)
 		ax.set_xlabel('Longitude')
 	
 	# set the title of the plot
@@ -378,7 +419,7 @@ def plot_profile(dataset, axis=0, time=[0], n=1, dem=None,
 		ax.set_ylabel(title)
 		ax.set_title('Profile of ' + title)
 			
-	plt.grid(True, which='both')
+	#plt.grid(True, which='both')
 	plt.legend(frameon=False)
 
 	if fname_out is not None:
