@@ -789,10 +789,10 @@ class water_body_parameters(object):
 
 			# label lakes
 			name_lks, num_features = label(name_lks)
-
+			
 			# flatten the name array to match the grid
 			name_lks = name_lks.flatten()
-
+			#print('name_lks', name_lks.shape, 'num_features', num_features)
 			# POST-PROCESSING LAKES VARIABLES		
 			# Step 2: For each label, collect flat indices (len=number of lakes)
 			ids_group_by_label = []
@@ -818,7 +818,11 @@ class water_body_parameters(object):
 			self.ids_lks = ids_lks
 			self.size_lks = size_lks
 			self.ids_max_depth_lks = ids_max_depth_lks
-			
+			#print('Lakes parameters are active')
+			#print('Lakes ids', self.ids_lks)
+			#print('Lakes size', self.size_lks)
+			#print('Lakes max depth ids', self.ids_max_depth_lks)
+			# 			
 			
 		else:
 			print('Lakes parameters is not active')

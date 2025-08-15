@@ -478,7 +478,7 @@ class gwflow_EFD(object):
 				# Mask out dry cell lakes (dry cells become zero)
 				dh_lks = dh_lks*wet_msk_lks
 				#print('dh_lks_masked', dh_lks)
-
+				#print('size', ids_lks)
 				# redistribute the water table depth anomaly to the links at lake nodes
 				# calculate the sum of water table depth anomaly at lake nodes
 				sum_dh_lks = np.add.reduceat(dh_lks, np.append([0], np.cumsum(sizes_lks)[:-1]))
@@ -492,8 +492,11 @@ class gwflow_EFD(object):
 				#print('avg_dh_lks', avg_dh_lks)
 				# assign maximum lake depth to the head at lake nodes
 				#head[ids_lks] = z_lks + avg_dh_lks
-				head[ids_lks] = head[ids_lks]*(1-wet_msk_lks) + wet_msk_lks*z_lks + avg_dh_lks
-
+				head[ids_lks] = (head[ids_lks]*(1-wet_msk_lks)+ 
+					 wet_msk_lks*(z_lks + #avg_dh_lks
+					 np.repeat(avg_dh_lks, sizes_lks))
+					)
+				
 				# modify storage change at lake nodes
 				# calculate the change in water storage at lake nodes
 				# if storage chang eis positive, and seepage is positive, accumulate the seepage to
