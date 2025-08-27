@@ -468,13 +468,13 @@ def calculate_WRSI_from_netCDF(fname, fname_out=None, deltat='M',
 	dataset = calculate_WRSI(dataset_aet, dataset_pet)
 	
 	# assign variable name to the new dataset
-	dataset.name = "wsri"
+	dataset.name = "wrsi"
 	
 	# save files
 	if fname_out is None:
 		fname_out = fname
 		fname_out = fname.split('.')[0]+'_wrsi.nc'
-	save_xarray_dataset_as_netcdf(fname_out, dataset, ["wsri"])
+	save_xarray_dataset_as_netcdf(fname_out, dataset, ["wrsi"])
 
 def calculate_dch_from_files(fname, path_rp=None, fname_out=None):
 	"""This function calculates diffuse recharge.
