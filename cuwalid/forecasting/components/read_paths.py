@@ -72,6 +72,18 @@ class get_paths(object):
 				os.path.join(
 					os.path.dirname(__file__), '..', default_dataset.fname_mask_dic[iwater_status]))
 				
+			# name field for shapefile
+			name_field_name = {
+				"Zoom" : default_dataset.name_field_county_shp,
+				"County" : default_dataset.name_county_shp,
+				#"Country" : name_field_county_shp,
+				}
+			name_field_code = {
+				"Zoom" : default_dataset.name_field_county_shp,
+				"County" : default_dataset.code_county_shp,
+				#"Country" : name_field_county_shp,
+				}
+			
 		else:
 			shapefile_country = default_dataset.shapefile_country_dic[region]
 			
@@ -87,7 +99,20 @@ class get_paths(object):
 
 			if mask_path is None:
 				mask_path = dataset_list.fname_mask_dic[iwater_status]
-	
+
+			# name field for shapefile
+			name_field_name = {
+				"Zoom" : dataset_list.name_field_county_shp,
+				"County" : dataset_list.name_county_shp,
+				#"Country" : name_field_county_shp,
+				}
+			name_field_code = {
+				"Zoom" : dataset_list.name_field_county_shp,
+				"County" : dataset_list.code_county_shp,
+				#"Country" : name_field_county_shp,
+				}
+
+
 		# river shape file
 		if river_shapefile_path is None:
 			self.rivers_shapefile = os.path.abspath(
@@ -159,18 +184,7 @@ class get_paths(object):
 		# READ DATA FROM REGIONAL DATASET FROM LOCAL REPO
 		# ----------------------------------------------------------
 		# load shapefiles
-		# name field for shapefile
-		name_field_name = {
-			"Zoom" : default_dataset.name_field_county_shp,
-			"County" : default_dataset.name_county_shp,
-			#"Country" : name_field_county_shp,
-			}
-		name_field_code = {
-			"Zoom" : default_dataset.name_field_county_shp,
-			"County" : default_dataset.code_county_shp,
-			#"Country" : name_field_county_shp,
-			}
-		
+
 		# select the field to use as polygon attribute
 		if place_code_field is False:
 			self.iname_field_shp = name_field_name[plot_scale]
@@ -211,7 +225,7 @@ class read_dataset_list_json(object):
 		if parameter_dataset_list_file is not None:
 			with open(parameter_dataset_list_file, 'r') as file:
 				dataset_list = json.load(file)
-
+	
 			self.name_short_country = dataset_list.get("name_short_country")
 			self.name_field_county_shp = dataset_list.get("name_field_county_shp")
 			self.code_county_shp = dataset_list.get("code_county_shp")
@@ -226,6 +240,8 @@ class read_dataset_list_json(object):
 			self.default_netcdf = dataset_list.get("default_netcdf")
 			self.fname_mask_dic = dataset_list.get("fname_mask_dic")
 		else:
+			print("WARNING: Using default dataset parameters")
+			print("Maps may no be printed correctly")
 			self.name_short_country = default_dataset.name_short_country
 			self.name_field_county_shp = default_dataset.name_field_county_shp
 			self.code_county_shp = default_dataset.code_county_shp

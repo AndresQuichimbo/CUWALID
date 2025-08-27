@@ -116,7 +116,7 @@ def plot_maps_json(config_file):
 	#print(river_path)
 	dataset_parameter_list = config.get("parameter_dataset_list", None)
 
-	print(f"testing {dataset_parameter_list}")
+	#print(f"testing {dataset_parameter_list}")
 	#print(dataset_parameter_list)
 	dataset_parameters = paths.read_dataset_list_json(dataset_parameter_list)
 		#print(dataset_parameters.code_county_shp,dataset_parameters.shapefile_level_1_dic,

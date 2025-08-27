@@ -11,6 +11,37 @@ import os
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 def get_full_path(path): return os.path.join(BASE_DIR, path)
 
+name_short_country = {
+"kenya":"KE",
+"ethiopia":"ET",
+"somalia":"SO"
+}
+
+name_field_county_shp = {
+"kenya":"county",
+"ethiopia":"NAME_2",
+"somalia":"NAME"
+}
+
+code_county_shp = {
+"kenya":"CODE",
+"ethiopia":"OBJECTID",
+"somalia":"REGN_NO"
+}
+
+name_county_shp = {
+"kenya":"ADM1_EN",
+"ethiopia":"NAME_2",
+"somalia":"NAME"
+}
+
+name_field_shp ={
+"Zoom": "IEBC_WARDS",
+"Ward": "IEBC_WARDS",
+"County": None,
+"Country": "NAME"
+}
+
 
 shapefile_country_dic = {
     "region": get_full_path("forecasting_dataset/HAD/gis/Horn_Africa/Horn_africa_contry.shp")
