@@ -249,13 +249,49 @@ def run_cuwalid(cuwalid_input):
 		ImCast_input["model_name"] = forecast_model_name
 		ImCast_input["output_dir"] = forecast_path_dryp_postpp
 
-		# make a copy of impact forecast files
+		# make a copy of impact forecast files for maps
 		iImCast_input = ImCast_input.copy()
+		iImCast_input["create_table"] = False
 
+		# make a copy of impact forecast files for tables
+		iImCast_input_table = ImCast_input.copy()
 
+		# create tables if option is activated
+		if ImCast_input["create_table"] is True:
+			print("Creating impact tables")
+			iImCast_input_table["create_map"] = False
+			#fcast.plot_maps_json(iImCast_input_table)
+
+		# plot maps and tables in parallel or in sequence
+		# tables will be submited as batch only for countries
 		if sim_in_parallel: # parallelise the map plotting for speeding up map generation
-			print("Running map plotting in parallel")
+			forecasting_folder = os.path.join(temp_folder, "plot_jsons")
+			os.makedirs(forecasting_folder, exist_ok=True)  
+						
+			print("Running map plotting and table creation in parallel")
 			for icountry in ImCast_input["country"]:
+				# Modify variables to make one specific table
+				if iImCast_input_table["create_table"] is True:
+					iImCast_input_table["country"] = [icountry]
+					
+					print(f"Creating table for {icountry}")
+					
+					ifsim_forecasting_file_table = os.path.join(forecasting_folder, f"table_input_{icountry}.json")
+					flog = os.path.join("logs", f"{icountry}_table.out")
+					with open(ifsim_forecasting_file_table, "w") as ImCast_input_file_table:
+							#json.dump(dryp_data, dest_file, indent=4)
+							json.dump(iImCast_input_table, ImCast_input_file_table, indent=4)
+						
+					time.sleep(5)
+					# Command to run the IMCast table creation in the background
+					command = f"nohup python -u -m cuwalid.forecasting.main_impact_forecast {ifsim_forecasting_file_table} > {flog}&"
+					print(f"Executing: {command}")
+					print(command)
+					process = subprocess.Popen(command, shell=True)
+
+					#fcast.plot_maps_json(iImCast_input_table)
+
+				# iterate over water status and languages to create maps
 				for iwater in ImCast_input["water_status"]:
 					for ilanguage in ImCast_input.get("language", ["English"]):
 						
@@ -264,8 +300,6 @@ def run_cuwalid(cuwalid_input):
 						iImCast_input["water_status"] = [iwater]
 						iImCast_input["country"] = [icountry]
 						
-						forecasting_folder = os.path.join(temp_folder, "plot_jsons")
-						os.makedirs(forecasting_folder, exist_ok=True)  
 						ifsim_forecasting_file = os.path.join(forecasting_folder, f"map_input_{icountry}_{iwater}_{ilanguage}.json")
 						print("Creating map for:")
 						print(icountry, iwater, ilanguage)
@@ -283,6 +317,7 @@ def run_cuwalid(cuwalid_input):
 						process = subprocess.Popen(command, shell=True)
 		else: # plot maps in sequence
 			print("Running map plotting in sequence")
+			print("This option is slower, consider using sim_in_parallel option")
 			fcast.plot_maps_json(ImCast_input)
 
 
