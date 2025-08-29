@@ -781,6 +781,8 @@ def get_average_from_list(fname_list, var="pre", mean=True, season=None,
 		except:
 			data = (pptools.read_dataset(ifname, var_name="rch")-
 				pptools.read_dataset(ifname, var_name="fch"))
+			data = data.rename(var)
+
 		#data = read_dataset(ifname, var_name=var)
 		#print(data)
 		# if seasonal average, select months
