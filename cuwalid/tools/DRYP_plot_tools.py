@@ -76,7 +76,7 @@ def split_text(text, max_len=1):
 	return text
 
 
-def plot_avg_var(fname, fname_out=None, fields=None, delta_t='1D',
+def plot_avg_var(fname, fname_out=None, fields=None, delta_t='1D', ax=None,
 				 date_start=None, date_end=None, max_subplots=None):
 	"""Plot average variables from a csv file.
 	
