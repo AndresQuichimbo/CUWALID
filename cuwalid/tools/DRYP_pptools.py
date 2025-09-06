@@ -9,6 +9,11 @@ import rasterio
 import cuwalid.tools.DRYP_rrtools as rrtools
 #from cuwalid.dryp.components.DRYP_json_reader import get_model_settings
 
+# GLOBAL VARIABLES
+RPVARS = ['fch', 'etrp', 'tls', 'thtrp', 'ssz']
+PNDVARS = ['epd', 'vpd', 'apnd']
+MEANVARS = ['tht', 'wte', 'ssz', 'apd', 'vpd', 'thtrp']
+
 class grid_pptools(object):
 	"""
 	Function to post-processing DRYP model outputs.
@@ -371,7 +376,7 @@ def calculate_anomalies_from_netCDF(fname, field='pre', fname_out=None,
 
 	
 def calculate_mean_from_netCDF(fname, field, fname_out=None,
-			       deltat='Y', start_time=None, end_time=None):
+			       deltat='YE', start_time=None, end_time=None, type=None):
 	"""Get mean average values from dataset. The output filename
 	 will be added "mean" at the end of the name.
 
@@ -387,6 +392,10 @@ def calculate_mean_from_netCDF(fname, field, fname_out=None,
 		starting date for the analysis, "DD-MM-YYYY".
 	end_time : str
 		final date for the analysis, "DD-MM-YYYY".
+	type : str
+		if "pnd" it will read the netcdf file with riparian area
+		if "rp" it will read the netcdf file with riparian area
+		if None it will read the normal netcdf file
 
 	Returns
 	-------
@@ -399,15 +408,19 @@ def calculate_mean_from_netCDF(fname, field, fname_out=None,
 	for ifield in field:
 		# read dataset
 		mean = False
-		if (ifield == 'tht') or (ifield == 'wte') or (ifield == "ssz"):
+		if ifield in MEANVARS:
 			mean = True
 		
 		# check if is the riparian area
-		if (ifield == 'fch'):
-			ifname = fname.split('.')[0]+'rp.nc'
-		else:
-			ifname = fname
-		
+		ifname = fname.copy()
+
+		if ifield in RPVARS:
+			if type is None:
+				ifname = fname.split('.')[0]+'rp.nc'
+		if ifield in PNDVARS:
+			if type is None:
+				ifname = fname.split('.')[0]+'pnd.nc'
+
 		if check_if_field_available_in_netCDF(ifname, ifield) is True:
 			# preporcess netcdf file
 			data = preprocesses_netCDF(ifname, ifield,
@@ -424,7 +437,9 @@ def calculate_mean_from_netCDF(fname, field, fname_out=None,
 				first_read = False
 			else:
 				dataset = xr.merge([dataset, data])
-	
+		else:
+			print("Specify a valid file or change the type of file in the function")
+
 	# save files
 	if fname_out is None:
 		fname_out = fname
@@ -1109,6 +1124,8 @@ def check_if_field_available_in_netCDF(fname, var_name):
 	var_available = False
 	if var_name in list(xr.open_dataset(fname).variables):
 		var_available = True
+	else:
+		print(f"Variable {var_name} not available in {fname}")
 	return var_available
 
 def season_name_to_number(season):
