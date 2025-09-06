@@ -13,6 +13,7 @@ from rasterio.features import geometry_mask
 from landlab import RasterModelGrid
 from landlab.components import FlowDirectorD8
 from landlab.core.utils import as_id_array
+from scipy.ndimage import label
 
 def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda):
 	"""Calculate soil water content at field capacity and available water content
@@ -1099,3 +1100,177 @@ def find_indices(raster, coordinates):
 		indices.append((int(row), int(column)))
 	return indices
 
+def create_raster_lake_label_from_bathymetry(path_bathymetry, path_lake_labels=None):
+	"""Get or create a raster file with lake labels from a bathymetry, this function
+	detects all lakes in the raster and assign a unique label to each lake.
+
+	Parameters
+	----------
+	path_bathymetry : str
+		file path of the bathymetry raster file
+	path_lake_labels : str, optional
+		file path of the output lake labels raster file
+		The default is None, if None the function will return the lake labels
+		and other lake properties as numpy arrays.
+		The output raster file will be created in the same format as the input raster file.
+		Example: "path/to/lake_labels.tif"
+	Returns
+	-------
+	name_lks : numpy array
+		array with lake labels
+	num_features : int
+		number of lakes detected
+	ids_lks : list of int
+		list of indices of all lake cells
+	size_lks : list of int
+		list of number of cells in each lake
+	ids_max_depth_lks : list of int
+		list of indices of the maximum depth cell in each lake
+		These values represent the properties of the lakes detected in the bathymetry raster.
+		The values are returned as numpy arrays and lists.
+		Note: The function will return these values only if path_lake_labels is None.
+		Make sure to provide the correct file path for the bathymetry raster file.
+		Example: "path/to/bathymetry.tif"
+		Make sure to provide the correct file path for the output lake labels raster file if needed.
+		Example: "path/to/lake_labels.tif"
+		Note: The function does not return any values if path_lake_labels is provided,
+		but it saves the lake labels raster file and a csv file with lake properties.
+	Examples
+	--------
+	>>> path_bathymetry = "bathymetry.tif"
+	>>> path_lake_labels = "lake_labels.tif"
+	>>> create_raster_lake_label_from_bathymetry(path_bathymetry, path_lake_labels)
+	>>> # This will create a raster file named "lake_labels.tif"
+	>>> # with the lake labels and a csv file with lake properties.
+	>>> # The function does not return any values, but it saves the raster file and csv file.
+	>>> # If path_lake_labels is None, the function will return the lake labels and other lake properties as numpy arrays.
+	>>> path_bathymetry = "bathymetry.tif"
+	>>> name_lks, num_features, ids_lks, size_lks, ids_max_depth_lks = create_raster_lake_label_from_bathymetry(path_bathymetry)
+	>>> # This will return the lake labels and other lake properties as numpy arrays.
+	
+	
+	"""
+
+	if os.path.exists(path_bathymetry):
+		# STEP 1: Read and identify lake
+		# read lake names, preserve the order, do not flatten
+		depth_lks = np.flip(rasterio.open(path_bathymetry).read(1), 0)#.flatten()
+
+		# mask lakes from depth
+		name_lks = depth_lks > 0
+		name_lks = name_lks.astype(int)
+
+		# label lakes
+		name_lks, num_features = label(name_lks)
+	
+		# flatten the name array to match the grid
+		name_lks_flat = name_lks.flatten()
+
+		# POST-PROCESSING LAKES VARIABLES		
+		# Step 2: For each label, collect flat indices (len=number of lakes)
+		ids_group_by_label = []
+		for label_num in range(1, num_features + 1):
+			flat_indices = list(np.where(name_lks_flat == label_num)[0])
+			ids_group_by_label.append(flat_indices)
+		
+		# Step 3: Get length of each lake (number of cells)
+		size_lks = list(map(len, ids_group_by_label))
+		
+		# Step 4: Get index of all lakes
+		ids_lks = list(np.where(name_lks_flat > 0)[0])
+		
+		# Step 5: Get index of the maximum depth for each lake
+		ids_max_depth_lks = numpy_argmin_reduceat(-depth_lks.flatten()[ids_lks],
+								np.append([0], np.cumsum(size_lks)[:-1])
+								)
+		# map the indices to the original ids_lks
+		ids_max_depth_lks = [ids_lks[i] for i in ids_max_depth_lks]
+
+		# transfer variables to the class
+		if path_lake_labels is not None:
+			# save lake labels as raster file
+			# get raster properties
+			_, profile, transform = open_raster(path_bathymetry)
+			profile.update(dtype=rasterio.int32)
+			save_raster(path_lake_labels, name_lks, profile, transform)
+			print('Lake labels rater file saved as:', path_lake_labels)
+
+			
+			df = pd.DataFrame({
+				'lake_id': np.arange(1, num_features + 1),
+				'num_cells': size_lks,
+				'id_max_depth': ids_max_depth_lks,
+				})
+
+			# save list of lakes and max depth as csv file
+			path_lake_labels_csv = path_lake_labels.split('.')[0]+'_list.csv'
+			if os.path.exists(path_lake_labels_csv):
+				os.remove(path_lake_labels_csv)
+			
+			df.to_csv(path_lake_labels_csv, index=False)
+			print('Lake properties saved as:', path_lake_labels_csv)
+
+
+		else:
+			return name_lks, num_features, ids_lks, size_lks, ids_max_depth_lks
+		
+def create_raster_flat_area_from_bathymetry(path_bathymetry, path_surface,
+											path_flat_area=None, save_file=False):
+	"""Flatten lakes areas of a the surface raster file. Lakes are detected from 
+	bathymetry raster file. The output raster file will be created in the same format
+	as the input raster file.
+	Parameters
+	----------
+	path_bathymetry : str
+		file path of the bathymetry raster file
+	path_surface : str
+		file path of the surface raster file
+	path_flat_area : str, optional
+		file path of the output flat area raster file
+		The default is None, if None the function will return the flat area
+		and other lake properties as numpy arrays.
+		The output raster file will be created in the same format as the input raster file.
+		Example: "path/to/flat_area.tif"
+	save_file : bool, optional
+		If True, the function will save the flat area raster file.
+		The default is False.
+	Returns
+	-------
+
+	"""
+
+	name_lks, num_features, _, size_lks, ids_max_depth_lks = create_raster_lake_label_from_bathymetry(
+		path_bathymetry, path_lake_labels=None)
+	
+	if save_file and path_flat_area is None:
+		# get raster properties
+		_, profile, transform = open_raster(path_bathymetry)
+
+# Getting the min Index 
+def numpy_argmin_reduceat(a, index):
+	"""Get the index of the minimum value in each group of a 1D array.
+	Parameters
+	----------
+	a : numpy array
+		1D array of values.
+	index : numpy array
+		1D array of number of elements that define the groups.
+	Returns
+	-------
+	min_idx : numpy array
+		1D array of indices of the minimum value in each group.
+	"""
+	# Ensure the input is a numpy array
+	n = a.max() + 1  # limit-offset
+	# Create an array to hold the group indices
+	id_arr = np.zeros(a.size, dtype=int)
+	# Assign group indices based on the input index array
+	id_arr[index] = 1
+	# Cumulative sum to create unique group identifiers
+	shift = n*id_arr.cumsum()
+	# Shift the original array by the group indices
+	sortidx = (a+shift).argsort()
+	grp_shifted_argmin = index
+	idx =sortidx[grp_shifted_argmin] - index
+	min_idx = idx + index
+	return min_idx
