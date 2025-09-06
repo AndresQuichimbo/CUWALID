@@ -40,15 +40,26 @@ print_soilmoisture_map = True
 # NETCDF4 model outputs
 apply_scale_offset = True
 
-long_name = {'pre':'precipitation', 'aet':'actual evapotranspiration', 'pet':'potential evapotranspiration',
-			 'inf':'infiltration', 'tls':'transmission losses', 'fch':'focused recharge',
-			 'ssz':'surface storage', 'rch':'total groundwater recharge',
-			'wte':'water table elevation', 'egw':'groundwater evaporation', 'run':'runoff',
+long_name = {'pre':'precipitation',
+			 'aet':'actual evapotranspiration',
+			 'pet':'potential evapotranspiration',
+			 'inf':'infiltration',
+			 'tls':'transmission losses',
+			 'fch':'focused recharge',
+			 'ssz':'surface storage',
+			 'rch':'total groundwater recharge',
+			'wte':'water table elevation',
+			'egw':'groundwater evaporation',
+			'run':'runoff',
 			'gdh':'groundwater discharge',
-			'tht':'soil moisture', 'twsc':'water storage change', 'dis':'discharge',
+			'tht':'soil moisture',
+			'twsc':'water storage change',
+			'dis':'discharge',
 			"vpd" : "Total volume of water available - ponds",
 			"epd" : "evaporation - ponds",
-			"apd" :"Total abstractions - ponds"
+			"apd" :"Total abstractions - ponds",
+			"etrp": "actual evapotranspiration - riparian",
+			"thtrp": "soil moisture - riparian",
 			}
 
 units_var = {'pre':'mm/dt', 'aet':'mm/dt', 'pet':'mm/dt', 'inf':'mm/dt',
@@ -57,7 +68,9 @@ units_var = {'pre':'mm/dt', 'aet':'mm/dt', 'pet':'mm/dt', 'inf':'mm/dt',
 						'tht':'m3/m3', 'twsc':'mm', 'dis':'m3/dt',
 						"vpd" : "m3",
 						"epd" : "m3/dt",
-						"apd" :"m3/dt"
+						"apd" :"m3/dt",
+						"etrp": "mm/dt",
+						"thtrp": "m3/m3",
 			}
 
 class GlobalGridVar:
