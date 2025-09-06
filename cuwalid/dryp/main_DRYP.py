@@ -591,17 +591,17 @@ def run_DRYP(filename_input):
 				# get mean total values for each flux and state of the riparian zone
 				if riv_nodes.size > 0:
 					total_rpvar.store_variables(PRE.date_sim_dt, t_pre,
-					  	{"aet": [np.mean(rAET)],
+					  	{"etrp": [np.mean(rAET)],
 						"fch": [np.mean(rPCR)],
 						"tls": [np.mean(ro.trans_losses[riv_nodes])],
-						"tht": [np.mean(rtheta)],
+						"thtrp": [np.mean(rtheta)],
 						"ssz": [np.mean(ro.SSZ[riv_nodes])]}
 						)
 					
 					grid_rpvar.store_variables(PRE.date_sim_dt, t_pre,
-				  		{"aet": rAET, "fch": rPCR,
+				  		{"etrp": rAET, "fch": rPCR,
 						"tls": ro.trans_losses[riv_nodes],
-						"tht": rtheta,
+						"thtrp": rtheta,
 						"ssz": ro.SSZ[riv_nodes]}
 						)
 
