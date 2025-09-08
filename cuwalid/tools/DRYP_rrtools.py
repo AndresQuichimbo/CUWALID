@@ -642,14 +642,22 @@ def clip_raster_by_mask(fname, fname_mask, fname_output):
 
 	# find bounds
 	min_row, max_row, min_col, max_col = find_region_bounds(data)
-	
-	# get coordinates
-	min_lon, min_lat = get_lat_lon_coordinates(transform, min_col, max_row)
-	lon, lat = get_lat_lon_coordinates(transform, max_col, min_row)
-	
-	# create extent list
-	extent = (min_lon, min_lat, lon, lat)
 
+
+    # --- pixel size from affine transform ---
+	pixel_width = transform.a
+	pixel_height = -transform.e  # usually negative, so take abs
+
+    # --- convert indices to coordinates ---
+    # top-left corner (min_col, min_row)
+	xmin, ymax = rasterio.transform.xy(transform, min_row, min_col, offset="ul")
+
+    # bottom-right corner (+1 to move outside the last pixel)
+	xmax, ymin = rasterio.transform.xy(transform, max_row + 1, max_col + 1, offset="ul")
+
+    # --- create extent tuple [xmin, ymin, xmax, ymax] ---
+	extent = (xmin, ymin, xmax, ymax)
+	
 	# create and save clipped raster
 	clip_raster_by_extent(fname, fname_output, extent)
 
@@ -721,7 +729,7 @@ def clip_raster_by_extent(fname, fname_output, extent):
 		dest.write(clipped)
 
 
-def find_region_bounds(array):
+def find_region_bounds(array, add_empty_frame=True):
 	"""This function finds indices of the extent of the region in
 	a 2D numpy array. Region must be specified with values greater
 	than zero.
@@ -763,10 +771,11 @@ def find_region_bounds(array):
 	#print(min_row, max_row, min_col, max_col)
 	
 	# aggregate one row to run on dryp
-	min_row = np.max([min_row-1, 0])
-	max_row = np.min([max_row+1, array.shape[0]])
-	min_col = np.max([min_col-1, 0])
-	max_col = np.min([max_col+1, array.shape[1]])
+	if add_empty_frame:
+		min_row = max(min_row - 1, 0)
+		max_row = min(max_row + 1, array.shape[0] - 1)
+		min_col = max(min_col - 1, 0)
+		max_col = min(max_col + 1, array.shape[1] - 1)
 	
 	#print(min_row, max_row, min_col, max_col)
 	return min_row, max_row, min_col, max_col
