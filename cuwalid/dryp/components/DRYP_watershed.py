@@ -273,7 +273,7 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 	
 
 def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
-						fname_flowDir=None, fname_mask=None):
+						fname_flowDir=None, fname_mask=None, save_files=True):
 	"""This function calculates the watershed area at a given point location.
 	It requires a flow direction map and an outlet point. The function will
 	calculate the area and indices (in landlab format). It also
@@ -295,9 +295,14 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 
 	Returns
 	-------
-	file
-		csv file containing a list areas and node index
-		asc flow accumalation map as raster file
+	df: pandas DataFrame
+		dataframe containing list of catchment areas and node index
+	discharge: numpy array
+		array containing the catchment areas at the outlet nodes
+	if save_files is True:
+		file
+			*.csv file containing a list areas and node index
+			*.asc flow accumalation map as raster file
 
 		
 	Examples
@@ -365,22 +370,26 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 						np.zeros_like(surface),
 						np.ones_like(surface)*1e5,
 						None)
-	
-	# save files
-	if fname_out is None:
-		fname_out = fname_surface.split('.')[0]
 
-	# Save contributing area as raster file
-	save_map_to_rastergrid(grid, ro.discharge,
-			fname_out + '_flowaccum.asc')
-	
-	# save list of catchement areas
+	# create dataframe containing list of catchement areas
 	df = pd.DataFrame()
 	df['IDnode'] = idnodes
 	df['Area'] = ro.discharge[idnodes]
-	
-	fname = fname_out + '_areas.csv'
-	df.to_csv(fname)
+
+
+	# save files
+	if save_files is True:
+		if fname_out is None:
+			fname_out = fname_surface.split('.')[0]
+
+		# Save contributing area as raster file
+		save_map_to_rastergrid(grid, ro.discharge,
+				fname_out + '_flowaccum.asc')
+
+		fname = fname_out + '_areas.csv'
+		df.to_csv(fname)
+	else:
+		return df, ro.discharge[idnodes]
 
 def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 					  fname_flowDir=None, fname_mask=None, raster=False):
