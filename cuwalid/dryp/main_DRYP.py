@@ -247,7 +247,7 @@ def run_DRYP(filename_input):
 				
 				# calculate maximum water available to extract from water bodies
 				# select row from dataframe and add to the excess component
-				# units of abstractions should be in flux/volume (m3)
+				# units of abstractions should be given in flux/volume units (e.g. m3)
 				if fluxWB.data_set is not None:
 					# read datasets				
 					maximum_flux_wb = np.abs(fluxWB.get_point_dataset_one_step(t_abs))
