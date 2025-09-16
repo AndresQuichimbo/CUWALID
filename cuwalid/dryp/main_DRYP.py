@@ -118,6 +118,7 @@ def run_DRYP(filename_input):
 				PET = ET0.get_one_step_dataset(t_eto, data_in.fname_TSMeteo, 'pet')
 				#PET[PET>1] = 1.0
 				
+				# ABSTRCTIONS/IRRIGATION ------------------------------
 				# read flux boundary conditions for all components
 				# add data abstractions/sink/source points
 				# select row from dataframe and add to the excess component
@@ -245,6 +246,7 @@ def run_DRYP(filename_input):
 						theta[act_nodes]
 						)
 				
+				# GROUNDWATER ABSTRACTIONS ------------------------------
 				# calculate maximum water available to extract from water bodies
 				# select row from dataframe and add to the excess component
 				# units of abstractions should be given in flux/volume units (e.g. m3)
@@ -350,6 +352,7 @@ def run_DRYP(filename_input):
 				# Add runoff from all sources - change all units to mm 
 				runoff[act_nodes] = EXS + ROF + baseflow[act_nodes]*1000.0
 				
+				# ABSTRACTIONS SURFACEWATER ------------------------------
 				# add data abstractions/sink/source points
 				# all abstractions units should be in m3 (cubic meters)
 				# positive values indicate flow in the river/pond
