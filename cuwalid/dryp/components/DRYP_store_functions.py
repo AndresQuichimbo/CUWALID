@@ -8,6 +8,8 @@ from netCDF4 import Dataset, num2date, date2num
 from landlab.io import write_esri_ascii
 from itertools import compress
 import operator
+from cuwalid.dryp.components.DRYP_global_parameters import *
+    
 
 # global settings
 agg_balance_global = 'D'
@@ -40,38 +42,51 @@ print_soilmoisture_map = True
 # NETCDF4 model outputs
 apply_scale_offset = True
 
-long_name = {'pre':'precipitation',
-			 'aet':'actual evapotranspiration',
-			 'pet':'potential evapotranspiration',
-			 'inf':'infiltration',
-			 'tls':'transmission losses',
-			 'fch':'focused recharge',
-			 'ssz':'surface storage',
-			 'rch':'total groundwater recharge',
-			'wte':'water table elevation',
-			'egw':'groundwater evaporation',
-			'run':'runoff',
-			'gdh':'groundwater discharge',
-			'tht':'soil moisture',
-			'twsc':'water storage change',
-			'dis':'discharge',
-			"vpd" : "Total volume of water available - ponds",
-			"epd" : "evaporation - ponds",
-			"apd" :"Total abstractions - ponds",
-			"etrp": "actual evapotranspiration - riparian",
-			"thtrp": "soil moisture - riparian",
-			}
-
-units_var = {'pre':'mm/dt', 'aet':'mm/dt', 'pet':'mm/dt', 'inf':'mm/dt',
-						'tls':'mm/dt', 'fch':'mm/dt', 'ssz':'m3/dt', 'rch':'mm/dt',
-						'wte':'m', 'egw':'mm/dt', 'run':'mm/dt', 'gdh':'m3/dt',
-						'tht':'m3/m3', 'twsc':'mm', 'dis':'m3/dt',
-						"vpd" : "m3",
-						"epd" : "m3/dt",
-						"apd" :"m3/dt",
-						"etrp": "mm/dt",
-						"thtrp": "m3/m3",
-			}
+#LONG_NAME_VAR = {
+#			'pre':'precipitation',
+#			'aet':'actual evapotranspiration',
+#			'pet':'potential evapotranspiration',
+#			'inf':'infiltration',
+#			'tls':'transmission losses',
+#			'fch':'focused recharge',
+#			'ssz':'surface storage',
+#			'rch':'total groundwater recharge',
+#			'wte':'water table elevation',
+#			'egw':'groundwater evaporation',
+#			'run':'runoff',
+#			'gdh':'groundwater discharge',
+#			'tht':'soil moisture',
+#			'twsc':'water storage change',
+#			'dis':'discharge',
+#			"vpd" : "Total volume of water available - ponds",
+#			"epd" : "evaporation - ponds",
+#			"apd" :"Total abstractions - ponds",
+#			"etrp": "actual evapotranspiration - riparian",
+#			"thtrp": "soil moisture - riparian",
+#			"pth": "Throughfall",
+#			"eca": "canopy evaporation",
+#			"scz": "canopy storage",
+#			}
+#
+#UNIT_NAME_VAR = {'pre':'mm/dt',
+#			 'aet':'mm/dt',
+#			 'pet':'mm/dt',
+#			 'inf':'mm/dt',
+#			 'tls':'mm/dt',
+#			 'fch':'mm/dt',
+#			 'ssz':'m3/dt',
+#			 'rch':'mm/dt',
+#			'wte':'m', 'egw':'mm/dt', 'run':'mm/dt', 'gdh':'m3/dt',
+#			'tht':'m3/m3', 'twsc':'mm', 'dis':'m3/dt',
+#			"vpd" : "m3",
+#			"epd" : "m3/dt",
+#			"apd" :"m3/dt",
+#			"etrp": "mm/dt",
+#			"thtrp": "m3/m3",
+#			"pth": "mm/dt",
+#			"eca": "mm/dt",
+#			"scz": "mm",
+#			}
 
 class GlobalGridVar:
 	"""Setting variables and arrays for saving model grid variables
@@ -157,6 +172,8 @@ class GlobalGridVar:
 			self.store_max = False
 
 		self.start_storing = False
+
+		self.store_var_names = None
 		#print(self.store_max)
 		#if store_max is True:
 		#	self.store_max = True
@@ -328,6 +345,11 @@ class GlobalGridVar:
 		csv files
 			output files in csv format
 		"""
+		# check if there are variables to store otherwise exit function
+		if self.store_var_names is None:
+			print("No variables to store")
+			return
+		
 		# additional variables
 		# var_name:	name of the variable to store
 		# length_var:	number of points to store
@@ -408,6 +430,13 @@ class GlobalGridVar:
 		netcdf
 			output files in netcdf format
 		"""
+		# check if there are variables to store otherwise exit function
+		if self.store_var_names is None:
+			print("No variables to store")
+			return
+			# additional variables
+			# var_name:	name of the variable to store
+			# length_var:	number of points to store
 		
 		if self.save_results is True:
 			# number of variables
@@ -442,8 +471,8 @@ class GlobalGridVar:
 			# create variable
 			for ivar in self.store_var_names:
 				dataset.createVariable(ivar, np.float32, ('time', 'lat', 'lon'), fill_value=-9999., zlib=True)
-				dataset.variables[ivar].units = units_var[ivar]
-				dataset.variables[ivar].long_name = long_name[ivar]
+				dataset.variables[ivar].units = UNIT_NAME_VAR[ivar]
+				dataset.variables[ivar].long_name = LONG_NAME_VAR[ivar]
 						
 			# save variables
 			for j, idate in enumerate(self.time_grid):
