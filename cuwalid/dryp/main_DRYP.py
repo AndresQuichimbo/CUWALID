@@ -602,6 +602,13 @@ def run_DRYP(filename_input):
 					"twsc":[np.mean(twsc[act_nodes])],
 					"chb":[gw.flux_at_CHB],
 					"tls":[np.mean(ro.trans_losses[act_nodes])],
+					'eca': [np.mean(Eca)] if Eca is not None else [0],
+					'scz': [np.mean(Sc0_cn)] if Sc0_cn is not None else [0],
+					'pth': [np.mean(Pth)] if Pth is not None else [0],
+					#'lai': [np.mean(LAIdt)],
+					#'kc': [np.mean(Kcdt)],
+					#'av': [np.mean(vegetation.av)],
+
 					})
 				
 				# get mean total values for each flux and state of the riparian zone
