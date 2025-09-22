@@ -10,6 +10,7 @@ import cuwalid.tools.DRYP_rrtools as rrtools
 #from cuwalid.dryp.components.DRYP_json_reader import get_model_settings
 
 # GLOBAL VARIABLES
+VEGVARS = ['pth', 'eca', 'scz']
 RPVARS = ['fch', 'etrp', 'tls', 'thtrp', 'ssz']
 PNDVARS = ['epd', 'vpd', 'apnd']
 MEANVARS = ['tht', 'wte', 'ssz', 'apd', 'vpd', 'thtrp']
@@ -171,6 +172,7 @@ class get_output_filenames(object):
 		"pnd" : fnameTS_grid+'pnd.nc',
 		"vmax" : fnameTS_grid+'vmax.nc',
 		"rmax" : fnameTS_grid+'rmax.nc',
+		"veg" : fnameTS_grid+'veg.nc',
 		}
 
 		# name outputs for initial conditions
@@ -420,6 +422,9 @@ def calculate_mean_from_netCDF(fname, field, fname_out=None,
 		if ifield in PNDVARS:
 			if type is None:
 				ifname = fname.split('.')[0]+'pnd.nc'
+		if ifield in VEGVARS:
+			if type is None:
+				ifname = fname.split('.')[0]+'veg.nc'
 
 		if check_if_field_available_in_netCDF(ifname, ifield) is True:
 			# preporcess netcdf file

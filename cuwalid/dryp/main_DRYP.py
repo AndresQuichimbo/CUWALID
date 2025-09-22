@@ -105,6 +105,7 @@ def run_DRYP(filename_input):
 
 	# Initialise the progress bar
 	print("****************************** SIMULATION IN PROGRESS ******************************")
+	print("Simulation period: from", data_in.ini_date, "to", data_in.end_date, "number of days:", data_in.ndays)
 	progress_bar = tqdm(total=data_in.ndays, unit='days')
 	while t < data_in.ndays:
 
