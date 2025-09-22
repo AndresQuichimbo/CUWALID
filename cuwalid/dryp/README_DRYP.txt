@@ -3,8 +3,6 @@ DRYP: Parsimonious model for DRYland regions water Partitioning
 DRYP v1.0 has been tested in Python 3.7.4. and runs in windows and Linux.
 The following python packages must be installed in order to use DRYP:
 Landlab 2.0. (see https://landlab.readthedocs.io/en/master/index.html)
-Numpy 1.16.4
-Pandas 0.25.1
 
 DRYP can run in previous versions of python that are compatible with packages listed above.
 DRYP comes with an example (GW 1D) in addition to the following python scripts:
@@ -39,3 +37,9 @@ E.A. Quichimbo 1, M.B. Singer 1,3,4, K. Michaelides 2,4,5, D.E.J. Hobley 1, R. R
 5	Cabot Institute for the Environment, University of Bristol, Bristol, UK
 6	University of Bristol, Faculty of Engineering, University Walk, Clifton BS8 1TR, UK
 7	Connected Waters Initiative Research Centre, University of New South Wales, Kensington, New South Wales, Australia
+
+Updates:
+08/07/2025: add lakes greater than one grid cell
+08/07/2025: change names of output variables to allow postprocessing
+22/09/2025: Add projection to metadata of netCDF files
+22/09/2025: Add option to store vegetation/interception variables
