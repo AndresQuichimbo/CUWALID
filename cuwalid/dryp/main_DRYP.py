@@ -672,7 +672,7 @@ def run_DRYP(filename_input):
 	save_model_outputs(data_in, total_var, point_var, grid_var, grid_rmax,
 				   grid_vmax, grid_rpvar, total_rpvar, grid_pndvar, total_pndvar,
 				   water_bodies, grid, head, theta, ro, rtheta, topo, grid_veg,
-				   act_nodes, riv_nodes,)
+				   act_nodes, riv_nodes, projection=data_in.PROJECTION)
 	print("======================= ALL PROCESSES COMPLETED SUCCESSFULLY =======================")
 # ---------------------------------------------------------------------
 # Call script from external library	

@@ -409,7 +409,7 @@ class GlobalGridVar:
 				df.to_csv(fname_csv, index=False)
 			
 
-	def save_netCDF_var(self, fname, latitude, longitude, nodes):
+	def save_netCDF_var(self, fname, latitude, longitude, nodes, projection=None):
 		"""This function save multiple arrays in a netcdf file
 		
 		Parameters
@@ -458,6 +458,8 @@ class GlobalGridVar:
 			dataset.createDimension('lat', nrow)		
 			dataset.description = self.dt_time+": Units of time depends on time step"
 			dataset.source = "Variable generated using: DRYPv2.0"
+			if projection is not None:
+				dataset.projection = projection
 
 			# Create coordinate variables for 4-dimensions		
 			lat = dataset.createVariable('lat', np.float32, ('lat',))		
