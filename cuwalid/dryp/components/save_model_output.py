@@ -3,9 +3,10 @@ from cuwalid.dryp.components.DRYP_store_functions import save_map_to_rastergrid
 
 def save_model_outputs(data_in, total_var, point_var, grid_var, grid_rmax,
                        grid_vmax, grid_rpvar, total_rpvar, grid_pndvar, total_pndvar,
-                       water_bodies, grid, head, theta, ro, rtheta, topo,
+                       water_bodies, grid, head, theta, ro, rtheta, topo, grid_veg,
                        act_nodes, riv_nodes):
-
+    """Saves model outputs to files (netCDF, CSV, raster)"""
+    
     # SAVE AVERAGE VALUES OF VARIABLES: CSV-FILES
     # var_name = ['pre', 'pet', 'run', 'aet', 'inf', 'tht',
     #     'rch', 'egw', 'wte', 'gdh', 'twsc', 'chb', 'tls']
@@ -19,9 +20,6 @@ def save_model_outputs(data_in, total_var, point_var, grid_var, grid_rmax,
     # SAVE VARIABLES AT POINT LOCATION: CSV-FILES
     # name of variables to store
     # var_name = ['aet', 'inf', 'dis', 'tht', 'rch', 'wte', 'gdh', 'ssz']
-    # length_var = [len(idOF_act), len(idOF_act), len(idOF),
-    #   			len(idUZ), len(idGW), len(idGW), len(idGW),
-    #			len(idOF),]
     point_var.save_csv_var(data_in.fnameTS_point)  # , var_name, length_var)
 
     # SAVE VARIABLES AS GRIDS-NETCDF FILES
@@ -48,7 +46,6 @@ def save_model_outputs(data_in, total_var, point_var, grid_var, grid_rmax,
     if riv_nodes.size > 0:
         print("<==== saving riparian zone temporal outputs")
         # var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
-
         # save grided model result datasets
         grid_rpvar.save_netCDF_var(data_in.fnameTS_grid + 'rp.nc',
                                    topo.lat, topo.lon, riv_nodes)  # , var_name
@@ -58,13 +55,18 @@ def save_model_outputs(data_in, total_var, point_var, grid_var, grid_rmax,
         total_rpvar.save_csv_var(data_in.fnameTS_avg + 'rp',  # var_name,
                                  # length_var,
                                  multi_files=False)
+    
+    # SAVE VARIABLES FROM VEGETATION
+    print("<==== saving vegetation temporal outputs")
+    # var_name = ['pth', 'eca', 'scz']
+    # save grided model result datasets
+    grid_veg.save_netCDF_var(data_in.fnameTS_grid + 'veg.nc',
+                                    topo.lat, topo.lon, act_nodes)  # , var_name
 
     # SAVE VARIABLES FROM PONDS
     print("<==== saving water bodies temporal outputs")
     if water_bodies.id_nodes is not None:
         # var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
-        # print(grid_pndvar)
-
         # save grided model result datasets
         grid_pndvar.save_netCDF_var(data_in.fnameTS_grid + 'pnd.nc',
                                     topo.lat, topo.lon, water_bodies.id_nodes)  # , var_name
