@@ -169,6 +169,9 @@ def setup_output_and_monitoring(data_in, grid, riv_nodes, water_bodies):
     grid_var = GlobalGridVar(data_in.ini_date,
                              data_in.dt_results, data_in.save_netcdf,
                              data_in.store.var_grid)
+    grid_veg = GlobalGridVar(data_in.ini_date,
+                             data_in.dt_results, data_in.save_netcdf,
+                             data_in.store.var_grid)
     grid_rmax = GlobalGridVar(data_in.ini_date,
                               data_in.dt_results, data_in.save_netcdf,
                               data_in.store.var_grid,
@@ -203,4 +206,4 @@ def setup_output_and_monitoring(data_in, grid, riv_nodes, water_bodies):
                                      
     return (idOF, idOF_act, idUZ, idUZ_act, idGW, idGW_act,
             point_var, grid_var, grid_rmax, grid_vmax, total_var,
-            grid_rpvar, total_rpvar, grid_pndvar, total_pndvar)
+            grid_rpvar, total_rpvar, grid_pndvar, total_pndvar, grid_veg)
