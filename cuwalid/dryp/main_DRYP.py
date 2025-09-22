@@ -21,7 +21,12 @@ import numpy as np
 from tqdm import tqdm
 from cuwalid.dryp.components.DRYP_json_reader import get_model_settings
 from cuwalid.dryp.components.DRYP_groundwater_EFD import storage_uz_sz
-from cuwalid.dryp.components.assemble_model_components import initialize_core_hydrology_components, initialize_optional_components_and_flux_ids, initialize_simulation_state_variables, setup_output_and_monitoring
+from cuwalid.dryp.components.assemble_model_components import (
+    initialize_core_hydrology_components,
+    initialize_optional_components_and_flux_ids,
+    initialize_simulation_state_variables,
+    setup_output_and_monitoring
+	)
 from cuwalid.dryp.components.read_model_parameters import read_model_parameters_and_settings
 from cuwalid.dryp.components.read_temporal_datasets import read_temporal_datasets_and_grid
 from cuwalid.dryp.components.save_model_output import save_model_outputs										
@@ -94,7 +99,7 @@ def run_DRYP(filename_input):
 
 	(idOF, idOF_act, idUZ, idUZ_act, idGW, idGW_act,
 	point_var, grid_var, grid_rmax, grid_vmax, total_var,
-	grid_rpvar, total_rpvar, grid_pndvar, total_pndvar) = setup_output_and_monitoring(
+	grid_rpvar, total_rpvar, grid_pndvar, total_pndvar, grid_veg) = setup_output_and_monitoring(
 		data_in, grid, riv_nodes, water_bodies
 	)
 
@@ -550,6 +555,13 @@ def run_DRYP(filename_input):
 					"gdh": baseflow[act_nodes], "twsc": twsc[act_nodes],
 					})
 				
+				# store vegetation variables
+				if vegetation.av is not None:
+					grid_veg.store_variables(PRE.date_sim_dt, t_pre,
+						{'pth': Pth, 'eca': Eca, 'scz': Sc0_cn,
+	   					#'lai': LAIdt, 'kc': Kcdt, 'av': vegetation.av
+						})
+
 				# store maximum values
 				if grid_vmax.store_max is True:
 					grid_vmax.store_variables(PRE.date_sim_dt, t_pre,
@@ -659,8 +671,8 @@ def run_DRYP(filename_input):
 	print("********************************** SAVING RESULTS **********************************")
 	save_model_outputs(data_in, total_var, point_var, grid_var, grid_rmax,
 				   grid_vmax, grid_rpvar, total_rpvar, grid_pndvar, total_pndvar,
-				   water_bodies, grid, head, theta, ro, rtheta, topo,
-				   act_nodes, riv_nodes)
+				   water_bodies, grid, head, theta, ro, rtheta, topo, grid_veg,
+				   act_nodes, riv_nodes,)
 	print("======================= ALL PROCESSES COMPLETED SUCCESSFULLY =======================")
 # ---------------------------------------------------------------------
 # Call script from external library	
