@@ -270,18 +270,18 @@ def SWBM(I, PET, Kc, L0, z_soil, fs, fc, wp):
 	L_TAW = Lfc - TAW
 	
 	# calculate stress coeficient
-	den = L_RAW-L_TAW	
-	beta = (L0-L_TAW)
-	beta = (beta/den)
-	beta[beta > 1.0] = 1.0
-	beta[beta < 0.0] = 0.0	
+	den = L_RAW - L_TAW	
+	beta = (L0 - L_TAW) / den
+	#beta = (beta/den)
+	# Clip beta to the [0, 1] range
+	beta = np.clip(beta, 0.0, 1.0)
 	
 	# calcualte direct evaporation from infiltration
 	I_AET = np.where(I > PET, PET, I)
 
 	# caculate evaporation from water stored in the soil
 	AET = I_AET*(1.0-beta) + beta*PET
-	AET[AET < 0.0] = 0.0
+	#AET[AET < 0.0] = 0.0
 	
 	# water balance
 	L = L0 + I - AET
