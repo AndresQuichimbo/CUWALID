@@ -2,8 +2,18 @@ import numpy as np
 
 class interception(object):
 
-	def __init__(self,):
-		
+	def __init__(self, LAI_model='SAVI', LAI_function=None):
+
+		""" Interception component
+		Parameters
+		-----------
+		LAI_model:		model to estimate Leaf Area Index (LAI)
+						Options: 'SAVI' (default), 'fixed', None
+		LAI_function:	function to estimate LAI if LAI_model is 'fixed'
+						Options: None (default)
+		"""
+		self.LAI_model = LAI_model
+		self.LAI_function = LAI_function
 		print("Run Interception component")
 		pass
 		
@@ -22,12 +32,16 @@ class interception(object):
 							h:		water table
 		
 		fcw:		biome-dependent coeficient		
-		Sc0:		initial water content canopy
+		Scz0:		initial water content canopy
 		
 		Returns
 		-------
 		Pth:	Throughfall, precipitation minus interceptionn
-		Eca:	Canopy evaporation
+		Ecw:	Canopy evaporation
+		Scz:	Canopy water storage
+		PET:	Potential evapotranspiration after canopy evaporation
+		LAI:	Leaf Area Index
+		Kc:		Crop factor
 		"""
 				
 		#if Kc is not available:
@@ -48,74 +62,43 @@ class interception(object):
 			
 			# Maximum amount of water store by canopy
 			#Sca_max = get_Scmax_from_LAI_and_fcw(fcw, LAI)
-			Sca_max = get_Scmax_from_LAI(LAI)
+			Sca_max = av*get_Scmax_from_LAI(LAI)
 			
 			# maximum canopy saturation
-			Sca = Sca_max*(1-np.exp(-rain/Sca_max))
+			#Sca = Sca_max*(1-np.exp(-rain/Sca_max))
+			Ecw = Sc0 + rain
 			
-			#Sca_aux = Sca - Sc0
-			
-			#Sca[Sca_aux < 0] = Sc0[Sca_aux < 0]
-			# add precipitation duration
-			#aux_rain = np.array(rain)
-			#aux_rain[aux_rain > 0] = 1
-						
-			# Available storage
-			#Sca_aux[Sca_aux < 0] = 0.0
-			#Sct = (Sca_max - Sc0)
-			
+			Ecw = np.where(Ecw > ETo, ETo, Ecw)
+
 			# Potential canopy evaporation
-			Eca = av*ETo*Sca/Sca_max
+			#Eca = av*ETo*Sc0/Sca_max
 			
-			# canopy evaporation
-			#Eca = Sc0 - Ecap
+			Sca = Sc0 - Ecw + rain
 			
-			# throughfall
-			Pth = rain - Eca + Sc0
-			#print(rain[50], Eca[50], Sca_max[50], Sc0[50], Pth[50], av[50])
+			# Interception
+			Pth = Sca - Sca_max
+
+			Scz = np.where(Pth > 0, Sca_max, Sca)
+
+			Pth = np.where(Pth > 0, Pth, 0.0)
+
 			# limit evaporation to the amount of water available
 			Pth[Pth < 0] = 0
 			
-			# Update canopy evaporation
-			Eca = rain - Pth + Sc0
-			
-			# Update throufall to allow canopy storage
-			Pth = Pth - av*(Sca_max) + Sc0
-			
-			# reduce throughfall by the canopy storage
-			Pth[Pth < 0] = 0
-			
-			#print(rain[50], Eca[50], Sca_max[50], Sc0[50], Pth[50], av[50])
-			#Eca[Eca > Sca_max] = Sca_max[Eca > Sca_max]
-			
-			# Mass balance			
-			Sc = rain - Pth - Eca + Sc0
-			#Eca = av*Eca
-			
 			# Potential evapotranspiration after canopy evaporation
-			PET = (ETo - Eca)
-						
-			# Interception
-			#I = av*Sca + Eca
-			
-			# Throughfall
-			#Pth = rain - I
-			
-			# make throufall do not exced the precipitaiton
-			#Pth[Pth<0] = 0.0
+			PET = (ETo - Ecw)
 
-			# MASS BALANCE
-			#MB = rain - Eca - Pth + Sc
+			PET[PET < 0] = 0.0			
 					
 		else:
-			Eca = None
+			Ecw = None
 			LAI = None
 			Kc = None
 			Pth = rain
 			PET = ETo
 			Sc = None
 			
-		return Pth, Eca, PET, LAI, Kc, Sc
+		return Pth, Ecw, PET, LAI, Kc, Scz
 		
 	
 def get_vegetation_factor(savi, savi_min, savi_max):
