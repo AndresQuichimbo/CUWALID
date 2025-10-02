@@ -357,22 +357,21 @@ def SWBMh(I, PET, Kc, L0, Droot, fs, fc, wp, c, Ksat):
 	
 	# Calculate stress coeficient
 	den = L_RAW - L_TAW	
-	beta = (L0 - L_TAW)
-	beta = beta/den
-	
-	beta[beta > 1.0] = 1.0
-	beta[beta < 0.0] = 0.0
+	beta = (L0 - L_TAW) / den
+
+	# Clip beta to the [0, 1] range
+	beta = np.clip(beta, 0.0, 1.0)
 	
 	# Calculate direct evaporation from precipitation/infiltration
 	I_AET = np.where(I > PET, PET, I)
 	
 	# Calculate evaporation under stress conditions
 	AET = I_AET*(1.0-beta) + beta*PET
-	AET[AET < 0.0] = 0.0
+	#AET[AET < 0.0] = 0.0
 	
 	# Update water content
 	L_aux = L0 + I - AET - Lwp
-	#print(L_aux)
+
 	# Update evaporation under limited water content, this will
 	# not allow the water content to be less than wilting_point
 	AET[L_aux < 0.0] = (L0+I-Lwp)[L_aux < 0.0]
@@ -386,10 +385,12 @@ def SWBMh(I, PET, Kc, L0, Droot, fs, fc, wp, c, Ksat):
 	L_aux -= RO
 	
 	# calculate second term of drainage equation
-	kd = (1-c)*Ksat/(Droot*np.power(Lsat/Droot, c))
+	kd = (1.0 - c) * Ksat / (Droot*np.power(fs, c))
 	
 	# calculate the water content after drainage
-	Lt = Droot*np.exp(1.0/(1.0-c)*np.log(np.power(L_aux/Droot, 1.0-c) - kd))
+	Lt_term = np.power(L_aux / Droot, 1.0 - c) - kd
+	Lt_term = np.clip(Lt_term, 1e-9, None) # Clip to avoid log(negative)
+	Lt = Droot * np.power(Lt_term, 1.0 / (1.0 - c))
 	
 	# calculate the variation of water content due to drainage
 	# check if the change in water content do not fall below field
@@ -404,20 +405,10 @@ def SWBMh(I, PET, Kc, L0, Droot, fs, fc, wp, c, Ksat):
 	# drainage rate is Ksat, therefore, drainge can not be
 	# greater than Ksat. The potential drainage rate is 
 	# (assumin that water flows continuously into the soil):
-	#Ks1 = Ksat - D
-	
-	# Update Ks1 in case of infiltration greater that drainage
-	#Ks1[RO < Ks1] = RO[RO < Ks1]
-	#print(Ks1, D)
-	# Update runoff to allow drainage
-	#RO += -Ks1
 	
 	# Calculate water content
 	L = L_aux - D
 	
-	# update drainage
-	#D += Ks1
-	#print(AET,D,L,RO,L0,I,)
 	return AET, D, L, RO
 
 # Variable soil depth
