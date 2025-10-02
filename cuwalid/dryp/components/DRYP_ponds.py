@@ -2,7 +2,7 @@
 import numpy as np
 
 class ponds():
-	def __init__(self, Amax, hmax):
+	def __init__(self, Amax, hmax, a=2.0):
 		"""This component calulate the water balance at ponds. Ponds
 		are water bodies that store water from precipitation and loss
 		water as potential evapotranspiration and human abstractions
@@ -18,9 +18,9 @@ class ponds():
 		# specify max colume
 		# calculate pond parameters: shape factor and Vmax
 		#self.a = (1/2)*np.log(Amax)/np.log(hmax)
-		self.a = 2.0
+		self.a = a
 		self.b = (Amax/np.pi)*np.power(hmax, -2.*self.a)
-		self.Vmax = (np.pi*self.b/(2*self.a+1))*hmax**(2*self.a+1)
+		self.Vmax = get_Vmax(hmax, self.b, a)#(np.pi*self.b/(2*self.a+1))*hmax**(2*self.a+1)
 		#print(Amax,hmax)
 		# calculate denominator for reduce calculations
 		self.denominator = 2.0*self.a+1 # this could be moved to only perform once		
@@ -108,4 +108,139 @@ class ponds():
 	
 		return V, et, Aoz, P
 		
+def volume_to_depth(V, b, a):
+	"""Convert volume of water to depth of water in ponds
+	
+	Parameters
+	----------
+	V: numpy array
+		volume of water [m3]
+	b : numpy array
+		shape factor
+	a : numpy array
+		shape factor
 		
+	Returns
+	-------
+	h :	numpy array
+		depth of water [m]
+	"""
+	h = np.power(V*(2*a+1)/(np.pi*b), 1/(2*a+1))
+	return h
+
+def depth_to_volume(h, b, a):
+	"""Convert depth of water to volume of water in ponds
+	
+	Parameters
+	----------
+	h: numpy array
+		depth of water [m]
+	b : numpy array
+		shape factor
+	a : numpy array
+		shape factor
+		
+	Returns
+	-------
+	V :	numpy array
+		volume of water [m3]
+	"""
+	V = (np.pi*b/(2*a+1))*h**(2*a+1)
+	return V
+
+def depth_to_area(h, b, a):
+	"""Convert depth of water to surface area of water in ponds
+	
+	Parameters
+	----------
+	h: numpy array
+		depth of water [m]
+	b : numpy array
+		shape factor
+	a : numpy array
+		shape factor
+		
+	Returns
+	-------
+	A :	numpy array
+		surface area of water [m2]
+	"""
+	A = np.pi*b*h**(2*a)
+	return A
+
+def volume_to_area(V, b, a):
+	"""Convert volume of water to surface area of water in ponds
+	
+	Parameters
+	----------
+	V: numpy array
+		volume of water [m3]
+	b : numpy array
+		shape factor
+	a : numpy array
+		shape factor
+		
+	Returns
+	-------
+	A :	numpy array
+		surface area of water [m2]
+	"""
+	h = volume_to_depth(V, b, a)
+	A = depth_to_area(h, b, a)
+	return A
+
+def get_Vmax(hmax, b, a):
+	"""Get maximum volume of water in ponds
+	
+	Parameters
+	----------
+	hmax: numpy array
+		maximum depth of water [m]
+	b : numpy array
+		shape factor
+	a : numpy array
+		shape factor
+		
+	Returns
+	-------
+	Vmax :	numpy array
+		maximum volume of water [m3]
+	"""
+	Vmax = (np.pi*b/(2*a+1))*hmax**(2*a+1)
+	return Vmax
+
+def get_b(Amax, hmax, a=2.0):
+	"""Get shape factor b of ponds
+	
+	Parameters
+	----------
+	Amax: numpy array
+		maximum surface area [m2]
+	hmax : numpy array
+		maximum pond depth [m]
+		
+	Returns
+	-------
+	b :	numpy array
+		shape factor
+	"""
+	b = Amax/(np.pi*np.power(hmax, 2.*a))
+	return b
+
+def depth_to_radius(h, b, a=2.0):
+	"""Convert depth of water to radius of water in ponds
+	
+	Parameters
+	----------
+	h: numpy array
+		depth of water [m]
+	a : numpy array
+		shape factor
+		
+	Returns
+	-------
+	r :	numpy array
+		radius of water [m]
+	"""
+	r = np.sqrt(b)*np.power(h, a)
+	return r
