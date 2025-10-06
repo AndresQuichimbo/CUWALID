@@ -272,7 +272,7 @@ def SWBM(I, PET, Kc, L0, z_soil, fs, fc, wp):
 	# calculate stress coeficient
 	den = L_RAW - L_TAW	
 	beta = (L0 - L_TAW) / den
-	#beta = (beta/den)
+
 	# Clip beta to the [0, 1] range
 	beta = np.clip(beta, 0.0, 1.0)
 	
@@ -281,7 +281,6 @@ def SWBM(I, PET, Kc, L0, z_soil, fs, fc, wp):
 
 	# caculate evaporation from water stored in the soil
 	AET = I_AET*(1.0-beta) + beta*PET
-	#AET[AET < 0.0] = 0.0
 	
 	# water balance
 	L = L0 + I - AET
@@ -292,14 +291,6 @@ def SWBM(I, PET, Kc, L0, z_soil, fs, fc, wp):
 	# calculate water balance
 	L = L0 + I - AET
 	
-	# calculate drainage
-	D = L - Lfc
-	D[D < 0.0] = 0.0
-	#D = np.where(L-Lfc > 0.0, L-Lfc, 0.0)
-	
-	# calculate water content after drainage
-	L = L-D
-	
 	# calculate runoff excess
 	RO = L-Lsat
 	RO[RO < 0.0] = 0.0
@@ -307,6 +298,13 @@ def SWBM(I, PET, Kc, L0, z_soil, fs, fc, wp):
 	# calculate soil after infiltration excess
 	L = L-RO
 	
+	# calculate drainage
+	D = L - Lfc
+	D[D < 0.0] = 0.0
+	
+	# calculate water content after drainage
+	L = L-D
+		
 	return AET, D, L, RO
 
 # Soil moisture water balance model for subhourly time steps - Variable Kc
