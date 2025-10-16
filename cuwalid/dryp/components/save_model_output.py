@@ -3,8 +3,8 @@ from cuwalid.dryp.components.DRYP_store_functions import save_map_to_rastergrid
 
 def save_model_outputs(data_in, total_var, point_var, grid_var, grid_rmax,
                        grid_vmax, grid_rpvar, total_rpvar, grid_pndvar, total_pndvar,
-                       water_bodies, grid, head, theta, ro, rtheta, topo, grid_veg,
-                       act_nodes, riv_nodes, projection=None):
+                       water_bodies, grid, head, theta, ro, rtheta, topo, grid_veg, grid_lks,
+                       act_nodes, riv_nodes, lks_nodes, projection=None):
     """Saves model outputs to files (netCDF, CSV, raster)"""
     
     # SAVE AVERAGE VALUES OF VARIABLES: CSV-FILES
@@ -37,6 +37,14 @@ def save_model_outputs(data_in, total_var, point_var, grid_var, grid_rmax,
         if riv_nodes.size > 0:
             grid_rmax.save_netCDF_var(data_in.fnameTS_grid + 'rmax.nc',
                                       topo.lat, topo.lon, riv_nodes,
+                                      projection=projection
+                                      )  # , var_name
+
+    # save grided model maximum values at streams - result datasets
+    print("<==== saving model temporal lake outputs")
+    if water_bodies.ids_slks.size > 0:
+        grid_lks.save_netCDF_var(data_in.fnameTS_grid + 'lks.nc',
+                                      topo.lat, topo.lon, lks_nodes,
                                       projection=projection
                                       )  # , var_name
 
