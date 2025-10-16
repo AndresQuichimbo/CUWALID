@@ -9,13 +9,22 @@ from cuwalid.dryp.components.DRYP_io import extract_id_from_coords, set_initial_
 from cuwalid.dryp.components.DRYP_ponds import ponds
 from cuwalid.dryp.components.DRYP_soil_layer import swbm
 from cuwalid.dryp.components.DRYP_store_functions import GlobalGridVar
+from cuwalid.dryp.components.DRYP_water_bodies import MultiLakeModel
 
-def initialize_core_hydrology_components(data_in, grid, topo, aquifer):
+def initialize_core_hydrology_components(data_in, grid, topo, aquifer, water_bodies):
     abc = ABMconnector()
     inf = infiltration(data_in.inf_method)
     cnp = interception()
     swb = swbm(data_in.dt) # soil layer
     swb_rip = swbm(data_in.dt) # riparian layer
+
+    lks = MultiLakeModel(
+        topo.surface[water_bodies.ids_lks] - water_bodies.depth_slks,
+        water_bodies.depth_slks,
+        water_bodies.area_slks,
+        water_bodies.name_lks
+        )
+
     ro = runoff_routing(grid,
                         topo.grid_size,
                         topo.surface[:],
@@ -23,13 +32,17 @@ def initialize_core_hydrology_components(data_in, grid, topo, aquifer):
                         topo.Ksat,
                         topo.decay,
                         topo.riv_width,
-                        topo.riv_length)
+                        topo.riv_length
+                        )
+    
     gw = gwflow_EFD(grid,
                     aquifer.Ksat,
                     topo.area_river,
                     aquifer.CHB,
-                    data_in.gw_func)
-    return abc, inf, cnp, swb, swb_rip, ro, gw
+                    data_in.gw_func
+                    )
+    
+    return abc, inf, cnp, swb, swb_rip, ro, gw, lks
 
 def initialize_optional_components_and_flux_ids(data_in, grid, water_bodies,
                                                 fluxOF, fluxUZ, fluxSZ, fluxWB):
@@ -203,7 +216,13 @@ def setup_output_and_monitoring(data_in, grid, riv_nodes, water_bodies):
         total_pndvar = GlobalGridVar(data_in.ini_date,
                                      data_in.dt_results, data_in.save_results,
                                      data_in.store.var_grid_pnd)
+        
+    if water_bodies.ids_slks is not None:
+        grid_lks = GlobalGridVar(data_in.ini_date,
+                                 data_in.dt_results, data_in.save_netcdf,
+                                 data_in.store.var_grid_lks) # lakes
                                      
     return (idOF, idOF_act, idUZ, idUZ_act, idGW, idGW_act,
             point_var, grid_var, grid_rmax, grid_vmax, total_var,
-            grid_rpvar, total_rpvar, grid_pndvar, total_pndvar, grid_veg)
+            grid_rpvar, total_rpvar, grid_pndvar, total_pndvar,
+            grid_veg, grid_lks)
