@@ -192,3 +192,86 @@ class MultiLakeModel:
     def get_lake_state(self, lake_id: int) -> Dict:
         b = self.lakes[lake_id]
         return {"H": float(b.H), "volume": float(b.volume), "total_area": float(b.total_area)}
+    
+    def get_lake_wet_area(self, lake_id: int) -> float:
+        b = self.lakes[lake_id]
+        H = b.H
+        depths = np.clip(H - b.bottoms, 0.0, b.tops - b.bottoms)
+        wet_area = float(np.sum((depths > 0.0) * b.areas))
+        return wet_area
+    
+    def get_lakes_wet_areas(self) -> Dict[int, float]:
+        """Return dict of lake_id -> wet area (m2)"""
+        result = {}
+        for lid in self.lake_ids_list:
+            result[int(lid)] = self.get_lake_wet_area(int(lid))
+        return result
+    
+    def get_lake_wet_cells(self) -> Dict[int, np.ndarray]:
+        """Return dict of lake_id -> array of cell indices that are wet (depth > 0)"""
+        result = {}
+        for lid, bucket in self.lakes.items():
+            H = bucket.H
+            depths = np.clip(H - bucket.bottoms, 0.0, bucket.tops - bucket.bottoms)
+            wet_mask = (depths > 0.0)
+            wet_indices = bucket.indices[wet_mask]
+            result[int(lid)] = wet_indices
+        return result
+
+    #def get_lakes_evaporation_volume(self, PET: np.ndarray, Kc: np.ndarray) -> Dict[int, float]:
+    def get_lakes_evaporation_volume(self, PET: np.ndarray) -> Dict[int, float]:
+        """Compute evaporation volume (m3) per lake given arrays of PET (mm/h) and Kc (unitless).
+        Returns dict of lake_id -> evaporation volume (m3).
+        """
+        PET = np.asarray(PET, dtype=float)
+        #Kc = np.asarray(Kc, dtype=float)
+        #if not (PET.shape == Kc.shape == (self.N,)):
+        if not (PET.shape == (self.N,)):
+            raise ValueError("PET must have shape (Ncells,) matching model domain")
+        result = {}
+        for lid, bucket in self.lakes.items():
+            H = bucket.H
+            depths = np.clip(H - bucket.bottoms, 0.0, bucket.tops - bucket.bottoms)
+            wet_mask = (depths > 0.0)
+            if not np.any(wet_mask):
+                result[int(lid)] = 0.0
+                continue
+            # Evaporation depth in m
+            #evap_depth_m = 0.001 * PET[bucket.indices[wet_mask]] * Kc[bucket.indices[wet_mask]]
+            evap_depth_m = 0.001 * PET[bucket.indices[wet_mask]]
+            evap_volume = float(np.sum(evap_depth_m * bucket.areas[wet_mask]))
+            result[int(lid)] = evap_volume
+        return result
+    
+    def get_lakes_id_cells(self) -> Dict[int, np.ndarray]:
+        """Return dict of lake_id -> array of cell indices belonging to that lake."""
+        result = {}
+        for lid, bucket in self.lakes.items():
+            result[int(lid)] = bucket.indices
+        return result
+    
+    def compute_lakes_tributary_volume(self, dV: np.ndarray, rate=False) -> Dict[int, float]:
+        """Compute total tributary volume (m3) per lake (sum of cell dV*areas).
+        Returns dict of lake_id -> tributary volume (m3).
+        """
+        result = {}
+        for lid, bucket in self.lakes.items():
+            if rate:
+                result[int(lid)] = dV[bucket.indices].sum()/3600.0  # convert from m3/h to m3/s
+            else:
+                result[int(lid)] = (dV[bucket.indices]*bucket.areas).sum()
+        return result
+
+    def get_lakes_id_indices_list(self) -> List[Tuple[int, np.ndarray]]:
+        """Return list of (lake_id, indices) tuples for all lakes."""
+        result = []
+        for lid, bucket in self.lakes.items():
+            result.append((int(lid), bucket.indices))
+        return result
+
+    def get_lakes_volumetric_states_list(self) -> List[Tuple[int, float, float]]:
+        """Return list of (lake_id, volume (m3), H (m)) tuples for all lakes."""
+        result = []
+        for lid, bucket in self.lakes.items():
+            result.append((int(lid), float(bucket.volume), float(bucket.H)))
+        return result 
