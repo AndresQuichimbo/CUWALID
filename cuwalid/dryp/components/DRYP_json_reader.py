@@ -468,6 +468,9 @@ class get_list_of_water_bodies_files(object):
         self.fname_pnd_Amax = dryp_config["WATER_BODIES"]["path_pnd_Amax"]
         self.fname_pnd_Vo = dryp_config["WATER_BODIES"]["path_pnd_Vo"]
         self.fname_wb_bc_flux = dryp_config["WATER_BODIES"]["path_wb_bc_flux"]
+        self.fname_slks_depth = dryp_config["WATER_BODIES"]["path_slks_depth"] # check if shallow lake depth is provided
+        self.fname_slks_area = dryp_config["WATER_BODIES"]["path_slks_area"] # check if shallow lake area is provided
+
 		
 
 
