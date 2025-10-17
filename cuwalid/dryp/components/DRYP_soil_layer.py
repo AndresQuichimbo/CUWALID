@@ -245,6 +245,7 @@ def SWBM(I, PET, Kc, L0, z_soil, fs, fc, wp):
 		AET:	Actual evpotranspiration
 		D:		Drainage
 		L:		Water content
+		RO:		Runoff excess
 	"""
 	# calculate reference evapotranspiration
 	PET = Kc*PET
