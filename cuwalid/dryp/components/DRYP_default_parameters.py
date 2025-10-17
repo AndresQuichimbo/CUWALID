@@ -72,6 +72,7 @@ default_input = {
       "path_out_sz": None,
       "path_out_uz": None,
       "path_out_oz": None,
+      "path_out_mask": None,
       "path_output": None,
       "path_setting": None,
       "path_store_settings": None
@@ -135,6 +136,22 @@ default_input = {
       "path_pnd_Amax": None, # ponds maximum extend
       "path_pnd_Vo": None, # ponds volume of water
       "path_wb_bc_flux": None, # water bodies boundary conditions
-   }
+      "path_slks_depth": None, # shallow lakes depth
+      "path_slks_area": None, # shallow lakes area
+   },
+
+   "CALIBRATION": {
+      "path_cal_mask": None,
+   #   "path_cal_obs": None,
+   #   "path_cal_sz": None,
+   #   "path_cal_uz": None,
+   #   "path_cal_oz": None,
+   #   "path_cal_gw": None,
+   #   "path_cal_riv": None,
+   #   "path_cal_wb": None,
+   #   "path_cal_method": "Nash-Sutcliffe",
+   #   "path_cal_start": None,
+   #   "path_cal_end": None
+   },
 
 }
