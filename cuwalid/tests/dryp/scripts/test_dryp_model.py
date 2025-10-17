@@ -4,7 +4,7 @@ DRYP: Dryland WAter Partitioning Model
 """
 import numpy as np
 import pandas as pd
-from cuwalid.dryp.components.DRYP_io import (grid_environment)
+from cuwalid.dryp.components.DRYP_io import (create_landlab_grid)
 from cuwalid.dryp.components.DRYP_infiltration import infiltration
 from cuwalid.dryp.components.DRYP_interception import interception
 from cuwalid.dryp.components.DRYP_soil_layer import swbm
@@ -31,8 +31,8 @@ def test_dryp():
 	domain = None
 	
 	# create a raster grid environment, landlab grid
-	grid_env = grid_environment()
-	grid =	grid_env.create_grid(
+	
+	grid =	create_landlab_grid(
 		grid_ncols,
 		grid_nrows,
 		grid_xllcorner,

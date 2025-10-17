@@ -5,7 +5,7 @@ Funtion to test steady-state conditions for the groundwater component
 @author: Edisson Quichimbo
 """
 import numpy as np
-from cuwalid.dryp.components.DRYP_io import (grid_environment)
+from cuwalid.dryp.components.DRYP_io import (create_landlab_grid)
 from cuwalid.dryp.components.DRYP_groundwater_EFD_SS import (gwflow_EFD)
 
 run_fortran = False
@@ -27,8 +27,8 @@ def run_DRYP_SS():
 	domain = None
 	
 	# create a raster grid environment, landlab grid
-	grid_env = grid_environment()
-	grid = grid_env.create_grid(
+	
+	grid = create_landlab_grid(
 		grid_ncols,
 		grid_nrows,
 		grid_xllcorner,
