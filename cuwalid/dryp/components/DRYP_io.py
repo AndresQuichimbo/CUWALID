@@ -490,13 +490,9 @@ class groundwater_parameters(object):
 		# Reading specific yield
 		if inputfile.fname_SZ_Sy == None or not os.path.exists(inputfile.fname_SZ_Sy):				
 			self.Sy = np.full(grid_size, 0.01, dtype=float)
-			#gw.add_zeros('node', 'SZ_Sy', dtype=float) # Water table elevation
-			#gw.at_node['SZ_Sy'] += 0.01
 			print('Specific yield...................not provided. Global default applied of 0.01')
 		else:
 			self.Sy = np.flip(rasterio.open(inputfile.fname_SZ_Sy).read(1), 0).flatten()
-			#read_esri_ascii(inputfile.fname_SZ_Sy,
-			#	name='SZ_Sy', grid=gw)[1]
 		
 		# Applying scale factor kSy
 		self.Sy = self.Sy*inputfile.kSy
@@ -730,7 +726,12 @@ class water_body_parameters(object):
 		Returns
 		-------
 		"""
-		#print("Reading water body parameters")
+		# ----------------------------------------------------------------------------------
+		# ponds
+		# ----------------------------------------------------------------------------------
+		self.pnds_Amax = None
+		self.pnds_hmax = None
+		self.pnds_Vo = None
 
 		if inputfile.fname_pnd_Amax != None and os.path.exists(inputfile.fname_pnd_hmax):
 			self.pnds_Amax = np.flip(rasterio.open(inputfile.fname_pnd_Amax).read(1), 0).flatten()
@@ -761,10 +762,7 @@ class water_body_parameters(object):
 					self.pnds_Vo = None
 
 		else:
-			print('Pond water body parameters are not available')
-			self.pnds_Amax = None
-			self.pnds_hmax = None
-			self.pnds_Vo = None
+			print('Ponds are not active')
 
 		self.id_nodes = id_nodes
 
@@ -776,6 +774,13 @@ class water_body_parameters(object):
 		#	print('Lake names.......................................... not provided')
 		#	name_lks = None
 
+		# ----------------------------------------------------------------------------------
+		# deep lakes
+		# ----------------------------------------------------------------------------------
+		self.ids_lks = None
+		self.size_lks = None
+		self.ids_max_depth_lks = None
+
 		# read water bodies ids and postptocess all required variables
 		if inputfile.fname_bathymetry != None and os.path.exists(inputfile.fname_bathymetry):
 			#print('Processing lakes parameters')
@@ -783,36 +788,8 @@ class water_body_parameters(object):
 			# read lake names, preserve the order, do not flatten
 			depth_lks = np.flip(rasterio.open(inputfile.fname_bathymetry).read(1), 0)#.flatten()
 
-			# mask lakes from depth
-			name_lks = depth_lks > 0
-			name_lks = name_lks.astype(int)
-
-			# label lakes
-			name_lks, num_features = label(name_lks)
-			
-			# flatten the name array to match the grid
-			name_lks = name_lks.flatten()
-			#print('name_lks', name_lks.shape, 'num_features', num_features)
-			# POST-PROCESSING LAKES VARIABLES		
-			# Step 2: For each label, collect flat indices (len=number of lakes)
-			ids_group_by_label = []
-			for label_num in range(1, num_features + 1):
-				flat_indices = list(np.where(name_lks == label_num)[0])
-				ids_group_by_label.append(flat_indices)
-			
-			# Step 3: Get length of each lake (number of cells)
-			size_lks = list(map(len, ids_group_by_label))
-			
-			# Step 4: Get index of all lakes
-			ids_lks = list(np.where(name_lks > 0)[0])
-
-			# Step 5: Get index of the maximum depth for each lake
-			ids_max_depth_lks = numpy_argmin_reduceat(-depth_lks.flatten()[ids_lks],
-									np.append([0], np.cumsum(size_lks)[:-1])
-									)
-			# map the indices to the original ids_lks
-			ids_max_depth_lks = [ids_lks[i] for i in ids_max_depth_lks]
-
+			# get lakes parameters
+			_, ids_lks, size_lks, ids_max_depth_lks, _ = get_water_body_parameters(depth_lks)
 			# transfer variables to the class
 			#self.name_lks = name_lks
 			self.ids_lks = ids_lks
@@ -822,16 +799,207 @@ class water_body_parameters(object):
 			#print('Lakes ids', self.ids_lks)
 			#print('Lakes size', self.size_lks)
 			#print('Lakes max depth ids', self.ids_max_depth_lks)
-			# 			
-			
+
 		else:
-			print('Lakes parameters is not active')
+			print('Deep lakes are not active')
 			#print('Initial water body volume........not provided. Global value 0 [m3]')
-			#self.name_lks = None
-			self.ids_lks = None
-			self.size_lks = None
-			self.ids_max_depth_lks = None
+
+		# ----------------------------------------------------------------------------------
+		# shallow lakes
+		# ----------------------------------------------------------------------------------
+		# read water bodies ids and postptocess all required variables
+		self.ids_slks = None
+		self.name_slks = None
+		self.depth_slks = None
+		self.area_slks = None
+
+		# read water bodies ids and postptocess all required variables
+		if inputfile.fname_slks_depth != None and os.path.exists(inputfile.fname_slks_depth):
+
+			if inputfile.fname_slks_area != None and os.path.exists(inputfile.fname_slks_area):
+				area_slks = np.flip(rasterio.open(inputfile.fname_slks_area).read(1), 0).flatten()
+				self.area_slks = area_slks[self.ids_slks]
+			else:
+				print('Shallow lake area................not provided. Global value 0 [m2]')
+				pass
+				#self.area_slks = np.ones(len(self.ids_slks), dtype=float)
+
+
+			#print('Processing lakes parameters')
+			# STEP 1: Read and identify lake
+			# read lake names, preserve the order, do not flatten
+			depth_slks = np.flip(rasterio.open(inputfile.fname_slks_depth).read(1), 0)#.flatten()
+
+			# get lakes parameters
+			name_slks, ids_slks, depth_slks = get_water_body_parameters(depth_slks)
+
+			# transfer variables to the class
+			self.ids_slks = ids_slks
+			self.name_slks = name_slks
+			self.depth_slks = depth_slks
+
+		else:
+			print('Shallow lakes are not active')
+			#print('Initial water body volume........not provided. Global value 0 [m3]')
+
+class zone_parameters(object):
+	"""reading calibration parameters
+	"""
+	def __init__(self, path_mask):
+		"""Read soil layer parameters
 		
+		Parameters
+		----------
+		path_mask:	string
+					path to the raster file with zones/mask for calibration
+					
+		"""		
+		# Reading Soil saturated hydraulic conductivity
+		if path_mask == None or not os.path.exists(path_mask):
+			self.zone_mask = None
+			print('Submask/zones....................not provided')
+		else:
+			self.zone_mask = np.flip(rasterio.open(path_mask).read(1), 0).astype(int).flatten()
+
+	def get_scale_factor_zones(self, factor):
+		"""get scale factor for all zones
+		Parameters
+		------
+		factor:	numpy array
+			scale factor for each zone, it should be the same size as the number of zones
+		
+		Returns
+		-------
+		parameter:	numpy array
+			calibrated model parameter
+		"""
+		# initial parameter
+		parameter = np.ones_like(self.zone_mask, dtype=float)
+		if self.zone_mask is not None:
+			num_zones = int(self.zone_mask.max())
+			for izone in range(1, num_zones + 1):
+				id_zone = np.where(self.zone_mask == izone)[0]
+				parameter[id_zone] = parameter[id_zone]*factor[izone - 1]
+		return parameter
+	
+	def extract_zone_info(self):
+		"""get ids for all zones
+		Parameters
+		----------
+
+		Returns
+		-------
+		ids_zones:	list
+			list of numpy arrays with the ids of each zone
+		size_zones:	list
+			list with the size of each zone
+		"""
+		if self.zone_mask is None:
+			return None, None
+
+		# get ids and size of zones
+		ids_zone, size_zone = get_zone_indices_and_sizes(self.zone_mask)
+		return ids_zone, size_zone
+
+def get_water_body_parameters(depth, area=None):
+	"""This function calculates all water body parameters required to run the water body component
+	Parameters
+	----------
+	depth :	numpy array
+		bathymetry of the water body [m]
+	area :	numpy array
+		surface area of the water body [m2]
+	
+	Returns
+	-------
+	tuple of three lists
+		ids_lks : list
+			flat indices of all lake cells
+		size_lks : list
+			number of cells in each lake
+		ids_max_depth_lks : list
+			flat indices of the cell with maximum depth in each lake
+	"""
+	# mask lakes from depth
+	name_lks = depth > 0
+	name_lks = name_lks.astype(int)
+
+	# label lakes
+	name_lks, num_features = label(name_lks)
+
+	# get lakes parameters
+	ids_lks, size_lks = get_zone_indices_and_sizes(name_lks)
+
+#	# flatten the name array to match the grid
+#	name_lks = name_lks.flatten()
+#	#print('name_lks', name_lks.shape, 'num_features', num_features)
+#	# POST-PROCESSING LAKES VARIABLES		
+#	# Step 2: For each label, collect flat indices (len=number of lakes)
+#	ids_group_by_label = []
+#	for label_num in range(1, num_features + 1):
+#		flat_indices = list(np.where(name_lks == label_num)[0])
+#		ids_group_by_label.append(flat_indices)
+#
+#	# Step 3: Get length of each lake (number of cells)
+#	size_lks = list(map(len, ids_group_by_label))
+#
+#	# Step 4: Get index of all lakes
+#	ids_lks = list(np.where(name_lks > 0)[0])
+
+	# Step 5: Get index of the maximum depth for each lake
+	ids_max_depth_lks = numpy_argmin_reduceat(-depth.flatten()[ids_lks],
+							np.append([0], np.cumsum(size_lks)[:-1])
+							)
+	# map the indices to the original ids_lks
+	ids_max_depth_lks = [ids_lks[i] for i in ids_max_depth_lks]
+
+	# reduce size of lakes names array
+	name_lks = name_lks[ids_lks]
+
+	# reduce depth array
+	depth = depth.flatten()[ids_lks]
+	 	
+	return name_lks, ids_lks, size_lks, ids_max_depth_lks, depth
+
+def get_zone_indices_and_sizes(mask):
+	"""This function get ids and length zones from a mask
+	Parameters
+	----------
+	mask :	numpy array
+		bathymetry of the water body [m]
+	
+	Returns
+	-------
+	tuple of three lists
+		ids_lks : list
+			flat indices of all lake cells
+		size_lks : list
+			number of cells in each lake
+		ids_max_depth_lks : list
+			flat indices of the cell with maximum depth in each lake
+	"""
+	# get masks
+	name_zones = mask.astype(int)
+
+	# flatten the name array to match the grid
+	name_zones = name_zones.flatten()
+
+	# number of features
+	num_features = name_zones.max()
+
+	# Step 2: For each label, collect flat indices (len=number of lakes)
+	ids_group_by_label = []
+	for label_num in range(1, num_features + 1):
+		flat_indices = list(np.where(name_zones == label_num)[0])
+		ids_group_by_label.append(flat_indices)
+
+	# Step 3: Get length of each lake (number of cells)
+	size_zones = list(map(len, ids_group_by_label))
+
+	# Step 4: Get index of all lakes
+	ids_zones = list(np.where(name_zones > 0)[0])
+	 	
+	return ids_zones, size_zones
 
 def extract_id_from_coords(grid, filename, xlabel="East", ylabel="North"):
 	""" extract nodes from a csv file
