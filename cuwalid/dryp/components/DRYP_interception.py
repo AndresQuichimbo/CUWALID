@@ -96,7 +96,7 @@ class interception(object):
 			Kc = None
 			Pth = rain
 			PET = ETo
-			Sc = None
+			Scz = None
 			
 		return Pth, Ecw, PET, LAI, Kc, Scz
 		
