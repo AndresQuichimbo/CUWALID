@@ -10,7 +10,7 @@ import xarray as xr
 #from landlab import RasterModelGrid
 #from cuwalid.dryp.components.DRYP_io_files import get_model_settings
 from cuwalid.dryp.components.DRYP_io import (
-	grid_environment,
+	create_landlab_grid,
 	extract_id_from_coords)
 from cuwalid.dryp.components.DRYP_flow_accum import runoff_routing
 from cuwalid.dryp.components.DRYP_store_functions import (
@@ -83,7 +83,7 @@ def get_flow_path(fname_surface, fname_outlet, fname_out=None,
 		mask = read_raster(fname_mask)
 
 	# create a raster grid environment, landlab grid
-	grid = grid_environment().create_grid(
+	grid = create_landlab_grid(
 		domain.width,
 		domain.height,
 		domain.bounds[1],
@@ -210,7 +210,7 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 		mask = read_raster(fname_mask)
 
 	# create a raster grid environment, landlab grid
-	grid = grid_environment().create_grid(
+	grid = create_landlab_grid(
 		domain.width,
 		domain.height,
 		domain.bounds[1],
@@ -337,7 +337,7 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 		mask = read_raster(fname_mask)
 
 	# create a raster grid environment, landlab grid
-	grid = grid_environment().create_grid(
+	grid = create_landlab_grid(
 		domain.width,
 		domain.height,
 		domain.bounds[1],
@@ -444,7 +444,7 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 	#area_cell = np.power(domain.transform[0], 2)
 
 	# create a raster grid environment, landlab grid
-	grid = grid_environment().create_grid(
+	grid = create_landlab_grid(
 		domain.width,
 		domain.height,
 		domain.bounds[1],
