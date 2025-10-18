@@ -72,7 +72,7 @@ default_input = {
       "path_out_sz": None,
       "path_out_uz": None,
       "path_out_oz": None,
-      "path_out_mask": None,
+      "path_out_zones": None,
       "path_output": None,
       "path_setting": None,
       "path_store_settings": None
