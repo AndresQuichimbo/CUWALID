@@ -6,7 +6,7 @@ import os
 import numpy as np
 from cuwalid.dryp.components.DRYP_io_files import get_model_settings
 from cuwalid.dryp.components.DRYP_io import (
-	grid_environment,
+	create_landlab_grid,
 	surface_parameters,
 	soil_parameters,
 	groundwater_parameters)
@@ -75,7 +75,7 @@ def run_DRYP_SS(filename_input):
 		print("Directory ", data_in.DirOutput, " already exists")
 
 	# create a raster grid environment, landlab grid
-	grid = grid_environment().create_grid(
+	grid = create_landlab_grid(
 		topo.grid_ncols,
 		topo.grid_nrows,
 		topo.grid_xllcorner,
