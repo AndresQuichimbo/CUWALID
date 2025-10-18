@@ -11,7 +11,7 @@ import xarray as xr
 #from cuwalid.dryp.components.DRYP_io_files import get_model_settings
 from cuwalid.dryp.components.DRYP_io import (
 	create_landlab_grid,
-	extract_id_from_coords)
+	get_index_from_coord_file)
 from cuwalid.dryp.components.DRYP_flow_accum import runoff_routing
 from cuwalid.dryp.components.DRYP_store_functions import (
 	save_map_to_rastergrid)
@@ -103,7 +103,7 @@ def get_flow_path(fname_surface, fname_outlet, fname_out=None,
 
 	# get basin outlets
 	# Output variables and location
-	idnodes = extract_id_from_coords(grid, fname_outlet)[0]
+	idnodes = get_index_from_coord_file(grid, fname_outlet)[0]
 
 	# create a raster dataset
 	unit_area = np.zeros_like(surface)
@@ -357,7 +357,7 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 
 	# get basin outlets
 	# Output variables and location
-	idnodes = extract_id_from_coords(grid, fname_outlet)[0]
+	idnodes = get_index_from_coord_file(grid, fname_outlet)[0]
 
 	ro.run_runoff_one_step(
 						np.ones_like(surface),# unit area
@@ -460,7 +460,7 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 		outlet = read_raster(fname_outlet)
 	else:	
 		# Output variables and location
-		idnodes = extract_id_from_coords(grid, fname_outlet)[0]
+		idnodes = get_index_from_coord_file(grid, fname_outlet)[0]
 
 		# create array with outlets
 		outlet = np.zeros_like(surface)
