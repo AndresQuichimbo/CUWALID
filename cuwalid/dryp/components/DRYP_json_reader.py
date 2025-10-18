@@ -206,6 +206,10 @@ class get_model_settings(object):
 		self.fname_DISpoints = dryp_config["OUTPUT"]["path_out_oz"]
 		self.fname_SMDpoints = dryp_config["OUTPUT"]["path_out_uz"]
 		self.fname_GWpoints = dryp_config["OUTPUT"]["path_out_sz"]
+		self.fname_zone_outputs = dryp_config["OUTPUT"]["path_out_zones"]
+
+		# calibration mask
+		self.fname_cal_mask = dryp_config["CALIBRATION"]["path_cal_mask"]
 
 		print("Model Name: ", self.Mname)
 

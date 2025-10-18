@@ -1,5 +1,6 @@
 from cuwalid.dryp.components.DRYP_json_reader import get_model_settings
 from cuwalid.dryp.components.DRYP_io import (
+    grid_environment,
 	surface_parameters,
 	soil_parameters,
 	groundwater_parameters,
@@ -8,11 +9,11 @@ from cuwalid.dryp.components.DRYP_io import (
 )
 from cuwalid.dryp.components.DRYP_dams import water_management		
 
-def read_model_parameters_and_settings(filename_input):
+def read_model_parameters(data_in):
     """Reads and prepares all model parameters and settings."""
 
-    # read model paramters and model setting file
-    data_in = get_model_settings(filename_input)
+    # create grid environment
+    domain = grid_environment(data_in.fname_surface)
 
     print("====== > Reading surface and river network parameters")
     topo = surface_parameters(data_in.fname_surface)
@@ -41,4 +42,4 @@ def read_model_parameters_and_settings(filename_input):
     # env_state.set_output_dir(data_in)
     # env_state.points_output(data_in)
 
-    return data_in, topo, soil, rsoil, aquifer, vegetation, water_bodies, water_bodies_management
+    return domain, topo, soil, rsoil, aquifer, vegetation, water_bodies, water_bodies_management

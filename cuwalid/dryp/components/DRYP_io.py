@@ -13,7 +13,126 @@ from scipy.ndimage import label
 
 # Global parameters
 ABC_RIVER = 0.2 # River abstraction parameter
+
+class grid_environment(object):
+	"""grid elements and state variables required for running the model"""
+	def __init__(self, inputfile):
+		"""this function create a grid landlab object, this function can be
+		used directly from landlab rastergrid function
+		"""
+		if inputfile.fname_DEM != None and os.path.exists(inputfile.fname_DEM):
+			with rasterio.open(inputfile.fname_DEM) as src:
+				##self.crs = src.crs      # coordinate reference system
+				##self.transform = src.transform  # affine transform (georeferencing info)
+				#self.bounds = src.bounds  # (left, bottom, right, top)
+				#self.res = src.res        # (x resolution, y resolution)
+				#self.dtype = src.dtypes[0]  # data type of first band
+				#self.nodata = src.nodata    # NoData value
+				#self.driver = src.driver    # file format (e.g. GTiff)
+			
+				self.grid_ncols = src.width
+				self.grid_nrows = src.height
+				self.grid_xllcorner = src.bounds[1]
+				self.grid_yllcorner = src.bounds[0]
+				self.grid_cellsize = src.transform[0]
+
+		else:
+			raise Exception("A digital elevation model map must be supplied")
 		
+		# define grid size for model arrays
+		self.grid_size = self.grid_ncols*self.grid_nrows
+
+	def create_grid(self, domain):
+		"""This function create a lanadlab grid object
+		Parameters
+		----------
+		None
+
+		Returns
+		-------
+		grid:	landlab grid
+		"""
+		grid = create_landlab_grid(
+			self.grid_ncols,
+			self.grid_nrows,
+			self.grid_xllcorner,
+			self.grid_yllcorner,
+			self.grid_cellsize,
+			domain=domain)
+		return grid
+
+def create_landlab_grid(ncol, nrow, xllcorner, yllcorner, cellsize, domain=None):
+	"""this function create a grid landlab object, this function can be
+	used directly from landlab rastergrid function
+	
+	Parameters
+	----------
+	ncol:		number of column of the grid, grid width (integer)
+	nrow:		number of column of the grid, grid width (integer)
+	xllcorner:	lower left x coordinate
+	yllcorner:	lower left x coordinate
+	cellsize:	grid spacing, size of the model cells
+	
+	Returns
+	-------
+	grid:	landlab grid
+	"""
+	grid = RasterModelGrid((nrow, ncol), xy_spacing=cellsize,
+		xy_of_lower_left=(yllcorner, xllcorner), xy_of_reference=(0.0, 0.0),
+		#xy_axis_name=('x', 'y'),
+		#xy_axis_units='-',
+		#bc=None
+		)
+	
+	if domain is not None:
+		idomain = np.where(domain > 0)[0]
+		grid.status_at_node[idomain] = grid.BC_NODE_IS_CORE
+		idomain = np.where(domain <= 0)[0]
+		grid.status_at_node[idomain] = grid.BC_NODE_IS_CLOSED
+	
+	return grid
+
+class index_handler(object):
+	def __init__(self):
+		pass
+	
+	def get_core_nodes(self, grid):
+		"""This function return the core nodes of the grid
+		Parameters
+		----------
+		grid:	landlab grid object
+
+		Returns
+		-------
+		core_nodes:	numpy array
+			array of core nodes ids
+		"""
+		core_nodes = grid.core_nodes
+		return core_nodes
+	
+def get_index_from_coord_file(grid, filename):
+	""" This function reads data points to report model results
+	Values at each point will be extracted for all components depending
+	on the specified points:
+	OF:	surfave component
+	UZ:	soil and riparian component
+	GW: saturated component
+	Parameters
+	-----
+	grid:	landlab grid object
+	inputfile:	python obkject containing a list of points
+	Returns
+	------
+	list of nodes where values will be extracted
+	"""				
+	# Reading output points
+	xpoint, ypoint = read_point_coordinates(filename)
+	idpoint, idypoint_active = extract_idnode_from_coords(grid,
+		xpoint, ypoint)
+	
+	return idpoint, idypoint_active
+
+
 class surface_parameters(object):
 	"""Setting model input varables and environmental states
 	"""
@@ -68,11 +187,11 @@ class surface_parameters(object):
 			mask[self.grid_nrows-1,0:self.grid_ncols] = -9999
 			mask[0:self.grid_nrows-1,0] = -9999
 			mask[0:self.grid_nrows-1,self.grid_ncols-1] = -9999
-			self.mask = mask.flatten()
+			self.mask = mask.astype(int).flatten()
 			
 			print('Basin boundary...................not provided')
 		else:
-			self.mask = np.flip(rasterio.open(inputfile.fname_Mask).read(1), 0).flatten()
+			self.mask = np.flip(rasterio.open(inputfile.fname_Mask).read(1), 0).astype(int).flatten()
 		#print(self.mask)
 		# define model domain for calculation
 		self.mask[self.mask > 0] = 1
@@ -227,67 +346,26 @@ class surface_parameters(object):
 		#print(v)
 		pass
 	# Find coordinates of points in model components
-	def points_output(self, inputfile):
-		""" This function reads data points to report model results
-		Values at each point will be extracted for all components depending
-		on the specified points:
-		OF:	surfave component
-		UZ:	soil and riparian component
-		GW: saturated component
-		Parameters
-		-----
-		inputfile:	python obkject containing a list of points
-
-		Returns
-		------
-		list of nodes where values will be extracted
-		"""				
-		# Reading output points
-		gaugeid = extract_id_from_coords(self.grid,
-			inputfile)
-		
-		return gaugeid
-
-
-class grid_environment(object):
-	"""grid elements and state variables required for running the model"""
-	def __init__(self,):
-		"""this function create a grid landlab object, this function can be
-		used directly from landlab rastergrid function
-		"""
-		pass
-
-	def create_grid(self, ncol, nrow, xllcorner, yllcorner, cellsize, domain):
-		"""this function create a grid landlab object, this function can be
-		used directly from landlab rastergrid function
-		
-		Parameters
-		----------
-		ncol:		number of column of the grid, grid width (integer)
-		nrow:		number of column of the grid, grid width (integer)
-		xllcorner:	lower left x coordinate
-		yllcorner:	lower left x coordinate
-		cellsize:	grid spacing, size of the model cells
-		
-		Returns
-		-------
-		grid:	landlab grid
-		"""
-		grid = RasterModelGrid((nrow, ncol), xy_spacing=cellsize,
-			xy_of_lower_left=(yllcorner, xllcorner), xy_of_reference=(0.0, 0.0),
-			#xy_axis_name=('x', 'y'),
-			#xy_axis_units='-',
-			#bc=None
-			)
-		
-		if domain is not None:
-			idomain = np.where(domain > 0)[0]
-			grid.status_at_node[idomain] = grid.BC_NODE_IS_CORE
-
-			idomain = np.where(domain <= 0)[0]
-			grid.status_at_node[idomain] = grid.BC_NODE_IS_CLOSED
-		
-		return grid
+#	def points_output(self, inputfile):
+#		""" This function reads data points to report model results
+#		Values at each point will be extracted for all components depending
+#		on the specified points:
+#		OF:	surfave component
+#		UZ:	soil and riparian component
+#		GW: saturated component
+#		Parameters
+#		-----
+#		inputfile:	python obkject containing a list of points
+#
+#		Returns
+#		------
+#		list of nodes where values will be extracted
+#		"""				
+#		# Reading output points
+#		gaugeid = get_index_from_coord_file(self.grid,
+#			inputfile)
+#		
+#		return gaugeid
 
 class model_environment_status(object):
 	"""grid elements and state variables required for running the model"""
@@ -882,7 +960,7 @@ class zone_parameters(object):
 				parameter[id_zone] = parameter[id_zone]*factor[izone - 1]
 		return parameter
 	
-	def extract_zone_info(self):
+	def extract_zone_info(self, core_nodes=None):
 		"""get ids for all zones
 		Parameters
 		----------
@@ -896,9 +974,45 @@ class zone_parameters(object):
 		"""
 		if self.zone_mask is None:
 			return None, None
-
+		if core_nodes is not None:
+			# Make all other (non-core) nodes equal to 0
+			all_indices = np.arange(self.zone_mask.size)
+			non_core = np.setdiff1d(all_indices, core_nodes)
+			self.zone_mask[non_core] = 0
+		
 		# get ids and size of zones
 		ids_zone, size_zone = get_zone_indices_and_sizes(self.zone_mask)
+		return ids_zone, size_zone
+	
+	def get_zone_info_from_core_nodes(self, core_nodes):
+		"""get zone info from core nodes
+		Parameters
+		----------
+		core_nodes:	numpy array
+			array with the core nodes ids
+		
+		Returns
+		-------
+		ids_zones:	list
+			list of numpy arrays with the ids of each zone
+		size_zones:	list
+			list with the size of each zone
+		"""
+		if self.zone_mask is None:
+			return None, None
+
+		if core_nodes is not None:
+			# Make all other (non-core) nodes equal to 0
+			all_indices = np.arange(self.zone_mask.size)
+			non_core = np.setdiff1d(all_indices, core_nodes)
+			self.zone_mask[non_core] = 0
+
+		# get mask for core nodes
+		mask_core = self.zone_mask[core_nodes]
+
+		# get ids and size of zones
+		ids_zone, size_zone = get_zone_indices_and_sizes(mask_core)
+
 		return ids_zone, size_zone
 
 def get_water_body_parameters(depth, area=None):
@@ -1001,42 +1115,65 @@ def get_zone_indices_and_sizes(mask):
 	 	
 	return ids_zones, size_zones
 
-def extract_id_from_coords(grid, filename, xlabel="East", ylabel="North"):
-	""" extract nodes from a csv file
-	this component uses the landlab funtion "find_nearest_node
+def read_point_coordinates(filename, xlabel="East", ylabel="North"):
+    """
+    Read x and y coordinates from a CSV file efficiently.
 
+    Parameters
+    ----------
+    filename : str
+        Path to the CSV file with coordinates.
+    xlabel : str, optional
+        Name of the column containing x coordinates. Default is "East".
+    ylabel : str, optional
+        Name of the column containing y coordinates. Default is "North".
+
+    Returns
+    -------
+    tuple of np.ndarray
+        xpoint : np.ndarray
+            Array of x coordinates.
+        ypoint : np.ndarray
+            Array of y coordinates.
+    """
+    if not filename or not os.path.exists(filename):
+        raise FileNotFoundError(f"File does not exist: {filename}")
+
+    # Read only required columns directly as float NumPy arrays
+    datapoints = pd.read_csv(filename, usecols=[xlabel, ylabel])
+
+    xpoint = datapoints[xlabel].to_numpy(dtype=float)
+    ypoint = datapoints[ylabel].to_numpy(dtype=float)
+
+    return xpoint, ypoint
+
+def extract_idnode_from_coords(grid, xpoint, ypoint):
+	""" extract nodes from coordinates
+	this component uses the landlab funtion "find_nearest_node
 	Parameters
 	----------
 	grid:		landlabgrid
-	filename:	csv file with coordinates
-	
+	xpoint:		numpy array with x coordinates
+	ypoint:		numpy array with y coordinates
+
 	Returns
 	-------
-	tuple of numby array with id nodes in the nodes array and 
-	in the active nodes list
+	tuple of numby array with id nodes in the nodes array and
 	idpoint:		nodes in the grid
 	idpoint_active:	index of ipoint in the active node list
 	"""
-	
-	# check if file is available
-	if filename == None or not os.path.exists(filename):
-		print(filename)
-		raise Exception("File do not exis")
-	
-	# read coordinates from csv file
-	datapoints = pd.read_csv(filename)
-	
-	# creating variables for storing outputs
-	npoints = len(datapoints['North'])
-	
+#	try:
+#		assert len(xpoint) > 0
+#	except:
+#		raise Exception('Sample points must be inside the model domain'
+#		   		'Please check the file of sample points')
+
 	idpoint = []
 	idpoint_active = []
-	#print(grid.shape)
-	for ndis in range(npoints):
+	for ixpoint, iypoint in zip(xpoint, ypoint):
 		# find the nearest point in the grid
 		point = grid.find_nearest_node(
-			[datapoints[xlabel][ndis],
-			datapoints[ylabel][ndis]])
+			[ixpoint, iypoint])
 		if grid.status_at_node[point] == 0:
 			# store id only if it is an active node
 			idpoint.append(point)
@@ -1045,17 +1182,19 @@ def extract_id_from_coords(grid, filename, xlabel="East", ylabel="North"):
 			point_active = np.where(grid.core_nodes == point)[0]
 			idpoint_active.append(point_active[0])
 
+	idpoint = np.array(idpoint, dtype=int)
+	idpoint_active =  np.array(idpoint_active, dtype=int)
+
 	try:
-		assert len(idpoint) > 0
+		assert len(xpoint) > 0
 	except:
 		raise Exception('Sample points must be inside the model domain'
 		   		'Please check the file of sample points')
-	
+
 	return idpoint, idpoint_active
 	
 def extract_id_from_raster(grid, filename):
-	""" find id location of boundary conditions from raster
-	this component uses the landlab funtion "find_nearest_node
+	""" extract nodes from raster file
 
 	Parameters
 	----------
@@ -1066,7 +1205,6 @@ def extract_id_from_raster(grid, filename):
 	-------
 	numby array with id nodes
 	"""
-	# read Power value for exponential function: default 0
 	if filename != None and os.path.exists(filename):
 		location_map = rasterio.open(filename.fname_laibrip).read(1).flatten()
 	else:

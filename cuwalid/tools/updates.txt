@@ -5,3 +5,13 @@ Updates:
 22/09/2025: Add projection to metadata of netCDF files
 22/09/2025: Add option to store vegetation/interception variables
 22/09/2025: Add vegetetion postprocessing options at pptools
+23/09/2025: include vegetation average results in the total average file
+23/09/2023: Check if gridded data is required to save otherwise skip it.
+23/09/2023: Add tls at point outputs
+06/10/2025: Soil layer updated/optimized
+
+Pending updates:
+shallow lakes model and dams
+Save data at specified time steps
+Integrate average results for model outputs
+Read mask dataset for calibration and aggregated dataset

@@ -3,7 +3,7 @@ from cuwalid.dryp.components.DRYP_io import grid_environment
 from cuwalid.dryp.components.DRYP_read_dataset import (
 	read_temporal_dataset, read_dataset, read_dataset_interp)
 
-def read_temporal_datasets_and_grid(data_in, topo):
+def read_temporal_datasets(data_in, topo):
     """Reads all temporal input datasets and sets up the simulation grid."""
 
     print("====== > Reading precipitation")
@@ -158,16 +158,16 @@ def read_temporal_datasets_and_grid(data_in, topo):
     Qusz = recharge_routing(topo.grid_size)
 
     # BUILD GRID DOMAIN -----------------------------------------------------
-    grid = grid_environment().create_grid(
-        topo.grid_ncols,
-        topo.grid_nrows,
-        topo.grid_xllcorner,
-        topo.grid_yllcorner,
-        topo.grid_cellsize,
-        topo.mask
-    )
+    #grid = create_landlab_grid(
+    #    topo.grid_ncols,
+    #    topo.grid_nrows,
+    #    topo.grid_xllcorner,
+    #    topo.grid_yllcorner,
+    #    topo.grid_cellsize,
+    #    topo.mask
+    #)
 
     # setting model fluxes and state variables
     # env_state = model_environment_status(data_in)
 
-    return PRE, ET0, SAVI, LAI, Kc, av, SAVImin, SAVImax, fluxOF, fluxUZ, fluxSZ, fluxWB, Qusz, grid
+    return PRE, ET0, SAVI, LAI, Kc, av, SAVImin, SAVImax, fluxOF, fluxUZ, fluxSZ, fluxWB, Qusz

@@ -19,18 +19,20 @@ Version(s):
 import argparse
 import numpy as np
 from tqdm import tqdm
+from cuwalid.dryp.components.DRYP_io import zone_parameters
 from cuwalid.dryp.components.DRYP_json_reader import get_model_settings
 from cuwalid.dryp.components.DRYP_groundwater_EFD import storage_uz_sz
 from cuwalid.dryp.components.assemble_model_components import (
     initialize_core_hydrology_components,
     initialize_optional_components_and_flux_ids,
     initialize_simulation_state_variables,
-    setup_output_and_monitoring
+    initialize_output_arrays,
+	setup_monitoring_nodes
 	)
-from cuwalid.dryp.components.read_model_parameters import read_model_parameters_and_settings
-from cuwalid.dryp.components.read_temporal_datasets import read_temporal_datasets_and_grid
+from cuwalid.dryp.components.read_model_parameters import read_model_parameters
+from cuwalid.dryp.components.read_temporal_datasets import read_temporal_datasets
 from cuwalid.dryp.components.save_model_output import save_model_outputs										
-
+import cuwalid.dryp.components.DRYP_util as utils
 # ---------------------------------------------------------------------
 # Version and algorithm information
 project_name = 'DRYP'
@@ -64,22 +66,25 @@ def run_DRYP(filename_input):
 
 	print("***************************** READING MODEL PARAMETERS *****************************")
 
-	data_in, topo, soil, rsoil, aquifer, vegetation, water_bodies, water_bodies_management = \
-		read_model_parameters_and_settings(filename_input)
+	domain, topo, soil, rsoil, aquifer, vegetation, water_bodies, water_bodies_management = \
+		read_model_parameters(data_in)
 	
+	# create model grid
+	grid = domain.create_grid(topo.mask)
+
 	# READING FORCING DATASET -------------------------------------------
 	# Read precipitation
 	print("***************************** READING TEMPORAL DATASETS ****************************")
 
-	PRE, ET0, SAVI, LAI, Kc, av, SAVImin, SAVImax, fluxOF, fluxUZ, fluxSZ, fluxWB, Qusz, grid = \
-		read_temporal_datasets_and_grid(data_in, topo)
+	PRE, ET0, SAVI, LAI, Kc, av, SAVImin, SAVImax, fluxOF, fluxUZ, fluxSZ, fluxWB, Qusz = \
+		read_temporal_datasets(data_in, topo)
 
 	# MODEL COMPONENTS ------------------------------------------------------
 	print("*************************** ASSEMBLING MODEL COMPONENTS ****************************")
 
-	abc, inf, cnp, swb, swb_rip, ro, gw = initialize_core_hydrology_components(
-		data_in, grid, topo, aquifer
-	)
+	abc, inf, cnp, swb, swb_rip, ro, gw, lks = initialize_core_hydrology_components(
+		data_in, grid, topo, aquifer, water_bodies
+		)
 
 	(pnds, idFluxOF, idFluxOF_act, idFluxUZ, idFluxUZ_act,
 	idFluxSZ, idFluxSZ_act, idFluxWB, idFluxWB_act,
@@ -97,11 +102,15 @@ def run_DRYP(filename_input):
 		data_in, topo, grid, aquifer, soil, vegetation, ro
 	)
 
-	(idOF, idOF_act, idUZ, idUZ_act, idGW, idGW_act,
+	# INITIALISE OUTPUT AND MONITORING --------------------------------
+	#
+	idOF, idUZ, idGW, idzone_info = setup_monitoring_nodes(grid, data_in)
+
+	(#idOF, idOF_act, idUZ, idUZ_act, idGW, idGW_act,
 	point_var, grid_var, grid_rmax, grid_vmax, total_var,
-	grid_rpvar, total_rpvar, grid_pndvar, total_pndvar, grid_veg) = setup_output_and_monitoring(
-		data_in, grid, riv_nodes, water_bodies
-	)
+	grid_rpvar, total_rpvar, grid_pndvar, total_pndvar, grid_veg,
+	grid_lks, zone_var) = initialize_output_arrays(data_in)#, grid, riv_nodes, water_bodies
+	
 
 	# Initialise the progress bar
 	print("****************************** SIMULATION IN PROGRESS ******************************")
@@ -112,17 +121,12 @@ def run_DRYP(filename_input):
 		for UZ_ti in range(data_in.dt_hourly):
 			
 			for dt_pre_sub in range(data_in.dt_sub_hourly):
-				#print(data_in.fname_TSPre)
+
 				# get rainfall
 				rain = PRE.get_one_step_dataset(t_pre, data_in.fname_TSPre, 'pre')
-				#rain = rain*0.5 # This is specific for IMERG 30 min resolution only
-				# for the forcast TRAINING.
-				#rain[rain>300] = 300.
-				#print("rain", np.where(np.isnan(rain[act_nodes])))
 				
 				# get potential evapotranspiration
 				PET = ET0.get_one_step_dataset(t_eto, data_in.fname_TSMeteo, 'pet')
-				#PET[PET>1] = 1.0
 				
 				# ABSTRCTIONS/IRRIGATION ------------------------------
 				# read flux boundary conditions for all components
@@ -140,7 +144,6 @@ def run_DRYP(filename_input):
 					head,
 					)				
 				
-				#print("pet", PET[act_nodes])
 				# check if interception is activated
 				#if vegetation.av is None:
 				#	SAVIdt = None
@@ -194,7 +197,7 @@ def run_DRYP(filename_input):
 					vegetation.av = avdt[act_nodes]
 				
 				# add interception component - UZ zone
-				Pth, Eca, PETh, LAIdt, Kcdt, Sc0_cn = cnp.run_interception_one_step(
+				Pth, Eca, PETh, LAIdt, Kcdt, vegetation.Sc0_cn[act_nodes] = cnp.run_interception_one_step(
 						rain[act_nodes], PET[act_nodes], vegetation.av,
 						SAVIdt, SAVIdt_max, SAVIdt_min,
 						LAIdt,
@@ -395,6 +398,16 @@ def run_DRYP(filename_input):
 					# change units from m to mm per unit rip. area
 					tls_aux = ro.trans_losses[riv_nodes]*topo.volume_to_depth_factor_rip[riv_nodes]
 
+					if lks is not None:
+						# Move Transmission losses to reservoirs or lakes
+						tls2lake = lks.compute_lakes_tributary_volume(tls_aux[water_bodies.ids_slks])
+
+						# calculate water balance in lakes
+						et_lks = lks.get_lakes_evaporation_volume(PET[water_bodies.ids_slks])
+
+						# update lake storage
+						lks.add_volume_to_lakes(et_lks.keys, tls2lake.values-et_lks.values)
+
 					# aggregate all inputs to riparian unsaturated zone [mm]
 					riv_infiltration = tls_aux + inf_rip_dt
 
@@ -546,20 +559,21 @@ def run_DRYP(filename_input):
 						theta[act_nodes]) - tws
 							
 				# get all state and flux variables to grid storage
-				grid_var.store_variables(PRE.date_sim_dt, t_pre,
-				  	{"pre": rain[act_nodes], "pet": PET[act_nodes],
-	   				"dis": ro.discharge[act_nodes],
-					"aet": AET, "inf": INF, "run": runoff[act_nodes],
-					"tht": theta[act_nodes],
-	   				"rch": recharge[act_nodes], "egw": PETsz,
-					"wte": head[act_nodes],
-					"gdh": baseflow[act_nodes], "twsc": twsc[act_nodes],
-					})
+				if data_in.save_netcdf is True:
+					grid_var.store_variables(PRE.date_sim_dt, t_pre,
+					  	{"pre": rain[act_nodes], "pet": PET[act_nodes],
+		   				"dis": ro.discharge[act_nodes],
+						"aet": AET, "inf": INF, "run": runoff[act_nodes],
+						"tht": theta[act_nodes],
+		   				"rch": recharge[act_nodes], "egw": PETsz,
+						"wte": head[act_nodes],
+						"gdh": baseflow[act_nodes], "twsc": twsc[act_nodes],
+						})
 				
 				# store vegetation variables
 				if vegetation.av is not None:
 					grid_veg.store_variables(PRE.date_sim_dt, t_pre,
-						{'pth': Pth, 'eca': Eca, 'scz': Sc0_cn,
+						{'pth': Pth, 'eca': Eca, 'scz': vegetation.Sc0_cn[act_nodes],
 	   					#'lai': LAIdt, 'kc': Kcdt, 'av': vegetation.av
 						})
 
@@ -578,13 +592,22 @@ def run_DRYP(filename_input):
 						grid_rmax.store_variables(PRE.date_sim_dt, t_pre,
 				  			{"dis": ro.discharge[riv_nodes]}
 							)
+				# store lake levels
+				if water_bodies.ids_slks is not None:
+					grid_lks.store_variables(PRE.date_sim_dt, t_pre,
+				  			{"slks": lks.get_lakes_volumetric_states_list()
+							}
+							)
+					
 
 				# get all fluxes and states at sampling points
 				point_var.store_variables(PRE.date_sim_dt, t_pre,
-				  	{"aet": AET[idOF_act], "inf": INF[idOF_act],
-			  		"dis": ro.discharge[idOF], "tht": theta[idUZ],
-					"rch": recharge[idGW], "wte": head[idGW],
-					"gdh": baseflow[idGW], "ssz": ro.SSZ[idOF],}
+				  	{"aet": AET[idOF[1]], "inf": INF[idOF[1]],
+			  		"dis": ro.discharge[idOF[0]], "tht": theta[idUZ[0]],
+					"rch": recharge[idGW[0]], "wte": head[idGW[0]],
+					"gdh": baseflow[idGW[0]], "ssz": ro.SSZ[idOF[0]],
+					"twsc": twsc[idGW[0]], "tls": ro.trans_losses[idOF[0]],
+					}
 					)
 				
 				# get mean total values for each flux and state
@@ -603,12 +626,11 @@ def run_DRYP(filename_input):
 					"chb":[gw.flux_at_CHB],
 					"tls":[np.mean(ro.trans_losses[act_nodes])],
 					'eca': [np.mean(Eca)] if Eca is not None else [0],
-					'scz': [np.mean(Sc0_cn)] if Sc0_cn is not None else [0],
+					'scz': [np.mean(vegetation.Sc0_cn[act_nodes])] if vegetation.Sc0_cn[act_nodes] is not None else [0],
 					'pth': [np.mean(Pth)] if Pth is not None else [0],
-					#'lai': [np.mean(LAIdt)],
-					#'kc': [np.mean(Kcdt)],
-					#'av': [np.mean(vegetation.av)],
-
+					'lai': [np.mean(LAIdt)] if LAIdt is not None else [0],
+					'kc': [np.mean(Kcdt)] if Kcdt is not None else [1],
+					'av': [np.mean(vegetation.av)] if vegetation.av is not None else [0],
 					})
 				
 				# get mean total values for each flux and state of the riparian zone
@@ -643,6 +665,28 @@ def run_DRYP(filename_input):
 						"apd": aoz_pnds,
 						}
 						)
+				if idzone_info[2] is not None:
+					zone_var.store_variables(PRE.date_sim_dt, t_pre,
+					  	{"pre":[utils.collapse_mean(rain[idzone_info[0]], idzone_info[2])],
+		   				"pet":[utils.collapse_mean(PET[idzone_info[0]], idzone_info[2])],
+		   				"run":[utils.collapse_mean(runoff[idzone_info[0]], idzone_info[2])],
+		   				"aet":[utils.collapse_mean(AET[idzone_info[1]], idzone_info[2])],
+						"inf":[utils.collapse_mean(INF[idzone_info[1]], idzone_info[2])],
+						"tht":[utils.collapse_mean(theta[idzone_info[0]], idzone_info[2])],
+						"rch":[utils.collapse_mean(recharge[idzone_info[0]], idzone_info[2])],
+						"egw":[utils.collapse_mean(PETsz[idzone_info[1]], idzone_info[2])],
+						"wte":[utils.collapse_mean(head[idzone_info[0]], idzone_info[2])],
+						"gdh":[utils.collapse_mean(baseflow[idzone_info[0]], idzone_info[2])],
+						"twsc":[utils.collapse_mean(twsc[idzone_info[0]], idzone_info[2])],
+						#"chb":[gw.flux_at_CHB],
+						"tls":[utils.collapse_mean(ro.trans_losses[idzone_info[0]], idzone_info[2])],
+						#'eca': [np.mean(Eca)] if Eca is not None else [0],
+						#'scz': [np.mean(vegetation.Sc0_cn[act_nodes])] if vegetation.Sc0_cn[act_nodes] is not None else [0],
+						#'pth': [np.mean(Pth)] if Pth is not None else [0],
+						#'lai': [np.mean(LAIdt)] if LAIdt is not None else [0],
+						#'kc': [np.mean(Kcdt)] if Kcdt is not None else [1],
+						#'av': [np.mean(vegetation.av)] if vegetation.av is not None else [0],
+						})
 
 				# reinitiate recharge variable
 				recharge[act_nodes] = 0.0
@@ -679,8 +723,8 @@ def run_DRYP(filename_input):
 	print("********************************** SAVING RESULTS **********************************")
 	save_model_outputs(data_in, total_var, point_var, grid_var, grid_rmax,
 				   grid_vmax, grid_rpvar, total_rpvar, grid_pndvar, total_pndvar,
-				   water_bodies, grid, head, theta, ro, rtheta, topo, grid_veg,
-				   act_nodes, riv_nodes, projection=data_in.PROJECTION)
+				   water_bodies, grid, head, theta, ro, rtheta, topo, grid_veg, grid_lks,
+				   act_nodes, riv_nodes, water_bodies.ids_slks, idzone_info[0], projection=data_in.PROJECTION)
 	print("======================= ALL PROCESSES COMPLETED SUCCESSFULLY =======================")
 # ---------------------------------------------------------------------
 # Call script from external library	
