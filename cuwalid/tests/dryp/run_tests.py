@@ -24,7 +24,8 @@ from cuwalid.tests.dryp.scripts import (
     test_dryp_tilted_V,
     test_dryp,
     test_basin_delineation,
-    test_ponds
+    test_ponds,
+    test_water_bodies
 )
 
 # Get the directory of the current script
@@ -54,7 +55,7 @@ test_functions = [
     test_dryp_tilted_V.test_dryp,
     test_dryp.test_dryp,
     test_basin_delineation.test_basin_delineation,
-    
+    test_water_bodies
 ]
 
 # Function to run tests
