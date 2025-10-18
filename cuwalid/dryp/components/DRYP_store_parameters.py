@@ -22,6 +22,10 @@ class get_store_parameters(object):
             # read variables for grided dataset for lakes
             self.var_grid_pnd = reading(fname)["store_var_grid_pnd"]
 
+            # read variables for grided dataset for lakes
+            self.var_grid_lks = reading(fname)["store_var_grid_lks"]
+
+
         else:
             print("Store variable option not provided, default parameters applied")
 	        # variables for grided dataset
@@ -51,7 +55,12 @@ class get_store_parameters(object):
             self.var_grid_pnd = {'epd': True, 'vpd': True, 'aoz': True,
                    #'tht': True, 'ssz': True,
                    }
-    
+            # variables for grided dataset
+            self.var_grid_lks = {'slks': True,# 'vpd': True, 'aoz': True,
+                   #'tht': True, 'ssz': True,
+                   }
+
+
 def reading(fname):
     s = open(fname, 'r').read()
     return ast.literal_eval(s)
