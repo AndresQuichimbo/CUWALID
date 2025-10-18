@@ -6,14 +6,14 @@ import numpy as np
 #import pandas as pd
 from cuwalid.dryp.components.DRYP_io_files import get_model_settings
 from cuwalid.dryp.components.DRYP_io import (
-	grid_environment,
+	create_landlab_grid,
 	surface_parameters,
 	model_environment_status,
 	soil_parameters,
 	groundwater_parameters,
 	interception_parameters,
 	set_initial_conditions,
-	extract_id_from_coords)
+	get_index_from_coord_file)
 from cuwalid.dryp.components.DRYP_infiltration import infiltration
 from cuwalid.dryp.components.DRYP_interception import interception
 from cuwalid.dryp.components.DRYP_read_dataset import (
@@ -133,7 +133,7 @@ def run_DRYP(filename_input):
 	Qusz = recharge_routing(topo.grid_size)
 
 	# create a raster grid environment, landlab grid
-	grid = grid_environment().create_grid(
+	grid = create_landlab_grid(
 		topo.grid_ncols,
 		topo.grid_nrows,
 		topo.grid_xllcorner,
@@ -170,7 +170,7 @@ def run_DRYP(filename_input):
 	# read location of point boundary conditions
 	#if dataFlux.data_set is not None:
 	#	if data_in.data_reading['abs'] == 0:
-	#		idFluxOF = extract_id_from_coords(
+	#		idFluxOF = get_index_from_coord_file(
 	#			env_state.grid,
 	#			data_in.filename_OF_points
 	#			)
@@ -246,9 +246,9 @@ def run_DRYP(filename_input):
 	AOF_threshold = np.ones(topo.grid_size)
 
 	# Output variables and location
-	idOF, idOF_act = extract_id_from_coords(grid, data_in.fname_DISpoints)	# Discharge points
-	idUZ, idUZ_act = extract_id_from_coords(grid, data_in.fname_SMDpoints)	# Soil moisture points
-	idGW, idGW_act = extract_id_from_coords(grid, data_in.fname_GWpoints)
+	idOF, idOF_act = get_index_from_coord_file(grid, data_in.fname_DISpoints)	# Discharge points
+	idUZ, idUZ_act = get_index_from_coord_file(grid, data_in.fname_SMDpoints)	# Soil moisture points
+	idGW, idGW_act = get_index_from_coord_file(grid, data_in.fname_GWpoints)
 	
 	# initialize array to store model results
 	point_var = GlobalGridVar(data_in.ini_date,
