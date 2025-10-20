@@ -1375,7 +1375,7 @@ def read_parameter_set_file(filename):
 	"""
 	# check if file exists
 	param_set = None
-	if not os.path.exists(filename):
+	if filename != None and os.path.exists(filename):
 		param_set = np.loadtxt(filename, delimiter=',')
 	return param_set
 		
