@@ -103,9 +103,10 @@ def run_DRYP(filename_input):
 	)
 
 	# INITIALISE OUTPUT AND MONITORING --------------------------------
-	#
+	#print("************************ READING SETTINGS FOR MODEL OUPUTS *************************")
+	print("Setting up outputs and monitoring nodes")
 	idOF, idUZ, idGW, idzone_info = setup_monitoring_nodes(grid, data_in)
-
+	#print("Monitoring nodes IDs:", idzone_info[2])
 	(#idOF, idOF_act, idUZ, idUZ_act, idGW, idGW_act,
 	point_var, grid_var, grid_rmax, grid_vmax, total_var,
 	grid_rpvar, total_rpvar, grid_pndvar, total_pndvar, grid_veg,
@@ -665,21 +666,22 @@ def run_DRYP(filename_input):
 						"apd": aoz_pnds,
 						}
 						)
+				
 				if idzone_info[2] is not None:
 					zone_var.store_variables(PRE.date_sim_dt, t_pre,
-					  	{"pre":[utils.collapse_mean(rain[idzone_info[0]], idzone_info[2])],
-		   				"pet":[utils.collapse_mean(PET[idzone_info[0]], idzone_info[2])],
-		   				"run":[utils.collapse_mean(runoff[idzone_info[0]], idzone_info[2])],
-		   				"aet":[utils.collapse_mean(AET[idzone_info[1]], idzone_info[2])],
-						"inf":[utils.collapse_mean(INF[idzone_info[1]], idzone_info[2])],
-						"tht":[utils.collapse_mean(theta[idzone_info[0]], idzone_info[2])],
-						"rch":[utils.collapse_mean(recharge[idzone_info[0]], idzone_info[2])],
-						"egw":[utils.collapse_mean(PETsz[idzone_info[1]], idzone_info[2])],
-						"wte":[utils.collapse_mean(head[idzone_info[0]], idzone_info[2])],
-						"gdh":[utils.collapse_mean(baseflow[idzone_info[0]], idzone_info[2])],
-						"twsc":[utils.collapse_mean(twsc[idzone_info[0]], idzone_info[2])],
+					  	{"pre":utils.collapse_mean(rain[idzone_info[0]], idzone_info[2]),
+		   				"pet":utils.collapse_mean(PET[idzone_info[0]], idzone_info[2]),
+		   				"run":utils.collapse_mean(runoff[idzone_info[0]], idzone_info[2]),
+		   				"aet":utils.collapse_mean(AET[idzone_info[1]], idzone_info[2]),
+						"inf":utils.collapse_mean(INF[idzone_info[1]], idzone_info[2]),
+						"tht":utils.collapse_mean(theta[idzone_info[0]], idzone_info[2]),
+						"rch":utils.collapse_mean(recharge[idzone_info[0]], idzone_info[2]),
+						"egw":utils.collapse_mean(PETsz[idzone_info[1]], idzone_info[2]),
+						"wte":utils.collapse_mean(head[idzone_info[0]], idzone_info[2]),
+						"gdh":utils.collapse_mean(baseflow[idzone_info[0]], idzone_info[2]),
+						"twsc":utils.collapse_mean(twsc[idzone_info[0]], idzone_info[2]),
 						#"chb":[gw.flux_at_CHB],
-						"tls":[utils.collapse_mean(ro.trans_losses[idzone_info[0]], idzone_info[2])],
+						"tls":utils.collapse_mean(ro.trans_losses[idzone_info[0]], idzone_info[2]),
 						#'eca': [np.mean(Eca)] if Eca is not None else [0],
 						#'scz': [np.mean(vegetation.Sc0_cn[act_nodes])] if vegetation.Sc0_cn[act_nodes] is not None else [0],
 						#'pth': [np.mean(Pth)] if Pth is not None else [0],
@@ -721,10 +723,11 @@ def run_DRYP(filename_input):
 	progress_bar.close()
 	
 	print("********************************** SAVING RESULTS **********************************")
-	save_model_outputs(data_in, total_var, point_var, grid_var, grid_rmax,
-				   grid_vmax, grid_rpvar, total_rpvar, grid_pndvar, total_pndvar,
-				   water_bodies, grid, head, theta, ro, rtheta, topo, grid_veg, grid_lks,
-				   act_nodes, riv_nodes, water_bodies.ids_slks, idzone_info[0], projection=data_in.PROJECTION)
+	save_model_outputs(data_in, total_var, point_var, zone_var, total_rpvar, total_pndvar,
+					grid_var, grid_rmax, grid_vmax, grid_rpvar, grid_pndvar, grid_veg, grid_lks,
+					grid, head, theta, ro.SSZ, rtheta, topo, water_bodies.pnds_Vo,
+					act_nodes, riv_nodes, water_bodies.ids_slks, water_bodies.id_nodes,
+					projection=data_in.PROJECTION)
 	print("======================= ALL PROCESSES COMPLETED SUCCESSFULLY =======================")
 # ---------------------------------------------------------------------
 # Call script from external library	

@@ -42,52 +42,6 @@ print_soilmoisture_map = True
 # NETCDF4 model outputs
 apply_scale_offset = True
 
-#LONG_NAME_VAR = {
-#			'pre':'precipitation',
-#			'aet':'actual evapotranspiration',
-#			'pet':'potential evapotranspiration',
-#			'inf':'infiltration',
-#			'tls':'transmission losses',
-#			'fch':'focused recharge',
-#			'ssz':'surface storage',
-#			'rch':'total groundwater recharge',
-#			'wte':'water table elevation',
-#			'egw':'groundwater evaporation',
-#			'run':'runoff',
-#			'gdh':'groundwater discharge',
-#			'tht':'soil moisture',
-#			'twsc':'water storage change',
-#			'dis':'discharge',
-#			"vpd" : "Total volume of water available - ponds",
-#			"epd" : "evaporation - ponds",
-#			"apd" :"Total abstractions - ponds",
-#			"etrp": "actual evapotranspiration - riparian",
-#			"thtrp": "soil moisture - riparian",
-#			"pth": "Throughfall",
-#			"eca": "canopy evaporation",
-#			"scz": "canopy storage",
-#			}
-#
-#UNIT_NAME_VAR = {'pre':'mm/dt',
-#			 'aet':'mm/dt',
-#			 'pet':'mm/dt',
-#			 'inf':'mm/dt',
-#			 'tls':'mm/dt',
-#			 'fch':'mm/dt',
-#			 'ssz':'m3/dt',
-#			 'rch':'mm/dt',
-#			'wte':'m', 'egw':'mm/dt', 'run':'mm/dt', 'gdh':'m3/dt',
-#			'tht':'m3/m3', 'twsc':'mm', 'dis':'m3/dt',
-#			"vpd" : "m3",
-#			"epd" : "m3/dt",
-#			"apd" :"m3/dt",
-#			"etrp": "mm/dt",
-#			"thtrp": "m3/m3",
-#			"pth": "mm/dt",
-#			"eca": "mm/dt",
-#			"scz": "mm",
-#			}
-
 class GlobalGridVar:
 	"""Setting variables and arrays for saving model grid variables
 	Returns
@@ -325,7 +279,6 @@ class GlobalGridVar:
 					else:
 						self.cumm_variable.append(self.var_acummulation)
 					self.time_grid.append(self.pdate)
-				
 		pass
 	
 	def save_csv_var(self, fname, multi_files=True):

@@ -1,10 +1,13 @@
 from cuwalid.dryp.components.DRYP_store_functions import save_map_to_rastergrid
 
 
-def save_model_outputs(data_in, total_var, point_var, zone_var, grid_var, grid_rmax,
-                       grid_vmax, grid_rpvar, total_rpvar, grid_pndvar, total_pndvar,
-                       water_bodies, grid, head, theta, ro, rtheta, topo, grid_veg, grid_lks,
-                       act_nodes, riv_nodes, lks_nodes, projection=None):
+def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
+                       total_rpvar, total_pndvar, # csv variables
+                       grid_var, grid_rmax, grid_vmax, # grid variables
+                       grid_rpvar, grid_pndvar, grid_veg, grid_lks, # grid variables
+                       grid, head, theta, ssz, rtheta, topo, pnd_Vo, # raster variables
+                       act_nodes, riv_nodes, lks_nodes, pnd_nodes, # node indices
+                       projection=None):
     """Saves model outputs to files (netCDF, CSV, raster)"""
 
     print("<==== saving model average temporal outputs")
@@ -28,7 +31,7 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, grid_var, grid_r
     # SAVE VARIABLES AT POINT LOCATION: CSV-FILES
     # name of variables to store
     # var_name = ['aet', 'inf', 'dis', 'tht', 'rch', 'wte', 'gdh', 'ssz']
-    zone_var.save_csv_var(data_in.fnameTS_point+"_zone")  # , var_name, length_var)
+    zone_var.save_csv_var(data_in.fnameTS_point+"zone_")  # , var_name, length_var)
 
     print("<==== saving model gridded temporal outputs")
 
@@ -42,43 +45,43 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, grid_var, grid_r
                               )  # , var_name
 
     # save grided model maximum values at streams - result datasets
-    if grid_rmax.store_max is True:
-        print("<==== saving model gridded temporal maximum values at streams outputs")
-        if riv_nodes.size > 0:
-            grid_rmax.save_netCDF_var(data_in.fnameTS_grid + 'rmax.nc',
+    #if grid_rmax.store_max is True:
+    print("<==== saving model gridded temporal maximum values at streams outputs")
+    #if riv_nodes.size > 0:
+    grid_rmax.save_netCDF_var(data_in.fnameTS_grid + 'rmax.nc',
                                       topo.lat, topo.lon, riv_nodes,
                                       projection=projection
                                       )  # , var_name
 
     # save grided model maximum values at streams - result datasets
     print("<==== saving model gridded temporal lake outputs")
-    if water_bodies.ids_slks.size > 0:
-        grid_lks.save_netCDF_var(data_in.fnameTS_grid + 'lks.nc',
+    #if water_bodies.ids_slks.size > 0:
+    grid_lks.save_netCDF_var(data_in.fnameTS_grid + 'lks.nc',
                                       topo.lat, topo.lon, lks_nodes,
                                       projection=projection
                                       )  # , var_name
 
     # save maximum grided model result datasets
-    if grid_vmax.store_max is True:
-        print("<==== saving model gridded temporal maximum values outputs")
-        grid_vmax.save_netCDF_var(data_in.fnameTS_grid + 'vmax.nc',
+    #if grid_vmax.store_max is True:
+    print("<==== saving model gridded temporal maximum values outputs")
+    grid_vmax.save_netCDF_var(data_in.fnameTS_grid + 'vmax.nc',
                                   topo.lat, topo.lon, act_nodes,
                                   projection=projection
                                   )  # , var_name
 
     # SAVE VARIABLES FROM THE RIPARIAN ZONE
-    if riv_nodes.size > 0:
-        print("<==== saving riparian zone temporal outputs")
+    #if riv_nodes.size > 0:
+    print("<==== saving riparian zone temporal outputs")
         # var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
         # save grided model result datasets
-        grid_rpvar.save_netCDF_var(data_in.fnameTS_grid + 'rp.nc',
+    grid_rpvar.save_netCDF_var(data_in.fnameTS_grid + 'rp.nc',
                                    topo.lat, topo.lon, riv_nodes,
                                    projection=projection
                                    )  # , var_name
 
         # save average riparian zone variables in a csv file
         # length_var = np.ones(len(var_name), dtype=int)
-        total_rpvar.save_csv_var(data_in.fnameTS_avg + 'rp',  # var_name,
+    total_rpvar.save_csv_var(data_in.fnameTS_avg + 'rp',  # var_name,
                                  # length_var,
                                  multi_files=False)
     
@@ -93,19 +96,20 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, grid_var, grid_r
 
     # SAVE VARIABLES FROM PONDS
     print("<==== saving water bodies temporal outputs")
-    if water_bodies.id_nodes is not None:
+    #if water_bodies.id_nodes is not None:
         # var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
         # save grided model result datasets
-        grid_pndvar.save_netCDF_var(data_in.fnameTS_grid + 'pnd.nc',
-                                    topo.lat, topo.lon, water_bodies.id_nodes,
+    grid_pndvar.save_netCDF_var(data_in.fnameTS_grid + 'pnd.nc',
+                                    topo.lat, topo.lon, pnd_nodes,
                                     projection=projection
                                     )  # , var_name
 
         # save average values in csv
         # length_var = np.ones(len(var_name), dtype=int)
-        total_pndvar.save_csv_var(data_in.fnameTS_avg + 'pnd',  # var_name,
+    total_pndvar.save_csv_var(data_in.fnameTS_avg + 'pnd',  # var_name,
                                   # length_var,
-                                  multi_files=False)
+                                  #multi_files=False
+                                  )
 
     # SAVE RASTER FILES FOR INITIAL CONDITIONS
     print("<==== saving raster files for initial conditions")
@@ -119,7 +123,7 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, grid_var, grid_r
                            data_in.fnameTS_avg + '_tht_ini.asc')
 
     # Save channel flow initial conditions
-    save_map_to_rastergrid(grid, ro.SSZ,
+    save_map_to_rastergrid(grid, ssz,
                            data_in.fnameTS_avg + '_Q_ini.asc')
 
     if riv_nodes.size > 0:
@@ -128,10 +132,10 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, grid_var, grid_r
         save_map_to_rastergrid(grid, theta,
                                data_in.fnameTS_avg + '_tht_rp_ini.asc')
 
-    if water_bodies.id_nodes is not None:
+    if pnd_nodes is not None:
         # Save pond water volume for initial conditions
         theta[:] = -9999
-        theta[water_bodies.id_nodes] = water_bodies.pnds_Vo
+        theta[pnd_nodes] = pnd_Vo
         save_map_to_rastergrid(grid, theta,
                                data_in.fnameTS_avg + '_V_pnd_ini.asc')
 
