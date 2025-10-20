@@ -367,12 +367,6 @@ class surface_parameters(object):
 #		
 #		return gaugeid
 
-class model_environment_status(object):
-	"""grid elements and state variables required for running the model"""
-	def __init__(self, grid_size):
-		"""ininitalize model variables which are common for all components"""
-		
-		pass
 
 def set_initial_conditions(grid_size, Droot, head, surface, 
 		    bathymetry, extintion_depth, cell_size, gw_activated):
@@ -458,7 +452,7 @@ class soil_parameters(object):
 			self.Ksat = np.flip(rasterio.open(inputfile.fname_Ksat).read(1), 0).flatten()
 					
 		# Change units and applying scale factor kKs
-		self.Ksat = (self.Ksat*inputfile.kKsat)
+		#self.Ksat = (self.Ksat*inputfile.kKsat)
 		#self.Ksat = (self.Ksat*inputfile.unit_sim_k*inputfile.kKsat)
 				
 		# Reading residual water content
@@ -524,7 +518,7 @@ class soil_parameters(object):
 			self.Droot = np.flip(rasterio.open(inputfile.fname_SoilDepth).read(1), 0).flatten()
 			self.Droot = np.array(self.Droot, dtype=float)
 		# Applying scale factor kDroot
-		self.Droot *= inputfile.kDroot
+		#self.Droot *= inputfile.kDroot
 		#self.Droot = np.array(self.depth_uz)
 
 		# Reading initial available water content: raster file		
@@ -534,7 +528,61 @@ class soil_parameters(object):
 		else:
 			self.theta = np.flip(rasterio.open(inputfile.fname_theta).read(1), 0).flatten()
 
-		self.theta_fc = theta_AWC + self.theta_wp
+		# store factors in the object
+		self.kKsat_soil = inputfile.kKsat
+		self.kDroot = inputfile.kDroot
+
+		#self.theta_fc = theta_AWC + self.theta_wp
+	
+	def apply_factor_ksat(self, kKsat_soil=None):
+		"""Apply scale factor to soil saturated hydraulic conductivity
+		Parameters
+		----------
+		kKsat_soil:	scale factor for soil saturated hydraulic conductivity
+
+		Returns
+		-------
+		"""
+		if kKsat_soil is not None:
+			self.Ksat = self.Ksat * kKsat_soil
+		else:
+			self.Ksat = self.Ksat*self.kKsat_soil
+
+	def apply_factor_Droot(self, kDroot=None):
+		"""Apply scale factor to soil rooting depth
+		Parameters
+		----------
+		kDroot:	scale factor for soil rooting depth
+
+		Returns
+		-------
+		"""
+		if kDroot is not None:
+			self.Droot = self.Droot * kDroot
+		else:
+			self.Droot = self.Droot * self.kDroot
+
+	
+
+	def print_soil_parameters(self):
+		print('Soil saturated hydraulic conductivity [mm/h]:')
+		print(self.Ksat)
+		print('Soil wilting point [-]:')
+		print(self.theta_wp)
+		print('Soil field capacity [-]:')
+		print(self.theta_fc)
+		print('Soil porosity [-]:')
+		print(self.theta_sat)
+		print('Soil particle distribution parameter [-]:')
+		print(self.lambdas)
+		print('Soil suction head [mm]:')
+		print(self.PSI)
+		print('Soil exponent c [-]:')
+		print(self.c_SOIL)
+		print('Soil rooting depth [mm]:')
+		print(self.Droot)
+		print('Initial soil moisture [-]:')
+		print(self.theta)
 
 class groundwater_parameters(object):
 	"""This function reads all aquifer paramters required to run the saturated component
@@ -761,8 +809,6 @@ class interception_parameters(object):
 			print('Tap water level..................not provided. Global 0 [mm]')
 			self.tap_depth = np.zeros(grid_size, dtype=float)
 		
-		#self.ztap = z - self.tap_depth*0.001
-		
 		# read soil depth, it is the same as the hillslope soil
 		if inputfile.fname_SoilDepth is not None and os.path.exists(inputfile.fname_SoilDepth):
 			Droot = np.flip(rasterio.open(inputfile.fname_SoilDepth).read(1), 0).flatten()
@@ -787,6 +833,17 @@ class interception_parameters(object):
 		self.extintion_depth[self.extintion_depth <= 0] = Droot[self.extintion_depth <= 0]*0.001
 
 		pass
+
+	def apply_factor_tap(self, kTap):
+		"""Apply scale factor to tap depth
+		Parameters
+		----------
+		kTap:	scale factor for tap depth
+
+		Returns
+		-------
+		"""
+		self.tap_depth = self.tap_depth * kTap
 
 class water_body_parameters(object):
 	"""This function reads all aquifer paramters required to run the saturated component
@@ -921,7 +978,7 @@ class water_body_parameters(object):
 			#print('Initial water body volume........not provided. Global value 0 [m3]')
 
 class zone_parameters(object):
-	"""reading calibration parameters
+	"""reading zone/mask parameters for calibration or modeling outputs
 	"""
 	def __init__(self, path_mask):
 		"""Read soil layer parameters
@@ -958,7 +1015,9 @@ class zone_parameters(object):
 			for izone in range(1, num_zones + 1):
 				id_zone = np.where(self.zone_mask == izone)[0]
 				parameter[id_zone] = parameter[id_zone]*factor[izone - 1]
-		return parameter
+			return parameter
+		else:
+			return None
 	
 	def extract_zone_info(self, core_nodes=None):
 		"""get ids for all zones
@@ -1301,4 +1360,22 @@ def numpy_argmax_reduceat(a, index):
 	idx =sortidx[grp_shifted_argmin] - index
 	min_idx = idx + index
 	return min_idx
+
+def read_parameter_set_file(filename):
+	"""This function reads a parameter set file for model calibration
+	Parameters
+	----------
+	filename :	str
+		path to the parameter set file
+	
+	Returns
+	-------
+	param_set :	numpy array
+		array with the parameter set values
+	"""
+	# check if file exists
+	param_set = None
+	if not os.path.exists(filename):
+		param_set = np.loadtxt(filename, delimiter=',')
+	return param_set
 		

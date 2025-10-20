@@ -141,8 +141,16 @@ default_input = {
    },
 
    "CALIBRATION": {
-      "path_cal_mask": None,
-   #   "path_cal_obs": None,
+      "path_cal_of_zone": None,
+      "path_cal_uz_zone": None,
+      "path_cal_sz_zone": None,
+      "path_cal_rp_zone": None,
+      "path_cal_st_zone": None,
+      "path_cal_of_set": None,
+      "path_cal_uz_set": None,
+      "path_cal_sz_set": None,
+      "path_cal_rp_set": None,
+      "path_cal_st_set": None,
    #   "path_cal_sz": None,
    #   "path_cal_uz": None,
    #   "path_cal_oz": None,

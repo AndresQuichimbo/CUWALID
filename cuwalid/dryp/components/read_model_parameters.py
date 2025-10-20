@@ -1,11 +1,13 @@
 from cuwalid.dryp.components.DRYP_json_reader import get_model_settings
 from cuwalid.dryp.components.DRYP_io import (
     grid_environment,
+    zone_parameters,
 	surface_parameters,
 	soil_parameters,
 	groundwater_parameters,
 	interception_parameters,
 	water_body_parameters,
+    read_parameter_set_file,
 )
 from cuwalid.dryp.components.DRYP_dams import water_management		
 
@@ -20,9 +22,18 @@ def read_model_parameters(data_in):
 
     print("====== > Reading hillslope soil hydraulic parameters")
     soil = soil_parameters(topo.grid_size, data_in.fname_soil)
+    # read calibration zones if provided and apply ksat factor
+    factor_ksat = read_parameter_set_file(data_in.fname_cal_sets.fname_cal_uz_set)
+    ksat_zones = zone_parameters(data_in.fname_cal_sets.fname_cal_uz_zone)
+    factor_ksat = ksat_zones.get_scale_factor_zones(factor_ksat)
+    soil.apply_factor_ksat(kKsat_soil=factor_ksat)
+    soil.apply_factor_Droot(kDroot=None)
 
     print("====== > Reading riparian soil hydraulic parameters")
     rsoil = soil_parameters(topo.grid_size, data_in.fname_riparian)
+    # read calibration zones if provided and apply ksat factor
+    rsoil.apply_factor_ksat(kKsat_soil=None)
+    rsoil.apply_factor_Droot(kDroot=None)
 
     print("====== > Reading groundwater aquifer hydraulic parameters")
     aquifer = groundwater_parameters(topo.grid_size, data_in.fname_aquifer)

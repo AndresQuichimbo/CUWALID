@@ -190,10 +190,6 @@ class get_model_settings(object):
 
 		# read store paramters
 		self.path_store_settings = dryp_config["OUTPUT"]["path_store_settings"]
-		
-		#self.fname_store = None
-		#if len(dryp_config.get("drylandmodel", {})) == 100:
-		#	self.fname_store = dryp_config["drylandmodel"][99]
 		self.store = get_store_parameters(self.path_store_settings)
 
 		# Vegetation parameters
@@ -209,7 +205,7 @@ class get_model_settings(object):
 		self.fname_zone_outputs = dryp_config["OUTPUT"]["path_out_zones"]
 
 		# calibration mask
-		self.fname_cal_mask = dryp_config["CALIBRATION"]["path_cal_mask"]
+		self.fname_cal_sets = get_paths_calibration_files(dryp_config)
 
 		print("Model Name: ", self.Mname)
 
@@ -295,41 +291,15 @@ class get_list_of_surface_files(object):
         self.fname_Ksat = dryp_config["UNSATURATED"]["path_riv_ksat"]
         if self.fname_Ksat is None:
             self.fname_Ksat = dryp_config["UNSATURATED"]["path_uz_ksat"]
-        self.fname_Q_ini = dryp_config["UNSATURATED"]["path_riv_ksat"]
-        
+		# filename of initial conditions
+        self.fname_Q_ini = dryp_config["UNSATURATED"]["path_riv_ksat"]        
 		# read boundary conditions 
         self.fname_of_bc_flux = dryp_config["TERRAIN"]["path_of_bc_flux"]
-        
-		#if len(dryp_config.get("drylandmodel", {})) == 96:
-        #    self.fname_bc = dryp_config["OUTPUT"]["path_of_settings"]
-        #else:
-        #    self.fname_bc = None
-
-        #self.fname_TSOF = None
-        #self.filename_OF_points = None
-
-        #if self.fname_of_bc_flux is not None:# and os.path.exists(self.fname_bc):
-        #    fbc = pd.read_csv(self.fname_bc)
-        #    #self.fname_TSOF = fbc.OFBC[1]
-        #    #self.filename_OF_points = fbc.OFBC[3]
-
+		# read bathymetry
         self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depth"]
-        #self.fname_bathymetry = None
-        #if dryp_config["OUTPUT"].get("path_gw_settings") is not None and os.path.exists(dryp_config["OUTPUT"]["path_gw_settings"]):
-        #    fgw = pd.read_csv(dryp_config["OUTPUT"]["path_gw_settings"])
-        #    self.fname_bathymetry = fgw.GROUNDWATER[18]  # Constant flux boundary
-
-        ## TODO: Check this if statement
-        #if len(dryp_config.get("drylandmodel", {})) == 94:
-        #    self.fname_riparian_zone = dryp_config["OUTPUT"]["path_rp_settings"]
-        #else:
-        #    self.fname_riparian_zone = None
-
+		# riparian zone
         self.fname_ripwidth = None
-        #if self.fname_riparian_zone is not None and os.path.exists(self.fname_riparian_zone):
-        #    frz = pd.read_csv(self.fname_riparian_zone)
-        #    self.fname_ripwidth = frz.RIPARIAN[21]  # riparian width [-]
-
+		# set river routing factors
         self.kKch = float(factors["GLOBAL_FACTORS"]["riv_kksat"])
         self.kTch = float(factors["GLOBAL_FACTORS"]["riv_kdecay"])
 
@@ -424,7 +394,6 @@ class get_list_of_groundwater_files(object):
         self.fname_thickness = dryp_config["SATURATED"]["path_sz_depth"]
         self.fname_b_aq = dryp_config["SATURATED"]["path_sz_bdd"]
         self.fname_aquifertype = dryp_config["SATURATED"]["path_sz_type"]
-        #self.fname_bathymetry = dryp_config["GROUNDWATER"]["path_gw_lake_elev"]
 		# get paht to bathymetry for lakes
         self.fname_bathymetry = dryp_config["WATER_BODIES"]["path_lake_depth"]
 		# get path of bodies ids
@@ -446,11 +415,7 @@ class get_list_of_groundwater_files(object):
             self.fname_SZ_Syb = dryp_config["GROUNDWATER"]["path_gw_2l_sy"]
             self.fname_SZ_Ssb = dryp_config["GROUNDWATER"]["path_gw_2l_ss"]
             self.fname_GWinib = dryp_config["GROUNDWATER"]["path_gw_2l_wte"]
-            #self.fname_FHBb = fgw.GROUNDWATER[59]  # flux head boundary
-            #self.fname_CHBb = fgw.GROUNDWATER[61]  # Constant flux boundary
-            # only for Manny's model
             self.fname_mask_of = dryp_config["SATURATED"]["path_sz_type"]
-            #self.fname_lakes_elevation = dryp_config["GROUNDWATER"]["path_gw_lake_elev"]
             self.fname_lakes_elevation = dryp_config["WATER_BODIES"]["path_lake_depth"]
 
         self.fname_GWini = dryp_config["SATURATED"]["path_sz_wte"]  # Initial water table
@@ -474,6 +439,29 @@ class get_list_of_water_bodies_files(object):
         self.fname_wb_bc_flux = dryp_config["WATER_BODIES"]["path_wb_bc_flux"]
         self.fname_slks_depth = dryp_config["WATER_BODIES"]["path_slks_depth"] # check if shallow lake depth is provided
         self.fname_slks_area = dryp_config["WATER_BODIES"]["path_slks_area"] # check if shallow lake area is provided
+
+class get_paths_calibration_files(object):
+	"""get list of file names for reading parameters"""
+
+	def __init__(self, dryp_config):
+		"""Model parameter settings and input file names and location"""
+
+		# calibration to calibration zones
+		self.fname_cal_of_zone = dryp_config["CALIBRATION"]["path_cal_of_zone"]
+		self.fname_cal_uz_zone = dryp_config["CALIBRATION"]["path_cal_uz_zone"]
+		self.fname_cal_sz_zone = dryp_config["CALIBRATION"]["path_cal_sz_zone"]
+		self.fname_cal_rp_zone = dryp_config["CALIBRATION"]["path_cal_rp_zone"]
+		self.fname_cal_st_zone = dryp_config["CALIBRATION"]["path_cal_st_zone"]
+		# pahths to calibration factor files
+		self.fname_cal_of_set = dryp_config["CALIBRATION"]["path_cal_of_set"]
+		self.fname_cal_uz_set = dryp_config["CALIBRATION"]["path_cal_uz_set"]
+		self.fname_cal_sz_set = dryp_config["CALIBRATION"]["path_cal_sz_set"]
+		self.fname_cal_rp_set = dryp_config["CALIBRATION"]["path_cal_rp_set"]
+		self.fname_cal_st_set = dryp_config["CALIBRATION"]["path_cal_st_set"]
+		# other calibration files
+		#self.fname_cal_mask = dryp_config["CALIBRATION"]["path_cal_mask"]
+		#self.fname_cal_points = dryp_config["CALIBRATION"]["path_cal_points"]
+		#self.fname_cal_settings = dryp_config["CALIBRATION"]["path_cal_settings"]
 
 		
 
