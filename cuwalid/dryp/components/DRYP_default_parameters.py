@@ -115,19 +115,19 @@ default_input = {
       "path_veg_rp_sca": None
    },
 
-   "GROUNDWATER": {
-   #   "path_gw_depth": None,
-   #   "path_gw_bdd": None,
-      "path_gw_2l_bottom": None,
-      "path_gw_2l_ksat": None,
-      "path_gw_2l_sy": None,
-      "path_gw_2l_ss": None,
-      "path_gw_2l_wte": None, 
-   #   "path_gw_type": None, # aquifer type
-   #   "path_gw_lake_elev": None, # lakes bathymetry
-   #   "path_pnds_hmax": None, # ponds max depth
-   #   "path_pnds_Amax": None, # ponds maximum extend
-   },
+   #"GROUNDWATER": {
+   ##   "path_gw_depth": None,
+   ##   "path_gw_bdd": None,
+   #   "path_gw_2l_bottom": None,
+   #   "path_gw_2l_ksat": None,
+   #   "path_gw_2l_sy": None,
+   #   "path_gw_2l_ss": None,
+   #   "path_gw_2l_wte": None, 
+   ##   "path_gw_type": None, # aquifer type
+   ##   "path_gw_lake_elev": None, # lakes bathymetry
+   ##   "path_pnds_hmax": None, # ponds max depth
+   ##   "path_pnds_Amax": None, # ponds maximum extend
+   #},
 
    "WATER_BODIES": {
       "path_lake_ids": None, # lakes labels as integers

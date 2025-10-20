@@ -6,13 +6,24 @@ CUWALID: Workflow for contributions
 
 
 
-
 DRYP: Model Hydrological Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Adding new components
----------------------
+Adding new model components
+----------------------------
+Entries for the model components are in the DRYP_default_parameters.py
+Create new entries in the DRYP_default_settings.py
+Add the corresponding new entries into the DRYP_json_reader.py
+Create the new model component in the components folder
 
+Add model component into the assemble_model_components.py. 
+This will include initializing the component within the initialize_core_hydrology_components function
+Create new python objects to the grid environment DRYP_io.py
+Add new component to the model main_DRYP
+Add new component to the model test_main_DRYP.py
+Add new component to the model example_main_DRYP.py
+Add new component to the model documentation
+Add new component to the model tutorial if applicable
 
 
 Adding new temporal datasets
