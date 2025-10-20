@@ -409,14 +409,14 @@ class get_list_of_groundwater_files(object):
         self.fname_GWinib = None
         self.fname_mask_of = None
         
-        if self.run_GW > 0:
-            self.fname_SZ_botb = dryp_config["GROUNDWATER"]["path_gw_2l_bottom"]
-            self.fname_SZ_Ksatb = dryp_config["GROUNDWATER"]["path_gw_2l_ksat"]
-            self.fname_SZ_Syb = dryp_config["GROUNDWATER"]["path_gw_2l_sy"]
-            self.fname_SZ_Ssb = dryp_config["GROUNDWATER"]["path_gw_2l_ss"]
-            self.fname_GWinib = dryp_config["GROUNDWATER"]["path_gw_2l_wte"]
-            self.fname_mask_of = dryp_config["SATURATED"]["path_sz_type"]
-            self.fname_lakes_elevation = dryp_config["WATER_BODIES"]["path_lake_depth"]
+        #if self.run_GW > 0:
+        #    self.fname_SZ_botb = dryp_config["GROUNDWATER"]["path_gw_2l_bottom"]
+        #    self.fname_SZ_Ksatb = dryp_config["GROUNDWATER"]["path_gw_2l_ksat"]
+        #    self.fname_SZ_Syb = dryp_config["GROUNDWATER"]["path_gw_2l_sy"]
+        #    self.fname_SZ_Ssb = dryp_config["GROUNDWATER"]["path_gw_2l_ss"]
+        #    self.fname_GWinib = dryp_config["GROUNDWATER"]["path_gw_2l_wte"]
+        #    self.fname_mask_of = dryp_config["SATURATED"]["path_sz_type"]
+        #    self.fname_lakes_elevation = dryp_config["WATER_BODIES"]["path_lake_depth"]
 
         self.fname_GWini = dryp_config["SATURATED"]["path_sz_wte"]  # Initial water table
         self.fname_DEM = dryp_config["TERRAIN"]["path_dem"]
