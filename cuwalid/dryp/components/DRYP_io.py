@@ -1103,8 +1103,8 @@ def get_water_body_parameters(depth, area=None):
 	# get lakes parameters
 	ids_lks, size_lks = get_zone_indices_and_sizes(name_lks)
 
-#	# flatten the name array to match the grid
-#	name_lks = name_lks.flatten()
+	# flatten the name array to match the grid
+	name_lks = name_lks.flatten()
 #	#print('name_lks', name_lks.shape, 'num_features', num_features)
 #	# POST-PROCESSING LAKES VARIABLES		
 #	# Step 2: For each label, collect flat indices (len=number of lakes)

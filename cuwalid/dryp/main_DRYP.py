@@ -24,7 +24,7 @@ from cuwalid.dryp.components.DRYP_json_reader import get_model_settings
 from cuwalid.dryp.components.DRYP_groundwater_EFD import storage_uz_sz
 from cuwalid.dryp.components.assemble_model_components import (
     initialize_core_hydrology_components,
-    initialize_optional_components_and_flux_ids,
+    set_flux_boundary_conditions,
     initialize_simulation_state_variables,
     initialize_output_arrays,
 	setup_monitoring_nodes
@@ -82,14 +82,14 @@ def run_DRYP(filename_input):
 	# MODEL COMPONENTS ------------------------------------------------------
 	print("*************************** ASSEMBLING MODEL COMPONENTS ****************************")
 
-	abc, inf, cnp, swb, swb_rip, ro, gw, lks = initialize_core_hydrology_components(
+	abc, inf, cnp, swb, swb_rip, ro, gw, lks, pnds = initialize_core_hydrology_components(
 		data_in, grid, topo, aquifer, water_bodies
 		)
 
-	(pnds, idFluxOF, idFluxOF_act, idFluxUZ, idFluxUZ_act,
+	(idFluxOF, idFluxOF_act, idFluxUZ, idFluxUZ_act,
 	idFluxSZ, idFluxSZ_act, idFluxWB, idFluxWB_act,
-	idFluxWBout, idFluxWBout_act) = initialize_optional_components_and_flux_ids(
-		data_in, grid, water_bodies, fluxOF, fluxUZ, fluxSZ, fluxWB
+	idFluxWBout, idFluxWBout_act) = set_flux_boundary_conditions(
+		data_in, grid, fluxOF, fluxUZ, fluxSZ, fluxWB
 	)
 
 	# Initialise time step variables
@@ -177,7 +177,7 @@ def run_DRYP(filename_input):
 				
 				#print(vegetation.av, SAVIdt, SAVIdt_max, SAVIdt_max, LAIdt, Kcdt)
 				# PONDS: Add ponds here ------------------------------------------
-				# first check that ponds is active
+				# first check if ponds is active
 				if water_bodies.id_nodes is not None:
 					water_bodies.pnds_Vo, et_pnds, aoz_pnds, Ppnds = pnds.run_ponds_one_step(
 				 							water_bodies.pnds_Vo,

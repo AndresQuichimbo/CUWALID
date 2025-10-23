@@ -10,6 +10,7 @@ from cuwalid.dryp.components.DRYP_io import (
     set_initial_conditions,
     zone_parameters)
 from cuwalid.dryp.components.DRYP_soil_layer import swbm
+from cuwalid.dryp.components.DRYP_ponds import ponds
 from cuwalid.dryp.components.DRYP_store_functions import GlobalGridVar
 from cuwalid.dryp.components.DRYP_water_bodies import MultiLakeModel
 
@@ -53,14 +54,17 @@ def initialize_core_hydrology_components(data_in, grid, topo, aquifer, water_bod
                     data_in.gw_func
                     )
     
-    return abc, inf, cnp, swb, swb_rip, ro, gw, lks
-
-def initialize_optional_components_and_flux_ids(data_in, grid, water_bodies,
-                                                fluxOF, fluxUZ, fluxSZ, fluxWB):
     pnds = None
     if water_bodies.id_nodes is not None:
         pnds = ponds(water_bodies.pnds_Amax, water_bodies.pnds_hmax) # ponds
+    
+    return abc, inf, cnp, swb, swb_rip, ro, gw, lks, pnds
 
+def set_flux_boundary_conditions(data_in, grid, fluxOF, fluxUZ, fluxSZ, fluxWB):
+    """Sets up boundary conditions for the model simulation.
+
+    """
+    
     idFluxOF, idFluxOF_act = None, None
     idFluxUZ, idFluxUZ_act = None, None
     idFluxSZ, idFluxSZ_act = None, None
@@ -101,7 +105,7 @@ def initialize_optional_components_and_flux_ids(data_in, grid, water_bodies,
                 xlabel="East_out", ylabel="North_out"
             )
             
-    return (pnds, idFluxOF, idFluxOF_act, idFluxUZ, idFluxUZ_act,
+    return (idFluxOF, idFluxOF_act, idFluxUZ, idFluxUZ_act,
             idFluxSZ, idFluxSZ_act, idFluxWB, idFluxWB_act,
             idFluxWBout, idFluxWBout_act)
 
