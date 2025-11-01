@@ -544,6 +544,7 @@ class soil_parameters(object):
 		-------
 		"""
 		if kKsat_soil is not None:
+			kKsat_soil[kKsat_soil == 1.0] = self.kKsat_soil
 			self.Ksat = self.Ksat * kKsat_soil
 		else:
 			self.Ksat = self.Ksat*self.kKsat_soil
@@ -1020,9 +1021,13 @@ class zone_parameters(object):
 			return None
 	
 	def extract_zone_info(self, core_nodes=None):
-		"""get ids for all zones
+		"""get zone info such as indices and size. If core nodes are provided,
+		only core nodes are considered for getting zone info
+
 		Parameters
 		----------
+		core_nodes:	numpy array
+			array with the core nodes ids
 
 		Returns
 		-------

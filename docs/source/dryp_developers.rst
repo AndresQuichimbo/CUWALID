@@ -45,3 +45,15 @@ Add new entries to the DRYP_json_reader.py
 Add new python objects to the grid environment DRYP_io.py
 Add new dataset to the model main_DRYP
 
+Additing new calibration parameters
+------------------------------------
+
+Running test units
+^^^^^^^^^^^^^^^^^^^^^^
+Test unit functions for reading calibration parameters in
+cuwalid/tests/dryp/scripts/test_zone_parameters.py
+
+move to the cuwalid/tests/dryp/
+cd cuwalid/tests/dryp/scripts/
+and run:
+python -m pytest -vv scripts/test_dryp_tilted_V.py

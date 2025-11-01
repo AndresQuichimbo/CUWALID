@@ -32,7 +32,7 @@ class get_model_settings(object):
 		# MODEL PARAMETERS SETTINGS		
 
 		filename_simpar = dryp_config["OUTPUT"]["path_setting"]
-		
+		print('Using settings file:', filename_simpar)
 		with open(filename_simpar, 'r') as f:
 			settings_config = json.load(f)
 		

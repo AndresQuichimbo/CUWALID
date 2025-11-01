@@ -28,7 +28,7 @@ def read_model_parameters(data_in):
     factor_ksat = ksat_zones.get_scale_factor_zones(factor_ksat)
     soil.apply_factor_ksat(kKsat_soil=factor_ksat)
     soil.apply_factor_Droot(kDroot=None)
-
+    
     print("====== > Reading riparian soil hydraulic parameters")
     rsoil = soil_parameters(topo.grid_size, data_in.fname_riparian)
     # read calibration zones if provided and apply ksat factor

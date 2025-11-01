@@ -1,0 +1,66 @@
+{
+    "model_name": "test_zone",
+    "path_input": "",
+    "TERRAIN": {
+        "path_dem": "tilted_v/input/test_dem_m.asc",
+        "path_Qo": null,
+        "path_fdl": "tilted_v/input/test_flowdir_m.asc",
+        "path_riv_decay": null,
+        "path_mask": "tilted_v/input/test_mask_m.asc",
+        "path_riv_len": "tilted_v/input/test_riv_m.asc",
+        "path_riv_width": null,
+        "path_riv_elev": null
+    },
+    "VEGETATION": {
+        "path_veg_kc": null,
+        "path_veg_lulc": null,
+        "path_veg_nn": null
+    },
+    "UNSATURATED": {
+        "path_uz_theta_sat: porosity": "tilted_v/input/test_rawls_ne.txt",
+        "path_uz_theta_res": "tilted_v/input/test_rawls_theta_r.txt",
+        "path_uz_theta_awc": "tilted_v/input/test_rawls_awc.txt",
+        "path_uz_theta_wp": "tilted_v/input/test_rawls_wp.txt",
+        "path_uz_root": "tilted_v/input/test_depth_m.asc",
+        "path_uz_lambda": "tilted_v/input/test_rawls_n.txt",
+        "path_uz_psi": "tilted_v/input/test_rawls_phi.txt",
+        "path_uz_ksat": "tilted_v/input/test_rawls_ks.txt",
+        "path_uz_sigmaksat": "tilted_v/input/test_rawls_sigma_ks.txt",
+        "path_uz_theta": null,
+        "path_riv_ksat": null
+    },
+    "SATURATED": {
+        "path_sz_mask": "tilted_v/input/test_mask_m.asc",
+        "path_sz_ksat": "tilted_v/input/test_rawls_ks1.txt",
+        "path_sz_sy": null,
+        "path_sz_wte": "tilted_v/input/test_wte_ini.asc",
+        "path_sz_bc_flux": null,
+        "path_sz_bc_head": "tilted_v/input/test_CHB1.asc",
+        "path_sz_bottom": null
+    },
+    "METEO": {
+        "path_pre": "tilted_v/input/Pre_60m_00_05_sin.csv",
+        "path_pet": "tilted_v/input/Pre_60m_00_05_sin.csv",
+        "path_aof": null,
+        "Other": null
+    },
+    "OUTPUT": {
+        "path_out_sz": "tilted_v/input/test_Flumes_points.csv",
+        "path_out_uz": "tilted_v/input/test_SM_points.csv",
+        "path_out_oz": "tilted_v/input/test_well_point_m.csv",
+        "path_output": "tilted_v/output",
+        "path_setting": "tilted_v/setting_test.json"
+    },
+    "CALIBRATION": {
+    "path_cal_of_zone": null,
+    "path_cal_uz_zone": "tilted_v/input/test_zone_file.asc",
+    "path_cal_sz_zone": null,
+    "path_cal_rp_zone": null,
+    "path_cal_st_zone": null,
+    "path_cal_of_set": null,
+    "path_cal_uz_set": "tilted_v/input/set_factor_zone_file.txt",
+    "path_cal_sz_set": null,
+    "path_cal_rp_set": null,
+    "path_cal_st_set": null
+    }
+}
