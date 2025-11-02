@@ -893,7 +893,7 @@ def calculate_saturation(dataset, theta_wp, theta_sat):
 		saturation
 	"""
 	# Calculate saturation
-	saturation = (dataset - theta_wp)/theta_sat
+	saturation = dataset/theta_sat
 
 	return saturation
 
