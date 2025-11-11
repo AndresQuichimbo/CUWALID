@@ -60,6 +60,96 @@ class grid_environment(object):
 			self.grid_cellsize,
 			domain=domain)
 		return grid
+	
+	def create_projected_grid(self,):
+		"""This function create a projected grid (approximate Cartesian grid)
+		using WGS84 approximation where the cell size is provided in degrees.
+		Parameters
+		----------
+		None
+
+		Returns
+		-------
+		dict
+			A dictionary with:
+			- 'lon' : 2D array of longitudes (degrees)
+			- 'lat' : 2D array of latitudes (degrees)
+			- 'x'   : 2D array of x coordinates (m, east)
+			- 'y'   : 2D array of y coordinates (m, north)
+			- 'mean_lat' : mean latitude used in the approximation
+		"""
+		grid = create_projected_grid_from_extent_deg(
+			self.grid_ncols,
+			self.grid_nrows,
+			self.grid_yllcorner,
+			self.grid_xllcorner,
+			self.grid_cellsize)
+		
+		return grid
+
+
+def create_projected_grid_from_extent_deg(ncols, nrows, lon_min, lat_min, cellsize_deg):
+	"""
+	Create a projected grid (approximate Cartesian grid) using WGS84
+	approximation where the cell size is provided in degrees.
+	Parameters
+	----------
+	ncols : int
+	    Number of grid columns (width).
+	nrows : int
+	    Number of grid rows (height).
+	lon_min : float
+	    Longitude of the lower-left corner (degrees).
+	lat_min : float
+	    Latitude of the lower-left corner (degrees).
+	cellsize_deg : float
+	    Grid cell size (degrees).
+	Returns
+	-------
+	dict
+	    A dictionary with:
+	    - 'lon' : 2D array of longitudes (degrees)
+	    - 'lat' : 2D array of latitudes (degrees)
+	    - 'x'   : 2D array of x coordinates (m, east)
+	    - 'y'   : 2D array of y coordinates (m, north)
+	    - 'mean_lat' : mean latitude used in the approximation
+	"""
+	# Generate 1D coordinate arrays (cell centers)
+	lon = np.linspace(lon_min + cellsize_deg / 2,
+	                  lon_min + (ncols - 0.5) * cellsize_deg,
+	                  ncols)
+	lat = np.linspace(lat_min + cellsize_deg / 2,
+	                  lat_min + (nrows - 0.5) * cellsize_deg,
+	                  nrows)
+	# 2D meshgrid of geographic coordinates
+	lon2d, lat2d = np.meshgrid(lon, lat)
+	# Compute mean latitude for conversion approximation
+	mean_lat = np.mean(lat)
+	mean_lat_rad = np.deg2rad(mean_lat)
+	# Conversion factors (WGS84) from degrees to meters
+	meters_per_deg_lat = 111132.92 - 559.82 * np.cos(2 * mean_lat_rad) + 1.175 * np.cos(4 * mean_lat_rad)
+	meters_per_deg_lon = 111412.84 * np.cos(mean_lat_rad) - 93.5 * np.cos(3 * mean_lat_rad)
+	# Compute Cartesian coordinates (relative to lower-left corner)
+	#x = (lon2d - lon_min) * meters_per_deg_lon
+	#y = (lat2d - lat_min) * meters_per_deg_lat
+	x = (lon - lon_min) * meters_per_deg_lon
+	y = (lat - lat_min) * meters_per_deg_lat
+	
+	return {"x":x, "y":y}
+
+
+## Example usage
+#if __name__ == "__main__":
+#    grid = create_projected_grid_from_extent_deg(
+#        ncols=400, nrows=300,
+#        lon_min=-45.0, lat_min=60.0,
+#        cellsize_deg=0.01  # about 1.1 km at 60°N
+#    )
+#    
+#    print(f"Mean latitude used: {grid['mean_lat']:.4f}")
+#    print(f"x range: {grid['x'].min():.1f} – {grid['x'].max():.1f} m")
+#    print(f"y range: {grid['y'].min():.1f} – {grid['y'].max():.1f} m")
+
 
 def create_landlab_grid(ncol, nrow, xllcorner, yllcorner, cellsize, domain=None):
 	"""this function create a grid landlab object, this function can be

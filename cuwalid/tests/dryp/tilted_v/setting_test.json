@@ -33,24 +33,21 @@
     "method_gw": 0
   },
   "OUTPUT": {
-    "output_csv": false,
+    "output_csv": true,
     "output_grid": false,
     "output_dt": "1H",
-    "not used 1": false,
-    "Save discharge in volumetric rate units": true,
-    "not used 2": false,
-    "not used 3": false
+    "output_dt_csv": "1H"
   },
   "GLOBAL_FACTORS": {
     "uz_kdt": 1.00000,
-    "uz_kdroot": 1.0,
+    "uz_kdroot": 0.55,
     "uz_kawc": 1.00,
     "uz_kkast": 0.29024,
     "uz_ksigma": 1.0,
     "riv_kksat": 10.52967,
     "riv_kdecay": 0.1512967,
     "riv_kwidth": 1.0,
-    "sz_kksat": 1.0,
+    "sz_kksat": 0.25,
     "sz_ksy": 1.00,
     "of_kflow": 1.0
   }

@@ -112,7 +112,6 @@ def run_DRYP(filename_input):
 	grid_rpvar, total_rpvar, grid_pndvar, total_pndvar, grid_veg,
 	grid_lks, zone_var) = initialize_output_arrays(data_in)#, grid, riv_nodes, water_bodies
 	
-
 	# Initialise the progress bar
 	print("****************************** SIMULATION IN PROGRESS ******************************")
 	print("Simulation period: from", data_in.ini_date, "to", data_in.end_date, "number of days:", data_in.ndays)
