@@ -134,10 +134,116 @@ def create_projected_grid_from_extent_deg(ncols, nrows, lon_min, lat_min, cellsi
 	#y = (lat2d - lat_min) * meters_per_deg_lat
 	x = (lon - lon_min) * meters_per_deg_lon
 	y = (lat - lat_min) * meters_per_deg_lat
+
+	# Create grid dictionary
+	grid = _generate_rectangular_grid_data(ncols, nrows, meters_per_deg_lon, meters_per_deg_lat)
+
+	# Add coordinate arrays
+	grid['x'] = x
+	grid['y'] = y
 	
-	return {"x":x, "y":y}
+	return grid
 
+def _generate_rectangular_grid_data(N_x, N_y, Dx_cell, Dy_cell):
+	"""
+	Generates the geometric and hydraulic data for a regular 
+	2D rectangular mesh with NON-UNIFORM cell sizes.
+	
+	Returns: A dictionary containing all necessary grid arrays.
+	"""
+	# Total number of cells
+	N_cells = N_x * N_y    
+	# A. Cell Properties
+	Cell_Areas = Dx_cell * Dy_cell # Area of each cell (Ai)
+	
+	# B. Connectivity (I, J arrays for vectorization)
+	I_list = [] # current node index
+	J_list = [] # neighbor node index
+	L_ij_list = [] # face length between cells i and j
+	Delta_L_ij_list = [] # distance between centroids of cells i and j
+	d_i_list = [] # distance from centroid of cell i to face ij
+	d_j_list = [] # distance from centroid of cell j to face ij
 
+	# Helper function to get 1D index from 2D coordinates
+	def to_1d(i, j):
+		return j * N_x + i
+
+	# Loop through all internal cells to define connections
+	for j in range(N_y):
+		for i in range(N_x):
+			idx = to_1d(i, j)
+			
+			# --- East/West Connections (Flow in x-direction) ---
+			if i < N_x - 1: # East neighbor exists
+				neighbor_idx = to_1d(i + 1, j)
+				
+				# Host/Neighbor cell dimensions
+				dx_i = Dx_cell[idx]
+				dx_j = Dx_cell[neighbor_idx]
+				
+				# Face length (L_ij) is based on the shared (vertical) dimension (Dy)
+				face_len_y = (Dy_cell[idx] + Dy_cell[neighbor_idx]) / 2.0
+				
+				# Connection 1: I -> J
+				I_list.append(idx)
+				J_list.append(neighbor_idx)
+				L_ij_list.append(face_len_y)                    # Face length (L_ij)
+				Delta_L_ij_list.append(dx_i / 2.0 + dx_j / 2.0) # Centroid distance (Delta_L_ij)
+				d_i_list.append(dx_i / 2.0)                     # Host centroid to face (d_i)
+				d_j_list.append(dx_j / 2.0)                     # Neighbor centroid to face (d_j)
+				
+				# Connection 2: J -> I
+				I_list.append(neighbor_idx)
+				J_list.append(idx)
+				L_ij_list.append(face_len_y)
+				Delta_L_ij_list.append(dx_i / 2.0 + dx_j / 2.0)
+				d_i_list.append(dx_j / 2.0) # d_i (J) is now dx_j/2
+				d_j_list.append(dx_i / 2.0) # d_j (I) is now dx_i/2
+
+			# --- North/South Connections (Flow in y-direction) ---
+			if j < N_y - 1: # North neighbor exists
+				neighbor_idx = to_1d(i, j + 1)
+				
+				# Host/Neighbor cell dimensions
+				dy_i = Dy_cell[idx]
+				dy_j = Dy_cell[neighbor_idx]
+				
+				# Face length (L_ij) is based on the shared (horizontal) dimension (Dx)
+				face_len_x = (Dx_cell[idx] + Dx_cell[neighbor_idx]) / 2.0
+				
+				# Connection 1: I -> J
+				I_list.append(idx)
+				J_list.append(neighbor_idx)
+				L_ij_list.append(face_len_x)                    # Face length (L_ij)
+				Delta_L_ij_list.append(dy_i / 2.0 + dy_j / 2.0) # Centroid distance (Delta_L_ij)
+				d_i_list.append(dy_i / 2.0)                     # Host centroid to face (d_i)
+				d_j_list.append(dy_j / 2.0)                     # Neighbor centroid to face (d_j)
+
+				# Connection 2: J -> I
+				I_list.append(neighbor_idx)
+				J_list.append(idx)
+				L_ij_list.append(face_len_x)
+				Delta_L_ij_list.append(dy_i / 2.0 + dy_j / 2.0)
+				d_i_list.append(dy_j / 2.0) # d_i (J) is now dy_j/2
+				d_j_list.append(dy_i / 2.0) # d_j (I) is now dy_i/2
+
+	#N_connections = len(I_list)
+	#print(f"Total connections established: {N_connections}")
+	
+	return {
+		'N_cells': N_cells,
+		'N_x': N_x,
+		'N_y': N_y,
+		'Areas': Cell_Areas,
+		'Dx_cell': Dx_cell, # Store for visualization/debug
+		'Dy_cell': Dy_cell, # Store for visualization/debug
+		'I': np.array(I_list),           # Host cell indices (i)
+		'J': np.array(J_list),           # Neighbor cell indices (j)
+		'L_ij': np.array(L_ij_list),
+		'Delta_L_ij': np.array(Delta_L_ij_list),
+		'd_i': np.array(d_i_list),
+		'd_j': np.array(d_j_list),
+	}
 ## Example usage
 #if __name__ == "__main__":
 #    grid = create_projected_grid_from_extent_deg(
