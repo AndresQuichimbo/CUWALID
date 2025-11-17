@@ -1276,6 +1276,69 @@ class zone_parameters(object):
 		return ids_zone, size_zone
 
 def get_water_body_parameters(depth, area=None):
+    """This function calculates all water body parameters required to run
+    the water body component
+    
+    Parameters
+    ----------
+    depth :	numpy array
+        bathymetry of the water body [m]
+    area :	numpy array
+        surface area of the water body [m2]
+    
+    Returns
+    -------
+    tuple of lists/arrays
+        name_lks : array
+            labels of lake cells (for returned ids)
+        ids_lks : list
+            flat indices of all lake cells (flattened, grouped by lake label)
+        size_lks : list
+            number of cells in each lake
+        ids_max_depth_lks : list
+            flat indices of the cell with maximum depth in each lake
+        depths : array
+            depth values corresponding to ids_lks
+    """
+    # mask lakes from depth
+    name_lks = (depth > 0).astype(int)
+
+    # label lakes (connected components)
+    labeled, num_features = label(name_lks)
+
+    # build groups of flat indices per labeled lake (1..num_features)
+    flat = labeled.flatten()
+    ids_group_by_label = []
+    for lab in range(1, num_features + 1):
+        ids = list(np.where(flat == lab)[0])
+        ids_group_by_label.append(ids)
+
+    # flatten groups to single list of ids (grouped by label)
+    ids_lks = [idx for grp in ids_group_by_label for idx in grp]
+
+    # sizes per lake
+    size_lks = [len(grp) for grp in ids_group_by_label]
+
+    # find index of maximum depth within each group (global flat index)
+    depth_flat = depth.flatten()
+    ids_max_depth_lks = []
+    for grp in ids_group_by_label:
+        if len(grp) == 0:
+            continue
+        grp_depths = depth_flat[grp]
+        imax = int(np.argmax(grp_depths))
+        ids_max_depth_lks.append(grp[imax])
+
+    # reduce name array to only the returned ids (labels for those ids)
+    name_lks_out = flat[ids_lks]
+
+    # reduce depth array to those ids
+    depths_out = depth_flat[ids_lks]
+
+    return name_lks_out, ids_lks, size_lks, ids_max_depth_lks, depths_out
+
+
+def get_water_body_parametersold(depth, area=None):
 	"""This function calculates all water body parameters required to run the water body component
 	Parameters
 	----------
