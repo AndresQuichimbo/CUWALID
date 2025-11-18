@@ -44,13 +44,16 @@ class grid_environment(object):
 
 	def create_grid(self, domain):
 		"""This function create a lanadlab grid object
+
 		Parameters
 		----------
-		None
-
+		domain:	numpy array
+			array defining the model domain, core nodes >0, inactive nodes <=0
+	
 		Returns
 		-------
 		grid:	landlab grid
+
 		"""
 		grid = create_landlab_grid(
 			self.grid_ncols,
@@ -64,6 +67,7 @@ class grid_environment(object):
 	def create_projected_grid(self,):
 		"""This function create a projected grid (approximate Cartesian grid)
 		using WGS84 approximation where the cell size is provided in degrees.
+		
 		Parameters
 		----------
 		None
@@ -78,7 +82,7 @@ class grid_environment(object):
 			- 'y'   : 2D array of y coordinates (m, north)
 			- 'mean_lat' : mean latitude used in the approximation
 		"""
-		grid = create_projected_grid_from_extent_deg(
+		grid = create_grid_from_extent(
 			self.grid_ncols,
 			self.grid_nrows,
 			self.grid_yllcorner,
@@ -86,6 +90,111 @@ class grid_environment(object):
 			self.grid_cellsize)
 		
 		return grid
+
+def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, domain=None, projected=False):
+	"""
+	Create a projected grid (approximate Cartesian grid) using WGS84
+	approximation where the cell size is provided in degrees.
+	Parameters
+	----------
+	ncols : int
+	    Number of grid columns (width).
+	nrows : int
+	    Number of grid rows (height).
+	lon_min : float
+	    Longitude of the lower-left corner (degrees).
+	lat_min : float
+	    Latitude of the lower-left corner (degrees).
+	cellsize_deg : float
+	    Grid cell size (degrees).
+	Returns
+	-------
+	dict
+	    A dictionary with:
+	    - 'lon' : 2D array of longitudes (degrees)
+	    - 'lat' : 2D array of latitudes (degrees)
+	    - 'x'   : 2D array of x coordinates (m, east)
+	    - 'y'   : 2D array of y coordinates (m, north)
+	    - 'mean_lat' : mean latitude used in the approximation
+	"""
+	# Generate 1D coordinate arrays (cell centers)
+	lon = np.linspace(lon_min + cellsize / 2,
+	                  lon_min + (ncols - 0.5) * cellsize,
+	                  ncols)
+	lat = np.linspace(lat_min + cellsize / 2,
+	                  lat_min + (nrows - 0.5) * cellsize,
+	                  nrows)
+	
+	# 2D meshgrid of geographic coordinates
+	#lon2d, lat2d = np.meshgrid(lon, lat)
+
+	if not projected:
+		# Compute mean latitude for conversion approximation
+		mean_lat = np.mean(lat)
+		mean_lat_rad = np.deg2rad(mean_lat)
+		# Conversion factors (WGS84) from degrees to meters
+		meters_per_deg_lat = 111132.92 - 559.82 * np.cos(2 * mean_lat_rad) + 1.175 * np.cos(4 * mean_lat_rad)
+		meters_per_deg_lon = 111412.84 * np.cos(mean_lat_rad) - 93.5 * np.cos(3 * mean_lat_rad)
+		# Compute Cartesian coordinates (relative to lower-left corner)
+		#x = (lon2d - lon_min) * meters_per_deg_lon
+		#y = (lat2d - lat_min) * meters_per_deg_lat
+		x = (lon - lon_min) * meters_per_deg_lon
+		y = (lat - lat_min) * meters_per_deg_lat
+	else:
+		# For projected grid, assume cellsize is already in meters
+		meters_per_deg_lon = np.full(len(lon), cellsize, dtype=float)
+		meters_per_deg_lat = np.full(len(lat), cellsize, dtype=float)
+		x = np.linspace(0 + cellsize / 2,
+		                (ncols - 0.5) * cellsize,
+		                ncols) + lon_min
+		y = np.linspace(0 + cellsize / 2,
+		                (nrows - 0.5) * cellsize,
+		                nrows) + lat_min
+
+
+	# Create grid dictionary
+	grid = _generate_rectangular_grid_data(ncols, nrows, meters_per_deg_lon, meters_per_deg_lat)
+
+	# Add coordinate arrays
+	grid['x'] = x
+	grid['y'] = y
+
+	if domain is None:
+		# create core nodes array
+		domain = center_ones(ncols, nrows).flatten()
+
+	grid['core_nodes'] = np.where(domain > 0)[0]
+
+	return grid
+
+def center_ones(nrows: int, ncols: int):
+    """
+    Return a 2D NumPy array with zeros on the border and ones in the interior.
+    Border thickness = 1. If nrows<=2 or ncols<=2 returns all zeros.
+
+    Args:
+        nrows (int): number of rows
+        ncols (int): number of columns
+
+    Returns:
+        numpy.ndarray: array shape (nrows, ncols)
+
+	Example:
+		>>> center_ones(5, 6)
+		array([[0, 0, 0, 0, 0, 0],
+			   [0, 1, 1, 1, 1, 0],
+			   [0, 1, 1, 1, 1, 0],
+			   [0, 1, 1, 1, 1, 0],
+			   [0, 0, 0, 0, 0, 0]])
+		
+    """
+
+    if nrows <= 2 or ncols <= 2:
+        return np.zeros((nrows, ncols), dtype=int)
+
+    a = np.zeros((nrows, ncols), dtype=int)
+    a[1:-1, 1:-1] = 1
+    return a
 
 
 def create_projected_grid_from_extent_deg(ncols, nrows, lon_min, lat_min, cellsize_deg):

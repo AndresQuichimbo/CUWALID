@@ -6,7 +6,7 @@ REG_FACTOR = 0.001  # Regularization factor for confined aquifers
 COURANT_2D = 0.50 # Courant Number 2D flow
 
 # --- 1. GROUNDWATER FLOW SOLVER CLASS ---
-class gwflow_solver_grs(object):
+class gwflow_EFD(object):
 	"""Module for solving 2D Unsteady Dupuit-Forchheimer Equation in Polar Coordinates
 	using a highly efficient Vectorized Explicit Finite Difference Method (FDM).
 	"""
@@ -20,11 +20,26 @@ class gwflow_solver_grs(object):
 			bc (dict): Boundary conditions.
 			method (str): Numerical method to use ('vectorized' or 'looped').
 		"""
+
 		self.grid = grid
+
 		self.Ksat = Ksat
-		self.area_river = area_river
-		#self.bc = bc
+
+		self.bc = bc
+
 		self.method = method
+
+		# create additional arrays for model component variables
+		self.method = method	
+		#	print('GROUND WATER MODEL SETTINGS ********************************')		
+		if method == 0:
+			print('Groundwater settings: Constant transmissivity function')
+		elif method == 1:
+			print('Groundwater settings: Linear transmissivity function')
+		elif method == 2:
+			print('Groundwater settings: Exponential transmissivity function')
+		else:
+			print('Groundwater settings: Multi-transmissivity function')
 		
 		# Pre-calculated static conductance array (length = N_connections)
 		self.C_static = _precalculate_static_conductance(grid)
@@ -37,6 +52,17 @@ class gwflow_solver_grs(object):
 				self.bc = bc[self.id_CHB]
 			else:
 				self.id_CHB = None
+
+		# calculate cell area
+		A = np.power(grid.dx, 2)	
+			
+		# calcualte river factor to reduce number of calculations
+		kriv = np.ones_like(area_river)
+		kriv[area_river > 0] = 1/area_river[area_river > 0]
+		self.kriv = kriv
+
+		# calcualte aquifer-river factor to reduce calculations
+		self.kaq = 1/A
 
 		pass
 

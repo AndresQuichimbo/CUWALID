@@ -21,6 +21,7 @@ b_faq = 131
 # ratio between vertical and horizontal Ksat
 fkxy = 0.1
 lakes_is_active = 0
+
 class gwflow_EFD(object):
 	"""Groundwater component. It uses an explicit approach to solve the
 	diffuse flow equation. It assumes only one layer and in a
