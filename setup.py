@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setup(
     name="cuwalid",
 
-    version="1.1.54",
+    version="1.1.55",
 
     author="Andrés Quichimbo, Manuel Rios Gaona, Dagmawi Teklu Asfaw, Leo Coote",
     author_email="cootelf@cardiff.ac.uk",
@@ -15,9 +15,9 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/CornishLeo/CUWALID",
     packages=find_packages(),
+    license="MIT",
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.9',

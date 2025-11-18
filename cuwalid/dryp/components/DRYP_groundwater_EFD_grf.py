@@ -23,18 +23,20 @@ class gwflow_solver_grs(object):
 		self.grid = grid
 		self.Ksat = Ksat
 		self.area_river = area_river
-		self.bc = bc
+		#self.bc = bc
 		self.method = method
 		
 		# Pre-calculated static conductance array (length = N_connections)
 		self.C_static = _precalculate_static_conductance(grid)
 
-
-
-
-		
-
-
+		# set up boundary conditions
+		self.id_CHB = None
+		if bc is not None:
+			self.id_CHB = np.where(bc != -9999)[0]
+			if self.id_CHB.size > 0:
+				self.bc = bc[self.id_CHB]
+			else:
+				self.id_CHB = None
 
 		pass
 
@@ -93,46 +95,76 @@ class gwflow_solver_grs(object):
 			groundwater discharge (baseflow) [m/dt]
 		
 		"""
-		thickness_sat = np.array(thickness, dtype=float)
-
+		# get number of cells
 		N_cells = grid['N_cells']
 
 		# Array lookups for connections
 		I = grid['I']
 		J = grid['J']
 
+		# create dynamic surface elevation to handle lakes
+		surface_i = surface.copy()
+
+		# number of active nodes
+		act_nodes = np.where(inodetype > 0)[0]
+
+		# initialize discharge
+		discharge = np.zeros_like(surface, dtype=float)
+		
+		# initialize seepage
+		dqs = np.zeros_like(surface, dtype=float)
+		
+		# initialize water storage change
+		water_storage_change = np.zeros_like(thickness, dtype=float)
+		
+		# initialize saturated thinckess
+		thickness_sat = np.array(thickness, dtype=float)
+		thickness_sat[act_nodes] = update_saturated_thickness(head,
+									bottom, surface, thickness,
+									inodetype, method=self.method
+									)
+		
+		# change in total storage at the end of the time step
+		total_storage_change = 0.0
+
+		# flux at constant head boundary
+		self.flux_at_CHB = 0.0
+
 		# Apply initial fixed boundary conditions (if provided)
-		if h_BC_mask is not None:
-			h[h_BC_mask] = h_BC_value
+		if self.bc is not None:
+			head[self.id_CHB] = self.bc
 			# Ensure that BC nodes are not updated by the flux calculation
-			Sy_for_update = grid['Sy'].copy()
-			Sy_for_update[h_BC_mask] = np.inf # Effectively sets update term to zero
+			Sy_for_update = Sy.copy()
+			Sy_for_update[self.id_CHB] = np.inf # Effectively sets update term to zero
 		else:
-			Sy_for_update = grid['Sy']
+			Sy_for_update = Sy
 	
-		# Calculate the per-cell update factor (dt / (Sy * Area))
-		Update_Factor = dt / (Sy_for_update * grid['Areas'])
+		## Calculate the per-cell update factor (dt / (Sy * Area))
+		#Update_Factor = dt / (Sy_for_update * grid['Areas'])
 	
-		# Store history every 1000 steps
-		store_interval = 1000
-		h_history = [h.copy()]
-	
-		# Stability Check Warning (Based on maximum diffusivity)
-		D_max = np.max(grid['K']) * head / np.min(grid['Sy'])
-	
-		dt = (COURANT_2D * (grid['Dx_cell']**2).min() / D_max)
+		# calculate maximum allowable time step based on Courant condition
+		dtp = get_maximim_time_step(self.Ksat[act_nodes], Sy[act_nodes],
+							  thickness[act_nodes], grid['Dx_cell'][act_nodes])
+
+		# inner iteration counter
+		inner_iter = 0
 
 		while dtp > dt:
-			h_prev = h.copy()
+			# adjusting heads at the bottom of the model domain
+			# WARNING! this could lead to increases in mass balance errors
+			head = np.minimum(surface, head)
 
 			# calculate aquifer saturated thickness at nodes
 			# for models with exponential function assign effective depth
 			# skip this for first iiteration
-			
 			if inner_iter > 0:
 				thickness_sat[act_nodes] = update_saturated_thickness(head, bottom,
 														  surface, thickness, inodetype, method=self.method)
-			
+
+				#if self.id_CHB is not None:
+				#self.ch_boundaries = bc[self.id_CHB]
+				#	head[self.id_CHB] = self.cb
+
 			# 1. Calculate Transmissivity at the Interface (T_ij^k = K_avg * h_avg)    
 			# Head at interface (Arithmetic Mean): h_avg = (h_i + h_j) / 2
 			h_i = head[I]
@@ -164,30 +196,47 @@ class gwflow_solver_grs(object):
 			# Flux entering cell I (Inflow, must be added): Q_flow_i_to_j where J is the host
 			Total_Flux_In = np.bincount(J, weights=Q_flow_i_to_j, minlength=N_cells)
 	
-			# Net flux into cell I = Inflow - Outflow
-			Net_Flux = Total_Flux_In - Total_Flux_Out
+			# Net flux into cell I = Inflow - Outflow [depth/time]
+			#Net_Flux = Total_Flux_In - Total_Flux_Out
+			Net_Flux = (Total_Flux_In - Total_Flux_Out)/grid['Areas']
 			
 			# add river component
 			if riv_nodes.size > 0:
-				for riv_node in riv_nodes:
-					# Calculate head difference between aquifer and river stage
-					head_diff = h_prev[riv_node] - riv_elevation[riv_node]
-					if head_diff > 0:
-						# Outflow from aquifer to river
-						Q_river = conductivity[riv_node] * head_diff
-						Net_Flux[riv_node] -= Q_river
-						
+				# Calculate channel cell conductivity
+				hriv = np.minimum(head[riv_nodes],
+					riv_elevation[riv_nodes]+stage[riv_nodes])
+
+				# Calculate head difference between aquifer and river stage
+				head_diff = head[riv_nodes] - hriv
+				head_diff[head_diff < 0] = 0
+							
+				# Calculate river cell flux [m3 h-1]
+				qs_riv = np.zeros_like(riv_nodes, dtype=float)
+				qs_riv = (conductivity[riv_nodes]*head_diff)
+				
+				# add river out/inflow to the mass balance [depth/time]
+				# change river flow units m3 -> m
+				#dqsdxy[riv_nodes] += -self.kaq*dqs_riv
+				Net_Flux[riv_nodes] += -self.kaq*qs_riv
+
+			
+			# 3. REGULARIZATION APPROACH **************************
+			# calculate regularization for aquifer cells
+			# check if lakes are active
+			if ids_lks is not None:
+				surface_i[ids_lks] = z_lks
+			# calculate regularization for aquifer cells
+			dqs[act_nodes] = regularization_T(surface_i[act_nodes], head[act_nodes],
+				thickness[act_nodes], Net_Flux[act_nodes], REG_FACTOR)
+		
+			# 4. handle lakes at lake nodes
 			if ids_lks is not None:
 				# create a mask of wet cell lakes
 				wet_msk_lks = np.where(head[ids_lks] >= bathymetry[ids_lks], 1, 0)
-				#print('wet', wet_msk_lks)
 				# Calculate anomaly in water table depth at lake nodes
 				dh_lks = head[ids_lks] - z_lks
-				#print('dh_lks', dh_lks)
 				# Mask out dry cell lakes (dry cells become zero)
 				dh_lks = dh_lks*wet_msk_lks
-				#print('dh_lks_masked', dh_lks)
-				#print('size', ids_lks)
 				# redistribute the water table depth anomaly to the links at lake nodes
 				# calculate the sum of water table depth anomaly at lake nodes
 				sum_dh_lks = np.add.reduceat(dh_lks, np.append([0], np.cumsum(sizes_lks)[:-1]))
@@ -205,22 +254,20 @@ class gwflow_solver_grs(object):
 					np.repeat(avg_dh_lks, sizes_lks))
 					)
 				
-				# modify storage change at lake nodes
+				# modify storage change at lake nodes [depth/time]
 				# calculate the change in water storage at lake nodes
 				# if storage chang eis positive, and seepage is positive, accumulate the seepage to
 				# the water storage change at lake nodes
-				Net_Flux[ids_lks] = Net_Flux[ids_lks]*(1-wet_msk_lks)# + wet_msk_lks*avg_dh_lks
+				dqs[ids_lks] = dqs[ids_lks]*(1-wet_msk_lks)# + wet_msk_lks*avg_dh_lks
 
-			# 3. Final Explicit Update    
-			# Change in head = (dt / (Sy * Area)) * [Net_Flux + Recharge]
-			dh = Update_Factor * (Net_Flux + recharge * grid['Areas'])
+			# 5. Final Explicit Update    
+			# Calculate storage change			
+			water_storage_change[act_nodes] = (Net_Flux[act_nodes]-dqs[act_nodes])*dtsp
+			#print('water_storage_change', water_storage_change[27:36])
 			
-			# 4. Regularization
-			# calculate regularization for aquifer cells
-			dhs = regularization_T(surface, h_prev,
-				h_interface, dh, REG_FACTOR)
-			dh = dh - dhs # total change in head after regularization (TWSA)
-			
+			# calculate total storage change to evaluate mass balance
+			total_storage_change += np.mean(water_storage_change[act_nodes])
+
 			# Update storage change for soil-gw interactions
 			# run FORTRAN connector
 			# create an auxiliary variable to interact with fortran
@@ -236,24 +283,63 @@ class gwflow_solver_grs(object):
 				np.array(theta_fc[act_nodes], np.float32),#tht_fc
 				np.array(theta_dt[act_nodes], np.float32),#tht_dt
 				np.array(water_storage_change[act_nodes], np.float32),#dS
-				np.array(Sy[act_nodes], np.float32),#Sy
+				np.array(Sy_for_update[act_nodes], np.float32),#Sy
 				aux_head
 				)
-			
+
             # asign updated values of aquifer heads to the groundwater object
 			head[act_nodes] = aux_head
 
-			# and Apply Updates
-			h = h_prev + dh
+			# accumulate discharge
+			if len(riv_nodes) > 0:
+				discharge[riv_nodes] += qs_riv*self.kaq*dtsp
+
+			discharge[act_nodes] += dqs[act_nodes]*dtsp
 
 			# Apply boundary condition reset (fixed head nodes must not change)
-			if h_BC_mask is not None:
-				h[h_BC_mask] = h_BC_value
+			if self.bc is not None:
+				head[self.id_CHB] = self.bc
 	
 			# Physical constraint: Head cannot be negative
-			h = np.maximum(h, 0.0) 
-	
-		return h
+			head = np.maximum(head, 0.0)
+
+			# adjusting head at the surface of the model domain
+			# WARNING! this could lead to increases in mass balance errors
+			head = np.minimum(surface, head)
+
+			# calculate new time step based on Courant condition
+			dtsp = get_maximim_time_step(self.Ksat[act_nodes], Sy[act_nodes],
+				thickness_sat[act_nodes], grid['Dx_cell'][act_nodes])
+			
+			# Update time step
+			if dtsp <= 0:
+				raise Exception("invalid time step", dtsp)			
+			if dtp == dt:			
+				dtp += dtsp			
+			elif (dtp + dtsp) > dt:			
+				dtsp = dt - dtp				
+				dtp += dtsp				
+			else:			
+				dtp += dtsp
+
+			# store history
+			inner_iter += 1
+
+		# calculate discharge at the end of the time step
+		self.flux_at_CHB = self.flux_at_CHB/len(act_nodes)
+		# check calculate water balance of the groundwater component
+		#print(np.mean(recharge[act_nodes]), np.mean(discharge[act_nodes]),
+		#		np.mean(total_storage_change), self.flux_at_CHB)
+		try:
+			MB = (np.mean(recharge[act_nodes]) - np.mean(discharge[act_nodes])
+				 - np.mean(total_storage_change) - self.flux_at_CHB)
+			#print(MB)
+			assert np.allclose(MB, 0.0, rtol=1e-05, atol=1e-04)
+		except:
+			raise Exception(MB,'Groundwater Water balance Error: '
+		   		'Please check units and non-data values')
+
+		return head, discharge
 	
 # --- 2. PRE-CALCULATION OF STATIC CONDUCTANCE ---
 def _precalculate_static_conductance(grid, Ksat):
@@ -368,6 +454,50 @@ def update_saturated_thickness(head, bottom, surface,
 					head[idnodes])
 		
 	# check that that saturated thickness is not negative
-    thickness[thickness < 0] = 0.0 
+	thickness[thickness < 0] = 0.0 
 
-    return thickness
+	return thickness
+
+def time_step_confined(D, Sy, T, dx):
+	"""Maximum time step for confined aquifers
+	D:	Courant number
+	"""
+	dt = D*Sy*np.power(dx, 2)/(T)
+	
+	#dt = np.nanmin(dt[dt > 0])
+	#return dt
+	return np.nanmin(dt[dt > 0])
+
+def get_maximim_time_step(Ksat, Sy, thickness, delta_x):
+	"""Calculate maximum allowable time step based on Courant condition
+	for confined aquifers.
+	Parameters
+	-----------
+	delta_x : numpy array
+		grid size [L]
+	thickness : numpy array
+		effective aquifer depth [m]
+	Ksat : numpy array
+		hydraulic conductivity [L/T]
+	Sy : numpy array
+		specific yield [-]
+
+	Returns
+	-------
+	dt : float
+		maximum allowable time step [T]
+	"""
+
+	Ksat_max = np.max(Ksat)
+	id_ksat_max = np.argmax(Ksat)
+	Sy_min = np.min(Sy)
+	id_Sy_min = np.argmin(Sy)
+
+	Sy_min = Sy[id_ksat_max]
+	D_max_ksat = Ksat_max * thickness[id_ksat_max] / Sy[id_ksat_max]
+	D_max_sy = Ksat_max[id_Sy_min] * thickness[id_Sy_min] / Sy_min
+	D_max = max(D_max_ksat, D_max_sy)
+	
+	dt = (COURANT_2D * (delta_x**2).min() / D_max)
+
+	return dt
