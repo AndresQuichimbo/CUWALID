@@ -384,7 +384,7 @@ class gwflow_EFD(object):
 			# Calculate flux per unit length at each face
 			qs = np.zeros_like(self.Ksat)
 			qs[act_links] = -T[act_links]*dhdl[act_links]
-			
+			#print('qs0', qs)#[13:23])
 			# calculate total flux at constant head boundary condition cells
 			# units are m per time step
 			if self.id_CHB is not None:
@@ -411,7 +411,7 @@ class gwflow_EFD(object):
 			# Calculate flux gradient
 			dqsdxy = (-grid.calc_flux_div_at_node(qs)#- dfhbc 
 					+ recharge/dt)
-			#print('dqsdxy0', dqsdxy[27:36])
+			#print('dqsdxy0', dqsdxy[13:23])
 			#print('time step', dtsp)
 
 			# CALCULATE FLUX AT RIVER CELLS*************************

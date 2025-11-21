@@ -5,16 +5,16 @@ Test fuction of the groundwater component
 @author: Edisson Quichimbo
 """
 import numpy as np
-from landlab import RasterModelGrid
+#from landlab import RasterModelGrid
 from cuwalid.dryp.components.DRYP_io import create_grid_from_extent
-from cuwalid.dryp.components.DRYP_groundwater_EFD_grf import gwflow_EFD
+from cuwalid.dryp.components.DRYP_groundwater_EFD_geo import gwflow_EFD
 
 
 def test_groundwater_multiaq():
 	# create a raster grid landlab object
 	ncol = 12
 	nrow = 3
-	grid = create_grid_from_extent(nrow, ncol, 0, 0, 1000.0, projected=True)
+	grid = create_grid_from_extent(ncol, nrow, 0, 0, 1000.0, projected=True)
 	grid_size = ncol*nrow
 		
 	surface = np.full(grid_size, 200.0)
@@ -88,7 +88,7 @@ def test_groundwater_multiaq():
 						1
 						)
 	
-	#print(i, head[act_nodes])
+	print(i, head.reshape(nrow, ncol))
 	out = head[act_nodes]
 	
 	assert np.allclose(out, answer)

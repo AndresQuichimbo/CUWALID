@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import cuwalid.dryp.components.lakesf90 as lakes
+from cuwalid.dryp.components.DRYP_io import _compute_inactive_links
 
 REG_FACTOR = 0.001  # Regularization factor for confined aquifers
 COURANT_2D = 0.50 # Courant Number 2D flow
@@ -41,9 +42,6 @@ class gwflow_EFD(object):
 		else:
 			print('Groundwater settings: Multi-transmissivity function')
 		
-		# Pre-calculated static conductance array (length = N_connections)
-		self.C_static = _precalculate_static_conductance(grid)
-
 		# set up boundary conditions
 		self.id_CHB = None
 		if bc is not None:
@@ -53,8 +51,22 @@ class gwflow_EFD(object):
 			else:
 				self.id_CHB = None
 
+		# create provisional domain for active nodes
+		inodetype = np.zeros(grid['N_cells'])
+		inodetype[grid['core_nodes']] = 1  # mark active nodes
+		if self.id_CHB is not None:
+			inodetype[self.id_CHB] = 2  # mark constant head boundary nodes
+
+		# get inactive links from grid object
+		inactive_links, _ = _compute_inactive_links(grid, inodetype)
+		
+		# Pre-calculated static conductance array (length = N_connections)
+		self.C_static = _precalculate_static_conductance(grid, Ksat)
+		# update pre-calculated inactive links in grid
+		self.C_static[inactive_links] = 0.0
+	
 		# calculate cell area
-		A = np.power(grid.dx, 2)	
+		A = grid['Areas']	
 			
 		# calcualte river factor to reduce number of calculations
 		kriv = np.ones_like(area_river)
@@ -145,9 +157,10 @@ class gwflow_EFD(object):
 		
 		# initialize saturated thinckess
 		thickness_sat = np.array(thickness, dtype=float)
-		thickness_sat[act_nodes] = update_saturated_thickness(head,
-									bottom, surface, thickness,
-									inodetype, method=self.method
+		thickness_sat[act_nodes] = update_saturated_thickness(head[act_nodes],
+									bottom[act_nodes], surface[act_nodes],
+									thickness_sat[act_nodes], inodetype[act_nodes],
+									method=self.method
 									)
 		
 		# change in total storage at the end of the time step
@@ -169,13 +182,17 @@ class gwflow_EFD(object):
 		#Update_Factor = dt / (Sy_for_update * grid['Areas'])
 	
 		# calculate maximum allowable time step based on Courant condition
-		dtp = get_maximim_time_step(self.Ksat[act_nodes], Sy[act_nodes],
+		dts = get_maximim_time_step(self.Ksat[act_nodes], Sy[act_nodes],
 							  thickness[act_nodes], grid['Dx_cell'][act_nodes])
+
+		# Calculate minimal time step		
+		dtp = np.nanmin([dt, dts])		
+		dtsp = dtp
 
 		# inner iteration counter
 		inner_iter = 0
 
-		while dtp > dt:
+		while dtp <= dt:
 			# adjusting heads at the bottom of the model domain
 			# WARNING! this could lead to increases in mass balance errors
 			head = np.minimum(surface, head)
@@ -184,12 +201,14 @@ class gwflow_EFD(object):
 			# for models with exponential function assign effective depth
 			# skip this for first iiteration
 			if inner_iter > 0:
-				thickness_sat[act_nodes] = update_saturated_thickness(head, bottom,
-														  surface, thickness, inodetype, method=self.method)
+				thickness_sat[act_nodes] = update_saturated_thickness(head,
+											bottom, surface, thickness,
+											inodetype, method=self.method
+											)
 
-				#if self.id_CHB is not None:
+				if self.id_CHB is not None:
 				#self.ch_boundaries = bc[self.id_CHB]
-				#	head[self.id_CHB] = self.cb
+					head[self.id_CHB] = self.bc[self.id_CHB]
 
 			# 1. Calculate Transmissivity at the Interface (T_ij^k = K_avg * h_avg)    
 			# Head at interface (Arithmetic Mean): h_avg = (h_i + h_j) / 2
@@ -198,7 +217,7 @@ class gwflow_EFD(object):
 			thickness_sat_i = thickness_sat[I]
 			thickness_sat_j = thickness_sat[J]
 	
-			h_interface = 0.5 * (h_i + h_j)
+			#h_interface = 0.5 * (h_i + h_j)
 			# Limit h_interface to the saturated thickness at the interface
 			thickness_interface = 0.5 * (thickness_sat_i + thickness_sat_j)
 			
@@ -214,7 +233,7 @@ class gwflow_EFD(object):
 			# T_interface^k = C_static * h_interface
 			# Q_flow_i_to_j = C_static * h_interface * (h_i - h_j)
 			Q_flow_i_to_j = self.C_static * thickness_interface * (h_i - h_j)
-	
+			#print('Q_flow_i_to_j0', Q_flow_i_to_j)#[13:23])
 			# 2. Calculate Divergence: Sum Fluxes per Cell (Net Flux) using np.bincount    
 			# Flux leaving cell I (Outflow, must be subtracted): Q_flow_i_to_j where I is the host
 			Total_Flux_Out = np.bincount(I, weights=Q_flow_i_to_j, minlength=N_cells)
@@ -224,10 +243,16 @@ class gwflow_EFD(object):
 	
 			# Net flux into cell I = Inflow - Outflow [depth/time]
 			#Net_Flux = Total_Flux_In - Total_Flux_Out
-			Net_Flux = (Total_Flux_In - Total_Flux_Out)/grid['Areas']
-			
+			#print('Total_Flux_In', Total_Flux_In.reshape(grid['N_x'], grid['N_y']))#[13:23])
+			#print('Total_Flux_Out', Total_Flux_Out.reshape(grid['N_x'], grid['N_y']))#[13:23])
+			#print('Net_Flux', Total_Flux_In + Total_Flux_Out)
+			Net_Flux = (Total_Flux_In - Total_Flux_Out)/grid['Areas'] + recharge/dt
+			#Net_Flux = (Total_Flux_Out)/grid['Areas'] + recharge/dt
+			#print('Net_Flux0', Net_Flux.reshape(grid['N_x'], grid['N_y']))#[13:23])
+			#print("recharge", recharge[13:23]/dt)
+			#print("dtsp", dtsp)
 			# add river component
-			if riv_nodes.size > 0:
+			if len(riv_nodes) > 0:
 				# Calculate channel cell conductivity
 				hriv = np.minimum(head[riv_nodes],
 					riv_elevation[riv_nodes]+stage[riv_nodes])
@@ -251,6 +276,7 @@ class gwflow_EFD(object):
 			# check if lakes are active
 			if ids_lks is not None:
 				surface_i[ids_lks] = z_lks
+
 			# calculate regularization for aquifer cells
 			dqs[act_nodes] = regularization_T(surface_i[act_nodes], head[act_nodes],
 				thickness[act_nodes], Net_Flux[act_nodes], REG_FACTOR)
@@ -521,7 +547,7 @@ def get_maximim_time_step(Ksat, Sy, thickness, delta_x):
 
 	Sy_min = Sy[id_ksat_max]
 	D_max_ksat = Ksat_max * thickness[id_ksat_max] / Sy[id_ksat_max]
-	D_max_sy = Ksat_max[id_Sy_min] * thickness[id_Sy_min] / Sy_min
+	D_max_sy = Ksat[id_Sy_min] * thickness[id_Sy_min] / Sy_min
 	D_max = max(D_max_ksat, D_max_sy)
 	
 	dt = (COURANT_2D * (delta_x**2).min() / D_max)

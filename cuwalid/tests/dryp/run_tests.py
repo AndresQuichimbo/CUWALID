@@ -6,6 +6,7 @@ package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..
 sys.path.insert(0, package_root)
 
 from cuwalid.tests.dryp.scripts import (
+    test_groundwater_multyaq_geo,
     test_precipitation,
     test_precipitation_csv,
     test_precipitation_step,
@@ -15,7 +16,7 @@ from cuwalid.tests.dryp.scripts import (
     test_gw_sw_interaction,
     test_groundwater_multyaq_ss,
     test_groundwater_multyaq,
-    test_groundwater_multyaq_grs,
+    test_groundwater_multyaq_geo,
     test_groundwater_ss_slopefactor,
     test_groundwater,
     test_save_necdf,
@@ -47,7 +48,7 @@ test_functions = [
     test_gw_sw_interaction.test_gw_sw_interaction,
     test_groundwater_multyaq_ss.run_DRYP_SS,
     test_groundwater_multyaq.test_groundwater_multiaq,
-    test_groundwater_multyaq_grs.test_groundwater_multiaq,
+    test_groundwater_multyaq_geo.test_groundwater_multiaq,
     test_groundwater_ss_slopefactor.run_DRYP_SS,
     test_groundwater.test_groundwater,
     test_save_necdf.test_save_variables,

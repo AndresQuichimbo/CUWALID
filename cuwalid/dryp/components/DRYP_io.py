@@ -64,7 +64,7 @@ class grid_environment(object):
 			domain=domain)
 		return grid
 	
-	def create_projected_grid(self,):
+	def create_projected_grid(self, domain, projected=False):
 		"""This function create a projected grid (approximate Cartesian grid)
 		using WGS84 approximation where the cell size is provided in degrees.
 		
@@ -87,8 +87,37 @@ class grid_environment(object):
 			self.grid_nrows,
 			self.grid_yllcorner,
 			self.grid_xllcorner,
-			self.grid_cellsize)
+			self.grid_cellsize,
+			domain=domain,
+			projected=projected)
 		
+		return grid
+	
+	def compute_inactive_links(self, grid, domain):
+		"""Compute inactive links for the rectangular grid.
+
+		Rules:
+		- A link is active only if both its end nodes are active.
+		- If a link connects an active node with an inactive node, the link is inactive.
+
+		Parameters
+		----------
+		grid : dict
+			Grid dictionary returned by _generate_rectangular_grid_data (must contain 'I' and 'J' arrays).
+		domain : array_like
+			1D flattened domain array where active nodes have values > 0.
+		Returns
+		-------
+		inactive_links : numpy.ndarray
+			1D array of link indices that are inactive.
+		active_link_mask : numpy.ndarray
+			boolean array (same length as grid['I']) True where link is active.
+		"""
+		inactive_links, active_links = _compute_inactive_links(grid, domain)
+
+		grid['inactive_links'] = inactive_links
+		grid['active_link_mask'] = active_links
+
 		return grid
 
 def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, domain=None, projected=False):
@@ -126,34 +155,35 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, domain=Non
 	                  nrows)
 	
 	# 2D meshgrid of geographic coordinates
-	#lon2d, lat2d = np.meshgrid(lon, lat)
+	lon2d, lat2d = np.meshgrid(lon, lat)
 
 	if not projected:
 		# Compute mean latitude for conversion approximation
 		mean_lat = np.mean(lat)
 		mean_lat_rad = np.deg2rad(mean_lat)
 		# Conversion factors (WGS84) from degrees to meters
-		meters_per_deg_lat = 111132.92 - 559.82 * np.cos(2 * mean_lat_rad) + 1.175 * np.cos(4 * mean_lat_rad)
-		meters_per_deg_lon = 111412.84 * np.cos(mean_lat_rad) - 93.5 * np.cos(3 * mean_lat_rad)
+
+		# meters_per_deg_lat = meters_dy
+		meters_dy = 111132.92 - 559.82 * np.cos(2 * mean_lat_rad) + 1.175 * np.cos(4 * mean_lat_rad)
+		# meters_per_deg_lon = meters_dx
+		meters_dx = 111412.84 * np.cos(mean_lat_rad) - 93.5 * np.cos(3 * mean_lat_rad)
+		
 		# Compute Cartesian coordinates (relative to lower-left corner)
-		#x = (lon2d - lon_min) * meters_per_deg_lon
-		#y = (lat2d - lat_min) * meters_per_deg_lat
-		x = (lon - lon_min) * meters_per_deg_lon
-		y = (lat - lat_min) * meters_per_deg_lat
+		x = (lon2d - lon_min) * meters_dx
+		y = (lat2d - lat_min) * meters_dy
+		#x = (lon - lon_min) * meters_per_deg_lon
+		#y = (lat - lat_min) * meters_per_deg_lat
 	else:
 		# For projected grid, assume cellsize is already in meters
-		meters_per_deg_lon = np.full(len(lon), cellsize, dtype=float)
-		meters_per_deg_lat = np.full(len(lat), cellsize, dtype=float)
-		x = np.linspace(0 + cellsize / 2,
-		                (ncols - 0.5) * cellsize,
-		                ncols) + lon_min
-		y = np.linspace(0 + cellsize / 2,
-		                (nrows - 0.5) * cellsize,
-		                nrows) + lat_min
 
+		meters_dx, meters_dy = np.meshgrid(np.full(len(lon), cellsize, dtype=float),
+									 np.full(len(lat), cellsize, dtype=float))	
+		# Compute Cartesian coordinates (relative to lower-left corner)
+		x = lon#2d# - lon_min) * meters_dx
+		y = lat#2d# - lat_min) * meters_dy
 
 	# Create grid dictionary
-	grid = _generate_rectangular_grid_data(ncols, nrows, meters_per_deg_lon, meters_per_deg_lat)
+	grid = _generate_rectangular_grid_data(ncols, nrows, meters_dx.flatten(), meters_dy.flatten())
 
 	# Add coordinate arrays
 	grid['x'] = x
@@ -195,63 +225,6 @@ def center_ones(nrows: int, ncols: int):
     a = np.zeros((nrows, ncols), dtype=int)
     a[1:-1, 1:-1] = 1
     return a
-
-
-def create_projected_grid_from_extent_deg(ncols, nrows, lon_min, lat_min, cellsize_deg):
-	"""
-	Create a projected grid (approximate Cartesian grid) using WGS84
-	approximation where the cell size is provided in degrees.
-	Parameters
-	----------
-	ncols : int
-	    Number of grid columns (width).
-	nrows : int
-	    Number of grid rows (height).
-	lon_min : float
-	    Longitude of the lower-left corner (degrees).
-	lat_min : float
-	    Latitude of the lower-left corner (degrees).
-	cellsize_deg : float
-	    Grid cell size (degrees).
-	Returns
-	-------
-	dict
-	    A dictionary with:
-	    - 'lon' : 2D array of longitudes (degrees)
-	    - 'lat' : 2D array of latitudes (degrees)
-	    - 'x'   : 2D array of x coordinates (m, east)
-	    - 'y'   : 2D array of y coordinates (m, north)
-	    - 'mean_lat' : mean latitude used in the approximation
-	"""
-	# Generate 1D coordinate arrays (cell centers)
-	lon = np.linspace(lon_min + cellsize_deg / 2,
-	                  lon_min + (ncols - 0.5) * cellsize_deg,
-	                  ncols)
-	lat = np.linspace(lat_min + cellsize_deg / 2,
-	                  lat_min + (nrows - 0.5) * cellsize_deg,
-	                  nrows)
-	# 2D meshgrid of geographic coordinates
-	lon2d, lat2d = np.meshgrid(lon, lat)
-	# Compute mean latitude for conversion approximation
-	mean_lat = np.mean(lat)
-	mean_lat_rad = np.deg2rad(mean_lat)
-	# Conversion factors (WGS84) from degrees to meters
-	meters_per_deg_lat = 111132.92 - 559.82 * np.cos(2 * mean_lat_rad) + 1.175 * np.cos(4 * mean_lat_rad)
-	meters_per_deg_lon = 111412.84 * np.cos(mean_lat_rad) - 93.5 * np.cos(3 * mean_lat_rad)
-	# Compute Cartesian coordinates (relative to lower-left corner)
-	#x = (lon2d - lon_min) * meters_per_deg_lon
-	#y = (lat2d - lat_min) * meters_per_deg_lat
-	x = (lon - lon_min) * meters_per_deg_lon
-	y = (lat - lat_min) * meters_per_deg_lat
-
-	# Create grid dictionary
-	grid = _generate_rectangular_grid_data(ncols, nrows, meters_per_deg_lon, meters_per_deg_lat)
-
-	# Add coordinate arrays
-	grid['x'] = x
-	grid['y'] = y
-	
-	return grid
 
 def _generate_rectangular_grid_data(N_x, N_y, Dx_cell, Dy_cell):
 	"""
@@ -348,23 +321,52 @@ def _generate_rectangular_grid_data(N_x, N_y, Dx_cell, Dy_cell):
 		'Dy_cell': Dy_cell, # Store for visualization/debug
 		'I': np.array(I_list),           # Host cell indices (i)
 		'J': np.array(J_list),           # Neighbor cell indices (j)
-		'L_ij': np.array(L_ij_list),
-		'Delta_L_ij': np.array(Delta_L_ij_list),
-		'd_i': np.array(d_i_list),
-		'd_j': np.array(d_j_list),
+		'L_ij': np.array(L_ij_list),	# Face lengths between cells
+		'Delta_L_ij': np.array(Delta_L_ij_list), # Distances between centroids
+		'd_i': np.array(d_i_list), # Distance from centroid of cell i to face ij
+		'd_j': np.array(d_j_list), # Distance from centroid of cell j to face ij
 	}
-## Example usage
-#if __name__ == "__main__":
-#    grid = create_projected_grid_from_extent_deg(
-#        ncols=400, nrows=300,
-#        lon_min=-45.0, lat_min=60.0,
-#        cellsize_deg=0.01  # about 1.1 km at 60°N
-#    )
-#    
-#    print(f"Mean latitude used: {grid['mean_lat']:.4f}")
-#    print(f"x range: {grid['x'].min():.1f} – {grid['x'].max():.1f} m")
-#    print(f"y range: {grid['y'].min():.1f} – {grid['y'].max():.1f} m")
 
+def _compute_inactive_links(grid, domain):
+    """
+    Compute inactive links for the rectangular grid.
+
+    Rules:
+    - A link is active only if both its end nodes are active.
+    - If a link connects an active node with an inactive node, the link is inactive.
+
+    Parameters
+    ----------
+    grid : dict
+        Grid dictionary returned by _generate_rectangular_grid_data (must contain 'I' and 'J' arrays).
+    domain : array_like
+        1D flattened domain array where active nodes have values > 0.
+
+    Returns
+    -------
+    inactive_links : numpy.ndarray
+        1D array of link indices that are inactive.
+    active_link_mask : numpy.ndarray
+        boolean array (same length as grid['I']) True where link is active.
+    """
+
+    if 'I' not in grid or 'J' not in grid:
+        raise ValueError("grid must contain 'I' and 'J' arrays of link connectivity")
+
+    I = np.asarray(grid['I'], dtype=int)
+    J = np.asarray(grid['J'], dtype=int)
+    domain = np.asarray(domain)
+
+    # active node mask: True for active nodes
+    active_node = domain > 0
+
+    # link is active only if both end nodes are active
+    active_link_mask = np.logical_and(active_node[I], active_node[J])
+
+    # inactive link indices
+    inactive_links = np.where(~active_link_mask)[0]
+
+    return inactive_links, active_link_mask
 
 def create_landlab_grid(ncol, nrow, xllcorner, yllcorner, cellsize, domain=None):
 	"""this function create a grid landlab object, this function can be

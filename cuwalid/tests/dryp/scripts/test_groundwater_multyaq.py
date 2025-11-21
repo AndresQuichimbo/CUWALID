@@ -86,7 +86,7 @@ def test_groundwater_multiaq():
 						1
 						)
 	
-	#print(i, head[act_nodes])
+	#print(i, head.reshape((nrow, ncol)))
 	out = head[act_nodes]
 	
 	assert np.allclose(out, answer)
