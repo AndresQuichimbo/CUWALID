@@ -239,15 +239,15 @@ class gwflow_EFD(object):
 			Total_Flux_Out = np.bincount(I, weights=Q_flow_i_to_j, minlength=N_cells)
 	
 			# Flux entering cell I (Inflow, must be added): Q_flow_i_to_j where J is the host
-			Total_Flux_In = np.bincount(J, weights=Q_flow_i_to_j, minlength=N_cells)
+			#Total_Flux_In = np.bincount(J, weights=Q_flow_i_to_j, minlength=N_cells)
 	
 			# Net flux into cell I = Inflow - Outflow [depth/time]
 			#Net_Flux = Total_Flux_In - Total_Flux_Out
 			#print('Total_Flux_In', Total_Flux_In.reshape(grid['N_x'], grid['N_y']))#[13:23])
 			#print('Total_Flux_Out', Total_Flux_Out.reshape(grid['N_x'], grid['N_y']))#[13:23])
 			#print('Net_Flux', Total_Flux_In + Total_Flux_Out)
-			Net_Flux = (Total_Flux_In - Total_Flux_Out)/grid['Areas'] + recharge/dt
-			#Net_Flux = (Total_Flux_Out)/grid['Areas'] + recharge/dt
+			#Net_Flux = (Total_Flux_In - Total_Flux_Out)/grid['Areas'] + recharge/dt
+			Net_Flux = -Total_Flux_Out/grid['Areas'] + recharge/dt
 			#print('Net_Flux0', Net_Flux.reshape(grid['N_x'], grid['N_y']))#[13:23])
 			#print("recharge", recharge[13:23]/dt)
 			#print("dtsp", dtsp)
