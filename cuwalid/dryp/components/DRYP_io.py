@@ -191,7 +191,7 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, domain=Non
 
 	if domain is None:
 		# create core nodes array
-		domain = center_ones(ncols, nrows).flatten()
+		domain = center_ones(nrows, ncols).flatten()
 
 	grid['core_nodes'] = np.where(domain > 0)[0]
 

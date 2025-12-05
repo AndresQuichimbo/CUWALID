@@ -12,7 +12,7 @@ class gwflow_EFD(object):
 	using a highly efficient Vectorized Explicit Finite Difference Method (FDM).
 	"""
 
-	def __init__(self, grid, Ksat, area_river, bc, method):
+	def __init__(self, grid, Ksat, area_river, bc, method=0):
 		"""Initialize the groundwater flow solver.
 		Args:
 			grid (object): Grid object containing spatial discretization.
@@ -51,17 +51,21 @@ class gwflow_EFD(object):
 			else:
 				self.id_CHB = None
 
+		# get active nodes array
 		# create provisional domain for active nodes
 		inodetype = np.zeros(grid['N_cells'])
 		inodetype[grid['core_nodes']] = 1  # mark active nodes
 		if self.id_CHB is not None:
 			inodetype[self.id_CHB] = 2  # mark constant head boundary nodes
+		
+		self.act_nodes = inodetype
 
 		# get inactive links from grid object
 		inactive_links, _ = _compute_inactive_links(grid, inodetype)
 		
 		# Pre-calculated static conductance array (length = N_connections)
 		self.C_static = _precalculate_static_conductance(grid, Ksat)
+		
 		# update pre-calculated inactive links in grid
 		self.C_static[inactive_links] = 0.0
 	
@@ -144,7 +148,7 @@ class gwflow_EFD(object):
 		surface_i = surface.copy()
 
 		# number of active nodes
-		act_nodes = np.where(inodetype > 0)[0]
+		act_nodes = np.where(self.act_nodes > 0)[0]
 
 		# initialize discharge
 		discharge = np.zeros_like(surface, dtype=float)
@@ -233,24 +237,14 @@ class gwflow_EFD(object):
 			# T_interface^k = C_static * h_interface
 			# Q_flow_i_to_j = C_static * h_interface * (h_i - h_j)
 			Q_flow_i_to_j = self.C_static * thickness_interface * (h_i - h_j)
-			#print('Q_flow_i_to_j0', Q_flow_i_to_j)#[13:23])
+
 			# 2. Calculate Divergence: Sum Fluxes per Cell (Net Flux) using np.bincount    
 			# Flux leaving cell I (Outflow, must be subtracted): Q_flow_i_to_j where I is the host
-			Total_Flux_Out = np.bincount(I, weights=Q_flow_i_to_j, minlength=N_cells)
-	
-			# Flux entering cell I (Inflow, must be added): Q_flow_i_to_j where J is the host
-			#Total_Flux_In = np.bincount(J, weights=Q_flow_i_to_j, minlength=N_cells)
+			Net_Flux = np.bincount(I, weights=Q_flow_i_to_j, minlength=N_cells)
 	
 			# Net flux into cell I = Inflow - Outflow [depth/time]
-			#Net_Flux = Total_Flux_In - Total_Flux_Out
-			#print('Total_Flux_In', Total_Flux_In.reshape(grid['N_x'], grid['N_y']))#[13:23])
-			#print('Total_Flux_Out', Total_Flux_Out.reshape(grid['N_x'], grid['N_y']))#[13:23])
-			#print('Net_Flux', Total_Flux_In + Total_Flux_Out)
-			#Net_Flux = (Total_Flux_In - Total_Flux_Out)/grid['Areas'] + recharge/dt
-			Net_Flux = -Total_Flux_Out/grid['Areas'] + recharge/dt
-			#print('Net_Flux0', Net_Flux.reshape(grid['N_x'], grid['N_y']))#[13:23])
-			#print("recharge", recharge[13:23]/dt)
-			#print("dtsp", dtsp)
+			Net_Flux = -Net_Flux/grid['Areas'] + recharge/dt
+
 			# add river component
 			if len(riv_nodes) > 0:
 				# Calculate channel cell conductivity
@@ -267,7 +261,6 @@ class gwflow_EFD(object):
 				
 				# add river out/inflow to the mass balance [depth/time]
 				# change river flow units m3 -> m
-				#dqsdxy[riv_nodes] += -self.kaq*dqs_riv
 				Net_Flux[riv_nodes] += -self.kaq*qs_riv
 
 			
@@ -516,8 +509,6 @@ def time_step_confined(D, Sy, T, dx):
 	"""
 	dt = D*Sy*np.power(dx, 2)/(T)
 	
-	#dt = np.nanmin(dt[dt > 0])
-	#return dt
 	return np.nanmin(dt[dt > 0])
 
 def get_maximim_time_step(Ksat, Sy, thickness, delta_x):
@@ -538,8 +529,9 @@ def get_maximim_time_step(Ksat, Sy, thickness, delta_x):
 	-------
 	dt : float
 		maximum allowable time step [T]
-	"""
 
+	"""
+	# calculate maximum diffusivity
 	Ksat_max = np.max(Ksat)
 	id_ksat_max = np.argmax(Ksat)
 	Sy_min = np.min(Sy)
