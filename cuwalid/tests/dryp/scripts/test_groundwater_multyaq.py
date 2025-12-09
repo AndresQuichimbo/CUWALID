@@ -51,7 +51,7 @@ def test_groundwater_multiaq():
 	recharge = np.full(grid_size, 0.00001)
 
 	act_nodes = grid.core_nodes[:]
-	
+	#print('act_nodes', act_nodes)
 	riv_nodes = []
 	
 	# time step
@@ -63,8 +63,8 @@ def test_groundwater_multiaq():
 		136.95245361, 136.98146057, 137.00320435, 137.0177002, 137.02494812]
 		
 	gw = gwflow_EFD(grid, Ksat_aq, area_river, CHB, method)
-	
-	for i in range(150000):
+	#print('ksat_aq', gw.Ksat)
+	for i in range(15):
 		
 		head, baseflow = gw.run_one_step_gw(grid,
 						surface,

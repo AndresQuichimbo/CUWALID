@@ -65,7 +65,7 @@ class gwflow_EFD(object):
 		
 		# Pre-calculated static conductance array (length = N_connections)
 		self.C_static = _precalculate_static_conductance(grid, Ksat)
-		
+
 		# update pre-calculated inactive links in grid
 		self.C_static[inactive_links] = 0.0
 	
@@ -166,7 +166,7 @@ class gwflow_EFD(object):
 									thickness_sat[act_nodes], inodetype[act_nodes],
 									method=self.method
 									)
-		
+		#print('thickness', thickness_sat[act_nodes])
 		# change in total storage at the end of the time step
 		total_storage_change = 0.0
 

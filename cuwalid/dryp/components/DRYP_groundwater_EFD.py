@@ -225,10 +225,10 @@ class gwflow_EFD(object):
 						head[act_nodes])
 		elif self.method == 3:
 			# update thikness for aquifers with linear transmissinity
-			idnodes = np.where(inodetype == 3)
+			idnodes = np.where(inodetype == 1)
 			thickness_sat[idnodes] = head[idnodes] - bottom[idnodes]
 			# updates thickness of aquiferes with exponential transmissivity
-			idnodes = np.where(inodetype == 1)
+			idnodes = np.where(inodetype == 2)
 			thickness_sat[idnodes] = exponential(thickness[idnodes],
 								surface[idnodes]-thickness[idnodes],
 								head[idnodes])
@@ -303,7 +303,7 @@ class gwflow_EFD(object):
 			
 			# check that that saturated thickness is not negative
 			thickness_sat[thickness_sat < 0] = 0
-			
+			#print('thickness', thickness_sat[act_nodes])
 			# map mean values of thickness at node to links
 			grid.at_node['aux_grid'][:] = thickness_sat[:]
 			thickness_link = map_link_head_node_to_link(grid, 'aux_grid')

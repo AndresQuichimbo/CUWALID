@@ -283,7 +283,7 @@ def plot_point_var(fname, fields=None, fname_out=None, delta_t='D',
 	
 	return ax
 
-def plot_profile(dataset, axis=0, time=[0], n=1, dem=None,
+def plot_profile(dataset, axis=0, time=[0], n=1, dem=None, river_bottom=None,
 				 bathymetry=None, title=None, fname_out=None, ax=None, plot_step=False):
 	"""Plot a profile of the dataset along a specified axis (0 or 1).
 	
@@ -334,14 +334,20 @@ def plot_profile(dataset, axis=0, time=[0], n=1, dem=None,
 	
 	#check if the axis is valid
 	nlat, nlon = dataset['lat'].shape[0], dataset['lon'].shape[0] 
-	nlatr, nlonr = np.shape(dem)
-	nlatb, nlonb = np.shape(bathymetry)
 
 	# check that nlat and nlon are the same as the dem and bathymetry
 	if dem is not None:
+		nlatr, nlonr = np.shape(dem)
 		if nlat != nlatr or nlon != nlonr:
 			raise ValueError("The shape of the dem does not match the dataset")
+	
+	if river_bottom is not None:
+		nlatrb, nlonrb = np.shape(river_bottom)
+		if nlat != nlatrb or nlon != nlonrb:
+			raise ValueError("The shape of the river bottom does not match the dataset")
+
 	if bathymetry is not None:
+		nlatb, nlonb = np.shape(bathymetry)
 		if nlat != nlatb or nlon != nlonb:
 			raise ValueError("The shape of the bathymetry does not match the dataset")
 
@@ -385,6 +391,8 @@ def plot_profile(dataset, axis=0, time=[0], n=1, dem=None,
 		dem[dem < 0] = np.nan
 	if bathymetry is not None:
 		bathymetry[bathymetry < 0] = np.nan
+	if river_bottom is not None:
+		river_bottom[river_bottom < 0] = np.nan
 	# check if the axis is 0 or 1
 	# if axis is 0, plot the profile along the latitude
 	if axis == 0: # plot along latitude
@@ -393,6 +401,9 @@ def plot_profile(dataset, axis=0, time=[0], n=1, dem=None,
 			
 		if bathymetry is not None:
 			ax.plot(dataset['lat'], bathymetry[:, n][::-1], 'k', alpha=0.7)
+
+		if river_bottom is not None:
+			ax.plot(dataset['lat'], river_bottom[:, n][::-1], 'grey', alpha=0.7)
 		
 		ax.set_xlabel('Latitude')
 
@@ -401,6 +412,8 @@ def plot_profile(dataset, axis=0, time=[0], n=1, dem=None,
 			ax.plot(dataset['lon'], dem[n], 'gray', ls='-', alpha=0.7)
 		if bathymetry is not None:
 			ax.plot(dataset['lon'], bathymetry[n], 'k', alpha=0.7)
+		if river_bottom is not None:
+			ax.plot(dataset['lon'], river_bottom[n], 'grey', alpha=0.7)
 		ax.set_xlabel('Longitude')
 	
 	# set the title of the plot
