@@ -417,7 +417,7 @@ class index_handler(object):
 		core_nodes = grid.core_nodes
 		return core_nodes
 	
-def get_index_from_coord_file(grid, filename):
+def get_index_from_coord_file(grid, filename, xlabel="East", ylabel="North"):
 	""" This function reads data points to report model results
 	Values at each point will be extracted for all components depending
 	on the specified points:
@@ -433,7 +433,7 @@ def get_index_from_coord_file(grid, filename):
 	list of nodes where values will be extracted
 	"""				
 	# Reading output points
-	xpoint, ypoint = read_point_coordinates(filename)
+	xpoint, ypoint = read_point_coordinates(filename, xlabel=xlabel, ylabel=ylabel)
 	idpoint, idypoint_active = extract_idnode_from_coords(grid,
 		xpoint, ypoint)
 	

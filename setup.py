@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setup(
     name="cuwalid",
 
-    version="1.1.56",
+    version="1.1.57",
 
     author="Andrés Quichimbo, Manuel Rios Gaona, Dagmawi Teklu Asfaw, Leo Coote",
     author_email="cootelf@cardiff.ac.uk",
