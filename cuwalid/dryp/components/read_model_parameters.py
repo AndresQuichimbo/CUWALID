@@ -21,7 +21,7 @@ def read_model_parameters(data_in):
     topo = surface_parameters(data_in.fname_surface)
 
     print("====== > Reading hillslope soil hydraulic parameters")
-    soil = soil_parameters(topo.grid_size, data_in.fname_soil)
+    soil = soil_parameters(domain.grid_size, data_in.fname_soil)
     # read calibration zones if provided and apply ksat factor
     factor_ksat = read_parameter_set_file(data_in.fname_cal_sets.fname_cal_uz_set)
     ksat_zones = zone_parameters(data_in.fname_cal_sets.fname_cal_uz_zone)
@@ -30,21 +30,21 @@ def read_model_parameters(data_in):
     soil.apply_factor_Droot(kDroot=None)
     
     print("====== > Reading riparian soil hydraulic parameters")
-    rsoil = soil_parameters(topo.grid_size, data_in.fname_riparian)
+    rsoil = soil_parameters(domain.grid_size, data_in.fname_riparian)
     # read calibration zones if provided and apply ksat factor
     rsoil.apply_factor_ksat(kKsat_soil=None)
     rsoil.apply_factor_Droot(kDroot=None)
 
     print("====== > Reading groundwater aquifer hydraulic parameters")
-    aquifer = groundwater_parameters(topo.grid_size, data_in.fname_aquifer)
+    aquifer = groundwater_parameters(domain.grid_size, data_in.fname_aquifer)
 
     print("====== > Reading interception parameters")
     vegetation = interception_parameters(
-        topo.grid_size, data_in.fname_interception_hillslope)
+        domain.grid_size, data_in.fname_interception_hillslope)
 
     print("====== > Reading water body parameters")
     water_bodies = water_body_parameters(
-        topo.grid_size, data_in.fname_water_bodies)
+        domain.grid_size, data_in.fname_water_bodies)
 
     print("====== > Reading water body management")
     water_bodies_management = water_management()
