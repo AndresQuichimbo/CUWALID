@@ -7,6 +7,7 @@ default_settings = {
     },
 
     "PROJECTION" : None,
+    "GEOGRAPHIC": False,
 
     "TIMESTEP_SETTINGS": {
         "dt_of": 60,
