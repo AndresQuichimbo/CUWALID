@@ -297,7 +297,8 @@ def SCHAAKE(P, ga_kdt, Lsat, L):
 	D = Lsat-L
 	I_aux = D*ga_kdt
 	I = P*I_aux/(P+I_aux)
-	I[P+I_aux == 0.0] = 0#np.where(P+I_aux == 0.0,0.0,I)
+	#I[P+I_aux == 0.0] = 0#np.where(P+I_aux == 0.0,0.0,I)
+	I = np.where(P+I_aux == 0.0, 0.0, I)
 	RO = P-I
 	return I, RO
 
@@ -363,10 +364,12 @@ def Upscaled_GA(P, ks, Sp, t, mu_Y, sigma_Y):
 		Sat. Hydraulic Conductivity
 	Sp:	numpy array
 		Sorptivity (keep the same sorptivity for one event)
-	F:	numpy array
-		Cummulative infiltration
 	t:	numpy array
 		Cummulative event time
+	mu_Y:	numpy array
+		Mean of the log-normal distribution
+	sigma_Y:	numpy array
+		Standard deviation of the log-normal distribution
 	
 	Returns
 	--------
@@ -471,6 +474,7 @@ def Mod_GA(P,ks,Sp,F,t,dt):
 	Sp:	Sorptivity (keep the same sorptivity for one event)
 	F:	Cummulative infiltration
 	t:	Cummulative event time
+	dt:	time step
 	
 	Returns
 	--------
