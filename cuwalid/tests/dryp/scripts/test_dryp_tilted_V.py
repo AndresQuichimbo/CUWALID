@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """This script runs the test model "Tilted-V"
-The model is published in the original paper
-of the model release.
+This test is published in the original paper of the model release.
 """
 import os
 from cuwalid.dryp.main_DRYP import run_DRYP
@@ -22,6 +21,24 @@ def aggregate_slice_csv(fname, agg_step='M', mean=True,
 		df = df.resample(agg_step).sum()#.reset_index()
 	return df
 
+def test_dryp_zones():
+
+	input_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tilted_v', 'input_test_zones.json'))
+
+	# run model test input file
+	run_DRYP(input_file)
+	
+	# compare model results
+	ans = aggregate_slice_csv('tilted_v/output/test_p_dis.csv',
+			   agg_step='D')['dis_0']
+	
+	out = aggregate_slice_csv('tilted_v/output_test/test_p_dis.csv',
+			   agg_step='D')['dis_0']
+	
+	assert np.allclose(out, ans)
+
+	print('Tilted-V catchment model: Test completed successfully')
+
 def test_dryp():
 
 	input_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tilted_v', 'input_test.json'))
@@ -40,24 +57,10 @@ def test_dryp():
 
 	print('Tilted-V catchment model: Test completed successfully')
 
-def test_dryp_zones():
 
-	input_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tilted_v', 'input_test_zones.json'))
-	
-	# run model test input file
-	run_DRYP(input_file)
-	
-	# compare model results
-	ans = aggregate_slice_csv('tilted_v/output/test_p_dis.csv',
-			   agg_step='D')['dis_0']
-	
-	out = aggregate_slice_csv('tilted_v/output_test/test_p_dis.csv',
-			   agg_step='D')['dis_0']
-	
-	assert np.allclose(out, ans)
-
-	print('Tilted-V catchment model: Test completed successfully')
 
 if __name__ == '__main__':
-	test_dryp()
+	"""Run the tests.
+	"""
 	test_dryp_zones()
+	#test_dryp()

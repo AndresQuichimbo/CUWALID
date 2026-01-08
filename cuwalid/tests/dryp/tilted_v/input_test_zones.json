@@ -49,7 +49,7 @@
         "path_out_uz": "tilted_v/input/test_SM_points.csv",
         "path_out_oz": "tilted_v/input/test_well_point_m.csv",
         "path_output": "tilted_v/output",
-        "path_setting": "tilted_v/setting_test.json"
+        "path_setting": "tilted_v/setting_test_zones.json"
     },
     "CALIBRATION": {
     "path_cal_of_zone": null,

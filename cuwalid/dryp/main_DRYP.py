@@ -71,6 +71,7 @@ def run_DRYP(filename_input):
 	
 	# create model grid
 	grid = domain.create_grid(topo.mask)
+	#grid = domain.create_projected_grid(topo.mask, projected=data_in.geograpgic)
 
 	# READING FORCING DATASET -------------------------------------------
 	# Read precipitation

@@ -56,6 +56,7 @@ test_functions = [
     test_save_csv.test_save_variables,
     test_dryp_model.test_dryp,
     test_dryp_tilted_V.test_dryp,
+    test_dryp_tilted_V.test_dryp_zones,
     test_dryp.test_dryp,
     test_basin_delineation.test_basin_delineation,
     test_water_bodies
