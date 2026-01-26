@@ -9,6 +9,7 @@ from landlab.io import write_esri_ascii
 from itertools import compress
 import operator
 from cuwalid.dryp.components.DRYP_global_parameters import *
+import rasterio
     
 
 # global settings
@@ -542,6 +543,35 @@ def save_map_to_rastergrid(grid, field, fname):
 	if print_maps_end is True:
 		files = write_esri_ascii(fname, grid, 'aux_grid')
 
+def save_map_to_rasterfile(grid, field, fname):
+	"""Save a map to a raster file using rasterio
+	Parameters
+	----------
+	grid:	grid properties
+		grid size, profile, transform
+	field:	numpy array
+		field to save
+	fname:	str
+		filename of the raster file
+	Returns
+	-------
+	raster file
+	"""
+	# check if file exists
+	os.remove(fname) if os.path.exists(fname) else None
+
+	# replace nan values by -9999
+	field[np.isnan(field)] = -9999
+
+	# rehshape field to 2D array
+	nrow = grid.grid_size[0]
+	ncol = grid.grid_size[1]
+	field = field.reshape(nrow, ncol)
+
+	# save raster file	
+	if print_maps_end is True:
+		save_raster(fname, field, grid.grid_profile, grid.grid_transform)
+
 def remove_variables_from_dict(data, variables):
 	""" remove keys of a dictionary
 	
@@ -586,3 +616,12 @@ def del_all(data, var_to_remove):
 	for key in var_to_remove:
 		del data[key]
 	return data
+
+def save_raster(fname, data, profile, transform):
+	os.remove(fname) if os.path.exists(fname) else None
+	with rasterio.open(fname, 'w', **profile) as dst:
+		# Write the modified raster data
+		# ensure that data has the same format type
+		dst.write(np.array(data, dtype=profile['dtype']), 1)
+		# Set the affine transformation
+		dst.transform = transform
