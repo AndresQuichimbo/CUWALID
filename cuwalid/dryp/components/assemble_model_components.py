@@ -2,7 +2,8 @@ import numpy as np
 
 from cuwalid.dryp.components.DRYP_ABM_connector import ABMconnector
 from cuwalid.dryp.components.DRYP_flow_accumf90 import runoff_routing
-from cuwalid.dryp.components.DRYP_groundwater_EFD import gwflow_EFD
+#from cuwalid.dryp.components.DRYP_groundwater_EFD import gwflow_EFD
+from cuwalid.dryp.components.DRYP_groundwater_EFD_geo import gwflow_EFD
 from cuwalid.dryp.components.DRYP_infiltration import infiltration
 from cuwalid.dryp.components.DRYP_interception import interception
 from cuwalid.dryp.components.DRYP_io import (
@@ -118,7 +119,8 @@ def initialize_simulation_state_variables(data_in, topo, grid, aquifer, soil, ve
     dt_GW = int(data_in.dt)
 
     # nodes to perform calculation
-    act_nodes = grid.core_nodes[:]
+    #act_nodes = grid.core_nodes[:]
+    act_nodes = grid['core_nodes'][:]
     
     _riv_nodes_mask = np.zeros(topo.grid_size)
     _riv_nodes_mask[act_nodes] = 1
@@ -270,8 +272,8 @@ def setup_monitoring_nodes(grid, data_in):
     # add nodes and core nodes for zone ouptuts
     zones = zone_parameters(data_in.fname_zone_outputs)
     
-    idzone, size_zone = zones.extract_zone_info(grid.core_nodes)
-    idzone_core, _ = zones.get_zone_info_from_core_nodes(grid.core_nodes)
+    idzone, size_zone = zones.extract_zone_info(grid['core_nodes'])
+    idzone_core, _ = zones.get_zone_info_from_core_nodes(grid['core_nodes'])
     idzone_info = (idzone, idzone_core, size_zone)
     
     return idOF, idUZ, idGW, idzone_info

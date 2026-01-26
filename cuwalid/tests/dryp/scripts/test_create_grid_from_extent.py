@@ -13,7 +13,7 @@ def test_create_grid_from_extent_projected():
     lat_min = 20.0
     cellsize = 1000.0
 
-    grid = create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, domain=None, projected=True)
+    grid = create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, domain=None, geographic=True)
 
     # basic structural checks
     assert grid['N_cells'] == ncols * nrows
@@ -27,5 +27,5 @@ def test_create_grid_from_extent_projected():
     # core_nodes should match the center-ones pattern used by the function.
     # Note: create_grid_from_extent currently calls center_ones with swapped args
     # (ncols, nrows) — match that behavior here to compute expected core nodes.
-    expected_core = np.where(center_ones(ncols, nrows).flatten() > 0)[0]
+    expected_core = np.where(center_ones(nrows, ncols).flatten() > 0)[0]
     assert np.array_equal(np.sort(grid['core_nodes']), np.sort(expected_core))

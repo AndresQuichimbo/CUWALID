@@ -258,10 +258,12 @@ class gwflow_EFD(object):
 				# Calculate river cell flux [m3 h-1]
 				qs_riv = np.zeros_like(riv_nodes, dtype=float)
 				qs_riv = (conductivity[riv_nodes]*head_diff)
-				
+				#print(len(riv_nodes), 'qs_riv', len(qs_riv))
 				# add river out/inflow to the mass balance [depth/time]
 				# change river flow units m3 -> m
-				Net_Flux[riv_nodes] += -self.kaq*qs_riv
+				#print('Net_Flux before riv', Net_Flux, len(Net_Flux))
+				#print('riv_nodes', riv_nodes, len(riv_nodes))
+				Net_Flux[riv_nodes] += -self.kaq[riv_nodes]*qs_riv
 
 			
 			# 3. REGULARIZATION APPROACH **************************
@@ -337,7 +339,7 @@ class gwflow_EFD(object):
 
 			# accumulate discharge
 			if len(riv_nodes) > 0:
-				discharge[riv_nodes] += qs_riv*self.kaq*dtsp
+				discharge[riv_nodes] += qs_riv*self.kaq[riv_nodes]*dtsp
 
 			discharge[act_nodes] += dqs[act_nodes]*dtsp
 

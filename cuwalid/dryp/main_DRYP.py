@@ -70,8 +70,8 @@ def run_DRYP(filename_input):
 		read_model_parameters(data_in)
 	
 	# create model grid
-	grid = domain.create_grid(topo.mask)
-	#grid = domain.create_projected_grid(topo.mask, projected=data_in.geograpgic)
+	#grid = domain.create_grid(topo.mask)
+	grid = domain.create_projected_grid(topo.mask, geographic=data_in.geographic)
 
 	# READING FORCING DATASET -------------------------------------------
 	# Read precipitation

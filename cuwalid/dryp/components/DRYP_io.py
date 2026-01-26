@@ -64,7 +64,7 @@ class grid_environment(object):
 			domain=domain)
 		return grid
 	
-	def create_projected_grid(self, domain, projected=False):
+	def create_projected_grid(self, domain, geographic=False):
 		"""This function create a projected grid (approximate Cartesian grid)
 		using WGS84 approximation where the cell size is provided in degrees.
 		
@@ -89,7 +89,7 @@ class grid_environment(object):
 			self.grid_xllcorner,
 			self.grid_cellsize,
 			domain=domain,
-			projected=projected)
+			geographic=geographic)
 		
 		return grid
 	
@@ -120,7 +120,7 @@ class grid_environment(object):
 
 		return grid
 
-def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, domain=None, projected=False):
+def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, domain=None, geographic=False):
 	"""
 	Create a projected grid (approximate Cartesian grid) using WGS84
 	approximation where the cell size is provided in degrees.
@@ -157,7 +157,7 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, domain=Non
 	# 2D meshgrid of geographic coordinates
 	lon2d, lat2d = np.meshgrid(lon, lat)
 
-	if not projected:
+	if geographic:
 		# Compute mean latitude for conversion approximation
 		mean_lat = np.mean(lat)
 		mean_lat_rad = np.deg2rad(mean_lat)
@@ -171,6 +171,8 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, domain=Non
 		# Compute Cartesian coordinates (relative to lower-left corner)
 		x = (lon2d - lon_min) * meters_dx
 		y = (lat2d - lat_min) * meters_dy
+		meters_dx = x
+		meters_dy = y
 		#x = (lon - lon_min) * meters_per_deg_lon
 		#y = (lat - lat_min) * meters_per_deg_lat
 	else:
@@ -194,6 +196,9 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, domain=Non
 		domain = center_ones(nrows, ncols).flatten()
 
 	grid['core_nodes'] = np.where(domain > 0)[0]
+	grid['llcorner_lon'] = lon_min
+	grid['llcorner_lat'] = lat_min
+	grid['cellsize'] = cellsize
 
 	return grid
 
@@ -230,6 +235,17 @@ def _generate_rectangular_grid_data(N_x, N_y, Dx_cell, Dy_cell):
 	"""
 	Generates the geometric and hydraulic data for a regular 
 	2D rectangular mesh with NON-UNIFORM cell sizes.
+
+	Parameters
+	----------
+	N_x : int
+		Number of cells in the x-direction (columns).
+	N_y : int
+		Number of cells in the y-direction (rows).
+	Dx_cell : array_like
+		1D array of cell widths in the x-direction (length N_x * N_y).
+	Dy_cell : array_like
+		1D array of cell heights in the y-direction (length N_x * N_y).
 	
 	Returns: A dictionary containing all necessary grid arrays.
 	"""
@@ -532,12 +548,17 @@ class surface_parameters(object):
 			self.riv_elevation = np.flip(rasterio.open(inputfile.fname_RiverElev).read(1), 0).flatten()
 			
 		# Reading a raster file of flow direction in LandLab format (receiving node ID)
-		if inputfile.fname_FlowDir != None and os.path.exists(inputfile.fname_FlowDir):
-			self.FlowDir = np.flip(rasterio.open(inputfile.fname_FlowDir).read(1), 0).flatten()
-		else:
-			self.FlowDir = None
-			print('Flow direction...................not provided')
-			#self.act_update_flow_director = True
+		self.FlowDir = read_raster_as_array(inputfile.fname_FlowDir, grid_size,
+					default_value=None, dtype=int,
+					message_if_not_exist=('Flow direction...................not provided')
+					)
+		
+		#if inputfile.fname_FlowDir != None and os.path.exists(inputfile.fname_FlowDir):
+		#	self.FlowDir = np.flip(rasterio.open(inputfile.fname_FlowDir).read(1), 0).flatten()
+		#else:
+		#	self.FlowDir = None
+		#	print('Flow direction...................not provided')
+		#	#self.act_update_flow_director = True
 
 		# LAKES COMPONENT ========================================================================
 		# read maximum surface water elevation of lakes
@@ -550,16 +571,25 @@ class surface_parameters(object):
 			self.bathymetry = self.surface[:]
 		#print(self.bathymetry, self.surface)
 		#print(v)
+
 		# CHANNEL ===============================================================================
 		# Channel hydraulic parameters
 		# Assuming a flow velocity of 1 m/s => 3600 m/h
-		if inputfile.fname_kTchannel == None or not os.path.exists(inputfile.fname_kTchannel):			
-			self.decay = np.full(grid_size, inputfile.kTch/self.grid_cellsize, dtype=float)
-			print('Channel decay parameter..........not provided')
-			print('Assumed value equivalent to a velocity of 1m/s')
-		else:		
-			self.decay = np.flip(rasterio.open(inputfile.fname_kTchannel).read(1), 0).flatten()
-			self.decay = self.decay*inputfile.kTch
+		#if inputfile.fname_kTchannel == None or not os.path.exists(inputfile.fname_kTchannel):			
+		#	self.decay = np.full(grid_size, inputfile.kTch/self.grid_cellsize, dtype=float)
+		#	print('Channel decay parameter..........not provided')
+		#	print('Assumed value equivalent to a velocity of 1m/s')
+		#else:		
+		#	self.decay = np.flip(rasterio.open(inputfile.fname_kTchannel).read(1), 0).flatten()
+		#	self.decay = self.decay*inputfile.kTch
+
+		self.decay = read_raster_as_array(inputfile.fname_kTchannel, grid_size,
+					default_value=1.0/self.grid_cellsize, dtype=float,
+					message_if_not_exist=(
+					'Channel decay parameter..........not provided\nAssumed value equivalent to a velocity of 1m/s')
+					)
+		self.decay = self.decay*inputfile.kTch
+
 		#self.decay = (inputfile.kT_units*3600.0*inputfile.kTch/self.grid_cellsize)
 		#river_banks = 30.0 # It is hard coded for now and will be pass as a raster grid
 		#print(inputfile.kTch)
@@ -673,7 +703,43 @@ class surface_parameters(object):
 #			inputfile)
 #		
 #		return gaugeid
+def read_raster_as_array(filename, grid_size=None, default_value=None, dtype=float,
+						message_if_not_exist="Raster file does not exist",):
+	"""This function read a raster file and return a numpy array
 
+	Parameters
+	----------
+	filename:	path to the raster file
+	grid_size:	size of the model domain
+	default_value: value to be used if the raster file does not exist
+	dtype:		data type of the output array
+	message_if_not_exist: message to be printed if the raster file does not exist
+
+	Returns
+	-------
+	data:	numpy array
+		array containing the raster data
+	"""
+	if filename is None or not os.path.exists(filename):
+		# check if default value is not None
+		if default_value is None:
+			data = None
+			print(message_if_not_exist)
+			return data
+		
+		# Check if default value is an array or a single value
+		if isinstance(default_value, (list, np.ndarray)):
+			data = np.array(default_value, dtype=dtype)
+			print(message_if_not_exist)
+			return data
+		data = np.full(grid_size, default_value, dtype=dtype)
+		print(message_if_not_exist)
+
+		return data
+	
+	data = np.flip(rasterio.open(filename).read(1), 0).flatten()
+	
+	return data
 
 def set_initial_conditions(grid_size, Droot, head, surface, 
 		    bathymetry, extintion_depth, cell_size, gw_activated):
@@ -1604,6 +1670,121 @@ def extract_idnode_from_coords(grid, xpoint, ypoint):
 
 	idpoint = []
 	idpoint_active = []
+	point = get_idnode_from_grid(grid, xpoint, ypoint)
+
+	for ipoint in point:
+		try:
+			point_active = np.where(grid['core_nodes'] == ipoint)[0]
+			idpoint.append(ipoint)
+			idpoint_active.append(point_active[0])
+		except:
+			pass
+
+
+	##for ixpoint, iypoint in zip(xpoint, ypoint):
+	#	# find the nearest point in the grid
+	#	point = get_idnode_from_grid(grid, ixpoint, iypoint)
+	#	
+	#	try:
+	#		point_active = np.where(grid['core_nodes'] == point)[0]
+	#		idpoint.append(point)
+	#		idpoint_active.append(point_active[0])
+	#	except:
+	#		pass
+
+	idpoint = np.array(idpoint, dtype=int)
+	idpoint_active =  np.array(idpoint_active, dtype=int)
+
+	try:
+		assert len(xpoint) > 0
+	except:
+		raise Exception('Sample points must be inside the model domain\n'
+		   		'Please check the file of sample points')
+
+	return idpoint, idpoint_active
+
+def get_idnode_from_grid(grid, xpoint, ypoint):
+	""" get nodes from coordinates from the grid.
+	This function uses grip parameters x and y to find the nearest node
+
+
+	Parameters
+	----------
+	grid:		landlabgrid
+	xpoint:		numpy array with x coordinates
+	ypoint:		numpy array with y coordinates
+
+	Returns
+	-------
+	numby array with id nodes in the nodes array
+	"""
+	try:
+		assert len(xpoint) > 0
+	except:
+		raise Exception('Sample points must be inside the model domain'
+		   		'Please check the file of sample points')
+	
+	# create an array of nodes ids
+	idnodes = np.arange(grid['N_cells'], dtype=int).reshape((grid['N_x'], grid['N_y']))
+
+	idpoint = []
+	for ixpoint, iypoint in zip(xpoint, ypoint):
+		# find the nearest point in the grid
+		point = find_location_of_nearest_node(
+			grid['N_x'], grid['N_y'],
+			ixpoint, iypoint)
+		
+		idpoint.append(idnodes[point[0]][point[1]])
+	
+	return idpoint
+
+def find_location_of_nearest_node(x_array, y_array, xpoint, ypoint):
+	""" find the nearest node in a grid
+	Parameters
+	----------
+	x_array:	numpy array
+		x coordinates of the grid
+	y_array:	numpy array
+		y coordinates of the grid
+	xpoint:		numpy array with x coordinates
+	ypoint:		numpy array with y coordinates
+
+	Returns
+	-------
+	numby array with id nodes in the nodes array
+	"""
+	#idpoint = []
+	#for ixpoint, iypoint in zip(xpoint, ypoint):
+		# find the nearest point for each axis
+	pointy = np.argmin(np.sqrt((y_array - ypoint)**2))
+	pointx = np.argmin(np.sqrt((x_array - xpoint)**2))
+	#	idpoint.append((pointx, pointy))
+
+	return np.array([pointx, pointy], dtype=int)
+
+def extract_idnode_from_coords_landlab(grid, xpoint, ypoint):
+	""" extract nodes from coordinates
+	this component uses the landlab funtion "find_nearest_node
+	Parameters
+	----------
+	grid:		landlabgrid
+	xpoint:		numpy array with x coordinates
+	ypoint:		numpy array with y coordinates
+
+	Returns
+	-------
+	tuple of numby array with id nodes in the nodes array and
+	idpoint:		nodes in the grid
+	idpoint_active:	index of ipoint in the active node list
+	"""
+#	try:
+#		assert len(xpoint) > 0
+#	except:
+#		raise Exception('Sample points must be inside the model domain'
+#		   		'Please check the file of sample points')
+
+	idpoint = []
+	idpoint_active = []
 	for ixpoint, iypoint in zip(xpoint, ypoint):
 		# find the nearest point in the grid
 		point = grid.find_nearest_node(
@@ -1626,7 +1807,7 @@ def extract_idnode_from_coords(grid, xpoint, ypoint):
 		   		'Please check the file of sample points')
 
 	return idpoint, idpoint_active
-	
+
 def extract_id_from_raster(grid, filename):
 	""" extract nodes from raster file
 

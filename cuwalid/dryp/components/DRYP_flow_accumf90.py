@@ -11,6 +11,7 @@ import cuwalid.dryp.components.faccumf90 as floss
 from landlab.components.flow_accum import flow_accum_bw#, make_ordered_node_array
 from landlab.core.utils import as_id_array
 from landlab.components import FlowDirectorD8
+from cuwalid.dryp.components.DRYP_io import create_landlab_grid
 
 class runoff_routing(object):
 	"""Function to discharge and transmission losses discharge.
@@ -53,8 +54,10 @@ class runoff_routing(object):
 		-------
 
 		"""
+		
 		# Creates numpy arrays for passing model variables
 		Create_parameter_WV(self, Ksat, decay, riv_width, riv_length)
+		
 		
 		#Create_parameter_WV(env_state.grid)#, data_in.Kloss)
 		self.discharge = np.zeros(grid_size)
@@ -63,20 +66,35 @@ class runoff_routing(object):
 		self.stage = np.zeros(grid_size)
 		#self.flow_tls_dt = np.zeros(grid_size)
 		self.carea = None
+
+		# create a temporal domain grid landlab object
+		domain_aux = np.zeros(grid_size, dtype=int)
+		domain_aux[grid['core_nodes']] = 1
 		
+		# Create landlab raster grid object
+		gridro = create_landlab_grid(
+			grid['N_x'],
+			grid['N_y'],
+			grid['llcorner_lon'],
+			grid['llcorner_lat'],
+			grid['cellsize'],
+			domain=domain_aux
+			#ncol, nrow, xllcorner, yllcorner, cellsize, domain=None
+			)
+
 		# 1. Check if flow director is needed
 		if FlowDirection is None:
-			if 'aux_grid' not in grid.at_node:
-				grid.add_field("aux_grid", np.array(surface[:]), at="node")
+			if 'aux_grid' not in gridro.at_node:
+				gridro.add_field("aux_grid", np.array(surface[:]), at="node")
 			else:
-				grid.at_node['aux_grid'][:] = FlowDirection
+				gridro.at_node['aux_grid'][:] = FlowDirection
 			#print(grid.at_node['aux_grid'])
-			fd = FlowDirectorD8(grid, 'aux_grid')
+			fd = FlowDirectorD8(gridro, 'aux_grid')
 			fd.run_one_step()
 		
 			# 2. Creates drainage networks, flowpaths and id arrays
 			# a value of 1 must be added to change from python to forttran
-			self.r = as_id_array(grid["node"]["flow__receiver_node"])
+			self.r = as_id_array(gridro["node"]["flow__receiver_node"])
 		else:
 			#self.r = as_id_array(range(grid_size))
 			#self.r[grid.core_nodes] = FlowDirection[grid.core_nodes]
@@ -89,6 +107,7 @@ class runoff_routing(object):
 		#self.carea = find_drainage_area(self.s, self.r,
 		#			env_state.area_cells,
 		#			env_state.grid.boundary_nodes)
+		del gridro
 		
 	#@profile
 	def run_runoff_one_step(self, runoff, AOF, AOF_threshold, conductivity,

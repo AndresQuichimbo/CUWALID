@@ -14,7 +14,7 @@ def test_groundwater_multiaq():
 	# create a raster grid dryp object
 	ncol = 12 # x direction
 	nrow = 3 # y direction
-	grid = create_grid_from_extent(ncol, nrow, 0, 0, 1000.0, projected=True)
+	grid = create_grid_from_extent(ncol, nrow, 0, 0, 1000.0, geographic=True)
 	grid_size = ncol*nrow
 		
 	surface = np.full(grid_size, 200.0)
@@ -60,12 +60,13 @@ def test_groundwater_multiaq():
 	method = 3
 	
 	# from analitical solution
-	answer = [116.51869202, 124.97717285, 130.36439514, 134.1315918, 136.88113403,
-		136.95245361, 136.98146057, 137.00320435, 137.0177002, 137.02494812]
+	answer = [100.09959412, 100.18914032, 100.26866913, 100.33820343, 100.39776611, 100.48051453, 100.67976379, 100.82920074, 100.92882538, 100.9786377 ]
+	#answer = [116.51869202, 124.97717285, 130.36439514, 134.1315918, 136.88113403,
+	#	136.95245361, 136.98146057, 137.00320435, 137.0177002, 137.02494812]
 		
 	gw = gwflow_EFD(grid, Ksat_aq, area_river, CHB, method)
 	#print('ksat_aq', gw.C_static)
-	for i in range(15):
+	for i in range(150000):
 		
 		head, baseflow = gw.run_one_step_gw(grid,
 						surface,

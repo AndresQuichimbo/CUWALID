@@ -281,25 +281,29 @@ class gwflow_EFD(object):
 			# for models with exponential function assign effective depth
 			# skip this for first iiteration
 			if inner_iter > 0:
-				# For method==0, tha saturated thickenss is constant
-				if self.method == 1:
-					# Saturated thickness for unconfined conditions
-					thickness_sat[act_nodes] = head[act_nodes] - bottom[act_nodes]
-				elif self.method == 2:
-					# Saturated thickness for exponential dacay function
-					thickness_sat[act_nodes] = exponential(thickness[act_nodes],
-								surface[act_nodes]-thickness[act_nodes],
-								head[act_nodes])
-				elif self.method == 3:
-					# saturated thickness for multiaquifer conditions
-					# update thikness for aquifers with linear transmissinity
-					idnodes = np.where(inodetype == 1)
-					thickness_sat[idnodes] = head[idnodes] - bottom[idnodes]
-					# updates thickness of aquiferes with exponential transmissivity
-					idnodes = np.where(inodetype == 2)
-					thickness_sat[idnodes] = exponential(thickness[idnodes],
-								surface[idnodes]-thickness[idnodes],
-								head[idnodes])
+				thickness_sat[act_nodes] = update_saturated_thickness(head,
+											bottom, surface, thickness,
+											inodetype, method=self.method
+											)
+				## For method==0, tha saturated thickenss is constant
+				#if self.method == 1:
+				#	# Saturated thickness for unconfined conditions
+				#	thickness_sat[act_nodes] = head[act_nodes] - bottom[act_nodes]
+				#elif self.method == 2:
+				#	# Saturated thickness for exponential dacay function
+				#	thickness_sat[act_nodes] = exponential(thickness[act_nodes],
+				#				surface[act_nodes]-thickness[act_nodes],
+				#				head[act_nodes])
+				#elif self.method == 3:
+				#	# saturated thickness for multiaquifer conditions
+				#	# update thikness for aquifers with linear transmissinity
+				#	idnodes = np.where(inodetype == 1)
+				#	thickness_sat[idnodes] = head[idnodes] - bottom[idnodes]
+				#	# updates thickness of aquiferes with exponential transmissivity
+				#	idnodes = np.where(inodetype == 2)
+				#	thickness_sat[idnodes] = exponential(thickness[idnodes],
+				#				surface[idnodes]-thickness[idnodes],
+				#				head[idnodes])
 			
 			# check that that saturated thickness is not negative
 			thickness_sat[thickness_sat < 0] = 0
@@ -634,6 +638,57 @@ class gwflow_EFD(object):
 		#print(head)
 		#print(v)
 		return head, discharge
+
+def update_saturated_thickness(head, bottom, surface,
+            thickness, inodetype, method=0):
+	"""Update aquifer saturated thickness based on the selected method.
+	Parameters 
+	-----------
+    head : numpy array
+        water table [m]
+    bottom : numpy array
+        aquifer bottom elevation [m]
+    surface:	numpy array
+        Topograhic elevation [m]
+    thickness :	numpy array
+        effective aquifer depth [m]
+    inodetype : numpy array
+        aquifer type indicator
+
+    Returns
+    -------
+    thickness_sat : numpy array
+        updated saturated thickness [m]
+    """
+	# For method==0, tha saturated thickenss is constant
+	if method == 0:
+		# Saturated thickness become zero when head is below bottom
+		thickness_aux = head - bottom
+		thickness[thickness_aux < 0] = 0.0
+	
+	elif method == 1:
+		# Saturated thickness for unconfined conditions
+		thickness = head - bottom
+	elif method == 2:
+		# Saturated thickness for exponential dacay function
+		thickness = exponential(thickness,
+					surface-thickness,
+					head)
+	elif method == 3:
+		# saturated thickness for multiaquifer conditions
+		# update thikness for aquifers with linear transmissinity
+		idnodes = np.where(inodetype == 1)
+		thickness[idnodes] = head[idnodes] - bottom[idnodes]
+		# updates thickness of aquiferes with exponential transmissivity
+		idnodes = np.where(inodetype == 2)
+		thickness[idnodes] = exponential(thickness[idnodes],
+					surface[idnodes]-thickness[idnodes],
+					head[idnodes])
+		
+	# check that that saturated thickness is not negative
+	thickness[thickness < 0] = 0.0
+
+	return thickness
 
 def transmissivity_multi_aquifer(Ksat, head, surface, thickness, aqtype, method):
 	"""Calculate aquifer transmissivity

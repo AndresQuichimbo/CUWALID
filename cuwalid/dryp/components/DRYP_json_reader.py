@@ -55,7 +55,7 @@ class get_model_settings(object):
 		self.data_interpolate = settings_config["READING"]["data_interp"]
 		self.data_projection = settings_config["READING"]["data_projection"]
 		self.PROJECTION = settings_config["PROJECTION"]
-		self.geograpgic = settings_config["GEOGRAPHIC"]
+		self.geographic = settings_config["GEOGRAPHIC"]
 
 		self.inf_method = bool(settings_config["COMPONENTS"]["method_inf"])
 
