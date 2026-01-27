@@ -14,7 +14,7 @@ def test_groundwater_multiaq():
 	# create a raster grid dryp object
 	ncol = 12 # x direction
 	nrow = 3 # y direction
-	grid = create_grid_from_extent(ncol, nrow, 0, 0, 1000.0, geographic=True)
+	grid = create_grid_from_extent(ncol, nrow, 0, 0, 1000.0, geographic=False)
 	grid_size = ncol*nrow
 		
 	surface = np.full(grid_size, 200.0)
