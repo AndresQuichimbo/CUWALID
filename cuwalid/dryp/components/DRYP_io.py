@@ -35,6 +35,8 @@ class grid_environment(object):
 				self.grid_xllcorner = src.bounds[1]
 				self.grid_yllcorner = src.bounds[0]
 				self.grid_cellsize = src.transform[0]
+				self.grid_profile = src.profile
+				self.grid_transform = src.transform
 
 		else:
 			raise Exception("A digital elevation model map must be supplied")
@@ -64,13 +66,18 @@ class grid_environment(object):
 			domain=domain)
 		return grid
 	
-	def create_projected_grid(self, domain, geographic=False):
+	def create_projected_grid(self, active_domain, geographic=False):
 		"""This function create a projected grid (approximate Cartesian grid)
 		using WGS84 approximation where the cell size is provided in degrees.
 		
 		Parameters
 		----------
-		None
+		active_domain:	numpy array
+			array defining the model domain, core nodes >0, inactive nodes <=0
+		geographic: bool
+			If True, the grid is geographic (lat/lon) and conversion to
+			Cartesian coordinates is applied. If False, the grid is projected
+			and cellsize is assumed to be in meters.
 
 		Returns
 		-------
@@ -88,8 +95,13 @@ class grid_environment(object):
 			self.grid_yllcorner,
 			self.grid_xllcorner,
 			self.grid_cellsize,
-			domain=domain,
+			domain=active_domain,
 			geographic=geographic)
+		
+		# add raster profile and transform
+		grid['profile'] = self.grid_profile
+		grid['transform'] = self.grid_transform
+
 		
 		return grid
 	
@@ -1731,7 +1743,7 @@ def get_idnode_from_grid(grid, xpoint, ypoint):
 	for ixpoint, iypoint in zip(xpoint, ypoint):
 		# find the nearest point in the grid
 		point = find_location_of_nearest_node(
-			grid['N_x'], grid['N_y'],
+			grid['x'], grid['y'],
 			ixpoint, iypoint)
 		
 		idpoint.append(idnodes[point[0]][point[1]])
