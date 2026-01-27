@@ -107,6 +107,7 @@ def run_DRYP(filename_input):
 	#print("************************ READING SETTINGS FOR MODEL OUPUTS *************************")
 	print("Setting up outputs and monitoring nodes")
 	idOF, idUZ, idGW, idzone_info = setup_monitoring_nodes(grid, data_in)
+	#print("Monitoring nodes OF:", idGW)
 	#print("Monitoring nodes IDs:", idzone_info[2])
 	(#idOF, idOF_act, idUZ, idUZ_act, idGW, idGW_act,
 	point_var, grid_var, grid_rmax, grid_vmax, total_var,
