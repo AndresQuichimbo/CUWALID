@@ -564,13 +564,13 @@ def save_map_to_rasterfile(grid, field, fname):
 	field[np.isnan(field)] = -9999
 
 	# rehshape field to 2D array
-	nrow = grid.grid_size[0]
-	ncol = grid.grid_size[1]
+	nrow = grid['N_x']
+	ncol = grid['N_y']
 	field = field.reshape(nrow, ncol)
 
 	# save raster file	
 	if print_maps_end is True:
-		save_raster(fname, field, grid.grid_profile, grid.grid_transform)
+		save_raster(fname, field, grid['profile'], grid['transform'])
 
 def remove_variables_from_dict(data, variables):
 	""" remove keys of a dictionary
