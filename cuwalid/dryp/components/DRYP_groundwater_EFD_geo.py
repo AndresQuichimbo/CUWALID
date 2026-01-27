@@ -200,7 +200,7 @@ class gwflow_EFD(object):
 			# adjusting heads at the bottom of the model domain
 			# WARNING! this could lead to increases in mass balance errors
 			head = np.minimum(surface, head)
-
+			
 			# calculate aquifer saturated thickness at nodes
 			# for models with exponential function assign effective depth
 			# skip this for first iiteration
