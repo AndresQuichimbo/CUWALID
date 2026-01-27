@@ -1,4 +1,4 @@
-from cuwalid.dryp.components.DRYP_store_functions import save_map_to_rastergrid
+from cuwalid.dryp.components.DRYP_store_functions import save_map_to_rasterfile#, save_map_to_rastergrid
 
 
 def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
@@ -8,7 +8,60 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
                        grid, head, theta, ssz, rtheta, topo, pnd_Vo, # raster variables
                        act_nodes, riv_nodes, lks_nodes, pnd_nodes, # node indices
                        projection=None):
-    """Saves model outputs to files (netCDF, CSV, raster)"""
+    """Saves model outputs to files (netCDF, CSV, raster)
+
+    Parameters
+    ----------
+    data_in : DRYPInputData
+        Input data object containing file names for saving outputs
+    total_var : DRYPTimeSeriesStore
+        Object storing average temporal variables for CSV output
+    point_var : DRYPTimeSeriesStore
+        Object storing point temporal variables for CSV output
+    zone_var : DRYPTimeSeriesStore
+        Object storing zone temporal variables for CSV output
+    total_rpvar : DRYPTimeSeriesStore
+        Object storing average riparian zone temporal variables for CSV output
+    total_pndvar : DRYPTimeSeriesStore
+        Object storing average pond temporal variables for CSV output
+    grid_var : DRYPTimeSeriesStore
+        Object storing gridded temporal variables for netCDF output
+    grid_rmax : DRYPTimeSeriesStore
+        Object storing gridded temporal maximum values at streams for netCDF output
+    grid_vmax : DRYPTimeSeriesStore
+        Object storing gridded temporal maximum values for netCDF output
+    grid_rpvar : DRYPTimeSeriesStore
+        Object storing riparian zone gridded temporal variables for netCDF output
+    grid_pndvar : DRYPTimeSeriesStore
+        Object storing pond gridded temporal variables for netCDF output
+    grid_veg : DRYPTimeSeriesStore
+        Object storing vegetation gridded temporal variables for netCDF output
+    grid : DRYPGrid
+        Model grid object
+    head : numpy array
+        Array of groundwater head values
+    theta : numpy array
+        Array of soil moisture values
+    ssz : numpy array
+        Array of channel flow values
+    rtheta : numpy array
+        Array of riparian zone soil moisture values
+    topo : DRYPTopo
+        Topography object containing latitude and longitude arrays
+    pnd_Vo : numpy array
+        Array of pond water volume values
+    act_nodes : numpy array
+        Array of active node indices
+    riv_nodes : numpy array
+        Array of river node indices
+    lks_nodes : numpy array
+        Array of lake node indices
+    pnd_nodes : numpy array
+        Array of pond node indices
+    projection : osgeo.osr.SpatialReference, optional
+        Projection information for geospatial outputs (default is None)
+
+    """
 
     print("<==== saving model average temporal outputs")
     # SAVE AVERAGE VALUES OF VARIABLES: CSV-FILES
@@ -115,27 +168,27 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
     print("<==== saving raster files for initial conditions")
 
     # Save water table for initial conditions
-    save_map_to_rastergrid(grid, head,
+    save_map_to_rasterfile(grid, head,
                            data_in.fnameTS_avg + '_wte_ini.asc')
 
     # Save soil moisture for initial conditions
-    save_map_to_rastergrid(grid, theta,
+    save_map_to_rasterfile(grid, theta,
                            data_in.fnameTS_avg + '_tht_ini.asc')
 
     # Save channel flow initial conditions
-    save_map_to_rastergrid(grid, ssz,
+    save_map_to_rasterfile(grid, ssz,
                            data_in.fnameTS_avg + '_Q_ini.asc')
 
     if riv_nodes.size > 0:
         # Save riparian soil moisture for initial conditions
         theta[riv_nodes] = rtheta
-        save_map_to_rastergrid(grid, theta,
+        save_map_to_rasterfile(grid, theta,
                                data_in.fnameTS_avg + '_tht_rp_ini.asc')
 
     if pnd_nodes is not None:
         # Save pond water volume for initial conditions
         theta[:] = -9999
         theta[pnd_nodes] = pnd_Vo
-        save_map_to_rastergrid(grid, theta,
+        save_map_to_rasterfile(grid, theta,
                                data_in.fnameTS_avg + '_V_pnd_ini.asc')
 
