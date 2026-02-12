@@ -591,13 +591,15 @@ class read_dataset_interp(object):
 
 						#time_pre = fpre["Date"]
 						self.read_before_ds = False
-
+				# get data at time step t
 				if self.ds is not None:
 					data = np.full(self.grid_length, self.ds[field].iloc[j_step])
 			else:
 				data = None
-		
-		return data
+		try:
+			return data
+		except:
+			raise Exception("Error 001: Format not recognized, please review the input data format")
 		
 # new read data for savi
 class read_dataset(object):
