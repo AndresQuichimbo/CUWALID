@@ -47,14 +47,15 @@ def initialize_core_hydrology_components(data_in, grid, topo, aquifer, water_bod
                         topo.riv_width,
                         topo.riv_length
                         )
-    
+    #print("surface:", topo.surface.reshape((grid['N_y'], grid['N_x'])))
+    #print("FlowDir:", topo.FlowDir.reshape((grid['N_y'], grid['N_x'])))
     gw = gwflow_EFD(grid,
                     aquifer.Ksat,
                     topo.area_river,
                     aquifer.CHB,
                     data_in.gw_func
                     )
-    
+    #print("Constant Head Boundary Nodes:", aquifer.CHB.reshape((grid['N_y'], grid['N_x'])))
     pnds = None
     if water_bodies.id_nodes is not None:
         pnds = ponds(water_bodies.pnds_Amax, water_bodies.pnds_hmax) # ponds
