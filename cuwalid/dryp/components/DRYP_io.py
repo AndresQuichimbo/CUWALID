@@ -95,7 +95,7 @@ class grid_environment(object):
 			self.grid_yllcorner,
 			self.grid_xllcorner,
 			self.grid_cellsize,
-			domain=active_domain,
+			active_domain=active_domain,
 			geographic=geographic)
 		
 		# add raster profile and transform
@@ -132,7 +132,7 @@ class grid_environment(object):
 
 		return grid
 
-def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, domain=None, geographic=False):
+def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, active_domain=None, geographic=False):
 	"""
 	Create a projected grid (approximate Cartesian grid) using WGS84
 	approximation where the cell size is provided in degrees.
@@ -203,11 +203,11 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, domain=Non
 	grid['x'] = x
 	grid['y'] = y
 
-	if domain is None:
+	if active_domain is None:
 		# create core nodes array
-		domain = center_ones(nrows, ncols).flatten()
+		active_domain = center_ones(nrows, ncols).flatten()
 
-	grid['core_nodes'] = np.where(domain > 0)[0]
+	grid['core_nodes'] = np.where(active_domain > 0)[0]
 	grid['llcorner_lon'] = lon_min
 	grid['llcorner_lat'] = lat_min
 	grid['cellsize'] = cellsize
@@ -1683,7 +1683,7 @@ def extract_idnode_from_coords(grid, xpoint, ypoint):
 	idpoint = []
 	idpoint_active = []
 	point = get_idnode_from_grid(grid, xpoint, ypoint)
-
+	#print("core nodes:", grid['core_nodes'])
 	for ipoint in point:
 		try:
 			point_active = np.where(grid['core_nodes'] == ipoint)[0]
@@ -1703,9 +1703,10 @@ def extract_idnode_from_coords(grid, xpoint, ypoint):
 	#		idpoint_active.append(point_active[0])
 	#	except:
 	#		pass
-
+	#print("idpoint:", idpoint)
 	idpoint = np.array(idpoint, dtype=int)
 	idpoint_active =  np.array(idpoint_active, dtype=int)
+	#print("idpoint_active:", idpoint_active)
 
 	try:
 		assert len(xpoint) > 0
@@ -1737,16 +1738,17 @@ def get_idnode_from_grid(grid, xpoint, ypoint):
 		   		'Please check the file of sample points')
 	
 	# create an array of nodes ids
-	idnodes = np.arange(grid['N_cells'], dtype=int).reshape((grid['N_x'], grid['N_y']))
-
+	idnodes = np.arange(grid['N_cells'], dtype=int).reshape((grid['N_y'], grid['N_x']))
+	#print("idnodes\n:", idnodes)
 	idpoint = []
 	for ixpoint, iypoint in zip(xpoint, ypoint):
 		# find the nearest point in the grid
 		point = find_location_of_nearest_node(
 			grid['x'], grid['y'],
 			ixpoint, iypoint)
-		
-		idpoint.append(idnodes[point[0]][point[1]])
+		#print("point:", point)
+		# store the id of the node
+		idpoint.append(idnodes[point[1]][point[0]])
 	
 	return idpoint
 
