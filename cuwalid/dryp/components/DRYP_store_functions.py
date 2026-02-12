@@ -566,7 +566,7 @@ def save_map_to_rasterfile(grid, field, fname):
 	# rehshape field to 2D array
 	nrow = grid['N_x']
 	ncol = grid['N_y']
-	field = field.reshape(nrow, ncol)
+	field = np.flip(field.reshape(ncol, nrow), axis=0)
 
 	# save raster file	
 	if print_maps_end is True:
