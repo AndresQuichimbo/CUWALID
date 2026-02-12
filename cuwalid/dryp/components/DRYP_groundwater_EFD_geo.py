@@ -50,7 +50,7 @@ class gwflow_EFD(object):
 				self.bc = bc[self.id_CHB]
 			else:
 				self.id_CHB = None
-
+		#print("Constant Head Boundary Nodes:", bc.reshape((grid['N_y'], grid['N_x'])))
 		# get active nodes array
 		# create provisional domain for active nodes
 		inodetype = np.zeros(grid['N_cells'])
@@ -59,7 +59,7 @@ class gwflow_EFD(object):
 			inodetype[self.id_CHB] = 2  # mark constant head boundary nodes
 		
 		self.act_nodes = inodetype
-
+		#print(inodetype.reshape((grid['N_y'], grid['N_x'])))
 		# get inactive links from grid object
 		inactive_links, _ = _compute_inactive_links(grid, inodetype)
 		
@@ -181,10 +181,10 @@ class gwflow_EFD(object):
 			Sy_for_update[self.id_CHB] = np.inf # Effectively sets update term to zero
 		else:
 			Sy_for_update = Sy
-	
+		#print("Initial Head:", head.reshape((grid['N_y'], grid['N_x'])))
 		## Calculate the per-cell update factor (dt / (Sy * Area))
 		#Update_Factor = dt / (Sy_for_update * grid['Areas'])
-	
+		
 		# calculate maximum allowable time step based on Courant condition
 		dts = get_maximim_time_step(self.Ksat[act_nodes], Sy[act_nodes],
 							  thickness[act_nodes], grid['Dx_cell'][act_nodes])
@@ -346,10 +346,10 @@ class gwflow_EFD(object):
 			# Apply boundary condition reset (fixed head nodes must not change)
 			if self.bc is not None:
 				head[self.id_CHB] = self.bc
-	
+			#print("Updated Head:", head.reshape((grid['N_y'], grid['N_x'])))
 			# Physical constraint: Head cannot be negative
 			head = np.maximum(head, 0.0)
-
+			
 			# adjusting head at the surface of the model domain
 			# WARNING! this could lead to increases in mass balance errors
 			head = np.minimum(surface, head)
