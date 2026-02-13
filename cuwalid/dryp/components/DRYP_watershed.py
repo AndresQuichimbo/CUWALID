@@ -10,6 +10,7 @@ import xarray as xr
 #from landlab import RasterModelGrid
 #from cuwalid.dryp.components.DRYP_io_files import get_model_settings
 from cuwalid.dryp.components.DRYP_io import (
+	create_grid_from_extent,# read_raster, save_raster,
 	create_landlab_grid,
 	get_index_from_coord_file)
 from cuwalid.dryp.components.DRYP_flow_accum import runoff_routing
@@ -83,11 +84,12 @@ def get_flow_path(fname_surface, fname_outlet, fname_out=None,
 		mask = read_raster(fname_mask)
 
 	# create a raster grid environment, landlab grid
-	grid = create_landlab_grid(
+	grid = create_grid_from_extent(
+	#grid = create_landlab_grid(
 		domain.width,
 		domain.height,
-		domain.bounds[1],
 		domain.bounds[0],
+		domain.bounds[1],
 		domain.transform[0], # cell size
 		mask)
 	
@@ -210,11 +212,12 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 		mask = read_raster(fname_mask)
 
 	# create a raster grid environment, landlab grid
-	grid = create_landlab_grid(
+	grid = create_grid_from_extent(
+	#grid = create_landlab_grid(
 		domain.width,
 		domain.height,
-		domain.bounds[1],
 		domain.bounds[0],
+		domain.bounds[1],
 		domain.transform[0], # cell size
 		mask)
 	
@@ -337,14 +340,15 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 		mask = read_raster(fname_mask)
 
 	# create a raster grid environment, landlab grid
-	grid = create_landlab_grid(
+	#grid = create_landlab_grid(
+	grid = create_grid_from_extent(
 		domain.width,
 		domain.height,
-		domain.bounds[1],
 		domain.bounds[0],
+		domain.bounds[1],
 		domain.transform[0], # cell size
 		mask)
-	
+	#print("grid created", "x:", domain.bounds[1], "y:", domain.bounds[0])
 	ro = runoff_routing(grid,
 		 	grid_size,
 			surface, 
@@ -444,11 +448,12 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 	#area_cell = np.power(domain.transform[0], 2)
 
 	# create a raster grid environment, landlab grid
-	grid = create_landlab_grid(
+	#grid = create_landlab_grid(
+	grid = create_grid_from_extent(
 		domain.width,
 		domain.height,
-		domain.bounds[1],
 		domain.bounds[0],
+		domain.bounds[1],
 		domain.transform[0], # cell size
 		mask)
 	

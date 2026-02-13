@@ -8,6 +8,7 @@ default_settings = {
 
     "PROJECTION" : None,
     "GEOGRAPHIC": False,
+    "FLOW_DIRECTION": "D8", # choose flow direction method (D8 or D4)
 
     "TIMESTEP_SETTINGS": {
         "dt_of": 60,

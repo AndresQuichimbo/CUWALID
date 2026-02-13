@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 from datetime import datetime, timedelta
-from cuwalid.dryp.components.DRYP_io import create_landlab_grid
+from cuwalid.dryp.components.DRYP_io import create_grid_from_extent, create_landlab_grid
 from cuwalid.dryp.components.DRYP_read_dataset import (read_dataset_interp)
 from cuwalid.dryp.components.DRYP_io import create_coordinate_array
 
@@ -61,7 +61,8 @@ def test_precipitation():
 
 	# create a raster grid environment, landlab grid
 	
-	grid =	create_landlab_grid(
+	#grid =	create_landlab_grid(
+	grid = create_grid_from_extent(
 		grid_ncols,
 		grid_nrows,
 		grid_xllcorner,

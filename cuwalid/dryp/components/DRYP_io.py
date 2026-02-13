@@ -32,8 +32,8 @@ class grid_environment(object):
 			
 				self.grid_ncols = src.width
 				self.grid_nrows = src.height
-				self.grid_xllcorner = src.bounds[1]
-				self.grid_yllcorner = src.bounds[0]
+				self.grid_xllcorner = src.bounds[0]
+				self.grid_yllcorner = src.bounds[1]
 				self.grid_cellsize = src.transform[0]
 				self.grid_profile = src.profile
 				self.grid_transform = src.transform
@@ -92,8 +92,8 @@ class grid_environment(object):
 		grid = create_grid_from_extent(
 			self.grid_ncols,
 			self.grid_nrows,
-			self.grid_yllcorner,
 			self.grid_xllcorner,
+			self.grid_yllcorner,
 			self.grid_cellsize,
 			active_domain=active_domain,
 			geographic=geographic)
@@ -165,7 +165,8 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, active_dom
 	lat = np.linspace(lat_min + cellsize / 2,
 	                  lat_min + (nrows - 0.5) * cellsize,
 	                  nrows)
-	
+	#print("lon range:", lon[0], "to", lon[-1])
+	#print("lat range:", lat[0], "to", lat[-1])
 	# 2D meshgrid of geographic coordinates
 	lon2d, lat2d = np.meshgrid(lon, lat)
 
@@ -1736,7 +1737,8 @@ def get_idnode_from_grid(grid, xpoint, ypoint):
 	except:
 		raise Exception('Sample points must be inside the model domain'
 		   		'Please check the file of sample points')
-	
+	#print("grid x:", grid['x'][0], "grid x:", grid['x'][-1])
+	#print("grid y:", grid['y'][0], "grid y:", grid['y'][-1])
 	# create an array of nodes ids
 	idnodes = np.arange(grid['N_cells'], dtype=int).reshape((grid['N_y'], grid['N_x']))
 	#print("idnodes\n:", idnodes)
@@ -1746,7 +1748,7 @@ def get_idnode_from_grid(grid, xpoint, ypoint):
 		point = find_location_of_nearest_node(
 			grid['x'], grid['y'],
 			ixpoint, iypoint)
-		#print("point:", point)
+		#print("point:", point, "ixpoint:", ixpoint, "iypoint:", iypoint)
 		# store the id of the node
 		idpoint.append(idnodes[point[1]][point[0]])
 	
