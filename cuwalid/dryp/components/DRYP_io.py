@@ -1008,7 +1008,7 @@ class groundwater_parameters(object):
 			self.Sy = np.flip(rasterio.open(inputfile.fname_SZ_Sy).read(1), 0).flatten()
 		
 		# Applying scale factor kSy
-		self.Sy = self.Sy*inputfile.kSy
+		#self.Sy = self.Sy*inputfile.kSy
 		
 		# Aquifer bottom
 		if inputfile.fname_SZ_bot == None or not os.path.exists(inputfile.fname_SZ_bot): 
@@ -1024,8 +1024,8 @@ class groundwater_parameters(object):
 		else:
 			self.Ksat = np.flip(rasterio.open(inputfile.fname_SZ_Ksat).read(1), 0).flatten()
 			
-		# Applying scale factor kKsat_gw
-		self.Ksat *= inputfile.kKsat
+		# Applying scale factor kKsat
+		#self.Ksat *= inputfile.kKsat
 		#self.Ksat *= inputfile.kKsat_gw*inputfile.unit_sim_k
 		#gw.at_node['Hydraulic_Conductivity'] *= inputfile.kKsat_gw*inputfile.unit_sim_k
 		#print(gw.at_node['Hydraulic_Conductivity'])				
@@ -1090,6 +1090,37 @@ class groundwater_parameters(object):
 			self.head = np.flip(rasterio.open(inputfile.fname_GWini).read(1), 0).flatten()
 			#h = read_esri_ascii(inputfile.fname_GWini,
 			#	name='water_table__elevation', grid=gw)[1]
+
+		self.kKsat = inputfile.kKsat
+		self.kSy = inputfile.kSy
+
+	def apply_factor_ksat(self, kKsat_aquifer=None):
+		"""Apply scale factor to aquifer saturated hydraulic conductivity
+		Parameters
+		----------
+		kKsat:	scale factor for aquifer saturated hydraulic conductivity
+		Returns
+		-------
+		"""
+		if kKsat_aquifer is not None:
+			kKsat_aquifer[kKsat_aquifer == 1.0] = self.kKsat
+			self.Ksat = self.Ksat * kKsat_aquifer
+		else:
+			self.Ksat = self.Ksat*self.kKsat
+
+	def apply_factor_Sy(self, kSy=None):
+		"""Apply scale factor to soil specific yield
+		Parameters
+		----------
+		kSy:	scale factor for soil specific yield
+		Returns
+		-------
+		"""
+		if kSy is not None:
+			kSy[kSy == 1.0] = self.kSy
+			self.Sy = self.Sy * kSy
+		else:
+			self.Sy = self.Sy*self.kSy
 
 class interception_parameters(object):
 	"""This function reads all aquifer paramters required to run the saturated component
