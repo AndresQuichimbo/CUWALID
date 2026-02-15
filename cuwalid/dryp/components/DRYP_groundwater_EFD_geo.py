@@ -51,6 +51,9 @@ class gwflow_EFD(object):
 			else:
 				self.id_CHB = None
 		#print("Constant Head Boundary Nodes:", bc.reshape((grid['N_y'], grid['N_x'])))
+		#print("Constant Head Boundary Nodes:", self.id_CHB)
+		#print("Constant Head Boundary Values:", self.bc)
+		#print("Initial Head:", c)
 		# get active nodes array
 		# create provisional domain for active nodes
 		inodetype = np.zeros(grid['N_cells'])
@@ -158,7 +161,7 @@ class gwflow_EFD(object):
 		
 		# initialize water storage change
 		water_storage_change = np.zeros_like(thickness, dtype=float)
-		
+		#print('Initial Head', head[act_nodes])
 		# initialize saturated thinckess
 		thickness_sat = np.array(thickness, dtype=float)
 		thickness_sat[act_nodes] = update_saturated_thickness(head[act_nodes],
@@ -169,12 +172,12 @@ class gwflow_EFD(object):
 		#print('thickness', thickness_sat[act_nodes])
 		# change in total storage at the end of the time step
 		total_storage_change = 0.0
-
+		#print("Constant Head Boundary Nodes:", self.id_CHB)
 		# flux at constant head boundary
 		self.flux_at_CHB = 0.0
-
+		#print("Initial Head:", head[act_nodes])
 		# Apply initial fixed boundary conditions (if provided)
-		if self.bc is not None:
+		if self.id_CHB is not None:
 			head[self.id_CHB] = self.bc
 			# Ensure that BC nodes are not updated by the flux calculation
 			Sy_for_update = Sy.copy()
@@ -184,11 +187,11 @@ class gwflow_EFD(object):
 		#print("Initial Head:", head.reshape((grid['N_y'], grid['N_x'])))
 		## Calculate the per-cell update factor (dt / (Sy * Area))
 		#Update_Factor = dt / (Sy_for_update * grid['Areas'])
+		#print("BC Head:", head[act_nodes])
 		
 		# calculate maximum allowable time step based on Courant condition
 		dts = get_maximim_time_step(self.Ksat[act_nodes], Sy[act_nodes],
 							  thickness[act_nodes], grid['Dx_cell'][act_nodes])
-
 		# Calculate minimal time step		
 		dtp = np.nanmin([dt, dts])		
 		dtsp = dtp
@@ -213,7 +216,7 @@ class gwflow_EFD(object):
 				if self.id_CHB is not None:
 				#self.ch_boundaries = bc[self.id_CHB]
 					head[self.id_CHB] = self.bc[self.id_CHB]
-
+			
 			# 1. Calculate Transmissivity at the Interface (T_ij^k = K_avg * h_avg)    
 			# Head at interface (Arithmetic Mean): h_avg = (h_i + h_j) / 2
 			h_i = head[I]
@@ -245,6 +248,7 @@ class gwflow_EFD(object):
 			# Net flux into cell I = Inflow - Outflow [depth/time]
 			Net_Flux = -Net_Flux/grid['Areas'] + recharge/dt
 
+			#print("Head before river interaction:", head[act_nodes])
 			# add river component
 			if len(riv_nodes) > 0:
 				# Calculate channel cell conductivity
@@ -319,6 +323,7 @@ class gwflow_EFD(object):
 			# run FORTRAN connector
 			# create an auxiliary variable to interact with fortran
 			aux_head = np.array(head[act_nodes], np.float32)
+			#print('Before update soil', aux_head)
 			lakes.uz_sz_interaction.update_soil(
 				np.array(surface[act_nodes], np.float32),# surface elev
 				np.array(bathymetry[act_nodes], np.float32),# bottom elev. upper layer
@@ -336,7 +341,7 @@ class gwflow_EFD(object):
 
             # asign updated values of aquifer heads to the groundwater object
 			head[act_nodes] = aux_head
-
+			#rint('Updated Head', head[act_nodes])
 			# accumulate discharge
 			if len(riv_nodes) > 0:
 				discharge[riv_nodes] += qs_riv*self.kaq[riv_nodes]*dtsp
@@ -344,7 +349,7 @@ class gwflow_EFD(object):
 			discharge[act_nodes] += dqs[act_nodes]*dtsp
 
 			# Apply boundary condition reset (fixed head nodes must not change)
-			if self.bc is not None:
+			if self.id_CHB is not None:
 				head[self.id_CHB] = self.bc
 			#print("Updated Head:", head.reshape((grid['N_y'], grid['N_x'])))
 			# Physical constraint: Head cannot be negative
