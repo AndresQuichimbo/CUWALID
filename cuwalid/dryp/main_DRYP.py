@@ -102,7 +102,7 @@ def run_DRYP(filename_input):
 	runoff, recharge, baseflow, AOF_threshold) = initialize_simulation_state_variables(
 		data_in, topo, grid, aquifer, soil, vegetation, ro
 	)
-
+	
 	# INITIALISE OUTPUT AND MONITORING --------------------------------
 	#print("************************ READING SETTINGS FOR MODEL OUPUTS *************************")
 	print("Setting up outputs and monitoring nodes")
@@ -496,7 +496,7 @@ def run_DRYP(filename_input):
 					if dt_GW == data_in.dtSZ:
 						# estimate and change recharge units
 						# from mm/h --> m/h
-						
+						#print("Aquifer Start Head", head[idGW[0]])
 						# run groundwater component
 						#if data_in.run_GW > 1:
 							# under development
@@ -601,7 +601,7 @@ def run_DRYP(filename_input):
 							}
 							)
 					
-
+				#print("Aquifer SHead", head[idGW[0]])
 				# get all fluxes and states at sampling points
 				point_var.store_variables(PRE.date_sim_dt, t_pre,
 				  	{"aet": AET[idOF[1]], "inf": INF[idOF[1]],
