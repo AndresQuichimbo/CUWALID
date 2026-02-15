@@ -37,7 +37,11 @@ def read_model_parameters(data_in):
 
     print("====== > Reading groundwater aquifer hydraulic parameters")
     aquifer = groundwater_parameters(domain.grid_size, data_in.fname_aquifer)
-
+    factor_ksat = read_parameter_set_file(data_in.fname_cal_sets.fname_cal_sz_set) # read calibration factor for zones if provided
+    ksat_zones = zone_parameters(data_in.fname_cal_sets.fname_cal_sz_zone) # read calibration zones if provided and apply ksat factor
+    factor_ksat = ksat_zones.get_scale_factor_zones(factor_ksat)
+    aquifer.apply_factor_ksat(kKsat_aquifer=factor_ksat)
+    
     print("====== > Reading interception parameters")
     vegetation = interception_parameters(
         domain.grid_size, data_in.fname_interception_hillslope)
