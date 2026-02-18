@@ -56,7 +56,7 @@ alg_release = '2023-08-01'
 # parallel version of the model, with parallel execution of model components
 # parallelization: parallel execution of model components
 #@profile
-def run_DRYP(filename_input):
+def run_parDRYP(filename_input):
 	"""This function integrates all components of the model, with
 	all model parameters and component settings being specified in
 	the -filename_input- file.
