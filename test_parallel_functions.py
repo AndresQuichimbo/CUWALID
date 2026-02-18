@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 # Import the required components from the cuwalid library
 from cuwalid.dryp.components.DRYP_infiltration import infiltration
-from cuwalid.dryp.components.read_model_parameters import read_model_parameters_and_settings
-from cuwalid.dryp.components.read_temporal_datasets import read_temporal_datasets_and_grid
+from cuwalid.dryp.components.read_model_parameters import read_model_parameters
+from cuwalid.dryp.components.read_temporal_datasets import read_temporal_datasets
 
 
 def _run_region(func, mask, input_arrays, region_args):
@@ -176,8 +176,8 @@ if __name__ == '__main__':
     inf = infiltration(1)
 
     # Load model parameters and datasets
-    data_in, topo, soil, rsoil, aquifer, vegetation, water_bodies, water_bodies_management = read_model_parameters_and_settings(filename_input)
-    PRE, ET0, SAVI, LAI, Kc, av, SAVImin, SAVImax, fluxOF, fluxUZ, fluxSZ, fluxWB, Qusz, grid = read_temporal_datasets_and_grid(data_in, topo)
+    data_in, topo, soil, rsoil, aquifer, vegetation, water_bodies, water_bodies_management = read_model_parameters(filename_input)
+    PRE, ET0, SAVI, LAI, Kc, av, SAVImin, SAVImax, fluxOF, fluxUZ, fluxSZ, fluxWB, Qusz, grid = read_temporal_datasets(data_in, topo)
 
     rain = PRE.get_one_step_dataset(0, data_in.fname_TSPre, 'pre')
 
