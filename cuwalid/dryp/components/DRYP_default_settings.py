@@ -122,7 +122,13 @@ default_settings = {
         "sz_kksat": 1.0,
         "sz_ksy": 1.0,
         "of_kflow": 1.0
-    }
+    },
+    "PARALLEL": {
+        "num_processes": 1,
+        "subdomain_size": None, # size of subdomains for parallel processing (in number of cells)
+        "overlap_size": None, # size of overlap between subdomains for parallel processing (in number of cells)
+    },
+    
 }
 
  

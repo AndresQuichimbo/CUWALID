@@ -162,4 +162,10 @@ default_input = {
    #   "path_cal_end": None
    },
 
+   "PARALLEL": {
+      "path_oz_subdomains": None, # raster map with subdomains for parallel processing
+      "path_sz_subdomains": None, # raster map with subdomains for parallel processing
+      "path_uz_subdomains": None, # raster map with subdomains for parallel processing
+   },
+
 }
