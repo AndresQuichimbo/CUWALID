@@ -116,9 +116,7 @@ class runoff_routing(object):
 			self.stream_level_ranges, order = flowaccum.get_stream_levels(self.s, distance)
 			# store order levels for parallelization
 			self.order = order
-			
 			# get list of donors
-			#self.donor_arrays = flowaccum.get_array_of_donors(self.r)
 			donor_arrays = flowaccum.get_array_of_donors(self.r)
 			# resize donor array to max number of donors
 			max_donors = max([len(d) for d in donor_arrays])
