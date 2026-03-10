@@ -164,11 +164,30 @@ class runoff_routing(object):
         self.stage = self.stage*river_cell
 
 def get_array_of_donors(r):
-    """Get array of donors for each pixel"""
-    donor_array = []
-    for i in range(len(r)):
-        donor_array.append(list(np.where(r == i)[0]))
-        
+    """Get array of donors for each pixel
+    
+    Optimized version using single-pass algorithm for O(n) complexity.
+    For large datasets, this is significantly faster than the original O(n²) approach.
+    
+    Parameters
+    ----------
+    r : ndarray
+        Receiver node IDs for each node
+    
+    Returns
+    -------
+    list of lists
+        For each node index, returns a list of all donor nodes (nodes that flow into it)
+    """
+    n = len(r)
+    # Pre-allocate list with empty lists for each node
+    donor_array = [[] for _ in range(n)]
+    
+    # Single pass: for each node, add it to its receiver's donor list
+    for donor_idx in range(n):
+        receiver_idx = r[donor_idx]
+        donor_array[receiver_idx].append(donor_idx)
+    
     return donor_array
 
 
