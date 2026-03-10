@@ -7,6 +7,7 @@ warnings.filterwarnings('ignore', message="invalid value encountered in divide")
 import numpy as np
 #from landlab import RasterModelGrid
 #import faccumf90 as floss
+import cuwalid.dryp.components.DRYP_flow_accum as flowaccum
 import cuwalid.dryp.components.faccumf90 as floss
 from landlab.components.flow_accum import flow_accum_bw#, make_ordered_node_array
 from landlab.core.utils import as_id_array
@@ -28,7 +29,7 @@ class runoff_routing(object):
 
 	"""
 	def __init__(self, grid, grid_size, surface, FlowDirection, Ksat,
-			decay, riv_width, riv_length):
+			decay, riv_width, riv_length, parallel=False):
 		"""initialization of flow routing component
 		
 		Parameters
@@ -99,15 +100,38 @@ class runoff_routing(object):
 			#self.r = as_id_array(range(grid_size))
 			#self.r[grid.core_nodes] = FlowDirection[grid.core_nodes]
 			self.r = as_id_array(FlowDirection)
-			
 		#nd = as_id_array(flow_accum_bw._make_number_of_donors_array(self.r))
 		#delta = as_id_array(flow_accum_bw._make_delta_array(nd))
 		#D = as_id_array(flow_accum_bw._make_array_of_donors(self.r, delta))
 		self.s = as_id_array(flow_accum_bw.make_ordered_node_array(self.r))
-		#self.carea = find_drainage_area(self.s, self.r,
-		#			env_state.area_cells,
-		#			env_state.grid.boundary_nodes)
 		del gridro
+
+		if parallel:
+			# create mask
+			distance = np.zeros(grid_size)
+			distance[grid['core_nodes']] = 1
+			# calculate distance
+			distance = flowaccum.find_distance_from_outlet(self.s, self.r, distance)
+			# calculate stream levels
+			self.stream_level_ranges, order = flowaccum.get_stream_levels(self.s, distance)
+			# store order levels for parallelization
+			self.order = order
+			# get list of donors
+			donor_arrays = flowaccum.get_array_of_donors(self.r)
+			# resize donor array to max number of donors
+			max_donors = max([len(d) for d in donor_arrays])
+			for i in range(len(donor_arrays)):
+				# add -1 to fill non donor values, and add 0 to fill non existing donors
+				donor_arrays[i] = donor_arrays[i] + [-1]*(max_donors - len(donor_arrays[i]))
+			# store donor arrays for parallelization
+			self.donor_arrays = np.array(donor_arrays, dtype=np.int32).flatten()
+			# store max number of donors for parallelization
+			self.max_donors = max_donors
+			#print("max donors: ", max_donors)
+			# drop non active nodes
+			#for idcored
+		self.parallel = parallel
+        
 		
 	#@profile
 	def run_runoff_one_step(self, runoff, AOF, AOF_threshold, conductivity,
@@ -172,17 +196,28 @@ class runoff_routing(object):
 			Q_ini = np.array(self.SSZ, np.float32) #Q_ini
 			Qaof = np.array(AOF, np.float32) #Qaof
 			
-			# Call FORTRAN function for flow routing
-			floss.ftransloss.find_discharge_and_losses(
-				self.s+1, self.r+1,
-				np.array(conductivity, np.float32), #Criv
-				np.array(decay, np.float32), #Kt
-				np.array(river_cell, np.int32), #riv
-				np.array(AOF_threshold, np.float32), #Qaoft
-				np.array(river_sat_deficit, np.float32), #riv_std
-				np.array(self.par_3, np.float32), #P3
-				np.array(self.par_4, np.float32), #P4
-				runoff, trans_losses, Q_ini, Qaof)
+			if self.parallel:
+				runoff, trans_losses, Q_ini, Qaof = flowaccum.par_find_discharge_and_losses(
+								self.order, #self.s,
+								self.r,
+								self.stream_level_ranges, self.donor_arrays, self.max_donors,
+								runoff,
+								conductivity, decay, Q_ini, river_cell, Qaof,
+								AOF_threshold, river_sat_deficit, self.par_3,
+								self.par_4#, node_cell_area, boundary_nodes
+								)
+			else:
+				# Call FORTRAN function for flow routing
+				floss.ftransloss.find_discharge_and_losses(
+					self.s+1, self.r+1,
+					np.array(conductivity, np.float32), #Criv
+					np.array(decay, np.float32), #Kt
+					np.array(river_cell, np.int32), #riv
+					np.array(AOF_threshold, np.float32), #Qaoft
+					np.array(river_sat_deficit, np.float32), #riv_std
+					np.array(self.par_3, np.float32), #P3
+					np.array(self.par_4, np.float32), #P4
+					runoff, trans_losses, Q_ini, Qaof)
 			
 			# update overland flow attributes
 			self.discharge[:] = runoff[:]		

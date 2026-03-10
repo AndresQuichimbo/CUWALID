@@ -5,8 +5,9 @@ from landlab.components.flow_accum import flow_accum_bw#, make_ordered_node_arra
 from landlab.core.utils import as_id_array
 #from landlab import RasterModelGrid
 from landlab.components import FlowDirectorD8
+from numba import njit, prange
+import pandas as pd
 
-#Kloss = None
 class runoff_routing(object):
     """Function to discharge and transmission losses discharge.
     Running run_one_step() results in the following to occur:
@@ -19,7 +20,7 @@ class runoff_routing(object):
     """
 
     def __init__(self, grid, grid_size, surface, FlowDirection,
-                 Ksat, decay, riv_width, riv_length):
+                 Ksat, decay, riv_width, riv_length, parallel=True):
         """initialization of flow routing component
         
         Parameters
@@ -78,8 +79,20 @@ class runoff_routing(object):
         #self.carea = find_drainage_area(self.s, self.r,
         #            area_cells,
         #            grid.boundary_nodes)
+
+        if parallel:
+            # create mask
+            distance = np.zeros(grid_size)
+            distance[grid['core_nodes']] = 1
+            # calculate distance
+            distance = find_distance_from_outlet(self.s, self.r, distance)
+            # calculate stream levels
+            self.stream_level_ranges = get_stream_levels(self.s, distance)
+            # get list of donors
+            self.donor_arrays = get_array_of_donors(self.r)
         
-        
+        pass
+       
     def run_runoff_one_step(self, runoff, AOF, AOF_threshold, conductivity,
              decay, river_cell, area_cells, area_river, river_sat_deficit,
              boundary_nodes):
@@ -112,23 +125,7 @@ class runoff_routing(object):
         Trans_losses: Transmission lossses at river cells [m3] [L3]
         aof:        River flow abstraction [mm] [L]
         """
-        
-        #env_state.grid.at_node['AOF'][:] = aof
-        #act_nodes = env_state.act_nodes
-        
-        # Update runoff with all inputs:
-        # Runoff in units [m]
-        #env_state.grid.at_node['runoff'][act_nodes] = (
-        #        exs[act_nodes]*0.001*env_state.cth_area[act_nodes]
-        #        + (env_state.SZgrid.at_node['discharge'][act_nodes])
-        #        )
-        
-        # create array with bolean values for running streamflow routing
-        #check_dry_conditions = len(np.where(
-        #        (env_state.grid.at_node['runoff'][act_nodes]
-        #        + env_state.grid.at_node['Q_ini'][act_nodes]
-        #        ) > 0.0)[0])
-        
+        # skip if runoff is zero        
         check_dry_condition = len(np.where(runoff > 0)[0])
 
         if check_dry_condition > 0:
@@ -153,16 +150,6 @@ class runoff_routing(object):
                 ))
                 
             # Update landlab grids of environmental states/fluxes
-            #env_state.grid.at_node["surface_water__discharge"][:] = discharge
-            #env_state.grid.at_node['Transmission_losses'][:] = QTL
-            #env_state.grid.at_node['Q_ini'][:] = Q_ini
-            #env_state.grid.at_node['AOF'][:] = Qaof
-            
-            #env_state.grid.at_node['AOF'][:] = aux[3] #aof
-            #print(discharge[23], QTL[23], Q_ini[23])
-            #self.dis_dt[act_nodes] = np.array(
-            #        env_state.grid.at_node["surface_water__discharge"][act_nodes])
-            
             self.discharge[self.discharge < 0] = 0.0
             
         else:
@@ -172,29 +159,36 @@ class runoff_routing(object):
             noflow = 0
         
         # save runoff for mass balance
-        #self.run_dt = np.zeros(grid_size)
-        #self.run_dt[act_nodes] = np.array(
-        #        env_state.grid.at_node['runoff'][act_nodes])
-        
-        # get transmission losses in [mm]
-        #self.tls_dt = np.array(
-        #        env_state.grid.at_node['Transmission_losses']
-        #        *1000.0/env_state.area_cells)
-        
-        # get transmission losses in [m3]
-        #self.tls_flow_dt = np.array(
-        #        env_state.grid.at_node['Transmission_losses'])
-        
-        # get channel storage in [mm]
-        #self.qfl_dt[act_nodes] = np.array(
-        #        env_state.grid.at_node['Q_ini'][act_nodes]
-        #        *1000.0/env_state.area_cells[act_nodes])
-        #print(self.tls_dt[act_nodes])
-
         self.stage[area_river > 0] = (self.discharge[area_river > 0]
                 /area_river[area_river > 0])
         self.stage = self.stage*river_cell
-        #        env_state.grid.at_node['runoff'][act_nodes])
+
+def get_array_of_donors(r):
+    """Get array of donors for each pixel
+    
+    Optimized version using single-pass algorithm for O(n) complexity.
+    For large datasets, this is significantly faster than the original O(n²) approach.
+    
+    Parameters
+    ----------
+    r : ndarray
+        Receiver node IDs for each node
+    
+    Returns
+    -------
+    list of lists
+        For each node index, returns a list of all donor nodes (nodes that flow into it)
+    """
+    n = len(r)
+    # Pre-allocate list with empty lists for each node
+    donor_array = [[] for _ in range(n)]
+    
+    # Single pass: for each node, add it to its receiver's donor list
+    for donor_idx in range(n):
+        receiver_idx = r[donor_idx]
+        donor_array[receiver_idx].append(donor_idx)
+    
+    return donor_array
 
 
 class watershed(object):
@@ -444,11 +438,102 @@ def find_watersheds(s, r, outlet, boundary_nodes=None):
                 
     return basin
 
+def find_distance_from_outlet(s, r, basin, boundary_nodes=None):
+
+    """Calculate the drainage area and water discharge at each node, permitting
+    discharge to fall (or gain) as it moves downstream according to some
+    function. Note that only transmission creates loss, so water sourced
+    locally within a cell is always retained. The loss on each link is recorded
+    in the 'surface_water__discharge_loss' link field on the grid; ensure this
+    exists before running the function.
+
+    Parameters
+    ----------
+    s : ndarray of int
+        Ordered (downstream to upstream) array of node IDs
+    r : ndarray of int
+        Receiver node IDs for each node
+    boundary_nodes: list, optional
+        Array of boundary nodes to have discharge and drainage area set to zero.
+        Default value is None.
+    outlet: raster with the location of basin outlet
+    
+    Returns
+    -------
+    tuple of ndarray: drainage area and discharge
+
+    Notes
+    -----
+    -  If node_cell_area not given, the output drainage area is equivalent
+    to the number of nodes/cells draining through each point, including
+    the local node itself.
+    -  Give node_cell_area as a scalar when using a regular raster grid.
+    -  If runoff is not given, the discharge returned will be the same as
+    drainage area (i.e., drainage area times unit runoff rate).
+    -  If using an unstructured Landlab grid, make sure that the input
+    argument for node_cell_area is the cell area at each NODE rather than
+    just at each CELL. This means you need to include entries for the
+    perimeter nodes too. They can be zeros.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from landlab import RasterModelGrid
+    >>> from landlab.components.flow_accum import (
+    ...     find_drainage_area_and_discharge)
+    >>> r = np.array([2, 5, 2, 7, 5, 5, 6, 5, 7, 8])-1
+    >>> s = np.array([4, 1, 0, 2, 5, 6, 3, 8, 7, 9])
+    >>> l = np.ones(10, dtype=int)  # dummy
+    >>> nodes_wo_outlet = np.array([0, 1, 2, 3, 5, 6, 7, 8, 9])
+    
+    """
+    # Number of points
+    npoint = len(s)
+    
+    # Initialize the drainage_area and discharge arrays. Drainage area starts
+    # out as the area of the cell in question, then (unless the cell has no
+    # donors) grows from there. Discharge starts out as the cell's local runoff
+    # rate times the cell's surface area.
+    #basin = np.zeros(npoint, dtype=int) + outlet
+    #discharge = np.zeros(npoint, dtype=int) + node_cell_area
+    # note no loss occurs at a node until the water actually moves along a link
+    
+    # Optionally zero out drainage area and discharge at boundary nodes
+    #if boundary_nodes is not None:
+    #    basin[boundary_nodes] = 0
+    
+    # Iterate forward through the list, which means we work from downstream
+    # to upstream
+    for i in range(npoint - 1):
+        donor = s[i]
+        recvr = r[donor]
+        if donor != recvr:
+            basin[donor] += basin[recvr]
+                
+    return basin
+
+def get_stream_levels(s, area):
+    pixels_ordered = pd.DataFrame({"pixels": np.arange(s.size), "order": area})
+    #print(pixels_ordered)
+    try:
+        #print("step 1\n", pixels_ordered.sort_values(["order", "pixels"]))
+        #print("step 2\n", pixels_ordered.sort_values(["order", "pixels"]).set_index("order"))
+        pixels_ordered = pixels_ordered.sort_values(["order", "pixels"]).set_index("order").squeeze()
+        #print("step 3\n", pixels_ordered)
+    except: # FOR COMPATIBILITY WITH OLDER PANDAS VERSIONS
+        pixels_ordered = pixels_ordered.sort(["order", "pixels"]).set_index("order").squeeze()
+    order_counts = pixels_ordered.groupby(pixels_ordered.index).count()
+    stop = order_counts.cumsum().values
+    order_start_stop = np.column_stack((np.append(0, stop[:-1]), stop)).astype(int)
+    #print('Pixel ordered\n', pixels_ordered.values)
+    #print('Order', order_counts)
+    #print(stop)
+    #print('order limit\n', order_start_stop)
+    return order_start_stop, pixels_ordered.values
+
 def find_discharge_and_losses(s, r, runoff, Criv, Kt,
                               Q_ini, riv, Q_aof, Q_aoft, riv_std, P3, P4,
                               node_cell_area, boundary_nodes):
-    # node_cell_area=1.0, boundary_nodes=None):
-
     """Calculate the drainage area and water discharge at each node, permitting
     discharge to fall (or gain) as it moves downstream according to some
     function. Note that only transmission creates loss, so water sourced
@@ -571,7 +656,51 @@ def find_discharge_and_losses(s, r, runoff, Criv, Kt,
     return discharge, QTL, Q_ini, Q_aof
     #return np.array([discharge, QTL, Q_ini, Q_aof])
 
-#@jit(nopython=True)
+
+@njit(parallel=True, fastmath=True, cache=True)
+def par_find_discharge_and_losses(s, r, order_levels, donor_arrays, max_donors, runoff, Criv, decay_Kt,
+                              Q_ini, riv, Q_aof, Q_aoft, riv_std, P3, P4,
+                              #node_cell_area, boundary_nodes
+                              ):
+    num_orders = order_levels.shape[0]
+    discharge = runoff.copy()#(len(runoff))
+    QTL = np.zeros(len(runoff))
+    # Iterate through routing orders (sets of pixels for which the kinemativc wave can be solved independently and thus in parallel)
+    for order in range(num_orders-1, -1, -1):
+        first = order_levels[order,0]
+        last = order_levels[order,1]
+        for index in prange(first, last):
+            recvr = s[index]
+            #print("receiver: ", recvr)
+            id_start = recvr*max_donors
+            id_end = id_start + max_donors
+            #print('max donors: ', max_donors)
+            for donor_index in range(id_start, id_end):
+                donor = donor_arrays[donor_index]
+            #for donor in donor_arrays[recvr]:
+                #print('donor: ', donor)
+                if (donor != recvr) and (donor != -1):
+                    #print('donor: ', donor)
+                    aux = TransLossWV(
+                            discharge[donor],
+                            Criv[donor],
+                            decay_Kt[donor],
+                            Q_ini[donor],
+                            riv[donor],
+                            Q_aof[donor],
+                            Q_aoft[donor],
+                            riv_std[donor],
+                            P3[donor], P4[donor]
+                            )
+                    #print("aux: ", aux)
+                    discharge[recvr] += aux[0]#discharge_remaining
+                    QTL[donor] = aux[1]#Q_TLp
+                    Q_ini[donor] = aux[2]#Q_inip
+                    Q_aof[donor] = aux[3]#Q_aofp
+            #print(aux)
+    return discharge, QTL, Q_ini, Q_aof
+
+@njit(nogil=True, fastmath=False, cache=True)
 def TransLossWV(Qw, Criv, Kt, Q_ini,
                 riv, Qaof, Qaoft, riv_std, P3, P4):
     """Transmission losses function
@@ -637,6 +766,7 @@ def TransLossWV(Qw, Criv, Kt, Q_ini,
     return np.array([Qout, QTL, Q_ini, Qaof])
     #return Qout, QTL, Q_ini, Qaof
 
+@njit(nogil=True, fastmath=False, cache=True)
 def exp_decay_loss_wp(TL, Qin, k, P3, P4):
     """Calculate transmission losses, flow leaving the cell, and
     channel storage
@@ -687,7 +817,8 @@ def exp_decay_loss_wp(TL, Qin, k, P3, P4):
         
     return np.array([Qout, Qtl, Sch])
 
-#@jit(nopython=True)
+#@njit
+@njit(nogil=True, fastmath=False, cache=True)
 def exp_decay_wp(Qin, k):
     """Calculate flow leaving the cell and channel storage
     
