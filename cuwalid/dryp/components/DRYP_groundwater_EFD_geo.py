@@ -161,7 +161,7 @@ class gwflow_EFD(object):
 		
 		# initialize water storage change
 		water_storage_change = np.zeros_like(thickness, dtype=float)
-		#print('Initial Head', head[act_nodes])
+		#print('Initial Head', len(bottom), len(surface), len(head), len(thickness))
 		# initialize saturated thinckess
 		thickness_sat = np.array(thickness, dtype=float)
 		thickness_sat[act_nodes] = update_saturated_thickness(head[act_nodes],
