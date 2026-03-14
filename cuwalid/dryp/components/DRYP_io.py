@@ -43,6 +43,18 @@ class grid_environment(object):
 		
 		# define grid size for model arrays
 		self.grid_size = self.grid_ncols*self.grid_nrows
+		# create dictionary to store grid data and parameters
+		self.grid_metadata = {
+			'ncols': self.grid_ncols,
+			'nrows': self.grid_nrows,
+			'xllcorner': self.grid_xllcorner,
+			'yllcorner': self.grid_yllcorner,
+			'cellsize': self.grid_cellsize,
+			'profile': self.grid_profile,
+			'transform': self.grid_transform,
+			'size': self.grid_size,
+			'shape': (self.grid_nrows, self.grid_ncols)
+			}
 
 	def create_grid(self, domain):
 		"""This function create a lanadlab grid object
@@ -717,7 +729,8 @@ class surface_parameters(object):
 #		
 #		return gaugeid
 def read_raster_as_array(filename, grid_size=None, default_value=None, dtype=float,
-						message_if_not_exist="Raster file does not exist",):
+						message_if_not_exist="Raster file does not exist",
+						flatten=True):
 	"""This function read a raster file and return a numpy array
 
 	Parameters
@@ -750,7 +763,9 @@ def read_raster_as_array(filename, grid_size=None, default_value=None, dtype=flo
 
 		return data
 	
-	data = np.flip(rasterio.open(filename).read(1), 0).flatten()
+	data = np.flip(rasterio.open(filename).read(1), 0)
+	if flatten:
+		data = data.flatten()
 	
 	return data
 
@@ -815,6 +830,34 @@ def set_initial_conditions(grid_size, Droot, head, surface,
 	
 	return head, Duz, z_extintion, river_sat_deficit, Ft0, SORP0, t_0, dry_day
 
+class parallel_parameters(object):
+	"""Setting model input varables and environmental states
+	"""
+	def __init__(self, inputfile):
+		"""Create variables to store model states and input data sets.
+		Read all input datasst and variables for all components
+		"""
+		self.gw = read_raster_as_array(inputfile.fname_subdomain_sz,
+											default_value=None, dtype=int, flatten=False,
+					message_if_not_exist='Groundwater subdomains.............not provided. Parallel groundwater component not activated')
+		#self.n_gw_subdomains = np.max(self.gw) + 1
+		#if self.n_gw_subdomains > 1:
+		#	print(f"Parallel groundwater component activated with {self.n_gw_subdomains} subdomains")
+		#else:
+		#	print("Parallel groundwater component not activated")
+		
+		self.ro = read_raster_as_array(inputfile.fname_subdomain_oz,
+					default_value=None, dtype=int, flatten=False,
+					message_if_not_exist=(
+						'Runoff subdomains..................not provided. Parallel runoff component not activated'))
+		#self.n_ro_subdomains = np.max(self.ro) + 1
+		#if self.n_ro_subdomains > 1:
+		#	print(f"Parallel runoff component activated with {self.n_ro_subdomains} subdomains")
+		#else:
+		#	print("Parallel runoff component not activated")
+		#print(self.ro)
+
+		
 class soil_parameters(object):
 	"""Setting model input varables and environmental states
 	"""
