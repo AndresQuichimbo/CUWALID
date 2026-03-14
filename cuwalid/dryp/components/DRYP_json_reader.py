@@ -198,6 +198,12 @@ class get_model_settings(object):
 		self.fname_Rip_width = dryp_config["VEGETATION"]["path_veg_lulc"]
 		self.fname_Rip_init = dryp_config["VEGETATION"].get("path_veg_nn")
 
+		# parallel processing subdomains
+		self.fname_subdomain_oz = dryp_config["PARALLEL"]["path_subdomains_oz"]
+		self.fname_subdomain_sz = dryp_config["PARALLEL"]["path_subdomains_sz"]
+		self.fname_subdomain_uz = dryp_config["PARALLEL"]["path_subdomains_uz"]
+		print(self.fname_subdomain_oz, self.fname_subdomain_sz, self.fname_subdomain_uz)
+
 		# Output files maps
 		self.DirOutput = dryp_config["OUTPUT"]["path_output"]
 		self.fname_DISpoints = dryp_config["OUTPUT"]["path_out_oz"]
