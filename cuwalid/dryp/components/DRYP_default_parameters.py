@@ -163,9 +163,9 @@ default_input = {
    },
 
    "PARALLEL": {
-      "path_oz_subdomains": None, # raster map with subdomains for parallel processing
-      "path_sz_subdomains": None, # raster map with subdomains for parallel processing
-      "path_uz_subdomains": None, # raster map with subdomains for parallel processing
+      "path_subdomains_oz": None, # raster map with subdomains for parallel processing
+      "path_subdomains_sz": None, # raster map with subdomains for parallel processing
+      "path_subdomains_uz": None, # raster map with subdomains for parallel processing
    },
 
 }
