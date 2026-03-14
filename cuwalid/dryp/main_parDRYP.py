@@ -17,9 +17,13 @@ Version(s):
 """
 
 import argparse
+import importlib
+import json
 import numpy as np
-from tqdm import tqdm
-from cuwalid.dryp.components.DRYP_io import zone_parameters
+from cuwalid.dryp.components.DRYP_io import (
+    zone_parameters,
+	parallel_parameters
+)
 from cuwalid.dryp.components.DRYP_json_reader import get_model_settings
 from cuwalid.dryp.components.DRYP_groundwater_EFD import storage_uz_sz
 from cuwalid.dryp.components.assemble_model_components import (
@@ -33,6 +37,27 @@ from cuwalid.dryp.components.read_model_parameters import read_model_parameters
 from cuwalid.dryp.components.read_temporal_datasets import read_temporal_datasets
 from cuwalid.dryp.components.save_model_output import save_model_outputs										
 import cuwalid.dryp.components.DRYP_util as utils
+
+import cuwalid.dryp.components.DRYP_parallel_tools as partools
+
+if importlib.util.find_spec("tqdm") is not None:
+	tqdm = importlib.import_module("tqdm").tqdm
+else:
+	class _NoOpTqdm:
+		def update(self, n=1):
+			return None
+
+		def close(self):
+			return None
+
+	def tqdm(*args, **kwargs):
+		return _NoOpTqdm()
+
+if importlib.util.find_spec("mpi4py") is not None:
+	from mpi4py import MPI
+	#MPI = importlib.import_module("mpi4py").MPI
+else:
+	MPI = None
 # ---------------------------------------------------------------------
 # Version and algorithm information
 project_name = 'DRYP'
@@ -41,6 +66,103 @@ alg_type = 'Model'
 alg_name = 'RUN_DRYP'
 alg_release = '2023-08-01'
 # ---------------------------------------------------------------------
+
+def _log_root(rank, *args, **kwargs):
+	if rank == 0:
+		print(*args, **kwargs)
+
+def _load_parallel_config(filename_input):
+	try:
+		with open(filename_input, 'r') as f:
+			config = json.load(f)
+	except Exception:
+		return {}
+
+	parallel_cfg = config.get('PARALLEL', {})
+	if isinstance(parallel_cfg, dict):
+		return parallel_cfg
+	return {}
+
+def _extract_subdomain_spec(parallel_cfg, component):
+	if component == 'ro':
+		keys = ('ro_subdomains', 'runoff_subdomains', 'oz_subdomains', 'subdomains_ro', 'path_oz_subdomains')
+	else:
+		keys = ('gw_subdomains', 'groundwater_subdomains', 'sz_subdomains', 'subdomains_gw', 'path_sz_subdomains')
+
+	for key in keys:
+		value = parallel_cfg.get(key)
+		if isinstance(value, list):
+			return value
+	return None
+
+# replace this function with a more robust function that can handle different formats of subdomain specifications, such as:
+def _normalize_subdomains(raw_spec, grid_size, active_nodes):
+	active_nodes = np.array(active_nodes, dtype=int)
+	if raw_spec is None:
+		return [active_nodes.copy()]
+
+	subdomains = []
+	if isinstance(raw_spec, list) and len(raw_spec) > 0 and isinstance(raw_spec[0], (list, tuple)):
+		for region in raw_spec:
+			subdomains.append(np.array(region, dtype=int).ravel())
+	else:
+		arr = np.array(raw_spec)
+		if arr.ndim == 1 and arr.size in (grid_size, active_nodes.size):
+			labels = arr.astype(int)
+			for label in np.unique(labels):
+				if label <= 0:
+					continue
+				if labels.size == grid_size:
+					idx = np.where(labels == label)[0]
+				else:
+					idx = active_nodes[np.where(labels == label)[0]]
+				subdomains.append(idx.astype(int))
+		elif arr.ndim == 1:
+			subdomains.append(arr.astype(int).ravel())
+
+	clean_subdomains = []
+	assigned = np.zeros(grid_size, dtype=bool)
+	active_mask = np.zeros(grid_size, dtype=bool)
+	active_mask[active_nodes] = True
+
+	for region in subdomains:
+		if region.size == 0:
+			continue
+		region = region[(region >= 0) & (region < grid_size)]
+		if region.size == 0:
+			continue
+		region = np.unique(region)
+		region = region[active_mask[region]]
+		region = region[~assigned[region]]
+		if region.size == 0:
+			continue
+		assigned[region] = True
+		clean_subdomains.append(region)
+
+	remaining = active_nodes[~assigned[active_nodes]]
+	if remaining.size > 0:
+		clean_subdomains.append(remaining)
+
+	if len(clean_subdomains) == 0:
+		clean_subdomains.append(active_nodes.copy())
+
+	return clean_subdomains
+
+def _owned_nodes_for_rank(subdomains, rank, size):
+	if size <= 1:
+		return np.unique(np.concatenate(subdomains)).astype(int)
+
+	owned = [subdomains[i] for i in range(len(subdomains)) if i % size == rank]
+	if len(owned) == 0:
+		return np.array([], dtype=int)
+	return np.unique(np.concatenate(owned)).astype(int)
+
+def _allreduce_sum(comm, local_array):
+	if comm is None:
+		return local_array
+	global_array = np.zeros_like(local_array)
+	comm.Allreduce(local_array, global_array, op=MPI.SUM)
+	return global_array
 
 # Structure and model components --------------------------------------
 # data_in:	Input variables 
@@ -63,10 +185,15 @@ def run_parDRYP(filename_input):
 	
 	"""
 	
+	comm = MPI.COMM_WORLD if MPI is not None else None
+	rank = comm.Get_rank() if comm is not None else 0
+	size = comm.Get_size() if comm is not None else 1
+	is_root = rank == 0
+
 	# read model paramters and model setting file
 	data_in = get_model_settings(filename_input)
 
-	print("***************************** READING MODEL PARAMETERS *****************************")
+	_log_root(rank, "***************************** READING MODEL PARAMETERS *****************************")
 
 	domain, topo, soil, rsoil, aquifer, vegetation, water_bodies, water_bodies_management = \
 		read_model_parameters(data_in)
@@ -88,13 +215,13 @@ def run_parDRYP(filename_input):
 	
 	# READING FORCING DATASET -------------------------------------------
 	# Read precipitation
-	print("***************************** READING TEMPORAL DATASETS ****************************")
+	_log_root(rank, "***************************** READING TEMPORAL DATASETS ****************************")
 
 	PRE, ET0, SAVI, LAI, Kc, av, SAVImin, SAVImax, fluxOF, fluxUZ, fluxSZ, fluxWB, Qusz = \
 		read_temporal_datasets(data_in, topo)
 
 	# MODEL COMPONENTS ------------------------------------------------------
-	print("*************************** ASSEMBLING MODEL COMPONENTS ****************************")
+	_log_root(rank, "*************************** ASSEMBLING MODEL COMPONENTS ****************************")
 
 	abc, inf, cnp, swb, swb_rip, ro, gw, lks, pnds = initialize_core_hydrology_components(
 		data_in, grid, topo, aquifer, water_bodies
@@ -124,6 +251,163 @@ def run_parDRYP(filename_input):
 	runoff, recharge, baseflow, AOF_threshold) = initialize_simulation_state_variables(
 		data_in, topo, grid, aquifer, soil, vegetation, ro
 	)
+
+	# read model domains for parallel execution of model components, and assign nodes to each subdomain
+	parallel_domains = parallel_parameters(data_in)
+	domains_ro = parallel_domains.ro
+	domains_gw = parallel_domains.gw
+	runoff_grid_shape = domain.grid_metadata['shape']
+	basin_ids = partools.get_basin_ids(domains_ro)
+	runoff_parallel = size > 1 and len(basin_ids) > 0
+	local_basin_ids = partools.assign_basins_to_rank(basin_ids, rank, size) if runoff_parallel else []
+	basis_ro = {}
+	basis_runtime_parameters = {}
+
+	gw_region_ids = partools.get_basin_ids(domains_gw)
+	gw_parallel = data_in.run_GW > 0 and size > 1 and len(gw_region_ids) > 0
+	local_gw_region_ids = partools.assign_basins_to_rank(gw_region_ids, rank, size) if gw_parallel else []
+	region_gw = {}
+	region_runtime_parameters_gw = {}
+	gw_split_lakes_detected = False
+
+	_log_root(
+		rank,
+		f"Parallel setup -> MPI ranks: {size}",
+	)
+
+	for basin_id in local_basin_ids:
+		basin_domain = partools.extract_basin_data(
+			basin_id, domains_ro, domain.grid_metadata, grid=True)
+		basin_parameters = partools.extract_basin_parameters(
+			basin_id,
+			domains_ro,
+			{
+				'surface': topo.surface,
+				'flowdird8': topo.FlowDir,
+				'Ksat': topo.Ksat,
+				'decay': topo.decay,
+				'riv_width': topo.riv_width,
+				'riv_length': topo.riv_length,
+				'conductivity': topo.conductivity,
+				'river_cells': topo.river_cells,
+				'AOF_threshold': AOF_threshold,
+				'area_cells': topo.area_cells,
+				'area_river': topo.area_river,
+			},
+		)
+
+		basis_ro[basin_id] = partools.initialize_basin_component(
+			basin_domain, basin_parameters)
+		basis_runtime_parameters[basin_id] = {
+			'conductivity': basin_parameters['conductivity'],
+			'decay': basin_parameters['decay'],
+			'river_cells': basin_parameters['river_cells'],
+			'AOF_threshold': basin_parameters['AOF_threshold'],
+			'area_cells': basin_parameters['area_cells'],
+			'area_river': basin_parameters['area_river'],
+		}
+
+	for region_id in local_gw_region_ids:
+		region_domain = partools.extract_basin_data(
+			region_id, domains_gw, domain.grid_metadata, grid=True)
+		region_parameters = partools.extract_basin_parameters(
+			region_id,
+			domains_gw,
+			{
+				'surface': topo.surface,
+				'bottom': aquifer.bottom,
+				'thickness': aquifer.thickness,
+				'bathymetry': topo.bathymetry,
+				'riv_elevation': topo.riv_elevation,
+				'Ksat': aquifer.Ksat,
+				'Sy': aquifer.Sy,
+				'Droot': soil.Droot*0.001,
+				'conductivity': topo.conductivity,
+				'inodetype': aquifer.gwtype,
+				'theta_sat': soil.theta_sat,
+				'theta_fc': soil.theta_fc,
+				'area_river': topo.area_river,
+				'bc_head': aquifer.CHB,
+			},
+			mask_inactive=True,
+		)
+		region_mask = region_domain['mask'].flatten()
+		region_parameters['bc_head'][~region_mask] = -9999
+		region_parameters['riv_nodes'] = partools.map_global_nodes_to_local(
+			region_domain, riv_nodes)
+		(ids_lks_local,
+		 size_lks_local,
+		 ids_max_depth_lks_local,
+		 split_lakes_local) = partools.extract_complete_lake_data(
+			region_domain,
+			water_bodies.ids_lks,
+			water_bodies.size_lks,
+			water_bodies.ids_max_depth_lks,
+		)
+		gw_split_lakes_detected = gw_split_lakes_detected or split_lakes_local
+		region_parameters['ids_lks'] = ids_lks_local
+		region_parameters['size_lks'] = size_lks_local
+		region_parameters['ids_max_depth_lks'] = ids_max_depth_lks_local
+
+		region_gw[region_id] = partools.initialize_gwflow_component(
+			region_domain, region_parameters)
+		region_runtime_parameters_gw[region_id] = {
+			'grid': region_domain['grid'],
+			'surface': region_parameters['surface'],
+			'bottom': region_parameters['bottom'],
+			'thickness': region_parameters['thickness'],
+			'bathymetry': region_parameters['bathymetry'],
+			'riv_elevation': region_parameters['riv_elevation'],
+			'riv_nodes': region_parameters['riv_nodes'],
+			'Ksat': region_parameters['Ksat'],
+			'Sy': region_parameters['Sy'],
+			'Droot': region_parameters['Droot'],
+			'conductivity': region_parameters['conductivity'],
+			'inodetype': region_parameters['inodetype'],
+			'theta_sat': region_parameters['theta_sat'],
+			'theta_fc': region_parameters['theta_fc'],
+			'area_river': region_parameters['area_river'],
+			'ids_lks': region_parameters['ids_lks'],
+			'size_lks': region_parameters['size_lks'],
+			'ids_max_depth_lks': region_parameters['ids_max_depth_lks'],
+			'active_count': int(np.count_nonzero(region_mask)),
+		}
+
+	if gw_parallel and comm is not None:
+		gw_split_lakes_detected = comm.allreduce(gw_split_lakes_detected, op=MPI.LOR)
+
+
+	#parallel_cfg = _load_parallel_config(filename_input)
+	##ro_subdomains = _normalize_subdomains(
+	##	_extract_subdomain_spec(parallel_cfg, 'ro'), topo.grid_size, act_nodes)
+	#gw_subdomains = _normalize_subdomains(
+	#	_extract_subdomain_spec(parallel_cfg, 'gw'), topo.grid_size, act_nodes)
+#
+	##local_ro_nodes = _owned_nodes_for_rank(ro_subdomains, rank, size)
+	#local_gw_nodes = _owned_nodes_for_rank(gw_subdomains, rank, size)
+#
+	##local_ro_mask = np.zeros(topo.grid_size, dtype=bool)
+	##local_ro_mask[local_ro_nodes] = True
+#
+	#local_gw_mask = np.zeros(topo.grid_size, dtype=bool)
+	#local_gw_mask[local_gw_nodes] = True
+#
+	##ro_ssz_global = ro.SSZ.copy()
+	#
+	#if size > 1 and data_in.run_GW > 0:
+	#	gw_global_mask = gw.act_nodes.copy()
+	#	gw.act_nodes[:] = 0
+	#	gw.act_nodes[local_gw_nodes] = gw_global_mask[local_gw_nodes]
+
+	_log_root(
+		rank,
+		f"Parallel setup -> MPI ranks: {size}, runoff subdomains: {len(basin_ids) if basin_ids else 1}, groundwater subdomains: {len(gw_region_ids) if gw_region_ids else 1}",
+	)
+	if gw_parallel and gw_split_lakes_detected:
+		_log_root(
+			rank,
+			"Warning: some lakes span multiple groundwater domains; lake coupling is only applied to lakes fully contained within a single groundwater domain.",
+		)
 	
     # ***
 	# the line above initialize the model state variables, which are updated at each time step
@@ -135,7 +419,7 @@ def run_parDRYP(filename_input):
 	
 	# INITIALISE OUTPUT AND MONITORING --------------------------------
 	#print("************************ READING SETTINGS FOR MODEL OUPUTS *************************")
-	print("Setting up outputs and monitoring nodes")
+	_log_root(rank, "Setting up outputs and monitoring nodes")
 	idOF, idUZ, idGW, idzone_info = setup_monitoring_nodes(grid, data_in)
 	#print("Monitoring nodes OF:", idGW)
 	#print("Monitoring nodes IDs:", idzone_info[2])
@@ -145,9 +429,9 @@ def run_parDRYP(filename_input):
 	grid_lks, zone_var) = initialize_output_arrays(data_in)#, grid, riv_nodes, water_bodies
 	
 	# Initialise the progress bar
-	print("****************************** SIMULATION IN PROGRESS ******************************")
-	print("Simulation period: from", data_in.ini_date, "to", data_in.end_date, "number of days:", data_in.ndays)
-	progress_bar = tqdm(total=data_in.ndays, unit='days')
+	_log_root(rank, "****************************** SIMULATION IN PROGRESS ******************************")
+	_log_root(rank, "Simulation period: from", data_in.ini_date, "to", data_in.end_date, "number of days:", data_in.ndays)
+	progress_bar = tqdm(total=data_in.ndays, unit='days') if is_root else None
 	while t < data_in.ndays:
 
 		for UZ_ti in range(data_in.dt_hourly):
@@ -424,7 +708,78 @@ def run_parDRYP(filename_input):
 				
 
 				# all variables with containing length must be changed to meters [m]
-				ro.run_runoff_one_step(
+				if runoff_parallel:
+					local_discharge = np.zeros_like(ro.discharge)
+					local_trans_losses = np.zeros_like(ro.trans_losses)
+					local_stage = np.zeros_like(ro.stage)
+					local_ssz = np.zeros_like(ro.SSZ)
+
+					for basin_id in local_basin_ids:
+						basin_forcing = partools.extract_basin_forcing(
+							basin_id,
+							domains_ro,
+							{
+								'runoff': runoff,
+								'riv_sat_deficit': river_sat_deficit,
+								'AOF': AOF,
+							},
+						)
+						basin_parameters = basis_runtime_parameters[basin_id]
+						basin_component = basis_ro[basin_id]
+
+						basin_component.run_runoff_one_step(
+							basin_forcing['runoff']*0.001,
+							basin_forcing['AOF'],
+							basin_parameters['AOF_threshold'],
+							basin_parameters['conductivity'],
+							basin_parameters['decay'],
+							basin_parameters['river_cells'],
+							basin_parameters['area_cells'],
+							basin_parameters['area_river'],
+							basin_forcing['riv_sat_deficit'],
+							None,
+						)
+
+						local_discharge = partools.combine_basin_results_into_world(
+							basin_id,
+							domains_ro,
+							basin_component.discharge,
+							world_data=local_discharge,
+							world_grid_shape=runoff_grid_shape,
+							flatten=True,
+						)
+						local_trans_losses = partools.combine_basin_results_into_world(
+							basin_id,
+							domains_ro,
+							basin_component.trans_losses,
+							world_data=local_trans_losses,
+							world_grid_shape=runoff_grid_shape,
+							flatten=True,
+						)
+						local_stage = partools.combine_basin_results_into_world(
+							basin_id,
+							domains_ro,
+							basin_component.stage,
+							world_data=local_stage,
+							world_grid_shape=runoff_grid_shape,
+							flatten=True,
+						)
+						local_ssz = partools.combine_basin_results_into_world(
+							basin_id,
+							domains_ro,
+							basin_component.SSZ,
+							world_data=local_ssz,
+							world_grid_shape=runoff_grid_shape,
+							flatten=True,
+						)
+
+					ro.discharge[:] = _allreduce_sum(comm, local_discharge)
+					ro.trans_losses[:] = _allreduce_sum(comm, local_trans_losses)
+					ro.stage[:] = _allreduce_sum(comm, local_stage)
+					ro.SSZ[:] = _allreduce_sum(comm, local_ssz)
+					#ro_ssz_global[:] = ro.SSZ
+				else:
+					ro.run_runoff_one_step(
 						runoff*0.001,
 						AOF, AOF_threshold,
 						topo.conductivity,
@@ -434,6 +789,7 @@ def run_parDRYP(filename_input):
 						topo.area_river,
 						river_sat_deficit,
 						None)
+					#ro_ssz_global[:] = ro.SSZ
 				
 				if riv_nodes.size > 0:
 					# change transmission losses rate to riparian area, all units
@@ -557,27 +913,111 @@ def run_parDRYP(filename_input):
 						# [baseflow[isubdomain]] = > [baseflow_0, baseflow_1, baseflow_2, ...]
 						
                         # run in parallel for each subdomain, and combine results to update head and baseflow for the entire model domain
-						head, baseflow = gw.run_one_step_gw(grid,
-								topo.surface[:],
-								aquifer.bottom,
-								aquifer.thickness,
-								topo.bathymetry,
-								topo.riv_elevation,
-								riv_nodes,
-								aquifer.Sy,
-								soil.Droot*0.001,
-								topo.conductivity,
-								aquifer.gwtype,
-								soil.theta_sat,
-								soil.theta_fc,
-								theta,
-								head,
-								(rch_agg - etg_agg)*0.001, #[mm/dt]recharge,
-								ro.stage,
-								data_in.dtSZ/60,
-								ids_lks=water_bodies.ids_lks,
-								sizes_lks=water_bodies.size_lks,
-								ids_max_depth_lks=water_bodies.ids_max_depth_lks,
+						gw_recharge = (rch_agg - etg_agg)*0.001
+
+						if gw_parallel:
+							local_head = np.zeros_like(head)
+							local_baseflow = np.zeros_like(baseflow)
+							local_owner = np.zeros(topo.grid_size, dtype=np.int32)
+							local_flux_chb = 0.0
+							local_count = 0.0
+
+							for region_id in local_gw_region_ids:
+								region_parameters = region_runtime_parameters_gw[region_id]
+								region_forcing = partools.extract_basin_forcing(
+									region_id,
+									domains_gw,
+									{
+										'head': head,
+										'theta': theta,
+										'recharge': gw_recharge,
+										'stage': ro.stage,
+									},
+								)
+
+								head_local, baseflow_local = region_gw[region_id].run_one_step_gw(
+									region_parameters['grid'],
+									region_parameters['surface'],
+									region_parameters['bottom'],
+									region_parameters['thickness'],
+									region_parameters['bathymetry'],
+									region_parameters['riv_elevation'],
+									region_parameters['riv_nodes'],
+									region_parameters['Sy'],
+									region_parameters['Droot'],
+									region_parameters['conductivity'],
+									region_parameters['inodetype'],
+									region_parameters['theta_sat'],
+									region_parameters['theta_fc'],
+									region_forcing['theta'],
+									region_forcing['head'],
+									region_forcing['recharge'],
+									region_forcing['stage'],
+									data_in.dtSZ/60,
+									ids_lks=region_parameters['ids_lks'],
+									sizes_lks=region_parameters['size_lks'],
+									ids_max_depth_lks=region_parameters['ids_max_depth_lks'],
+								)
+
+								local_head = partools.combine_basin_results_into_world(
+									region_id,
+									domains_gw,
+									head_local,
+									world_data=local_head,
+									world_grid_shape=runoff_grid_shape,
+									flatten=True,
+								)
+								local_baseflow = partools.combine_basin_results_into_world(
+									region_id,
+									domains_gw,
+									baseflow_local,
+									world_data=local_baseflow,
+									world_grid_shape=runoff_grid_shape,
+									flatten=True,
+								)
+								local_owner = partools.combine_basin_results_into_world(
+									region_id,
+									domains_gw,
+									np.ones_like(head_local, dtype=np.int32),
+									world_data=local_owner,
+									world_grid_shape=runoff_grid_shape,
+									flatten=True,
+								)
+								local_flux_chb += region_gw[region_id].flux_at_CHB*region_parameters['active_count']
+								local_count += float(region_parameters['active_count'])
+
+							global_head = _allreduce_sum(comm, local_head)
+							global_baseflow = _allreduce_sum(comm, local_baseflow)
+							global_owner = _allreduce_sum(comm, local_owner)
+
+							head[global_owner > 0] = global_head[global_owner > 0]
+							baseflow[global_owner > 0] = global_baseflow[global_owner > 0]
+
+							total_count = comm.allreduce(local_count, op=MPI.SUM)
+							flux_weighted = comm.allreduce(local_flux_chb, op=MPI.SUM)
+							gw.flux_at_CHB = flux_weighted/total_count if total_count > 0 else 0.0
+						else:
+							head, baseflow = gw.run_one_step_gw(grid,
+									topo.surface[:],
+									aquifer.bottom,
+									aquifer.thickness,
+									topo.bathymetry,
+									topo.riv_elevation,
+									riv_nodes,
+									aquifer.Sy,
+									soil.Droot*0.001,
+									topo.conductivity,
+									aquifer.gwtype,
+									soil.theta_sat,
+									soil.theta_fc,
+									theta,
+									head,
+									gw_recharge,
+									ro.stage,
+									data_in.dtSZ/60,
+									ids_lks=water_bodies.ids_lks,
+									sizes_lks=water_bodies.size_lks,
+									ids_max_depth_lks=water_bodies.ids_max_depth_lks,
 								)
 							#gw.run_one_step_gw(env_state.grid, data_in.dtSZ/60,
 							#	swb.tht_dt,	env_state.Droot*0.001)
@@ -777,20 +1217,26 @@ def run_parDRYP(filename_input):
 			t_eto += 1		
 		
 		# update progress bar
-		progress_bar.update(1)
+		if progress_bar is not None:
+			progress_bar.update(1)
 	
 		t += 1
 		
 	# Close the progress bar
-	progress_bar.close()
-	
-	print("********************************** SAVING RESULTS **********************************")
-	save_model_outputs(data_in, total_var, point_var, zone_var, total_rpvar, total_pndvar,
-					grid_var, grid_rmax, grid_vmax, grid_rpvar, grid_pndvar, grid_veg, grid_lks,
-					grid, head, theta, ro.SSZ, rtheta, topo, water_bodies.pnds_Vo,
-					act_nodes, riv_nodes, water_bodies.ids_slks, water_bodies.id_nodes,
-					projection=data_in.PROJECTION)
-	print("======================= ALL PROCESSES COMPLETED SUCCESSFULLY =======================")
+	if progress_bar is not None:
+		progress_bar.close()
+
+	if comm is not None:
+		comm.Barrier()
+
+	if is_root:
+		print("********************************** SAVING RESULTS **********************************")
+		save_model_outputs(data_in, total_var, point_var, zone_var, total_rpvar, total_pndvar,
+						grid_var, grid_rmax, grid_vmax, grid_rpvar, grid_pndvar, grid_veg, grid_lks,
+						grid, head, theta, ro.SSZ, rtheta, topo, water_bodies.pnds_Vo,
+						act_nodes, riv_nodes, water_bodies.ids_slks, water_bodies.id_nodes,
+						projection=data_in.PROJECTION)
+		print("======================= ALL PROCESSES COMPLETED SUCCESSFULLY =======================")
 # ---------------------------------------------------------------------
 # Call script from external library	
 if __name__ == '__main__':
@@ -800,5 +1246,5 @@ if __name__ == '__main__':
 	# Parse command line arguments
 	args = parser.parse_args()
 
-	run_DRYP(args.config_file)
+	run_parDRYP(args.config_file)
 # ---------------------------------------------------------------------
