@@ -1067,7 +1067,7 @@ def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
 	
 	# create list of idnodes for each D8 code
 	loc=[1, ncols+1, ncols, ncols-1, -1, -ncols-1, -ncols, -ncols+1]
-
+	print(f"Transforming flow direction from ",format_data, " format to DRYP landlab format")
 	# replace D8 codes with landlab codes
 	for idir_code, iloc in zip(dir_code, loc):
 		dirnodes[np.where(fdg==idir_code)]=ids[np.where(fdg==idir_code)]+iloc

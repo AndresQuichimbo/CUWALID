@@ -269,7 +269,7 @@ def setup_monitoring_nodes(grid, data_in):
     idOF = get_index_from_coord_file(grid, data_in.fname_DISpoints)  # Discharge monitoring points
     idUZ = get_index_from_coord_file(grid, data_in.fname_SMDpoints)  # Soil moisture monitoring points
     idGW = get_index_from_coord_file(grid, data_in.fname_GWpoints) # groundwater monitoring points
-
+    
     # add nodes and core nodes for zone ouptuts
     zones = zone_parameters(data_in.fname_zone_outputs)
     

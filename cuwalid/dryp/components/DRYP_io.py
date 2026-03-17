@@ -11,6 +11,8 @@ from landlab import RasterModelGrid
 import rasterio
 from scipy.ndimage import label
 
+from cuwalid.tools.DRYP_rrtools import transform_flowdirection_d8_to_landlab_array
+
 # Global parameters
 ABC_RIVER = 0.2 # River abstraction parameter
 
@@ -484,7 +486,7 @@ def get_index_from_coord_file(grid, filename, xlabel="East", ylabel="North"):
 class surface_parameters(object):
 	"""Setting model input varables and environmental states
 	"""
-	def __init__(self, inputfile):
+	def __init__(self, inputfile, flowdir_format="DRYP"):
 		"""Create variables to store model states and input data sets.
 		Read all input datasst and variables for all components
 		"""
@@ -577,7 +579,17 @@ class surface_parameters(object):
 					default_value=None, dtype=int,
 					message_if_not_exist=('Flow direction...................not provided')
 					)
-		
+		#print(self.FlowDir)
+		if self.FlowDir is not None:
+			# change D8 format into landlab format
+			# D8 flow direction encoding: 1, 2, 4, 8, 16, 32, 64, 128 for E, SE, S, SW, W, NW, N, NE respectively
+			# Landlab flow direction encoding: 0, 1, 2, 3, 4, 5, 6, 7 for E, SE, S, SW, W, NW, N,
+			# NE respectively
+			if (flowdir_format is not 'landlab') and (flowdir_format is not 'DRYP'):
+				self.FlowDir = transform_flowdirection_d8_to_landlab_array(
+					self.FlowDir.reshape(self.grid_nrows, self.grid_ncols), flowdir_format).flatten()
+
+		#print(self.FlowDir)
 		#if inputfile.fname_FlowDir != None and os.path.exists(inputfile.fname_FlowDir):
 		#	self.FlowDir = np.flip(rasterio.open(inputfile.fname_FlowDir).read(1), 0).flatten()
 		#else:
