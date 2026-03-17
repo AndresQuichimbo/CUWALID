@@ -7,7 +7,7 @@ default_settings = {
     },
 
     "PROJECTION" : None,
-    "GEOGRAPHIC": False,
+    "GEOGRAPHIC_SYSTEM": False,
     "FLOWDIR_FORMAT": "DRYP", # choose flow direction method (D8)
 
     "TIMESTEP_SETTINGS": {
