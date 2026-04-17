@@ -59,6 +59,11 @@ def run_hydro_forecast(config_path):
         print("========================== Processing historical simulation ==========================")
         print("WARNING: A new folder will '/netcdf/' will be created inside '/postpp/'")
         print("to store new variables if it does not exist")
+        # check if folder exist postpp/netcdf
+        netcdf_folder = os.path.join(historical_postpp_path, "netcdf")
+        if not os.path.exists(netcdf_folder):
+            os.makedirs(netcdf_folder)
+       
               
         # check if folder exist postpp/netcdf
         # print("to store new variables if it does not exist")
