@@ -275,11 +275,11 @@ def get_percentiles_multi_files(model_path, model_name, start_year, end_year, se
 			# resample dataset
 			if  ifield == "flood":
 				data_concat = cuwalid.resample_dataset(data_concat,
-						extremes="max", delt='Y'
+						extremes="max", delt='YE'
 						)
 			else:
 				data_concat = cuwalid.resample_dataset(data_concat,
-						mean=mean, delt='Y'
+						mean=mean, delt='YE'
 						)
 			
 			# calculate quantiles values of each variable, and store
@@ -401,7 +401,7 @@ def get_extremes_quantiles_multi_netcdf(model_path, model_name, start_year, end_
 				
 			# resample dataset
 			data_concat = cuwalid.resample_dataset(data_concat,
-						mean=mean, delt='Y'
+						mean=mean, delt='YE'
 						)
 			
 			# calculate quantiles values of each variable, and store
@@ -544,7 +544,7 @@ def get_anomalies_multi_netcdf(model_path, model_name, start_year, end_year, sea
 		
 		delta = None
 		if ifield == 'twsc':
-			accum = "Y"
+			accum = "YE"
 		
 		#for iseason, imonths in zip(season, months):
 		for iseason in season:
@@ -666,7 +666,7 @@ def read_dataset(fname, var_name='tht'):
 	data = data[var_name]
 	return data
 
-def resample_dataset(data, mean=True, delt='Y'):
+def resample_dataset(data, mean=True, delt='YE'):
 	# calculate climatological mean
 	# output an array
 	if mean is True:
