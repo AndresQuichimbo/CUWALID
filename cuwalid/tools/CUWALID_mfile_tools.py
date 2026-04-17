@@ -106,7 +106,7 @@ def date_to_day_of_year(date_str):
     # Return the day of the year (1 for Jan 1, 365 for Dec 31 in non-leap years)
     return date.timetuple().tm_yday
 
-def concatenate_netCDF(fname_list, var, agg="M", dim='time', season=None):
+def concatenate_netCDF(fname_list, var, agg="ME", dim='time', season=None):
 	""" Get a xarray from a list of netcdf files
 	
 	Parameters
@@ -790,7 +790,7 @@ def get_average_from_list(fname_list, var="pre", mean=True, season=None,
 			data = data.where(data.time.dt.month.isin(
 				season_name_to_number(season)))
 			# calculate annual average to reduce the use of memory
-			data = resample_dataset(data, mean=mean, delt='Y')
+			data = resample_dataset(data, mean=mean, delt='YE')
 			
 		else:
 			# if aggregation is provided, reduce the size of array
@@ -798,7 +798,7 @@ def get_average_from_list(fname_list, var="pre", mean=True, season=None,
 			#if delta is not None:
 				# aggregate only when accumulation is not active
 			if accum is False:
-				data = resample_dataset(data, mean=mean, delt="Y")
+				data = resample_dataset(data, mean=mean, delt="YE")
 			
 		if concat_first_read is True:
 			dataconcatenat = data.copy()
@@ -860,7 +860,7 @@ def get_average_all_variables_from_list(fname, field, season):
 		
 		if ifield == "flood":
 			fname_list = [
-				ifname.split('.')[0]+'max.nc' for ifname in fname_list
+				ifname.split('.')[0]+'rmax.nc' for ifname in fname_list
 				]
 		
 
