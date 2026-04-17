@@ -26,8 +26,17 @@ def get_csv_TS_files_from_multi_CSV(model_path, model_name, start_year, end_year
 			#"/user/work/km19051/HAD_output/HAD_IMERG_sim_84_"+str(year)+"_p_dis.csv" for year in range(2000, 2006)
 			model_path+model_name+"_"+ str(iyear) + icsv_file for iyear in range(start_year, end_year)
 			]
+		
+		# check if fname is not empty
+		if not fname:
+			print("No files found for the specified parameters.\nPlease check the model path, model name, and year range.")
+			return
+
 		first_read = True
 		for ifname in fname:
+			if not os.path.exists(ifname):
+				print(f"File {ifname} does not exist. Skipping this file.")
+				continue
 			if first_read == True:
 				data = pd.read_csv(ifname)
 				first_read = False
@@ -74,7 +83,7 @@ def get_TWSA_from_mult_files(model_path, model_name, start_year, end_year):
 			
 		# concatenate dataset at selected fields
 		data_concat = cuwalid.concatenate_netCDF(
-			fname, ifield, agg="M", dim='time'
+			fname, ifield, agg="ME", dim='time'
 			)
 		
 		# accummulate dataset, just in case of TWSA
@@ -238,14 +247,14 @@ def get_percentiles_multi_files(model_path, model_name, start_year, end_year, se
 			# concatenate dataset at selected fields
 			if  ifield == "flood":
 				data_concat = cuwalid.concatenate_netCDF(
-						fname, ifield, agg="M", dim='time'
+						fname, ifield, agg="ME", dim='time'
 						)
 				# rename variable
 				data_concat = data_concat.rename('flood')
 
 			else:
 				data_concat = cuwalid.concatenate_netCDF(
-						fname, ifield, agg="M", dim='time'
+						fname, ifield, agg="ME", dim='time'
 						)
 			
 			# accummulate dataset, just in case of TWSA
@@ -373,7 +382,7 @@ def get_extremes_quantiles_multi_netcdf(model_path, model_name, start_year, end_
 			
 			# concatenate dataset at selected fields
 			data_concat = cuwalid.concatenate_netCDF(
-				fname, ifield, agg="M", dim='time'
+				fname, ifield, agg="ME", dim='time'
 				)
 			
 			## accummulate dataset, just in case of TWSA
