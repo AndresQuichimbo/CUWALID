@@ -51,6 +51,10 @@ def run_hydro_forecast(config_path):
     iyear = config["year"]
     #nsim = config["nsim"]
 
+    # check if period of analysis is correct
+    if start_year > end_year:
+        raise ValueError("Start year must be less than the end year.")
+    
 
     # ----------------------HINDCAST-----------------------
 
