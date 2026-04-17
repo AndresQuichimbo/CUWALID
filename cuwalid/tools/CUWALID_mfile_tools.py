@@ -138,7 +138,7 @@ def concatenate_netCDF(fname_list, var, agg="ME", dim='time', season=None):
 		if (var == 'fch') or (var == 'tls'):# or (var == 'flood'):
 			ifname = ifname.split('.')[0]+'rp.nc'
 		if (var == 'flood'):
-			ifname = ifname.split('.')[0]+'max.nc'
+			ifname = ifname.split('.')[0]+'rmax.nc'
 		
 		# read dataset
 		if (var == 'flood'):
