@@ -25,6 +25,7 @@ LONG_NAME_VAR = {'pre':'precipitation',
 			'kc': 'Crop Coefficient',
 			'av': 'Vegetation cover fraction',
             'slks': 'lake water volume',
+            "lks": "total lake water volume",
 			}
 
 UNIT_NAME_VAR = {'pre':'mm/dt',
@@ -54,4 +55,5 @@ UNIT_NAME_VAR = {'pre':'mm/dt',
 			'kc': '-',
 			'av': '-',
             'slks': 'm',
+			"lks": 'm3',
 			}
