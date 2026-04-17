@@ -13,7 +13,7 @@ from matplotlib.colors import LinearSegmentedColormap
 
 def plot_probabilistic_tercile_forecast(data,
 		title="Probabilistic Forecasting", reproject=False,
-		fshapefile=None, fmask=None):
+		fshapefile=None, fshapefile_1=None, fmask=None, width=7, height=8):
 	"""This function create a tercile plot
 	
 	Parameters
@@ -23,6 +23,10 @@ def plot_probabilistic_tercile_forecast(data,
 		tercile forecasting datset
 	title : str
 		specify title for the figure
+	width : float
+		specify the width of the figure
+	height : float
+		specify the height of the figure
 	
 	Return
 	------
@@ -46,7 +50,7 @@ def plot_probabilistic_tercile_forecast(data,
 	cmap = ["Blues", "Greens", "Oranges"]
 	
 	
-	fig, ax=plt.subplots(figsize=(7, 8))
+	fig, ax=plt.subplots(figsize=(width, height))
 	plt.subplots_adjust(#wspace=0.40, hspace=0.40,
 						#left=0.075, right=0.97,
 						top=0.92, bottom=0.20
@@ -83,10 +87,23 @@ def plot_probabilistic_tercile_forecast(data,
 			)
 	
 	if fshapefile is not None:
-		boundaries = gpd.read_file(fshapefile)
+		boundaries_0 = gpd.read_file(fshapefile)
 		
-		boundaries.plot(ax=ax,
+		boundaries_0.plot(ax=ax,
 				facecolor='none',
+				linewidth=1.5,
+				#edgecolor=line_colors["Administrative Boundary"],
+				#linewidth=line_width["Administrative Boundary"],
+				#ls=line_ls["Administrative Boundary"],
+				# legend=True, label='Boundaries',
+				alpha=1.0
+				)
+	if fshapefile_1 is not None:
+		boundaries_1 = gpd.read_file(fshapefile_1)
+		
+		boundaries_1.plot(ax=ax,
+				facecolor='none',
+				linewidth=0.5,
 				#edgecolor=line_colors["Administrative Boundary"],
 				#linewidth=line_width["Administrative Boundary"],
 				#ls=line_ls["Administrative Boundary"],
