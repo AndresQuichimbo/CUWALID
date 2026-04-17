@@ -66,20 +66,20 @@ class grid_pptools(object):
 		self.var_name = ['pre', 'pet', 'dis', 'aet', 'inf', 'run', 'tht', 
 		   'rch', 'egw', 'wte', 'gdh', 'twsc']
 
-	def get_mean(self, deltat='Y', start_time=None, end_time=None):
+	def get_mean(self, deltat='YE', start_time=None, end_time=None):
 		"""Thids function get mean values of all variables of a netcdf file"""
 		calculate_mean_from_netCDF(self.fname_grid,
 			     fname_out=self.fname_gridpp, 
 				 field=self.var_name,
-				 deltat='Y', start_time=start_time, end_time=end_time)
+				 deltat='YE', start_time=start_time, end_time=end_time)
 
-	def get_wrsi(self, deltat='Y', start_time=None, end_time=None):
+	def get_wrsi(self, deltat='YE', start_time=None, end_time=None):
 		"""This function gets wrsi index from model outputs"""
 		calculate_WRSI_from_netCDF(self.fname_grid,
 			     fname_out=self.fname_gridpp,
-				 deltat='Y', start_time=start_time, end_time=end_time)
+				 deltat='YE', start_time=start_time, end_time=end_time)
 
-	def get_twsa(self, var_name=None, mean=True, deltat='Y',
+	def get_twsa(self, var_name=None, mean=True, deltat='YE',
 	      start_time=None, end_time=None):
 		"""Get total water storage anomaly from model outputs"""
 		calculate_twsa_from_netCDF(self.fname_grid,
@@ -234,11 +234,11 @@ def calculate_storage_from_files(fname, path_surface, path_Droot, path_theta_sat
 	#ftheta_sat = fname_rasters[3]
 	#fSy = fname_rasters[4]
 	
-	head = preprocesses_netCDF(fname, "wte", mean=True, deltat='M',
+	head = preprocesses_netCDF(fname, "wte", mean=True, deltat='ME',
 			start_time=start_time, end_time=end_time
 			)
 	
-	theta = preprocesses_netCDF(fname, "tht", mean=True, deltat='M',
+	theta = preprocesses_netCDF(fname, "tht", mean=True, deltat='ME',
 			start_time=start_time, end_time=end_time
 			)
 		
@@ -341,7 +341,7 @@ def calculate_storage(head, theta, surface, bathymetry, bottom, Droot, theta_sat
 
 
 def calculate_anomalies_from_netCDF(fname, field='pre', fname_out=None,
-			       deltat='Y', start_time=None, end_time=None):
+			       deltat='YE', start_time=None, end_time=None):
 	"""Get anomalies from netcdf filed
 	
 	Parameters
@@ -451,7 +451,7 @@ def calculate_mean_from_netCDF(fname, field, fname_out=None,
 		fname_out = fname_out.split('.')[0]+'_mean.nc'
 	save_xarray_dataset_as_netcdf(fname_out, dataset, field)
 
-def calculate_WRSI_from_netCDF(fname, fname_out=None, deltat='M',
+def calculate_WRSI_from_netCDF(fname, fname_out=None, deltat='ME',
 			       start_time=None, end_time=None):
 	"""Get mean average values from dataset.
 
@@ -520,10 +520,10 @@ def calculate_dch_from_files(fname, path_rp=None, fname_out=None):
 		path_rp = fname.split('.')[0]+'rp.nc'
 
 	# read dataset - diffuse recharge
-	data = preprocesses_netCDF(fname, "rch", mean=True, deltat='M')
+	data = preprocesses_netCDF(fname, "rch", mean=True, deltat='ME')
 
 	# read dataset - diffuse recharge
-	datarp = preprocesses_netCDF(path_rp, "fch", mean=True, deltat='M')
+	datarp = preprocesses_netCDF(path_rp, "fch", mean=True, deltat='ME')
 
 	# calculate diffuse recharge
 	dch = data - datarp.fillna(0)
@@ -562,7 +562,7 @@ def calculate_twsa_from_netCDF(fname, fname_out=None, var_name="twsc",
 		2D time series mean or sum of tne dataset
 
 	 """
-	data = preprocesses_netCDF(fname, var_name, mean=False, deltat='M',
+	data = preprocesses_netCDF(fname, var_name, mean=False, deltat='ME',
 			    start_time=start_time, end_time=end_time)
 	data = data.cumsum(dim='time')
 
@@ -579,7 +579,7 @@ def calculate_twsa_from_netCDF(fname, fname_out=None, var_name="twsc",
 
 
 def calculate_AI_from_netCDF(fname_pre, fname_pet, fname_out=None,
-			     deltat='Y', start_time=None, end_time=None, average=True):
+			     deltat='YE', start_time=None, end_time=None, average=True):
 	"""Get mean average values from dataset.
 
 	Parameters
@@ -595,7 +595,7 @@ def calculate_AI_from_netCDF(fname_pre, fname_pet, fname_out=None,
 	end_time : str
 		final date for the analysis, "DD-MM-YYYY".
 	average : bool
-		if True, the long therm average is caluated otherwise it will
+		if True, the long term average is calculated otherwise it will
 		return a time series dataarray
 
 	Returns
@@ -729,14 +729,14 @@ def calculate_seasonal_average_from_netCDF(fname, var_name='pre', season="OND",
 	"""
 
 	# read dataset
-	data = preprocesses_netCDF(fname, var_name=var_name, mean=mean, deltat='M',
+	data = preprocesses_netCDF(fname, var_name=var_name, mean=mean, deltat='ME',
 			    start_time=start_time, end_time=end_time)
 
 	# get seasson
 	data = data.where(data.time.dt.month.isin(season_name_to_number(season)))
 	
 	# get average from season
-	data = resample_dataset(data, mean=True, deltat='Y')
+	data = resample_dataset(data, mean=True, deltat='YE')
 	
 	# save season as netcdf file
 	# save files
@@ -914,7 +914,7 @@ def calulate_diffuse_recharge(dataset, dataset_rp):
 	"""
 	return dataset - dataset_rp
 
-def preprocesses_netCDF(fname, var_name, mean=True, deltat='Y',
+def preprocesses_netCDF(fname, var_name, mean=True, deltat='YE',
 			start_time=None, end_time=None):
 	"""This function read, slice, and resample netCDF files.
 
@@ -1076,7 +1076,7 @@ def create_ensamble_simulations(fname_list, var_name='tht'):
 
 	# read all files from list
 	for ifname in fname_list:
-		idataset = preprocesses_netCDF(ifname, var_name, mean=True, deltat='Y',
+		idataset = preprocesses_netCDF(ifname, var_name, mean=True, deltat='YE',
 			start_time=None, end_time=None).mean(dim="time")
 		
 		# concatenate all datasets
@@ -1113,7 +1113,7 @@ def read_dataset(fname, var_name='tht'):
 	data = data[var_name]
 	return data
 
-def resample_dataset(data, mean=True, deltat='Y'):
+def resample_dataset(data, mean=True, deltat='YE'):
 	# calculate climatological mean
 	if mean is True:
 		data = data.resample(time=deltat).mean()
