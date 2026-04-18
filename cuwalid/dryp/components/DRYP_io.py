@@ -226,6 +226,7 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, active_dom
 	grid['llcorner_lon'] = lon_min
 	grid['llcorner_lat'] = lat_min
 	grid['cellsize'] = cellsize
+	grid['n_core_nodes'] = len(grid['core_nodes'])
 
 	return grid
 
