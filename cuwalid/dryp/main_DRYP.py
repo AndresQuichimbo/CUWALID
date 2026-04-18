@@ -528,6 +528,12 @@ def run_DRYP(filename_input):
 							#gw.run_one_step_gw(env_state.grid, data_in.dtSZ/60,
 							#	swb.tht_dt,	env_state.Droot*0.001)
 						
+						# calculate lakes total volume
+						vtot_lks = head - topo.bathymetry
+						vtot_lks[vtot_lks < 0] = 0
+						#vtot_lks = vtot_lks*topo.area_cells
+						vtot_lks = np.sum(vtot_lks)/grid['n_core_nodes']
+						
 						# empty array
 						rch_agg = np.zeros(topo.grid_size)
 						etg_agg = np.zeros(topo.grid_size)
@@ -625,7 +631,7 @@ def run_DRYP(filename_input):
 					"wte":[np.mean(head[act_nodes])],
 					"gdh":[np.mean(baseflow[act_nodes])],
 					"twsc":[np.mean(twsc[act_nodes])],
-					"chb":[gw.flux_at_CHB],
+					"chb":[gw.flux_at_CHB*1000.0],
 					"tls":[np.mean(ro.trans_losses[act_nodes])],
 					'eca': [np.mean(Eca)] if Eca is not None else [0],
 					'scz': [np.mean(vegetation.Sc0_cn[act_nodes])] if vegetation.Sc0_cn[act_nodes] is not None else [0],
@@ -633,6 +639,7 @@ def run_DRYP(filename_input):
 					'lai': [np.mean(LAIdt)] if LAIdt is not None else [0],
 					'kc': [np.mean(Kcdt)] if Kcdt is not None else [1],
 					'av': [np.mean(vegetation.av)] if vegetation.av is not None else [0],
+					'lks': [vtot_lks] if vtot_lks is not None else [0],
 					})
 				
 				# get mean total values for each flux and state of the riparian zone
