@@ -61,7 +61,7 @@ def run_hydro_forecast(config_path):
     if include_hincast:
 
         print("========================== Processing historical simulation ==========================")
-        print("WARNING: A new folder will '/netcdf/' will be created inside '/postpp/'")
+        print("WARNING: A new folder '/netcdf/' will be created inside '/postpp/'")
         print("to store new variables if it does not exist")
         # check if folder exist postpp/netcdf
         netcdf_folder = os.path.join(historical_postpp_path, "netcdf")
@@ -108,7 +108,7 @@ def run_hydro_forecast(config_path):
             #                                    start_year, end_year, season, variables,
             #                                    historical_postpp_path)
 
-            print("Step 6: Getting average values from historical simualations")
+            print("Step 6: Getting average values from historical simulations")
             get_average_multi_netcdf(historical_model_path,
                                      historical_model_name,
                                      start_year, end_year, season, variables,
