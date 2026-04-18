@@ -246,7 +246,12 @@ class gwflow_EFD(object):
 			Net_Flux = np.bincount(I, weights=Q_flow_i_to_j, minlength=N_cells)
 	
 			# Net flux into cell I = Inflow - Outflow [depth/time]
-			Net_Flux = -Net_Flux/grid['Areas'] + recharge/dt
+			Net_Flux = -Net_Flux/grid['Areas']
+
+			if self.id_CHB is not None:
+				self.flux_at_CHB = Net_Flux[self.id_CHB].sum()
+			
+			Net_Flux += recharge/dt
 
 			#print("Head before river interaction:", head[act_nodes])
 			# add river component
