@@ -18,10 +18,11 @@ from cuwalid.dryp.components.DRYP_store_functions import (
 	save_map_to_rastergrid)
 import rasterio
 from cuwalid.dryp.components.DRYP_flow_accum import watershed
+from cuwalid.tools.DRYP_rrtools import transform_flowdirection_d8_to_landlab_array
 
 def get_flow_path(fname_surface, fname_outlet, fname_out=None,
 						fname_flowDir=None, fname_mask=None,
-						accum=True):
+						accum=True, flowdir_format='DRYP'):
 	"""Function to create flow path map if the location of the input points
 	is provided. This function requires a flow direction map
 	but if not provided the flow direction will be created. The function also
@@ -42,6 +43,8 @@ def get_flow_path(fname_surface, fname_outlet, fname_out=None,
 		(optional) filename of the mask raster file
 	accum : bool
 		(optional) value that specify if the flow accumulation map is created
+	flowdir_format: str
+		(optional) value that specify the flow direction format (D8, LDD, GRASS, AGNPS, landlab, DRYP)
 
 
 	Returns:
@@ -69,7 +72,12 @@ def get_flow_path(fname_surface, fname_outlet, fname_out=None,
 	# read flow direction
 	flowDir = None
 	if fname_flowDir is not None:
-		flowDir = read_raster(fname_flowDir)
+		if flowdir_format is not "DRYP":
+			flowDir = read_raster(fname_flowDir, flatten=False)
+			flowDir = transform_flowdirection_d8_to_landlab_array(
+			flowDir, format_data=flowdir_format).flatten()
+		else:
+			flowDir = read_raster(fname_flowDir)
 	
 	## get raster shape and cellsize
 	domain = rasterio.open(fname_surface)
@@ -152,7 +160,7 @@ def get_flow_path(fname_surface, fname_outlet, fname_out=None,
 			fname_out + '_flowpath.asc')
 
 def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=None,
-						fname_flowDir=None, fname_mask=None, field=None):
+						fname_flowDir=None, fname_mask=None, field=None, flowdir_format='DRYP'):
 	"""This function calculates the flow accumulation map.
 	It requires a flow direction map and an the flow unit rate map.
 	If the flow unit rate map is not provided, the function will
@@ -173,6 +181,10 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 		(optional) filename of the mask raster file
 	fname_out : str
 		(optional) filename of the output raster file
+	field: str
+		(optional) field name of the flow unit rate in case the flow unit rate file is a netcdf file
+	flowdir_format: str
+		(optional) value that specify the flow direction format (D8, LDD, GRASS, AGNPS, landlab, DRYP)
 
 	Returns
 	-------
@@ -197,7 +209,12 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 	# read flow direction
 	flowDir = None
 	if fname_flowDir is not None:
-		flowDir = read_raster(fname_flowDir)
+		if flowdir_format is not "DRYP":
+			flowDir = read_raster(fname_flowDir, flatten=False)
+			flowDir = transform_flowdirection_d8_to_landlab_array(
+			flowDir, format_data=flowdir_format).flatten()
+		else:
+			flowDir = read_raster(fname_flowDir)
 	
 	## get raster shape and cellsize
 	domain = rasterio.open(fname_surface)
@@ -276,7 +293,7 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 	
 
 def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
-						fname_flowDir=None, fname_mask=None, save_files=True):
+						fname_flowDir=None, fname_mask=None, save_files=True, flowdir_format='DRYP'):
 	"""This function calculates the watershed area at a given point location.
 	It requires a flow direction map and an outlet point. The function will
 	calculate the area and indices (in landlab format). It also
@@ -295,6 +312,13 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 		(optional) filename of the flow direction raster map
 	fname_out : str
 		(optional) filename of the output raster file
+	fname_mask : str
+		(optional) filename of the mask raster file
+	save_files: bool
+		(optional) value that specify if the output files are saved or not
+	flowdir_format: str
+		(optional) value that specify the flow direction format (D8, LDD, GRASS, AGNPS, landlab, DRYP)
+
 
 	Returns
 	-------
@@ -325,7 +349,12 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 	# read flow direction
 	flowDir = None
 	if fname_flowDir is not None:
-		flowDir = read_raster(fname_flowDir)
+		if flowdir_format is not "DRYP":
+			flowDir = read_raster(fname_flowDir, flatten=False)
+			flowDir = transform_flowdirection_d8_to_landlab_array(
+			flowDir, format_data=flowdir_format).flatten()
+		else:
+			flowDir = read_raster(fname_flowDir)
 	
 	## get raster shape and cellsize
 	domain = rasterio.open(fname_surface)
@@ -396,7 +425,7 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 		return df, ro.discharge[idnodes]
 
 def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
-					  fname_flowDir=None, fname_mask=None, raster=False):
+					  fname_flowDir=None, fname_mask=None, raster=False, flowdir_format='DRYP'):
 	"""Function to delineate a basin assuming an outlet
 	point is provided. This function requires a flow direction map
 	but if not provided the flow direction will be created
@@ -407,12 +436,16 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 		file name of the elevation raster map
 	fname_outlet : str
 		file name of the outflow raster map
-	fname_floedir : str
+	fname_flowDir : str
 		(optional) filename of the flow direction raster map
 	fname_out : str
 		(optional) filename of the output raster file
 	raster: bool
 		value that specify if it is a raster or csv fname_outlet
+	fname_mask : str
+		(optional) filename of the mask raster file
+	flowdir_format: str
+		(optional) value that specify the flow direction format (D8, LDD, GRASS, AGNPS, landlab, DRYP)
 
 	Returns
 	-------
@@ -434,7 +467,12 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 	# read flow direction
 	flowDir = None	
 	if fname_flowDir is not None:
-		flowDir = read_raster(fname_flowDir)
+		if flowdir_format is not "DRYP":
+			flowDir = read_raster(fname_flowDir, flatten=False)
+			flowDir = transform_flowdirection_d8_to_landlab_array(
+			flowDir, format_data=flowdir_format).flatten()
+		else:
+			flowDir = read_raster(fname_flowDir)
 	
 	# read mask
 	mask = None
@@ -506,8 +544,11 @@ def get_raster_properties(fname):
 	grid_cellsize = domain.transform[0]
 	return grid_ncols, grid_nrows, grid_cellsize
 
-def read_raster(fname):
-	return np.flip(rasterio.open(fname).read(1), 0).flatten()
+def read_raster(fname, flatten=True):
+	data = np.flip(rasterio.open(fname).read(1), 0)
+	if flatten:
+		data = data.flatten()
+	return data
 
 def save_raster(fname, data, profile, transform):
 	os.remove(fname) if os.path.exists(fname) else None
