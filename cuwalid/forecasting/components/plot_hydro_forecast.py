@@ -8,19 +8,21 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import cuwalid.tools.CUWALID_mfile_tools as cuwalid
 import cuwalid.tools.CUWALID_view_tool as cuwalidplt
 
-def plot_tercile_probability_forecast(model_path, model_name, season, variables, postpp_path, iyear=2022):
+def plot_tercile_probability_forecast(model_path, model_name, season, variables, postpp_path, iyear=2022, path_mask=None, path_river=None, shapefile_county=None):
 	"""This function creates a figure from the tercile forecats
 	file. Variabkes names of the file must be: "AN", "NN, "BN".
 	"""
 
 	# load dataset of mask for basin and streams
-	path_mask = "../HAD/WS/input_model/HAD_mask_utm.asc"
-	path_river =  "../HAD/WS/input_model/HAD_riv_length_utm.asc"
+	if path_mask is None:
+		path_mask = "../HAD/WS/input_model/HAD_mask_utm.asc"
+	if path_river is None:
+		path_river =  "../HAD/WS/input_model/HAD_riv_length_utm.asc"
 
 
 	# path of shapefile to include in the plot
 	#shapefile_county = "D:/HAD/data/gis/Horn_Africa/Horn_africa_contry.shp"
-	shapefile_county = "/home/cuwalid/Datasets/data/shp/wgs84/HAD_regional_basin.shp"
+	#shapefile_county = "/home/cuwalid/Datasets/data/shp/wgs84/HAD_regional_basin.shp"
 
 	# specified fields
 	field = cuwalid.drop_false_keys(variables)
