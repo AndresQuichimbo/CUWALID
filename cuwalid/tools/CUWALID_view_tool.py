@@ -11,7 +11,7 @@ from rasterio.enums import Resampling
 from matplotlib.colors import LinearSegmentedColormap
 
 
-def plot_probabilistic_tercile_forecast(data,
+def plot_probabilistic_tercile_forecast(data, cmap_type=None,
 		title="Probabilistic Forecasting", reproject=False,
 		fshapefile=None, fshapefile_1=None, fmask=None, width=7, height=8):
 	"""This function create a tercile plot
@@ -48,8 +48,19 @@ def plot_probabilistic_tercile_forecast(data,
 	tercile = ["AN", "NN", "BN"]
 	barloc = [0.0, 0.5, 1.75]
 	cmap = ["Blues", "Greens", "Oranges"]
-	
-	
+
+	# --- Define colormaps ---
+	cmap_outflow = ["YlOrRd", "cool", "Purples"]  # yellow → red, green → blue, light → dark purple
+	cmap_inflow = ["Greens", "cool", "YlOrBr"]  # light → dark green, light → dark blue-green, light → dark blue
+	#cmap = cmap_outflow  # Choose the desired colormap set (outflow or inflow)
+
+	if cmap_type == "outflow":
+		cmap = cmap_outflow
+	elif cmap_type == "inflow":
+		cmap = cmap_inflow
+	else:
+		cmap = cmap  # Default colormap set
+
 	fig, ax=plt.subplots(figsize=(width, height))
 	plt.subplots_adjust(#wspace=0.40, hspace=0.40,
 						#left=0.075, right=0.97,
