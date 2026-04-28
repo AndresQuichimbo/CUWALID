@@ -15,7 +15,7 @@ from landlab.components import FlowDirectorD8
 from landlab.core.utils import as_id_array
 from scipy.ndimage import label
 
-def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda):
+def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda, path_out=None, name_out=None):
 	"""Calculate soil water content at field capacity and available water content
 	
 	Parameters:
@@ -26,6 +26,11 @@ def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda):
 		raster filename of air entry pressure
 	fname_lambda : str
 		raster file name of soil particle distribution
+	path_out : str
+		directory path to save the output raster files
+	name_out : str
+		prefix for the output raster file names
+
 
 	Returns:
 	--------
@@ -53,14 +58,19 @@ def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda):
 		porosity, psi, lambdas, psi_fc=336.506, psi_wp=15295.743)
 
 	# create files names
-	fname_fc = ""
-	fname_wp = ""
-	fname_awc = ""
-
+	if path_out is None:
+		path_out = os.path.dirname(fname_porosity)
+	if name_out is None:
+		name_out = ""
+	fname_fc = os.path.join(path_out, f"{name_out}field_capacity.asc")
+	fname_wp = os.path.join(path_out, f"{name_out}wilting_point.asc")
+	fname_awc = os.path.join(path_out, f"{name_out}available_water_content.asc")
+	
 	# save soil properties as raster files
 	save_raster(fname_fc, field_capacity, profile, transform)
 	save_raster(fname_wp, wilting_point, profile, transform)
 	save_raster(fname_awc, available_water_content, profile, transform)
+	print(f"Raster files saved: \n{fname_fc},\n{fname_wp},\n{fname_awc}")
 
 def create_raster_flowdirection_dryp(fname, fname_out, translate=True, format_data="D8"):
 	"""Create raster file from a raster D8 flow direction map
@@ -97,8 +107,8 @@ def create_raster_flowdirection_dryp(fname, fname_out, translate=True, format_da
 
 	Example:
 	--------
-	>>> fname = "flow_direction.asc
-	>>> fname_out = "flow_direction_landlab.asc
+	>>> fname = "flow_direction.asc"
+	>>> fname_out = "flow_direction_landlab.asc"
 	>>> create_raster_flowdirection_dryp(fname, fname_out, translate=True)
 	>>> # This will create a raster file named "flow_direction_landlab.asc"
 	>>> # with the flow direction values in Landlab format.
