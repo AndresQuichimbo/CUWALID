@@ -11,7 +11,7 @@ from landlab import RasterModelGrid
 import rasterio
 from scipy.ndimage import label
 
-from cuwalid.tools.DRYP_rrtools import transform_flowdirection_d8_to_landlab_array
+from cuwalid.tools.DRYP_rrtools import create_raster_flowdirection_dryp, transform_flowdirection_d8_to_landlab_array
 
 # Global parameters
 ABC_RIVER = 0.2 # River abstraction parameter
@@ -173,12 +173,15 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, active_dom
 	    - 'mean_lat' : mean latitude used in the approximation
 	"""
 	# Generate 1D coordinate arrays (cell centers)
-	lon = np.linspace(lon_min + cellsize / 2,
-	                  lon_min + (ncols - 0.5) * cellsize,
-	                  ncols)
-	lat = np.linspace(lat_min + cellsize / 2,
-	                  lat_min + (nrows - 0.5) * cellsize,
-	                  nrows)
+	lon, lat = get_coordinates_at_center_of_cells(ncols, nrows,
+					lon_min, lat_min, cellsize)
+		
+	#lon = np.linspace(lon_min + cellsize / 2,
+	#                  lon_min + (ncols - 0.5) * cellsize,
+	#                  ncols)
+	#lat = np.linspace(lat_min + cellsize / 2,
+	#                  lat_min + (nrows - 0.5) * cellsize,
+	#                  nrows)
 	#print("lon range:", lon[0], "to", lon[-1])
 	#print("lat range:", lat[0], "to", lat[-1])
 	# 2D meshgrid of geographic coordinates
@@ -186,30 +189,34 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, active_dom
 
 	if geographic:
 		# Compute mean latitude for conversion approximation
-		mean_lat = np.mean(lat)
-		mean_lat_rad = np.deg2rad(mean_lat)
+		#mean_lat = np.mean(lat)
+		#mean_lat_rad = np.deg2rad(mean_lat)
 		# Conversion factors (WGS84) from degrees to meters
 
 		# meters_per_deg_lat = meters_dy
-		meters_dy = 111132.92 - 559.82 * np.cos(2 * mean_lat_rad) + 1.175 * np.cos(4 * mean_lat_rad)
+		#meters_dy = 111132.92 - 559.82 * np.cos(2 * mean_lat_rad) + 1.175 * np.cos(4 * mean_lat_rad)
 		# meters_per_deg_lon = meters_dx
-		meters_dx = 111412.84 * np.cos(mean_lat_rad) - 93.5 * np.cos(3 * mean_lat_rad)
-		
+		#meters_dx = 111412.84 * np.cos(mean_lat_rad) - 93.5 * np.cos(3 * mean_lat_rad)
+		meters_dy = 111132.92 * 0.008333333333333
+		meters_dx = 111412.84 * 0.008333333333333# * np.cos(mean_lat_rad)
+	
 		# Compute Cartesian coordinates (relative to lower-left corner)
 		x = (lon2d - lon_min) * meters_dx
 		y = (lat2d - lat_min) * meters_dy
-		meters_dx = x
-		meters_dy = y
+		#meters_dx = x
+		#meters_dy = y
 		#x = (lon - lon_min) * meters_per_deg_lon
 		#y = (lat - lat_min) * meters_per_deg_lat
 	else:
 		# For projected grid, assume cellsize is already in meters
-
-		meters_dx, meters_dy = np.meshgrid(np.full(len(lon), cellsize, dtype=float),
-									 np.full(len(lat), cellsize, dtype=float))	
+		meters_dx = cellsize
+		meters_dy = cellsize
 		# Compute Cartesian coordinates (relative to lower-left corner)
 		x = lon#2d# - lon_min) * meters_dx
 		y = lat#2d# - lat_min) * meters_dy
+
+	meters_dx, meters_dy = np.meshgrid(np.full(len(lon), meters_dx, dtype=float),
+									 np.full(len(lat), meters_dy, dtype=float))	
 
 	# Create grid dictionary
 	grid = _generate_rectangular_grid_data(ncols, nrows, meters_dx.flatten(), meters_dy.flatten())
@@ -229,6 +236,78 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, active_dom
 	grid['n_core_nodes'] = len(grid['core_nodes'])
 
 	return grid
+
+def get_coordinates_at_center_of_cells(ncols, nrows, lon_min, lat_min, cellsize):
+	"""
+	Get the geographic coordinates (longitude and latitude) at the center of each cell.
+
+	Parameters
+	----------
+	ncols : int
+	    Number of grid columns (width).
+	nrows : int
+	    Number of grid rows (height).
+	lon_min : float
+	    Longitude of the lower-left corner (degrees).
+	lat_min : float
+	    Latitude of the lower-left corner (degrees).
+	cellsize : float
+	    Grid cell size (degrees).
+	active_domain : array_like, optional
+	    Array indicating active cells (1) and inactive cells (0). If None, all cells are considered active.
+	geographic : bool, optional
+	    If True, coordinates are returned in geographic (longitude, latitude) format. If False, coordinates are returned in projected (x, y) format.
+	    - 'cellsize' : grid cell size (degrees)
+	Returns
+	-------
+	"""
+	# Generate 1D coordinate arrays (cell centers)
+	lon = np.linspace(lon_min + cellsize / 2,
+	                  lon_min + (ncols - 0.5) * cellsize,
+	                  ncols)
+	lat = np.linspace(lat_min + cellsize / 2,
+	                  lat_min + (nrows - 0.5) * cellsize,
+	                  nrows)
+	
+	return lon, lat
+
+def convert_geographic_to_cartesian(lon, lat, lon_min, lat_min):
+	"""
+	Convert geographic coordinates (longitude, latitude) to Cartesian coordinates (x, y) using WGS84 approximation.
+
+	Parameters
+	----------
+	lon : array_like
+	    Array of longitudes (degrees).
+	lat : array_like
+	    Array of latitudes (degrees).
+	lon_min : float
+	    Longitude of the lower-left corner (degrees).
+	lat_min : float
+	    Latitude of the lower-left corner (degrees).
+
+	Returns
+	-------
+	x : numpy.ndarray
+	    Array of x coordinates (meters, east).
+	y : numpy.ndarray
+	    Array of y coordinates (meters, north).
+	"""
+	# Compute mean latitude for conversion approximation
+	#mean_lat = np.mean(lat)
+	#mean_lat_rad = np.deg2rad(mean_lat)
+
+	# Conversion factors (WGS84) from degrees to meters
+	#meters_dy = 111132.92 - 559.82 * np.cos(2 * mean_lat_rad) + 1.175 * np.cos(4 * mean_lat_rad)
+	#meters_dx = 111412.84 * np.cos(mean_lat_rad) - 93.5 * np.cos(3 * mean_lat_rad)
+	meters_dy = 111132.92 * 0.008333333333333
+	meters_dx = 111412.84 * 0.008333333333333# * np.cos(mean_lat_rad)
+	#print("meters_dx", meters_dx, "meters_dy", meters_dy)
+	# Compute Cartesian coordinates (relative to lower-left corner)
+	x = (lon - lon_min) * meters_dx
+	y = (lat - lat_min) * meters_dy
+
+	return x, y, meters_dx, meters_dy
 
 def center_ones(nrows: int, ncols: int):
     """
@@ -495,7 +574,7 @@ class surface_parameters(object):
 		# ================ Reading surface water model inputs ==============
 		
 		#print('******************* Reading Input Files ********************')
-		#print(inputfile.fname_DEM)
+		
 		# Reading digital elevation model
 		if inputfile.fname_DEM != None and os.path.exists(inputfile.fname_DEM):
 			domain = rasterio.open(inputfile.fname_DEM)
@@ -513,7 +592,21 @@ class surface_parameters(object):
 		else:
 			raise Exception("A digital elevation model map must be supplied")
 		
-		#print(self.surface)
+		# get grid metadata
+		self.lon, self.lat = get_coordinates_at_center_of_cells(self.grid_ncols, self.grid_nrows,
+													 self.grid_xllcorner, self.grid_yllcorner,
+													 self.grid_cellsize,
+													 )
+		
+		if inputfile.geographic:
+			_, _, delta_x, delta_y = convert_geographic_to_cartesian(self.lon, self.lat,
+														   self.grid_xllcorner, self.grid_yllcorner)
+			self.area_cells = delta_x*delta_y
+		else:
+			self.area_cells = self.grid_cellsize**2
+
+		cellsize_meters = np.sqrt(self.area_cells)
+
 		# define grid size for model arrays
 		grid_size = len(self.surface)
 
@@ -523,7 +616,7 @@ class surface_parameters(object):
 		else:
 			self.river_banks = np.full(grid_size, 100.0, dtype=float)
 		
-		self.river_banks[self.river_banks > grid_size] = grid_size
+		self.river_banks[self.river_banks > cellsize_meters] = cellsize_meters
 		#self.river_banks = 50.0 # metres
 		#if self.river_banks > self.grid_cellsize:
 		#	self.river_banks = domain.transform[0]
@@ -543,16 +636,16 @@ class surface_parameters(object):
 			print('Basin boundary...................not provided')
 		else:
 			self.mask = np.flip(rasterio.open(inputfile.fname_Mask).read(1), 0).astype(int).flatten()
-		#print(self.mask)
+		
 		# define model domain for calculation
 		self.mask[self.mask > 0] = 1
 		self.mask[self.mask < 0] = 0
-		#print(self.mask)
+		
 		# Reading the raster file of river network
 		if inputfile.fname_River != None and os.path.exists(inputfile.fname_River):     
 			self.riv_length= np.flip(rasterio.open(inputfile.fname_River).read(1), 0).flatten()
 		else:
-			self.riv_length = np.full(grid_size, self.grid_cellsize, dtype=float)#
+			self.riv_length = np.full(grid_size, cellsize_meters, dtype=float)#
 			print('River network....................not provided')
 			print('All cells are considered rivers with length of grid size')
 		
@@ -574,22 +667,34 @@ class surface_parameters(object):
 			print('River bottom elevation: surface elevation')
 		else:
 			self.riv_elevation = np.flip(rasterio.open(inputfile.fname_RiverElev).read(1), 0).flatten()
-			
-		# Reading a raster file of flow direction in LandLab format (receiving node ID)
-		self.FlowDir = read_raster_as_array(inputfile.fname_FlowDir, grid_size,
+
+		if flowdir_format != 'DRYP':
+			if inputfile.fname_FlowDir != None and os.path.exists(inputfile.fname_FlowDir):
+				self.FlowDir = create_raster_flowdirection_dryp(inputfile.fname_FlowDir,
+															   format_data=flowdir_format)#.flatten()
+				self.FlowDir = np.flip(self.FlowDir, 0).flatten()
+				print('Flow direction...................provided---flow direction format: {}'.format(flowdir_format))
+			else:
+				self.FlowDir = None
+				print('Flow direction...................not provided')
+		else:
+			# Reading a raster file of flow direction in LandLab format (receiving node ID)
+			self.FlowDir = read_raster_as_array(inputfile.fname_FlowDir, grid_size,
 					default_value=None, dtype=int,
 					message_if_not_exist=('Flow direction...................not provided')
 					)
-		#print(self.FlowDir)
-		if self.FlowDir is not None:
-			# change D8 format into landlab format
-			# D8 flow direction encoding: 1, 2, 4, 8, 16, 32, 64, 128 for E, SE, S, SW, W, NW, N, NE respectively
-			# Landlab flow direction encoding: 0, 1, 2, 3, 4, 5, 6, 7 for E, SE, S, SW, W, NW, N,
-			# NE respectively
-			if (flowdir_format is not 'landlab') and (flowdir_format is not 'DRYP'):
-				self.FlowDir = transform_flowdirection_d8_to_landlab_array(
-					self.FlowDir.reshape(self.grid_nrows, self.grid_ncols), flowdir_format).flatten()
-
+		
+		#if self.FlowDir is not None:
+		#	# change D8 format into landlab format
+		#	# D8 flow direction encoding: 1, 2, 4, 8, 16, 32, 64, 128 for E, SE, S, SW, W, NW, N, NE respectively
+		#	# Landlab flow direction encoding: 0, 1, 2, 3, 4, 5, 6, 7 for E, SE, S, SW, W, NW, N,
+		#	# NE respectively
+		#	if flowdir_format != 'DRYP':
+		#		self.FlowDir = transform_flowdirection_d8_to_landlab_array(
+		#			self.FlowDir.reshape(self.grid_nrows, self.grid_ncols), flowdir_format)
+		#		#self.FlowDir = np.flip(self.FlowDir, 0).flatten()
+		#		self.FlowDir = self.FlowDir.flatten()
+		#	print('Flow direction...................provided---flow direction format: {}'.format(flowdir_format))
 		#print(self.FlowDir)
 		#if inputfile.fname_FlowDir != None and os.path.exists(inputfile.fname_FlowDir):
 		#	self.FlowDir = np.flip(rasterio.open(inputfile.fname_FlowDir).read(1), 0).flatten()
@@ -607,9 +712,7 @@ class surface_parameters(object):
 		else:
 			print('Lake bathymetry..................not provided. Global default z')
 			self.bathymetry = self.surface[:]
-		#print(self.bathymetry, self.surface)
-		#print(v)
-
+		
 		# CHANNEL ===============================================================================
 		# Channel hydraulic parameters
 		# Assuming a flow velocity of 1 m/s => 3600 m/h
@@ -622,7 +725,7 @@ class surface_parameters(object):
 		#	self.decay = self.decay*inputfile.kTch
 
 		self.decay = read_raster_as_array(inputfile.fname_kTchannel, grid_size,
-					default_value=1.0/self.grid_cellsize, dtype=float,
+					default_value=1.0/cellsize_meters, dtype=float,
 					message_if_not_exist=(
 					'Channel decay parameter..........not provided\nAssumed value equivalent to a velocity of 1m/s')
 					)
@@ -648,8 +751,9 @@ class surface_parameters(object):
 		#self.SS_loss = self.Ksat * self.riv_length * self.riv_width
 			 
 		# calculating cells area [m2]
-		self.area_cells = np.power(self.grid_cellsize, 2)#*self.area_catch_factor
-		
+		#self.area_cells = np.power(self.grid_cellsize, 2)#*self.area_catch_factor
+		#self.area_cells = delta_x*delta_y
+
 		#self.area_cells_hills = rg.dx*rg.dy*rg.at_node['cth_area_k']
 		
 		area_bank_cells = self.river_cells*self.riv_length*self.river_banks#(
@@ -710,15 +814,16 @@ class surface_parameters(object):
 			1000./self.area_bank_cells[self.area_bank_cells > 0])
 		self.grid_size = grid_size
 		
+		# calculate area of river cells [m2]
 		self.area_river = self.river_cells*self.riv_length*self.riv_width
-
+		
 		# this axis have to be flipped to match landlab grid
-		lat_end = self.grid_xllcorner + self.grid_cellsize*self.grid_nrows
-		self.lat = np.arange(self.grid_xllcorner, lat_end, self.grid_cellsize)[:self.grid_nrows]
-		lon_end = self.grid_yllcorner + self.grid_cellsize*self.grid_ncols
-		self.lon = np.arange(self.grid_yllcorner, lon_end, self.grid_cellsize)[:self.grid_ncols]
-		#print(self.surface)
-		#print(v)
+		# correcting the coordinates to be at the center of the cells
+		lat_end = self.grid_xllcorner+self.grid_cellsize/2 + self.grid_cellsize*self.grid_nrows
+		self.lat = np.arange(self.grid_xllcorner+self.grid_cellsize/2, lat_end, self.grid_cellsize)[:self.grid_nrows]
+		lon_end = self.grid_yllcorner+self.grid_cellsize/2 + self.grid_cellsize*self.grid_ncols
+		self.lon = np.arange(self.grid_yllcorner+self.grid_cellsize/2, lon_end, self.grid_cellsize)[:self.grid_ncols]
+		self.cellsize_meters = cellsize_meters
 		pass
 	# Find coordinates of points in model components
 #	def points_output(self, inputfile):
@@ -783,7 +888,7 @@ def read_raster_as_array(filename, grid_size=None, default_value=None, dtype=flo
 	return data
 
 def set_initial_conditions(grid_size, Droot, head, surface, 
-		    bathymetry, extintion_depth, cell_size, gw_activated):
+		    bathymetry, extintion_depth, cellsize_meters, gw_activated):
 	"""This function check for initial condition
 	
 	Parameters
@@ -813,7 +918,7 @@ def set_initial_conditions(grid_size, Droot, head, surface,
 	"""
 	if gw_activated > 0:
 		# Calculating intial groundwater river deficit
-		river_sat_deficit = (surface - head)*np.power(cell_size, 2)
+		river_sat_deficit = (surface - head)*np.power(cellsize_meters, 2)
 		
 		# setting initial conditions for soil depth (units: mm)
 		Duz = (bathymetry - head)*1000
@@ -831,7 +936,7 @@ def set_initial_conditions(grid_size, Droot, head, surface,
 		
 		# adding the saturated deficit [m3]
 		# setting a high saturated deficit to allow free drainage
-		river_sat_deficit = np.full(len(Droot), 1000*np.power(cell_size, 2), dtype=float)
+		river_sat_deficit = np.full(len(Droot), 1000*np.power(cellsize_meters, 2), dtype=float)
 		
 	# calculate the extintion elevation
 	z_extintion = bathymetry - extintion_depth
@@ -928,6 +1033,9 @@ class soil_parameters(object):
 
 		self.theta_fc = theta_AWC + self.theta_wp
 
+		# Reading soil particle distribution parameter: raster file
+		# Potential sources of soil particle distribution parameter:
+		# https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2019MS001784
 		# Exponent for soil moisture - matrix potential relation
 		# Rawls (1982), and Clapp and Hornberger (1978)
 		if inputfile.fname_b_SOIL == None or not os.path.exists(inputfile.fname_b_SOIL):
@@ -944,10 +1052,10 @@ class soil_parameters(object):
 			psi_a = np.flip(rasterio.open(inputfile.fname_PSI).read(1), 0).flatten()
 			
 		# Sorptivity for the Campbell model
-		self.PSI = psi_a*(self.lambdas*2+2.5)/(self.lambdas+2.5)
+		self.PSI = np.absolute(psi_a)*(self.lambdas*2+2.5)/(self.lambdas+2.5)
 		
-		# Exponent c for Rawls (1982), and Clapp and Hornberger (1978)
-		# c_SOIL = np.array(self.lambdas)*2+2.5
+		# -- no longer used ---Exponent c for Rawls (1982), and Clapp and Hornberger (1978)
+		# -- c_SOIL = np.array(self.lambdas)*2+2.5
 		# Campbell (1974)
 		self.c_SOIL = 2.0/np.array(self.lambdas) + 3.0
 		
