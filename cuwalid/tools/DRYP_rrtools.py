@@ -72,7 +72,7 @@ def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda, path_
 	save_raster(fname_awc, available_water_content, profile, transform)
 	print(f"Raster files saved: \n{fname_fc},\n{fname_wp},\n{fname_awc}")
 
-def create_raster_flowdirection_dryp(fname, fname_out, translate=True, format_data="D8"):
+def create_raster_flowdirection_dryp(fname, fname_out=None, translate=True, format_data="D8"):
 	"""Create raster file from a raster D8 flow direction map
 	
 	Parameters:
@@ -161,8 +161,10 @@ def create_raster_flowdirection_dryp(fname, fname_out, translate=True, format_da
 			
 			# flip raster in order to make aggree with landlab
 			flowdir = np.flip(flowdir, 0)
-
-	save_raster(fname_out, flowdir, profile, transform)
+	if fname_out is not None:
+		save_raster(fname_out, flowdir, profile, transform)
+	else:
+		return flowdir
 	
 def create_raster_river_network(fname, threshold, fname_out,
 								cell_area=False, fill_value=None):
@@ -331,7 +333,8 @@ def create_raster_from_shapefile(fname_shp, fname_raster, fname_out):
 
 	Example
 	-------
-
+	
+	>>> from cuwalid.tools.DRYP_rrtools import create_raster_from_shapefile
 	>>> shapefile_path = 'test.shp'
 	>>> fname_raster = "test.asc"
 	>>> fname_out = "mask.asc"
@@ -1055,7 +1058,7 @@ def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
 	fdg = flowdir.reshape(-1)
 	
 	# create array of nodes
-	dirnodes=np.zeros(len(fdg))
+	dirnodes=np.arange(len(fdg), dtype=int)
 
 	# create landlab idnodes
 	ids=np.arange(len(fdg), dtype=int)
@@ -1073,6 +1076,7 @@ def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
 	elif format_data == "AGNPS":
 		dir_code=[3, 2, 1, 8, 7, 6, 5, 4]
 	else:
+		format_data = "No Format"
 		dir_code=np.arange(1,9)
 	
 	# create list of idnodes for each D8 code
