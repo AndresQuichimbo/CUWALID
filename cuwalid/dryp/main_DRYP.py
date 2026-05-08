@@ -230,7 +230,7 @@ def run_DRYP(filename_input):
 				#### NOT IN USE, NOT DELETE												
 				#### add irrigation as rain, still under development
 				####Pth = Pth[:] + abc.auz[:]
-								
+				#print("Precipitation after interception and irrigation", Pth)				
 				# INFILTRATION: estimate infiltration --------------------
 				#inf.run_infiltration_one_step(Pth, env_state, data_in)
 				INF, EXS, Ft0, SORP0, t_0, dry_day = inf.run_infiltration_one_step(
@@ -378,7 +378,7 @@ def run_DRYP(filename_input):
 					# select row from dataframe and add to the excess component
 					# units should be in m
 					runoff[idFluxWBout] += maximum_flux_wb
-					#print(maximum_flux_wb)
+
 				# RUNOFF: estimate runoff---------------------------------------
 				# all variables with containing length must be changed to meters [m]
 				ro.run_runoff_one_step(
@@ -391,7 +391,7 @@ def run_DRYP(filename_input):
 						topo.area_river,
 						river_sat_deficit,
 						None)
-				
+
 				if riv_nodes.size > 0:
 					# change transmission losses rate to riparian area, all units
 					# must be in mm/dt
@@ -427,7 +427,7 @@ def run_DRYP(filename_input):
 							rsoil.Droot[riv_nodes],
 							rtheta
 							)
-					
+
 					# update focused recharge
 					rPCR += rROF
 
@@ -554,7 +554,7 @@ def run_DRYP(filename_input):
 						Duz0, theta[act_nodes]
 						)
 				
-				# estimate groundwater storage change for delta t
+				# estimate groundwater storage change [mm] for delta t
 				twsc = np.zeros_like(rain)
 				twsc[act_nodes] = storage_uz_sz(
 						topo.surface[act_nodes],
@@ -565,7 +565,7 @@ def run_DRYP(filename_input):
 						aquifer.Sy[act_nodes],
 						head[act_nodes],
 						theta[act_nodes]) - tws
-							
+
 				# get all state and flux variables to grid storage
 				if data_in.save_netcdf is True:
 					grid_var.store_variables(PRE.date_sim_dt, t_pre,
@@ -607,7 +607,6 @@ def run_DRYP(filename_input):
 							}
 							)
 					
-				#print("Aquifer SHead", head[idGW[0]])
 				# get all fluxes and states at sampling points
 				point_var.store_variables(PRE.date_sim_dt, t_pre,
 				  	{"aet": AET[idOF[1]], "inf": INF[idOF[1]],
@@ -708,7 +707,7 @@ def run_DRYP(filename_input):
 					if riv_nodes.size > 0:
 						river_sat_deficit[riv_nodes] = ((
 							topo.riv_elevation[riv_nodes] - head[riv_nodes])*
-							np.power(topo.grid_size, 2)*
+							topo.area_cells*
 							aquifer.Sy[riv_nodes])
 
 						river_sat_deficit[river_sat_deficit < 0] = 0.0
