@@ -72,10 +72,11 @@ def get_flow_path(fname_surface, fname_outlet, fname_out=None,
 	# read flow direction
 	flowDir = None
 	if fname_flowDir is not None:
-		if flowdir_format is not "DRYP":
-			flowDir = read_raster(fname_flowDir, flatten=False)
+		if flowdir_format != "DRYP":
+			flowDir = open_raster(fname_flowDir)[0]
 			flowDir = transform_flowdirection_d8_to_landlab_array(
-			flowDir, format_data=flowdir_format).flatten()
+				flowDir, format_data=flowdir_format)
+			flowDir = np.flip(flowDir, 0).flatten()
 		else:
 			flowDir = read_raster(fname_flowDir)
 	
@@ -209,10 +210,11 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 	# read flow direction
 	flowDir = None
 	if fname_flowDir is not None:
-		if flowdir_format is not "DRYP":
-			flowDir = read_raster(fname_flowDir, flatten=False)
+		if flowdir_format != "DRYP":
+			flowDir = open_raster(fname_flowDir)[0]
 			flowDir = transform_flowdirection_d8_to_landlab_array(
-			flowDir, format_data=flowdir_format).flatten()
+				flowDir, format_data=flowdir_format)
+			flowDir = np.flip(flowDir, 0).flatten()
 		else:
 			flowDir = read_raster(fname_flowDir)
 	
@@ -349,10 +351,11 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 	# read flow direction
 	flowDir = None
 	if fname_flowDir is not None:
-		if flowdir_format is not "DRYP":
-			flowDir = read_raster(fname_flowDir, flatten=False)
+		if flowdir_format != "DRYP":
+			flowDir = open_raster(fname_flowDir)[0]
 			flowDir = transform_flowdirection_d8_to_landlab_array(
-			flowDir, format_data=flowdir_format).flatten()
+				flowDir, format_data=flowdir_format)
+			flowDir = np.flip(flowDir, 0).flatten()
 		else:
 			flowDir = read_raster(fname_flowDir)
 	
@@ -397,11 +400,11 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 						np.zeros_like(surface),#AOF
 						np.zeros_like(surface),#AOF_threshold,
 						np.zeros_like(surface), #conductivity,
-						np.ones_like(surface),
+						np.ones_like(surface), # decay factor
 						np.zeros_like(surface),# no rivers
-						np.full(grid_size, area_cell),
-						np.zeros_like(surface),
-						np.ones_like(surface)*1e5,
+						np.full(grid_size, area_cell), # area of each cell
+						np.zeros_like(surface), # no river width
+						np.ones_like(surface)*1e5, # river conductance
 						None)
 
 	# create dataframe containing list of catchement areas
@@ -410,17 +413,23 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 	df['Area'] = ro.discharge[idnodes]
 
 
+	# get raster file properties
+	surface, profile, transform = open_raster(fname_surface)
+
 	# save files
 	if save_files is True:
 		if fname_out is None:
-			fname_out = fname_surface.split('.')[0]
+			fname_out = fname_surface.split('.')[0] + '_flowaccum' + '.' + fname_surface.split('.')[-1]
 
 		# Save contributing area as raster file
-		save_map_to_rastergrid(grid, ro.discharge,
-				fname_out + '_flowaccum.asc')
+		save_raster(fname_out, np.flip(ro.discharge.reshape((domain.height,domain.width)), 0), profile, transform)
 
-		fname = fname_out + '_areas.csv'
+		#save_map_to_rastergrid(grid, ro.discharge,
+		#		fname_out)# + '_flowaccum.asc')
+
+		fname = fname_out.split('.')[0] + '_areas.csv'
 		df.to_csv(fname)
+		print(f"Watershed area and contributing area map saved:\n{fname}, {fname_out + '_flowaccum.asc'}")
 	else:
 		return df, ro.discharge[idnodes]
 
@@ -467,12 +476,16 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 	# read flow direction
 	flowDir = None	
 	if fname_flowDir is not None:
-		if flowdir_format is not "DRYP":
-			flowDir = read_raster(fname_flowDir, flatten=False)
+		if flowdir_format != "DRYP":
+			flowDir = open_raster(fname_flowDir)[0]
 			flowDir = transform_flowdirection_d8_to_landlab_array(
-			flowDir, format_data=flowdir_format).flatten()
+				flowDir, format_data=flowdir_format)
+			flowDir = np.flip(flowDir, 0).reshape(-1)
+			#print("flow direction read and transformed", flowDir)
 		else:
 			flowDir = read_raster(fname_flowDir)
+			#print("flow direction read:", flowDir)
+
 	
 	# read mask
 	mask = None
@@ -520,7 +533,7 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 
 	# save files
 	if fname_out is None:
-		fname_out = fname_surface.split('.')[0] + '_basin.asc'
+		fname_out = fname_surface.split('.')[0] + '_basin_' + '.' + fname_surface.split('.')[-1]
 
 	# save raster dataset
 	save_raster(fname_out, basinmask, profile, transform)
