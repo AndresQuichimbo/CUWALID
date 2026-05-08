@@ -484,8 +484,7 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 			#print("flow direction read and transformed", flowDir)
 		else:
 			flowDir = read_raster(fname_flowDir)
-			#print("flow direction read:", flowDir)
-
+			
 	
 	# read mask
 	mask = None
