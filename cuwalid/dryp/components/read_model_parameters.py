@@ -18,7 +18,8 @@ def read_model_parameters(data_in):
     domain = grid_environment(data_in.fname_surface)
 
     print("====== > Reading surface and river network parameters")
-    topo = surface_parameters(data_in.fname_surface, flowdir_format=data_in.flowdir_format)
+    topo = surface_parameters(data_in.fname_surface,
+                              flowdir_format=data_in.flowdir_format)
 
     print("====== > Reading hillslope soil hydraulic parameters")
     soil = soil_parameters(domain.grid_size, data_in.fname_soil)
