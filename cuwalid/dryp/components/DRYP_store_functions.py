@@ -438,7 +438,7 @@ class GlobalGridVar:
 					if save_all is True:
 						# precipitation
 						factor = 1.0
-						if (iname == 'tht') or (iname == "wte") or (iname == "ssz"):
+						if (iname == 'tht') or (iname == "wte") or (iname == "ssz") or (iname == 'thtrp'):
 							factor = 1.0/self.nsteps_vector[j]
 							
 						# selec nodes of the whole variable array 
