@@ -55,7 +55,7 @@ It will look something like the file json file below:
     :linenos:
 
 CUWALID — Running from the Tutorials Repo (ICPAC example)
-==============================================================================
+===========================================================
 
 This document explains how to run CUWALID using the **tutorial templates** from `AndresQuichimbo/CUWALID-tutorials`, while the `input/` folder lives in a server path such as:
 
@@ -135,7 +135,7 @@ The master config controls:
 - where to find per-model templates under `MODELS`
 
 Key fields (must be correct)
---------------------------------
+----------------------------
 - `output_dir` **must not be empty**
 - `season` is a list, but CUWALID uses `season[0]` internally
 - `year` is the target year for the forecast
@@ -256,7 +256,7 @@ Keep these consistent with your dataset and your intended model configuration.
 ---
 
 7. WaterCast: Hydro forecasting (HyCast) and Impact forecasting (ImCast)
---------------------------------------------------------------------------
+------------------------------------------------------------------------
 
 When `run_WaterCast` is `true`, `main_cuwalid.py` runs two stages:
 

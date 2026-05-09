@@ -111,7 +111,7 @@ class infiltration(object):
 		
 		Lsat = theta_sat*Droot
 		L_0 = theta*Droot
-
+		
 		# run infiltration		
 		Ft, SORP, infiltration, excess, t_0, rain_day_before = infiltration_model(
 				rain,

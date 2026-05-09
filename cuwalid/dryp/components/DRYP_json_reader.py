@@ -310,6 +310,7 @@ class get_list_of_surface_files(object):
 		# set river routing factors
         self.kKch = float(factors["GLOBAL_FACTORS"]["riv_kksat"])
         self.kTch = float(factors["GLOBAL_FACTORS"]["riv_kdecay"])
+        self.geographic = factors["GEOGRAPHIC_SYSTEM"]
 
 
 class get_list_of_soil_files(object):

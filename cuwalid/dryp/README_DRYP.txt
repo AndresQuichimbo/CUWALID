@@ -43,3 +43,8 @@ Updates:
 08/07/2025: change names of output variables to allow postprocessing
 22/09/2025: Add projection to metadata of netCDF files
 22/09/2025: Add option to store vegetation/interception variables
+
+versions
+
+test versions
+1.1.60: Add new algorithm for artifacts reduction

@@ -231,7 +231,6 @@ class gwflow_EFD(object):
 		# Calculate minimal time step		
 		dtp = np.nanmin([dt, dts])		
 		dtsp = dtp
-
 		# inner iteration counter
 		inner_iter = 0
 
@@ -239,7 +238,6 @@ class gwflow_EFD(object):
 			# adjusting heads at the bottom of the model domain
 			# WARNING! this could lead to increases in mass balance errors
 			np.minimum(surface, head, out=head)
-			
 			# calculate aquifer saturated thickness at nodes
 			# for models with exponential function assign effective depth
 			# skip this for first iiteration

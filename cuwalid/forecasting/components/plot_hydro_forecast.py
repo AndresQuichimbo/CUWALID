@@ -49,7 +49,8 @@ def plot_tercile_probability_forecast(model_path, model_name, season, variables,
 				cuwalidplt.get_label_variable(ivar),
 				reproject=True,
 				fshapefile=shapefile_county,
-				fmask=path_mask
+				fmask=path_mask,
+				cmap_type="outflow" if ivar in ["pet", "aet"] else "inflow"
 			)
 
 			# Ensure the `fig` directory exists and save the plot

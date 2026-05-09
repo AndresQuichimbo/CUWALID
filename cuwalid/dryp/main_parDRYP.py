@@ -985,8 +985,11 @@ def run_parDRYP(filename_input):
 								)
 								local_flux_chb += region_gw[region_id].flux_at_CHB*region_parameters['active_count']
 								local_count += float(region_parameters['active_count'])
+								#print(local_head)
 
 							global_head = _allreduce_sum(comm, local_head)
+							#print('gl',global_head)
+							#print(c)
 							global_baseflow = _allreduce_sum(comm, local_baseflow)
 							global_owner = _allreduce_sum(comm, local_owner)
 
