@@ -48,3 +48,7 @@ versions
 
 test versions
 1.1.60: Add new algorithm for artifacts reduction
+
+1.1.61: Coordinates fixed in the Centre
+        Geographical reference system added to the model
+        Flow direction now accept different formats
