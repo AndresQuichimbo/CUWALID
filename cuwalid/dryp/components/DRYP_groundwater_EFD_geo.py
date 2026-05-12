@@ -438,8 +438,10 @@ class gwflow_EFD(object):
 			#print(MB)
 			assert np.allclose(MB, 0.0, rtol=1e-05, atol=1e-04)
 		except:
-			raise Exception(MB,'Groundwater Water balance Error: '
-		   		'Please check units and non-data values')
+			raise Exception('Groundwater Water balance Error: ', MB,
+		   		'Please check units and non-data values: ', 
+				np.where(np.isnan(recharge[act_nodes]) | np.isinf(recharge[act_nodes])),
+				' Check time step: dt = ', dtsp)
 
 		return head, discharge
 	

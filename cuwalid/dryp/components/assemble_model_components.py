@@ -71,7 +71,7 @@ def set_flux_boundary_conditions(data_in, grid, fluxOF, fluxUZ, fluxSZ, fluxWB):
     idFluxSZ, idFluxSZ_act = None, None
     idFluxWB, idFluxWB_act = None, None
     idFluxWBout, idFluxWBout_act = None, None
-
+    
     # read location of point boundary conditions
     if fluxOF.data_set is not None:
         if data_in.data_reading['fluxOF'] == 0:
@@ -271,9 +271,7 @@ def setup_monitoring_nodes(grid, data_in):
     
     # add nodes and core nodes for zone ouptuts
     zones = zone_parameters(data_in.fname_zone_outputs)
-    
-    idzone, size_zone = zones.extract_zone_info(grid['core_nodes'])
+    idzone, size_zone = zones.extract_zone_info(core_nodes=grid['core_nodes'])
     idzone_core, _ = zones.get_zone_info_from_core_nodes(grid['core_nodes'])
     idzone_info = (idzone, idzone_core, size_zone)
-    
     return idOF, idUZ, idGW, idzone_info

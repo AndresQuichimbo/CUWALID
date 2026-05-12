@@ -648,7 +648,7 @@ class surface_parameters(object):
 			self.riv_length = np.full(grid_size, cellsize_meters, dtype=float)#
 			print('River network....................not provided')
 			print('All cells are considered rivers with length of grid size')
-		
+		self.riv_length = np.asarray(self.riv_length, dtype=float)
 		self.river_cells = np.zeros(grid_size, int)
 		self.river_cells[self.riv_length > 0] = 1
 		self.river_cells[self.mask <= 0] = 0
@@ -663,11 +663,12 @@ class surface_parameters(object):
 		# Reading the raster file of river elevation		
 		if inputfile.fname_RiverElev == None or not os.path.exists(inputfile.fname_RiverElev):
 			self.riv_elevation = self.surface[:]
+			
 			print('River bottom......................not provided')
 			print('River bottom elevation: surface elevation')
 		else:
 			self.riv_elevation = np.flip(rasterio.open(inputfile.fname_RiverElev).read(1), 0).flatten()
-
+		self.riv_elevation = np.asarray(self.riv_elevation, dtype=float)
 		if flowdir_format != 'DRYP':
 			if inputfile.fname_FlowDir != None and os.path.exists(inputfile.fname_FlowDir):
 				self.FlowDir = create_raster_flowdirection_dryp(inputfile.fname_FlowDir,
@@ -997,7 +998,8 @@ class soil_parameters(object):
 			print('Hydraulic conductivity...........not provided. Global default applied of 1.0 mm/h')
 		else:
 			self.Ksat = np.flip(rasterio.open(inputfile.fname_Ksat).read(1), 0).flatten()
-					
+		# make float
+		self.Ksat = np.array(self.Ksat, dtype=float)			
 		# Change units and applying scale factor kKs
 		#self.Ksat = (self.Ksat*inputfile.kKsat)
 		#self.Ksat = (self.Ksat*inputfile.unit_sim_k*inputfile.kKsat)
@@ -1009,27 +1011,32 @@ class soil_parameters(object):
 		#	print('Residual moisture content..... not provided as raster. Global default applied of 0.025')
 		#else:
 		#	self.theta_res = np.flip(rasterio.open(inputfile.fname_theta_r).read(1), 0).flatten()
-			
+		# make float
+		#self.theta_res = np.array(self.theta_res, dtype=float)
 		# Reading Wilting point field
 		if inputfile.fname_theta_wp == None or not os.path.exists(inputfile.fname_theta_wp):
 			self.theta_wp = np.full(grid_size, 0.05, dtype=float)
 			print('Wilting point....................not provided. Global default applied of 0.05')
 		else:
 			self.theta_wp = np.flip(rasterio.open(inputfile.fname_theta_wp).read(1), 0).flatten()
-				
+		# make float
+		self.theta_wp = np.array(self.theta_wp, dtype=float)		
 		# Read Saturated water content (porosity)
 		if inputfile.fname_n == None or not os.path.exists(inputfile.fname_n):
 			self.theta_sat = np.full(grid_size, 0.40, dtype=float)
 			print('Porosity.........................not provided. Global default applied of 0.4')
 		else:
 			self.theta_sat = np.flip(rasterio.open(inputfile.fname_n).read(1), 0).flatten()
-			
+		# make float
+		self.theta_sat = np.array(self.theta_sat, dtype=float)	
 		# Reading available water content: raster file		
 		if inputfile.fname_theta_AWC == None or not os.path.exists(inputfile.fname_theta_AWC):
 			theta_AWC = np.full(grid_size, 0.10, dtype=float)
 			print('Available Water Content..........not provided. Global default applied of 0.10')
 		else:
 			theta_AWC = np.flip(rasterio.open(inputfile.fname_theta_AWC).read(1), 0).flatten()
+		# make float
+		theta_AWC = np.array(theta_AWC, dtype=float)
 
 		self.theta_fc = theta_AWC + self.theta_wp
 
@@ -1246,12 +1253,16 @@ class groundwater_parameters(object):
 		#print("reading initial water table elevation...")
 		if inputfile.fname_GWini == None or not os.path.exists(inputfile.fname_GWini):
 			self.head = np.flip(rasterio.open(inputfile.fname_DEM).read(1), 0).flatten()
+			# make sure that initial water table is float and not integer
+			self.head = np.array(self.head, dtype=float)
 			#h = gw.add_zeros('node', 'water_table__elevation', dtype=float)
 			#gw.at_node['water_table__elevation'] = z - rg.at_node['Soil_depth']*0.001
 			print('Initial water table elevation... not provided assumed equal to surface')
 			#print('Initial water table elevation assumed equal to root depth elevation')
 		else:
 			self.head = np.flip(rasterio.open(inputfile.fname_GWini).read(1), 0).flatten()
+			# make sure that initial water table is float and not integer
+			self.head = np.array(self.head, dtype=float)
 			#h = read_esri_ascii(inputfile.fname_GWini,
 			#	name='water_table__elevation', grid=gw)[1]
 
@@ -1584,6 +1595,9 @@ class zone_parameters(object):
 		------
 		factor:	numpy array
 			scale factor for each zone, it should be the same size as the number of zones
+			the first element of the factor array corresponds to zone 1, the second to zone 2,
+			and so on. Zone 0 is not considered for applying factor, it is assumed to be the
+			default zone with no change.
 		
 		Returns
 		-------
@@ -1617,14 +1631,19 @@ class zone_parameters(object):
 		size_zones:	list
 			list with the size of each zone
 		"""
+		#print('core nodes', core_nodes)
 		if self.zone_mask is None:
 			return None, None
+		#print("zone mask", self.zone_mask)#, "core nodes", core_nodes.shape)
 		if core_nodes is not None:
 			# Make all other (non-core) nodes equal to 0
+			#ones_like_mask = np.ones_like(self.zone_mask, dtype=int)
+			#ones_like_mask[core_nodes] = 0
+			#self.zone_mask[ones_like_mask == 1] = 0
 			all_indices = np.arange(self.zone_mask.size)
 			non_core = np.setdiff1d(all_indices, core_nodes)
 			self.zone_mask[non_core] = 0
-		
+		#print("zone mask after applying core nodes", self.zone_mask)
 		# get ids and size of zones
 		ids_zone, size_zone = get_zone_indices_and_sizes(self.zone_mask)
 		return ids_zone, size_zone
@@ -1802,7 +1821,7 @@ def get_zone_indices_and_sizes(mask):
 	"""
 	# get masks
 	name_zones = mask.astype(int)
-
+	
 	# flatten the name array to match the grid
 	name_zones = name_zones.flatten()
 

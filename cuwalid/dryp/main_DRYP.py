@@ -542,6 +542,9 @@ def run_DRYP(filename_input):
 					# time accumulator for gw	
 					dt_GW += int(data_in.dt)
 				
+				else:
+					vtot_lks = None
+
 				# update soil moisture
 				if data_in.run_GW > 0:
 
@@ -630,7 +633,7 @@ def run_DRYP(filename_input):
 					"wte":[np.mean(head[act_nodes])],
 					"gdh":[np.mean(baseflow[act_nodes])],
 					"twsc":[np.mean(twsc[act_nodes])],
-					"chb":[gw.flux_at_CHB*1000.0],
+					"chb":[gw.flux_at_CHB*1000.0] if data_in.run_GW > 0 else [0],
 					"tls":[np.mean(ro.trans_losses[act_nodes])],
 					'eca': [np.mean(Eca)] if Eca is not None else [0],
 					'scz': [np.mean(vegetation.Sc0_cn[act_nodes])] if vegetation.Sc0_cn[act_nodes] is not None else [0],
