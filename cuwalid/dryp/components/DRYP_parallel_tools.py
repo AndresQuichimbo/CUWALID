@@ -110,6 +110,117 @@ def extract_basin_data(basin_id, domains, grid_metadata, grid=True):
         'global_nodes': global_nodes,
     }
 
+
+def combine_basin_results_into_world_halo(basin_id, catchment_mask, basin_result, halo =1, world_data=None, world_grid_shape=None, flatten=False):
+    """Combine results from one basin into a full world array"""
+    if world_data is None:
+        if world_grid_shape is None:
+            world_grid_shape = catchment_mask.shape
+        world_data = np.zeros(world_grid_shape, dtype=np.asarray(basin_result).dtype)
+
+    if basin_result is None:
+        return world_data
+
+    if world_grid_shape is None:
+        world_grid_shape = catchment_mask.shape
+
+    needs_flatten = flatten or world_data.ndim == 1
+    if world_data.ndim == 1:
+        world_view = world_data.reshape(world_grid_shape)
+    else:
+        world_view = world_data
+
+    basin_region_mask, row_min, row_max, col_min, col_max = _get_basin_region(
+        basin_id, catchment_mask)
+    row_min_h = max(0, row_min - halo)
+    row_max_h = min(catchment_mask.shape[0]-1, row_max + halo)
+    col_min_h = max(0, col_min - halo)
+    col_max_h = min(catchment_mask.shape[1]-1, col_max + halo)
+    bounds = np.array([[row_min, row_max, col_min, col_max]])
+    nrows = row_max_h - row_min_h + 1
+    ncols = col_max_h - col_min_h + 1
+    
+    extended_mask = np.ones((nrows, ncols), dtype=bool)
+ 
+    # np.savetxt(
+    #     f"/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/bounds_combine_{basin_id}.csv",
+    #     bounds,
+    #     fmt="%d",
+    #     delimiter=",",
+    #     header="row_min,row_max,col_min,col_max",
+    #     comments=""
+    # )
+    # basin_array = np.asarray(basin_result).reshape(basin_region_mask.shape)
+    # print("-----------------------------------------------------------------------------------------------")
+    # print("basin_region_mask.shape: ", basin_region_mask.shape)
+    # print("extended_mask.shape: ", extended_mask.shape)
+    # print("basin_result.shape: ", basin_result.shape)
+    basin_array = np.asarray(basin_result).reshape(extended_mask.shape)
+    # row_min>row_max?
+    # print("row_min: ", row_min)
+    # print("row_max: ", row_max)
+    local_row_min = row_min - row_min_h
+    local_row_max = row_max - row_min_h
+    local_col_min = col_min - col_min_h
+    local_col_max = col_max - col_min_h
+
+
+    # basin_array = basin_array[row_min:row_max+1, col_min:col_max+1]
+    basin_array = basin_array[
+        local_row_min:local_row_max+1,
+        local_col_min:local_col_max+1
+    ]
+    world_region = world_view[row_min:row_max+1, col_min:col_max+1]
+    # print("basin_array.shape: ", basin_array.shape)
+    # print("-----------------------------------------------------------------------------------------------")
+    
+    world_region[basin_region_mask] = basin_array[basin_region_mask]
+
+    if needs_flatten:
+        return world_view.flatten()
+
+    return world_view
+
+def extract_basin_forcing_halo(basin_id, catchment_mask, world_forcing_arrays, halo=1):
+    """Extract forcing data for a specific basin"""
+    basin_region_mask, row_min, row_max, col_min, col_max = _get_basin_region(
+        basin_id, catchment_mask)
+    forcing_data = {}
+    row_min_h = max(0, row_min - halo)
+    row_max_h = min(catchment_mask.shape[0]-1, row_max + halo)
+    col_min_h = max(0, col_min - halo)
+    col_max_h = min(catchment_mask.shape[1]-1, col_max + halo)
+    catchment_mask_plus_basin_halo = catchment_mask.copy()
+    catchment_mask_plus_basin_halo[row_min_h:row_max_h+1, col_min_h:col_max_h+1] = basin_id
+    # print(str(row_min_h)+' '+str(row_max_h)+ ' '+str(col_min_h)+ ' '+str(col_max_h))
+    nrows = row_max_h - row_min_h + 1
+    ncols = col_max_h - col_min_h + 1
+    # print("basin_forcing_halo nrows: ", nrows)
+    # print("basin_forcing_halo ncols: ", ncols)
+
+    bounds = np.array([[row_min, row_max, col_min, col_max, row_min_h, row_max_h, col_min_h, col_max_h, catchment_mask.shape[0], catchment_mask.shape[1]]])
+ 
+    # np.savetxt(
+    #     f"/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/bounds_forcing_{basin_id}.csv",
+    #     bounds,
+    #     fmt="%d",
+    #     delimiter=",",
+    #     header="row_min,row_max,col_min,col_max,row_min_h,row_max_h,col_min_h,col_max_h,catchment_mask.shape[0],catchment_mask.shape[1]",
+    #     comments=""
+    # )
+ 
+    # Extended mask: all cells in bounding box, regardless of basin
+    extended_mask = np.ones((nrows, ncols), dtype=bool)
+
+    for key, array in world_forcing_arrays.items():
+        basin_array = _extract_basin_array(
+            array, catchment_mask, row_min_h, row_max_h, col_min_h, col_max_h)
+        # basin_array[~basin_region_mask] = 0print("basin_region_mask.shape: ", basin_region_mask.shape)
+        basin_array[~extended_mask] = 0
+        forcing_data[key] = basin_array.flatten()
+
+    return forcing_data
+
 def extract_basin_forcing(basin_id, catchment_mask, world_forcing_arrays):
     """Extract forcing data for a specific basin"""
     basin_region_mask, row_min, row_max, col_min, col_max = _get_basin_region(
@@ -120,6 +231,64 @@ def extract_basin_forcing(basin_id, catchment_mask, world_forcing_arrays):
             array, catchment_mask, row_min, row_max, col_min, col_max)
         basin_array[~basin_region_mask] = 0
         forcing_data[key] = basin_array.flatten()
+
+    return forcing_data
+
+def extract_basin_forcing_with_halo(
+    basin_domain,
+    world_forcing_arrays,
+    mask_inactive=True,
+):
+    """
+    Extract forcing data for a basin INCLUDING halo cells.
+
+    Parameters
+    ----------
+    basin_domain : dict
+        Output from extract_basin_data_with_halo().
+        Must contain:
+            - 'global_nodes'
+            - 'mask' (core + halo)
+            - 'core_mask' (optional)
+    world_forcing_arrays : dict
+        Global arrays (flattened or 2D).
+    mask_inactive : bool
+        If True, inactive cells (outside mask) are zeroed.
+
+    Returns
+    -------
+    forcing_data : dict
+        Local (halo-aware) flattened arrays of size N_local_cells.
+    """
+
+    global_nodes = basin_domain['global_nodes']
+    region_mask = basin_domain['mask'].flatten()
+
+    forcing_data = {}
+
+    for key, array in world_forcing_arrays.items():
+
+        data = np.asarray(array)
+
+        # --- Handle 2D arrays ---
+        if data.ndim == 2:
+            data = data.flatten()
+
+        # --- Handle 1D arrays ---
+        elif data.ndim == 1:
+            pass
+
+        else:
+            raise ValueError(f"Unsupported array dimension: {data.ndim}D")
+
+        # --- Extract halo-aware local array ---
+        local_array = data[global_nodes].copy()
+
+        # --- Mask inactive cells if requested ---
+        if mask_inactive:
+            local_array[~region_mask] = 0
+
+        forcing_data[key] = local_array
 
     return forcing_data
 
@@ -135,6 +304,52 @@ def extract_basin_parameters(basin_id, catchment_mask, world_parameter_arrays, m
             if mask_inactive:
                 basin_array[~basin_region_mask] = 0
             parameter_data[key] = basin_array.flatten()
+        else:
+            parameter_data[key] = array
+
+    return parameter_data
+
+def extract_basin_parameters_with_halo(
+    basin_domain,
+    catchment_mask,
+    world_parameter_arrays,
+    mask_inactive=False
+):
+    """
+    Extract parameters INCLUDING halo region.
+    """
+
+    row_min, row_max, col_min, col_max = basin_domain['bbox']
+    extended_mask = basin_domain['mask']        # includes halo
+    core_mask = basin_domain['core_mask']       # only real cells
+
+    parameter_data = {}
+
+    for key, array in world_parameter_arrays.items():
+        if isinstance(array, np.ndarray):
+
+            data = np.asarray(array)
+
+            # extract using HALO bbox
+            if data.ndim == 2:
+                local = data[row_min:row_max+1, col_min:col_max+1].copy()
+
+            elif data.ndim == 1:
+                local = data.reshape(catchment_mask.shape)[
+                    row_min:row_max+1, col_min:col_max+1
+                ].copy()
+            else:
+                raise ValueError(f"Unsupported array dimension: {data.ndim}D")
+
+            # flatten to match your solver
+            local = local.flatten()
+
+            if mask_inactive:
+                # IMPORTANT: only mask OUTSIDE extended domain
+                local[~extended_mask.flatten()] = 0
+
+            parameter_data[key] = local
+
         else:
             parameter_data[key] = array
 
@@ -169,6 +384,33 @@ def combine_all_basin_results_into_world(all_basin_results, catchment_mask, worl
         combined_discharge[rows.min():rows.max()+1, cols.min():cols.max()+1] = discharge.reshape(nrows_basin, ncols_basin)
     
     return combined_discharge
+def combine_basin_results_into_world_with_halo(
+    basin_domain,
+    basin_result,
+    global_array
+):
+    """
+    Write back ONLY CORE values from a halo domain.
+    """
+
+    global_nodes = basin_domain['global_nodes']
+    core_mask = basin_domain['core_mask'].flatten()
+
+    basin_result = np.asarray(basin_result)
+
+    # safety check
+    assert len(basin_result) == len(global_nodes), \
+        "Local result size mismatch with domain"
+
+    # extract only core
+    core_values = basin_result[core_mask]
+    core_global_nodes = global_nodes[core_mask]
+
+    # write back
+    global_array[core_global_nodes] = core_values
+
+    return global_array
+
 
 def combine_basin_results_into_world(basin_id, catchment_mask, basin_result, world_data=None, world_grid_shape=None, flatten=False):
     """Combine results from one basin into a full world array"""
@@ -199,7 +441,6 @@ def combine_basin_results_into_world(basin_id, catchment_mask, basin_result, wor
         return world_view.flatten()
 
     return world_view
-
 
 def get_basin_bbox(basin_id, catchment_mask):
     """Get bounding box for a specific basin"""
@@ -235,6 +476,268 @@ def map_global_nodes_to_local(basin_input, global_node_ids):
         if int(global_id) in lookup
     ]
     return np.array(local_nodes, dtype=int)
+
+def extract_basin_parameters_halo(basin_id, catchment_mask, world_parameter_arrays, halo=1, mask_inactive=False):
+    """Extract parameter data for a specific basin"""
+    #basin_1: 1,2,3,4
+    # catchment_mask: 1,2,3,4 mask
+    #     [[1. 1. 1. ... 3. 3. 3.]
+    #  [1. 1. 1. ... 3. 3. 3.]
+    #  [1. 1. 1. ... 3. 3. 3.]
+    #  ...
+    #  [2. 2. 2. ... 4. 4. 4.]
+    #  [2. 2. 2. ... 4. 4. 4.]
+    #  [2. 2. 2. ... 4. 4. 4.]]
+    # print("Inside extract basin parameters halo: ", basin_id)
+    # print("catchment_mask.shape: ", catchment_mask.shape)
+    
+    basin_region_mask, row_min, row_max, col_min, col_max = _get_basin_region(
+        basin_id, catchment_mask)
+    catchment_mask_plus_basin_halo = catchment_mask.copy()
+    np.savetxt("/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/basin_region_mask_"+str(basin_id)+".csv", basin_region_mask, fmt="%s", delimiter=",")
+
+    # Expand bounding box with halo, without going out of global matrix
+    row_min_h = max(0, row_min - halo)
+    row_max_h = min(catchment_mask.shape[0]-1, row_max + halo)
+    col_min_h = max(0, col_min - halo)
+    col_max_h = min(catchment_mask.shape[1]-1, col_max + halo)
+    catchment_mask_plus_basin_halo[row_min_h:row_max_h+1, col_min_h:col_max_h+1] = basin_id
+    # print(str(row_min_h)+' '+str(row_max_h)+ ' '+str(col_min_h)+ ' '+str(col_max_h))
+    nrows = row_max_h - row_min_h + 1
+    ncols = col_max_h - col_min_h + 1
+    # print("basin_forcing_halo nrows: ", nrows)
+    # print("basin_forcing_halo ncols: ", ncols)
+    
+    # np.savetxt("/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/basin_region_mask_"+str(basin_id)+".csv", basin_region_mask, fmt="%s", delimiter=",")
+ 
+    # Extended mask: all cells in bounding box, regardless of basin
+    extended_mask = np.ones((nrows, ncols), dtype=bool)
+    # np.savetxt("/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/extended_region_mask_"+str(basin_id)+".csv", extended_mask, fmt="%s", delimiter=",")
+
+
+    bounds = np.array([[row_min, row_max, col_min, col_max, row_min_h, row_max_h, col_min_h, col_max_h, catchment_mask.shape[0], catchment_mask.shape[1]]])
+ 
+    # np.savetxt(
+    #     f"/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/bounds_param_{basin_id}.csv",
+    #     bounds,
+    #     fmt="%d",
+    #     delimiter=",",
+    #     header="row_min,row_max,col_min,col_max,row_min_h,row_max_h,col_min_h,col_max_h,catchment_mask.shape[0],catchment_mask.shape[1]",
+    #     comments=""
+    # )
+
+
+    parameter_data = {}
+    for key, array in world_parameter_arrays.items():
+        if isinstance(array, np.ndarray):
+            # basin_array = _extract_basin_array(
+            #     array, catchment_mask, row_min_h, row_max_h, col_min_h, col_max_h)
+            basin_array = _extract_basin_array(array, catchment_mask_plus_basin_halo, 
+                            row_min_h, row_max_h, col_min_h, col_max_h)
+            if mask_inactive:
+                # basin_array[~basin_region_mask] = 0
+                basin_array[~extended_mask] = 0
+            parameter_data[key] = basin_array.flatten()
+        else:
+            parameter_data[key] = array
+
+    return parameter_data
+
+def extract_basin_data_with_halo2(basin_id, domains, grid_metadata, rank, halo=1, grid=True):
+    """
+    Extract subdomain data including halo (ghost cells) for MPI exchange.
+    Halo includes neighboring cells even if they are outside the basin.
+    """
+ 
+    # Get the bounding box of the basin
+    basin_mask, row_min, row_max, col_min, col_max = _get_basin_region(basin_id, domains)
+    # print("basin_mask: ",basin_mask)
+    np.savetxt("/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/basin_mask_"+str(rank)+".csv", basin_mask, fmt="%s", delimiter=",")
+ 
+ 
+ 
+    # Expand bounding box with halo, without going out of global matrix
+    row_min_h = max(0, row_min - halo)
+    row_max_h = min(domains.shape[0]-1, row_max + halo)
+    col_min_h = max(0, col_min - halo)
+    col_max_h = min(domains.shape[1]-1, col_max + halo)
+ 
+    # Save the 4 values as one row
+    bounds = np.array([[row_min, row_max, col_min, col_max, row_min_h, row_max_h, col_min_h, col_max_h,
+                        grid_metadata['xllcorner'], grid_metadata['yllcorner']]])
+ 
+    np.savetxt(
+        f"/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/bounds_{rank}.csv",
+        bounds,
+        fmt="%d",
+        delimiter=",",
+        header="row_min,row_max,col_min,col_max,row_min_h,row_max_h,col_min_h,col_max_h,xllcorner,yllcorner",
+        comments=""
+    )
+ 
+    nrows = row_max_h - row_min_h + 1
+    ncols = col_max_h - col_min_h + 1
+ 
+    # Extended mask: all cells in bounding box, regardless of basin
+    extended_mask = np.ones((nrows, ncols), dtype=bool)
+ 
+    # Core mask: only the real basin cells
+    # core_mask = np.zeros_like(extended_mask, dtype=bool)
+    # core_mask[
+    #     (row_min_h):(row_max_h + 1),
+    #     (col_min_h):(col_max_h + 1)
+    # ] = basin_mask
+    core_mask = extended_mask
+    binary_init_core_mask = np.zeros_like(extended_mask, dtype=bool)
+    binary_init_core_mask[
+        (row_min - row_min_h):(row_max - row_min_h + 1),
+        (col_min - col_min_h):(col_max - col_min_h + 1)
+    ] = basin_mask
+    # print('core_mask: ',core_mask)
+ 
+    # Grid (optional)
+    if grid:
+        grid = create_grid_from_extent(
+            ncols, nrows,
+            grid_metadata['xllcorner'] + col_min_h * grid_metadata['cellsize'],
+            grid_metadata['yllcorner'] + row_min_h * grid_metadata['cellsize'],
+            grid_metadata['cellsize'],
+            active_domain=extended_mask.flatten(),
+        )
+    else:
+        grid = None
+ 
+    # Global node indices
+    global_nodes = np.arange(domains.size, dtype=int).reshape(domains.shape)[
+        row_min_h:row_max_h+1, col_min_h:col_max_h+1
+    ].flatten()
+ 
+    return {
+        'basin_id': basin_id,
+        'grid': grid,
+        'grid_size': nrows * ncols,
+        'mask': extended_mask,  # now includes all halo cells
+        'core_mask': core_mask, # only subdomain real cells
+        'binary_init_core_mask': binary_init_core_mask,
+        'bbox': (row_min_h, row_max_h, col_min_h, col_max_h),
+        'shape': (nrows, ncols),
+        'global_nodes': global_nodes,
+    }
+
+# def extract_basin_data_with_halo2(basin_id, domains, grid_metadata, rank, halo=1, grid=True):
+#     """
+#     Extract subdomain data including halo (ghost cells) for MPI exchange.
+#     Halo includes neighboring cells even if they are outside the basin.
+#     """
+
+#     # Get the bounding box of the basin
+#     basin_mask, row_min, row_max, col_min, col_max = _get_basin_region(basin_id, domains)
+#     # print("basin_mask: ",basin_mask)
+#     np.savetxt("basin_mask.csv", basin_mask, fmt="%s", delimiter=",")
+
+
+#     # Expand bounding box with halo, without going out of global matrix
+#     row_min_h = max(0, row_min - halo)
+#     row_max_h = min(domains.shape[0]-1, row_max + halo)
+#     col_min_h = max(0, col_min - halo)
+#     col_max_h = min(domains.shape[1]-1, col_max + halo)
+
+#     nrows = row_max_h - row_min_h + 1
+#     ncols = col_max_h - col_min_h + 1
+
+#     # Extended mask: all cells in bounding box, regardless of basin 
+#     extended_mask = np.ones((nrows, ncols), dtype=bool) 
+
+#     # Core mask: only the real basin cells
+#     core_mask = np.zeros_like(extended_mask, dtype=bool) 
+#     core_mask[
+#         (row_min - row_min_h):(row_max - row_min_h + 1),
+#         (col_min - col_min_h):(col_max - col_min_h + 1)
+#     ] = basin_mask
+#     print('core_mask: ',core_mask)
+#     np.savetxt("/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/core_mask_"+str(rank)+".csv", core_mask, fmt="%s", delimiter=",")
+
+#     # Grid (optional)
+#     if grid:
+#         grid = create_grid_from_extent(
+#             ncols, nrows,
+#             grid_metadata['xllcorner'] + col_min_h * grid_metadata['cellsize'],
+#             grid_metadata['yllcorner'] + row_min_h * grid_metadata['cellsize'],
+#             grid_metadata['cellsize'],
+#             active_domain=extended_mask.flatten(),
+#         )
+#     else:
+#         grid = None
+
+#     # Global node indices
+#     global_nodes = np.arange(domains.size, dtype=int).reshape(domains.shape)[
+#         row_min_h:row_max_h+1, col_min_h:col_max_h+1
+#     ].flatten()
+
+#     return {
+#         'basin_id': basin_id,
+#         'grid': grid,
+#         'grid_size': nrows * ncols,
+#         'mask': extended_mask,  # now includes all halo cells
+#         'core_mask': core_mask, # only subdomain real cells
+#         'bbox': (row_min_h, row_max_h, col_min_h, col_max_h),
+#         'shape': (nrows, ncols),
+#         'global_nodes': global_nodes,
+#     }
+
+def extract_basin_data_with_halo(basin_id, domains, grid_metadata, halo=1, grid=True):
+    """
+    Extrae los datos de un subdominio incluyendo halo (celdas fantasma).
+    """
+
+    # obtener bounding box del subdominio
+    basin_mask, row_min, row_max, col_min, col_max = _get_basin_region(basin_id, domains)
+
+    # expandir con halo, sin salirse de la matriz global
+    row_min_h = max(0, row_min - halo)
+    row_max_h = min(domains.shape[0]-1, row_max + halo)
+    col_min_h = max(0, col_min - halo)
+    col_max_h = min(domains.shape[1]-1, col_max + halo)
+
+    nrows = row_max_h - row_min_h + 1
+    ncols = col_max_h - col_min_h + 1
+
+    # máscara extendida: incluye halo
+    extended_mask = domains[row_min_h:row_max_h+1, col_min_h:col_max_h+1] == basin_id
+
+    # máscara core: solo el subdominio real
+    core_mask = np.zeros_like(extended_mask, dtype=bool)
+    core_mask[
+        (row_min - row_min_h):(row_max - row_min_h + 1),
+        (col_min - col_min_h):(col_max - col_min_h + 1)
+    ] = basin_mask
+
+    # grid extendido
+    if grid:
+        grid = create_grid_from_extent(
+            ncols, nrows,
+            grid_metadata['xllcorner'] + col_min_h * grid_metadata['cellsize'],
+            grid_metadata['yllcorner'] + row_min_h * grid_metadata['cellsize'],
+            grid_metadata['cellsize'],
+            active_domain=extended_mask.flatten(),
+        )
+    else:
+        grid = None
+
+    global_nodes = np.arange(domains.size, dtype=int).reshape(domains.shape)[
+        row_min_h:row_max_h+1, col_min_h:col_max_h+1
+    ].flatten()
+
+    return {
+        'basin_id': basin_id,
+        'grid': grid,
+        'grid_size': nrows * ncols,
+        'mask': extended_mask,  # incluye halo
+        'core_mask': core_mask, # solo subdominio real
+        'bbox': (row_min_h, row_max_h, col_min_h, col_max_h),
+        'shape': (nrows, ncols),
+        'global_nodes': global_nodes,
+    }
 
 
 def extract_complete_lake_data(basin_input, ids_lks, size_lks, ids_max_depth_lks):
@@ -317,7 +820,7 @@ def initialize_gwflow_component(aquifer_input, aquifer_model_parameters):
         aquifer_model_parameters['Ksat'],
         aquifer_model_parameters['area_river'],
         aquifer_model_parameters['bc_head'],
-        method=0
+        method=0   #, region_domain = aquifer_input
     )
 
 
