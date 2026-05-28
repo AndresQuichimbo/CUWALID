@@ -6,7 +6,7 @@ Make sure MPI is available by loading the required module.
 
 ## Steps
 
-1. Navigate to the DRYP package directory:
+1. Navigate to the DRYP directory inside the CUWALID-tutorials package [CUWALID-tutorials GitHub Repository](https://github.com/AndresQuichimbo/CUWALID-tutorials/tree/main):
 
 ```bash
 cd /shared/home1/c.c23086054/CUWALID-tutorials/Examples/DRYP
