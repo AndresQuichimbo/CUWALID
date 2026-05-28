@@ -279,7 +279,7 @@ def infiltration_model(rainfall, K_sat, PSI_f, Droot, SORP0, L_0, Lsat, t_0, Ft0
  
 def SCHAAKE(P, ga_kdt, Lsat, L):
 	"""Schaake infiltration approach, Schaake et. al. (1996)
-
+	https://agupubs.onlinelibrary.wiley.com/doi/epdf/10.1029/95JD02892
 	Parameters
 	-----------
 	P:	Precipitation
@@ -355,7 +355,7 @@ def Philip(P, ks, Sp, F, t):
 def Upscaled_GA(P, ks, Sp, t, mu_Y, sigma_Y):
 	"""Upscaled Green & Ampt infiltration approach - Craig et. al. 2010
 	Required Gauss2p, epsilon, and getX
-
+	https://gwfnet.net/sites/ip3/download/publications/upscaledgreenamptcraigsoulis.pdf
 	Parameters
 	-----------
 	P: numpy array

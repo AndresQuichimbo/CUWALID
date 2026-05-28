@@ -130,9 +130,13 @@ The format of precipitation, evapotranspiration, vegetation, boundary conditions
 3. netCDF files, when monthly fiels are provided
 4. netCDF files, for DAILY netCDF files
 5. netCDF files, for ensamble netCDF files (only for STORM)
+6. netCDF files, for IMERG half-hourly files using date placeholders
+    (3B-HHR.MS.MRG.3IMERG.YYYYMMDD-Shhmm00-E042959.0240.V07B.HDF5.nc4)
 
 The time frequency of the of model should be in minutes as time units. 
 Note that it is not the time step of the model, it is only of the forcing dataset.
+For IMERG format (option 6), if forcing time step is shorter than the model
+time step, all files within the model step are read and aggregated.
 
 The model also accept datasets that are not in the model grid projection, or do not
 have the same grid size. For those cases, we can specified if each dataset requires
@@ -188,6 +192,50 @@ options.
             "savi_min": true,
             "savi_max": true
             }
+
+        Example JSON configuration for IMERG half-hourly precipitation
+        options.
+
+        Use the input file to define the precipitation file template:
+
+        .. parsed-literal::
+
+            "METEO": {
+                "path_pre": "/path/to/IMERG/3B-HHR.MS.MRG.3IMERG.YYYYMMDD-Shhmm00-E042959.0240.V07B.HDF5.nc4",
+                "path_pet": null,
+                "path_aof": null,
+                "path_lai": null,
+                "path_savi": null,
+                "path_kc": null
+            }
+
+        Use the settings file to activate IMERG format and 30 min forcing step:
+
+        .. parsed-literal::
+
+            "TIMESTEP_SETTINGS": {
+                "dt_of": 60,
+                "dt_uz": 60,
+                "dt_gw": 60
+            },
+            "READING": {
+                "data_reading": {
+                    "pre": 6
+                },
+                "data_step": {
+                    "pre": 30
+                },
+                "data_reproject": {
+                    "pre": true
+                },
+                "data_interp": {
+                    "pre": true
+                }
+            },
+
+        With this setup, DRYP reads one file every 30 minutes and aggregates two
+        files when the model time step is 60 minutes. Reprojection and interpolation
+        are then applied once to the aggregated field to reduce processing time.
     },
 
 
