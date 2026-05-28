@@ -186,6 +186,7 @@ class read_dataset_interp(object):
 			3 for MONTHLY netCDF files
 			4 for DAILY netCDF files
 			5 for ensamble netCDF files
+			6 for IMERG half-hourly netCDF files
 		reproject:	bool
 			True default values
 		interpolate: bool
@@ -231,7 +232,7 @@ class read_dataset_interp(object):
 		self.fill_value = 1
 		self.file_format = file_format
 		
-		if file_format > 5:
+		if file_format > 6:
 			print("Provide a valid data type to enable reading")
 			print("Use: 0 for csv files")
 			print("Use: 1 for netCDF files")
@@ -239,6 +240,7 @@ class read_dataset_interp(object):
 			print("Use: 3 for MONTHLY netCDF files")
 			print("Use: 4 for DAILY netCDF files")
 			print("Use: 5 for ensamble netCDF files")
+			print("Use: 6 for IMERG half-hourly netCDF files")
 			raise Exception("Change 'data_reading' options in settings file")
 			
 			
@@ -282,6 +284,13 @@ class read_dataset_interp(object):
 
 		self.noskip = noskip
 
+		# Cache IMERG metadata to avoid repeated per-file introspection.
+		self.imerg_varname = None
+		self.imerg_has_time_dim = False
+		self.imerg_template_da = None
+		self.imerg_cache_field = None
+		self.imerg_cache_template = None
+
 	#@profile
 	def get_one_step_dataset(self, j_step, fname_ds, field, time_field="time"):
 		"""
@@ -303,6 +312,121 @@ class read_dataset_interp(object):
 		
 		if self.file_format > 0:
 			if fname_ds is not None:
+				if self.file_format == 6:
+					if (self.imerg_cache_field != field) or (self.imerg_cache_template != fname_ds):
+						self.imerg_varname = None
+						self.imerg_has_time_dim = False
+						self.imerg_template_da = None
+						self.imerg_cache_field = field
+						self.imerg_cache_template = fname_ds
+
+					# Validate model and dataset time step compatibility.
+					if self.dt_ds <= 0:
+						raise Exception("Dataset time step should be greater than 0 minutes")
+					if self.dt_ds > self.dt:
+						raise Exception("For file_format 6, dataset time step should be <= model time step")
+
+					if self.dt_ds < self.dt:
+						if (self.dt % self.dt_ds) != 0:
+							raise Exception("For file_format 6, model time step should be a multiple of dataset time step")
+						n_substeps = int(self.dt/self.dt_ds)
+						dates_to_read = [idate_ds + timedelta(minutes=i*self.dt_ds) for i in range(n_substeps)]
+					else:
+						dates_to_read = [idate_ds]
+
+					fnames_to_read = []
+					for idate_file in dates_to_read:
+						fname_step = idate_file.strftime(fname_ds)
+						fname_step = fname_step.replace("YYYY", idate_file.strftime('%Y'))
+						fname_step = fname_step.replace("MM", idate_file.strftime('%m'))
+						fname_step = fname_step.replace("DD", idate_file.strftime('%d'))
+						fname_step = fname_step.replace("hh", idate_file.strftime('%H'))
+						#fname_step = fname_step.replace("HH", idate_file.strftime('%H'))
+						fname_step = fname_step.replace("mm", idate_file.strftime('%M'))
+						fnames_to_read.append(fname_step)
+
+					for fname_step in fnames_to_read:
+						if not os.path.exists(fname_step):
+							if self.noskip is False:
+								return None
+							raise Exception("Dataset file not found: " + str(fname_step))
+
+					# Read metadata once and reuse it for all following time steps.
+					if self.imerg_template_da is None:
+						ds_meta = xr.open_dataset(fnames_to_read[0])
+						try:
+							if 'latitude' in list(ds_meta.coords):
+								ds_meta = ds_meta.rename({'longitude':'lon', 'latitude':'lat'})
+							if 'X' in list(ds_meta.coords):
+								ds_meta = ds_meta.rename({'X':'lon', 'Y':'lat'})
+							if 'x' in list(ds_meta.coords):
+								ds_meta = ds_meta.rename({'x':'lon', 'y':'lat'})
+
+							if field in list(ds_meta.variables):
+								self.imerg_varname = field
+							elif (field == 'pre') and ('rain' in list(ds_meta.variables)):
+								self.imerg_varname = 'rain'
+							elif (field == 'pre') and ('precipitation' in list(ds_meta.variables)):
+								self.imerg_varname = 'precipitation'
+							else:
+								raise Exception("Field not found in dataset: " + str(field))
+
+							da_meta = ds_meta[self.imerg_varname]
+							self.imerg_has_time_dim = ('time' in list(da_meta.dims))
+							if self.imerg_has_time_dim:
+								da_meta = da_meta.isel(time=0)
+							self.imerg_template_da = da_meta
+						finally:
+							try:
+								ds_meta.close()
+							except:
+								a=1
+
+					data_sum = None
+					for fname_step in fnames_to_read:
+						ds_nc = Dataset(fname_step, 'r')
+						try:
+							var_nc = ds_nc.variables[self.imerg_varname]
+							if self.imerg_has_time_dim:
+								data_step = np.array(var_nc[0][:], dtype=float)
+							else:
+								data_step = np.array(var_nc[:], dtype=float)
+
+							if field == 'pre':
+								# Keep clipping at file level so accumulated totals remain consistent.
+								np.clip(data_step, 0.0, 200.0, out=data_step)
+						finally:
+							try:
+								ds_nc.close()
+							except:
+								a=1
+
+						if data_sum is None:
+							data_sum = data_step
+						else:
+							data_sum += data_step
+
+					if data_sum is None:
+						if self.noskip is False:
+							return None
+						raise Exception("No valid IMERG files found for time step")
+
+					da_agg = self.imerg_template_da.copy(data=data_sum)
+					ds_agg = da_agg.to_dataset(name=field)
+					
+					# raw IMERG dataset has lon, and lat dimensions,
+					# but dimention needed is lat, and lon, so we need to transpose it before reprojection and interpolation.
+					ds_agg = ds_agg.transpose('lat', 'lon')
+
+					# Expensive operations are done once per model step, after aggregation.
+					if self.reproject_ds is True:
+						ds_agg = reproject_dataset(ds_agg, self.proj, self.proj_model)
+
+					if self.interpolate_ds is True:
+						ds_agg = ds_agg.interp(lat=self.lat, lon=self.lon, method="linear")
+
+					return np.array(ds_agg.variables[field][:]).flatten()
+
 				# create zero array for precipitation
 				#data = np.zeros(env_state.grid_size)
 				#if (self.read_before_ds == 1):# or (self.file_format == 2):
