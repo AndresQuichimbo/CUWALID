@@ -68,7 +68,6 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
     # var_name = ['pre', 'pet', 'run', 'aet', 'inf', 'tht',
     #     'rch', 'egw', 'wte', 'gdh', 'twsc', 'chb', 'tls']
     # length_var = np.ones(len(var_name), dtype=int)
-    print(data_in.fnameTS_avg)
     total_var.save_csv_var(data_in.fnameTS_avg,  # var_name,
                            # length_var,
                            multi_files=False)
