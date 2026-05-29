@@ -656,8 +656,8 @@ def run_parDRYP(filename_input):
 
 		owned_nodes = global_nodes[core_mask]
 		global_node_owner[owned_nodes] = rank
-		filename = f"/shared/home1/c.c23086054/CUWALID/cuwalid/global_node_owner_rank_{rank}.csv"
-		np.savetxt(filename, global_node_owner, delimiter=",", fmt="%d")
+		# filename = f"/shared/home1/c.c23086054/CUWALID/cuwalid/global_node_owner_rank_{rank}.csv"
+		# np.savetxt(filename, global_node_owner, delimiter=",", fmt="%d")
 
 		################################################################################
 		

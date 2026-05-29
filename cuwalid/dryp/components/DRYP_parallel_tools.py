@@ -494,7 +494,7 @@ def extract_basin_parameters_halo(basin_id, catchment_mask, world_parameter_arra
     basin_region_mask, row_min, row_max, col_min, col_max = _get_basin_region(
         basin_id, catchment_mask)
     catchment_mask_plus_basin_halo = catchment_mask.copy()
-    np.savetxt("/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/basin_region_mask_"+str(basin_id)+".csv", basin_region_mask, fmt="%s", delimiter=",")
+    # np.savetxt("/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/basin_region_mask_"+str(basin_id)+".csv", basin_region_mask, fmt="%s", delimiter=",")
 
     # Expand bounding box with halo, without going out of global matrix
     row_min_h = max(0, row_min - halo)
@@ -552,7 +552,7 @@ def extract_basin_data_with_halo2(basin_id, domains, grid_metadata, rank, halo=1
     # Get the bounding box of the basin
     basin_mask, row_min, row_max, col_min, col_max = _get_basin_region(basin_id, domains)
     # print("basin_mask: ",basin_mask)
-    np.savetxt("/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/basin_mask_"+str(rank)+".csv", basin_mask, fmt="%s", delimiter=",")
+    # np.savetxt("/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/basin_mask_"+str(rank)+".csv", basin_mask, fmt="%s", delimiter=",")
  
  
  
@@ -566,14 +566,14 @@ def extract_basin_data_with_halo2(basin_id, domains, grid_metadata, rank, halo=1
     bounds = np.array([[row_min, row_max, col_min, col_max, row_min_h, row_max_h, col_min_h, col_max_h,
                         grid_metadata['xllcorner'], grid_metadata['yllcorner']]])
  
-    np.savetxt(
-        f"/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/bounds_{rank}.csv",
-        bounds,
-        fmt="%d",
-        delimiter=",",
-        header="row_min,row_max,col_min,col_max,row_min_h,row_max_h,col_min_h,col_max_h,xllcorner,yllcorner",
-        comments=""
-    )
+    # np.savetxt(
+    #     f"/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/bounds_{rank}.csv",
+    #     bounds,
+    #     fmt="%d",
+    #     delimiter=",",
+    #     header="row_min,row_max,col_min,col_max,row_min_h,row_max_h,col_min_h,col_max_h,xllcorner,yllcorner",
+    #     comments=""
+    # )
  
     nrows = row_max_h - row_min_h + 1
     ncols = col_max_h - col_min_h + 1
