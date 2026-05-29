@@ -12,7 +12,7 @@ class gwflow_EFD(object):
 	using a highly efficient Vectorized Explicit Finite Difference Method (FDM).
 	"""
 
-	def __init__(self, grid, Ksat, area_river, bc, method=0, region_domain = None):
+	def __init__(self, grid, Ksat, area_river, bc, method=0):
 		"""Initialize the groundwater flow solver.
 		Args:
 			grid (object): Grid object containing spatial discretization.
@@ -55,72 +55,14 @@ class gwflow_EFD(object):
 		#print("Constant Head Boundary Values:", self.bc)
 		#print("Initial Head:", c)
 		# get active nodes array
-
+		# create provisional domain for active nodes
 		inodetype = np.zeros(grid['N_cells'])
 		inodetype[grid['core_nodes']] = 1  # mark active nodes
 		if self.id_CHB is not None:
 			inodetype[self.id_CHB] = 2  # mark constant head boundary nodes
 		
 		self.act_nodes = inodetype
-
-		inactive_links, _ = _compute_inactive_links(grid, inodetype)
-		# create provisional domain for active nodes
-		# inodetype = np.zeros(grid['N_cells'])
-		# #######################
-		# if region_domain is not None:
-		# 	mask = region_domain['mask'].flatten()   # core + halo
-		# else:
-		# 	mask = np.zeros(grid['N_cells'], dtype=bool)
-		# 	mask[grid['core_nodes']] = True
-
-		# Active nodes (safe, explicit, no encoding)
-		# self.act_nodes = np.where(mask)[0]
-		# print("self.act_nodes: np.where(mask)[0]: ",self.act_nodes)
-
-		# --- Optional: store core nodes separately ---
-		# --- Build mask ---
-		# if region_domain is not None:
-		# 	mask = region_domain['mask'].flatten()   # core + halo
-		# else:
-		# 	mask = np.zeros(grid['N_cells'], dtype=bool)
-		# 	mask[grid['core_nodes']] = True
-
-		# # --- Active nodes (indices) ---
-		# self.act_nodes = np.where(mask)[0]
-
-		# # --- Node type (for physics) ---
-		# self.inodetype = np.zeros(grid['N_cells'])
-
-		# # Active cells = 1
-		# self.inodetype[mask] = 1
-
-		# # Constant head boundaries = 2
-		# if self.id_CHB is not None:
-		# 	self.inodetype[self.id_CHB] = 2
-		# if region_domain is not None:
-		# 	print('gwFlow region_domain is not None')
-		# 	self.core_nodes = np.where(region_domain['core_mask'].flatten())[0]
-		# else:
-		# 	print('gwFlow region_domain is None')
-		# 	self.core_nodes = grid['core_nodes']
-		# # if region_domain ==None:
-		# # 	inodetype[grid['core_nodes']] = 1  # mark active nodes
-		# # #######################
-		# # else:
-		# # 	core = region_domain['core_mask'].flatten()
-		# # 	grid['core_nodes'] = np.where(core)[0]
-		# # 	halo = region_domain['mask'].flatten() & ~core
-
-		# # 	inodetype[core] = 1       # active
-		# # 	inodetype[halo] = 1       # ALSO active (important!)
-
-		# if self.id_CHB is not None:
-		# 	inodetype[self.id_CHB] = 2  # mark constant head boundary nodes
-		
-		# self.act_nodes = inodetype
-		# print('self.act_nodes after inodetype: ', self.act_nodes)
-		# # print('np.where(self.act_nodes > 0)[0]: ',np.where(self.act_nodes > 0)[0])
-		# #print(inodetype.reshape((grid['N_y'], grid['N_x'])))
+		#print(inodetype.reshape((grid['N_y'], grid['N_x'])))
 		# get inactive links from grid object
 		inactive_links, _ = _compute_inactive_links(grid, inodetype)
 		
@@ -200,6 +142,8 @@ class gwflow_EFD(object):
 		"""
 		# get number of cells
 		N_cells = grid['N_cells']
+		areas = grid['Areas']
+		inv_areas = 1.0/areas
 
 		# Array lookups for connections
 		I = grid['I']
@@ -208,10 +152,14 @@ class gwflow_EFD(object):
 		# create dynamic surface elevation to handle lakes
 		surface_i = surface.copy()
 
-		# print("self.act_nodes: ", self.act_nodes)
 		# number of active nodes
 		act_nodes = np.where(self.act_nodes > 0)[0]
-		# act_nodes = self.act_nodes
+		n_act_nodes = len(act_nodes)
+		Ksat_act = self.Ksat[act_nodes]
+		Sy_act = Sy[act_nodes]
+		thickness_act = thickness[act_nodes]
+		dx_act = grid['Dx_cell'][act_nodes]
+		recharge_over_dt = recharge/dt
 
 		# initialize discharge
 		discharge = np.zeros_like(surface, dtype=float)
@@ -224,26 +172,11 @@ class gwflow_EFD(object):
 		#print('Initial Head', len(bottom), len(surface), len(head), len(thickness))
 		# initialize saturated thinckess
 		thickness_sat = np.array(thickness, dtype=float)
-		# print("N_cells:", len(head))
-		# print("act_nodes: ",act_nodes)
-		# print("act_nodes.size: ",act_nodes.size)
-		# print("max act_nodes:", np.max(act_nodes))
-		# if act_nodes.size > 0:
-		# 	print("max act_nodes:", np.max(act_nodes))
-		# else:
-		# 	print("WARNING: no active groundwater nodes in this region")
-		# 	print("act_nodes: ",act_nodes)
-		# 	print("act_nodes.size: ",act_nodes.size)
-		# 	print("max act_nodes:", np.max(act_nodes))
-			
-		
-		thickness_sat[act_nodes] = update_saturated_thickness(
-									head[act_nodes],
+		thickness_sat[act_nodes] = update_saturated_thickness(head[act_nodes],
 									bottom[act_nodes], surface[act_nodes],
 									thickness_sat[act_nodes], inodetype[act_nodes],
 									method=self.method
 									)
-		# print('aft update_saturated_thickness')
 		#print('thickness', thickness_sat[act_nodes])
 		# change in total storage at the end of the time step
 		total_storage_change = 0.0
@@ -259,34 +192,64 @@ class gwflow_EFD(object):
 			Sy_for_update[self.id_CHB] = np.inf # Effectively sets update term to zero
 		else:
 			Sy_for_update = Sy
+
+		surface_act32 = np.asarray(surface[act_nodes], dtype=np.float32)
+		bathymetry_act32 = np.asarray(bathymetry[act_nodes], dtype=np.float32)
+		bathy_minus_droot_act32 = np.asarray(
+			bathymetry[act_nodes] - Droot[act_nodes], dtype=np.float32
+		)
+		ones_act32 = np.ones(n_act_nodes, np.float32)
+		zeros_act32 = np.zeros(n_act_nodes, np.float32)
+		theta_sat_act32 = np.asarray(theta_sat[act_nodes], np.float32)
+		theta_fc_act32 = np.asarray(theta_fc[act_nodes], np.float32)
+		theta_dt_act32 = np.asarray(theta_dt[act_nodes], np.float32)
+		Sy_for_update_act32 = np.asarray(Sy_for_update[act_nodes], np.float32)
+
+		has_river = len(riv_nodes) > 0
+		if has_river:
+			riv_nodes = np.asarray(riv_nodes)
+			riv_elevation_nodes = riv_elevation[riv_nodes]
+			riv_area = areas[riv_nodes]
+			riv_sy = Sy[riv_nodes]
+			riv_storage = riv_area*riv_sy
+			riv_kaq = self.kaq[riv_nodes]
+			if np.ndim(conductivity) == 0:
+				riv_cond = conductivity
+			else:
+				riv_cond = conductivity[riv_nodes]
+
+		has_lakes = ids_lks is not None
+		if has_lakes:
+			lks_reduce_idx = np.append([0], np.cumsum(sizes_lks)[:-1])
 		#print("Initial Head:", head.reshape((grid['N_y'], grid['N_x'])))
 		## Calculate the per-cell update factor (dt / (Sy * Area))
 		#Update_Factor = dt / (Sy_for_update * grid['Areas'])
 		#print("BC Head:", head[act_nodes])
 		
 		# calculate maximum allowable time step based on Courant condition
-		dts = get_maximim_time_step(self.Ksat[act_nodes], Sy[act_nodes],
-							  thickness[act_nodes], grid['Dx_cell'][act_nodes])
+		dts = get_maximim_time_step(Ksat_act, Sy_act, thickness_act, dx_act)
 		# Calculate minimal time step		
 		dtp = np.nanmin([dt, dts])		
 		dtsp = dtp
-
 		# inner iteration counter
 		inner_iter = 0
 
 		while dtp <= dt:
 			# adjusting heads at the bottom of the model domain
 			# WARNING! this could lead to increases in mass balance errors
-			head = np.minimum(surface, head)
-			
+			np.minimum(surface, head, out=head)
 			# calculate aquifer saturated thickness at nodes
 			# for models with exponential function assign effective depth
 			# skip this for first iiteration
 			if inner_iter > 0:
-				thickness_sat[act_nodes] = update_saturated_thickness(head,
-											bottom, surface, thickness,
-											inodetype, method=self.method
-											)
+				thickness_sat[act_nodes] = update_saturated_thickness(
+					head[act_nodes],
+					bottom[act_nodes],
+					surface[act_nodes],
+					thickness[act_nodes],
+					inodetype[act_nodes],
+					method=self.method
+				)
 
 				if self.id_CHB is not None:
 				#self.ch_boundaries = bc[self.id_CHB]
@@ -304,7 +267,7 @@ class gwflow_EFD(object):
 			thickness_interface = 0.5 * (thickness_sat_i + thickness_sat_j)
 			
 			# Handle lakes at lake nodes			
-			if ids_lks is not None:
+			if has_lakes:
 				z_lks = np.repeat(head[ids_max_depth_lks], sizes_lks)
 
 				# Check if head is above the bottom elevation of the lakes
@@ -321,40 +284,44 @@ class gwflow_EFD(object):
 			Net_Flux = np.bincount(I, weights=Q_flow_i_to_j, minlength=N_cells)
 	
 			# Net flux into cell I = Inflow - Outflow [depth/time]
-			Net_Flux = -Net_Flux/grid['Areas']
+			Net_Flux = -Net_Flux*inv_areas
 
 			if self.id_CHB is not None:
 				self.flux_at_CHB = Net_Flux[self.id_CHB].sum()
 			
-			Net_Flux += recharge/dt
-
+			Net_Flux += recharge_over_dt
 
 			#print("Head before river interaction:", head[act_nodes])
 			# add river component
-			if len(riv_nodes) > 0:
-				# Calculate channel cell conductivity
-				hriv = np.minimum(head[riv_nodes],
-					riv_elevation[riv_nodes]+stage[riv_nodes])
+			if has_river:
+				riv_stage = riv_elevation_nodes + stage[riv_nodes]
 
-				# Calculate head difference between aquifer and river stage
-				head_diff = head[riv_nodes] - hriv
-				head_diff[head_diff < 0] = 0
-							
-				# Calculate river cell flux [m3 h-1]
-				qs_riv = np.zeros_like(riv_nodes, dtype=float)
-				qs_riv = (conductivity[riv_nodes]*head_diff)
-				#print(len(riv_nodes), 'qs_riv', len(qs_riv))
+				# Equivalent to head - min(head, river_stage), but avoids an extra temporary array.
+				head_diff = head[riv_nodes] - riv_stage
+				np.maximum(head_diff, 0.0, out=head_diff)
+
+				# New implementation of river-aquifer interaction using conductance and head difference
+				# and a threshold to avoid numerical instability when conductivity is high.
+				with np.errstate(divide='ignore', invalid='ignore'):
+					aux = np.log(head_diff) - riv_cond*dt/riv_storage
+				head_diff -= np.where(aux > 0.0, np.exp(aux), 0.0)
+				qs_riv = head_diff*riv_storage
+				
+				# Calculate river cell flux [m3 h-1] (This section has been removed)
+				#qs_riv = np.zeros_like(riv_nodes, dtype=float)
+				#qs_riv = (conductivity[riv_nodes]*head_diff)
+				
 				# add river out/inflow to the mass balance [depth/time]
 				# change river flow units m3 -> m
 				#print('Net_Flux before riv', Net_Flux, len(Net_Flux))
 				#print('riv_nodes', riv_nodes, len(riv_nodes))
-				Net_Flux[riv_nodes] += -self.kaq[riv_nodes]*qs_riv
+				Net_Flux[riv_nodes] -= riv_kaq*qs_riv
 
 			
 			# 3. REGULARIZATION APPROACH **************************
 			# calculate regularization for aquifer cells
 			# check if lakes are active
-			if ids_lks is not None:
+			if has_lakes:
 				surface_i[ids_lks] = z_lks
 
 			# calculate regularization for aquifer cells
@@ -362,7 +329,7 @@ class gwflow_EFD(object):
 				thickness[act_nodes], Net_Flux[act_nodes], REG_FACTOR)
 		
 			# 4. handle lakes at lake nodes
-			if ids_lks is not None:
+			if has_lakes:
 				# create a mask of wet cell lakes
 				wet_msk_lks = np.where(head[ids_lks] >= bathymetry[ids_lks], 1, 0)
 				# Calculate anomaly in water table depth at lake nodes
@@ -371,9 +338,9 @@ class gwflow_EFD(object):
 				dh_lks = dh_lks*wet_msk_lks
 				# redistribute the water table depth anomaly to the links at lake nodes
 				# calculate the sum of water table depth anomaly at lake nodes
-				sum_dh_lks = np.add.reduceat(dh_lks, np.append([0], np.cumsum(sizes_lks)[:-1]))
+				sum_dh_lks = np.add.reduceat(dh_lks, lks_reduce_idx)
 				# count the number of wet cells in each lake
-				sum_wet_lks = np.add.reduceat(wet_msk_lks, np.append([0], np.cumsum(sizes_lks)[:-1]))
+				sum_wet_lks = np.add.reduceat(wet_msk_lks, lks_reduce_idx)
 				# calculate the average water table depth anomaly at lake nodes
 				avg_dh_lks = np.divide(sum_dh_lks, sum_wet_lks,
 							out=np.zeros_like(sum_dh_lks),
@@ -403,20 +370,23 @@ class gwflow_EFD(object):
 			# Update storage change for soil-gw interactions
 			# run FORTRAN connector
 			# create an auxiliary variable to interact with fortran
-			aux_head = np.array(head[act_nodes], np.float32)
+			aux_head = np.asarray(head[act_nodes], np.float32)
+			water_storage_change_act32 = np.asarray(
+				water_storage_change[act_nodes], np.float32
+			)
 			#print('Before update soil', aux_head)
 			lakes.uz_sz_interaction.update_soil(
-				np.array(surface[act_nodes], np.float32),# surface elev
-				np.array(bathymetry[act_nodes], np.float32),# bottom elev. upper layer
-				np.array(bathymetry[act_nodes]-Droot[act_nodes], np.float32), # bottom elev. lower layer
-				np.ones(len(act_nodes), np.float32),# specifiy yield upper layer (always 1 for lakes)
-				np.zeros(len(act_nodes), np.float32), # field capacity (always zero for lakes)
-				np.zeros(len(act_nodes), np.float32),# water content (alwas zero for lakes)
-				np.array(theta_sat[act_nodes], np.float32),#tht_sat
-				np.array(theta_fc[act_nodes], np.float32),#tht_fc
-				np.array(theta_dt[act_nodes], np.float32),#tht_dt
-				np.array(water_storage_change[act_nodes], np.float32),#dS
-				np.array(Sy_for_update[act_nodes], np.float32),#Sy
+				surface_act32,# surface elev
+				bathymetry_act32,# bottom elev. upper layer
+				bathy_minus_droot_act32, # bottom elev. lower layer
+				ones_act32,# specifiy yield upper layer (always 1 for lakes)
+				zeros_act32, # field capacity (always zero for lakes)
+				zeros_act32,# water content (alwas zero for lakes)
+				theta_sat_act32,#tht_sat
+				theta_fc_act32,#tht_fc
+				theta_dt_act32,#tht_dt
+				water_storage_change_act32,#dS
+				Sy_for_update_act32,#Sy
 				aux_head
 				)
 
@@ -424,8 +394,8 @@ class gwflow_EFD(object):
 			head[act_nodes] = aux_head
 			#rint('Updated Head', head[act_nodes])
 			# accumulate discharge
-			if len(riv_nodes) > 0:
-				discharge[riv_nodes] += qs_riv*self.kaq[riv_nodes]*dtsp
+			if has_river:
+				discharge[riv_nodes] += qs_riv*riv_kaq*dtsp
 
 			discharge[act_nodes] += dqs[act_nodes]*dtsp
 
@@ -434,15 +404,14 @@ class gwflow_EFD(object):
 				head[self.id_CHB] = self.bc
 			#print("Updated Head:", head.reshape((grid['N_y'], grid['N_x'])))
 			# Physical constraint: Head cannot be negative
-			head = np.maximum(head, 0.0)
+			np.maximum(head, 0.0, out=head)
 			
 			# adjusting head at the surface of the model domain
 			# WARNING! this could lead to increases in mass balance errors
-			head = np.minimum(surface, head)
+			np.minimum(surface, head, out=head)
 
 			# calculate new time step based on Courant condition
-			dtsp = get_maximim_time_step(self.Ksat[act_nodes], Sy[act_nodes],
-				thickness_sat[act_nodes], grid['Dx_cell'][act_nodes])
+			dtsp = get_maximim_time_step(Ksat_act, Sy_act, thickness_sat[act_nodes], dx_act)
 			
 			# Update time step
 			if dtsp <= 0:
@@ -459,7 +428,7 @@ class gwflow_EFD(object):
 			inner_iter += 1
 
 		# calculate discharge at the end of the time step
-		self.flux_at_CHB = self.flux_at_CHB/len(act_nodes)
+		self.flux_at_CHB = self.flux_at_CHB/n_act_nodes
 		# check calculate water balance of the groundwater component
 		#print(np.mean(recharge[act_nodes]), np.mean(discharge[act_nodes]),
 		#		np.mean(total_storage_change), self.flux_at_CHB)
@@ -469,10 +438,11 @@ class gwflow_EFD(object):
 			#print(MB)
 			assert np.allclose(MB, 0.0, rtol=1e-05, atol=1e-04)
 		except:
-			raise Exception(MB,'Groundwater Water balance Error: '
-		   		'Please check units and non-data values')
+			raise Exception('Groundwater Water balance Error: ', MB,
+		   		'Please check units and non-data values: ', 
+				np.where(np.isnan(recharge[act_nodes]) | np.isinf(recharge[act_nodes])),
+				' Check time step: dt = ', dtsp)
 
-		# print('before return head, discharge')
 		return head, discharge
 	
 # --- 2. PRE-CALCULATION OF STATIC CONDUCTANCE ---
@@ -564,25 +534,21 @@ def update_saturated_thickness(head, bottom, surface,
     """
 	# For method==0, tha saturated thickenss is constant
 	if method == 0:
-		# print('method 0')
 		# Saturated thickness become zero when head is below bottom
 		thickness_aux = head - bottom
 		thickness[thickness_aux < 0] = 0.0
 	
 	elif method == 1:
 		# Saturated thickness for unconfined conditions
-		# print('method 1')
 		thickness = head - bottom
 	elif method == 2:
 		# Saturated thickness for exponential dacay function
-		# print('method 2')
 		thickness = exponential(thickness,
 					surface-thickness,
 					head)
 	elif method == 3:
 		# saturated thickness for multiaquifer conditions
 		# update thikness for aquifers with linear transmissinity
-		# print('method 3')
 		idnodes = np.where(inodetype == 1)
 		thickness[idnodes] = head[idnodes] - bottom[idnodes]
 		# updates thickness of aquiferes with exponential transmissivity
@@ -593,7 +559,7 @@ def update_saturated_thickness(head, bottom, surface,
 		
 	# check that that saturated thickness is not negative
 	thickness[thickness < 0] = 0.0 
-	# print('returning thickness')
+
 	return thickness
 
 def time_step_confined(D, Sy, T, dx):
