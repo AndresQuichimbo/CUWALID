@@ -40,7 +40,7 @@ check_miniconda
 # Create Conda environments
 conda create -y -n $ENV
 conda create -y -n $ENJ
-conda create -y -n $SPY
+#conda create -y -n $SPY
 
 # Move into cuwalid environment and install packages
 conda activate $ENV
