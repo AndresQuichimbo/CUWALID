@@ -15,7 +15,7 @@ from landlab.components import FlowDirectorD8
 from landlab.core.utils import as_id_array
 from scipy.ndimage import label
 
-def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda, path_out=None, name_out=None):
+def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda):
 	"""Calculate soil water content at field capacity and available water content
 	
 	Parameters:
@@ -26,11 +26,6 @@ def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda, path_
 		raster filename of air entry pressure
 	fname_lambda : str
 		raster file name of soil particle distribution
-	path_out : str
-		directory path to save the output raster files
-	name_out : str
-		prefix for the output raster file names
-
 
 	Returns:
 	--------
@@ -58,22 +53,19 @@ def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda, path_
 		porosity, psi, lambdas, psi_fc=336.506, psi_wp=15295.743)
 
 	# create files names
-	if path_out is None:
-		path_out = os.path.dirname(fname_porosity)
-	if name_out is None:
-		name_out = ""
-	fname_fc = os.path.join(path_out, f"{name_out}field_capacity.asc")
-	fname_wp = os.path.join(path_out, f"{name_out}wilting_point.asc")
-	fname_awc = os.path.join(path_out, f"{name_out}available_water_content.asc")
-	
+	fname_fc = ""
+	fname_wp = ""
+	fname_awc = ""
+
 	# save soil properties as raster files
 	save_raster(fname_fc, field_capacity, profile, transform)
 	save_raster(fname_wp, wilting_point, profile, transform)
 	save_raster(fname_awc, available_water_content, profile, transform)
-	print(f"Raster files saved: \n{fname_fc},\n{fname_wp},\n{fname_awc}")
 
-def create_raster_flowdirection_dryp(fname, fname_out=None, translate=True, format_data="D8"):
-	"""Create raster file from a raster D8 flow direction map
+def create_raster_flowdirection_dryp(fname, fname_out, translate=True, format_data="D8"):
+	"""Create raster DRYP flow direction from a DEM or file from a raster D8 flow direction map.
+	if a flow direction is provided, the function will translate it to landlab format, if not,
+	the function will calculate the flow direction from the DEM and save it as raster file.
 	
 	Parameters:
 	-----------
@@ -119,52 +111,46 @@ def create_raster_flowdirection_dryp(fname, fname_out=None, translate=True, form
 	flowdird8, profile, transform = open_raster(fname) 
 	
 	if translate is True:
-		## save data tuype
-		#dtype = flowdird8.dtype
-
 		# calculate flow direction
 		flowdir = transform_flowdirection_d8_to_landlab_array(
 			flowdird8, format_data=format_data)
 
-		## assign data type
-		#flowdir = np.array(flowdir, dtype=dtype)
-
-		# save soil properties as raster files
+		# Update profile to use int32 for output data type
+		# (cell indices can range from 0 to millions, not 0-255 as in uint8 input)
+		profile = profile.copy()
+		profile['dtype'] = 'int32'
 	else:
-			# get array shape
-			shape = np.shape(flowdird8)
-
-			# create grid
-			domain = rasterio.open(fname)
-			# create a raster grid environment, landlab grid
-			grid = RasterModelGrid(
-					(domain.height, domain.width),
-					xy_spacing=domain.transform[0],
-					xy_of_lower_left=(domain.bounds[0], domain.bounds[1]),
-					xy_of_reference=(0.0, 0.0),
-					)
-			
-			grid.add_field("aux_grid",
-				  np.array(np.flip(flowdird8, 0), dtype=float),#.flatten(),
-				  at="node")
-			
-			# calculate flow rirection
-			fd = FlowDirectorD8(grid, 'aux_grid')
-			fd.run_one_step()
+		# get array shape
+		shape = np.shape(flowdird8)
+		# create grid
+		domain = rasterio.open(fname)
+		# create a raster grid environment, landlab grid
+		grid = RasterModelGrid(
+				(domain.height, domain.width),
+				xy_spacing=domain.transform[0],
+				xy_of_lower_left=(domain.bounds[0], domain.bounds[1]),
+				xy_of_reference=(0.0, 0.0),
+				)
 		
-			# 2. Creates drainage networks, flowpaths and id arrays
-			# a value of 1 must be added to change from python to forttran
-			flowdir = as_id_array(grid["node"]["flow__receiver_node"])
-			
-			# reshape array to save as raster
-			flowdir = flowdir.reshape(shape)
-			
-			# flip raster in order to make aggree with landlab
-			flowdir = np.flip(flowdir, 0)
-	if fname_out is not None:
-		save_raster(fname_out, flowdir, profile, transform)
-	else:
-		return flowdir
+		grid.add_field("aux_grid",
+			  np.array(np.flip(flowdird8, 0), dtype=float),#.flatten(),
+			  at="node")
+		
+		# calculate flow rirection
+		fd = FlowDirectorD8(grid, 'aux_grid')
+		fd.run_one_step()
+	
+		# 2. Creates drainage networks, flowpaths and id arrays
+		# a value of 1 must be added to change from python to forttran
+		flowdir = as_id_array(grid["node"]["flow__receiver_node"])
+		
+		# reshape array to save as raster
+		flowdir = flowdir.reshape(shape)
+		
+		# flip raster in order to make aggree with landlab
+		flowdir = np.flip(flowdir, 0)
+
+	save_raster(fname_out, flowdir, profile, transform)
 	
 def create_raster_river_network(fname, threshold, fname_out,
 								cell_area=False, fill_value=None):
@@ -333,8 +319,7 @@ def create_raster_from_shapefile(fname_shp, fname_raster, fname_out):
 
 	Example
 	-------
-	
-	>>> from cuwalid.tools.DRYP_rrtools import create_raster_from_shapefile
+
 	>>> shapefile_path = 'test.shp'
 	>>> fname_raster = "test.asc"
 	>>> fname_out = "mask.asc"
@@ -1051,6 +1036,9 @@ def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
 	# get array shape
 	shape = np.shape(flowdir)
 
+	# ensure that flowdir is a numpy array
+	flowdir = np.array(flowdir, dtype=int)
+
 	# flip raster in order to make aggree with landlab
 	flowdir = np.flip(flowdir, 0)
 
@@ -1064,7 +1052,7 @@ def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
 	ids=np.arange(len(fdg), dtype=int)
 	
 	# find the number of columns
-	ncols=flowdir.shape[1]
+	ncols=shape[1]
 	
 	# create an array of D* direction codes
 	if format_data == "D8":
@@ -1076,12 +1064,12 @@ def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
 	elif format_data == "AGNPS":
 		dir_code=[3, 2, 1, 8, 7, 6, 5, 4]
 	else:
-		format_data = "No Format"
 		dir_code=np.arange(1,9)
 	
 	# create list of idnodes for each D8 code
 	loc=[1, ncols+1, ncols, ncols-1, -1, -ncols-1, -ncols, -ncols+1]
 	print(f"Transforming flow direction from ",format_data, " format to DRYP landlab format")
+	
 	# replace D8 codes with landlab codes
 	for idir_code, iloc in zip(dir_code, loc):
 		dirnodes[np.where(fdg==idir_code)]=ids[np.where(fdg==idir_code)]+iloc
@@ -1090,7 +1078,7 @@ def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
 	# make nodes at edges sink points
 	
 	# create id grid
-	nodes = np.arange(len(fdg), dtype=int).reshape(flowdir.shape)
+	nodes = np.arange(len(fdg), dtype=int).reshape(shape)
 	
 	idnodes = nodes[0,:] # at the top
 	dirnodes[idnodes] = idnodes 
