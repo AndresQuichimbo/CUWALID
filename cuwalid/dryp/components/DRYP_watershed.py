@@ -20,6 +20,48 @@ import rasterio
 from cuwalid.dryp.components.DRYP_flow_accum import watershed
 from cuwalid.tools.DRYP_rrtools import transform_flowdirection_d8_to_landlab_array
 
+
+def _load_raster_or_netcdf_array(fname, field=None, flatten=True):
+	"""Load a raster or NetCDF file as a numpy array.
+
+	NetCDF inputs are handled through xarray and raster inputs through
+	`read_raster`. If a NetCDF file has a time dimension, the first time slice
+	is used by default.
+	"""
+	if fname is None:
+		raise ValueError("fname must not be None")
+
+	fname_lower = fname.lower()
+	if fname_lower.endswith((".nc", ".nc4", ".cdf")):
+		ds = xr.open_dataset(fname)
+		try:
+			if field is not None and field in ds.variables:
+				data = ds[field]
+			elif field is not None:
+				# Fall back to the first data variable when the requested field is absent.
+				data_var_names = list(ds.data_vars)
+				if not data_var_names:
+					raise KeyError("NetCDF file does not contain data variables")
+				data = ds[data_var_names[0]]
+			else:
+				data_var_names = list(ds.data_vars)
+				if not data_var_names:
+					raise KeyError("NetCDF file does not contain data variables")
+				data = ds[data_var_names[0]]
+
+			if "time" in data.dims:
+				data = data.isel(time=0)
+
+			array = np.asarray(data.values)
+		finally:
+			ds.close()
+	else:
+		array = read_raster(fname, flatten=False)
+
+	if flatten:
+		return np.asarray(array).reshape(-1)
+	return np.asarray(array)
+
 def get_flow_path(fname_surface, fname_outlet, fname_out=None,
 						fname_flowDir=None, fname_mask=None,
 						accum=True, flowdir_format='DRYP'):
@@ -161,7 +203,8 @@ def get_flow_path(fname_surface, fname_outlet, fname_out=None,
 			fname_out + '_flowpath.asc')
 
 def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=None,
-						fname_flowDir=None, fname_mask=None, field=None, flowdir_format='DRYP'):
+						fname_flowDir=None, fname_mask=None, field=None, flowdir_format='DRYP',
+						dtype='float32', Volume=False):
 	"""This function calculates the flow accumulation map.
 	It requires a flow direction map and an the flow unit rate map.
 	If the flow unit rate map is not provided, the function will
@@ -175,7 +218,7 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 	fname_surface: str
 		file name of the elevation raster map
 	fname_flow_unit_rate : str
-		file name of the flow unit rate raster map
+		file name of the flow unit rate raster map, or netcdf file containing the flow unit rate variable (field)
 	fname_flowDir : str
 		(optional) filename of the flow direction raster map
 	fname_mask : str
@@ -186,6 +229,9 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 		(optional) field name of the flow unit rate in case the flow unit rate file is a netcdf file
 	flowdir_format: str
 		(optional) value that specify the flow direction format (D8, LDD, GRASS, AGNPS, landlab, DRYP)
+	dtype: data type of the output raster file (default: np.float32)
+	Volume: bool
+		(optional) if True, the flow accumulation map will be calculated in terms of volume
 
 	Returns
 	-------
@@ -223,7 +269,10 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 	#grid_shape = (domain.height, domain.width)
 	grid_size = (domain.height*domain.width)
 	#grid_size = int(domain.nrows*domain.ncols)
-	area_cell = np.power(domain.transform[0], 2)
+	if Volume is True:
+		area_cell = np.power(domain.transform[0], 2)
+	else:
+		area_cell = 1.0
 
 	# read mask
 	mask = None
@@ -253,22 +302,13 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 	# read flow unit rate
 	if fname_flow_unit_rate is not None:
 		try:
-			flow_unit_rate = xr.open_dataset(fname_flow_unit_rate)
-			try:
-				flow_unit_rate = flow_unit_rate[field].values.flatten()
-			except:
-				print('Field not found. unit values used instead')
-				flow_unit_rate = flow_unit_rate.values.flatten()
-			#flow_unit_rate = np.flip(flow_unit_rate, 0)
-
-		except:
-			try:
-				flow_unit_rate = read_raster(fname_flow_unit_rate)
-			except:
-				print('Flow unit rate file not found. unit values used instead')
-				#flow_unit_rate = read_raster(fname_flow_unit_rate)
-				flow_unit_rate = np.ones_like(surface)
+			flow_unit_rate = _load_raster_or_netcdf_array(fname_flow_unit_rate, field=field, flatten=True)
+		except Exception as exc:
+			print(f'Flow unit rate file not found or unreadable ({fname_flow_unit_rate}). unit values used instead')
+			print(exc)
+			flow_unit_rate = np.ones_like(surface)
 	else:
+		print('Flow unit rate file not found. unit values used instead')
 		flow_unit_rate = np.ones_like(surface)
 
 	# runoff component to generate the flow accumulation map
@@ -284,15 +324,24 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 						np.ones_like(surface)*1e5,
 						None)
 	
+	# get raster file properties
+	_, profile, transform = open_raster(fname_surface)
+
+	# update profile for output raster
+	profile = profile.copy()
+	if dtype is not None:
+		profile['dtype'] = dtype
+	
 	# save files
 	if fname_out is None:
 		fname_out = fname_surface.split('.')[0]
 		fname_out = fname_out + '_var_flowaccum.asc'
 
 	# Save contributing area as raster file
-	save_map_to_rastergrid(grid, ro.discharge,
-			fname_out)
+	save_raster(fname_out, np.flip(ro.discharge.reshape((domain.height,domain.width)), 0),
+			 profile, transform)
 	
+	print(f"Flow accumulation map saved:\n{fname_out}")
 
 def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 						fname_flowDir=None, fname_mask=None, save_files=True, flowdir_format='DRYP'):
