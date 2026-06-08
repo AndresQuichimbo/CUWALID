@@ -483,7 +483,8 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 		return df, ro.discharge[idnodes]
 
 def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
-					  fname_flowDir=None, fname_mask=None, raster=False, flowdir_format='DRYP'):
+					  fname_flowDir=None, fname_mask=None, frmt_outlet_raster=False,
+					  flowdir_format='DRYP', burn=False, burn_value=1, ids_field_name=None, save_files=True):
 	"""Function to delineate a basin assuming an outlet
 	point is provided. This function requires a flow direction map
 	but if not provided the flow direction will be created
@@ -491,23 +492,36 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 	Parameters
 	----------
 	fname_surface: str
-		file name of the elevation raster map
+		file name of the elevation raster map, it will be ignored it the flow direction is
+		provided as a raster map
 	fname_outlet : str
-		file name of the outflow raster map
+		file name of the outflow csv or raster map, if the outlet is provided as a raster,
+		the raster should contain the IDs of the outlets, if it is a csv file, the coordinates
+		of the outlets should be provided in the two columns labeled East and North of the csv file,
+		and the field name containing the IDs should be provided in ids_field_name parameter,
+		if ids_field_name is None, default values of 1 will be used as IDs for the outlets.
 	fname_flowDir : str
 		(optional) filename of the flow direction raster map
 	fname_out : str
 		(optional) filename of the output raster file
-	raster: bool
-		value that specify if it is a raster or csv fname_outlet
+	frmt_outlet_raster: bool
+		True if the outlet is provided as a raster or False (default) if it is provided as a CSV file
 	fname_mask : str
 		(optional) filename of the mask raster file
 	flowdir_format: str
 		(optional) value that specify the flow direction format (D8, LDD, GRASS, AGNPS, landlab, DRYP)
+	burn: bool
+		(optional) whether to burn the outlet point into the DEM
+	burn_value: float
+		(optional) value to burn into the DEM if burn is True
+	ids_field_name: str
+		(optional) name of the field in the outlet CSV file to use as IDs for the outlets; if None, the first field will be used as ID
+	save_files: bool
+		(optional) whether to save the output files; if False, the function will return the results instead of saving them
 
 	Returns
 	-------
-	raster file
+	raster file if save_files is True, otherwise a numpy array
 
 
 	Examples
@@ -560,7 +574,7 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 	basin = watershed(grid, surface, flowDir)
 
 	# get basin outlets
-	if raster is True:
+	if frmt_outlet_raster is True:
 		outlet = read_raster(fname_outlet)
 	else:	
 		# Output variables and location
@@ -568,13 +582,24 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 
 		# create array with outlets
 		outlet = np.zeros_like(surface)
-		outlet[idnodes] = 1
+		if burn is True:
+			if ids_field_name is not None:
+				ids = pd.read_csv(fname_outlet)[ids_field_name].values
+				for i, id in enumerate(ids):
+					outlet[idnodes[i]] = id
+			else:
+				outlet[idnodes] = burn_value
+		else:
+			outlet[idnodes] = 1
 
 	# get watershed
 	basinmask = basin.get_watersheds(outlet)
 
 	# reshape landlab grid into a 2D numpy array
 	basinmask = np.flip(basinmask.reshape(grid_shape), 0)
+	
+	if save_files is False:
+		return basinmask
 	
 	# get raster file properties
 	surface, profile, transform = open_raster(fname_surface)
