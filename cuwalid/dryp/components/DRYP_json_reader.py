@@ -203,7 +203,8 @@ class get_model_settings(object):
 		self.fname_subdomain_oz = dryp_config["PARALLEL"]["path_subdomains_oz"]
 		self.fname_subdomain_sz = dryp_config["PARALLEL"]["path_subdomains_sz"]
 		self.fname_subdomain_uz = dryp_config["PARALLEL"]["path_subdomains_uz"]
-		print(self.fname_subdomain_oz, self.fname_subdomain_sz, self.fname_subdomain_uz)
+		self.fname_basin_order = dryp_config["PARALLEL"]["path_basin_order"]
+		#print(self.fname_subdomain_oz, self.fname_subdomain_sz, self.fname_subdomain_uz)
 
 		# Output files maps
 		self.DirOutput = dryp_config["OUTPUT"]["path_output"]

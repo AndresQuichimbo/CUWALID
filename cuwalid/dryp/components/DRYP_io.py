@@ -953,28 +953,72 @@ class parallel_parameters(object):
 	"""Setting model input varables and environmental states
 	"""
 	def __init__(self, inputfile):
-		"""Create variables to store model states and input data sets.
-		Read all input datasst and variables for all components
+		"""Read parallel model subdomains for groundwater and runoff components.
+		Raster files should contain integer values greater than 0, where each
+		unique value represents a different subdomain.
+		Basin order file should contain a column 'subdomain_id' with the same
+		integer values as in the raster files, and a column 'order' indicating the
+		processing order of the subdomains, and optionally a column "id_downstream"
+		indicating the downstream cell of each basin. If the basin is not connected
+		to any other basin, the value in "id_downstream" should be -9999 or any
+		negative value.
+
+		Parameters
+		----------
+		inputfile:	list of file manes for soil parameters
+
+		Returns
+		-------
+		None
+
 		"""
+
+		# read groundwater subdomains
 		self.gw = read_raster_as_array(inputfile.fname_subdomain_sz,
 											default_value=None, dtype=int, flatten=False,
 					message_if_not_exist='Groundwater subdomains.............not provided. Parallel groundwater component not activated')
-		#self.n_gw_subdomains = np.max(self.gw) + 1
-		#if self.n_gw_subdomains > 1:
-		#	print(f"Parallel groundwater component activated with {self.n_gw_subdomains} subdomains")
-		#else:
-		#	print("Parallel groundwater component not activated")
 		
+		# read runoff subdomains/basins
 		self.ro = read_raster_as_array(inputfile.fname_subdomain_oz,
 					default_value=None, dtype=int, flatten=False,
 					message_if_not_exist=(
 						'Runoff subdomains..................not provided. Parallel runoff component not activated'))
-		#self.n_ro_subdomains = np.max(self.ro) + 1
-		#if self.n_ro_subdomains > 1:
-		#	print(f"Parallel runoff component activated with {self.n_ro_subdomains} subdomains")
-		#else:
-		#	print("Parallel runoff component not activated")
-		#print(self.ro)
+		
+		# read basin processing order
+		if inputfile.fname_basin_order != None and os.path.exists(inputfile.fname_basin_order):
+			self.basin_order = pd.read_csv(inputfile.fname_basin_order)
+			# check if the required columns are present
+			if 'subdomain_id' not in self.basin_order.columns or 'order' not in self.basin_order.columns:
+				raise ValueError("Basin order file must contain 'subdomain_id' and 'order' columns")
+			# sort the dataframe by the 'order' column
+			self.basin_order = self.basin_order.sort_values(by='order').reset_index(drop=True)
+			print('Basin processing order.............provided')
+			
+			# check if the subdomain ids in the basin order file match those in the raster files
+			subdomain_ids = set(self.basin_order['subdomain_id'])
+			
+			if self.ro is not None:
+				ro_subdomain_ids = set(np.unique(self.ro[self.ro > 0]))
+				if not subdomain_ids.issubset(ro_subdomain_ids):
+					raise ValueError("Subdomain IDs in basin order file do not match those in runoff subdomain raster")	
+		else:
+			# if the basin order file is not provided, assume order 0 to all
+			# basins and get unique subdomain ids from the runoff raster
+			if self.ro is not None:
+				unique_subdomains = np.unique(self.ro[self.ro > 0])
+				self.basin_order = pd.DataFrame({
+					'subdomain_id': unique_subdomains,
+					'order': 0,  # default order for all basins
+					'id_downstream': -9999  # default value indicating no downstream connection
+				})
+				print('Basin processing order.............not provided. Default order based on runoff subdomains applied')
+				# Note: If the runoff subdomain raster is not provided,
+				# the basin order will be set to None, and the model will
+				# need to handle this case appropriately (e.g., by processing
+				# all cells together or using a default order).
+			#else:
+			#	self.basin_order = None
+			#print('Basin processing order.............not provided. Default order based on runoff subdomains applied')
 
 		
 class soil_parameters(object):
