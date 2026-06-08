@@ -287,226 +287,6 @@ def add_send_info(halo_info, region_domain, global_node_owner, rank):
 
     return halo_info
 
-import numpy as np
-
-# def build_halo_send_recv(region_domain, global_node_owner, rank):
-#     """
-#     Build both recv_local and send_local for a given rank.
-    
-#     Args:
-#         region_domain: dict with keys
-#             - 'global_nodes': 1D array mapping local index → global node ID
-#             - 'core_mask': bool array indicating core nodes
-#             - 'mask': bool array indicating all nodes in the subdomain
-#         global_node_owner: array mapping global node ID → owner rank
-#         rank: current rank
-    
-#     Returns:
-#         halo_info: dict keyed by neighbor rank
-#             - 'recv_local': list of local indices to receive from that neighbor
-#             - 'send_local': list of local indices to send to that neighbor
-#     """
-#     global_nodes = region_domain['global_nodes']
-#     core_mask = region_domain['core_mask'].flatten()
-#     mask = region_domain['mask'].flatten()
-    
-#     # halo nodes = in mask but not core
-#     halo_mask = mask & (~core_mask)
-    
-#     halo_info = {}
-
-#     # ----------------------------
-#     # 1️⃣ Build recv_local
-#     # ----------------------------
-#     for local_idx, is_halo in enumerate(halo_mask):
-#         if not is_halo:
-#             continue
-
-#         global_id = global_nodes[local_idx]
-#         owner = global_node_owner[global_id]
-
-#         if owner == rank:
-#             continue  # I own it → not a recv from neighbor
-
-#         if owner not in halo_info:
-#             halo_info[owner] = {"recv_local": [], "send_local": []}
-
-#         halo_info[owner]["recv_local"].append(local_idx)
-
-#     # ----------------------------
-#     # 2️⃣ Build send_local
-#     # ----------------------------
-#     # Build lookup: global_id → local core index
-#     global_to_local_core = {
-#         global_nodes[i]: i
-#         for i, is_core in enumerate(core_mask)
-#         if is_core
-#     }
-
-#     # Iterate over all my core nodes
-#     for local_idx, is_core in enumerate(core_mask):
-#         if not is_core:
-#             continue
-
-#         global_id = global_nodes[local_idx]
-
-#         # Check which neighbors want this node
-#         for neighbor_rank, info in halo_info.items():
-#             # If neighbor owns a halo cell whose global ID equals this core node
-#             neighbor_recv_global_ids = [
-#                 global_nodes[idx] for idx in info["recv_local"]
-#             ]
-#             if global_id in neighbor_recv_global_ids:
-#                 info["send_local"].append(local_idx)
-
-#     return halo_info
-
-# def build_halo_send_recv(region_domain, global_node_owner, rank):
-#     """
-#     Build recv_local and send_local for a rank based on global ownership.
-
-#     Args:
-#         region_domain: dict with
-#             - 'global_nodes': 1D array mapping local index → global node ID
-#             - 'core_mask': bool array indicating core nodes
-#             - 'mask': bool array indicating all nodes in the subdomain
-#         global_node_owner: array mapping global node ID → owner rank
-#         rank: current rank
-
-#     Returns:
-#         halo_info: dict keyed by neighbor rank
-#             - 'recv_local': list of local indices to receive from that neighbor
-#             - 'send_local': list of local indices to send to that neighbor
-#     """
-#     global_nodes = region_domain['global_nodes']
-#     core_mask = region_domain['core_mask'].flatten()
-#     mask = region_domain['mask'].flatten()
-
-#     # halo = in mask but not core
-#     halo_mask = mask & (~core_mask)
-
-#     halo_info = {}
-
-#     # ----------------------------
-#     # 1️⃣ Build recv_local: halo nodes owned by neighbors
-#     # ----------------------------
-#     for local_idx, is_halo in enumerate(halo_mask):
-#         if not is_halo:
-#             continue
-
-#         global_id = global_nodes[local_idx]
-#         owner = global_node_owner[global_id]
-
-#         if owner == rank:
-#             continue  # I own it → not received
-
-#         if owner not in halo_info:
-#             halo_info[owner] = {"recv_local": [], "send_local": []}
-
-#         halo_info[owner]["recv_local"].append(local_idx)
-
-#     # ----------------------------
-#     # 2️⃣ Build send_local: my core nodes needed by neighbors
-#     # ----------------------------
-#     # build lookup: global_id → local core index
-#     global_to_local_core = {
-#         global_nodes[i]: i
-#         for i, is_core in enumerate(core_mask) if is_core
-#     }
-
-#     # iterate over all halo nodes to see which neighbor wants which global_id
-#     for neighbor_rank, info in halo_info.items():
-#         send_list = []
-
-#         for recv_local_idx in info["recv_local"]:
-#             global_id = global_nodes[recv_local_idx]
-
-#             # if I own this global_id → neighbor wants it
-#             if global_node_owner[global_id] == rank:
-#                 # map to my local core index
-#                 send_list.append(global_to_local_core[global_id])
-
-#         info["send_local"] = send_list
-
-#     # ----------------------------
-#     # 3️⃣ Check for frontier nodes I own that are requested by neighbors
-#     # Optional: for ranks not already in halo_info
-#     # ----------------------------
-#     # This step ensures neighbors that have no halo nodes in my domain
-#     # but might request frontier nodes still appear
-#     return halo_info
-
-# def add_send_info(halo_info, region_domain, global_node_owner, rank):
-#     global_nodes = region_domain['global_nodes']
-#     core_mask = region_domain['core_mask'].flatten()
-
-#     # build reverse lookup: global_id → local core index
-#     global_to_local_core = {
-#         global_nodes[i]: i
-#         for i in range(len(global_nodes))
-#         if core_mask[i]
-#     }
-
-#     for neighbor_rank, info in halo_info.items():
-#         send_list = []
-
-#         for local_idx in info["recv_local"]:
-#             global_id = global_nodes[local_idx]
-
-#             # if I own this node → I must send it
-#             if global_node_owner[global_id] == rank:
-#                 if global_id in global_to_local_core:
-#                     send_list.append(global_to_local_core[global_id])
-
-#         info["send_local"] = send_list
-
-#     return halo_info
-
-# def add_send_info(halo_info, region_domain, global_node_owner, rank):
-#     global_nodes = region_domain['global_nodes']
-#     core_mask = region_domain['core_mask'].flatten()
-
-#     for neighbor_rank, info in halo_info.items():
-#         send_list = []
-
-#         # Get global IDs that neighbor needs (from recv)
-#         recv_globals = global_nodes[info["recv_local"]]
-
-#         for local_idx, is_core in enumerate(core_mask):
-#             if not is_core:
-#                 continue
-
-#             global_id = global_nodes[local_idx]
-
-#             # ONLY send if neighbor needs it
-#             if global_id in recv_globals:
-#                 send_list.append(local_idx)
-
-#         info["send_local"] = send_list
-
-#     return halo_info
-
-# def add_send_info(halo_info, region_domain, global_node_owner, rank):
-#     global_nodes = region_domain['global_nodes']
-#     core_mask = region_domain['core_mask'].flatten()
-
-#     for neighbor_rank, info in halo_info.items():
-#         send_list = []
-
-#         for local_idx, is_core in enumerate(core_mask):
-#             if not is_core:
-#                 continue
-
-#             global_id = global_nodes[local_idx]
-
-#             # check if neighbor needs this node
-#             if global_node_owner[global_id] == rank:
-#                 send_list.append(local_idx)
-
-#         info["send_local"] = send_list
-
-#     return halo_info
-
 # Structure and model components --------------------------------------
 # data_in:	Input variables 
 # env_state:Model state and fluxes
@@ -520,9 +300,8 @@ import numpy as np
 
 # parallel version of the model, with parallel execution of model components
 # parallelization: parallel execution of model components
-#@profile
 
-@profile(filename="profile_out")
+#@profile(filename="profile_out")
 def run_parDRYP(filename_input, disable_dynamic=False):
 	"""This function integrates all components of the model, with
 	all model parameters and component settings being specified in
@@ -608,6 +387,18 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 	# print("domains_gw: ",domains_gw)
 	runoff_grid_shape = domain.grid_metadata['shape']
 	basin_ids = partools.get_basin_ids(domains_ro)
+	basin_order_df = parallel_domains.basin_order if parallel_domains.basin_order is not None else None
+	basin_level_by_id = {int(bid): 0 for bid in basin_ids}
+	if basin_order_df is not None:
+		for _, row in basin_order_df.iterrows():
+			bid = int(row['subdomain_id'])
+			if bid in basin_level_by_id:
+				basin_level_by_id[bid] = int(row['order'])
+	basin_levels = sorted(set(basin_level_by_id[int(bid)] for bid in basin_ids))
+	basin_ids_by_level = {
+		level: [int(bid) for bid in basin_ids if basin_level_by_id[int(bid)] == level]
+		for level in basin_levels
+	}
 	runoff_parallel = size > 1 and len(basin_ids) > 0
 	basis_costs = np.ones(len(basin_ids), dtype=float)
 	basis_id_to_idx = {bid: i for i, bid in enumerate(basin_ids)}
@@ -1134,15 +925,8 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 				# all variables with containing length must be changed to meters [m]
 				
 				if runoff_parallel:
-					# Reassign runoff tasks dynamically (if enabled) using current cost estimates.
-					if use_dynamic_scheduling:
-						basis_assignments = _dynamic_rank_assignment(basin_ids, basis_costs, size)
-						local_basin_ids = basis_assignments[rank]
-						for basin_id in local_basin_ids:
-							_ensure_runoff_basin_initialized(basin_id)
-					# else: use initial static assignment set at startup
-
-					time1 = time.time()
+					# Run runoff by basin level order: 0, 1, 2, ...
+					#time1 = time.time()
 					local_discharge = np.zeros_like(ro.discharge)
 					# print("time1: ",time.time()-time1)
 					local_trans_losses = np.zeros_like(ro.trans_losses)
@@ -1151,69 +935,91 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 					local_cost_sum = np.zeros(len(basin_ids), dtype=float)
 					local_cost_count = np.zeros(len(basin_ids), dtype=float)
 
-					for basin_id in local_basin_ids:
-						ibasin_start = time.time()
-						basin_forcing = partools.extract_basin_forcing(
-							basin_id,
-							domains_ro,
-							{
-								'runoff': runoff,
-								'riv_sat_deficit': river_sat_deficit,
-								'AOF': AOF,
-							},
-						)
-						basin_parameters = basis_runtime_parameters[basin_id]
-						basin_component = basis_ro[basin_id]
+					for basin_level in basin_levels:
+						level_basin_ids = basin_ids_by_level.get(basin_level, [])
+						if len(level_basin_ids) == 0:
+							continue
 
-						basin_component.run_runoff_one_step(
-							basin_forcing['runoff']*0.001,
-							basin_forcing['AOF'],
-							basin_parameters['AOF_threshold'],
-							basin_parameters['conductivity'],
-							basin_parameters['decay'],
-							basin_parameters['river_cells'],
-							basin_parameters['area_cells'],
-							basin_parameters['area_river'],
-							basin_forcing['riv_sat_deficit'],
-							None,
-						)
-						
-						local_discharge = partools.combine_basin_results_into_world(
-							basin_id,
-							domains_ro,
-							basin_component.discharge,
-							world_data=local_discharge,
-							world_grid_shape=runoff_grid_shape,
-							flatten=True,
-						)
-						local_trans_losses = partools.combine_basin_results_into_world(
-							basin_id,
-							domains_ro,
-							basin_component.trans_losses,
-							world_data=local_trans_losses,
-							world_grid_shape=runoff_grid_shape,
-							flatten=True,
-						)
-						local_stage = partools.combine_basin_results_into_world(
-							basin_id,
-							domains_ro,
-							basin_component.stage,
-							world_data=local_stage,
-							world_grid_shape=runoff_grid_shape,
-							flatten=True,
-						)
-						local_ssz = partools.combine_basin_results_into_world(
-							basin_id,
-							domains_ro,
-							basin_component.SSZ,
-							world_data=local_ssz,
-							world_grid_shape=runoff_grid_shape,
-							flatten=True,
-						)
-						idx = basis_id_to_idx.get(basin_id)
-						if idx is not None:
-							local_cost_sum[idx] += (time.time() - ibasin_start)
-							local_cost_count[idx] += 1.0
+						if use_dynamic_scheduling:
+							level_costs = np.array(
+								[basis_costs[basis_id_to_idx[bid]] for bid in level_basin_ids],
+								dtype=float,
+							)
+							level_assignments = _dynamic_rank_assignment(level_basin_ids, level_costs, size)
+							level_local_basin_ids = level_assignments[rank]
+						else:
+							level_local_basin_ids = partools.assign_basins_to_rank(level_basin_ids, rank, size)
+
+						for basin_id in level_local_basin_ids:
+							_ensure_runoff_basin_initialized(basin_id)
+
+						for basin_id in level_local_basin_ids:
+							ibasin_start = time.time()
+							basin_forcing = partools.extract_basin_forcing(
+								basin_id,
+								domains_ro,
+								{
+									'runoff': runoff,
+									'riv_sat_deficit': river_sat_deficit,
+									'AOF': AOF,
+								},
+							)
+							basin_parameters = basis_runtime_parameters[basin_id]
+							basin_component = basis_ro[basin_id]
+
+							basin_component.run_runoff_one_step(
+								basin_forcing['runoff']*0.001,
+								basin_forcing['AOF'],
+								basin_parameters['AOF_threshold'],
+								basin_parameters['conductivity'],
+								basin_parameters['decay'],
+								basin_parameters['river_cells'],
+								basin_parameters['area_cells'],
+								basin_parameters['area_river'],
+								basin_forcing['riv_sat_deficit'],
+								None,
+							)
+
+							local_discharge = partools.combine_basin_results_into_world(
+								basin_id,
+								domains_ro,
+								basin_component.discharge,
+								world_data=local_discharge,
+								world_grid_shape=runoff_grid_shape,
+								flatten=True,
+							)
+							local_trans_losses = partools.combine_basin_results_into_world(
+								basin_id,
+								domains_ro,
+								basin_component.trans_losses,
+								world_data=local_trans_losses,
+								world_grid_shape=runoff_grid_shape,
+								flatten=True,
+							)
+							local_stage = partools.combine_basin_results_into_world(
+								basin_id,
+								domains_ro,
+								basin_component.stage,
+								world_data=local_stage,
+								world_grid_shape=runoff_grid_shape,
+								flatten=True,
+							)
+							local_ssz = partools.combine_basin_results_into_world(
+								basin_id,
+								domains_ro,
+								basin_component.SSZ,
+								world_data=local_ssz,
+								world_grid_shape=runoff_grid_shape,
+								flatten=True,
+							)
+							idx = basis_id_to_idx.get(basin_id)
+							if idx is not None:
+								local_cost_sum[idx] += (time.time() - ibasin_start)
+								local_cost_count[idx] += 1.0
+
+						# Enforce level ordering globally before proceeding to next level.
+						if comm is not None:
+							comm.Barrier()
 
 					ro.discharge[:] = _allreduce_sum(comm, local_discharge)
 					ro.trans_losses[:] = _allreduce_sum(comm, local_trans_losses)
