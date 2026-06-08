@@ -62,7 +62,7 @@ def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda):
 	save_raster(fname_wp, wilting_point, profile, transform)
 	save_raster(fname_awc, available_water_content, profile, transform)
 
-def create_raster_flowdirection_dryp(fname, fname_out, translate=True, format_data="D8"):
+def create_raster_flowdirection_dryp(fname, fname_out=None, translate=True, format_data="D8"):
 	"""Create raster DRYP flow direction from a DEM or file from a raster D8 flow direction map.
 	if a flow direction is provided, the function will translate it to landlab format, if not,
 	the function will calculate the flow direction from the DEM and save it as raster file.
@@ -149,10 +149,13 @@ def create_raster_flowdirection_dryp(fname, fname_out, translate=True, format_da
 		
 		# flip raster in order to make aggree with landlab
 		flowdir = np.flip(flowdir, 0)
-
-	save_raster(fname_out, flowdir, profile, transform)
 	
-def create_raster_river_network(fname, threshold, fname_out,
+	if fname_out is not None:
+		save_raster(fname_out, flowdir, profile, transform)
+	else:
+		return flowdir, profile, transform
+
+def create_raster_river_network(fname, threshold, fname_out=None,
 								cell_area=False, fill_value=None):
 	"""Create a raster file from a raster D8 flow direction map. The
 	river network will be created from a flow accumulation map and a 
@@ -214,10 +217,13 @@ def create_raster_river_network(fname, threshold, fname_out,
 	raster[raster >= threshold] = value
 	
 	# save soil properties as raster files
-	save_raster(fname_out, raster, profile, transform)
+	if fname_out is not None:
+		save_raster(fname_out, raster, profile, transform)
+	else:
+		return raster, profile, transform
 
 def create_raster_bc_at_point(fname_wte, fname_bc_head,
-										fname_out):
+										fname_out=None):
 	"""Create a raster file from values at specified locations
 	of a raster file. Only values at selcted locations are kept in
 	the raster, the remained values are assined -9999
@@ -293,11 +299,13 @@ def create_raster_bc_at_point(fname_wte, fname_bc_head,
 	for index in indices:
 		row, column = index
 		raster[row, column] = head[row, column]
-
+	if fname_out is not None:
 	# save soil properties as raster files
-	save_raster(fname_out, raster, profile, transform)
+		save_raster(fname_out, raster, profile, transform)
+	else:
+		return raster, profile, transform
 	
-def create_raster_from_shapefile(fname_shp, fname_raster, fname_out):
+def create_raster_from_shapefile(fname_shp, fname_raster, fname_out=None):
 	"""This function takes a shapefile (\*.shp) and a raster file
 	to create a new raster containing the shapefile geometry
 	as mask
@@ -344,9 +352,12 @@ def create_raster_from_shapefile(fname_shp, fname_raster, fname_out):
 		invert=True)
 	
 	# Create a new raster with the same dimensions and extent of the input
-	save_raster(fname_out, array, profile, transform)
+	if fname_out is not None:
+		save_raster(fname_out, array, profile, transform)
+	else:
+		return array, profile, transform
 
-def create_raster_landlab_idnodes(fname, fname_out):
+def create_raster_landlab_idnodes(fname, fname_out=None):
 	"""Create a raster file of landlab idnodes
 	
 	Parameters
@@ -386,10 +397,13 @@ def create_raster_landlab_idnodes(fname, fname_out):
 	idnodes = np.arange(len(raster), dtype=int).reshape(shape)
 	idnodes = np.flip(idnodes, 0)
 	
-	# save soil properties as raster files
-	save_raster(fname_out, idnodes, profile, transform)
+	if fname_out is not None:
+		# save soil properties as raster files
+		save_raster(fname_out, idnodes, profile, transform)
+	else:
+		return idnodes, profile, transform
 
-def create_raster_landlab_idcorenodes(fname, fname_out):
+def create_raster_landlab_idcorenodes(fname, fname_out=None):
 	"""Create a raster file of landlab idnodes
 	
 	Parameters
@@ -424,7 +438,10 @@ def create_raster_landlab_idcorenodes(fname, fname_out):
 	idnodes = np.flip(idnodes, 0)
 	
 	# save soil properties as raster files
-	save_raster(fname_out, idnodes, profile, transform)
+	if fname_out is not None:
+		save_raster(fname_out, idnodes, profile, transform)
+	else:
+		return idnodes, profile, transform
 
 def open_raster(fname):
 	"""read raster file
@@ -520,6 +537,15 @@ def save_raster(fname, data, profile, transform):
 		dst.write(np.array(data, dtype=profile['dtype']), 1)
 		# Set the affine transformation
 		dst.transform = transform
+
+def read_raster(fname, flatten=True):
+	"""This function reads a raster file and returns the data as a
+	numpy array.
+	"""
+	data = np.flip(rasterio.open(fname).read(1), 0)
+	if flatten:
+		data = data.flatten()
+	return data
 
 def get_raster_properties(fname):
 	"""This function gets the properties of a raster file.
