@@ -833,7 +833,7 @@ def get_transform_parameters(fname):
 	
 	return crs, transform
 
-def get_lat_lon_coordinates(transform, col, row):
+def get_lat_lon_coordinates(transform, col, row, center=True):
 	"""This function gets latitude/North and longitud/East
 	from set of python array index.
 	
@@ -845,6 +845,10 @@ def get_lat_lon_coordinates(transform, col, row):
 		column index
 	row : int
 		row index
+	center : bool, optional
+		If True, return the coordinates of the center of the pixel.
+		If False, return the coordinates of the upper-left corner of the pixel.
+		Default is True.
 	
 	Returns
 	-------
@@ -862,7 +866,10 @@ def get_lat_lon_coordinates(transform, col, row):
 	>>> lat, lon = get_lat_lon_coordinates(transform, col, row)
 
 	"""
-	lon, lat = transform*(col, row)
+	if center:
+		lon, lat = transform*(col + 0.5, row + 0.5)
+	else:
+		lon, lat = transform*(col, row)
 
 	return lon, lat
 
@@ -1117,7 +1124,7 @@ def transform_flowdirection_d8_to_landlab_array(flowdir, format_data="D8"):
 	
 	return np.flip(dirnodes.reshape(shape), 0)
 
-def find_indices(raster, coordinates):
+def find_indices(raster, coordinates, get_values=False):
 	"""Finds the indices of the points in the raster given the coordinates.
 
 	Parameters
@@ -1129,12 +1136,20 @@ def find_indices(raster, coordinates):
 	Returns
 	-------
 	  A list of tuples containing the (row, column) indices of the points.
+	  If get_values is True, also returns a list of values at the given coordinates.
 	"""
-	indices = []
-	for coordinate in coordinates:
-		x, y = coordinate
-		row, column = rasterio.transform.rowcol(raster.transform, x, y)
-		indices.append((int(row), int(column)))
+	import numpy as np
+	xs = [c[0] for c in coordinates]
+	ys = [c[1] for c in coordinates]
+	# vectorised transform: compute all row/col indices in one call
+	rows, cols = rasterio.transform.rowcol(raster.transform, xs, ys)
+	rows = np.asarray(rows, dtype=int)
+	cols = np.asarray(cols, dtype=int)
+	indices = list(zip(rows.tolist(), cols.tolist()))
+	if get_values:
+		band = raster.read(1)  # read once
+		values = band[rows, cols].tolist()
+		return indices, values
 	return indices
 
 def create_raster_lake_label_from_bathymetry(path_bathymetry, path_lake_labels=None):
