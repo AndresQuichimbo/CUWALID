@@ -1679,17 +1679,18 @@ class zone_parameters(object):
 		if self.zone_mask is None:
 			return None, None
 		#print("zone mask", self.zone_mask)#, "core nodes", core_nodes.shape)
+		zone_mask = self.zone_mask.copy()
 		if core_nodes is not None:
 			# Make all other (non-core) nodes equal to 0
 			#ones_like_mask = np.ones_like(self.zone_mask, dtype=int)
 			#ones_like_mask[core_nodes] = 0
 			#self.zone_mask[ones_like_mask == 1] = 0
-			all_indices = np.arange(self.zone_mask.size)
+			all_indices = np.arange(zone_mask.size)
 			non_core = np.setdiff1d(all_indices, core_nodes)
-			self.zone_mask[non_core] = 0
+			zone_mask[non_core] = 0
 		#print("zone mask after applying core nodes", self.zone_mask)
 		# get ids and size of zones
-		ids_zone, size_zone = get_zone_indices_and_sizes(self.zone_mask)
+		ids_zone, size_zone = get_zone_indices_and_sizes(zone_mask)
 		return ids_zone, size_zone
 	
 	def get_zone_info_from_core_nodes(self, core_nodes):
@@ -1709,14 +1710,16 @@ class zone_parameters(object):
 		if self.zone_mask is None:
 			return None, None
 
+		zone_mask = self.zone_mask.copy()
+
 		if core_nodes is not None:
 			# Make all other (non-core) nodes equal to 0
-			all_indices = np.arange(self.zone_mask.size)
+			all_indices = np.arange(zone_mask.size)
 			non_core = np.setdiff1d(all_indices, core_nodes)
-			self.zone_mask[non_core] = 0
+			zone_mask[non_core] = 0
 
 		# get mask for core nodes
-		mask_core = self.zone_mask[core_nodes]
+		mask_core = zone_mask[core_nodes]
 
 		# get ids and size of zones
 		ids_zone, size_zone = get_zone_indices_and_sizes(mask_core)
@@ -1872,17 +1875,19 @@ def get_zone_indices_and_sizes(mask):
 	# number of features
 	num_features = name_zones.max()
 
-	# Step 2: For each label, collect flat indices (len=number of lakes)
+	# Step 2: For each label, collect flat indices and keep them grouped
+	# by zone label so the collapsed values and zone sizes stay aligned.
 	ids_group_by_label = []
 	for label_num in range(1, num_features + 1):
-		flat_indices = list(np.where(name_zones == label_num)[0])
-		ids_group_by_label.append(flat_indices)
+		flat_indices = np.where(name_zones == label_num)[0]
+		if flat_indices.size > 0:
+			ids_group_by_label.append(flat_indices.tolist())
 
 	# Step 3: Get length of each lake (number of cells)
 	size_zones = list(map(len, ids_group_by_label))
 
-	# Step 4: Get index of all lakes
-	ids_zones = list(np.where(name_zones > 0)[0])
+	# Step 4: Get indices ordered by zone label, not by global index.
+	ids_zones = [idx for zone_ids in ids_group_by_label for idx in zone_ids]
 	 	
 	return ids_zones, size_zones
 

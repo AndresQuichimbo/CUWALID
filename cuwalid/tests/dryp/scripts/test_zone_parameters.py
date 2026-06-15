@@ -3,6 +3,7 @@ import numpy as np
 import pytest
 
 from cuwalid.dryp.components.DRYP_io import zone_parameters
+from cuwalid.dryp.components.DRYP_util import collapse_mean
 import rasterio
 
 class DummyRaster:
@@ -39,7 +40,7 @@ def test_zone_parameters_with_mask_and_scale_and_core_nodes(monkeypatch):
     # After __init__, zone_mask is np.flip(arr,0).astype(int).flatten()
     flipped = np.flip(arr, 0).astype(int).flatten()
     # expected flattened indices > 0
-    expected_ids = list(np.where(flipped > 0)[0])
+    expected_ids = [0, 3, 1, 4]
     # expected sizes per zone: zone1 has two cells, zone2 has two cells
     expected_sizes = [2, 2]
 
@@ -60,9 +61,13 @@ def test_zone_parameters_with_mask_and_scale_and_core_nodes(monkeypatch):
     # Test extract_zone_info (no core_nodes)
     ids_zone, size_zone = zp.extract_zone_info()
     assert isinstance(ids_zone, list) or isinstance(ids_zone, np.ndarray)
-    # ids_zone should equal flattened indices > 0
+    # ids_zone should be grouped by zone label, not by global flat index
     assert list(ids_zone) == expected_ids
     assert size_zone == expected_sizes
+
+    # The grouped ordering must make collapse_mean match per-zone aggregation
+    values = np.array([10.0, 11.0, 20.0, 21.0])
+    assert np.allclose(collapse_mean(values, np.array(size_zone)), np.array([10.5, 20.5]))
 
     # Test get_zone_info_from_core_nodes: choose core_nodes that include all active indices
     core_nodes = np.array(expected_ids, dtype=int)
