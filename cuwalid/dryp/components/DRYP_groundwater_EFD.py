@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from scipy.sparse import csr_matrix
+from scipy.sparse.linalg import spsolve
 from landlab.grid.mappers import (
         map_link_head_node_to_link,
         map_link_tail_node_to_link,
@@ -34,7 +36,9 @@ class gwflow_EFD(object):
 	
 	"""
 		
-	def __init__(self, grid, Ksat, area_river, bc, method):
+	def __init__(self, grid, Ksat, area_river, bc, method,
+			solver='explicit', implicit_max_iter=8,
+			implicit_tolerance=1.0e-6):
 		"""Initialize groundwater component
 
 		Parameters
@@ -86,6 +90,11 @@ class gwflow_EFD(object):
 			
 		# create additional arrays for model component variables
 		self.method = method	
+		self.solver = solver.lower()
+		if self.solver not in ('explicit', 'implicit'):
+			raise ValueError("solver must be 'explicit' or 'implicit'")
+		self.implicit_max_iter = max(1, int(implicit_max_iter))
+		self.implicit_tolerance = float(implicit_tolerance)
 		#	print('GROUND WATER MODEL SETTINGS ********************************')		
 		if method == 0:
 			print('Groundwater settings: Constant transmissivity function')
@@ -95,6 +104,7 @@ class gwflow_EFD(object):
 			print('Groundwater settings: Exponential transmissivity function')
 		else:
 			print('Groundwater settings: Multi-transmissivity function')
+		print(f'Groundwater solver: {self.solver}')
 		#print('Change approach in setting_file: line 26')
 		#	print('************************************************************')
 		
@@ -186,6 +196,16 @@ class gwflow_EFD(object):
 			groundwater discharge (baseflow) [m/dt]
 		
 		"""
+		if self.solver == 'implicit':
+			return self._run_one_step_gw_implicit(
+				grid, surface, bottom, thickness, bathymetry,
+				riv_elevation, riv_nodes, Sy, Droot, conductivity,
+				inodetype, theta_sat, theta_fc, theta_dt, head,
+				recharge, stage, dt, ids_lks=ids_lks,
+				sizes_lks=sizes_lks,
+				ids_max_depth_lks=ids_max_depth_lks
+			)
+
 		# Calculate time step ---------------------------------------------------
 		#print('===============================================================')
 		# create a copy of the surface elevation
@@ -638,6 +658,284 @@ class gwflow_EFD(object):
 		#print(head)
 		#print(v)
 		return head, discharge
+
+	def _run_one_step_gw_implicit(self, grid, surface, bottom, thickness,
+			 bathymetry, riv_elevation, riv_nodes, Sy, Droot,
+			 conductivity, inodetype, theta_sat, theta_fc, theta_dt,
+			 head, recharge, stage, dt,
+			 ids_lks=None, sizes_lks=None, ids_max_depth_lks=None):
+		"""Run one backward-Euler step with a Picard linearization.
+
+		The transmissivity and river exchange terms are frozen at the current
+		iterate, which removes the explicit Courant restriction while preserving
+		the existing storage-to-head coupling via the soil connector.
+		"""
+		act_links = grid.active_links[:]
+		act_nodes = np.array(grid.core_nodes, dtype=int)
+		surface_i = surface.copy()
+		head_initial = np.minimum(surface, np.array(head, dtype=float, copy=True))
+		head_iter = head_initial.copy()
+		discharge = np.zeros_like(surface, dtype=float)
+		dqs = np.zeros_like(surface, dtype=float)
+		water_storage_change = np.zeros_like(thickness, dtype=float)
+		thickness_sat = update_saturated_thickness(
+			head_iter.copy(), bottom, surface, np.array(thickness, dtype=float),
+			inodetype, method=self.method
+		)
+		total_storage_change = 0.0
+		self.flux_at_CHB = 0.0
+
+		if self.id_CHB is not None:
+			head_initial[self.id_CHB] = self.ch_boundaries
+			head_iter[self.id_CHB] = self.ch_boundaries
+			solver_nodes = np.unique(np.concatenate((act_nodes, self.id_CHB)))
+		else:
+			solver_nodes = act_nodes.copy()
+
+		solver_index = -np.ones(len(surface), dtype=int)
+		solver_index[solver_nodes] = np.arange(len(solver_nodes))
+		is_fixed = np.zeros(len(surface), dtype=bool)
+		if self.id_CHB is not None:
+			is_fixed[self.id_CHB] = True
+
+		has_river = len(riv_nodes) > 0
+		if has_river:
+			riv_nodes = np.asarray(riv_nodes, dtype=int)
+
+		for inner_iter in range(self.implicit_max_iter):
+			if inner_iter > 0:
+				thickness_sat = update_saturated_thickness(
+					head_iter.copy(), bottom, surface,
+					np.array(thickness, dtype=float), inodetype,
+					method=self.method
+				)
+
+			thickness_sat[thickness_sat < 0] = 0.0
+			grid.at_node['aux_grid'][:] = thickness_sat[:]
+			thickness_link = map_link_head_node_to_link(grid, 'aux_grid')
+			aux_t = map_link_tail_node_to_link(grid, 'aux_grid')
+			thickness_link = 0.5*(aux_t + thickness_link)
+			T = np.zeros_like(self.Ksat)
+			T[act_links] = self.Ksat[act_links]*thickness_link[act_links]
+
+			head_linear = self._solve_implicit_heads(
+				grid, act_links, solver_nodes, solver_index, is_fixed,
+				head_initial, head_iter, T, Sy, recharge, riv_nodes,
+				riv_elevation, stage, conductivity, dt
+			)
+			head_trial = np.minimum(surface, head_linear)
+			if self.id_CHB is not None:
+				head_trial[self.id_CHB] = self.ch_boundaries
+
+			if ids_lks is not None:
+				z_lks = np.repeat(head_trial[ids_max_depth_lks], sizes_lks)
+				z_lks = np.where(
+					z_lks >= bathymetry[ids_lks], z_lks, bathymetry[ids_lks]
+				)
+				surface_i[ids_lks] = z_lks
+
+			grid.at_node['aux_grid'][:] = head_trial[:]
+			dhdl = grid.calc_grad_at_link(grid.at_node['aux_grid'])
+			qs = np.zeros_like(self.Ksat)
+			qs[act_links] = -T[act_links]*dhdl[act_links]
+
+			self.flux_at_CHB = 0.0
+			if self.id_CHB is not None:
+				links_at_CHB = grid.links_at_node[self.id_CHB]
+				link_dirs_at_CHB = grid.active_link_dirs_at_node[self.id_CHB]
+				active_links_at_CHB = links_at_CHB[link_dirs_at_CHB != 0]
+				active_link_dirs_at_CHB = link_dirs_at_CHB[link_dirs_at_CHB != 0]
+				self.flux_at_CHB += (
+					np.sum(qs[active_links_at_CHB]*active_link_dirs_at_CHB)
+					/grid.dx
+				)*dt
+
+			dqsdxy = -grid.calc_flux_div_at_node(qs) + recharge/dt
+			qs_riv = np.zeros(0, dtype=float)
+			if has_river:
+				hriv = np.minimum(
+					head_trial[riv_nodes],
+					riv_elevation[riv_nodes] + stage[riv_nodes]
+				)
+				head_diff = head_trial[riv_nodes] - hriv
+				head_diff[head_diff < 0] = 0.0
+				qs_riv = conductivity[riv_nodes]*head_diff
+				dqsdxy[riv_nodes] += -self.kaq*qs_riv
+
+			dqs.fill(0.0)
+			dqs[act_nodes] = regularization_T(
+				surface_i[act_nodes], head_trial[act_nodes],
+				thickness[act_nodes], dqsdxy[act_nodes], REG_FACTOR
+			)
+
+			if ids_lks is not None:
+				wet_msk_lks = np.where(head_trial[ids_lks] >= bathymetry[ids_lks], 1, 0)
+				dh_lks = (head_trial[ids_lks] - z_lks)*wet_msk_lks
+				reduce_idx = np.append([0], np.cumsum(sizes_lks)[:-1])
+				sum_dh_lks = np.add.reduceat(dh_lks, reduce_idx)
+				sum_wet_lks = np.add.reduceat(wet_msk_lks, reduce_idx)
+				avg_dh_lks = np.divide(
+					sum_dh_lks, sum_wet_lks,
+					out=np.zeros_like(sum_dh_lks),
+					where=sum_wet_lks != 0
+				)
+				head_trial[ids_lks] = (
+					head_trial[ids_lks]*(1 - wet_msk_lks) + wet_msk_lks*(
+						z_lks + np.repeat(avg_dh_lks, sizes_lks)
+					)
+				)
+				dqs[ids_lks] = dqs[ids_lks]*(1 - wet_msk_lks)
+
+			safe_sy = np.maximum(Sy[act_nodes], np.finfo(float).eps)
+			water_storage_change.fill(0.0)
+			water_storage_change[act_nodes] = (
+				safe_sy*(head_trial[act_nodes] - head_initial[act_nodes])
+				- dqs[act_nodes]*dt
+			)
+			total_storage_change = np.mean(water_storage_change[act_nodes])
+
+			head_next = self._apply_storage_change(
+				act_nodes, surface, bathymetry, Droot, theta_sat,
+				theta_fc, theta_dt, water_storage_change, head_initial, Sy
+			)
+			head_next = np.minimum(surface, head_next)
+			if self.id_CHB is not None:
+				head_next[self.id_CHB] = self.ch_boundaries
+
+			if np.max(np.abs(head_next[act_nodes] - head_iter[act_nodes])) <= self.implicit_tolerance:
+				head_iter = head_next
+				break
+
+			head_iter = head_next
+
+		head[:] = head_iter
+		if has_river and qs_riv.size > 0:
+			discharge[riv_nodes] += qs_riv*self.kaq*dt
+		discharge[act_nodes] += dqs[act_nodes]*dt
+
+		self.flux_at_CHB = self.flux_at_CHB/len(act_nodes)
+		try:
+			MB = (
+				np.mean(recharge[act_nodes]) - np.mean(discharge[act_nodes])
+				- total_storage_change - self.flux_at_CHB
+			)
+			assert np.allclose(MB, 0.0, rtol=1e-05, atol=1e-04)
+		except:
+			raise Exception(MB, 'Groundwater Water balance Error: '
+		   		'Please check units and non-data values')
+
+		return head, discharge
+
+	def _solve_implicit_heads(self, grid, act_links, solver_nodes,
+			solver_index, is_fixed, head_initial, head_iter, T, Sy,
+			recharge, riv_nodes, riv_elevation, stage, conductivity, dt):
+		"""Assemble and solve one linearized backward-Euler system."""
+		rows = []
+		cols = []
+		data = []
+		rhs = np.zeros(len(solver_nodes), dtype=float)
+		diag = np.zeros(len(solver_nodes), dtype=float)
+		safe_sy = np.maximum(Sy, np.finfo(float).eps)
+		conductance = T[act_links]/(grid.dx*grid.dx)
+		tails = grid.node_at_link_tail[act_links]
+		heads = grid.node_at_link_head[act_links]
+
+		for tail, head, coeff in zip(tails, heads, conductance):
+			if coeff == 0.0:
+				continue
+			i_local = solver_index[tail]
+			j_local = solver_index[head]
+			if i_local < 0 or j_local < 0:
+				continue
+
+			if not is_fixed[tail]:
+				diag[i_local] += coeff
+				if is_fixed[head]:
+					rhs[i_local] += coeff*head_initial[head]
+				else:
+					rows.append(i_local)
+					cols.append(j_local)
+					data.append(-coeff)
+
+			if not is_fixed[head]:
+				diag[j_local] += coeff
+				if is_fixed[tail]:
+					rhs[j_local] += coeff*head_initial[tail]
+				else:
+					rows.append(j_local)
+					cols.append(i_local)
+					data.append(-coeff)
+
+		for node in solver_nodes:
+			local_idx = solver_index[node]
+			if is_fixed[node]:
+				rows.append(local_idx)
+				cols.append(local_idx)
+				data.append(1.0)
+				rhs[local_idx] = head_initial[node]
+				continue
+
+			storage_coeff = safe_sy[node]/dt
+			diag[local_idx] += storage_coeff
+			rhs[local_idx] += storage_coeff*head_initial[node] + recharge[node]/dt
+
+		if riv_nodes is not None and len(riv_nodes) > 0:
+			riv_stage = riv_elevation[riv_nodes] + stage[riv_nodes]
+			active_riv = head_iter[riv_nodes] > riv_stage
+			for node, stage_node, riv_active in zip(riv_nodes, riv_stage, active_riv):
+				if not riv_active or is_fixed[node]:
+					continue
+				local_idx = solver_index[node]
+				if local_idx < 0:
+					continue
+				riv_coeff = self.kaq*conductivity[node]
+				diag[local_idx] += riv_coeff
+				rhs[local_idx] += riv_coeff*stage_node
+
+		for idx, value in enumerate(diag):
+			rows.append(idx)
+			cols.append(idx)
+			data.append(value)
+
+		matrix = csr_matrix((data, (rows, cols)), shape=(len(solver_nodes), len(solver_nodes)))
+		solution = spsolve(matrix, rhs)
+		head_linear = head_initial.copy()
+		head_linear[solver_nodes] = solution
+		return head_linear
+
+	def _apply_storage_change(self, act_nodes, surface, bathymetry, Droot,
+			theta_sat, theta_fc, theta_dt, water_storage_change, head, Sy):
+		"""Apply groundwater storage changes through the existing soil connector."""
+		head_next = np.array(head, dtype=float, copy=True)
+		if self.lakes_is_active == 0:
+			head_next[act_nodes] = fun_update_UZ_SZ_depth(
+				np.array(water_storage_change[act_nodes]),
+				np.array(head_next[act_nodes]),
+				np.array(theta_dt[act_nodes]),
+				np.array(theta_sat[act_nodes]),
+				np.array(theta_fc[act_nodes]),
+				np.array(Sy[act_nodes]),
+				np.array(surface[act_nodes] - Droot[act_nodes])
+			)
+		else:
+			aux_head = np.array(head_next[act_nodes], np.float32)
+			lakes.uz_sz_interaction.update_soil(
+				np.array(surface[act_nodes], np.float32),
+				np.array(bathymetry[act_nodes], np.float32),
+				np.array(bathymetry[act_nodes]-Droot[act_nodes], np.float32),
+				np.ones(len(act_nodes), np.float32),
+				np.zeros(len(act_nodes), np.float32),
+				np.zeros(len(act_nodes), np.float32),
+				np.array(theta_sat[act_nodes], np.float32),
+				np.array(theta_fc[act_nodes], np.float32),
+				np.array(theta_dt[act_nodes], np.float32),
+				np.array(water_storage_change[act_nodes], np.float32),
+				np.array(Sy[act_nodes], np.float32),
+				aux_head
+			)
+			head_next[act_nodes] = aux_head
+
+		return head_next
 
 def update_saturated_thickness(head, bottom, surface,
             thickness, inodetype, method=0):

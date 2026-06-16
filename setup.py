@@ -33,6 +33,7 @@ setup(
         'chardet',
         'tqdm',
         'numpy<2.0',
+        'scipy',
         'Cartopy',
         'metpy',
         'numba',
