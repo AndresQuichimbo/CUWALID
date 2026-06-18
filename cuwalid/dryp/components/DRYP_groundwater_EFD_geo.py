@@ -541,8 +541,8 @@ class gwflow_EFD(object):
 
 		areas = grid['Areas']
 		areas_act = areas[act_nodes]
-		recharge_volume_free = recharge[self.free_nodes]*areas[self.free_nodes]/dt
-		storage_coeff_free = Sy[self.free_nodes]*areas[self.free_nodes]/dt
+		recharge_volume_free = recharge[self.free_nodes]*areas[self.free_nodes]*dt
+		storage_coeff_free = Sy[self.free_nodes]*areas[self.free_nodes]#/dt
 
 		surface_act32 = np.asarray(surface[act_nodes], dtype=np.float32)
 		bathymetry_act32 = np.asarray(bathymetry[act_nodes], dtype=np.float32)
@@ -675,8 +675,8 @@ class gwflow_EFD(object):
 
 		try:
 			MB = (
-				np.mean(recharge[act_nodes]) - np.mean(discharge[act_nodes])
-				- np.mean(total_storage_change) - self.flux_at_CHB
+				np.mean(recharge[act_nodes])*dt - np.mean(discharge[act_nodes])
+				- np.mean(total_storage_change) - self.flux_at_CHB*dt
 			)
 			assert np.allclose(MB, 0.0, rtol=1e-05, atol=1e-04)
 		except:
@@ -693,7 +693,7 @@ class gwflow_EFD(object):
 		if len(self.free_nodes) == 0:
 			return np.zeros(0, dtype=float)
 
-		edge_g = self.edge_c_static*0.5*(thickness_sat[self.edge_i] + thickness_sat[self.edge_j])
+		edge_g = self.edge_c_static*dt*0.5*(thickness_sat[self.edge_i] + thickness_sat[self.edge_j])
 		diag = storage_coeff_free.copy()
 		rhs = storage_coeff_free*head_initial[self.free_nodes] + recharge_volume_free
 
@@ -740,10 +740,11 @@ class gwflow_EFD(object):
 		x0 = head_iter[self.free_nodes]
 		solution, info = cg(
 			matrix, rhs, x0=x0,
-			rtol=self.implicit_tolerance,
-			atol=0.0,
+			tol=self.implicit_tolerance,
+			#atol=0.0,
 			maxiter=self.linear_max_iter
 		)
+		#print('CG solver info:', info, '\nsolution:', solution, '\nx0:', x0)
 		if info != 0:
 			solution = spsolve(matrix, rhs)
 
@@ -764,24 +765,25 @@ class gwflow_EFD(object):
 		if self.id_CHB is not None:
 			self.flux_at_CHB = Net_Flux[self.id_CHB].sum()
 
-		Net_Flux += recharge/dt
+		Net_Flux += recharge#/dt
 		qs_riv = np.zeros(0, dtype=float)
 		if riv_nodes is not None and len(riv_nodes) > 0:
 			riv_stage = riv_elevation[riv_nodes] + stage[riv_nodes]
-			head_diff = head[riv_nodes] - riv_stage
-			np.maximum(head_diff, 0.0, out=head_diff)
-			if np.ndim(conductivity) == 0:
-				riv_cond = np.full(len(riv_nodes), conductivity, dtype=float)
-			else:
-				riv_cond = conductivity[riv_nodes]
-			riv_storage_exact = np.maximum(
-				grid['Areas'][riv_nodes]*Sy[riv_nodes],
-				np.finfo(float).eps
-			)
-			with np.errstate(divide='ignore', invalid='ignore'):
-				aux = np.log(head_diff) - riv_cond*dt/riv_storage_exact
-			head_diff_loss = head_diff - np.where(aux > 0.0, np.exp(aux), 0.0)
-			qs_riv = head_diff_loss*riv_storage_exact
+			#head_diff = head[riv_nodes] - riv_stage
+			#np.maximum(head_diff, 0.0, out=head_diff)
+			#if np.ndim(conductivity) == 0:
+			#	riv_cond = np.full(len(riv_nodes), conductivity, dtype=float)
+			#else:
+			#	riv_cond = conductivity[riv_nodes]
+			#riv_storage_exact = np.maximum(
+			#	grid['Areas'][riv_nodes]*Sy[riv_nodes],
+			#	np.finfo(float).eps
+			#)
+			#with np.errstate(divide='ignore', invalid='ignore'):
+			#	aux = np.log(head_diff) - riv_cond*dt/riv_storage_exact
+			#head_diff_loss = head_diff - np.where(aux > 0.0, np.exp(aux), 0.0)
+			#qs_riv = head_diff_loss*riv_storage_exact
+			qs_riv = conductivity[riv_nodes] * np.maximum(head[riv_nodes] - riv_stage, 0.0)
 			Net_Flux[riv_nodes] -= self.kaq[riv_nodes]*qs_riv
 
 		return Net_Flux, qs_riv

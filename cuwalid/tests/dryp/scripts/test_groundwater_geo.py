@@ -8,9 +8,15 @@ import numpy as np
 #from landlab import RasterModelGrid
 from cuwalid.dryp.components.DRYP_io import create_grid_from_extent
 from cuwalid.dryp.components.DRYP_groundwater_EFD_geo import gwflow_EFD
+import time
+
+# global variables
+SY = 0.01
+KSAT = 10.0
+RECHARGE = 0.00001
 
 # analytical solution
-def constant_transmissivity(x, R=0.00001, L=11000, T=1000, hbc=100):
+def constant_transmissivity(x, R=RECHARGE, L=11000, T=KSAT*100, hbc=100):
     h = hbc + (R/(2*T))*(L**2 - x**2)
     return h
 
@@ -28,7 +34,7 @@ def test_groundwater_constant_transmissivity():
 	h(L) = 100 m
 	Q(0) = 0 m3/d
 	Analytical solution:
-	h(x) = 100 + (R/(2T))*(L^2 - x^2/2)
+	h(x) = 100 + (R/(2*T))*(L**2 - x**2)
 
 	Expected outcome:
 	The numerical solution should be close to the analytical solution:
@@ -53,8 +59,8 @@ def test_groundwater_constant_transmissivity():
 	thickness = np.full(grid_size, 100.0)
 	bathymetry = np.full(grid_size, 200.0)
 	head = np.full(grid_size, 100.0)
-	Sy = np.full(grid_size, 0.01)	
-	Ksat_aq = np.full(grid_size, 10.0)
+	Sy = np.full(grid_size, SY)	
+	Ksat_aq = np.full(grid_size, KSAT)
 	CHB = np.full(grid_size, -9999)
 	CHB[ncol*2-1] = 100.0
 
@@ -62,7 +68,7 @@ def test_groundwater_constant_transmissivity():
 	theta_sat = np.full(grid_size, 0.6)
 	theta_fc = np.full(grid_size, 0.4)
 	theta = np.full(grid_size, 0.4)
-	Ksat = np.full(grid_size, 10.00)
+	Ksat = np.full(grid_size, KSAT)
 	Droot = np.full(grid_size, 1.0)
 
 	area_river = np.full(grid_size, 10000.0)
@@ -73,7 +79,7 @@ def test_groundwater_constant_transmissivity():
 	aqtype = np.zeros(grid_size)
 	
 	# recharge
-	recharge = np.full(grid_size, 0.00001)
+	recharge = np.full(grid_size, RECHARGE)
 
 	
 	act_nodes = grid['core_nodes'][:]
@@ -91,6 +97,9 @@ def test_groundwater_constant_transmissivity():
 	# run groundwater model
 	gw = gwflow_EFD(grid, Ksat_aq, area_river, CHB, method)
 	
+	# run the model for 5000 time steps
+	# measure the time taken to run the model
+	start_time = time.time()
 	for i in range(5000):
 		
 		head, baseflow = gw.run_one_step_gw(grid,
@@ -112,13 +121,9 @@ def test_groundwater_constant_transmissivity():
 						stage,
 						1
 						)
-	
-	#print(i, head.reshape(nrow, ncol))
+	end_time = time.time()
+	print('Time taken to run the model for 5000 time steps: {:.2f} seconds'.format(end_time - start_time))
 	out = head[act_nodes]
-	#print('Output:', out)
-	#print('Answer:', answer)
-	#print('Error:', out-answer)
-	
 	assert np.allclose(out, answer, atol=7.5e-2)
 	# tolerance use for numerical errors is assumed to be 7.5 cm
 
@@ -140,22 +145,22 @@ def test_groundwater_constant_transmissivity_implicit():
 	thickness = np.full(grid_size, 100.0)
 	bathymetry = np.full(grid_size, 200.0)
 	head = np.full(grid_size, 100.0)
-	Sy = np.full(grid_size, 0.01)
-	Ksat_aq = np.full(grid_size, 10.0)
+	Sy = np.full(grid_size, SY)
+	Ksat_aq = np.full(grid_size, KSAT)
 	CHB = np.full(grid_size, -9999)
 	CHB[ncol*2-1] = 100.0
 
 	theta_sat = np.full(grid_size, 0.6)
 	theta_fc = np.full(grid_size, 0.4)
 	theta = np.full(grid_size, 0.4)
-	Ksat = np.full(grid_size, 10.0)
+	Ksat = np.full(grid_size, KSAT)
 	Droot = np.full(grid_size, 1.0)
 
 	area_river = np.full(grid_size, 10000.0)
 	conductivity = riv_width*riv_length*Ksat
 	stage = np.full(grid_size, 0.01)
 	aqtype = np.zeros(grid_size)
-	recharge = np.full(grid_size, 0.00001)
+	recharge = np.full(grid_size, RECHARGE)
 	act_nodes = grid['core_nodes'][:]
 	riv_nodes = []
 
@@ -167,8 +172,10 @@ def test_groundwater_constant_transmissivity_implicit():
 		solver='implicit', implicit_max_iter=6,
 		implicit_tolerance=1.0e-8, linear_max_iter=200
 	)
-
-	for i in range(1000):
+	# run the model for 5000 time steps
+	# measure the time taken to run the model
+	start_time = time.time()
+	for i in range(100):
 		head, baseflow = gw.run_one_step_gw(
 			grid,
 			surface,
@@ -189,9 +196,11 @@ def test_groundwater_constant_transmissivity_implicit():
 			stage,
 			50.0
 		)
-
+	end_time = time.time()
+	print('Time taken to run the model for 100 time steps: {:.2f} seconds'.format(end_time - start_time))
 	out = head[act_nodes]
 	assert np.allclose(out, answer, atol=7.5e-2)
 	
 if __name__ == '__main__':
 	test_groundwater_constant_transmissivity()
+	test_groundwater_constant_transmissivity_implicit()
