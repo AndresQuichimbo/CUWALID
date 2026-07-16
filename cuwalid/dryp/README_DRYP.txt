@@ -52,3 +52,5 @@ test versions
 1.1.61: Coordinates fixed in the Centre
         Geographical reference system added to the model
         Flow direction now accept different formats
+
+1.1.64: Add implicit solution for the groundwater component

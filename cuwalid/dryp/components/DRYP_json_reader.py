@@ -71,6 +71,9 @@ class get_model_settings(object):
 		# Groundwater aquifer functions
 		self.gw_func = int(settings_config["COMPONENTS"]["method_gw"])
 
+		# Groundwater solver
+		self.solver_gw = settings_config["COMPONENTS"]["solver_gw"]
+		print("Groundwater solver0: ", self.solver_gw)
 		# Save netcdf files of model results
 		self.save_netcdf = bool(settings_config["OUTPUT"]["output_grid"])
 		

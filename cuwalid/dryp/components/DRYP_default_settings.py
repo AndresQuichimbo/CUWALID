@@ -99,6 +99,7 @@ default_settings = {
         "method_inf": 1, # choose infiltration method
         "run_gw" : True, # activate groundwater component
         "method_gw": 0, # choose groundwater transimissivity approach
+        "solver_gw": "explicit", # choose groundwater solver
     },
 
     "OUTPUT": {

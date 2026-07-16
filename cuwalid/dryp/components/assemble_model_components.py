@@ -52,7 +52,8 @@ def initialize_core_hydrology_components(data_in, grid, topo, aquifer, water_bod
                     aquifer.Ksat,
                     topo.area_river,
                     aquifer.CHB,
-                    data_in.gw_func
+                    data_in.gw_func,
+                    solver=data_in.solver_gw
                     )
     
     pnds = None
