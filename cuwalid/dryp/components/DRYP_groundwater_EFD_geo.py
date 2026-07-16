@@ -645,8 +645,7 @@ class gwflow_EFD(object):
 
 			water_storage_change.fill(0.0)
 			water_storage_change[act_nodes] = (
-				Sy[act_nodes]*(head_trial[act_nodes] - head_initial[act_nodes])
-				- dqs[act_nodes]*dt
+				(Net_Flux[act_nodes] - dqs[act_nodes])*dt
 			)
 			total_storage_change = np.mean(water_storage_change[act_nodes])
 
