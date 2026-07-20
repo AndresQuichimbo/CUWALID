@@ -153,77 +153,62 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, active_dom
 	Parameters
 	----------
 	ncols : int
-	    Number of grid columns (width).
+		Number of grid columns (width).
 	nrows : int
-	    Number of grid rows (height).
+		Number of grid rows (height).
 	lon_min : float
-	    Longitude of the lower-left corner (degrees).
+		Longitude of the lower-left corner (degrees).
 	lat_min : float
-	    Latitude of the lower-left corner (degrees).
-	cellsize_deg : float
-	    Grid cell size (degrees).
+		Latitude of the lower-left corner (degrees).
+	cellsize : float
+		Grid cell size (degrees).
 	Returns
 	-------
 	dict
-	    A dictionary with:
-	    - 'lon' : 2D array of longitudes (degrees)
-	    - 'lat' : 2D array of latitudes (degrees)
-	    - 'x'   : 2D array of x coordinates (m, east)
-	    - 'y'   : 2D array of y coordinates (m, north)
-	    - 'mean_lat' : mean latitude used in the approximation
+		A dictionary with:
+		- 'lon' : 2D array of longitudes (degrees)
+		- 'lat' : 2D array of latitudes (degrees)
+		- 'x'   : 2D array of x coordinates (m, east)
+		- 'y'   : 2D array of y coordinates (m, north)
+		- 'mean_lat' : mean latitude used in the approximation
 	"""
 	# Generate 1D coordinate arrays (cell centers)
 	lon, lat = get_coordinates_at_center_of_cells(ncols, nrows,
 					lon_min, lat_min, cellsize)
 		
-	#lon = np.linspace(lon_min + cellsize / 2,
-	#                  lon_min + (ncols - 0.5) * cellsize,
-	#                  ncols)
-	#lat = np.linspace(lat_min + cellsize / 2,
-	#                  lat_min + (nrows - 0.5) * cellsize,
-	#                  nrows)
-	#print("lon range:", lon[0], "to", lon[-1])
-	#print("lat range:", lat[0], "to", lat[-1])
 	# 2D meshgrid of geographic coordinates
 	lon2d, lat2d = np.meshgrid(lon, lat)
 
 	if geographic:
-		# Compute mean latitude for conversion approximation
-		#mean_lat = np.mean(lat)
-		#mean_lat_rad = np.deg2rad(mean_lat)
-		# Conversion factors (WGS84) from degrees to meters
 
-		# meters_per_deg_lat = meters_dy
-		#meters_dy = 111132.92 - 559.82 * np.cos(2 * mean_lat_rad) + 1.175 * np.cos(4 * mean_lat_rad)
-		# meters_per_deg_lon = meters_dx
-		#meters_dx = 111412.84 * np.cos(mean_lat_rad) - 93.5 * np.cos(3 * mean_lat_rad)
-		meters_dy = 111132.92 * 0.008333333333333
-		meters_dx = 111412.84 * 0.008333333333333# * np.cos(mean_lat_rad)
-	
-		# Compute Cartesian coordinates (relative to lower-left corner)
-		x = (lon2d - lon_min) * meters_dx
-		y = (lat2d - lat_min) * meters_dy
-		#meters_dx = x
-		#meters_dy = y
-		#x = (lon - lon_min) * meters_per_deg_lon
-		#y = (lat - lat_min) * meters_per_deg_lat
+		meters_dx_mesh, meters_dy_mesh = convert_geographic_to_cartesian(lon, lat,
+														   lon_min, lat_min)
+		#lat2d_rad = np.deg2rad(lat2d)
+		#
+		## Strict WGS84 length approximation per degree
+		#meters_dy_2d = 111132.92 - 559.82 * np.cos(2 * lat2d_rad) + 1.175 * np.cos(4 * lat2d_rad)
+		#meters_dx_2d = 111412.84 * np.cos(lat2d_rad) - 93.5 * np.cos(3 * lat2d_rad)
+		#
+		## Scale by cellsize (which is in degrees) to get the true metric size of each individual cell
+		#meters_dx_mesh = meters_dx_2d * cellsize
+		#meters_dy_mesh = meters_dy_2d * cellsize
+		#
+		## Relative Cartesian coordinates from the lower-left origin
+		#x = (lon2d - lon_min) * meters_dx_2d
+		#y = (lat2d - lat_min) * meters_dy_2d
 	else:
-		# For projected grid, assume cellsize is already in meters
-		meters_dx = cellsize
-		meters_dy = cellsize
-		# Compute Cartesian coordinates (relative to lower-left corner)
-		x = lon#2d# - lon_min) * meters_dx
-		y = lat#2d# - lat_min) * meters_dy
+		# For projected grids, cellsize is already in meters
+		#x = lon2d
+		#y = lat2d
+		meters_dx_mesh, meters_dy_mesh = np.meshgrid(np.full(len(lon), cellsize), np.full(len(lat), cellsize))
 
-	meters_dx, meters_dy = np.meshgrid(np.full(len(lon), meters_dx, dtype=float),
-									 np.full(len(lat), meters_dy, dtype=float))	
+	# Pass the true variable meshes to match PCR-GLOBWB cell-by-cell requirements
+	grid = _generate_rectangular_grid_data(ncols, nrows, meters_dx_mesh.flatten(), meters_dy_mesh.flatten())
 
-	# Create grid dictionary
-	grid = _generate_rectangular_grid_data(ncols, nrows, meters_dx.flatten(), meters_dy.flatten())
 
 	# Add coordinate arrays
-	grid['x'] = x
-	grid['y'] = y
+	grid['x'] = lon#2d
+	grid['y'] = lat#2d
 
 	if active_domain is None:
 		# create core nodes array
@@ -244,82 +229,110 @@ def get_coordinates_at_center_of_cells(ncols, nrows, lon_min, lat_min, cellsize)
 	Parameters
 	----------
 	ncols : int
-	    Number of grid columns (width).
+		Number of grid columns (width).
 	nrows : int
-	    Number of grid rows (height).
+		Number of grid rows (height).
 	lon_min : float
-	    Longitude of the lower-left corner (degrees).
+		Longitude of the lower-left corner (degrees).
 	lat_min : float
-	    Latitude of the lower-left corner (degrees).
+		Latitude of the lower-left corner (degrees).
 	cellsize : float
-	    Grid cell size (degrees).
+		Grid cell size (degrees).
 	active_domain : array_like, optional
-	    Array indicating active cells (1) and inactive cells (0). If None, all cells are considered active.
+		Array indicating active cells (1) and inactive cells (0). If None, all cells are considered active.
 	geographic : bool, optional
-	    If True, coordinates are returned in geographic (longitude, latitude) format. If False, coordinates are returned in projected (x, y) format.
-	    - 'cellsize' : grid cell size (degrees)
+		If True, coordinates are returned in geographic (longitude, latitude) format. If False, coordinates are returned in projected (x, y) format.
+		- 'cellsize' : grid cell size (degrees)
 	Returns
 	-------
 	"""
 	# Generate 1D coordinate arrays (cell centers)
 	lon = np.linspace(lon_min + cellsize / 2,
-	                  lon_min + (ncols - 0.5) * cellsize,
-	                  ncols)
+					  lon_min + (ncols - 0.5) * cellsize,
+					  ncols)
 	lat = np.linspace(lat_min + cellsize / 2,
-	                  lat_min + (nrows - 0.5) * cellsize,
-	                  nrows)
+					  lat_min + (nrows - 0.5) * cellsize,
+					  nrows)
 	
 	return lon, lat
 
 def convert_geographic_to_cartesian(lon, lat, lon_min, lat_min):
 	"""
-	Convert geographic coordinates (longitude, latitude) to Cartesian coordinates (x, y) using WGS84 approximation.
+	Convert geographic coordinates (longitude, latitude) to metric cell sizes
+	using a WGS84 length-per-degree approximation.
 
 	Parameters
 	----------
 	lon : array_like
-	    Array of longitudes (degrees).
+		1D array of longitude cell-center coordinates (degrees).
 	lat : array_like
-	    Array of latitudes (degrees).
+		1D array of latitude cell-center coordinates (degrees).
 	lon_min : float
-	    Longitude of the lower-left corner (degrees).
+		Longitude of the lower-left corner (degrees).
 	lat_min : float
-	    Latitude of the lower-left corner (degrees).
+		Latitude of the lower-left corner (degrees).
 
 	Returns
 	-------
-	x : numpy.ndarray
-	    Array of x coordinates (meters, east).
-	y : numpy.ndarray
-	    Array of y coordinates (meters, north).
+	meters_dx_mesh : numpy.ndarray
+		2D array (nrows, ncols) with per-cell width in meters.
+	meters_dy_mesh : numpy.ndarray
+		2D array (nrows, ncols) with per-cell height in meters.
 	"""
+	# Keep API-compatible args lon_min/lat_min even if input lon/lat are already centers.
+	_ = lon_min
+	_ = lat_min
+
+	lon = np.asarray(lon, dtype=float).ravel()
+	lat = np.asarray(lat, dtype=float).ravel()
+	if lon.size < 2 or lat.size < 2:
+		raise ValueError('lon and lat must contain at least two points to infer cell size')
+
+	# Assuming regular grid spacing in degrees.
+	cellsize_lon = float(np.mean(np.diff(lon)))
+	cellsize_lat = float(np.mean(np.diff(lat)))
+	cellsize_lon = abs(cellsize_lon)
+	cellsize_lat = abs(cellsize_lat)
+
+	# 2D meshgrid of geographic coordinates at cell centers
+	_, lat2d = np.meshgrid(lon, lat)
+
+	lat2d_rad = np.deg2rad(lat2d)
+		
+	# Strict WGS84 length approximation per degree
+	meters_dy_2d = 111132.92 - 559.82 * np.cos(2 * lat2d_rad) + 1.175 * np.cos(4 * lat2d_rad)
+	meters_dx_2d = 111412.84 * np.cos(lat2d_rad) - 93.5 * np.cos(3 * lat2d_rad)
+	
+	# Scale by the angular cell size (degrees) to get metric cell dimensions.
+	meters_dx_mesh = meters_dx_2d * cellsize_lon
+	meters_dy_mesh = meters_dy_2d * cellsize_lat
 	# Compute mean latitude for conversion approximation
 	#mean_lat = np.mean(lat)
 	#mean_lat_rad = np.deg2rad(mean_lat)
 
-	# Conversion factors (WGS84) from degrees to meters
-	#meters_dy = 111132.92 - 559.82 * np.cos(2 * mean_lat_rad) + 1.175 * np.cos(4 * mean_lat_rad)
-	#meters_dx = 111412.84 * np.cos(mean_lat_rad) - 93.5 * np.cos(3 * mean_lat_rad)
-	meters_dy = 111132.92 * 0.008333333333333
-	meters_dx = 111412.84 * 0.008333333333333# * np.cos(mean_lat_rad)
-	#print("meters_dx", meters_dx, "meters_dy", meters_dy)
-	# Compute Cartesian coordinates (relative to lower-left corner)
-	x = (lon - lon_min) * meters_dx
-	y = (lat - lat_min) * meters_dy
+	## Conversion factors (WGS84) from degrees to meters
+	##meters_dy = 111132.92 - 559.82 * np.cos(2 * mean_lat_rad) + 1.175 * np.cos(4 * mean_lat_rad)
+	##meters_dx = 111412.84 * np.cos(mean_lat_rad) - 93.5 * np.cos(3 * mean_lat_rad)
+	#meters_dy = 111132.92 * 0.008333333333333
+	#meters_dx = 111412.84 * 0.008333333333333# * np.cos(mean_lat_rad)
+	##print("meters_dx", meters_dx, "meters_dy", meters_dy)
+	## Compute Cartesian coordinates (relative to lower-left corner)
+	#x = (lon - lon_min) * meters_dx
+	#y = (lat - lat_min) * meters_dy
 
-	return x, y, meters_dx, meters_dy
+	return meters_dx_mesh, meters_dy_mesh
 
 def center_ones(nrows: int, ncols: int):
-    """
-    Return a 2D NumPy array with zeros on the border and ones in the interior.
-    Border thickness = 1. If nrows<=2 or ncols<=2 returns all zeros.
+	"""
+	Return a 2D NumPy array with zeros on the border and ones in the interior.
+	Border thickness = 1. If nrows<=2 or ncols<=2 returns all zeros.
 
-    Args:
-        nrows (int): number of rows
-        ncols (int): number of columns
+	Args:
+		nrows (int): number of rows
+		ncols (int): number of columns
 
-    Returns:
-        numpy.ndarray: array shape (nrows, ncols)
+	Returns:
+		numpy.ndarray: array shape (nrows, ncols)
 
 	Example:
 		>>> center_ones(5, 6)
@@ -329,14 +342,14 @@ def center_ones(nrows: int, ncols: int):
 			   [0, 1, 1, 1, 1, 0],
 			   [0, 0, 0, 0, 0, 0]])
 		
-    """
+	"""
 
-    if nrows <= 2 or ncols <= 2:
-        return np.zeros((nrows, ncols), dtype=int)
+	if nrows <= 2 or ncols <= 2:
+		return np.zeros((nrows, ncols), dtype=int)
 
-    a = np.zeros((nrows, ncols), dtype=int)
-    a[1:-1, 1:-1] = 1
-    return a
+	a = np.zeros((nrows, ncols), dtype=int)
+	a[1:-1, 1:-1] = 1
+	return a
 
 def _generate_rectangular_grid_data(N_x, N_y, Dx_cell, Dy_cell):
 	"""
@@ -451,45 +464,45 @@ def _generate_rectangular_grid_data(N_x, N_y, Dx_cell, Dy_cell):
 	}
 
 def _compute_inactive_links(grid, domain):
-    """
-    Compute inactive links for the rectangular grid.
+	"""
+	Compute inactive links for the rectangular grid.
 
-    Rules:
-    - A link is active only if both its end nodes are active.
-    - If a link connects an active node with an inactive node, the link is inactive.
+	Rules:
+	- A link is active only if both its end nodes are active.
+	- If a link connects an active node with an inactive node, the link is inactive.
 
-    Parameters
-    ----------
-    grid : dict
-        Grid dictionary returned by _generate_rectangular_grid_data (must contain 'I' and 'J' arrays).
-    domain : array_like
-        1D flattened domain array where active nodes have values > 0.
+	Parameters
+	----------
+	grid : dict
+		Grid dictionary returned by _generate_rectangular_grid_data (must contain 'I' and 'J' arrays).
+	domain : array_like
+		1D flattened domain array where active nodes have values > 0.
 
-    Returns
-    -------
-    inactive_links : numpy.ndarray
-        1D array of link indices that are inactive.
-    active_link_mask : numpy.ndarray
-        boolean array (same length as grid['I']) True where link is active.
-    """
+	Returns
+	-------
+	inactive_links : numpy.ndarray
+		1D array of link indices that are inactive.
+	active_link_mask : numpy.ndarray
+		boolean array (same length as grid['I']) True where link is active.
+	"""
 
-    if 'I' not in grid or 'J' not in grid:
-        raise ValueError("grid must contain 'I' and 'J' arrays of link connectivity")
+	if 'I' not in grid or 'J' not in grid:
+		raise ValueError("grid must contain 'I' and 'J' arrays of link connectivity")
 
-    I = np.asarray(grid['I'], dtype=int)
-    J = np.asarray(grid['J'], dtype=int)
-    domain = np.asarray(domain)
+	I = np.asarray(grid['I'], dtype=int)
+	J = np.asarray(grid['J'], dtype=int)
+	domain = np.asarray(domain)
 
-    # active node mask: True for active nodes
-    active_node = domain > 0
+	# active node mask: True for active nodes
+	active_node = domain > 0
 
-    # link is active only if both end nodes are active
-    active_link_mask = np.logical_and(active_node[I], active_node[J])
+	# link is active only if both end nodes are active
+	active_link_mask = np.logical_and(active_node[I], active_node[J])
 
-    # inactive link indices
-    inactive_links = np.where(~active_link_mask)[0]
+	# inactive link indices
+	inactive_links = np.where(~active_link_mask)[0]
 
-    return inactive_links, active_link_mask
+	return inactive_links, active_link_mask
 
 def create_landlab_grid(ncol, nrow, xllcorner, yllcorner, cellsize, domain=None):
 	"""this function create a grid landlab object, this function can be
@@ -598,17 +611,17 @@ class surface_parameters(object):
 													 self.grid_cellsize,
 													 )
 		
-		if inputfile.geographic:
-			_, _, delta_x, delta_y = convert_geographic_to_cartesian(self.lon, self.lat,
-														   self.grid_xllcorner, self.grid_yllcorner)
-			self.area_cells = delta_x*delta_y
-		else:
-			self.area_cells = self.grid_cellsize**2
-
-		cellsize_meters = np.sqrt(self.area_cells)
-
 		# define grid size for model arrays
 		grid_size = len(self.surface)
+
+		if inputfile.geographic:
+			delta_x, delta_y = convert_geographic_to_cartesian(self.lon, self.lat,
+														   self.grid_xllcorner, self.grid_yllcorner)
+			self.area_cells = (delta_x*delta_y).flatten()
+		else:
+			self.area_cells = np.full(grid_size, self.grid_cellsize**2, dtype=float)
+
+		cellsize_meters = np.sqrt(self.area_cells)
 
 		# Reading river banks
 		if inputfile.fname_ripwidth != None and os.path.exists(inputfile.fname_ripwidth):
@@ -616,7 +629,7 @@ class surface_parameters(object):
 		else:
 			self.river_banks = np.full(grid_size, 100.0, dtype=float)
 		
-		self.river_banks[self.river_banks > cellsize_meters] = cellsize_meters
+		self.river_banks = np.minimum(self.river_banks, cellsize_meters)
 		#self.river_banks = 50.0 # metres
 		#if self.river_banks > self.grid_cellsize:
 		#	self.river_banks = domain.transform[0]
@@ -645,7 +658,7 @@ class surface_parameters(object):
 		if inputfile.fname_River != None and os.path.exists(inputfile.fname_River):     
 			self.riv_length= np.flip(rasterio.open(inputfile.fname_River).read(1), 0).flatten()
 		else:
-			self.riv_length = np.full(grid_size, cellsize_meters, dtype=float)#
+			self.riv_length = np.array(cellsize_meters, dtype=float, copy=True)
 			print('River network....................not provided')
 			print('All cells are considered rivers with length of grid size')
 		self.riv_length = np.asarray(self.riv_length, dtype=float)
@@ -802,7 +815,7 @@ class surface_parameters(object):
 		self.rip_to_cell_area_factor = self.area_bank_cells/self.area_cells
 		self.cell_to_rip_area_factor = np.zeros_like(self.rip_to_cell_area_factor, dtype=float)
 		self.cell_to_rip_area_factor[self.area_bank_cells > 0] = (
-			self.area_cells/
+			self.area_cells[self.area_bank_cells > 0]/
 			self.area_bank_cells[self.area_bank_cells > 0])
 		
 		# hillslope area cell factor [-]
@@ -889,7 +902,7 @@ def read_raster_as_array(filename, grid_size=None, default_value=None, dtype=flo
 	return data
 
 def set_initial_conditions(grid_size, Droot, head, surface, 
-		    bathymetry, extintion_depth, cellsize_meters, gw_activated):
+			bathymetry, extintion_depth, cellsize_meters, gw_activated):
 	"""This function check for initial condition
 	
 	Parameters
@@ -1727,66 +1740,66 @@ class zone_parameters(object):
 		return ids_zone, size_zone
 
 def get_water_body_parameters(depth, area=None):
-    """This function calculates all water body parameters required to run
-    the water body component
-    
-    Parameters
-    ----------
-    depth :	numpy array
-        bathymetry of the water body [m]
-    area :	numpy array
-        surface area of the water body [m2]
-    
-    Returns
-    -------
-    tuple of lists/arrays
-        name_lks : array
-            labels of lake cells (for returned ids)
-        ids_lks : list
-            flat indices of all lake cells (flattened, grouped by lake label)
-        size_lks : list
-            number of cells in each lake
-        ids_max_depth_lks : list
-            flat indices of the cell with maximum depth in each lake
-        depths : array
-            depth values corresponding to ids_lks
-    """
-    # mask lakes from depth
-    name_lks = (depth > 0).astype(int)
+	"""This function calculates all water body parameters required to run
+	the water body component
+	
+	Parameters
+	----------
+	depth :	numpy array
+		bathymetry of the water body [m]
+	area :	numpy array
+		surface area of the water body [m2]
+	
+	Returns
+	-------
+	tuple of lists/arrays
+		name_lks : array
+			labels of lake cells (for returned ids)
+		ids_lks : list
+			flat indices of all lake cells (flattened, grouped by lake label)
+		size_lks : list
+			number of cells in each lake
+		ids_max_depth_lks : list
+			flat indices of the cell with maximum depth in each lake
+		depths : array
+			depth values corresponding to ids_lks
+	"""
+	# mask lakes from depth
+	name_lks = (depth > 0).astype(int)
 
-    # label lakes (connected components)
-    labeled, num_features = label(name_lks)
+	# label lakes (connected components)
+	labeled, num_features = label(name_lks)
 
-    # build groups of flat indices per labeled lake (1..num_features)
-    flat = labeled.flatten()
-    ids_group_by_label = []
-    for lab in range(1, num_features + 1):
-        ids = list(np.where(flat == lab)[0])
-        ids_group_by_label.append(ids)
+	# build groups of flat indices per labeled lake (1..num_features)
+	flat = labeled.flatten()
+	ids_group_by_label = []
+	for lab in range(1, num_features + 1):
+		ids = list(np.where(flat == lab)[0])
+		ids_group_by_label.append(ids)
 
-    # flatten groups to single list of ids (grouped by label)
-    ids_lks = [idx for grp in ids_group_by_label for idx in grp]
+	# flatten groups to single list of ids (grouped by label)
+	ids_lks = [idx for grp in ids_group_by_label for idx in grp]
 
-    # sizes per lake
-    size_lks = [len(grp) for grp in ids_group_by_label]
+	# sizes per lake
+	size_lks = [len(grp) for grp in ids_group_by_label]
 
-    # find index of maximum depth within each group (global flat index)
-    depth_flat = depth.flatten()
-    ids_max_depth_lks = []
-    for grp in ids_group_by_label:
-        if len(grp) == 0:
-            continue
-        grp_depths = depth_flat[grp]
-        imax = int(np.argmax(grp_depths))
-        ids_max_depth_lks.append(grp[imax])
+	# find index of maximum depth within each group (global flat index)
+	depth_flat = depth.flatten()
+	ids_max_depth_lks = []
+	for grp in ids_group_by_label:
+		if len(grp) == 0:
+			continue
+		grp_depths = depth_flat[grp]
+		imax = int(np.argmax(grp_depths))
+		ids_max_depth_lks.append(grp[imax])
 
-    # reduce name array to only the returned ids (labels for those ids)
-    name_lks_out = flat[ids_lks]
+	# reduce name array to only the returned ids (labels for those ids)
+	name_lks_out = flat[ids_lks]
 
-    # reduce depth array to those ids
-    depths_out = depth_flat[ids_lks]
+	# reduce depth array to those ids
+	depths_out = depth_flat[ids_lks]
 
-    return name_lks_out, ids_lks, size_lks, ids_max_depth_lks, depths_out
+	return name_lks_out, ids_lks, size_lks, ids_max_depth_lks, depths_out
 
 
 def get_water_body_parametersold(depth, area=None):
@@ -1892,36 +1905,36 @@ def get_zone_indices_and_sizes(mask):
 	return ids_zones, size_zones
 
 def read_point_coordinates(filename, xlabel="East", ylabel="North"):
-    """
-    Read x and y coordinates from a CSV file efficiently.
+	"""
+	Read x and y coordinates from a CSV file efficiently.
 
-    Parameters
-    ----------
-    filename : str
-        Path to the CSV file with coordinates.
-    xlabel : str, optional
-        Name of the column containing x coordinates. Default is "East".
-    ylabel : str, optional
-        Name of the column containing y coordinates. Default is "North".
+	Parameters
+	----------
+	filename : str
+		Path to the CSV file with coordinates.
+	xlabel : str, optional
+		Name of the column containing x coordinates. Default is "East".
+	ylabel : str, optional
+		Name of the column containing y coordinates. Default is "North".
 
-    Returns
-    -------
-    tuple of np.ndarray
-        xpoint : np.ndarray
-            Array of x coordinates.
-        ypoint : np.ndarray
-            Array of y coordinates.
-    """
-    if not filename or not os.path.exists(filename):
-        raise FileNotFoundError(f"File does not exist: {filename}")
+	Returns
+	-------
+	tuple of np.ndarray
+		xpoint : np.ndarray
+			Array of x coordinates.
+		ypoint : np.ndarray
+			Array of y coordinates.
+	"""
+	if not filename or not os.path.exists(filename):
+		raise FileNotFoundError(f"File does not exist: {filename}")
 
-    # Read only required columns directly as float NumPy arrays
-    datapoints = pd.read_csv(filename, usecols=[xlabel, ylabel])
+	# Read only required columns directly as float NumPy arrays
+	datapoints = pd.read_csv(filename, usecols=[xlabel, ylabel])
 
-    xpoint = datapoints[xlabel].to_numpy(dtype=float)
-    ypoint = datapoints[ylabel].to_numpy(dtype=float)
+	xpoint = datapoints[xlabel].to_numpy(dtype=float)
+	ypoint = datapoints[ylabel].to_numpy(dtype=float)
 
-    return xpoint, ypoint
+	return xpoint, ypoint
 
 def extract_idnode_from_coords(grid, xpoint, ypoint):
 	""" extract nodes from coordinates
