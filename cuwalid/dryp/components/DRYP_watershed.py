@@ -7,6 +7,7 @@ import sys
 import numpy as np
 import pandas as pd
 import xarray as xr
+from scipy.ndimage import binary_fill_holes
 #from landlab import RasterModelGrid
 #from cuwalid.dryp.components.DRYP_io_files import get_model_settings
 from cuwalid.dryp.components.DRYP_io import (
@@ -174,7 +175,7 @@ def get_flow_path(fname_surface, fname_outlet, fname_out=None,
 						np.zeros_like(surface), #conductivity,
 						np.ones_like(surface),
 						np.zeros_like(surface),# no rivers
-						np.full(grid_size, area_cell),
+						grid['Areas'],
 						np.zeros_like(surface),
 						np.ones_like(surface)*1e5,
 						None)
@@ -190,7 +191,7 @@ def get_flow_path(fname_surface, fname_outlet, fname_out=None,
 						np.zeros_like(surface), #conductivity,
 						np.ones_like(surface),
 						np.zeros_like(surface),# no rivers
-						np.full(grid_size, area_cell),
+						grid['Areas'],
 						np.zeros_like(surface),
 						np.ones_like(surface)*1e5,
 						None)
@@ -266,13 +267,21 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 	
 	## get raster shape and cellsize
 	domain = rasterio.open(fname_surface)
-	#grid_shape = (domain.height, domain.width)
-	grid_size = (domain.height*domain.width)
-	#grid_size = int(domain.nrows*domain.ncols)
-	if Volume is True:
-		area_cell = np.power(domain.transform[0], 2)
+
+	# check if the domain has a valid CRS
+	if domain.crs is None:
+		geographic = False
+		print("Warning: The input raster does not have a valid CRS. Assuming it is in projected coordinates.")
 	else:
-		area_cell = 1.0
+		geographic = False
+
+	# check if domain is in geographic coordinates
+	if domain.crs is not None and domain.crs.is_geographic:
+		print("The input raster is in geographic coordinates.")
+		geographic = True
+	
+	# calculate grid size
+	grid_size = domain.height*domain.width
 
 	# read mask
 	mask = None
@@ -287,8 +296,16 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 		domain.bounds[0],
 		domain.bounds[1],
 		domain.transform[0], # cell size
-		mask)
-	
+		mask,
+		geographic=geographic)
+
+	# calculate area of each cell
+	if Volume is True:
+		area_cell = grid['Areas']
+	else:
+		area_cell = np.full(grid_size, 1.0)
+
+
 	ro = runoff_routing(grid,
 		 	grid_size,
 			surface, 
@@ -319,7 +336,7 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 						np.zeros_like(surface), #conductivity,
 						np.ones_like(surface),
 						np.zeros_like(surface),# no rivers
-						np.full(grid_size, area_cell),
+						area_cell,
 						np.zeros_like(surface),
 						np.ones_like(surface)*1e5,
 						None)
@@ -335,7 +352,7 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 	# save files
 	if fname_out is None:
 		fname_out = fname_surface.split('.')[0]
-		fname_out = fname_out + '_var_flowaccum.asc'
+		fname_out = fname_out + '_var_flowaccum.'+fname_surface.split('.')[-1]
 
 	# Save contributing area as raster file
 	save_raster(fname_out, np.flip(ro.discharge.reshape((domain.height,domain.width)), 0),
@@ -344,7 +361,8 @@ def get_flow_accumulation(fname_surface, fname_flow_unit_rate=None, fname_out=No
 	print(f"Flow accumulation map saved:\n{fname_out}")
 
 def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
-						fname_flowDir=None, fname_mask=None, save_files=True, flowdir_format='DRYP'):
+						fname_flowDir=None, fname_mask=None, save_files=True,
+						flowdir_format='DRYP'):
 	"""This function calculates the watershed area at a given point location.
 	It requires a flow direction map and an outlet point. The function will
 	calculate the area and indices (in landlab format). It also
@@ -359,7 +377,7 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 		file name of the elevation raster map
 	fname_outlet : str
 		file name of the outflow raster map
-	fname_floedir : str
+	fname_flowDir : str
 		(optional) filename of the flow direction raster map
 	fname_out : str
 		(optional) filename of the output raster file
@@ -369,7 +387,7 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 		(optional) value that specify if the output files are saved or not
 	flowdir_format: str
 		(optional) value that specify the flow direction format (D8, LDD, GRASS, AGNPS, landlab, DRYP)
-
+	
 
 	Returns
 	-------
@@ -386,12 +404,12 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 	Examples
 	--------
 
-	>>> from cuwalid.dryp.components.DRYP_watershed import get_watershed_map
+	>>> from cuwalid.dryp.components.DRYP_watershed import get_watershed_area
 	>>> fname_surface = "surface.asc"
-	>>> fname_flowdir = "flowdir.asc"
+	>>> fname_flowDir = "flowdir.asc"
 	>>> fname_outlet = "point.csv"
 
-	>>> get_watershed_area(fname_surface, fname_outlet, fname_flowdir)
+	>>> get_watershed_area(fname_surface, fname_outlet, fname_flowDir=fname_flowDir)
 	"""
 
 	# read datasets: surface, flow direction, and list of points
@@ -410,6 +428,18 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 	
 	## get raster shape and cellsize
 	domain = rasterio.open(fname_surface)
+	# check if the domain has a valid CRS
+	if domain.crs is None:
+		geographic = False
+		print("Warning: The input raster does not have a valid CRS. Assuming it is in projected coordinates.")
+	else:
+		geographic = False
+
+	# check if domain is in geographic coordinates
+	if domain.crs is not None and domain.crs.is_geographic:
+		print("The input raster is in geographic coordinates.")
+		geographic = True
+
 	#grid_shape = (domain.height, domain.width)
 	grid_size = (domain.height*domain.width)
 	#grid_size = int(domain.nrows*domain.ncols)
@@ -428,7 +458,9 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 		domain.bounds[0],
 		domain.bounds[1],
 		domain.transform[0], # cell size
-		mask)
+		mask,
+		geographic=geographic)
+	
 	#print("grid created", "x:", domain.bounds[1], "y:", domain.bounds[0])
 	ro = runoff_routing(grid,
 		 	grid_size,
@@ -451,7 +483,7 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 						np.zeros_like(surface), #conductivity,
 						np.ones_like(surface), # decay factor
 						np.zeros_like(surface),# no rivers
-						np.full(grid_size, area_cell), # area of each cell
+						grid['Areas'], # area of each cell
 						np.zeros_like(surface), # no river width
 						np.ones_like(surface)*1e5, # river conductance
 						None)
@@ -484,7 +516,8 @@ def get_watershed_area(fname_surface, fname_outlet, fname_out=None,
 
 def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 					  fname_flowDir=None, fname_mask=None, frmt_outlet_raster=False,
-					  flowdir_format='DRYP', burn=False, burn_value=1, ids_field_name=None, save_files=True):
+					  flowdir_format='DRYP', burn=False, burn_value=1, ids_field_name=None,
+					  save_files=True, fill_isolated_basins=False):
 	"""Function to delineate a basin assuming an outlet
 	point is provided. This function requires a flow direction map
 	but if not provided the flow direction will be created
@@ -518,6 +551,8 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 		(optional) name of the field in the outlet CSV file to use as IDs for the outlets; if None, the first field will be used as ID
 	save_files: bool
 		(optional) whether to save the output files; if False, the function will return the results instead of saving them
+	fill_isolated_basins: bool
+		(optional) whether to fill isolated basins
 
 	Returns
 	-------
@@ -597,6 +632,13 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 
 	# reshape landlab grid into a 2D numpy array
 	basinmask = np.flip(basinmask.reshape(grid_shape), 0)
+
+	# fill isolated blank spaces/holes inside the watershed mask
+	if fill_isolated_basins:
+		# binary_fill_holes expects a boolean mask, fills holes, and returns a boolean array
+		# We cast it back to the original datatype to match your dataset structure
+		filled_mask = binary_fill_holes(basinmask > 0)
+		basinmask = filled_mask.astype(basinmask.dtype)
 	
 	if save_files is False:
 		return basinmask
@@ -643,3 +685,4 @@ def save_raster(fname, data, profile, transform):
 		dst.write(np.array(data, dtype=np.float32), 1)
 		# Set the affine transformation
 		dst.transform = transform
+
