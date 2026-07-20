@@ -167,7 +167,7 @@ def initialize_simulation_state_variables(data_in, topo, grid, aquifer, soil, ve
             topo.surface[act_nodes],
             topo.bathymetry[act_nodes],
             vegetation.extintion_depth[act_nodes],
-            topo.cellsize_meters, #cell_size_meters,
+            topo.cellsize_meters[act_nodes], #cell_size_meters,
             data_in.run_GW
         )
     )
