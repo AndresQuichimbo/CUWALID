@@ -637,7 +637,8 @@ def get_watershed_mask(fname_surface, fname_outlet, fname_out=None,
 	if fill_isolated_basins:
 		# binary_fill_holes expects a boolean mask, fills holes, and returns a boolean array
 		# We cast it back to the original datatype to match your dataset structure
-		filled_mask = binary_fill_holes(basinmask > 0)
+		mask_bool = basinmask > 0
+		filled_mask = binary_fill_holes(mask_bool)
 		basinmask = filled_mask.astype(basinmask.dtype)
 	
 	if save_files is False:

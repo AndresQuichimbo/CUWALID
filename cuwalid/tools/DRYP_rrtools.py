@@ -4,6 +4,7 @@ import pandas as pd
 import geopandas as gpd
 import numpy as np
 import rasterio
+from rasterio.windows import from_bounds, Window
 from rasterio.mask import mask
 from rasterio.crs import CRS
 from rasterio.transform import Affine
@@ -630,7 +631,7 @@ def check_raster_alignaments(fname_base, fname):
 	else:
 		return print("Reference:", shape_base, "Dataset:", shape_raster, fname)
 
-def clip_raster_by_mask(fname, fname_mask, fname_output):
+def clip_raster_by_mask_old(fname, fname_mask, fname_output):
 	"""This function clip a raster file by using a mask raster file. All raster
 	files must have the same size, otherwise and error will raise.
 	The output file will be 
@@ -686,7 +687,7 @@ def clip_raster_by_mask(fname, fname_mask, fname_output):
 	clip_raster_by_extent(fname, fname_output, extent)
 
 
-def clip_raster_by_extent(fname, fname_output, extent):
+def clip_raster_by_extent_old(fname, fname_output, extent):
 	"""Function to clip raster files by extent.
 	
 	Parameters:
@@ -752,58 +753,126 @@ def clip_raster_by_extent(fname, fname_output, extent):
 	with rasterio.open(fname_output, "w", **out_meta) as dest:
 		dest.write(clipped)
 
-
 def find_region_bounds(array, add_empty_frame=True):
-	"""This function finds indices of the extent of the region in
-	a 2D numpy array. Region must be specified with values greater
-	than zero.
+    """
+    Finds slicing indices for the extent of a region (>0) in a 2D array.
+    
+    Returns:
+    --------
+    tuple: (min_row, max_row, min_col, max_col) as exclusive slicing indices.
+           Returns None if no valid region (>0) is found.
+    """
+    nonzero_indices = np.nonzero(array > 0)
+    
+    # Check if any elements are greater than zero
+    if len(nonzero_indices[0]) == 0:
+        return None
 
-	Parameters:
-	-----------
-	array : numpy array
-		2D numpy array (e.g.: from a raster file)
-	
-	Returns:
-	--------
-		min_row, max_row, min_col, max_col : int
-		indices of the region in the array
-		These indices represent the minimum and maximum row and column indices
-		of the region in the 2D array.
-		The values are returned as a tuple of four integers.
-		For example, if the region is found between rows 10 and 20 and columns 5 and 15,
-		the function will return (10, 20, 5, 15).
-		Note: The indices are zero-based, meaning that the first row and column have an index of 0.
-		Make sure to provide the correct 2D array for the function to work properly.
+    # Base minimum and maximum indices (inclusive)
+    min_row = int(np.min(nonzero_indices[0]))
+    max_row = int(np.max(nonzero_indices[0]))
+    min_col = int(np.min(nonzero_indices[1]))
+    max_col = int(np.max(nonzero_indices[1]))
 
-		Example: (10, 20, 5, 15)
-		Note: The indices are returned as a tuple of four integers.
-	
-		Example: (min_row, max_row, min_col, max_col)
-		Note: The indices are returned as a tuple of four integers.
-		For example, if the region is found between rows 10 and 20 and columns 5 and 15,
-		the function will return (10, 20, 5, 15).
-	"""
-	# Find the indices of non-zero elements of a 2d array
-	nonzero_indices = np.nonzero(array)
-	
-	# Find the bounding indices
-	min_row = np.min(nonzero_indices[0])
-	max_row = np.max(nonzero_indices[0])
-	min_col = np.min(nonzero_indices[1])
-	max_col = np.max(nonzero_indices[1])
-	
-	#print(min_row, max_row, min_col, max_col)
-	
-	# aggregate one row to run on dryp
-	if add_empty_frame:
-		min_row = max(min_row - 1, 0)
-		max_row = min(max_row + 1, array.shape[0] - 1)
-		min_col = max(min_col - 1, 0)
-		max_col = min(max_col + 1, array.shape[1] - 1)
-	
-	#print(min_row, max_row, min_col, max_col)
-	return min_row, max_row, min_col, max_col
-	
+    if add_empty_frame:
+        # Pad bounds by 1 while keeping them safely within array dimensions
+        min_row = max(min_row - 1, 0)
+        min_col = max(min_col - 1, 0)
+        
+        # Convert maximum inclusive index to exclusive slicing index 
+        # (+1 for exclusive slice, +1 for padding)
+        max_row_slice = min(max_row + 2, array.shape[0])
+        max_col_slice = min(max_col + 2, array.shape[1])
+    else:
+        # Standard exclusive slicing conversion (+1)
+        max_row_slice = max_row + 1
+        max_col_slice = max_col + 1
+
+    return min_row, max_row_slice, min_col, max_col_slice
+
+
+def clip_raster_by_mask(fname, fname_mask, fname_output):
+    """
+    Clips a raster file using a mask raster file. 
+    The mask must align spatially with the target raster coordinate system.
+
+    Parameters:
+    -----------    
+    fname : str
+        Input raster file path to be clipped.
+    fname_mask : str
+        Mask raster file path used to determine the clip extent.
+    fname_output : str
+        Output file path for the clipped raster dataset.
+    """
+    # Open mask raster to extract spatial region
+    with rasterio.open(fname_mask) as mask_src:
+        mask_data = mask_src.read(1)  # Read band 1
+        transform = mask_src.transform
+
+        # Find pixel bounds
+        bounds = find_region_bounds(mask_data)
+        if bounds is None:
+            raise ValueError(f"No valid mask region (>0) found in {fname_mask}.")
+            
+        min_row, max_row, min_col, max_col = bounds
+
+        # Convert exclusive pixel indices directly to geospatial coordinates.
+        # Uses standard 'ul' (upper-left corner) placement.
+        xmin, ymax = rasterio.transform.xy(transform, min_row, min_col, offset="ul")
+        xmax, ymin = rasterio.transform.xy(transform, max_row, max_col, offset="ul")
+
+    # Create extent tuple [xmin, ymin, xmax, ymax]
+    extent = (xmin, ymin, xmax, ymax)
+    
+    # Crop and save the source raster
+    clip_raster_by_extent(fname, fname_output, extent)
+
+
+def clip_raster_by_extent(fname, fname_output, extent):
+    """
+    Clips a raster using pure Rasterio windows without geometry masks.
+    
+    Parameters:
+    -----------    
+    fname : str
+        Path to the input raster file.
+    fname_output : str
+        Path to save the clipped raster dataset.
+    extent : list or tuple of floats
+        Boundaries to clip, structured as [xmin, ymin, xmax, ymax].
+    """
+    xmin, ymin, xmax, ymax = extent
+    
+    with rasterio.open(fname) as src:
+        # Calculate pixel windows directly from the spatial coordinates
+        window = from_bounds(xmin, ymin, xmax, ymax, transform=src.transform)
+        
+        # Force round the window lengths to integer values to prevent sub-pixel distortions
+        window = Window(
+            col_off=int(round(window.col_off)),
+            row_off=int(round(window.row_off)),
+            width=int(round(window.width)),
+            height=int(round(window.height))
+        )
+        
+        # Read only the target subset data from disk
+        clipped = src.read(window=window)
+        out_transform = src.window_transform(window)
+        
+        # Update metadata for dimensions and transform offset
+        out_meta = src.meta.copy()
+        out_meta.update({
+            "height": window.height,
+            "width": window.width,
+            "transform": out_transform
+        })
+        
+        # Write the clean data segment to disk
+        with rasterio.open(fname_output, "w", **out_meta) as dest:
+            dest.write(clipped)
+
+
 def get_transform_parameters(fname):
 	"""This function read a raster file and extract the transformation
 	parameters. This paramters allows to get the coordinates
