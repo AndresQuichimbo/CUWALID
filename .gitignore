@@ -63,4 +63,8 @@ test.py.lprof
 JJAS_test/
 cuwalid/dryp/components/faccumf90.cpython-39-x86_64-linux-gnu.so
 cuwalid/dryp/components/lakesf90.cpython-39-x86_64-linux-gnu.so
+cuwalid/dryp/components/gaussf90.cpython-310-x86_64-linux-gnu.so
+cuwalid/dryp/components/gaussf90.cpython-311-x86_64-linux-gnu.so
+cuwalid/dryp/components/lakesf90.cpython-311-x86_64-linux-gnu.so
+cuwalid/dryp/components/faccumf90.cpython-311-x86_64-linux-gnu.so
 .github/agents/
