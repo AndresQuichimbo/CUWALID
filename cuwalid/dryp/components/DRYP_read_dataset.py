@@ -283,6 +283,7 @@ class read_dataset_interp(object):
 		self.step_func = step_func
 
 		self.noskip = noskip
+		self._warned_step_oob = False
 
 		# Cache IMERG metadata to avoid repeated per-file introspection.
 		self.imerg_varname = None
@@ -290,9 +291,252 @@ class read_dataset_interp(object):
 		self.imerg_template_da = None
 		self.imerg_cache_field = None
 		self.imerg_cache_template = None
+		self.max_val_pet = 1.25*self.dt_ds/60.0
+
+	def get_one_step_dataset(self, j_step, fname_ds, field, time_field="time"):
+		"""
+		Fetch interpolated/aggregated dataset array for model time step `j_step`.
+		Assumes `file_format` and `field` are fixed across all calls.
+		"""
+		if j_step < 0:
+			raise ValueError("Time step index `j_step` must be >= 0")
+	
+		# 1. Determine current simulation date
+		if j_step < len(self.date_sim_dt):
+			idate_ds = self.date_sim_dt[j_step]
+		else:
+			idate_ds = self.ini_date + timedelta(minutes=(j_step * self.dt))
+			if not getattr(self, '_warned_step_oob', False):
+				warnings.warn(
+					"Time step index exceeded precomputed simulation index; "
+					"using ini_date + j_step * dt fallback.",
+					RuntimeWarning,
+				)
+				self._warned_step_oob = True
+	
+		# --------------------------------------------------------------------------
+		# FORMAT 6: IMERG Half-Hourly Files
+		# --------------------------------------------------------------------------
+		if self.file_format == 6:
+			if fname_ds is None:
+				return None
+	
+			if self.dt_ds <= 0:
+				raise ValueError("Dataset time step (dt_ds) must be greater than 0 minutes")
+			if self.dt_ds > self.dt:
+				raise ValueError("For file_format 6, dataset time step must be <= model time step")
+	
+			# Determine sub-steps if dataset dt is smaller than model dt
+			if self.dt_ds < self.dt:
+				if (self.dt % self.dt_ds) != 0:
+					raise ValueError("Model time step must be a multiple of dataset time step")
+				n_substeps = int(self.dt / self.dt_ds)
+				dates_to_read = [idate_ds + timedelta(minutes=i * self.dt_ds) for i in range(n_substeps)]
+			else:
+				dates_to_read = [idate_ds]
+	
+			# Resolve filenames for all sub-steps
+			fnames_to_read = []
+			for idate_file in dates_to_read:
+				fname_step = idate_file.strftime(fname_ds)
+				fname_step = fname_step.replace("YYYY", idate_file.strftime('%Y')) \
+									  .replace("MM", idate_file.strftime('%m')) \
+									  .replace("DD", idate_file.strftime('%d')) \
+									  .replace("hh", idate_file.strftime('%H')) \
+									  .replace("mm", idate_file.strftime('%M'))
+				fnames_to_read.append(fname_step)
+	
+			# File existence check
+			for fname_step in fnames_to_read:
+				if not os.path.exists(fname_step):
+					if not self.noskip:
+						return None
+					raise FileNotFoundError(f"IMERG dataset file not found: {fname_step}")
+	
+			# Metadata initialization (runs once on step 0)
+			if not hasattr(self, '_imerg_template_da') or self._imerg_template_da is None:
+				with xr.open_dataset(fnames_to_read[0]) as ds_meta:
+					# Rename coordinates if necessary
+					if 'latitude' in ds_meta.coords:
+						ds_meta = ds_meta.rename({'longitude': 'lon', 'latitude': 'lat'})
+					elif 'X' in ds_meta.coords:
+						ds_meta = ds_meta.rename({'X': 'lon', 'Y': 'lat'})
+					elif 'x' in ds_meta.coords:
+						ds_meta = ds_meta.rename({'x': 'lon', 'y': 'lat'})
+	
+					# Detect variable name
+					if field in ds_meta.variables:
+						self._imerg_varname = field
+					elif field == 'pre' and 'rain' in ds_meta.variables:
+						self._imerg_varname = 'rain'
+					elif field == 'pre' and 'precipitation' in ds_meta.variables:
+						self._imerg_varname = 'precipitation'
+					else:
+						raise KeyError(f"Field '{field}' not found in IMERG dataset")
+	
+					da_meta = ds_meta[self._imerg_varname]
+					self._imerg_has_time_dim = ('time' in da_meta.dims)
+					if self._imerg_has_time_dim:
+						da_meta = da_meta.isel(time=0)
+					self._imerg_template_da = da_meta
+	
+			# Fast read using netCDF4 C-library
+			data_sum = None
+			for fname_step in fnames_to_read:
+				ds_nc = Dataset(fname_step, 'r')
+				try:
+					var_nc = ds_nc.variables[self._imerg_varname]
+					if self._imerg_has_time_dim:
+						# Explicit 3D slice (time, lat, lon)
+						data_step = np.array(var_nc[0, :, :], dtype=float)
+					else:
+						data_step = np.array(var_nc[:], dtype=float)
+	
+					if field == 'pre':
+						np.clip(data_step, 0.0, 200.0, out=data_step)
+				finally:
+					ds_nc.close()
+	
+				if data_sum is None:
+					data_sum = data_step
+				else:
+					data_sum += data_step
+	
+			# Reconstruction into xarray for spatial transforms
+			da_agg = self._imerg_template_da.copy(data=data_sum)
+			ds_agg = da_agg.to_dataset(name=field).transpose('lat', 'lon')
+	
+			if self.reproject_ds:
+				ds_agg = reproject_dataset(ds_agg, self.proj, self.proj_model)
+	
+			if self.interpolate_ds:
+				ds_agg = ds_agg.interp(lat=self.lat, lon=self.lon, method="linear")
+	
+			return np.array(ds_agg[field].values).flatten()
+	
+		# --------------------------------------------------------------------------
+		# FORMATS 1 to 5: Standard / Yearly / Monthly / Daily / Ensemble NetCDF
+		# --------------------------------------------------------------------------
+		elif self.file_format in (1, 2, 3, 4, 5):
+			if fname_ds is None:
+				return None
+	
+			# Build dynamic filename based on current date
+			target_fname = fname_ds
+			if self.file_format == 2:    # Yearly
+				target_fname = target_fname.replace("YYYY", str(idate_ds.year))
+			elif self.file_format == 3:  # Monthly
+				target_fname = target_fname.replace("YYYY", str(idate_ds.year)) \
+										   .replace("MM", f"{idate_ds.month:02d}")
+			elif self.file_format == 4:  # Daily
+				target_fname = target_fname.replace("YYYY", str(idate_ds.year)) \
+										   .replace("MM", f"{idate_ds.month:02d}") \
+										   .replace("DD", f"{idate_ds.day:02d}")
+	
+			# Check if we need to load a new file
+			if getattr(self, '_current_loaded_fname', None) != target_fname:
+				if not os.path.exists(target_fname):
+					if not self.noskip:
+						return None
+					raise FileNotFoundError(f"File not found: {target_fname}")
+	
+				# Close previous xarray Dataset if already open
+				if hasattr(self, 'ds') and self.ds is not None:
+					self.ds.close()
+	
+				if self.file_format == 5:
+					groupds = list(Dataset(target_fname).groups.keys())[0]
+					meta = xr.open_dataset(target_fname)
+					self.ds = xr.open_dataset(target_fname, group=groupds)
+					new_time = self.ds["time"].dt.strftime(f"{idate_ds.year}-%m-%d %H:%M:%S")
+					self.ds = self.ds.assign_coords(
+						time=pd.to_datetime(new_time),
+						y=meta['projection_y_coordinate'].load(),
+						x=meta['projection_x_coordinate'].load()
+					)
+					meta.close()
+				else:
+					self.ds = xr.open_dataset(target_fname)
+	
+				# Standardize coordinate naming
+				rename_dict = {}
+				for old_c, new_c in [('latitude', 'lat'), ('longitude', 'lon'), 
+									 ('X', 'lon'), ('Y', 'lat'), ('x', 'lon'), ('y', 'lat'), 
+									 ('Time (in Days)', 'time'), ('array_index', 'time')]:
+					if old_c in self.ds.coords or old_c in self.ds.dims:
+						rename_dict[old_c] = new_c
+				if rename_dict:
+					self.ds = self.ds.rename(rename_dict)
+	
+				# Standardize precipitation variable name
+				if field == 'pre':
+					if 'rain' in self.ds.variables:
+						self.ds = self.ds.rename({'rain': 'pre'})
+					elif 'precipitation' in self.ds.variables:
+						self.ds = self.ds.rename({'precipitation': 'pre'})
+	
+				# Sanity value thresholding on field
+				if field in self.ds:
+					if field == 'pet':
+						self.ds[field] = self.ds[field].clip(min=0.0, max=self.max_val_pet)
+					elif field == 'pre':
+						self.ds[field] = self.ds[field].clip(min=0.0, max=200.0)
+	
+				# Resample field if target time step differs from dataset
+				if self.dt_ds != self.dt and not self.step_func:
+					self.ds[field] = self.ds[field].resample(time=self.freq_dt).sum()
+	
+				if self.reproject_ds:
+					self.ds = reproject_dataset(self.ds, self.proj, self.proj_model)
+	
+				self._current_loaded_fname = target_fname
+	
+			# Extract specific step slice by time coordinate or step index
+			if self.step_func:
+				idx = (idate_ds.month - 1) if self.dt_ds > 1440 else (idate_ds.day - 1)
+				ds_step = self.ds[[field]].isel(time=[idx])
+			else:
+				if 'time' in self.ds.coords and isinstance(self.ds.indexes.get('time'), pd.DatetimeIndex):
+					ds_step = self.ds[[field]].sel(time=[idate_ds], method='nearest')
+				else:
+					ds_step = self.ds[[field]].isel(time=[j_step % len(self.ds.time)])
+	
+			if self.interpolate_ds:
+				ds_step = ds_step.interp(lat=self.lat, lon=self.lon, method="linear")
+	
+			return np.array(ds_step[field].values).flatten()
+	
+		# --------------------------------------------------------------------------
+		# FORMAT 0: Single CSV File Time Series
+		# --------------------------------------------------------------------------
+		elif self.file_format == 0:
+			if fname_ds is None or not os.path.exists(fname_ds):
+				if not self.noskip:
+					return None
+				raise FileNotFoundError(f"CSV file not found: {fname_ds}")
+	
+			# Load CSV once
+			if getattr(self, '_current_loaded_fname', None) != fname_ds:
+				df = pd.read_csv(fname_ds)
+				df["Date"] = pd.to_datetime(df['Date'])
+				df = df[(df["Date"] >= self.ini_date) & (df["Date"] < self.end_date)]
+	
+				if df.empty:
+					raise ValueError("CSV dataset period does not match simulation period")
+	
+				if self.dt != self.dt_ds:
+					df = df.set_index('Date')[[field]].resample(self.freq_dt).sum().reset_index()
+	
+				self.df_csv = df
+				self._current_loaded_fname = fname_ds
+	
+			return np.full(self.grid_length, self.df_csv[field].iloc[j_step])
+	
+		else:
+			raise ValueError(f"Unsupported file format: {self.file_format}")
 
 	#@profile
-	def get_one_step_dataset(self, j_step, fname_ds, field, time_field="time"):
+	def get_one_step_dataset_old(self, j_step, fname_ds, field, time_field="time"):
 		"""
 		Call this to execute a step in the model.
 
@@ -307,8 +551,21 @@ class read_dataset_interp(object):
 					
 		"""
 		
-		# find the date of the simulation time period at time step j_step 
-		idate_ds = self.date_sim_dt[j_step]# - timedelta(hours=(self.nsteps_pre-1))
+		if j_step < 0:
+			raise Exception("Time step index should be >= 0")
+
+		# Use arithmetic fallback if caller advances beyond cached index length.
+		if j_step < len(self.date_sim_dt):
+			idate_ds = self.date_sim_dt[j_step]
+		else:
+			idate_ds = self.ini_date + timedelta(minutes=(j_step * self.dt))
+			if self._warned_step_oob is False:
+				warnings.warn(
+					"Time step index exceeded precomputed simulation index; "
+					"using ini_date + j_step * dt fallback.",
+					RuntimeWarning,
+				)
+				self._warned_step_oob = True
 		
 		if self.file_format > 0:
 			if fname_ds is not None:
@@ -552,9 +809,9 @@ class read_dataset_interp(object):
 						groupds = list(Dataset(fname_ds).groups.keys())[0]
 						meta = xr.open_dataset(fname_ds)
 						meta = meta.assign_coords({
-						    'y': meta['projection_y_coordinate'].load(),
-						    'x': meta['projection_x_coordinate'].load()
-						    })
+							'y': meta['projection_y_coordinate'].load(),
+							'x': meta['projection_x_coordinate'].load()
+							})
 						#mask = meta['regions']
 						#mask.plot(cmap='turbo', levels=5)
 
@@ -570,9 +827,9 @@ class read_dataset_interp(object):
 						# Assign the new time dimension to the dataset
 						#self.ds['time'] = new_time
 						self.ds = self.ds.assign_coords({
-						    'y': meta['projection_y_coordinate'].load(),
-						    'x': meta['projection_x_coordinate'].load()
-						    })
+							'y': meta['projection_y_coordinate'].load(),
+							'x': meta['projection_x_coordinate'].load()
+							})
 						del(meta)
 						#print(self.ds)
 
@@ -724,7 +981,9 @@ class read_dataset_interp(object):
 			return data
 		except:
 			raise Exception("Error 001: Format not recognized, please review the input data format")
-		
+
+
+
 # new read data for savi
 class read_dataset(object):
 	"""Read input datasets from different sequential files
@@ -785,6 +1044,7 @@ class read_dataset(object):
 		self.file_format = file_format
 		self.read_before_ds = 1
 		self.noskip = noskip
+		self._warned_step_oob = False
 	
 	# find precipitation and PET for an specific time step
 	def get_one_step_dataset(self, j_step, fname_ds, field):
@@ -802,7 +1062,22 @@ class read_dataset(object):
 		"""
 		#date = self.date_sim_dt[j]
 		# Precipitation
-		idate_pre = self.date_sim_dt[j_step] - timedelta(hours=(self.nsteps_pre-1))
+		if j_step < 0:
+			raise Exception("Time step index should be >= 0")
+
+		if j_step < len(self.date_sim_dt):
+			idate_base = self.date_sim_dt[j_step]
+		else:
+			idate_base = self.ini_date + timedelta(minutes=(j_step * self.dt))
+			if self._warned_step_oob is False:
+				warnings.warn(
+					"Time step index exceeded precomputed simulation index; "
+					"using ini_date + j_step * dt fallback.",
+					RuntimeWarning,
+				)
+				self._warned_step_oob = True
+
+		idate_pre = idate_base - timedelta(hours=(self.nsteps_pre-1))
 		#print(type(idate_pre), idate_pre)
 		data = np.zeros(self.grid_length)
 		if fname_ds is not None:
