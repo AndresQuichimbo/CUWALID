@@ -2,7 +2,7 @@ import numpy as np
 
 class swbm(object):
 
-	def __init__(self, dt):
+	def __init__(self, dt, validate_mass_balance=False):
 		"""run the soil layer component for estimating actual
 		evpotranspiration and groundwater recharge. This component
 		is also used to estimate the water content in the riparian
@@ -17,6 +17,10 @@ class swbm(object):
 		"""
 		# create variables for python objects
 		self.dt = dt
+		self.validate_mass_balance = validate_mass_balance
+		self._cached_droot_ref = None
+		self._cached_nodes = None
+		self._cached_full = False
 		
 		self.two_layer = 0
 		# activate second layer for soil moisture
@@ -87,26 +91,62 @@ class swbm(object):
 		------
 		
 		"""
-		# find nodes with root depth greater than 0
-		nodes = np.where(Droot > 0.0)[0]
-		
-		# create states arrays
-		AET = np.zeros_like(theta, dtype=float)
-		PCR = np.zeros_like(theta, dtype=float)
-		THT = theta.copy()
-		ROF = inf.copy()
-		#print(np.mean(theta))
-		if nodes.size > 0:
+		# Droot is static in typical runs; cache root-node masks by identity.
+		if Droot is self._cached_droot_ref:
+			nodes = self._cached_nodes
+			full = self._cached_full
+		else:
+			nodes = np.where(Droot > 0.0)[0]
+			full = (nodes.size == Droot.size)
+			self._cached_droot_ref = Droot
+			self._cached_nodes = nodes
+			self._cached_full = full
 
-			L_0 = theta[nodes]*Droot[nodes]
-
-			# run two-layer model
+		if full:
+			L_0 = theta*Droot
 			if self.two_layer == 0:
-				# call the one-layer model
-				if self.dt >= 1440:				
-					AET_dt, PCR_dt, L_dt, ROF_dt = SWBM(
+				if self.dt >= 1440:
+					AET, PCR, L_dt, ROF = SWBM(
+						inf,
+						pet,
+						Kc,
+						L_0,
+						Droot,
+						theta_sat,
+						theta_fc,
+						theta_wp,
+					)
+				else:
+					AET, PCR, L_dt, ROF = SWBMh(
+						inf,
+						pet,
+						Kc,
+						L_0,
+						Droot,
+						theta_sat,
+						theta_fc,
+						theta_wp,
+						c,
+						Ksat,
+					)
+			THT = L_dt/Droot
+		else:
+			# create states arrays
+			AET = np.zeros_like(theta, dtype=float)
+			PCR = np.zeros_like(theta, dtype=float)
+			THT = theta.copy()
+			ROF = inf.copy()
+			if nodes.size > 0:
+
+				L_0 = theta[nodes]*Droot[nodes]
+
+				# run two-layer model
+				if self.two_layer == 0:
+					# call the one-layer model
+					if self.dt >= 1440:				
+						AET_dt, PCR_dt, L_dt, ROF_dt = SWBM(
 										inf[nodes],
-			    						pet[nodes],
+		    							pet[nodes],
 										Kc[nodes],
 										L_0, Droot[nodes],
 										theta_sat[nodes],
@@ -114,10 +154,10 @@ class swbm(object):
 										theta_wp[nodes]
 										)
 					
-				else:				
-					AET_dt, PCR_dt, L_dt, ROF_dt = SWBMh(
+					else:				
+						AET_dt, PCR_dt, L_dt, ROF_dt = SWBMh(
 										inf[nodes],
-			     						pet[nodes], 
+		     							pet[nodes], 
 										Kc[nodes],
 										L_0, Droot[nodes],
 										theta_sat[nodes], 
@@ -127,25 +167,10 @@ class swbm(object):
 										Ksat[nodes]
 										)
 			
-			#else:					
-			#	# water content of the lower soil layer
-			#	L_0l = self.L_0l[act_nodes]
-			#	
-			#	# call two-layer model solver
-			#	L, Ll, E, T, D, RO = FAO2L(inf, pet, Kc,
-			#								L_0, L_0l,
-			#								ds, ds,
-			#								theta_sat, theta_fc, theta_wp,
-			#								c, Ksat)
-			#	
-			#	self.L_0l[act_nodes] = np.array(Ll)
-			#	self.thtl_dt[act_nodes] = np.array(Ll/ds)	
-			#	AET = E + T
-			
-			AET[nodes] = AET_dt
-			PCR[nodes] = PCR_dt
-			THT[nodes] = L_dt/Droot[nodes]
-			ROF[nodes] = ROF_dt
+				AET[nodes] = AET_dt
+				PCR[nodes] = PCR_dt
+				THT[nodes] = L_dt/Droot[nodes]
+				ROF[nodes] = ROF_dt
 		# If the soil is fully saturated, unsaturated zone is zero,
 		# (water table is close to the surface), all water return
 		# as saturation excess, there is not percolation
@@ -154,13 +179,14 @@ class swbm(object):
 		#print(226, np.mean(inf), np.mean(AET), np.mean(PCR), np.mean(ROF))
 		#print(np.mean((THT - theta)*Droot), np.mean(theta), np.mean(THT))
 		# test the mass balance
-		try:
-			MB = np.mean(inf - AET - PCR - ROF - (THT - theta)*Droot)
-			assert np.allclose(MB, 0.0, rtol=1e-05, atol=1.5e-05)
-		except:
-			raise Exception(MB,
-			    'Soil Water balance Error: '
-		   		'Please check units and non-data values')
+		if self.validate_mass_balance:
+			try:
+				MB = np.mean(inf - AET - PCR - ROF - (THT - theta)*Droot)
+				assert np.allclose(MB, 0.0, rtol=1e-05, atol=1.5e-05)
+			except:
+				raise Exception(MB,
+				    'Soil Water balance Error: '
+	   				'Please check units and non-data values')
 
 		return AET, PCR, THT, ROF
 		

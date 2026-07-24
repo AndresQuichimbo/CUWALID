@@ -106,6 +106,22 @@ class runoff_routing(object):
 		self.s = as_id_array(flow_accum_bw.make_ordered_node_array(self.r))
 		del gridro
 
+		# Precompute Fortran-indexed topology once instead of reallocating
+		# these arrays at every time step.
+		self.s_p1 = self.s + 1
+		self.r_p1 = self.r + 1
+
+		# Identity-keyed dtype caches for static channel parameters used by
+		# the Fortran kernel.
+		self._cond_ref = None
+		self._cond_f32 = None
+		self._decay_ref = None
+		self._decay_f32 = None
+		self._river_cell_ref = None
+		self._river_cell_i32 = None
+		self._aof_thr_ref = None
+		self._aof_thr_f32 = None
+
 		if parallel:
 			# create mask
 			distance = np.zeros(grid_size)
@@ -184,9 +200,9 @@ class runoff_routing(object):
 			River flow abstraction [mm] [L]
 		"""
 		# if there is no flow skip flow accumulator
-		check_dry_condition = len(np.where(runoff + self.SSZ > 0)[0])
+		check_dry_condition = np.any(runoff + self.SSZ > 0)
 
-		if check_dry_condition > 0:
+		if check_dry_condition:
 			# all valye format type should be float32 to pass to Fortran
 			# run this section for any runoff
 			# this function return: discharge, QTL, Q_ini, Q_aof
@@ -207,16 +223,44 @@ class runoff_routing(object):
 								self.par_4#, node_cell_area, boundary_nodes
 								)
 			else:
+				if conductivity is self._cond_ref:
+					conductivity_f32 = self._cond_f32
+				else:
+					conductivity_f32 = np.array(conductivity, np.float32)
+					self._cond_ref = conductivity
+					self._cond_f32 = conductivity_f32
+
+				if decay is self._decay_ref:
+					decay_f32 = self._decay_f32
+				else:
+					decay_f32 = np.array(decay, np.float32)
+					self._decay_ref = decay
+					self._decay_f32 = decay_f32
+
+				if river_cell is self._river_cell_ref:
+					river_cell_i32 = self._river_cell_i32
+				else:
+					river_cell_i32 = np.array(river_cell, np.int32)
+					self._river_cell_ref = river_cell
+					self._river_cell_i32 = river_cell_i32
+
+				if AOF_threshold is self._aof_thr_ref:
+					aof_threshold_f32 = self._aof_thr_f32
+				else:
+					aof_threshold_f32 = np.array(AOF_threshold, np.float32)
+					self._aof_thr_ref = AOF_threshold
+					self._aof_thr_f32 = aof_threshold_f32
+
 				# Call FORTRAN function for flow routing
 				floss.ftransloss.find_discharge_and_losses(
-					self.s+1, self.r+1,
-					np.array(conductivity, np.float32), #Criv
-					np.array(decay, np.float32), #Kt
-					np.array(river_cell, np.int32), #riv
-					np.array(AOF_threshold, np.float32), #Qaoft
+					self.s_p1, self.r_p1,
+					conductivity_f32, #Criv
+					decay_f32, #Kt
+					river_cell_i32, #riv
+					aof_threshold_f32, #Qaoft
 					np.array(river_sat_deficit, np.float32), #riv_std
-					np.array(self.par_3, np.float32), #P3
-					np.array(self.par_4, np.float32), #P4
+					self.par_3_f32, #P3
+					self.par_4_f32, #P4
 					runoff, trans_losses, Q_ini, Qaof)
 			
 			# update overland flow attributes
@@ -267,6 +311,8 @@ def Create_parameter_WV(self, Ksat, decay, riv_width, riv_length):#, kKloss):
 	# Calculate parameter p3 for estimating time to get dry
 	# conditions in the channel
 	self.par_3 = Ksat*riv_width*riv_length/(riv_width-2*Ksat)
+	self.par_3_f32 = np.array(self.par_3, np.float32)
+	self.par_4_f32 = np.array(self.par_4, np.float32)
 	
 	return		
 		

@@ -90,11 +90,17 @@ class GlobalGridVar:
 		self.dt_time = dt
 		self.update_keys = True
 		self.drop_var = None
+		self._drop_var_set = None
+		self.store_var_length = None
+		self.store_var_slices = None
+		self.total_store_size = 0
 		if store_var is not None:
 			# select variables that are not stored
 			self.drop_var = drop_false_keys(store_var)
 			if len(self.drop_var) == 0:
 				self.drop_var = None
+			else:
+				self._drop_var_set = set(self.drop_var)
 		#self.store_var = None
 		#self.update_keys = True
 		
@@ -129,6 +135,8 @@ class GlobalGridVar:
 		self.start_storing = False
 
 		self.store_var_names = None
+		self._nc_stream_cfg = None
+		self._nc_ds_state = None
 		#print(self.store_max)
 		#if store_max is True:
 		#	self.store_max = True
@@ -136,6 +144,146 @@ class GlobalGridVar:
 		#	self.store_max = False
 		#print(self.store_max)
 		pass
+
+	def enable_netcdf_streaming(self, fname, latitude, longitude, nodes,
+			projection=None, flush_every=60):
+		"""Enable optional incremental netCDF writes for long simulations."""
+		self._nc_stream_cfg = dict(
+			fname=fname,
+			latitude=latitude,
+			longitude=longitude,
+			nodes=nodes,
+			projection=projection,
+			flush_every=max(1, int(flush_every)),
+		)
+
+	def _flush_netcdf(self, final=False):
+		"""Flush buffered output periods to streaming netCDF and optionally close."""
+		cfg = self._nc_stream_cfg
+		if cfg is None:
+			return
+
+		if self.save_results is not True or save_all is not True:
+			return
+
+		if self.store_var_names is None:
+			if final:
+				print("No variables to store")
+			return
+
+		if len(self.cumm_variable) == 0:
+			if final and self._nc_ds_state is not None:
+				self._nc_ds_state['dataset'].close()
+				self._nc_ds_state = None
+			return
+
+		state = self._nc_ds_state
+		if state is None:
+			nodes = cfg['nodes']
+			latitude = cfg['latitude']
+			longitude = cfg['longitude']
+			nrow = len(latitude)
+			ncol = len(longitude)
+			grid_size = nrow*ncol
+
+			dataset = Dataset(cfg['fname'], 'w', format='NETCDF4_CLASSIC')
+			dataset.createDimension('time', None)
+			dataset.createDimension('lon', ncol)
+			dataset.createDimension('lat', nrow)
+			dataset.description = self.dt_time+": Units of time depends on time step"
+			dataset.source = "Variable generated using: DRYPv2.0"
+			if cfg['projection'] is not None:
+				dataset.projection = cfg['projection']
+
+			lat = dataset.createVariable('lat', np.float32, ('lat',))
+			lon = dataset.createVariable('lon', np.float32, ('lon',))
+			time = dataset.createVariable('time', np.float32, ('time',))
+			time.units = 'hours since 1980-01-01 00:00:00'
+			time.calendar = 'gregorian'
+			lon.units = 'meters'
+			lat.units = 'meters'
+			lat[:] = latitude
+			lon[:] = longitude
+
+			for ivar in self.store_var_names:
+				dataset.createVariable(
+					ivar,
+					np.float32,
+					('time', 'lat', 'lon'),
+					fill_value=-9999.,
+					zlib=True,
+					chunksizes=(1, nrow, ncol),
+				)
+				dataset.variables[ivar].units = UNIT_NAME_VAR[ivar]
+				dataset.variables[ivar].long_name = LONG_NAME_VAR[ivar]
+
+			state = dict(
+				dataset=dataset,
+				grid=np.full(grid_size, -9999., dtype=np.float32),
+				nrow=nrow,
+				ncol=ncol,
+				nodes=nodes,
+				time_idx=0,
+			)
+			self._nc_ds_state = state
+
+		dataset = state['dataset']
+		grid = state['grid']
+		nodes = state['nodes']
+		nrow = state['nrow']
+		ncol = state['ncol']
+		time_var = dataset.variables['time']
+
+		avg_names = {'tht', 'wte', 'ssz', 'thtrp'}
+		for j, idate in enumerate(self.time_grid):
+			jt = state['time_idx']
+			time_var[jt] = date2num(idate, units=time_var.units, calendar=time_var.calendar)
+			for k, iname in enumerate(self.store_var_names):
+				factor = 1.0
+				if iname in avg_names:
+					factor = 1.0/float(self.nsteps_vector[j])
+				grid[nodes] = self.cumm_variable[j][self.store_var_slices[k]]*factor
+				dataset.variables[iname][jt, :, :] = grid.reshape(nrow, ncol)
+			state['time_idx'] += 1
+
+		self.cumm_variable = []
+		self.time_grid = []
+		self.nsteps_vector = []
+
+		if final:
+			dataset.close()
+			self._nc_ds_state = None
+
+	def _initialize_variable_layout(self, variables):
+		if self._drop_var_set is None:
+			self.store_var_names = list(variables.keys())
+		else:
+			self.store_var_names = [
+				name for name in variables.keys() if name not in self._drop_var_set
+			]
+
+		self.store_var_length = [
+			np.asarray(variables[name]).size for name in self.store_var_names
+		]
+		self.store_var_slices = []
+		start = 0
+		for size in self.store_var_length:
+			stop = start + size
+			self.store_var_slices.append(slice(start, stop))
+			start = stop
+		self.total_store_size = start
+		self.update_keys = False
+
+	def _flatten_selected_variables(self, variables):
+		selected = [np.asarray(variables[name]).ravel() for name in self.store_var_names]
+		if len(selected) == 1:
+			return selected[0].copy()
+
+		dtype = np.result_type(*selected)
+		flat = np.empty(self.total_store_size, dtype=dtype)
+		for values, value_slice in zip(selected, self.store_var_slices):
+			flat[value_slice] = values
+		return flat
 
 	def store_variables(self, date_sim_dt, t_date, variables):
 		"""	This function store variables in a 2D array, it will
@@ -158,33 +306,22 @@ class GlobalGridVar:
 		numpy array
 		"""
 		if self.save_results is True:
-			# remove variables that are not being stored
-			if self.drop_var is not None:
-				variables = remove_variables_from_dict(
-					variables, self.drop_var)
-			
 			# get keys from dictionary, if not already stored
 			if self.update_keys is True:
-				self.store_var_names = list(variables.keys())
-				self.store_var_length = get_list_of_length_field_dict(
-					variables)
-				self.update_keys = False
-			
-			# change dictionary to list
-			variables = list(variables.values())			
+				self._initialize_variable_layout(variables)
 
 			## check if the last date is read
 			date = date_sim_dt[t_date]
 			
 			# accumulate variables/create array of variables
-			variables = np.concatenate(variables)
+			variables = self._flatten_selected_variables(variables)
 			#print(date, self.idate, t_date)
 			if date < self.idate:
 				#print("Date: ", date, " - ", self.idate)
 				# accumulate variables
 				if self.var_acummulation is None:
-					# create variables
-					self.var_acummulation = np.array(variables)
+					# _flatten_selected_variables already returns a fresh array
+					self.var_acummulation = variables
 				else:
 					# accumulate
 					self.var_acummulation += variables
@@ -198,9 +335,7 @@ class GlobalGridVar:
 						# if variable storing values does not exist
 						# create a new variable
 						if self.var_maximum is None:
-							# create variables
-							self.var_maximum = np.array(variables)
-							#self.var_maximum = np.array(self.var_acummulation)
+							self.var_maximum = variables
 
 						self.var_maximum = np.maximum(
 								self.var_acummulation,
@@ -218,14 +353,8 @@ class GlobalGridVar:
 				#print('max', self.daily_steps)
 				# Store variables at the specified time step
 				if (self.var_acummulation is None):
-					# create variables
-					self.var_acummulation = np.array(variables)
-				else:
-					# accumulate
-					if self.start_storing is True:
-						if date <= self.idate:
-							self.var_acummulation += variables
-					self.start_storing = True	
+					self.var_acummulation = variables
+				self.start_storing = True
 				#print("Store: ", self.var_acummulation)
 				#print("Store: ", variables)
 
@@ -265,6 +394,12 @@ class GlobalGridVar:
 				#if (t_date < len(date_sim_dt)-1):
 					#print(t_date, "Date: ", date, " - ", self.idate)
 				self.var_maximum = None
+
+				if (
+					self._nc_stream_cfg is not None
+					and len(self.cumm_variable) >= self._nc_stream_cfg['flush_every']
+				):
+					self._flush_netcdf()
 			#print(len(self.cumm_variable))
 			#print('Accum: ', self.var_acummulation)
 			# check the if the last step has been processed
@@ -303,64 +438,37 @@ class GlobalGridVar:
 		if self.store_var_names is None:
 			print("No variables to store")
 			return
-		
-		# additional variables
-		# var_name:	name of the variable to store
-		# length_var:	number of points to store
-		
-		if self.save_results is True:
-			# number of variables
-			nvar = len(self.store_var_names)
-			# change list to numpy array
-			self.cumm_variable = np.array(self.cumm_variable)
-			# grid size
-			if multi_files is False:
-				df = pd.DataFrame()
-				df['Date'] = self.time_grid[:]
-			isize = 0
-			for i, iname in enumerate(self.store_var_names):
-				#npre = dataset.createVariable('pre', np.float32, ('time', 'lat', 'lon'), zlib=True)
-				if save_all is True:
-					# slice dataset to assign variable vame
-					var_size = self.store_var_length[i]
-					inodes = range(isize, isize+var_size)
-					data = self.cumm_variable[:,inodes]
-					factor = 1
-					# calulate the average for especif variables
-					if (iname == 'tht') or (iname == "wte") or (iname == "ssz"):
-						#print(self.nsteps_vector)
-						factor = np.array(self.nsteps_vector, dtype=float)
-						#print("Factor: ", factor)
-						factor = 1/factor
-						data = data.T
-						data = factor*data[np.newaxis,:]
-						data = data[0]
-						data = data.T
-						#print("Factor: ", factor)
-						
-					# create list of comuns name
-					columname = [self.store_var_names[i] + '_'+ str(k) for k in range(var_size)]
-					
-					
-					if multi_files is False:
-						# save variables in only one file
-						for k, icolumname in enumerate(columname):
-							df[icolumname] = data[:, k]
-						
-					else:
-						# save variables in a multiple files
-						# create pandas dataframe
-						df = pd.DataFrame(data, columns=columname)
-						df['Date'] = self.time_grid[:]
 
-						# save to csv
-						fname_csv = fname+self.store_var_names[i]+'.csv'
-						df.to_csv(fname_csv, index=False)
-					
-				isize += var_size
+		if self.save_results is not True or save_all is not True:
+			return
+
+		cumm_variable = np.asarray(self.cumm_variable)
+		avg_names = {'tht', 'wte', 'ssz', 'thtrp'}
+		nsteps_inv = 1.0/np.asarray(self.nsteps_vector, dtype=float)
+
+		if multi_files is False:
+			data_columns = {'Date': self.time_grid[:]}
+
+		for i, iname in enumerate(self.store_var_names):
+			var_size = self.store_var_length[i]
+			data = cumm_variable[:, self.store_var_slices[i]]
+			if iname in avg_names:
+				data = data*nsteps_inv[:, np.newaxis]
+
+			columname = [f"{iname}_{k}" for k in range(var_size)]
 			if multi_files is False:
-				fname_csv = fname+'.csv'
+				for k, icolumname in enumerate(columname):
+					data_columns[icolumname] = data[:, k]
+			else:
+				df = pd.DataFrame(data, columns=columname)
+				df['Date'] = self.time_grid[:]
+				fname_csv = fname+iname+'.csv'
 				df.to_csv(fname_csv, index=False)
+
+		if multi_files is False:
+			df = pd.DataFrame(data_columns)
+			fname_csv = fname+'.csv'
+			df.to_csv(fname_csv, index=False)
 			
 
 	def save_netCDF_var(self, fname, latitude, longitude, nodes, projection=None):
@@ -384,78 +492,69 @@ class GlobalGridVar:
 		netcdf
 			output files in netcdf format
 		"""
-		# check if there are variables to store otherwise exit function
+		if self._nc_stream_cfg is not None:
+			self._flush_netcdf(final=True)
+			return
+
 		if self.store_var_names is None:
 			print("No variables to store")
 			return
-			# additional variables
-			# var_name:	name of the variable to store
-			# length_var:	number of points to store
-		
-		if self.save_results is True:
-			# number of variables
-			var_size = len(nodes)
-			# change list to numpy array
-			self.cumm_variable = np.array(self.cumm_variable)
-			# grid size
-			nrow = len(latitude)
-			ncol = len(longitude)
 
-			# create a mask to save space 
-			grid_size = nrow*ncol
-			grid = np.full(grid_size, -9999., dtype=float)
-			
-			# create netcdf file
-			dataset = Dataset(fname, 'w', format='NETCDF4_CLASSIC')
-			dataset.createDimension('time', None)		
-			dataset.createDimension('lon', ncol)		
-			dataset.createDimension('lat', nrow)		
-			dataset.description = self.dt_time+": Units of time depends on time step"
-			dataset.source = "Variable generated using: DRYPv2.0"
-			if projection is not None:
-				dataset.projection = projection
+		if self.save_results is not True or save_all is not True:
+			return
 
-			# Create coordinate variables for 4-dimensions		
-			lat = dataset.createVariable('lat', np.float32, ('lat',))		
-			lon = dataset.createVariable('lon', np.float32, ('lon',))		
-			time = dataset.createVariable('time', np.float32, ('time',))
-			time.units = 'hours since 1980-01-01 00:00:00'		
-			time.calendar = 'gregorian'
-			lon.units = 'meters'
-			lat.units = 'meters'
-			#print(self.nsteps_vector)
-			# create variable
-			for ivar in self.store_var_names:
-				dataset.createVariable(ivar, np.float32, ('time', 'lat', 'lon'), fill_value=-9999., zlib=True)
-				dataset.variables[ivar].units = UNIT_NAME_VAR[ivar]
-				dataset.variables[ivar].long_name = LONG_NAME_VAR[ivar]
-						
-			# save variables
-			for j, idate in enumerate(self.time_grid):
-				time[j] = date2num(idate, units=time.units, calendar=time.calendar)
-				isize = 0
-				for k, iname in enumerate(self.store_var_names):
-					if save_all is True:
-						# precipitation
-						factor = 1.0
-						if (iname == 'tht') or (iname == "wte") or (iname == "ssz") or (iname == 'thtrp'):
-							factor = 1.0/self.nsteps_vector[j]
-							
-						# selec nodes of the whole variable array 
-						inodes = range(isize, isize+var_size)
-						
-						# save values in active grid nodes
-						grid[nodes] = self.cumm_variable[j,inodes]*factor
-						# convert 1D array into 2D grid array
-						grid2D = grid.reshape(nrow, ncol)
-						# store data in the variable name
-						dataset.variables[iname][j] = grid2D[:,:]
-						
-					isize += var_size
-			lat[:] = latitude
-			lon[:] = longitude
-			
-			dataset.close()
+		cumm_variable = np.asarray(self.cumm_variable)
+		nrow = len(latitude)
+		ncol = len(longitude)
+		avg_names = {'tht', 'wte', 'ssz', 'thtrp'}
+		nsteps_inv = 1.0/np.asarray(self.nsteps_vector, dtype=np.float32)
+
+		grid_size = nrow*ncol
+		grid = np.full(grid_size, -9999., dtype=np.float32)
+		grid2D = grid.reshape(nrow, ncol)
+
+		dataset = Dataset(fname, 'w', format='NETCDF4_CLASSIC')
+		dataset.createDimension('time', None)
+		dataset.createDimension('lon', ncol)
+		dataset.createDimension('lat', nrow)
+		dataset.description = self.dt_time+": Units of time depends on time step"
+		dataset.source = "Variable generated using: DRYPv2.0"
+		if projection is not None:
+			dataset.projection = projection
+
+		lat = dataset.createVariable('lat', np.float32, ('lat',))
+		lon = dataset.createVariable('lon', np.float32, ('lon',))
+		time = dataset.createVariable('time', np.float32, ('time',))
+		time.units = 'hours since 1980-01-01 00:00:00'
+		time.calendar = 'gregorian'
+		lon.units = 'meters'
+		lat.units = 'meters'
+
+		var_handles = {}
+		for ivar in self.store_var_names:
+			var_handles[ivar] = dataset.createVariable(
+				ivar,
+				np.float32,
+				('time', 'lat', 'lon'),
+				fill_value=-9999.,
+				zlib=True,
+				chunksizes=(1, nrow, ncol),
+			)
+			var_handles[ivar].units = UNIT_NAME_VAR[ivar]
+			var_handles[ivar].long_name = LONG_NAME_VAR[ivar]
+
+		time_values = date2num(self.time_grid, units=time.units, calendar=time.calendar)
+		time[:] = time_values
+
+		for j in range(len(self.time_grid)):
+			for k, iname in enumerate(self.store_var_names):
+				factor = nsteps_inv[j] if iname in avg_names else 1.0
+				grid[nodes] = cumm_variable[j, self.store_var_slices[k]]*factor
+				var_handles[iname][j, :, :] = grid2D
+
+		lat[:] = latitude
+		lon[:] = longitude
+		dataset.close()
 
 def str2timedelta(date, delta):
 	"""Generate an array of delta time step, indicating units

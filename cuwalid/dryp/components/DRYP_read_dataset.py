@@ -151,11 +151,11 @@ class read_temporal_dataset():
 		dataset_at_t:	list of values
 		
 		"""
-		head = list(self.data_set)
-		
-		head.remove('Date')
-		#print(type(head), t)
-		dataset_at_t = np.array(self.data_set[head].iloc[t])
+		if getattr(self, '_point_cols', None) is None:
+			head = list(self.data_set)
+			head.remove('Date')
+			self._point_cols = head
+		dataset_at_t = np.array(self.data_set[self._point_cols].iloc[t])
 	
 		return dataset_at_t
 

@@ -1,6 +1,18 @@
 import numpy as np
 
-def collapse_mean(a, b):
+def collapse_mean_indices(group_sizes):
+    group_sizes = np.asanyarray(group_sizes)
+
+    if group_sizes.ndim != 1:
+        raise ValueError("group_sizes must be one-dimensional")
+
+    idx = np.empty_like(group_sizes, dtype=int)
+    idx[0] = 0
+    if group_sizes.size > 1:
+        np.cumsum(group_sizes[:-1], out=idx[1:])
+    return idx
+
+def collapse_mean(a, b, idx=None):
     """Compute the mean of groups of values in an array.
     
     Parameters
@@ -23,10 +35,8 @@ def collapse_mean(a, b):
     if b.sum() != a.size:
         raise ValueError("Sum of b must equal the length of a")
 
-    # Precompute group start indices (avoids repeated array concat)
-    idx = np.empty_like(b, dtype=int)
-    np.cumsum(b[:-1], out=idx[1:])
-    idx[0] = 0
+    if idx is None:
+        idx = collapse_mean_indices(b)
 
     # Fast mean computation using reduceat
     return np.add.reduceat(a, idx) / b

@@ -142,6 +142,11 @@ class gwflow_EFD(object):
 		self.ff_rows = np.concatenate((self.ff_i, self.ff_j))
 		self.ff_cols = np.concatenate((self.ff_j, self.ff_i))
 
+		# Cache static per-active-node slices once for explicit solver hot path.
+		self.n_active_nodes = len(self.active_nodes)
+		self.Ksat_act = self.Ksat[self.active_nodes]
+		self.dx_act = grid['Dx_cell'][self.active_nodes]
+
 	def run_one_step_gw(self, grid, surface, bottom, thickness,
 			bathymetry, riv_elevation, riv_nodes, Sy, Droot,
 			conductivity, inodetype, theta_sat, theta_fc, theta_dt,
@@ -219,13 +224,13 @@ class gwflow_EFD(object):
 		# create dynamic surface elevation to handle lakes
 		surface_i = surface.copy()
 
-		# number of active nodes
-		act_nodes = np.where(self.act_nodes > 0)[0]
-		n_act_nodes = len(act_nodes)
-		Ksat_act = self.Ksat[act_nodes]
+		# Reuse active-node topology/slices cached in _prepare_solver_layout.
+		act_nodes = self.active_nodes
+		n_act_nodes = self.n_active_nodes
+		Ksat_act = self.Ksat_act
 		Sy_act = Sy[act_nodes]
 		thickness_act = thickness[act_nodes]
-		dx_act = grid['Dx_cell'][act_nodes]
+		dx_act = self.dx_act
 		recharge_over_dt = recharge/dt
 
 		# initialize discharge
