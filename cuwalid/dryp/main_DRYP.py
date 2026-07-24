@@ -710,7 +710,7 @@ def run_DRYP(filename_input):
 					if riv_nodes.size > 0:
 						river_sat_deficit[riv_nodes] = ((
 							topo.riv_elevation[riv_nodes] - head[riv_nodes])*
-							topo.area_cells*
+							topo.area_cells[riv_nodes]*
 							aquifer.Sy[riv_nodes])
 
 						river_sat_deficit[river_sat_deficit < 0] = 0.0

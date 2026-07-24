@@ -288,7 +288,7 @@ class gwflow_EFD(object):
 		has_lakes = ids_lks is not None
 		if has_lakes:
 			lks_reduce_idx = np.append([0], np.cumsum(sizes_lks)[:-1])
-		#print("Initial Head:", head.reshape((grid['N_y'], grid['N_x'])))
+		#print("Initial Head2:", head[act_nodes])#.reshape((grid['N_y'], grid['N_x'])))
 		## Calculate the per-cell update factor (dt / (Sy * Area))
 		#Update_Factor = dt / (Sy_for_update * grid['Areas'])
 		#print("BC Head:", head[act_nodes])
@@ -459,7 +459,7 @@ class gwflow_EFD(object):
 
             # asign updated values of aquifer heads to the groundwater object
 			head[act_nodes] = aux_head
-			#rint('Updated Head', head[act_nodes])
+			#print('Updated Head', head[act_nodes])
 			# accumulate discharge
 			if has_river:
 				discharge[riv_nodes] += qs_riv*riv_kaq*dtsp
