@@ -388,10 +388,11 @@ def SWBMh(I, PET, Kc, L0, Droot, fs, fc, wp, c, Ksat):
 	beta = np.clip(beta, 0.0, 1.0)
 	
 	# Calculate direct evaporation from precipitation/infiltration
-	I_AET = np.where(I > PET, PET, I)
+	#I_AET = np.where(I > PET, PET, I)
 	
 	# Calculate evaporation under stress conditions
-	AET = I_AET*(1.0-beta) + beta*PET
+	#AET = I_AET*(1.0-beta) + beta*PET
+	AET = beta*PET
 	#AET[AET < 0.0] = 0.0
 	
 	# Update water content
