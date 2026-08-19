@@ -2,7 +2,7 @@ import numpy as np
 
 class swbm(object):
 
-	def __init__(self, dt, validate_mass_balance=False):
+	def __init__(self, dt):
 		"""run the soil layer component for estimating actual
 		evpotranspiration and groundwater recharge. This component
 		is also used to estimate the water content in the riparian
@@ -17,12 +17,17 @@ class swbm(object):
 		"""
 		# create variables for python objects
 		self.dt = dt
-		self.validate_mass_balance = validate_mass_balance
+		
+		self.two_layer = 0
+		# cache for run_swbm_one_step: Droot is static for the whole
+		# simulation and the caller always passes the same array object
+		# every time step, so the "which nodes have a root zone" mask
+		# can be computed once and reused by identity instead of
+		# recomputing np.where() (and re-slicing every input array) on
+		# every single call.
 		self._cached_droot_ref = None
 		self._cached_nodes = None
 		self._cached_full = False
-		
-		self.two_layer = 0
 		# activate second layer for soil moisture
 		#if layer:
 		#	self.two_layer = 1
@@ -91,7 +96,10 @@ class swbm(object):
 		------
 		
 		"""
-		# Droot is static in typical runs; cache root-node masks by identity.
+		# find nodes with root depth greater than 0. Droot is static for
+		# the whole run and the caller passes the same array object every
+		# time step, so cache this instead of recomputing np.where() (an
+		# O(n) allocation) on every single call.
 		if Droot is self._cached_droot_ref:
 			nodes = self._cached_nodes
 			full = self._cached_full
@@ -103,32 +111,25 @@ class swbm(object):
 			self._cached_full = full
 
 		if full:
+			# common case: every node has a root zone, so operate on the
+			# full arrays directly instead of copying via fancy indexing
+			# (inf[nodes], pet[nodes], ...) - this avoids ~9 unnecessary
+			# array copies per call.
 			L_0 = theta*Droot
 			if self.two_layer == 0:
 				if self.dt >= 1440:
 					AET, PCR, L_dt, ROF = SWBM(
-						inf,
-						pet,
-						Kc,
-						L_0,
-						Droot,
-						theta_sat,
-						theta_fc,
-						theta_wp,
-					)
+										inf, pet, Kc,
+										L_0, Droot,
+										theta_sat, theta_fc, theta_wp
+										)
 				else:
 					AET, PCR, L_dt, ROF = SWBMh(
-						inf,
-						pet,
-						Kc,
-						L_0,
-						Droot,
-						theta_sat,
-						theta_fc,
-						theta_wp,
-						c,
-						Ksat,
-					)
+										inf, pet, Kc,
+										L_0, Droot,
+										theta_sat, theta_fc, theta_wp,
+										c, Ksat
+										)
 			THT = L_dt/Droot
 		else:
 			# create states arrays
@@ -136,6 +137,7 @@ class swbm(object):
 			PCR = np.zeros_like(theta, dtype=float)
 			THT = theta.copy()
 			ROF = inf.copy()
+			#print(np.mean(theta))
 			if nodes.size > 0:
 
 				L_0 = theta[nodes]*Droot[nodes]
@@ -145,28 +147,43 @@ class swbm(object):
 					# call the one-layer model
 					if self.dt >= 1440:				
 						AET_dt, PCR_dt, L_dt, ROF_dt = SWBM(
-										inf[nodes],
-		    							pet[nodes],
-										Kc[nodes],
-										L_0, Droot[nodes],
-										theta_sat[nodes],
-										theta_fc[nodes],
-										theta_wp[nodes]
-										)
-					
+											inf[nodes],
+				    						pet[nodes],
+											Kc[nodes],
+											L_0, Droot[nodes],
+											theta_sat[nodes],
+											theta_fc[nodes],
+											theta_wp[nodes]
+											)
+						
 					else:				
 						AET_dt, PCR_dt, L_dt, ROF_dt = SWBMh(
-										inf[nodes],
-		     							pet[nodes], 
-										Kc[nodes],
-										L_0, Droot[nodes],
-										theta_sat[nodes], 
-										theta_fc[nodes], 
-										theta_wp[nodes],
-										c[nodes],
-										Ksat[nodes]
-										)
-			
+											inf[nodes],
+				     						pet[nodes], 
+											Kc[nodes],
+											L_0, Droot[nodes],
+											theta_sat[nodes], 
+											theta_fc[nodes], 
+											theta_wp[nodes],
+											c[nodes],
+											Ksat[nodes]
+											)
+				
+				#else:					
+				#	# water content of the lower soil layer
+				#	L_0l = self.L_0l[act_nodes]
+				#	
+				#	# call two-layer model solver
+				#	L, Ll, E, T, D, RO = FAO2L(inf, pet, Kc,
+				#								L_0, L_0l,
+				#								ds, ds,
+				#								theta_sat, theta_fc, theta_wp,
+				#								c, Ksat)
+				#	
+				#	self.L_0l[act_nodes] = np.array(Ll)
+				#	self.thtl_dt[act_nodes] = np.array(Ll/ds)	
+				#	AET = E + T
+				
 				AET[nodes] = AET_dt
 				PCR[nodes] = PCR_dt
 				THT[nodes] = L_dt/Droot[nodes]
@@ -179,14 +196,13 @@ class swbm(object):
 		#print(226, np.mean(inf), np.mean(AET), np.mean(PCR), np.mean(ROF))
 		#print(np.mean((THT - theta)*Droot), np.mean(theta), np.mean(THT))
 		# test the mass balance
-		if self.validate_mass_balance:
-			try:
-				MB = np.mean(inf - AET - PCR - ROF - (THT - theta)*Droot)
-				assert np.allclose(MB, 0.0, rtol=1e-05, atol=1.5e-05)
-			except:
-				raise Exception(MB,
-				    'Soil Water balance Error: '
-	   				'Please check units and non-data values')
+		try:
+			MB = np.mean(inf - AET - PCR - ROF - (THT - theta)*Droot)
+			assert np.allclose(MB, 0.0, rtol=1e-05, atol=1.5e-05)
+		except:
+			raise Exception(MB,
+			    'Soil Water balance Error: '
+		   		'Please check units and non-data values')
 
 		return AET, PCR, THT, ROF
 		
@@ -388,11 +404,10 @@ def SWBMh(I, PET, Kc, L0, Droot, fs, fc, wp, c, Ksat):
 	beta = np.clip(beta, 0.0, 1.0)
 	
 	# Calculate direct evaporation from precipitation/infiltration
-	#I_AET = np.where(I > PET, PET, I)
+	I_AET = np.where(I > PET, PET, I)
 	
 	# Calculate evaporation under stress conditions
-	#AET = I_AET*(1.0-beta) + beta*PET
-	AET = beta*PET
+	AET = I_AET*(1.0-beta) + beta*PET
 	#AET[AET < 0.0] = 0.0
 	
 	# Update water content

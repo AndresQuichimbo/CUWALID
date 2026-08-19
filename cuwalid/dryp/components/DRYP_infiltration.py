@@ -9,7 +9,7 @@ import scipy.special as spy
 
 
 class infiltration(object):
-	def __init__(self, method=0, validate_mass_balance=False):	
+	def __init__(self, method=0):	
 		"""Initializa the infiltration component.
 		An infiltration aproach has to bu provided, defauil approach is Philips
 		
@@ -40,7 +40,6 @@ class infiltration(object):
 		
 		# pass method option to the run option
 		self.method = method
-		self.validate_mass_balance = validate_mass_balance
 				
 	
 	def run_infiltration_one_step(self, Ksat, theta_sat, PSI,
@@ -122,7 +121,7 @@ class infiltration(object):
 				SORP0,
 				L_0,
 				Lsat,
-				t_0,
+				t_0[:],
 				Ft0,
 				rain_day_before,
 				self.method,
@@ -130,13 +129,12 @@ class infiltration(object):
 				)
 		
 		# test water balance of the model
-		if self.validate_mass_balance:
-			try:
-				MB = rain - infiltration - excess
-				assert np.allclose(MB, 0.0)
-			except:
-				raise Exception('Infiltration Water balance Error: '
-		   				'Please check units and non-data values')
+		try:
+			MB = rain - infiltration - excess
+			assert np.allclose(MB, 0.0)
+		except:
+			raise Exception('Infiltration Water balance Error: '
+		   		'Please check units and non-data values')
 
 		return infiltration, excess, Ft, SORP, t_0, rain_day_before
 
@@ -488,8 +486,8 @@ def Mod_GA(P,ks,Sp,F,t,dt):
 	aux_1 = tp-t
 	aux_2 = t+1-tp
 	aux = aux_1*aux_2
-	id_error = np.where(aux >= 0)[0]
-	if len(id_error) > 0: # ponding during time step
+	id_error = aux >= 0
+	if np.any(id_error): # ponding during time step
 		to = Newthon_Rap_Mod_GA(P,ks,Sp,F,t,tp,0.1)
 	else:
 		to = t
@@ -508,15 +506,15 @@ def Newthon_Rap_Mod_GA(P,ks,Sp,F,t,tp,to_0):
 	aux_1 = tp-t
 	aux_2 = t+1-tp
 	aux = aux_1*aux_2
-	id_error = np.where(aux > 0)[0]
-	len_error = len(id_error)
-	error[id_error] = 1
+	error_mask = aux > 0
+	len_error = np.count_nonzero(error_mask)
+	error[error_mask] = 1
 	to = t
 	
 	while len_error > 0:
 		to = np.where(error < 0.001,t,to_0-f_GA(P,ks,Sp,F,t,tp,to_0)/dF_GA(ks,Sp,to_0))
 		error = np.where(error <= 0.001,0.0,np.abs(to-to_0)/to)
-		len_error = len(np.where(error >= 0.001)[0])
+		len_error = np.count_nonzero(error >= 0.001)
 		to_0 = to	
 	return to
 	

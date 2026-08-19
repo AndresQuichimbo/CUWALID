@@ -1,9 +1,17 @@
 # -*- coding: utf-8 -*-
+import inspect
 import numpy as np
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import cg, spsolve
 import cuwalid.dryp.components.lakesf90 as lakes
 from cuwalid.dryp.components.DRYP_io import _compute_inactive_links
+
+# scipy.sparse.linalg.cg renamed its convergence-tolerance keyword from
+# `tol` to `rtol` around scipy 1.12, and removed `tol` entirely in later
+# releases. Detect which one this installation's cg() actually accepts
+# once, at import time, instead of hardcoding `tol` and crashing outright
+# on any environment with a newer scipy.
+_CG_TOL_KWARG = 'rtol' if 'rtol' in inspect.signature(cg).parameters else 'tol'
 
 REG_FACTOR = 0.001  # Regularization factor for confined aquifers
 COURANT_2D = 0.50 # Courant Number 2D flow
@@ -142,7 +150,10 @@ class gwflow_EFD(object):
 		self.ff_rows = np.concatenate((self.ff_i, self.ff_j))
 		self.ff_cols = np.concatenate((self.ff_j, self.ff_i))
 
-		# Cache static per-active-node slices once for explicit solver hot path.
+		# Cache static per-active-node arrays once here rather than
+		# recomputing them (via fancy indexing) on every single call to
+		# run_one_step_gw - self.act_nodes, self.Ksat and grid['Dx_cell']
+		# are all fixed for the whole simulation.
 		self.n_active_nodes = len(self.active_nodes)
 		self.Ksat_act = self.Ksat[self.active_nodes]
 		self.dx_act = grid['Dx_cell'][self.active_nodes]
@@ -224,7 +235,9 @@ class gwflow_EFD(object):
 		# create dynamic surface elevation to handle lakes
 		surface_i = surface.copy()
 
-		# Reuse active-node topology/slices cached in _prepare_solver_layout.
+		# reuse the node index array and static slices cached once in
+		# _prepare_solver_layout, instead of recomputing them (and
+		# re-slicing self.Ksat/grid['Dx_cell']) on every single call
 		act_nodes = self.active_nodes
 		n_act_nodes = self.n_active_nodes
 		Ksat_act = self.Ksat_act
@@ -293,7 +306,7 @@ class gwflow_EFD(object):
 		has_lakes = ids_lks is not None
 		if has_lakes:
 			lks_reduce_idx = np.append([0], np.cumsum(sizes_lks)[:-1])
-		#print("Initial Head2:", head[act_nodes])#.reshape((grid['N_y'], grid['N_x'])))
+		#print("Initial Head:", head.reshape((grid['N_y'], grid['N_x'])))
 		## Calculate the per-cell update factor (dt / (Sy * Area))
 		#Update_Factor = dt / (Sy_for_update * grid['Areas'])
 		#print("BC Head:", head[act_nodes])
@@ -359,7 +372,12 @@ class gwflow_EFD(object):
 			Net_Flux = -Net_Flux*inv_areas
 
 			if self.id_CHB is not None:
-				self.flux_at_CHB = Net_Flux[self.id_CHB].sum()
+				# accumulate (weighted by this substep's duration) rather
+				# than overwrite - this loop can run many Courant-limited
+				# substeps per outer dt, and the mass-balance check below
+				# needs the flux integrated over the whole dt, not just
+				# whatever the last substep happened to compute.
+				self.flux_at_CHB += Net_Flux[self.id_CHB].sum()*dtsp
 			
 			Net_Flux += recharge_over_dt
 
@@ -372,24 +390,31 @@ class gwflow_EFD(object):
 				head_diff = head[riv_nodes] - riv_stage
 				np.maximum(head_diff, 0.0, out=head_diff)
 
-				# New implementation of river-aquifer interaction using conductance and head difference
-				# and a threshold to avoid numerical instability when conductivity is high.
+				# River-aquifer interaction using conductance and head difference,
+				# analytically integrated over the CURRENT substep (dtsp) to avoid
+				# numerical instability/overshoot when conductivity is high.
+				# NOTE: this must use dtsp (the duration actually elapsed in this
+				# substep), not the outer dt - using dt here would integrate the
+				# exponential decay over the whole requested time step on every
+				# single substep, over-depleting the river an amount that grows
+				# with the number of Courant-limited substeps (verified against
+				# the analytic single-cell solution: the bug made results worse,
+				# not better, as substeps got finer - a clear sign of a scaling
+				# error rather than legitimate discretization error).
 				with np.errstate(divide='ignore', invalid='ignore'):
-					aux = np.log(head_diff) - riv_cond*dt/riv_storage
+					aux = np.log(head_diff) - riv_cond*dtsp/riv_storage
 				head_diff -= np.where(aux > 0.0, np.exp(aux), 0.0)
+				# qs_riv is the volume exchanged during THIS substep (dtsp), not
+				# the full dt, so it must be converted back to a rate before
+				# being folded into Net_Flux (which is otherwise a rate, and
+				# gets re-integrated over dtsp below via water_storage_change =
+				# (Net_Flux - dqs)*dtsp).
 				qs_riv = head_diff*riv_storage
-				
-				# Calculate river cell flux [m3 h-1] (This section has been removed)
-				#qs_riv = np.zeros_like(riv_nodes, dtype=float)
-				#qs_riv = (conductivity[riv_nodes]*head_diff)
-				
-				# add river out/inflow to the mass balance [depth/time]
-				# change river flow units m3 -> m
-				#print('Net_Flux before riv', Net_Flux, len(Net_Flux))
-				#print('riv_nodes', riv_nodes, len(riv_nodes))
-				Net_Flux[riv_nodes] -= riv_kaq*qs_riv
 
-			
+				# add river out/inflow to the mass balance [depth/time]
+				Net_Flux[riv_nodes] -= (riv_kaq*qs_riv)/dtsp
+
+
 			# 3. REGULARIZATION APPROACH **************************
 			# calculate regularization for aquifer cells
 			# check if lakes are active
@@ -464,10 +489,13 @@ class gwflow_EFD(object):
 
             # asign updated values of aquifer heads to the groundwater object
 			head[act_nodes] = aux_head
-			#print('Updated Head', head[act_nodes])
+			#rint('Updated Head', head[act_nodes])
 			# accumulate discharge
+			# qs_riv is already the volume exchanged during this substep
+			# (dtsp) after the fix above - no further *dtsp here (see the
+			# river-exchange fix earlier in this loop for the derivation).
 			if has_river:
-				discharge[riv_nodes] += qs_riv*riv_kaq*dtsp
+				discharge[riv_nodes] += qs_riv*riv_kaq
 
 			discharge[act_nodes] += dqs[act_nodes]*dtsp
 
@@ -665,11 +693,24 @@ class gwflow_EFD(object):
 			if self.id_CHB is not None:
 				head_next[self.id_CHB] = self.bc_values
 
-			if np.max(np.abs(head_next[act_nodes] - head_iter[act_nodes])) <= self.implicit_tolerance:
-				head_iter = head_next
-				break
-
+			residual = np.max(np.abs(head_next[act_nodes] - head_iter[act_nodes]))
 			head_iter = head_next
+			if residual <= self.implicit_tolerance:
+				break
+		else:
+			# the for-loop completed without ever hitting the `break`
+			# above, i.e. the Picard iteration did not converge within
+			# implicit_max_iter iterations. Previously this was silent -
+			# the last (non-converged) head_iter was used with no
+			# indication anything was wrong. Surface it so convergence
+			# problems (e.g. from a very large dt, strong nonlinearity
+			# near lakes/rivers, or too few iterations allowed) are
+			# visible instead of silently degrading accuracy.
+			print(f"WARNING: groundwater implicit solver did not converge "
+				  f"after {self.implicit_max_iter} iterations "
+				  f"(max |dhead|={residual:.3e} > tolerance={self.implicit_tolerance:.3e}). "
+				  f"Consider increasing implicit_max_iter or implicit_tolerance, "
+				  f"or reducing dt.")
 
 		head[:] = head_iter
 		if has_river and qs_riv.size > 0:
@@ -744,12 +785,17 @@ class gwflow_EFD(object):
 		x0 = head_iter[self.free_nodes]
 		solution, info = cg(
 			matrix, rhs, x0=x0,
-			tol=self.implicit_tolerance,
-			#atol=0.0,
-			maxiter=self.linear_max_iter
+			maxiter=self.linear_max_iter,
+			**{_CG_TOL_KWARG: self.implicit_tolerance}
 		)
 		#print('CG solver info:', info, '\nsolution:', solution, '\nx0:', x0)
 		if info != 0:
+			print(f"WARNING: groundwater CG solver did not converge "
+				  f"(info={info}) within {self.linear_max_iter} iterations; "
+				  f"falling back to a direct sparse solve (spsolve), which "
+				  f"is much slower for large domains. This can indicate a "
+				  f"poorly-conditioned system (e.g. very large contrasts in "
+				  f"conductivity or cell size).")
 			solution = spsolve(matrix, rhs)
 
 		return solution
@@ -773,21 +819,28 @@ class gwflow_EFD(object):
 		qs_riv = np.zeros(0, dtype=float)
 		if riv_nodes is not None and len(riv_nodes) > 0:
 			riv_stage = riv_elevation[riv_nodes] + stage[riv_nodes]
-			#head_diff = head[riv_nodes] - riv_stage
-			#np.maximum(head_diff, 0.0, out=head_diff)
-			#if np.ndim(conductivity) == 0:
-			#	riv_cond = np.full(len(riv_nodes), conductivity, dtype=float)
-			#else:
-			#	riv_cond = conductivity[riv_nodes]
-			#riv_storage_exact = np.maximum(
-			#	grid['Areas'][riv_nodes]*Sy[riv_nodes],
-			#	np.finfo(float).eps
-			#)
-			#with np.errstate(divide='ignore', invalid='ignore'):
-			#	aux = np.log(head_diff) - riv_cond*dt/riv_storage_exact
-			#head_diff_loss = head_diff - np.where(aux > 0.0, np.exp(aux), 0.0)
-			#qs_riv = head_diff_loss*riv_storage_exact
-			qs_riv = conductivity[riv_nodes] * np.maximum(head[riv_nodes] - riv_stage, 0.0)
+			head_diff = np.maximum(head[riv_nodes] - riv_stage, 0.0)
+			if np.ndim(conductivity) == 0:
+				riv_cond = np.full(len(riv_nodes), conductivity, dtype=float)
+			else:
+				riv_cond = conductivity[riv_nodes]
+			riv_storage_exact = np.maximum(
+				grid['Areas'][riv_nodes]*Sy[riv_nodes],
+				np.finfo(float).eps
+			)
+			# Use the SAME analytic exchange coefficient that was used to
+			# assemble and solve the linear system for `head` (see
+			# riv_exchange_coeff in _run_one_step_gw_implicit). Using a
+			# plain linear-conductance term here instead (as before) meant
+			# the reported discharge/mass-balance/soil-interaction terms
+			# were computed from a different river-exchange model than the
+			# one that actually determined the head solution - a real
+			# inconsistency that would show up as mass-balance errors,
+			# especially for high conductivity or large dt (exactly when
+			# the two formulas diverge most).
+			exchange_coeff = (riv_storage_exact/dt)*(
+				1.0 - np.exp(-riv_cond*dt/riv_storage_exact))
+			qs_riv = exchange_coeff*head_diff
 			Net_Flux[riv_nodes] -= self.kaq[riv_nodes]*qs_riv
 
 		return Net_Flux, qs_riv
@@ -965,17 +1018,27 @@ def get_maximim_time_step(Ksat, Sy, thickness, delta_x):
 		maximum allowable time step [T]
 
 	"""
-	# calculate maximum diffusivity
-	Ksat_max = np.max(Ksat)
-	id_ksat_max = np.argmax(Ksat)
-	Sy_min = np.min(Sy)
-	id_Sy_min = np.argmin(Sy)
+	# Diffusivity D = K*thickness/Sy must be evaluated PER CELL and the
+	# worst case (maximum) taken across the whole domain. The previous
+	# version only checked D at the max-Ksat cell (using that cell's own
+	# thickness/Sy) and at the min-Sy cell (using that cell's own
+	# Ksat/thickness) separately - this can completely miss the true
+	# worst-case cell once thickness varies too (a cell with only
+	# moderate Ksat and Sy but large thickness can have a higher K*
+	# thickness/Sy than either extreme cell alone), silently picking a
+	# time step far larger than what is actually stable for the explicit
+	# scheme. Computing D elementwise is both correct and cheaper.
+	with np.errstate(divide='ignore', invalid='ignore'):
+		D = Ksat*thickness/Sy
+	D = D[np.isfinite(D)]
+	D_max = D.max() if D.size > 0 else 0.0
 
-	Sy_min = Sy[id_ksat_max]
-	D_max_ksat = Ksat_max * thickness[id_ksat_max] / Sy[id_ksat_max]
-	D_max_sy = Ksat[id_Sy_min] * thickness[id_Sy_min] / Sy_min
-	D_max = max(D_max_ksat, D_max_sy)
-	
-	dt = (COURANT_2D * (delta_x**2).min() / D_max)
+	if D_max <= 0:
+		# no meaningful diffusivity anywhere (e.g. fully dry domain) -
+		# groundwater flow is negligible this step; let the caller's
+		# np.nanmin([dt, dts]) fall back to the full outer time step
+		return np.inf
+
+	dt = COURANT_2D * (delta_x**2).min() / D_max
 
 	return dt

@@ -10,6 +10,16 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
                        projection=None):
     """Saves model outputs to files (netCDF, CSV, raster)
 
+    Note on gridded (netCDF) outputs: if enable_netcdf_streaming() was
+    called on a given store (grid_var, grid_rmax, grid_vmax, grid_veg,
+    grid_rpvar, grid_lks, grid_pndvar - see main_DRYP.py), most of its
+    data has already been written to disk incrementally during the
+    run. The save_netCDF_var(...) calls below then simply flush
+    whatever is still buffered and close the file, rather than
+    building the whole file from an in-memory buffer. This keeps
+    memory use bounded for large domains / long runs and requires no
+    change to how this function is called.
+
     Parameters
     ----------
     data_in : DRYPInputData
@@ -108,11 +118,13 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
 
     # save grided model maximum values at streams - result datasets
     print("<==== saving model gridded temporal lake outputs")
-    #if water_bodies.ids_slks.size > 0:
-    grid_lks.save_netCDF_var(data_in.fnameTS_grid + 'lks.nc',
-                                      topo.lat, topo.lon, lks_nodes,
-                                      projection=projection
-                                      )  # , var_name
+    if lks_nodes is not None:
+        grid_lks.save_netCDF_var(data_in.fnameTS_grid + 'lks.nc',
+                                          topo.lat, topo.lon, lks_nodes,
+                                          projection=projection
+                                          )  # , var_name
+    else:
+        print("      no lake nodes - skipping lake gridded output")
 
     # save maximum grided model result datasets
     #if grid_vmax.store_max is True:
@@ -149,20 +161,22 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
 
     # SAVE VARIABLES FROM PONDS
     print("<==== saving water bodies temporal outputs")
-    #if water_bodies.id_nodes is not None:
+    if pnd_nodes is not None:
         # var_name = ['aet', 'fch', 'tls', 'tht', 'ssz']
         # save grided model result datasets
-    grid_pndvar.save_netCDF_var(data_in.fnameTS_grid + 'pnd.nc',
-                                    topo.lat, topo.lon, pnd_nodes,
-                                    projection=projection
-                                    )  # , var_name
+        grid_pndvar.save_netCDF_var(data_in.fnameTS_grid + 'pnd.nc',
+                                        topo.lat, topo.lon, pnd_nodes,
+                                        projection=projection
+                                        )  # , var_name
 
         # save average values in csv
         # length_var = np.ones(len(var_name), dtype=int)
-    total_pndvar.save_csv_var(data_in.fnameTS_avg + 'pnd',  # var_name,
-                                  # length_var,
-                                  #multi_files=False
-                                  )
+        total_pndvar.save_csv_var(data_in.fnameTS_avg + 'pnd',  # var_name,
+                                      # length_var,
+                                      #multi_files=False
+                                      )
+    else:
+        print("      no pond nodes - skipping pond outputs")
 
     # SAVE RASTER FILES FOR INITIAL CONDITIONS
     print("<==== saving raster files for initial conditions")

@@ -580,19 +580,21 @@ def extract_basin_data_with_halo2(basin_id, domains, grid_metadata, rank, halo=1
  
     # Extended mask: all cells in bounding box, regardless of basin
     extended_mask = np.ones((nrows, ncols), dtype=bool)
- 
-    # Core mask: only the real basin cells
-    # core_mask = np.zeros_like(extended_mask, dtype=bool)
-    # core_mask[
-    #     (row_min_h):(row_max_h + 1),
-    #     (col_min_h):(col_max_h + 1)
-    # ] = basin_mask
-    core_mask = extended_mask
-    binary_init_core_mask = np.zeros_like(extended_mask, dtype=bool)
-    binary_init_core_mask[
+
+    # Core mask: only the real basin cells (True) vs halo/ghost cells
+    # pulled in from neighboring regions (False). This MUST be the
+    # actual basin-shaped mask, not the all-True extended_mask - with
+    # halo=0 the two happen to coincide (since the box exactly equals
+    # the basin's own extent), which is why this went unnoticed, but
+    # with halo>0 (required for real inter-region connectivity) using
+    # extended_mask here would treat neighboring regions' ghost cells
+    # as this region's own core cells.
+    core_mask = np.zeros_like(extended_mask, dtype=bool)
+    core_mask[
         (row_min - row_min_h):(row_max - row_min_h + 1),
         (col_min - col_min_h):(col_max - col_min_h + 1)
     ] = basin_mask
+    binary_init_core_mask = core_mask
     # print('core_mask: ',core_mask)
  
     # Grid (optional)
@@ -779,26 +781,187 @@ def extract_complete_lake_data(basin_input, ids_lks, size_lks, ids_max_depth_lks
     )
 
 
+def build_basin_connectivity(connectivity_spec, grid_size):
+    """
+    Parse a basin-to-basin surface-water connectivity table.
+
+    Each entry describes one connection: the outlet node of an upstream
+    basin whose discharge should be added, at the following time step, as
+    an inflow at the inlet node of a downstream basin. This is the piece
+    that makes basins that are NOT truly endorheic (i.e. they drain into
+    another, separately-simulated basin) actually receive their upstream
+    water, since each basin's runoff_routing component otherwise only
+    ever sees its own local runoff.
+
+    Parameters
+    ----------
+    connectivity_spec : list of dict, or None
+        Each dict needs the keys 'outlet_basin', 'outlet_node',
+        'inlet_basin', 'inlet_node'. Node ids are GLOBAL (flattened,
+        full-domain) node indices - the same indexing used everywhere
+        else in this module (topo.surface, ro.discharge, domains_ro,
+        etc). This is exactly the information the user needs to supply:
+        for every basin that is not truly endorheic, identify its
+        outlet cell (where flow leaves the basin, usually the lowest
+        point on its boundary) and the corresponding inlet cell in the
+        receiving basin (where that flow re-enters, usually the
+        matching cell just downstream). None or [] means no basin is
+        connected to any other (all endorheic) - the previous, implicit
+        behaviour.
+    grid_size : int
+        Full domain grid size, used only for bounds-checking.
+
+    Returns
+    -------
+    connections : list of dict
+        Validated connections with plain python int node/basin ids.
+    """
+    connections = []
+    if not connectivity_spec:
+        return connections
+
+    for entry in connectivity_spec:
+        try:
+            outlet_basin = int(entry['outlet_basin'])
+            outlet_node = int(entry['outlet_node'])
+            inlet_basin = int(entry['inlet_basin'])
+            inlet_node = int(entry['inlet_node'])
+        except (KeyError, TypeError, ValueError):
+            raise ValueError(
+                f"Invalid basin connectivity entry: {entry}. Each entry "
+                "must provide integer 'outlet_basin', 'outlet_node', "
+                "'inlet_basin', 'inlet_node' (global node ids)."
+            )
+        if not (0 <= outlet_node < grid_size):
+            raise ValueError(
+                f"outlet_node {outlet_node} is out of range for a grid "
+                f"of size {grid_size} (entry: {entry})")
+        if not (0 <= inlet_node < grid_size):
+            raise ValueError(
+                f"inlet_node {inlet_node} is out of range for a grid "
+                f"of size {grid_size} (entry: {entry})")
+        connections.append({
+            'outlet_basin': outlet_basin,
+            'outlet_node': outlet_node,
+            'inlet_basin': inlet_basin,
+            'inlet_node': inlet_node,
+        })
+    return connections
+
+
+def build_basin_execution_levels(basin_ids, basin_connections):
+    """
+    Compute a topological execution order for basins from their
+    surface-water connectivity, so every basin's outlet discharge is
+    available BEFORE its downstream basin is run - in the same time
+    step, with no lag.
+
+    Parameters
+    ----------
+    basin_ids : iterable of int
+        All basin ids in the domain (across all ranks).
+    basin_connections : list of dict
+        As returned by build_basin_connectivity: each entry has
+        'outlet_basin' and 'inlet_basin' (the inlet basin depends on
+        the outlet basin having already been run this step).
+
+    Returns
+    -------
+    levels : list of list of int
+        levels[0] are basins with no upstream dependency (endorheic
+        basins, or the head of a connected chain) - these can be run
+        first, in any order / in parallel across ranks. levels[1] are
+        basins whose only upstream dependencies are in levels[0], and
+        so on. Every basin in `basin_ids` appears in exactly one level.
+        Basins within the same level have no dependency on each other
+        and can be run in parallel; levels themselves must be
+        processed in order, with the outlet discharge of each level's
+        basins made available to later levels before they run (see the
+        main loop).
+
+    Notes
+    -----
+    If the connectivity table contains a cycle (basins draining into
+    each other in a loop - a configuration error), this breaks the
+    cycle deterministically (by basin id) rather than looping forever,
+    since a long-running continental-scale job hanging silently would
+    be far worse than a warning.
+    """
+    basin_ids = list(basin_ids)
+    remaining = set(basin_ids)
+    downstream = {b: set() for b in basin_ids}
+    indegree = {b: 0 for b in basin_ids}
+
+    for connection in basin_connections:
+        u = connection['outlet_basin']
+        v = connection['inlet_basin']
+        if u not in downstream or v not in indegree:
+            # connection references a basin id not present in this
+            # decomposition (e.g. sea / not modelled) - ignore
+            # defensively rather than fail the whole setup.
+            continue
+        if v not in downstream[u]:
+            downstream[u].add(v)
+            indegree[v] += 1
+
+    levels = []
+    while remaining:
+        current_level = sorted(b for b in remaining if indegree[b] == 0)
+        if not current_level:
+            # cycle detected - break it deterministically and move on;
+            # the caller should be warned separately if this happens.
+            current_level = [min(remaining)]
+        for b in current_level:
+            remaining.discard(b)
+            for downstream_basin in downstream.get(b, ()):
+                if downstream_basin in indegree:
+                    indegree[downstream_basin] -= 1
+        levels.append(current_level)
+    return levels
+
+
 def initialize_basin_component(basin_input, basin_model_parameters):
     """Start the runoff routing component (`ro`) for one basin."""
     local_flow_direction = None
     if basin_model_parameters.get('flowdird8') is not None:
-        local_flow_direction = np.arange(basin_input['grid_size'], dtype=int)
+        grid_size = basin_input['grid_size']
         basin_mask = basin_input['mask'].flatten()
+        # flow_direction is already indexed locally (one entry per cell
+        # in this basin's bounding box), but its VALUES are GLOBAL
+        # receiver node ids (since topo.FlowDir stores global ids for
+        # the whole domain and extracting a spatial subset doesn't
+        # change the values, only which cells are included).
         flow_direction = np.asarray(basin_model_parameters['flowdird8'], dtype=int).ravel()
-        global_to_local = {
-            int(global_id): local_id
-            for local_id, global_id in enumerate(basin_input['global_nodes'])
-        }
+        global_nodes = np.asarray(basin_input['global_nodes'], dtype=int)
 
-        for local_id, receiver_global_id in enumerate(flow_direction):
-            if not basin_mask[local_id]:
-                continue
+        # Build the global-id -> local-id lookup as a vectorized scatter
+        # instead of a Python dict + per-cell loop. This turns what used
+        # to be an O(n) pure-Python loop (with a dict lookup per cell -
+        # a severe bottleneck for continental-scale basins with millions
+        # of cells) into a couple of O(n) numpy operations.
+        global_size = int(global_nodes.max()) + 1 if global_nodes.size > 0 else 0
+        global_to_local_arr = np.full(global_size, -1, dtype=np.int64)
+        global_to_local_arr[global_nodes] = np.arange(global_nodes.size)
 
-            receiver_local_id = global_to_local.get(int(receiver_global_id), local_id)
-            if not basin_mask[receiver_local_id]:
-                receiver_local_id = local_id
-            local_flow_direction[local_id] = receiver_local_id
+        # Gather: for every local cell, look up the local id of its
+        # (global-indexed) receiver. Values outside this basin's
+        # bounding box (or invalid) come back as -1.
+        valid_receiver = (flow_direction >= 0) & (flow_direction < global_size)
+        receiver_local_id = np.full(grid_size, -1, dtype=np.int64)
+        receiver_local_id[valid_receiver] = global_to_local_arr[flow_direction[valid_receiver]]
+
+        local_ids = np.arange(grid_size, dtype=np.int64)
+        # Fall back to routing to itself (a local sink) wherever the
+        # receiver falls outside this basin's bounding box, or lands on
+        # a halo/inactive cell that isn't part of the basin mask.
+        not_found = receiver_local_id < 0
+        receiver_local_id[not_found] = local_ids[not_found]
+        clipped = np.clip(receiver_local_id, 0, grid_size - 1)
+        outside_mask = ~basin_mask[clipped]
+        receiver_local_id[outside_mask] = local_ids[outside_mask]
+
+        local_flow_direction = local_ids.copy()
+        local_flow_direction[basin_mask] = receiver_local_id[basin_mask]
 
     return runoff_routing(
         basin_input['grid'],

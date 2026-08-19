@@ -1,13 +1,13 @@
 import os
 import numpy as np
 import pandas as pd
-from calendar import monthrange
 import datetime
 from datetime import timedelta
 from netCDF4 import Dataset, num2date, date2num
 from landlab.io import write_esri_ascii
 from itertools import compress
 import operator
+import concurrent.futures
 from cuwalid.dryp.components.DRYP_global_parameters import *
 import rasterio
     
@@ -90,17 +90,11 @@ class GlobalGridVar:
 		self.dt_time = dt
 		self.update_keys = True
 		self.drop_var = None
-		self._drop_var_set = None
-		self.store_var_length = None
-		self.store_var_slices = None
-		self.total_store_size = 0
 		if store_var is not None:
 			# select variables that are not stored
 			self.drop_var = drop_false_keys(store_var)
 			if len(self.drop_var) == 0:
 				self.drop_var = None
-			else:
-				self._drop_var_set = set(self.drop_var)
 		#self.store_var = None
 		#self.update_keys = True
 		
@@ -135,8 +129,22 @@ class GlobalGridVar:
 		self.start_storing = False
 
 		self.store_var_names = None
+
+		# --- Optional incremental / streaming netCDF output ------------
+		# When enabled (see enable_netcdf_streaming), completed output
+		# periods are written straight to disk once a configurable
+		# number of them have accumulated, instead of being buffered in
+		# memory for the entire simulation. This is opt-in and fully
+		# backward compatible: if it is never enabled, save_netCDF_var
+		# behaves exactly as before.
 		self._nc_stream_cfg = None
 		self._nc_ds_state = None
+		# background writer: at most one write is ever in flight (see
+		# _wait_for_pending_write) - this bounds memory (only one
+		# snapshot alive at a time) and avoids any concurrent access to
+		# the same netCDF file handle / reusable grid buffer.
+		self._nc_write_executor = None
+		self._nc_pending_future = None
 		#print(self.store_max)
 		#if store_max is True:
 		#	self.store_max = True
@@ -146,24 +154,231 @@ class GlobalGridVar:
 		pass
 
 	def enable_netcdf_streaming(self, fname, latitude, longitude, nodes,
-			projection=None, flush_every=60):
-		"""Enable optional incremental netCDF writes for long simulations."""
+			projection=None, flush_every=60, split_by=None, async_write=True):
+		"""Write completed output periods straight to a netCDF file on
+		disk as soon as `flush_every` of them have accumulated, instead
+		of buffering the entire simulation's gridded output in memory.
+
+		Call this once, right after creating a GlobalGridVar object,
+		for stores whose output is saved via save_netCDF_var (e.g.
+		grid_var, grid_rmax, grid_lks, grid_vmax, grid_rpvar,
+		grid_pndvar, grid_veg). It has no benefit - but also no effect
+		- on stores that are only ever saved via save_csv_var.
+
+		The existing call to save_netCDF_var(fname, latitude,
+		longitude, nodes, projection=...) at the end of the run still
+		needs to happen exactly as before: it will simply flush
+		whatever is left buffered and close the file, rather than
+		writing everything from scratch, so no other code needs to
+		change.
+
+		Parameters
+		----------
+		fname : str
+			output netCDF filename (the same value you would
+			otherwise pass to save_netCDF_var). When split_by is set,
+			this is used as a template: the period is inserted before
+			the extension, e.g. 'out.nc' -> 'out_2020-01.nc' for a
+			monthly split.
+		latitude, longitude : numpy array
+			grid coordinate arrays
+		nodes : numpy array
+			node indices this store's variables correspond to
+		projection : optional
+			projection metadata to attach to the file
+		flush_every : int
+			number of completed output periods to buffer in memory
+			before writing them to disk (default 60, e.g. roughly two
+			months of daily output). Buffered periods are still split
+			across separate files at a `split_by` boundary even if
+			flush_every hasn't been reached yet, so output files never
+			mix periods.
+		split_by : str or None
+			If given, start a new output file at each period boundary
+			instead of writing one continuous file for the whole run -
+			useful to keep individual files a manageable size for very
+			large domains / long runs. One of:
+			  - None (default): a single continuous file, as before.
+			  - 'D' / 'day' / 'daily': one file per calendar day.
+			  - 'M' / 'month' / 'monthly': one file per calendar month.
+			  - 'Y' / 'year' / 'yearly': one file per calendar year.
+		async_write : bool
+			If True (default), the actual disk write for each flush
+			runs in a background thread so the simulation can keep
+			computing the next period instead of waiting for the
+			write to finish. netCDF4/HDF5 writes release the GIL
+			while blocked on I/O, so this genuinely overlaps with
+			computation. At most one write is ever in flight (a new
+			flush waits for the previous one before starting), which
+			also caps memory to roughly one extra buffered batch. Set
+			to False to write synchronously instead (e.g. for
+			debugging, or on a filesystem/setup where background
+			writes are undesirable).
+		"""
+		valid_split = (None, 'D', 'd', 'day', 'daily',
+					   'M', 'm', 'month', 'monthly',
+					   'Y', 'y', 'year', 'yearly')
+		if split_by not in valid_split:
+			raise ValueError(
+				f"Unsupported split_by value: {split_by!r}. Use one of "
+				f"{valid_split}.")
 		self._nc_stream_cfg = dict(
-			fname=fname,
-			latitude=latitude,
-			longitude=longitude,
-			nodes=nodes,
-			projection=projection,
+			fname=fname, latitude=latitude, longitude=longitude,
+			nodes=nodes, projection=projection,
 			flush_every=max(1, int(flush_every)),
+			split_by=split_by, async_write=bool(async_write),
 		)
 
+	def _nc_period_key(self, date, split_by):
+		"""Group key identifying which output file `date` belongs to."""
+		if split_by is None:
+			return None
+		if split_by in ('D', 'd', 'day', 'daily'):
+			return (date.year, date.month, date.day)
+		if split_by in ('M', 'm', 'month', 'monthly'):
+			return (date.year, date.month)
+		if split_by in ('Y', 'y', 'year', 'yearly'):
+			return (date.year,)
+		return None
+
+	def _nc_period_filename(self, base_fname, period_key, split_by):
+		"""Insert a period-specific suffix before the file extension."""
+		if split_by is None or period_key is None:
+			return base_fname
+		root, ext = os.path.splitext(base_fname)
+		if len(period_key) == 3:
+			suffix = f"_{period_key[0]:04d}-{period_key[1]:02d}-{period_key[2]:02d}"
+		elif len(period_key) == 2:
+			suffix = f"_{period_key[0]:04d}-{period_key[1]:02d}"
+		else:
+			suffix = f"_{period_key[0]:04d}"
+		return f"{root}{suffix}{ext}"
+
+	def _nc_get_executor(self):
+		if self._nc_write_executor is None:
+			# a single worker keeps writes strictly serialized (safe
+			# for a single netCDF file handle) while still overlapping
+			# I/O with the main thread's ongoing computation
+			self._nc_write_executor = concurrent.futures.ThreadPoolExecutor(
+				max_workers=1)
+		return self._nc_write_executor
+
+	def _nc_wait_for_pending_write(self):
+		"""Block until any in-flight background write has finished.
+
+		Called before touching the open dataset/grid buffer again (at
+		the start of the next flush, or before closing/rolling over to
+		a new file) - this is what keeps the single background write
+		safe without any locks: the main thread simply never touches
+		shared state while a write could still be using it.
+		"""
+		if self._nc_pending_future is not None:
+			self._nc_pending_future.result()
+			self._nc_pending_future = None
+
+	def _nc_open_file(self, fname, period_key):
+		nodes = self._nc_stream_cfg['nodes']
+		latitude = self._nc_stream_cfg['latitude']
+		longitude = self._nc_stream_cfg['longitude']
+		projection = self._nc_stream_cfg['projection']
+		var_size = len(nodes)
+		nrow = len(latitude)
+		ncol = len(longitude)
+		grid_size = nrow*ncol
+
+		dataset = Dataset(fname, 'w', format='NETCDF4_CLASSIC')
+		dataset.createDimension('time', None)
+		dataset.createDimension('lon', ncol)
+		dataset.createDimension('lat', nrow)
+		dataset.description = self.dt_time+": Units of time depends on time step"
+		dataset.source = "Variable generated using: DRYPv2.0"
+		if projection is not None:
+			dataset.projection = projection
+
+		lat_var = dataset.createVariable('lat', np.float32, ('lat',))
+		lon_var = dataset.createVariable('lon', np.float32, ('lon',))
+		time_var = dataset.createVariable('time', np.float32, ('time',))
+		time_var.units = 'hours since 1980-01-01 00:00:00'
+		time_var.calendar = 'gregorian'
+		lon_var.units = 'meters'
+		lat_var.units = 'meters'
+
+		for ivar in self.store_var_names:
+			dataset.createVariable(
+				ivar, np.float32, ('time', 'lat', 'lon'),
+				fill_value=-9999., zlib=True,
+				chunksizes=(1, nrow, ncol))
+			dataset.variables[ivar].units = UNIT_NAME_VAR[ivar]
+			dataset.variables[ivar].long_name = LONG_NAME_VAR[ivar]
+
+		lat_var[:] = latitude
+		lon_var[:] = longitude
+
+		self._nc_ds_state = dict(
+			dataset=dataset,
+			grid=np.full(grid_size, -9999., dtype=np.float32),
+			nrow=nrow, ncol=ncol, var_size=var_size, nodes=nodes,
+			time_idx=0, period_key=period_key, fname=fname,
+		)
+
+	def _nc_close_file(self):
+		# always wait for any write still targeting this file before
+		# closing it - closing while a background write is in flight
+		# would corrupt the file or crash.
+		self._nc_wait_for_pending_write()
+		if self._nc_ds_state is not None:
+			self._nc_ds_state['dataset'].close()
+			self._nc_ds_state = None
+
+	def _nc_write_batch(self, state, store_var_names, cumm_variable, time_grid, nsteps_vector):
+		"""Write one contiguous batch of buffered periods (all
+		belonging to the same output file) to disk. Runs either
+		directly on the main thread or inside the background writer
+		thread - it only touches `state` (the dataset/grid for one
+		already-open file) and the snapshot arrays passed in, never the
+		live self.cumm_variable/self.time_grid/self.nsteps_vector, so
+		it's safe to run concurrently with the simulation continuing to
+		accumulate new data.
+		"""
+		dataset = state['dataset']
+		grid = state['grid']
+		var_size = state['var_size']
+		nodes = state['nodes']
+		nrow, ncol = state['nrow'], state['ncol']
+		time_units = dataset.variables['time'].units
+		time_cal = dataset.variables['time'].calendar
+
+		for j, idate in enumerate(time_grid):
+			jt = state['time_idx']
+			dataset.variables['time'][jt] = date2num(
+				idate, units=time_units, calendar=time_cal)
+			isize = 0
+			for iname in store_var_names:
+				factor = 1.0
+				if iname in ('tht', 'wte', 'ssz', 'thtrp'):
+					factor = 1.0/nsteps_vector[j]
+				inodes = range(isize, isize+var_size)
+				grid[nodes] = cumm_variable[j][inodes]*factor
+				grid2D = grid.reshape(nrow, ncol)
+				dataset.variables[iname][jt] = grid2D[:, :]
+				isize += var_size
+			state['time_idx'] += 1
+		# flush this batch to disk immediately so data is durable as
+		# soon as the write "completes", rather than sitting in an
+		# HDF5-library buffer indefinitely
+		dataset.sync()
+
 	def _flush_netcdf(self, final=False):
-		"""Flush buffered output periods to streaming netCDF and optionally close."""
+		"""Write any buffered output periods to the streaming netCDF
+		file(s), creating/rolling over files as needed, and clear them
+		from memory. If final=True, also wait for all writes to finish
+		and close the currently open file.
+		"""
 		cfg = self._nc_stream_cfg
 		if cfg is None:
 			return
 
-		if self.save_results is not True or save_all is not True:
+		if not self.save_results:
 			return
 
 		if self.store_var_names is None:
@@ -171,119 +386,63 @@ class GlobalGridVar:
 				print("No variables to store")
 			return
 
-		if len(self.cumm_variable) == 0:
-			if final and self._nc_ds_state is not None:
-				self._nc_ds_state['dataset'].close()
-				self._nc_ds_state = None
-			return
+		# never touch the open file/grid buffer while a previous write
+		# might still be using them
+		self._nc_wait_for_pending_write()
 
-		state = self._nc_ds_state
-		if state is None:
-			nodes = cfg['nodes']
-			latitude = cfg['latitude']
-			longitude = cfg['longitude']
-			nrow = len(latitude)
-			ncol = len(longitude)
-			grid_size = nrow*ncol
+		split_by = cfg['split_by']
+		n = len(self.time_grid)
+		start = 0
+		while start < n:
+			period_key = self._nc_period_key(self.time_grid[start], split_by)
+			end = start
+			while end < n and self._nc_period_key(self.time_grid[end], split_by) == period_key:
+				end += 1
+			# [start:end) is one contiguous run belonging to the same
+			# output file (time_grid is chronological, so periods are
+			# naturally contiguous - no need to group non-locally)
 
-			dataset = Dataset(cfg['fname'], 'w', format='NETCDF4_CLASSIC')
-			dataset.createDimension('time', None)
-			dataset.createDimension('lon', ncol)
-			dataset.createDimension('lat', nrow)
-			dataset.description = self.dt_time+": Units of time depends on time step"
-			dataset.source = "Variable generated using: DRYPv2.0"
-			if cfg['projection'] is not None:
-				dataset.projection = cfg['projection']
+			if self._nc_ds_state is not None and self._nc_ds_state['period_key'] != period_key:
+				# crossing a period boundary - finish and close the
+				# previous file before starting the next one
+				self._nc_close_file()
 
-			lat = dataset.createVariable('lat', np.float32, ('lat',))
-			lon = dataset.createVariable('lon', np.float32, ('lon',))
-			time = dataset.createVariable('time', np.float32, ('time',))
-			time.units = 'hours since 1980-01-01 00:00:00'
-			time.calendar = 'gregorian'
-			lon.units = 'meters'
-			lat.units = 'meters'
-			lat[:] = latitude
-			lon[:] = longitude
+			if self._nc_ds_state is None:
+				fname = self._nc_period_filename(cfg['fname'], period_key, split_by)
+				self._nc_open_file(fname, period_key)
 
-			for ivar in self.store_var_names:
-				dataset.createVariable(
-					ivar,
-					np.float32,
-					('time', 'lat', 'lon'),
-					fill_value=-9999.,
-					zlib=True,
-					chunksizes=(1, nrow, ncol),
-				)
-				dataset.variables[ivar].units = UNIT_NAME_VAR[ivar]
-				dataset.variables[ivar].long_name = LONG_NAME_VAR[ivar]
+			state = self._nc_ds_state
+			snapshot_cumm = self.cumm_variable[start:end]
+			snapshot_time = self.time_grid[start:end]
+			snapshot_nsteps = self.nsteps_vector[start:end]
+			store_var_names = self.store_var_names
 
-			state = dict(
-				dataset=dataset,
-				grid=np.full(grid_size, -9999., dtype=np.float32),
-				nrow=nrow,
-				ncol=ncol,
-				nodes=nodes,
-				time_idx=0,
-			)
-			self._nc_ds_state = state
+			is_last_run = (end == n)
+			write_sync = (not cfg['async_write']) or (final and is_last_run)
+			if write_sync:
+				self._nc_write_batch(state, store_var_names,
+									 snapshot_cumm, snapshot_time, snapshot_nsteps)
+			else:
+				self._nc_wait_for_pending_write()  # extra safety, see below
+				self._nc_pending_future = self._nc_get_executor().submit(
+					self._nc_write_batch, state, store_var_names,
+					snapshot_cumm, snapshot_time, snapshot_nsteps)
 
-		dataset = state['dataset']
-		grid = state['grid']
-		nodes = state['nodes']
-		nrow = state['nrow']
-		ncol = state['ncol']
-		time_var = dataset.variables['time']
+			start = end
 
-		avg_names = {'tht', 'wte', 'ssz', 'thtrp'}
-		for j, idate in enumerate(self.time_grid):
-			jt = state['time_idx']
-			time_var[jt] = date2num(idate, units=time_var.units, calendar=time_var.calendar)
-			for k, iname in enumerate(self.store_var_names):
-				factor = 1.0
-				if iname in avg_names:
-					factor = 1.0/float(self.nsteps_vector[j])
-				grid[nodes] = self.cumm_variable[j][self.store_var_slices[k]]*factor
-				dataset.variables[iname][jt, :, :] = grid.reshape(nrow, ncol)
-			state['time_idx'] += 1
-
+		# free the buffered periods now that they are either safely on
+		# disk or handed off (with their own independent snapshot) to
+		# the background writer - this is the whole point: memory use
+		# stays bounded instead of growing with the simulation length
 		self.cumm_variable = []
 		self.time_grid = []
 		self.nsteps_vector = []
 
 		if final:
-			dataset.close()
-			self._nc_ds_state = None
-
-	def _initialize_variable_layout(self, variables):
-		if self._drop_var_set is None:
-			self.store_var_names = list(variables.keys())
-		else:
-			self.store_var_names = [
-				name for name in variables.keys() if name not in self._drop_var_set
-			]
-
-		self.store_var_length = [
-			np.asarray(variables[name]).size for name in self.store_var_names
-		]
-		self.store_var_slices = []
-		start = 0
-		for size in self.store_var_length:
-			stop = start + size
-			self.store_var_slices.append(slice(start, stop))
-			start = stop
-		self.total_store_size = start
-		self.update_keys = False
-
-	def _flatten_selected_variables(self, variables):
-		selected = [np.asarray(variables[name]).ravel() for name in self.store_var_names]
-		if len(selected) == 1:
-			return selected[0].copy()
-
-		dtype = np.result_type(*selected)
-		flat = np.empty(self.total_store_size, dtype=dtype)
-		for values, value_slice in zip(selected, self.store_var_slices):
-			flat[value_slice] = values
-		return flat
+			self._nc_close_file()
+			if self._nc_write_executor is not None:
+				self._nc_write_executor.shutdown(wait=True)
+				self._nc_write_executor = None
 
 	def store_variables(self, date_sim_dt, t_date, variables):
 		"""	This function store variables in a 2D array, it will
@@ -306,21 +465,33 @@ class GlobalGridVar:
 		numpy array
 		"""
 		if self.save_results is True:
+			# remove variables that are not being stored
+			if self.drop_var is not None:
+				variables = remove_variables_from_dict(
+					variables, self.drop_var)
+			
 			# get keys from dictionary, if not already stored
 			if self.update_keys is True:
-				self._initialize_variable_layout(variables)
+				self.store_var_names = list(variables.keys())
+				self.store_var_length = get_list_of_length_field_dict(
+					variables)
+				self.update_keys = False
+			
+			# change dictionary to list
+			variables = list(variables.values())			
 
 			## check if the last date is read
 			date = date_sim_dt[t_date]
 			
 			# accumulate variables/create array of variables
-			variables = self._flatten_selected_variables(variables)
+			variables = np.concatenate(variables)
 			#print(date, self.idate, t_date)
 			if date < self.idate:
 				#print("Date: ", date, " - ", self.idate)
 				# accumulate variables
 				if self.var_acummulation is None:
-					# _flatten_selected_variables already returns a fresh array
+					# create variables (np.concatenate already returns a
+					# fresh array, no need to copy it again)
 					self.var_acummulation = variables
 				else:
 					# accumulate
@@ -335,6 +506,7 @@ class GlobalGridVar:
 						# if variable storing values does not exist
 						# create a new variable
 						if self.var_maximum is None:
+							# create variables
 							self.var_maximum = variables
 
 						self.var_maximum = np.maximum(
@@ -353,7 +525,21 @@ class GlobalGridVar:
 				#print('max', self.daily_steps)
 				# Store variables at the specified time step
 				if (self.var_acummulation is None):
+					# create variables (no need to copy, np.concatenate
+					# already returned a fresh array)
 					self.var_acummulation = variables
+				else:
+					# accumulate the value at the boundary itself (it
+					# belongs to the period that is about to be closed).
+					# NOTE: previously this addition was gated by
+					# `self.start_storing`, which stayed False the first
+					# time a period closed and silently dropped this
+					# step's contribution from the very first output
+					# period. That gate has been removed - the date
+					# check below is sufficient to avoid pulling in a
+					# value that belongs to the next period.
+					if date <= self.idate:
+						self.var_acummulation += variables
 				self.start_storing = True
 				#print("Store: ", self.var_acummulation)
 				#print("Store: ", variables)
@@ -365,8 +551,7 @@ class GlobalGridVar:
 					# create a new variable
 					if self.var_maximum is None:
 						# create variables
-						self.var_maximum = np.array(variables)
-						#self.var_maximum = np.array(self.var_acummulation)
+						self.var_maximum = variables
 					# get maximum value
 					self.var_maximum = np.maximum(
 							self.var_acummulation,
@@ -395,10 +580,12 @@ class GlobalGridVar:
 					#print(t_date, "Date: ", date, " - ", self.idate)
 				self.var_maximum = None
 
-				if (
-					self._nc_stream_cfg is not None
-					and len(self.cumm_variable) >= self._nc_stream_cfg['flush_every']
-				):
+				# stream completed periods to disk if incremental
+				# netCDF output has been enabled for this store,
+				# keeping memory use bounded for large/long runs
+				# instead of buffering the whole simulation
+				if (self._nc_stream_cfg is not None and
+						len(self.cumm_variable) >= self._nc_stream_cfg['flush_every']):
 					self._flush_netcdf()
 			#print(len(self.cumm_variable))
 			#print('Accum: ', self.var_acummulation)
@@ -438,37 +625,66 @@ class GlobalGridVar:
 		if self.store_var_names is None:
 			print("No variables to store")
 			return
-
-		if self.save_results is not True or save_all is not True:
-			return
-
-		cumm_variable = np.asarray(self.cumm_variable)
-		avg_names = {'tht', 'wte', 'ssz', 'thtrp'}
-		nsteps_inv = 1.0/np.asarray(self.nsteps_vector, dtype=float)
-
-		if multi_files is False:
-			data_columns = {'Date': self.time_grid[:]}
-
-		for i, iname in enumerate(self.store_var_names):
-			var_size = self.store_var_length[i]
-			data = cumm_variable[:, self.store_var_slices[i]]
-			if iname in avg_names:
-				data = data*nsteps_inv[:, np.newaxis]
-
-			columname = [f"{iname}_{k}" for k in range(var_size)]
+		
+		# additional variables
+		# var_name:	name of the variable to store
+		# length_var:	number of points to store
+		
+		if self.save_results is True:
+			# number of variables
+			nvar = len(self.store_var_names)
+			# change list to numpy array
+			self.cumm_variable = np.array(self.cumm_variable)
+			# grid size
 			if multi_files is False:
-				for k, icolumname in enumerate(columname):
-					data_columns[icolumname] = data[:, k]
-			else:
-				df = pd.DataFrame(data, columns=columname)
+				df = pd.DataFrame()
 				df['Date'] = self.time_grid[:]
-				fname_csv = fname+iname+'.csv'
-				df.to_csv(fname_csv, index=False)
+			isize = 0
+			for i, iname in enumerate(self.store_var_names):
+				#npre = dataset.createVariable('pre', np.float32, ('time', 'lat', 'lon'), zlib=True)
+				if save_all is True:
+					# slice dataset to assign variable vame
+					var_size = self.store_var_length[i]
+					inodes = range(isize, isize+var_size)
+					data = self.cumm_variable[:,inodes]
+					factor = 1
+					# calculate the average for specific variables
+					# NOTE: 'thtrp' added here to match the same set of
+					# time-averaged variables used in save_netCDF_var -
+					# previously it was summed here but averaged there,
+					# giving inconsistent CSV vs netCDF outputs.
+					if iname in ('tht', 'wte', 'ssz', 'thtrp'):
+						#print(self.nsteps_vector)
+						factor = 1.0/np.array(self.nsteps_vector, dtype=float)
+						# broadcast factor (per time step) along the time
+						# axis without transposing the (possibly large)
+						# data array back and forth
+						data = data*factor[:, np.newaxis]
+						#print("Factor: ", factor)
+						
+					# create list of comuns name
+					columname = [self.store_var_names[i] + '_'+ str(k) for k in range(var_size)]
+					
+					
+					if multi_files is False:
+						# save variables in only one file
+						for k, icolumname in enumerate(columname):
+							df[icolumname] = data[:, k]
+						
+					else:
+						# save variables in a multiple files
+						# create pandas dataframe
+						df = pd.DataFrame(data, columns=columname)
+						df['Date'] = self.time_grid[:]
 
-		if multi_files is False:
-			df = pd.DataFrame(data_columns)
-			fname_csv = fname+'.csv'
-			df.to_csv(fname_csv, index=False)
+						# save to csv
+						fname_csv = fname+self.store_var_names[i]+'.csv'
+						df.to_csv(fname_csv, index=False)
+					
+				isize += var_size
+			if multi_files is False:
+				fname_csv = fname+'.csv'
+				df.to_csv(fname_csv, index=False)
 			
 
 	def save_netCDF_var(self, fname, latitude, longitude, nodes, projection=None):
@@ -492,69 +708,99 @@ class GlobalGridVar:
 		netcdf
 			output files in netcdf format
 		"""
+		# if incremental streaming was enabled for this store (see
+		# enable_netcdf_streaming), most of the output has already
+		# been written to disk during the run - just flush whatever
+		# is left buffered and close the file. The fname/latitude/
+		# longitude/nodes/projection arguments are ignored in that
+		# case since they were already fixed when streaming was
+		# enabled (callers don't need to change anything).
 		if self._nc_stream_cfg is not None:
 			self._flush_netcdf(final=True)
 			return
 
+		# check if there are variables to store otherwise exit function
 		if self.store_var_names is None:
 			print("No variables to store")
 			return
+			# additional variables
+			# var_name:	name of the variable to store
+			# length_var:	number of points to store
+		
+		if self.save_results is True:
+			# number of variables
+			var_size = len(nodes)
+			# change list to numpy array
+			self.cumm_variable = np.array(self.cumm_variable)
+			# grid size
+			nrow = len(latitude)
+			ncol = len(longitude)
 
-		if self.save_results is not True or save_all is not True:
-			return
+			# create a mask to save space
+			# use float32 to match the netCDF variable dtype below -
+			# avoids doubling memory use and an implicit cast on every
+			# write
+			grid_size = nrow*ncol
+			grid = np.full(grid_size, -9999., dtype=np.float32)
+			
+			# create netcdf file
+			dataset = Dataset(fname, 'w', format='NETCDF4_CLASSIC')
+			dataset.createDimension('time', None)		
+			dataset.createDimension('lon', ncol)		
+			dataset.createDimension('lat', nrow)		
+			dataset.description = self.dt_time+": Units of time depends on time step"
+			dataset.source = "Variable generated using: DRYPv2.0"
+			if projection is not None:
+				dataset.projection = projection
 
-		cumm_variable = np.asarray(self.cumm_variable)
-		nrow = len(latitude)
-		ncol = len(longitude)
-		avg_names = {'tht', 'wte', 'ssz', 'thtrp'}
-		nsteps_inv = 1.0/np.asarray(self.nsteps_vector, dtype=np.float32)
-
-		grid_size = nrow*ncol
-		grid = np.full(grid_size, -9999., dtype=np.float32)
-		grid2D = grid.reshape(nrow, ncol)
-
-		dataset = Dataset(fname, 'w', format='NETCDF4_CLASSIC')
-		dataset.createDimension('time', None)
-		dataset.createDimension('lon', ncol)
-		dataset.createDimension('lat', nrow)
-		dataset.description = self.dt_time+": Units of time depends on time step"
-		dataset.source = "Variable generated using: DRYPv2.0"
-		if projection is not None:
-			dataset.projection = projection
-
-		lat = dataset.createVariable('lat', np.float32, ('lat',))
-		lon = dataset.createVariable('lon', np.float32, ('lon',))
-		time = dataset.createVariable('time', np.float32, ('time',))
-		time.units = 'hours since 1980-01-01 00:00:00'
-		time.calendar = 'gregorian'
-		lon.units = 'meters'
-		lat.units = 'meters'
-
-		var_handles = {}
-		for ivar in self.store_var_names:
-			var_handles[ivar] = dataset.createVariable(
-				ivar,
-				np.float32,
-				('time', 'lat', 'lon'),
-				fill_value=-9999.,
-				zlib=True,
-				chunksizes=(1, nrow, ncol),
-			)
-			var_handles[ivar].units = UNIT_NAME_VAR[ivar]
-			var_handles[ivar].long_name = LONG_NAME_VAR[ivar]
-
-		time_values = date2num(self.time_grid, units=time.units, calendar=time.calendar)
-		time[:] = time_values
-
-		for j in range(len(self.time_grid)):
-			for k, iname in enumerate(self.store_var_names):
-				factor = nsteps_inv[j] if iname in avg_names else 1.0
-				grid[nodes] = cumm_variable[j, self.store_var_slices[k]]*factor
-				var_handles[iname][j, :, :] = grid2D
-
-		lat[:] = latitude
-		lon[:] = longitude
-		dataset.close()
+			# Create coordinate variables for 4-dimensions		
+			lat = dataset.createVariable('lat', np.float32, ('lat',))		
+			lon = dataset.createVariable('lon', np.float32, ('lon',))		
+			time = dataset.createVariable('time', np.float32, ('time',))
+			time.units = 'hours since 1980-01-01 00:00:00'		
+			time.calendar = 'gregorian'
+			lon.units = 'meters'
+			lat.units = 'meters'
+			#print(self.nsteps_vector)
+			# create variable
+			for ivar in self.store_var_names:
+				dataset.createVariable(
+					ivar, np.float32, ('time', 'lat', 'lon'),
+					fill_value=-9999., zlib=True,
+					# chunk one time-slice at a time - the natural write
+					# pattern here - instead of relying on netCDF4's
+					# default chunk guess, which can be poor for an
+					# unlimited time dimension
+					chunksizes=(1, nrow, ncol))
+				dataset.variables[ivar].units = UNIT_NAME_VAR[ivar]
+				dataset.variables[ivar].long_name = LONG_NAME_VAR[ivar]
+						
+			# save variables
+			for j, idate in enumerate(self.time_grid):
+				time[j] = date2num(idate, units=time.units, calendar=time.calendar)
+				isize = 0
+				for k, iname in enumerate(self.store_var_names):
+					if save_all is True:
+						# precipitation
+						factor = 1.0
+						if (iname == 'tht') or (iname == "wte") or (iname == "ssz") or (iname == 'thtrp'):
+							factor = 1.0/self.nsteps_vector[j]
+							
+						# selec nodes of the whole variable array 
+						inodes = range(isize, isize+var_size)
+						
+						# save values in active grid nodes
+						grid[nodes] = self.cumm_variable[j,inodes]*factor
+						# convert 1D array into 2D grid array
+						grid2D = grid.reshape(nrow, ncol)
+						# store data in the variable name
+						dataset.variables[iname][j] = grid2D[:,:]
+						
+					isize += var_size
+			lat[:] = latitude
+			lon[:] = longitude
+			
+			dataset.close()
 
 def str2timedelta(date, delta):
 	"""Generate an array of delta time step, indicating units

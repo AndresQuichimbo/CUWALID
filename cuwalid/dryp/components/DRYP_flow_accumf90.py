@@ -58,6 +58,11 @@ class runoff_routing(object):
 		
 		# Creates numpy arrays for passing model variables
 		Create_parameter_WV(self, Ksat, decay, riv_width, riv_length)
+		# par_3/par_4 are static for the whole run - precompute the
+		# float32 versions Fortran needs, instead of recasting them
+		# every single call to run_runoff_one_step
+		self.par_3_f32 = np.array(self.par_3, np.float32)
+		self.par_4_f32 = np.array(self.par_4, np.float32)
 		
 		
 		#Create_parameter_WV(env_state.grid)#, data_in.Kloss)
@@ -106,13 +111,16 @@ class runoff_routing(object):
 		self.s = as_id_array(flow_accum_bw.make_ordered_node_array(self.r))
 		del gridro
 
-		# Precompute Fortran-indexed topology once instead of reallocating
-		# these arrays at every time step.
+		# self.s/self.r describe the static drainage network topology and
+		# never change after initialization, so the Fortran-index (+1)
+		# versions used every time step in run_runoff_one_step are
+		# precomputed once here instead of being reallocated every call.
 		self.s_p1 = self.s + 1
 		self.r_p1 = self.r + 1
 
-		# Identity-keyed dtype caches for static channel parameters used by
-		# the Fortran kernel.
+		# caches for the identity-keyed float32/int32 casts done in
+		# run_runoff_one_step (see below) - conductivity/decay/river_cell
+		# /AOF_threshold are static for the whole run in practice
 		self._cond_ref = None
 		self._cond_f32 = None
 		self._decay_ref = None
@@ -200,9 +208,12 @@ class runoff_routing(object):
 			River flow abstraction [mm] [L]
 		"""
 		# if there is no flow skip flow accumulator
+		# (np.any avoids materialising a full index array via np.where
+		# just to check whether anything is non-zero - this runs every
+		# single time step)
 		check_dry_condition = np.any(runoff + self.SSZ > 0)
 
-		if check_dry_condition:
+		if check_dry_condition > 0:
 			# all valye format type should be float32 to pass to Fortran
 			# run this section for any runoff
 			# this function return: discharge, QTL, Q_ini, Q_aof
@@ -223,6 +234,12 @@ class runoff_routing(object):
 								self.par_4#, node_cell_area, boundary_nodes
 								)
 			else:
+				# Call FORTRAN function for flow routing
+				# conductivity/decay/river_cell/AOF_threshold are static
+				# for the whole run in practice (same array object passed
+				# every time step), so cache their Fortran-dtype casts
+				# keyed by identity instead of reallocating them every
+				# single call.
 				if conductivity is self._cond_ref:
 					conductivity_f32 = self._cond_f32
 				else:
@@ -251,7 +268,6 @@ class runoff_routing(object):
 					self._aof_thr_ref = AOF_threshold
 					self._aof_thr_f32 = aof_threshold_f32
 
-				# Call FORTRAN function for flow routing
 				floss.ftransloss.find_discharge_and_losses(
 					self.s_p1, self.r_p1,
 					conductivity_f32, #Criv
@@ -311,8 +327,6 @@ def Create_parameter_WV(self, Ksat, decay, riv_width, riv_length):#, kKloss):
 	# Calculate parameter p3 for estimating time to get dry
 	# conditions in the channel
 	self.par_3 = Ksat*riv_width*riv_length/(riv_width-2*Ksat)
-	self.par_3_f32 = np.array(self.par_3, np.float32)
-	self.par_4_f32 = np.array(self.par_4, np.float32)
 	
 	return		
 		

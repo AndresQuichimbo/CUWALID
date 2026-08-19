@@ -102,73 +102,134 @@ def run_DRYP(filename_input):
 	runoff, recharge, baseflow, AOF_threshold) = initialize_simulation_state_variables(
 		data_in, topo, grid, aquifer, soil, vegetation, ro
 	)
-
-	act_nodes = np.asarray(act_nodes, dtype=int)
-	riv_nodes = np.asarray(riv_nodes, dtype=int)
-	act_riv_nodes = np.asarray(act_riv_nodes, dtype=int) if act_riv_nodes is not None else np.array([], dtype=int)
-	id_lakes = np.asarray(id_lakes, dtype=int)
-
-	soil_ksat_act = soil.Ksat[act_nodes]
-	soil_theta_sat_act = soil.theta_sat[act_nodes]
-	soil_psi_act = soil.PSI[act_nodes]
-	soil_droot_act = soil.Droot[act_nodes]
-	soil_theta_fc_act = soil.theta_fc[act_nodes]
-	soil_theta_wp_act = soil.theta_wp[act_nodes]
-	soil_c_soil_act = soil.c_SOIL[act_nodes]
-	topo_surface_act = topo.surface[act_nodes]
-	topo_bathymetry_act = topo.bathymetry[act_nodes]
-	aquifer_bottom_act = aquifer.bottom[act_nodes]
-	aquifer_sy_act = aquifer.Sy[act_nodes]
-	vegetation_fcw_cn_act = vegetation.fcw_cn[act_nodes]
-	vegetation_ext_depth_act = vegetation.extintion_depth[act_nodes]
-	positive_ext_depth = vegetation_ext_depth_act > 0
-	vegetation_av_static = vegetation.av[act_nodes].copy() if vegetation.av is not None else None
-	sc0_cn_act = vegetation.Sc0_cn[act_nodes].copy()
-	ones_act = np.ones(act_nodes.size, dtype=float)
-	aux_rch = np.zeros(act_nodes.size, dtype=float)
-	twsc = np.zeros(topo.grid_size, dtype=float)
-
-	if riv_nodes.size > 0:
-		rsoil_ksat_riv = rsoil.Ksat[riv_nodes]
-		rsoil_theta_sat_riv = rsoil.theta_sat[riv_nodes]
-		rsoil_theta_fc_riv = rsoil.theta_fc[riv_nodes]
-		rsoil_theta_wp_riv = rsoil.theta_wp[riv_nodes]
-		rsoil_c_soil_riv = rsoil.c_SOIL[riv_nodes]
-		rsoil_droot_riv = rsoil.Droot[riv_nodes]
-		cell_to_rip_area_factor = topo.cell_to_rip_area_factor[riv_nodes]
-		area_bank_cells_riv = topo.area_bank_cells[riv_nodes]
-		rip_to_cell_area_factor = topo.rip_to_cell_area_factor[riv_nodes]
-		volume_to_depth_factor_rip = topo.volume_to_depth_factor_rip[riv_nodes]
-		ones_riv = np.ones(riv_nodes.size, dtype=float)
-	else:
-		ones_riv = np.array([], dtype=float)
-
-	pre_get_one_step = PRE.get_one_step_dataset
-	pet_get_one_step = ET0.get_one_step_dataset
-	savi_get_one_step = SAVI.get_one_step_dataset
-	savimin_get_one_step = SAVImin.get_one_step_dataset
-	savimax_get_one_step = SAVImax.get_one_step_dataset
-	lai_get_one_step = LAI.get_one_step_dataset
-	kc_get_one_step = Kc.get_one_step_dataset
-	av_get_one_step = av.get_one_step_dataset
 	
 	# INITIALISE OUTPUT AND MONITORING --------------------------------
 	#print("************************ READING SETTINGS FOR MODEL OUPUTS *************************")
 	print("Setting up outputs and monitoring nodes")
 	idOF, idUZ, idGW, idzone_info = setup_monitoring_nodes(grid, data_in)
-	zone_nodes = idzone_core = zone_sizes = zone_starts = None
-	if idzone_info[2] is not None:
-		zone_nodes = idzone_info[0]
-		idzone_core = idzone_info[1]
-		zone_sizes = idzone_info[2]
-		zone_starts = utils.collapse_mean_indices(zone_sizes)
 	#print("Monitoring nodes OF:", idGW)
 	#print("Monitoring nodes IDs:", idzone_info[2])
 	(#idOF, idOF_act, idUZ, idUZ_act, idGW, idGW_act,
 	point_var, grid_var, grid_rmax, grid_vmax, total_var,
 	grid_rpvar, total_rpvar, grid_pndvar, total_pndvar, grid_veg,
 	grid_lks, zone_var) = initialize_output_arrays(data_in)#, grid, riv_nodes, water_bodies
-	
+
+	# ------------------------------------------------------------------
+	# ENABLE INCREMENTAL NETCDF STREAMING FOR GRIDDED OUTPUTS -----------
+	# Without this, every grid_* store buffers its ENTIRE output time
+	# series in memory and only writes to disk once, at the very end
+	# of the run (in save_model_outputs). For a large grid run over a
+	# long period that can exhaust memory. Enabling streaming here
+	# makes each store flush completed periods to its netCDF file every
+	# `flush_every` periods, bounding memory use regardless of run
+	# length. This is fully backward compatible: the save_netCDF_var
+	# call at the end of the run (in save_model_outputs) is unchanged -
+	# it now just flushes whatever remains buffered and closes the
+	# file. Point/zone/average CSV stores (point_var, zone_var,
+	# total_var, total_rpvar, total_pndvar) are unaffected since their
+	# data volume is tiny compared to full-grid output.
+	#
+	# Two related, independently-configurable options (both optional,
+	# both set via data_in - default to the previous behaviour if not
+	# provided):
+	#   - data_in.nc_split_by: split gridded output into separate files
+	#     per period instead of one continuous file for the whole run
+	#     - e.g. 'monthly' produces one .nc file per calendar month.
+	#     Useful to keep individual file sizes manageable for large
+	#     domains / long runs. None (default) keeps a single file, as
+	#     before.
+	#   - data_in.nc_async_write: if True (default), each flush's
+	#     actual disk write runs in a background thread so the
+	#     simulation keeps computing the next period instead of
+	#     waiting for the write to finish - the only synchronization
+	#     point is that a NEW flush waits for the PREVIOUS write to
+	#     finish, so at most one write is ever in flight. This adds
+	#     negligible overhead as long as flush_every is large enough
+	#     that computing the next batch takes longer than writing the
+	#     previous one (true for any reasonable flush_every - a single
+	#     netCDF write is fast relative to dozens-to-hundreds of
+	#     simulation time steps). Set to False to write synchronously
+	#     instead (e.g. for debugging).
+	_nc_flush_every = getattr(data_in, 'nc_flush_every', 60)
+	_nc_split_by = getattr(data_in, 'nc_split_by', None)
+	_nc_async_write = getattr(data_in, 'nc_async_write', True)
+	grid_var.enable_netcdf_streaming(
+		data_in.fnameTS_grid + '.nc', topo.lat, topo.lon, act_nodes,
+		projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+		split_by=_nc_split_by, async_write=_nc_async_write)
+	grid_vmax.enable_netcdf_streaming(
+		data_in.fnameTS_grid + 'vmax.nc', topo.lat, topo.lon, act_nodes,
+		projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+		split_by=_nc_split_by, async_write=_nc_async_write)
+	grid_veg.enable_netcdf_streaming(
+		data_in.fnameTS_grid + 'veg.nc', topo.lat, topo.lon, act_nodes,
+		projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+		split_by=_nc_split_by, async_write=_nc_async_write)
+	grid_rmax.enable_netcdf_streaming(
+		data_in.fnameTS_grid + 'rmax.nc', topo.lat, topo.lon, riv_nodes,
+		projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+		split_by=_nc_split_by, async_write=_nc_async_write)
+	grid_rpvar.enable_netcdf_streaming(
+		data_in.fnameTS_grid + 'rp.nc', topo.lat, topo.lon, riv_nodes,
+		projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+		split_by=_nc_split_by, async_write=_nc_async_write)
+	if water_bodies.ids_slks is not None:
+		grid_lks.enable_netcdf_streaming(
+			data_in.fnameTS_grid + 'lks.nc', topo.lat, topo.lon,
+			water_bodies.ids_slks, projection=data_in.PROJECTION,
+			flush_every=_nc_flush_every, split_by=_nc_split_by,
+			async_write=_nc_async_write)
+	if water_bodies.id_nodes is not None:
+		grid_pndvar.enable_netcdf_streaming(
+			data_in.fnameTS_grid + 'pnd.nc', topo.lat, topo.lon,
+			water_bodies.id_nodes, projection=data_in.PROJECTION,
+			flush_every=_nc_flush_every, split_by=_nc_split_by,
+			async_write=_nc_async_write)
+	# ------------------------------------------------------------------
+
+	# ------------------------------------------------------------------
+	# PRECOMPUTE STATIC, NODE-INDEXED ARRAYS ----------------------------
+	# soil/topo/aquifer/vegetation properties are static for the whole
+	# run, so re-slicing them with act_nodes/riv_nodes on every single
+	# sub-hourly time step (as the loop used to do) allocates a brand
+	# new array copy every iteration for no reason. For large grids run
+	# over many time steps this is a significant, easily avoidable cost.
+	# Slice once here and reuse the cached arrays inside the time loop.
+	Ksat_a = soil.Ksat[act_nodes]
+	theta_sat_a = soil.theta_sat[act_nodes]
+	PSI_a = soil.PSI[act_nodes]
+	Droot_a = soil.Droot[act_nodes]
+	Droot_a_m = Droot_a*0.001
+	theta_fc_a = soil.theta_fc[act_nodes]
+	theta_wp_a = soil.theta_wp[act_nodes]
+	c_SOIL_a = soil.c_SOIL[act_nodes]
+	Sy_a = aquifer.Sy[act_nodes]
+	surface_a = topo.surface[act_nodes]
+	bottom_a = aquifer.bottom[act_nodes]
+	bathymetry_a = topo.bathymetry[act_nodes]
+	extintion_depth_a = vegetation.extintion_depth[act_nodes]
+	ones_act_nodes = np.ones_like(act_nodes)
+	# full-domain (not just act_nodes) static array used by the
+	# groundwater component every step
+	Droot_full_m = soil.Droot*0.001
+
+	if riv_nodes.size > 0:
+		Droot_r = rsoil.Droot[riv_nodes]
+		Ksat_r = rsoil.Ksat[riv_nodes]
+		theta_sat_r = rsoil.theta_sat[riv_nodes]
+		theta_fc_r = rsoil.theta_fc[riv_nodes]
+		theta_wp_r = rsoil.theta_wp[riv_nodes]
+		c_SOIL_r = rsoil.c_SOIL[riv_nodes]
+		soil_theta_fc_r = soil.theta_fc[riv_nodes]
+		cell_to_rip_area_factor_r = topo.cell_to_rip_area_factor[riv_nodes]
+		area_bank_cells_r = topo.area_bank_cells[riv_nodes]
+		rip_to_cell_area_factor_r = topo.rip_to_cell_area_factor[riv_nodes]
+		volume_to_depth_factor_rip_r = topo.volume_to_depth_factor_rip[riv_nodes]
+		riv_elevation_r = topo.riv_elevation[riv_nodes]
+		Sy_r = aquifer.Sy[riv_nodes]
+		ones_riv_nodes = np.ones_like(riv_nodes)
+	# ------------------------------------------------------------------
+
 	# Initialise the progress bar
 	print("****************************** SIMULATION IN PROGRESS ******************************")
 	print("Simulation period: from", data_in.ini_date, "to", data_in.end_date, "number of days:", data_in.ndays)
@@ -180,10 +241,10 @@ def run_DRYP(filename_input):
 			for dt_pre_sub in range(data_in.dt_sub_hourly):
 
 				# get rainfall
-				rain = pre_get_one_step(t_pre, data_in.fname_TSPre, 'pre')
+				rain = PRE.get_one_step_dataset(t_pre, data_in.fname_TSPre, 'pre')
 				
 				# get potential evapotranspiration
-				PET = pet_get_one_step(t_eto, data_in.fname_TSMeteo, 'pet')
+				PET = ET0.get_one_step_dataset(t_eto, data_in.fname_TSMeteo, 'pet')
 				
 				# ABSTRCTIONS/IRRIGATION ------------------------------
 				# read flux boundary conditions for all components
@@ -209,12 +270,12 @@ def run_DRYP(filename_input):
 				#	LAIdt = None
 				#	Kcdt = None
 				#else:
-				SAVIdt = savi_get_one_step(t_savi, data_in.fname_TSsavi, 'savi')
-				SAVIdt_min = savimin_get_one_step(t_savi, data_in.fname_savi_min, 'savi')
-				SAVIdt_max = savimax_get_one_step(t_savi, data_in.fname_savi_max, 'savi')
-				LAIdt = lai_get_one_step(t_savi, data_in.fname_TSlai, 'LAI')
-				Kcdt = kc_get_one_step(t_kc, data_in.fname_TSkc, 'kc')
-				avdt = av_get_one_step(t_av, data_in.fname_TSav, 'VegetationFraction')
+				SAVIdt = SAVI.get_one_step_dataset(t_savi, data_in.fname_TSsavi, 'savi')
+				SAVIdt_min = SAVImin.get_one_step_dataset(t_savi, data_in.fname_savi_min, 'savi')
+				SAVIdt_max = SAVImax.get_one_step_dataset(t_savi, data_in.fname_savi_max, 'savi')
+				LAIdt = LAI.get_one_step_dataset(t_savi, data_in.fname_TSlai, 'LAI')
+				Kcdt = Kc.get_one_step_dataset(t_savi, data_in.fname_TSkc, 'kc')
+				avdt = av.get_one_step_dataset(t_av, data_in.fname_TSav, 'VegetationFraction')
 
 				if Kcdt is not None:
 					# remove the folowing line
@@ -247,19 +308,21 @@ def run_DRYP(filename_input):
 				## calculate AV
 				#av = None
 				if avdt is None:
-					av_act = vegetation_av_static
+					if vegetation.av is not None:
+						#av = (SAVIdt - SAVIdt_min)/(SAVIdt_max - SAVIdt_min)
+						vegetation.av = vegetation.av[act_nodes]
 				else:
-					av_act = avdt[act_nodes]
+					vegetation.av = avdt[act_nodes]
 				
 				# add interception component - UZ zone
-				Pth, Eca, PETh, LAIdt, Kcdt, sc0_cn_act = cnp.run_interception_one_step(
-						rain[act_nodes], PET[act_nodes], av_act,
+				Pth, Eca, PETh, LAIdt, Kcdt, vegetation.Sc0_cn[act_nodes] = cnp.run_interception_one_step(
+						rain[act_nodes], PET[act_nodes], vegetation.av,
 						SAVIdt, SAVIdt_max, SAVIdt_min,
 						LAIdt,
 						vegetation.lai_a,
 						vegetation.lai_b,
-						vegetation_fcw_cn_act,
-						sc0_cn_act,
+						vegetation.fcw_cn[act_nodes],
+						vegetation.Sc0_cn[act_nodes],
 						Kcdt)
 				
 				## Estimate Kc for the riparian area
@@ -286,13 +349,12 @@ def run_DRYP(filename_input):
 				#print("Precipitation after interception and irrigation", Pth)				
 				# INFILTRATION: estimate infiltration --------------------
 				#inf.run_infiltration_one_step(Pth, env_state, data_in)
-				theta_act = theta[act_nodes]
 				INF, EXS, Ft0, SORP0, t_0, dry_day = inf.run_infiltration_one_step(
-						soil_ksat_act,
-						soil_theta_sat_act,
-						soil_psi_act,
-						soil_droot_act,
-						theta_act,
+						Ksat_a,
+						theta_sat_a,
+						PSI_a,
+						Droot_a,
+						theta[act_nodes],
 						#rain[act_nodes],
 						Pth,
 						Ft0, SORP0, t_0, dry_day,
@@ -301,14 +363,14 @@ def run_DRYP(filename_input):
 				# subsurface storage [mm]
 				#if data_in.run_GW > 0:
 				tws = storage_uz_sz(
-						topo_surface_act,
-						topo_bathymetry_act,
-						aquifer_bottom_act,
-						soil_droot_act*0.001,
-						soil_theta_sat_act,
-						aquifer_sy_act,
+						surface_a,
+						bathymetry_a,
+						bottom_a,
+						Droot_a_m,
+						theta_sat_a,
+						Sy_a,
 						head[act_nodes],
-						theta_act
+						theta[act_nodes]
 						)
 				
 				# GROUNDWATER ABSTRACTIONS ------------------------------
@@ -335,9 +397,10 @@ def run_DRYP(filename_input):
 				# ratio of Etp, units of procesing are in meters
 				ratio_etp = head[act_nodes] - z_extintion
 				ratio_etp[ratio_etp < 0] = 0
-				ratio_etp[positive_ext_depth] = (
-						ratio_etp[positive_ext_depth]
-						/ vegetation_ext_depth_act[positive_ext_depth]
+				extintion_mask = extintion_depth_a > 0
+				ratio_etp[extintion_mask] = (
+						ratio_etp[extintion_mask]
+						/extintion_depth_a[extintion_mask]
 						)
 				
 				# calculate ratio of potential evapotranspiration from
@@ -356,17 +419,17 @@ def run_DRYP(filename_input):
 				#print(INF)
 				# SOIL WATER BALANCE: Mestimate soil water balance-------
 				# Units for fluxes are in mm, units of soil moisture [--]
-				AET, PCR, theta[act_nodes], ROF = swb.run_swbm_one_step(
+				AET, PCR, theta[act_nodes], ROF= swb.run_swbm_one_step(
 						INF,
 						PETuz,
-						ones_act,
-						soil_ksat_act,
-						soil_theta_sat_act,
-						soil_theta_fc_act,
-						soil_theta_wp_act,
-						soil_c_soil_act,
+						ones_act_nodes,#Kc[act_nodes],
+						Ksat_a,
+						theta_sat_a,
+						theta_fc_a,
+						theta_wp_a,
+						c_SOIL_a,
 						Duz0,
-						theta_act
+						theta[act_nodes]
 						)
 				
 				# if rivers available, run the water balance in the riparaian
@@ -378,25 +441,25 @@ def run_DRYP(filename_input):
 					rpet_dt = PETuz[act_riv_nodes] - AET[act_riv_nodes]					
 					
 					# calculate riparian water deficit [mm]
-					rsmd = (soil_theta_fc_act[act_riv_nodes] - rtheta)*rsoil_droot_riv
+					rsmd = (soil_theta_fc_r - rtheta)*Droot_r
 					rsmd[rsmd < 0] = 0
 
 					# estimate available storage at riparian zone
 					# change gw discharge from m to mm per unit rip. area
 					rsmd, qriv, inf_rip_dt = swb_rip.water_deficit(
-							baseflow[riv_nodes]*1000.0*cell_to_rip_area_factor,
+						baseflow[riv_nodes]*1000.0*cell_to_rip_area_factor_r,
 						rpet_dt, rsmd)
 					
 					# change river saturated deficit units from mm to m3
 					# also update saturatin deficit with saturated zone
 					river_sat_deficit[riv_nodes] += (rsmd*0.001*
-									  area_bank_cells_riv)
+									  area_bank_cells_r)
 					
 					# THIS VALUES IS TRANFERED TO THE CELL AREA
 					# update groundwater discharge at river cells
 					# change units from mm to m
 					baseflow[riv_nodes] = (qriv*
-								rip_to_cell_area_factor*0.001)
+							rip_to_cell_area_factor_r*0.001)
 				
 				# update infiltration excess to considers lakes
 				# precipitation over lakes is directly added to the total storage
@@ -404,7 +467,7 @@ def run_DRYP(filename_input):
 				# find lakes
 				#id_lakes = bathymetry 
 				# add excess to recharge
-				aux_rch.fill(0.0)
+				aux_rch = np.zeros_like(EXS[:])
 				if id_lakes.size > 0:
 					aux_rch[id_lakes] = EXS[id_lakes]
 					# update infiltration excess
@@ -451,7 +514,7 @@ def run_DRYP(filename_input):
 					
 					# change units of volumetric rate flow to depth rate flow
 					# change units from m to mm per unit rip. area
-					tls_aux = ro.trans_losses[riv_nodes]*volume_to_depth_factor_rip
+					tls_aux = ro.trans_losses[riv_nodes]*volume_to_depth_factor_rip_r
 
 					if lks is not None:
 						# Move Transmission losses to reservoirs or lakes
@@ -471,13 +534,13 @@ def run_DRYP(filename_input):
 					rAET, rPCR, rtheta, rROF = swb_rip.run_swbm_one_step(
 							riv_infiltration,#[riv_nodes],
 							rpet_dt,
-							ones_riv,
-							rsoil_ksat_riv,
-							rsoil_theta_sat_riv,
-							rsoil_theta_fc_riv,
-							rsoil_theta_wp_riv,
-							rsoil_c_soil_riv,
-							rsoil_droot_riv,
+							ones_riv_nodes,#Kc[act_nodes],
+							Ksat_r,
+							theta_sat_r,
+							theta_fc_r,
+							theta_wp_r,
+							c_SOIL_r,
+							Droot_r,
 							rtheta
 							)
 
@@ -486,8 +549,8 @@ def run_DRYP(filename_input):
 
 					# transfer fluxes from riparian zone to model cells
 					# lenght units are keept in mm
-					rAET *= rip_to_cell_area_factor
-					rPCR *= rip_to_cell_area_factor
+					rAET *= rip_to_cell_area_factor_r
+					rPCR *= rip_to_cell_area_factor_r
 
 					# update total recharge, umits [mm/dt]
 					recharge[riv_nodes] += rPCR
@@ -564,7 +627,7 @@ def run_DRYP(filename_input):
 								topo.riv_elevation,
 								riv_nodes,
 								aquifer.Sy,
-								soil.Droot*0.001,
+								Droot_full_m,
 								topo.conductivity,
 								aquifer.gwtype,
 								soil.theta_sat,
@@ -602,23 +665,23 @@ def run_DRYP(filename_input):
 				if data_in.run_GW > 0:
 
 					Duz0, theta[act_nodes] = swb.run_soil_aquifer_one_step(
-						topo_surface_act,
+						surface_a,
 						head[act_nodes],#aquifer.head[act_nodes],
-						soil_droot_act,
-						soil_theta_fc_act,
-						soil_theta_wp_act,
+						Droot_a,
+						theta_fc_a,
+						theta_wp_a,
 						Duz0, theta[act_nodes]
 						)
 				
 				# estimate groundwater storage change [mm] for delta t
-				twsc.fill(0.0)
+				twsc = np.zeros_like(rain)
 				twsc[act_nodes] = storage_uz_sz(
-						topo_surface_act,
-						topo_bathymetry_act,
-						aquifer_bottom_act,
-						soil_droot_act*0.001,
-						soil_theta_sat_act,
-						aquifer_sy_act,
+						surface_a,
+						bathymetry_a,
+						bottom_a,
+						Droot_a_m,
+						theta_sat_a,
+						Sy_a,
 						head[act_nodes],
 						theta[act_nodes]) - tws
 
@@ -635,9 +698,9 @@ def run_DRYP(filename_input):
 						})
 				
 				# store vegetation variables
-				if av_act is not None:
+				if vegetation.av is not None:
 					grid_veg.store_variables(PRE.date_sim_dt, t_pre,
-						{'pth': Pth, 'eca': Eca, 'scz': sc0_cn_act,
+						{'pth': Pth, 'eca': Eca, 'scz': vegetation.Sc0_cn[act_nodes],
 	   					#'lai': LAIdt, 'kc': Kcdt, 'av': vegetation.av
 						})
 
@@ -689,11 +752,11 @@ def run_DRYP(filename_input):
 					"chb":[gw.flux_at_CHB*1000.0] if data_in.run_GW > 0 else [0],
 					"tls":[np.mean(ro.trans_losses[act_nodes])],
 					'eca': [np.mean(Eca)] if Eca is not None else [0],
-					'scz': [np.mean(sc0_cn_act)] if sc0_cn_act is not None else [0],
+					'scz': [np.mean(vegetation.Sc0_cn[act_nodes])] if vegetation.Sc0_cn[act_nodes] is not None else [0],
 					'pth': [np.mean(Pth)] if Pth is not None else [0],
 					'lai': [np.mean(LAIdt)] if LAIdt is not None else [0],
 					'kc': [np.mean(Kcdt)] if Kcdt is not None else [1],
-					'av': [np.mean(av_act)] if av_act is not None else [0],
+					'av': [np.mean(vegetation.av)] if vegetation.av is not None else [0],
 					'lks': [vtot_lks] if vtot_lks is not None else [0],
 					})
 				
@@ -730,21 +793,21 @@ def run_DRYP(filename_input):
 						}
 						)
 				
-				if zone_sizes is not None:
+				if idzone_info[2] is not None:
 					zone_var.store_variables(PRE.date_sim_dt, t_pre,
-				  	{"pre":utils.collapse_mean(rain[zone_nodes], zone_sizes, zone_starts),
-		   				"pet":utils.collapse_mean(PET[zone_nodes], zone_sizes, zone_starts),
-		   				"run":utils.collapse_mean(runoff[zone_nodes], zone_sizes, zone_starts),
-		   				"aet":utils.collapse_mean(AET[idzone_core], zone_sizes, zone_starts),
-						"inf":utils.collapse_mean(INF[idzone_core], zone_sizes, zone_starts),
-						"tht":utils.collapse_mean(theta[zone_nodes], zone_sizes, zone_starts),
-						"rch":utils.collapse_mean(recharge[zone_nodes], zone_sizes, zone_starts),
-						"egw":utils.collapse_mean(PETsz[idzone_core], zone_sizes, zone_starts),
-						"wte":utils.collapse_mean(head[zone_nodes], zone_sizes, zone_starts),
-						"gdh":utils.collapse_mean(baseflow[zone_nodes], zone_sizes, zone_starts),
-						"twsc":utils.collapse_mean(twsc[zone_nodes], zone_sizes, zone_starts),
+					  	{"pre":utils.collapse_mean(rain[idzone_info[0]], idzone_info[2]),
+		   				"pet":utils.collapse_mean(PET[idzone_info[0]], idzone_info[2]),
+		   				"run":utils.collapse_mean(runoff[idzone_info[0]], idzone_info[2]),
+		   				"aet":utils.collapse_mean(AET[idzone_info[1]], idzone_info[2]),
+						"inf":utils.collapse_mean(INF[idzone_info[1]], idzone_info[2]),
+						"tht":utils.collapse_mean(theta[idzone_info[0]], idzone_info[2]),
+						"rch":utils.collapse_mean(recharge[idzone_info[0]], idzone_info[2]),
+						"egw":utils.collapse_mean(PETsz[idzone_info[1]], idzone_info[2]),
+						"wte":utils.collapse_mean(head[idzone_info[0]], idzone_info[2]),
+						"gdh":utils.collapse_mean(baseflow[idzone_info[0]], idzone_info[2]),
+						"twsc":utils.collapse_mean(twsc[idzone_info[0]], idzone_info[2]),
 						#"chb":[gw.flux_at_CHB],
-						"tls":utils.collapse_mean(ro.trans_losses[zone_nodes], zone_sizes, zone_starts),
+						"tls":utils.collapse_mean(ro.trans_losses[idzone_info[0]], idzone_info[2]),
 						#'eca': [np.mean(Eca)] if Eca is not None else [0],
 						#'scz': [np.mean(vegetation.Sc0_cn[act_nodes])] if vegetation.Sc0_cn[act_nodes] is not None else [0],
 						#'pth': [np.mean(Pth)] if Pth is not None else [0],
@@ -762,9 +825,9 @@ def run_DRYP(filename_input):
 					# apply only when river exist
 					if riv_nodes.size > 0:
 						river_sat_deficit[riv_nodes] = ((
-							topo.riv_elevation[riv_nodes] - head[riv_nodes])*
-							topo.area_cells[riv_nodes]*
-							aquifer.Sy[riv_nodes])
+							riv_elevation_r - head[riv_nodes])*
+							topo.area_cells*
+							Sy_r)
 
 						river_sat_deficit[river_sat_deficit < 0] = 0.0
 
@@ -773,7 +836,6 @@ def run_DRYP(filename_input):
 				t_pre += 1
 				t_savi += 1
 				t_kc += 1
-				t_av += 1
 				t_abs += 1
 				
 			t_eto += 1		

@@ -73,9 +73,17 @@ alg_release = '2023-08-01'
 
 import cProfile
 
-def profile(filename=None, comm=MPI.COMM_WORLD):
+def profile(filename=None, comm=None):
   def prof_decorator(f):
     def wrap_f(*args, **kwargs):
+      # resolve the communicator lazily (at call time), not at import
+      # time - MPI.COMM_WORLD does not exist when mpi4py isn't
+      # installed, and evaluating it as a default argument value would
+      # crash on import regardless of whether this decorator is ever
+      # actually invoked with MPI active.
+      active_comm = comm
+      if active_comm is None and MPI is not None:
+        active_comm = MPI.COMM_WORLD
       pr = cProfile.Profile()
       pr.enable()
       result = f(*args, **kwargs)
@@ -84,7 +92,8 @@ def profile(filename=None, comm=MPI.COMM_WORLD):
       if filename is None:
         pr.print_stats()
       else:
-        filename_r = filename + ".{}".format(comm.rank)
+        rank_suffix = active_comm.rank if active_comm is not None else 0
+        filename_r = filename + ".{}".format(rank_suffix)
         pr.dump_stats(filename_r)
 
       return result
@@ -587,6 +596,62 @@ def run_parDRYP(filename_input):
 	basis_ro = {}
 	basis_runtime_parameters = {}
 
+	# --- Surface-water basin connectivity (outlet -> downstream inlet) ---
+	# Splitting the surface routing into independent per-basin
+	# runoff_routing components (above) means each basin only ever
+	# "sees" its own local runoff - a basin that is not truly endorheic
+	# (it drains into another, separately-simulated basin) would
+	# otherwise silently lose all of its outflow. basin_connectivity is
+	# user-provided (see build_basin_connectivity's docstring): for
+	# every such basin, give its outlet cell and the matching inlet cell
+	# in the basin that receives that flow (both as GLOBAL node ids).
+	# If it's absent, every basin is treated as endorheic, matching the
+	# previous behaviour.
+	basin_connectivity_spec = getattr(data_in, 'basin_connectivity', None)
+	basin_connections = partools.build_basin_connectivity(
+		basin_connectivity_spec, topo.grid_size)
+	n_basin_connections = len(basin_connections)
+	# local index of each connection's outlet node WITHIN the owning
+	# basin's own component - filled in below, as each local basin is
+	# set up; stays None for connections whose outlet basin isn't owned
+	# by this rank.
+	basin_connection_outlet_local = [None]*n_basin_connections
+
+	# Compute a topological execution order (levels) from the basin
+	# connectivity, computed identically on every rank (from the FULL
+	# basin_ids list, not just the local ones) so all ranks agree on
+	# the same level structure. All basins in a level can be run in
+	# parallel (across ranks, independently of each other); levels
+	# themselves are processed strictly in order within a time step, so
+	# a downstream basin always sees its upstream basin's outlet
+	# discharge from THIS step, not a lagged previous one - this
+	# matters a lot once the time step is a full day rather than an
+	# hour, where a one-step lag would otherwise mean a full day's
+	# delay in basin-to-basin routing.
+	basin_execution_levels = partools.build_basin_execution_levels(
+		basin_ids, basin_connections)
+	local_basin_ids_set = set(local_basin_ids)
+	# for each level, the local basins (owned by this rank) that need
+	# to run in that level, and the connection indices whose outlet
+	# basin is in that level (so their discharge can be handed to
+	# downstream basins before the NEXT level runs)
+	basin_execution_levels_local = [
+		[b for b in level if b in local_basin_ids_set]
+		for level in basin_execution_levels
+	]
+	connections_by_level = [
+		[conn_idx for conn_idx, c in enumerate(basin_connections)
+		 if c['outlet_basin'] in set(level)]
+		for level in basin_execution_levels
+	]
+	if n_basin_connections > 0:
+		_log_root(
+			rank,
+			f"Surface-water basin connectivity: {n_basin_connections} "
+			f"outlet->inlet connection(s) configured across "
+			f"{len(basin_execution_levels)} execution level(s).",
+		)
+
 	gw_region_ids = partools.get_basin_ids(domains_gw)
 	gw_parallel = data_in.run_GW > 0 and size > 1 and len(gw_region_ids) > 0
 	local_gw_region_ids = partools.assign_basins_to_rank(gw_region_ids, rank, size) if gw_parallel else []
@@ -633,6 +698,24 @@ def run_parDRYP(filename_input):
 			'area_cells': basin_parameters['area_cells'],
 			'area_river': basin_parameters['area_river'],
 		}
+
+		# resolve any outlet nodes belonging to this basin to their
+		# local index, for the connectivity transfer in the main loop
+		for conn_idx, connection in enumerate(basin_connections):
+			if connection['outlet_basin'] != basin_id:
+				continue
+			local_idx = partools.map_global_nodes_to_local(
+				basin_domain, [connection['outlet_node']])
+			if local_idx.size == 0:
+				_log_root(
+					rank,
+					f"WARNING: basin connectivity outlet_node "
+					f"{connection['outlet_node']} was not found as an "
+					f"active cell in basin {basin_id}; this connection "
+					f"will be ignored.",
+				)
+				continue
+			basin_connection_outlet_local[conn_idx] = int(local_idx[0])
 	################################################################################################
 	global_head = head.copy()
 	global_baseflow = np.zeros_like(head)
@@ -640,9 +723,17 @@ def run_parDRYP(filename_input):
 	global_node_owner = np.full(topo.grid_size, -1, dtype=np.int32)
 	# print("local_gw_region_ids: ",local_gw_region_ids)
 
+	GW_HALO = 1  # width of the ghost-cell ring exchanged between adjacent
+	             # groundwater regions - must be >=1 for regions to see
+	             # their neighbors' head at all (0 means each rectangular
+	             # region is solved as if it had a no-flow wall on every
+	             # edge, which is wrong for a domain that is only split
+	             # this way for parallel execution, not because those
+	             # edges are real boundaries).
+
 	for region_id in local_gw_region_ids:
 		region_domain = partools.extract_basin_data_with_halo2(
-			region_id, domains_gw, domain.grid_metadata, rank, halo = 0, grid=True)
+			region_id, domains_gw, domain.grid_metadata, rank, halo=GW_HALO, grid=True)
 		
 		core_mask_flat = region_domain['core_mask'].flatten()  # only real basin cells
 		halo_mask_flat = region_domain['mask'].flatten() & ~core_mask_flat # halo=region domain without core cells
@@ -680,14 +771,25 @@ def run_parDRYP(filename_input):
 				'area_river': topo.area_river,
 				'bc_head': aquifer.CHB,
 			},
-			halo = 0,
+			halo=GW_HALO,
 			mask_inactive=True,
 		)
 		
 		
 		region_mask = region_domain['mask'].flatten()
 		region_parameters['bc_head'][~region_mask] = -9999
-		
+		# Mark halo (ghost) cells as constant-head boundary nodes, seeded
+		# with the current global head at those cells. This registers
+		# them in gwflow_EFD's id_CHB/bc_values machinery at
+		# initialization, so the region's own linear solve treats them
+		# as FIXED inputs (representing the neighboring region's state)
+		# rather than either ignoring them (halo=0, no connectivity) or
+		# incorrectly solving for them as if they belonged to this
+		# region. Their value is refreshed every time step from the
+		# latest global head (see the main loop) so this is a live
+		# coupling, not a one-off snapshot.
+		region_parameters['bc_head'][halo_mask_flat] = head[global_nodes[halo_mask_flat]]
+
 		region_parameters['riv_nodes'] = partools.map_global_nodes_to_local(
 			region_domain, riv_nodes)
 		
@@ -733,6 +835,11 @@ def run_parDRYP(filename_input):
 			'size_lks': region_parameters['size_lks'],
 			'ids_max_depth_lks': region_parameters['ids_max_depth_lks'],
 			'active_count': int(np.count_nonzero(region_mask)),
+			# needed every time step to refresh the halo (ghost-cell)
+			# boundary heads from the latest global head - this is what
+			# actually couples this region to its neighbors
+			'halo_mask_flat': halo_mask_flat,
+			'global_nodes': global_nodes,
 		}
 	
 	# print(C)
@@ -797,6 +904,64 @@ def run_parDRYP(filename_input):
 	point_var, grid_var, grid_rmax, grid_vmax, total_var,
 	grid_rpvar, total_rpvar, grid_pndvar, total_pndvar, grid_veg,
 	grid_lks, zone_var) = initialize_output_arrays(data_in)#, grid, riv_nodes, water_bodies
+
+	# ------------------------------------------------------------------
+	# ENABLE INCREMENTAL NETCDF STREAMING FOR GRIDDED OUTPUTS -----------
+	# Gridded output (only ever saved from rank 0 - see the main loop)
+	# would otherwise buffer the ENTIRE run's output time series in
+	# memory before writing anything to disk at the end. At continental
+	# scale (tens of millions of cells, decades at hourly/daily
+	# resolution) that is not viable. This makes each store flush
+	# completed periods to disk incrementally instead, with two
+	# independently-configurable options (both via data_in, both
+	# optional):
+	#   - data_in.nc_split_by: split output into one file per period
+	#     (e.g. 'monthly') instead of one continuous file for the
+	#     whole run, keeping individual file sizes manageable.
+	#   - data_in.nc_async_write: if True (default), each flush's disk
+	#     write runs in a background thread so the simulation keeps
+	#     computing instead of waiting for the write - the only
+	#     synchronization point is that a new flush waits for the
+	#     previous write to finish first.
+	# This only needs to run on rank 0, since that is the only rank
+	# that ever calls store_variables/save_netCDF_var on these objects.
+	if rank == 0:
+		_nc_flush_every = getattr(data_in, 'nc_flush_every', 60)
+		_nc_split_by = getattr(data_in, 'nc_split_by', None)
+		_nc_async_write = getattr(data_in, 'nc_async_write', True)
+		grid_var.enable_netcdf_streaming(
+			data_in.fnameTS_grid + '.nc', topo.lat, topo.lon, act_nodes,
+			projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+			split_by=_nc_split_by, async_write=_nc_async_write)
+		grid_vmax.enable_netcdf_streaming(
+			data_in.fnameTS_grid + 'vmax.nc', topo.lat, topo.lon, act_nodes,
+			projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+			split_by=_nc_split_by, async_write=_nc_async_write)
+		grid_veg.enable_netcdf_streaming(
+			data_in.fnameTS_grid + 'veg.nc', topo.lat, topo.lon, act_nodes,
+			projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+			split_by=_nc_split_by, async_write=_nc_async_write)
+		grid_rmax.enable_netcdf_streaming(
+			data_in.fnameTS_grid + 'rmax.nc', topo.lat, topo.lon, riv_nodes,
+			projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+			split_by=_nc_split_by, async_write=_nc_async_write)
+		grid_rpvar.enable_netcdf_streaming(
+			data_in.fnameTS_grid + 'rp.nc', topo.lat, topo.lon, riv_nodes,
+			projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+			split_by=_nc_split_by, async_write=_nc_async_write)
+		if water_bodies.ids_slks is not None:
+			grid_lks.enable_netcdf_streaming(
+				data_in.fnameTS_grid + 'lks.nc', topo.lat, topo.lon,
+				water_bodies.ids_slks, projection=data_in.PROJECTION,
+				flush_every=_nc_flush_every, split_by=_nc_split_by,
+				async_write=_nc_async_write)
+		if water_bodies.id_nodes is not None:
+			grid_pndvar.enable_netcdf_streaming(
+				data_in.fnameTS_grid + 'pnd.nc', topo.lat, topo.lon,
+				water_bodies.id_nodes, projection=data_in.PROJECTION,
+				flush_every=_nc_flush_every, split_by=_nc_split_by,
+				async_write=_nc_async_write)
+	# ------------------------------------------------------------------
 	
 	
 	# Initialise the progress bar
@@ -1115,64 +1280,110 @@ def run_parDRYP(filename_input):
 					local_stage = np.zeros_like(ro.stage)
 					local_ssz = np.zeros_like(ro.SSZ)
 
-					for basin_id in local_basin_ids:
-						basin_forcing = partools.extract_basin_forcing(
-							basin_id,
-							domains_ro,
-							{
-								'runoff': runoff,
-								'riv_sat_deficit': river_sat_deficit,
-								'AOF': AOF,
-							},
-						)
-						basin_parameters = basis_runtime_parameters[basin_id]
-						basin_component = basis_ro[basin_id]
+					# Run basins level by level (see build_basin_execution_levels):
+					# every basin in a level is independent of every other basin
+					# in that same level, so they can run in any order / in
+					# parallel across ranks. Between levels, outlet discharge
+					# computed in the level just finished is synchronized across
+					# ranks and added as inflow at the corresponding downstream
+					# inlet node BEFORE the next level runs - so a downstream
+					# basin always sees its upstream basin's discharge from THIS
+					# time step, with no lag, regardless of which rank owns
+					# which basin.
+					for level_idx, level_local_basin_ids in enumerate(basin_execution_levels_local):
+						for basin_id in level_local_basin_ids:
+							basin_forcing = partools.extract_basin_forcing(
+								basin_id,
+								domains_ro,
+								{
+									'runoff': runoff,
+									'riv_sat_deficit': river_sat_deficit,
+									'AOF': AOF,
+								},
+							)
+							basin_parameters = basis_runtime_parameters[basin_id]
+							basin_component = basis_ro[basin_id]
 
-						basin_component.run_runoff_one_step(
-							basin_forcing['runoff']*0.001,
-							basin_forcing['AOF'],
-							basin_parameters['AOF_threshold'],
-							basin_parameters['conductivity'],
-							basin_parameters['decay'],
-							basin_parameters['river_cells'],
-							basin_parameters['area_cells'],
-							basin_parameters['area_river'],
-							basin_forcing['riv_sat_deficit'],
-							None,
-						)
-						
-						local_discharge = partools.combine_basin_results_into_world(
-							basin_id,
-							domains_ro,
-							basin_component.discharge,
-							world_data=local_discharge,
-							world_grid_shape=runoff_grid_shape,
-							flatten=True,
-						)
-						local_trans_losses = partools.combine_basin_results_into_world(
-							basin_id,
-							domains_ro,
-							basin_component.trans_losses,
-							world_data=local_trans_losses,
-							world_grid_shape=runoff_grid_shape,
-							flatten=True,
-						)
-						local_stage = partools.combine_basin_results_into_world(
-							basin_id,
-							domains_ro,
-							basin_component.stage,
-							world_data=local_stage,
-							world_grid_shape=runoff_grid_shape,
-							flatten=True,
-						)
-						local_ssz = partools.combine_basin_results_into_world(
-							basin_id,
-							domains_ro,
-							basin_component.SSZ,
-							world_data=local_ssz,
-							world_grid_shape=runoff_grid_shape,
-							flatten=True,
-						)
+							basin_component.run_runoff_one_step(
+								basin_forcing['runoff']*0.001,
+								basin_forcing['AOF'],
+								basin_parameters['AOF_threshold'],
+								basin_parameters['conductivity'],
+								basin_parameters['decay'],
+								basin_parameters['river_cells'],
+								basin_parameters['area_cells'],
+								basin_parameters['area_river'],
+								basin_forcing['riv_sat_deficit'],
+								None,
+							)
+
+							local_discharge = partools.combine_basin_results_into_world(
+								basin_id,
+								domains_ro,
+								basin_component.discharge,
+								world_data=local_discharge,
+								world_grid_shape=runoff_grid_shape,
+								flatten=True,
+							)
+							local_trans_losses = partools.combine_basin_results_into_world(
+								basin_id,
+								domains_ro,
+								basin_component.trans_losses,
+								world_data=local_trans_losses,
+								world_grid_shape=runoff_grid_shape,
+								flatten=True,
+							)
+							local_stage = partools.combine_basin_results_into_world(
+								basin_id,
+								domains_ro,
+								basin_component.stage,
+								world_data=local_stage,
+								world_grid_shape=runoff_grid_shape,
+								flatten=True,
+							)
+							local_ssz = partools.combine_basin_results_into_world(
+								basin_id,
+								domains_ro,
+								basin_component.SSZ,
+								world_data=local_ssz,
+								world_grid_shape=runoff_grid_shape,
+								flatten=True,
+							)
+
+						# synchronize this level's outlet discharge (if any
+						# connections originate in this level) and apply it
+						# as inflow at the downstream inlet(s) before the
+						# NEXT level runs.
+						level_connection_idx = connections_by_level[level_idx]
+						if level_connection_idx:
+							local_outlet_volume = np.zeros(len(level_connection_idx))
+							for k, conn_idx in enumerate(level_connection_idx):
+								local_idx = basin_connection_outlet_local[conn_idx]
+								if local_idx is None:
+									continue
+								basin_id = basin_connections[conn_idx]['outlet_basin']
+								if basin_id not in local_basin_ids_set:
+									continue
+								local_outlet_volume[k] = basis_ro[basin_id].discharge[local_idx]
+
+							if comm is not None:
+								global_outlet_volume = comm.allreduce(local_outlet_volume, op=MPI.SUM)
+							else:
+								global_outlet_volume = local_outlet_volume
+
+							for k, conn_idx in enumerate(level_connection_idx):
+								connection = basin_connections[conn_idx]
+								inlet_area = topo.area_cells[connection['inlet_node']]
+								inflow_mm = (
+									global_outlet_volume[k]/inlet_area*1000.0
+									if inlet_area > 0 else 0.0
+								)
+								# add directly to the global runoff array so
+								# the downstream basin's extract_basin_forcing
+								# call (in the next level) picks it up
+								# naturally, exactly like any other local
+								# runoff contribution
+								runoff[connection['inlet_node']] += inflow_mm
 
 					ro.discharge[:] = _allreduce_sum(comm, local_discharge)
 					ro.trans_losses[:] = _allreduce_sum(comm, local_trans_losses)
@@ -1354,9 +1565,25 @@ def run_parDRYP(filename_input):
 										'recharge': gw_recharge,
 										'stage': ro.stage,
 									},
-									halo = 0
+									halo=GW_HALO
 								)
 								#print("time1: ", time.time()-start1)
+
+								# Refresh the halo (ghost-cell) boundary heads from the
+								# latest global head before solving - this is what actually
+								# couples this region to its neighbors. Without it (halo=0,
+								# or halo>0 but never refreshed), each rectangular region
+								# would be solved as if walled off from its neighbors, which
+								# is wrong since these boundaries only exist because the
+								# domain was split up for parallel execution.
+								halo_mask_flat = region_parameters['halo_mask_flat']
+								if np.any(halo_mask_flat) and region_gw[region_id].id_CHB is not None:
+									region_global_nodes = region_parameters['global_nodes']
+									region_gw[region_id].bc_values[
+										np.isin(region_gw[region_id].id_CHB,
+												np.where(halo_mask_flat)[0])
+									] = head[region_global_nodes[halo_mask_flat]]
+
 								
 								# head = exchange_halos(comm, head, region_halo_info[region_id])
 								# theta = exchange_halos(comm, theta, region_halo_info[region_id])
@@ -1699,7 +1926,7 @@ def run_parDRYP(filename_input):
 					if riv_nodes.size > 0:
 						river_sat_deficit[riv_nodes] = ((
 							topo.riv_elevation[riv_nodes] - head[riv_nodes])*
-							np.power(topo.grid_size, 2)*
+							topo.area_cells*
 							aquifer.Sy[riv_nodes])
 
 						river_sat_deficit[river_sat_deficit < 0] = 0.0
