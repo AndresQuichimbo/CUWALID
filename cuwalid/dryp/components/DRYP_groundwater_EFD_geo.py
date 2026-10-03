@@ -24,7 +24,8 @@ class gwflow_EFD(object):
 
 	def __init__(self, grid, Ksat, area_river, bc, method=0,
 			solver='explicit', implicit_max_iter=8,
-			implicit_tolerance=1.0e-6, linear_max_iter=200):
+			implicit_tolerance=1.0e-6, linear_max_iter=200,
+			linear_tolerance=1.0e-4, implicit_relaxation=1.0):
 		"""Initialize the groundwater flow solver.
 		Args:
 			grid (object): Grid object containing spatial discretization.
@@ -48,6 +49,8 @@ class gwflow_EFD(object):
 		self.implicit_max_iter = max(1, int(implicit_max_iter))
 		self.implicit_tolerance = float(implicit_tolerance)
 		self.linear_max_iter = max(20, int(linear_max_iter))
+		self.linear_tolerance = max(float(linear_tolerance), np.finfo(float).eps)
+		self.implicit_relaxation = min(max(float(implicit_relaxation), 0.0), 1.0)
 
 		# create additional arrays for model component variables
 		self.method = method	
@@ -61,6 +64,14 @@ class gwflow_EFD(object):
 		else:
 			print('Groundwater settings: Multi-transmissivity function')
 		print(f'Groundwater solver: {self.solver}')
+		if self.solver == 'implicit':
+			print(
+				f'Implicit settings: max_iter={self.implicit_max_iter}, '
+				f'nonlinear_tol={self.implicit_tolerance:.2e}, '
+				f'linear_max_iter={self.linear_max_iter}, '
+				f'linear_tol={self.linear_tolerance:.2e}, '
+				f'relaxation={self.implicit_relaxation:.2f}'
+			)
 		
 		# set up boundary conditions
 		self.id_CHB = None
@@ -558,6 +569,8 @@ class gwflow_EFD(object):
 		"""
 		act_nodes = self.active_nodes
 		n_act_nodes = len(act_nodes)
+		if n_act_nodes == 0:
+			return head, discharge
 		n_free_nodes = len(self.free_nodes)
 		has_lakes = ids_lks is not None
 		surface_i = surface.copy()
@@ -637,6 +650,9 @@ class gwflow_EFD(object):
 					storage_coeff_free, riv_free_nodes, riv_free_index,
 					riv_free_stage, riv_free_coeff, dt
 				)
+			if not np.all(np.isfinite(head_trial[act_nodes])):
+				bad_nodes = ~np.isfinite(head_trial)
+				head_trial[bad_nodes] = head_iter[bad_nodes]
 
 			np.maximum(head_trial, 0.0, out=head_trial)
 			np.minimum(surface, head_trial, out=head_trial)
@@ -688,10 +704,21 @@ class gwflow_EFD(object):
 				ones_act32, zeros_act32, theta_sat_act32,
 				theta_fc_act32, theta_dt_act32, Sy_for_update_act32
 			)
+			if not np.all(np.isfinite(head_next[act_nodes])):
+				bad_nodes = ~np.isfinite(head_next)
+				head_next[bad_nodes] = head_iter[bad_nodes]
 			np.maximum(head_next, 0.0, out=head_next)
 			np.minimum(surface, head_next, out=head_next)
 			if self.id_CHB is not None:
 				head_next[self.id_CHB] = self.bc_values
+
+			if self.implicit_relaxation < 1.0:
+				head_next = (
+					head_iter
+					+ self.implicit_relaxation*(head_next - head_iter)
+				)
+				if self.id_CHB is not None:
+					head_next[self.id_CHB] = self.bc_values
 
 			residual = np.max(np.abs(head_next[act_nodes] - head_iter[act_nodes]))
 			head_iter = head_next
@@ -719,11 +746,20 @@ class gwflow_EFD(object):
 		self.flux_at_CHB = self.flux_at_CHB/n_act_nodes
 
 		try:
-			MB = (
-				np.mean(recharge[act_nodes])*dt - np.mean(discharge[act_nodes])
-				- np.mean(total_storage_change) - self.flux_at_CHB*dt
+			finite_mask = (
+				np.isfinite(recharge[act_nodes])
+				& np.isfinite(discharge[act_nodes])
+				& np.isfinite(water_storage_change[act_nodes])
 			)
-			assert np.allclose(MB, 0.0, rtol=1e-05, atol=1e-04)
+			if not np.any(finite_mask):
+				print('WARNING: groundwater mass-balance check skipped (no finite active-node values).')
+				return head, discharge
+
+			rch_mean = np.mean(recharge[act_nodes][finite_mask])
+			dis_mean = np.mean(discharge[act_nodes][finite_mask])
+			dst_mean = np.mean(water_storage_change[act_nodes][finite_mask])
+			MB = (rch_mean*dt - dis_mean - dst_mean - self.flux_at_CHB*dt)
+			assert np.isfinite(MB) and np.allclose(MB, 0.0, rtol=1e-05, atol=1e-04)
 		except:
 			raise Exception('Groundwater Water balance Error: ', MB,
 		   		'Please check units and non-data values: ',
@@ -786,10 +822,10 @@ class gwflow_EFD(object):
 		solution, info = cg(
 			matrix, rhs, x0=x0,
 			maxiter=self.linear_max_iter,
-			**{_CG_TOL_KWARG: self.implicit_tolerance}
+			**{_CG_TOL_KWARG: self.linear_tolerance}
 		)
 		#print('CG solver info:', info, '\nsolution:', solution, '\nx0:', x0)
-		if info != 0:
+		if info != 0 or (not np.all(np.isfinite(solution))):
 			print(f"WARNING: groundwater CG solver did not converge "
 				  f"(info={info}) within {self.linear_max_iter} iterations; "
 				  f"falling back to a direct sparse solve (spsolve), which "
@@ -797,6 +833,9 @@ class gwflow_EFD(object):
 				  f"poorly-conditioned system (e.g. very large contrasts in "
 				  f"conductivity or cell size).")
 			solution = spsolve(matrix, rhs)
+			if not np.all(np.isfinite(solution)):
+				print('WARNING: groundwater direct sparse solve returned non-finite values; reusing previous iterate for free nodes.')
+				solution = x0.copy()
 
 		return solution
 

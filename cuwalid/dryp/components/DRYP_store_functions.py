@@ -355,7 +355,7 @@ class GlobalGridVar:
 			isize = 0
 			for iname in store_var_names:
 				factor = 1.0
-				if iname in ('tht', 'wte', 'ssz', 'thtrp'):
+				if iname in ('tht', 'wte', 'ssz', 'thtrp', 'kc', 'lai', 'savi','av'):
 					factor = 1.0/nsteps_vector[j]
 				inodes = range(isize, isize+var_size)
 				grid[nodes] = cumm_variable[j][inodes]*factor
@@ -604,7 +604,7 @@ class GlobalGridVar:
 					self.time_grid.append(self.pdate)
 		pass
 	
-	def save_csv_var(self, fname, multi_files=True):
+	def save_csv_var(self, fname, multi_files=True, return_df=False):
 		"""This function save multiple arrays in a csv file
 		
 		Parameters
@@ -653,7 +653,7 @@ class GlobalGridVar:
 					# time-averaged variables used in save_netCDF_var -
 					# previously it was summed here but averaged there,
 					# giving inconsistent CSV vs netCDF outputs.
-					if iname in ('tht', 'wte', 'ssz', 'thtrp'):
+					if iname in ('tht', 'wte', 'ssz', 'thtrp', 'kc', 'lai', 'savi','av'):
 						#print(self.nsteps_vector)
 						factor = 1.0/np.array(self.nsteps_vector, dtype=float)
 						# broadcast factor (per time step) along the time
@@ -686,6 +686,8 @@ class GlobalGridVar:
 				fname_csv = fname+'.csv'
 				df.to_csv(fname_csv, index=False)
 			
+			if return_df is True and multi_files is False:
+				return df
 
 	def save_netCDF_var(self, fname, latitude, longitude, nodes, projection=None):
 		"""This function save multiple arrays in a netcdf file

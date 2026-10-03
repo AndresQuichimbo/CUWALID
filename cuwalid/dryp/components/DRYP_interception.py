@@ -93,7 +93,8 @@ class interception(object):
 		else:
 			Ecw = None
 			LAI = None
-			Kc = None
+			#if Kc is not None:
+			#Kc = None
 			Pth = rain
 			PET = ETo
 			Scz = None

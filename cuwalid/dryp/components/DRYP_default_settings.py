@@ -100,6 +100,11 @@ default_settings = {
         "run_gw" : True, # activate groundwater component
         "method_gw": 0, # choose groundwater transimissivity approach
         "solver_gw": "explicit", # choose groundwater solver
+        "gw_implicit_max_iter": 12,
+        "gw_implicit_tolerance": 1.0e-5,
+        "gw_linear_max_iter": 120,
+        "gw_linear_tolerance": 1.0e-4,
+        "gw_implicit_relaxation": 0.8,
     },
 
     "OUTPUT": {

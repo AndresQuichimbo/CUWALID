@@ -132,6 +132,9 @@ The format of precipitation, evapotranspiration, vegetation, boundary conditions
 5. netCDF files, for ensamble netCDF files (only for STORM)
 6. netCDF files, for IMERG half-hourly files using date placeholders
     (3B-HHR.MS.MRG.3IMERG.YYYYMMDD-Shhmm00-E042959.0240.V07B.HDF5.nc4)
+7. Zarr stores, when one store is provided for the entire simulation period
+
+For Zarr format (option 7), provide the path to the store in the same forcing field you would use for a single netCDF file. The recommended storage layout is chunked by one time step and the full spatial plane, i.e. ``(1, nlat, nlon)``.
 
 The time frequency of the of model should be in minutes as time units. 
 Note that it is not the time step of the model, it is only of the forcing dataset.

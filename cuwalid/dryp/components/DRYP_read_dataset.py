@@ -9,10 +9,49 @@ import os
 import numpy as np
 import pandas as pd
 import xarray as xr
+import zarr
 import rioxarray  # activate the rio accessor
 from netCDF4 import Dataset, num2date, date2num
 from datetime import datetime, timedelta
 from cuwalid.dryp.components.DRYP_projection import reproject_dataset
+
+
+def _forward_fill_time_axis(ds, target_time):
+	"""Align a dataset to a target time axis, carrying the last value forward."""
+	if ('time' not in list(ds.dims)) or (target_time is None):
+		return ds
+	return ds.sortby('time').reindex(time=pd.DatetimeIndex(target_time), method='ffill')
+
+
+def _build_ffill_source_index(source_time, target_time):
+	"""Map each target timestamp to the source index used by forward-fill."""
+	if target_time is None:
+		return None
+	src_idx = pd.DatetimeIndex(pd.to_datetime(source_time)).sort_values()
+	tgt_idx = pd.DatetimeIndex(target_time)
+	if len(src_idx) == 0:
+		return None
+	pos = src_idx.searchsorted(tgt_idx, side='right') - 1
+	pos = np.asarray(pos, dtype=int)
+	pos[pos < 0] = -1
+	return pos
+
+
+def _validate_zarr_store(fname_ds):
+	"""Validate Zarr path and surface clearer compatibility errors."""
+	if not os.path.exists(fname_ds):
+		raise FileNotFoundError("Zarr path not found: " + str(fname_ds))
+
+	# Zarr v3 stores are marked by zarr.json. They require zarr>=3.
+	is_v3 = os.path.isfile(os.path.join(fname_ds, 'zarr.json'))
+	if is_v3:
+		major = int(str(zarr.__version__).split('.')[0])
+		if major < 3:
+			raise RuntimeError(
+				"Zarr v3 store detected at " + str(fname_ds)
+				+ " (found zarr.json), but installed zarr version is " + str(zarr.__version__)
+				+ ". Please install zarr>=3 in this environment or convert the store to Zarr v2."
+			)
 
 #@profile
 class read_temporal_dataset():
@@ -166,10 +205,67 @@ class read_dataset_interp(object):
 	"""Read netcdf files as input datasets
 	
 	"""
+	def _clip_to_model_domain(self, ds):
+		"""Restrict a dataset to the model domain bounds without interpolation."""
+		if ('lat' not in list(ds.coords)) or ('lon' not in list(ds.coords)):
+			return ds
+
+		lat_values = np.asarray(self.lat, dtype=float).ravel()
+		lon_values = np.asarray(self.lon, dtype=float).ravel()
+		if (lat_values.size == 0) or (lon_values.size == 0):
+			return ds
+
+		lat_values = lat_values[np.isfinite(lat_values)]
+		lon_values = lon_values[np.isfinite(lon_values)]
+		if (lat_values.size == 0) or (lon_values.size == 0):
+			return ds
+
+		lat_coord = ds['lat']
+		lon_coord = ds['lon']
+		n_lat = len(lat_values)
+		n_lon = len(lon_values)
+		lat_mask = (lat_coord >= float(np.min(lat_values))) & (lat_coord <= float(np.max(lat_values)))
+		lon_mask = (lon_coord >= float(np.min(lon_values))) & (lon_coord <= float(np.max(lon_values)))
+
+		if np.any(np.asarray(lat_mask.values)):
+			ds = ds.sel(lat=lat_coord.where(lat_mask, drop=True))
+		if np.any(np.asarray(lon_mask.values)):
+			ds = ds.sel(lon=lon_coord.where(lon_mask, drop=True))
+
+		if (ds.sizes.get('lat') != n_lat) or (ds.sizes.get('lon') != n_lon):
+			target_lat = xr.DataArray(lat_values, dims='lat')
+			target_lon = xr.DataArray(lon_values, dims='lon')
+			ds = ds.sel(lat=target_lat, lon=target_lon, method='nearest')
+		return ds
+
+	def _normalize_dataset_coords(self, ds):
+		"""Normalize coordinate names expected by DRYP."""
+		if 'latitude' in list(ds.coords):
+			ds = ds.rename({'longitude':'lon', 'latitude':'lat'})
+		if 'X' in list(ds.coords):
+			ds = ds.rename({'X':'lon', 'Y':'lat'})
+		if 'x' in list(ds.coords):
+			ds = ds.rename({'x':'lon', 'y':'lat'})
+		return ds
+
+	def _open_gridded_dataset(self, fname_ds):
+		"""Open supported gridded formats with DRYP-compatible chunking."""
+		if self.file_format == 7:
+			_validate_zarr_store(fname_ds)
+			ds = xr.open_zarr(fname_ds, chunks=None)
+			ds = self._normalize_dataset_coords(ds)
+			if 'time' in list(ds.dims):
+				self._zarr_time_src_index = _build_ffill_source_index(ds['time'].values, self.date_sim_dt)
+			else:
+				self._zarr_time_src_index = None
+			return ds
+		return xr.open_dataset(fname_ds)
+
 	#@profile
 	def __init__(self, dt, dt_ds, ini_date, end_date, file_format,
 		reproject, interpolate, grid_length, lat, lon, proj=None,
-		proj_model=None, step_func=False, noskip=True):
+		proj_model=None, step_func=False, noskip=True,
+		fill_missing_time=False):
 		"""set model grid time series and model files
 
 		Parameters
@@ -190,6 +286,7 @@ class read_dataset_interp(object):
 			4 for DAILY netCDF files
 			5 for ensamble netCDF files
 			6 for IMERG half-hourly netCDF files
+			7 for Zarr stores chunked as (1, nlat, nlon)
 		reproject:	bool
 			True default values
 		interpolate: bool
@@ -205,6 +302,9 @@ class read_dataset_interp(object):
 			reading option to skip reading when file is not available
 			True: an error will raised if file is not available, default value
 			False: a non data value will return if is not available
+		fill_missing_time : bool
+			when reading zarr files, forward-fill missing time steps from the
+			last available value
 
 		Returns
 		--------
@@ -235,7 +335,7 @@ class read_dataset_interp(object):
 		self.fill_value = 1
 		self.file_format = file_format
 		
-		if file_format > 6:
+		if file_format > 7:
 			print("Provide a valid data type to enable reading")
 			print("Use: 0 for csv files")
 			print("Use: 1 for netCDF files")
@@ -244,6 +344,7 @@ class read_dataset_interp(object):
 			print("Use: 4 for DAILY netCDF files")
 			print("Use: 5 for ensamble netCDF files")
 			print("Use: 6 for IMERG half-hourly netCDF files")
+			print("Use: 7 for Zarr stores")
 			raise Exception("Change 'data_reading' options in settings file")
 			
 			
@@ -284,6 +385,12 @@ class read_dataset_interp(object):
 			self.proj_model = proj_model
 
 		self.step_func = step_func
+		self.fill_missing_time = fill_missing_time
+		self._zarr_time_src_index = None
+		self._zarr_cache_src_index = None
+		self._zarr_cache_field = None
+		self._zarr_cache_data = None
+		self._zarr_cache_fname = None
 
 		self.noskip = noskip
 
@@ -498,10 +605,10 @@ class read_dataset_interp(object):
 
 				# THIS IS A PARTIAL SOLUTION, SO IT WILL BE MODIFIED LATER
 				# this will allow the model to read datasets fstarting from any time step
-				if (self.read_before_ds is True) and (self.file_format == 1):
+				if (self.read_before_ds is True) and (self.file_format in [1, 7]):
 					self.step_0 = aux_time_j + 0
 
-				if (self.read_before_ds is False) and (self.file_format == 1):
+				if (self.read_before_ds is False) and (self.file_format in [1, 7]):
 					j_step = self.j_step
 
 				# THIS IS A PARTIAL SOLUTION TO READ STORM, SO IT WILL BE MODIFIED LATER
@@ -589,18 +696,18 @@ class read_dataset_interp(object):
 							if not os.path.exists(fname_ds):
 								self.ds = None
 							else:
-								self.ds = xr.open_dataset(fname_ds)
+								self.ds = self._open_gridded_dataset(fname_ds)
 						else:
-							self.ds = xr.open_dataset(fname_ds)
+							self.ds = self._open_gridded_dataset(fname_ds)
+						if self.file_format == 7:
+							self._zarr_cache_src_index = None
+							self._zarr_cache_field = None
+							self._zarr_cache_data = None
+							self._zarr_cache_fname = fname_ds
 					#print(fname_ds)
 					if self.ds is not None:
 						# check if dimension names are compatible with DRYP names
-						if 'latitude' in list(self.ds.coords):
-							self.ds = self.ds.rename({'longitude':'lon', 'latitude':'lat'})
-						if 'X' in list(self.ds.coords):
-							self.ds = self.ds.rename({'X':'lon', 'Y':'lat'})
-						if 'x' in list(self.ds.coords):
-							self.ds = self.ds.rename({'x':'lon', 'y':'lat'})
+						self.ds = self._normalize_dataset_coords(self.ds)
 						try:
 							self.ds = self.ds.rename({"Time (in Days)":"time"})
 							#print(self.ds)
@@ -642,12 +749,16 @@ class read_dataset_interp(object):
 							if self.step_func is False:
 								# temporal resampling
 								self.ds = self.ds.resample(time=self.freq_dt).sum()
+								if (self.file_format == 7) and ('time' in list(self.ds.dims)):
+									self._zarr_time_src_index = _build_ffill_source_index(self.ds['time'].values, self.date_sim_dt)
 							#print("resample", self.ds)		
 
 						# reproject dataset
 						if self.reproject_ds is True:
 							self.ds = reproject_dataset(self.ds, self.proj, self.proj_model)#, keys)
 							#print("repro", self.ds, self.proj, self.proj_model)
+						if (self.file_format == 7) and (self.interpolate_ds is not True):
+							self.ds = self._clip_to_model_domain(self.ds)
 						# flag to no read every time the whole dataset
 					self.read_before_ds = False
 
@@ -657,8 +768,30 @@ class read_dataset_interp(object):
 				#print(iindex,j_step,self.step_0)
 
 				if self.ds is not None:
+					src_idx = None
+					if (self.file_format == 7) and (self._zarr_cache_fname == fname_ds):
+						if (self._zarr_time_src_index is not None) and (0 <= iindex < len(self._zarr_time_src_index)):
+							src_idx = int(self._zarr_time_src_index[iindex])
+						elif self._zarr_time_src_index is not None:
+							src_idx = -1
+						if (
+							src_idx is not None
+							and src_idx >= 0
+							and self._zarr_cache_data is not None
+							and self._zarr_cache_src_index == src_idx
+							and self._zarr_cache_field == field
+						):
+							data = self._zarr_cache_data.copy()
+							self.j_step += 1
+							return data
+						if (src_idx is not None) and (src_idx < 0):
+							data = np.full(self.grid_length, np.nan)
+							self.j_step += 1
+							return data
 					# select data step
-					if self.step_func is False:
+					if (self.file_format == 7) and (src_idx is not None):
+						ds = self.ds.isel(time=src_idx)
+					elif self.step_func is False:
 						ds = self.ds.isel(time=[iindex])
 					else:
 						if self.dt_ds > 1440:
@@ -683,7 +816,18 @@ class read_dataset_interp(object):
 					#plt.imshow(np.array(ds.variables[field][0][:]))
 					#plt.savefig('precipitation'+field+str(self.j_step)+'.png')
 					#plt.close()
-					data = np.array(ds.variables[field][0][:]).flatten()
+					if (self.file_format == 7) and (src_idx is not None):
+						data = np.array(ds[field].values).flatten()
+					else:
+						data = np.array(ds.variables[field][0][:]).flatten()
+					if (
+						self.file_format == 7
+						and src_idx is not None
+						and src_idx >= 0
+					):
+						self._zarr_cache_src_index = src_idx
+						self._zarr_cache_field = field
+						self._zarr_cache_data = data.copy()
 					#print(np.where(np.isnan(data)))
 				else:
 					data = None	
@@ -741,7 +885,8 @@ class read_dataset(object):
 	
 	"""
 	def __init__(self, dt, dt_ds, ini_date, end_date, file_format,
-		reproject, interpolate, grid_length, noskip=True):
+		reproject, interpolate, grid_length, noskip=True,
+		fill_missing_time=False):
 		"""set model grid time series and model files
 
 		Parameters
@@ -793,6 +938,44 @@ class read_dataset(object):
 		self.file_format = file_format
 		self.read_before_ds = 1
 		self.noskip = noskip
+		self.fill_missing_time = fill_missing_time
+		self._zarr_time_src_index = None
+		self._zarr_cache_src_index = None
+		self._zarr_cache_field = None
+		self._zarr_cache_data = None
+		self._zarr_cache_fname = None
+
+	def _open_time_dataset(self, fname_ds):
+		if self.file_format == 7:
+			_validate_zarr_store(fname_ds)
+			ds = xr.open_zarr(fname_ds, chunks=None)
+			if 'latitude' in list(ds.coords):
+				ds = ds.rename({'longitude':'lon', 'latitude':'lat'})
+			if 'X' in list(ds.coords):
+				ds = ds.rename({'X':'lon', 'Y':'lat'})
+			if 'x' in list(ds.coords):
+				ds = ds.rename({'x':'lon', 'y':'lat'})
+			if 'time' in list(ds.dims):
+				self._zarr_time_src_index = _build_ffill_source_index(ds['time'].values, self.date_sim_dt)
+			else:
+				self._zarr_time_src_index = None
+			return ds
+		return None
+
+	def _get_time_slice(self, ds, field, t_idx):
+		if field in list(ds.variables):
+			vfield = field
+		elif (field == 'pre') and ('rain' in list(ds.variables)):
+			vfield = 'rain'
+		elif (field == 'pre') and ('precipitation' in list(ds.variables)):
+			vfield = 'precipitation'
+		else:
+			raise Exception("Field not found in dataset: " + str(field))
+
+		da = ds[vfield]
+		if 'time' in list(da.dims):
+			da = da.isel(time=t_idx)
+		return np.array(da.values).flatten()
 	
 	# find precipitation and PET for an specific time step
 	def get_one_step_dataset(self, j_step, fname_ds, field):
@@ -828,6 +1011,71 @@ class read_dataset(object):
 
 				else:
 					data_ti = (self.fpre.variables[field][self.i_tstep][:]).flatten()
+					self.read_before_pre = 0
+
+				self.i_tstep += 1
+				data += data_ti
+
+			elif self.file_format == 7:
+
+				if self.read_before_pre == 1:
+					self.i_tstep = j_step
+					hour_pre = int(idate_pre.hour/self.nsteps_hour_pre)
+					j_tp = (idate_pre.dayofyear-1)*self.nsteps_day_pre + hour_pre
+					self.fpre = self._open_time_dataset(fname_ds)
+					self._zarr_cache_src_index = None
+					self._zarr_cache_field = None
+					self._zarr_cache_data = None
+					self._zarr_cache_fname = fname_ds
+
+					self.i_tstep = j_step + j_tp
+					src_idx = None
+					if (self._zarr_time_src_index is not None) and (0 <= self.i_tstep < len(self._zarr_time_src_index)):
+						src_idx = int(self._zarr_time_src_index[self.i_tstep])
+					elif self._zarr_time_src_index is not None:
+						src_idx = -1
+					if (
+						src_idx is not None
+						and src_idx >= 0
+						and self._zarr_cache_data is not None
+						and self._zarr_cache_src_index == src_idx
+						and self._zarr_cache_field == field
+					):
+						data_ti = self._zarr_cache_data.copy()
+					else:
+						if (src_idx is not None) and (src_idx < 0):
+							data_ti = np.full(self.grid_length, np.nan)
+						else:
+							data_ti = self._get_time_slice(self.fpre, field, src_idx if src_idx is not None else self.i_tstep)
+						if (src_idx is not None) and (src_idx >= 0):
+							self._zarr_cache_src_index = src_idx
+							self._zarr_cache_field = field
+							self._zarr_cache_data = data_ti.copy()
+					self.read_before_pre = 0
+
+				else:
+					src_idx = None
+					if (self._zarr_time_src_index is not None) and (0 <= self.i_tstep < len(self._zarr_time_src_index)):
+						src_idx = int(self._zarr_time_src_index[self.i_tstep])
+					elif self._zarr_time_src_index is not None:
+						src_idx = -1
+					if (
+						src_idx is not None
+						and src_idx >= 0
+						and self._zarr_cache_data is not None
+						and self._zarr_cache_src_index == src_idx
+						and self._zarr_cache_field == field
+					):
+						data_ti = self._zarr_cache_data.copy()
+					else:
+						if (src_idx is not None) and (src_idx < 0):
+							data_ti = np.full(self.grid_length, np.nan)
+						else:
+							data_ti = self._get_time_slice(self.fpre, field, src_idx if src_idx is not None else self.i_tstep)
+						if (src_idx is not None) and (src_idx >= 0):
+							self._zarr_cache_src_index = src_idx
+							self._zarr_cache_field = field
+							self._zarr_cache_data = data_ti.copy()
 					self.read_before_pre = 0
 
 				self.i_tstep += 1

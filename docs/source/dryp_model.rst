@@ -79,6 +79,10 @@ Within the DRYP Settings file under "READING"-"data_reading" then "pre"/"pet, yo
 - 3 for MONTHLY netCDF files
 - 4 for DAILY netCDF files
 - 5 for ensamble netCDF files
+- 6 for IMERG half-hourly netCDF files using date placeholders
+- 7 for Zarr stores
+
+For Zarr inputs, DRYP expects a single store path per variable and reads it through xarray. The recommended chunk layout is time-major with chunks shaped as ``(1, nlat, nlon)`` so each model step can read one temporal slab at a time efficiently.
 
 It should be noted that if you are running the main cuwalid system (e.g. run_cuwalid() function), these settings will be changed automatically to match what is required from the output of Storm and stoPET.
 

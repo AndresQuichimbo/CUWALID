@@ -47,7 +47,7 @@ call conda create -y -n %SPY%
 
 REM move into cuwalid
 call conda activate %ENV%
-call conda install -y -c conda-forge python=%PYT% geopandas rioxarray dask landlab pointpats scikit-image pip-tools chardet tqdm cartopy metpy numba cmaps cmcrameri seaborn nb_conda_kernels spyder-kernels ipykernel basemap bottleneck
+call conda install -y -c conda-forge python=%PYT% geopandas rioxarray dask landlab pointpats scikit-image pip-tools chardet tqdm cartopy metpy numba cmaps cmcrameri seaborn nb_conda_kernels spyder-kernels ipykernel basemap bottleneck zarr
 call conda deactivate
 
 REM move into jupyter

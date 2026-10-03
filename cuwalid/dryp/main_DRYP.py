@@ -82,6 +82,24 @@ def run_DRYP(filename_input):
 
 	# MODEL COMPONENTS ------------------------------------------------------
 	print("*************************** ASSEMBLING MODEL COMPONENTS ****************************")
+	print("Basin area [m2]:   		  ", topo.basin_area)
+	print("River area [m2]:   		  ", topo.river_area)
+	print("Riparian area [m2]:		  ", topo.riparian_area)
+	print("Total hill cell area [m2]: ", topo.basin_area-topo.total_river_cell_area)
+	print("Total river cell area [m2]:", topo.total_river_cell_area)
+	#print("Lakes area [m2]:   ", topo.lakes_area)
+	print("Total basin cells:   ", topo.total_basin_cells)
+	print("Total river cells:   ", topo.total_river_cells)
+
+	# update data in by adding area and number of cells
+	data_in.basin_area = topo.basin_area
+	data_in.river_area = topo.river_area
+	data_in.riparian_area = topo.riparian_area
+	data_in.total_hill_cell_area = topo.basin_area - topo.total_river_cell_area
+	data_in.total_river_cell_area = topo.total_river_cell_area
+	data_in.total_basin_cells = topo.total_basin_cells
+	data_in.total_river_cells = topo.total_river_cells
+	
 
 	abc, inf, cnp, swb, swb_rip, ro, gw, lks, pnds = initialize_core_hydrology_components(
 		data_in, grid, topo, aquifer, water_bodies
@@ -100,7 +118,7 @@ def run_DRYP(filename_input):
 	id_lakes, head, theta, river_sat_deficit, save_rz_var, rtheta,
 	Duz0, z_extintion, Ft0, SORP0, t_0, dry_day,
 	runoff, recharge, baseflow, AOF_threshold) = initialize_simulation_state_variables(
-		data_in, topo, grid, aquifer, soil, vegetation, ro
+		data_in, topo, grid, aquifer, soil, rsoil, vegetation, ro
 	)
 	
 	# INITIALISE OUTPUT AND MONITORING --------------------------------
@@ -111,7 +129,8 @@ def run_DRYP(filename_input):
 	#print("Monitoring nodes IDs:", idzone_info[2])
 	(#idOF, idOF_act, idUZ, idUZ_act, idGW, idGW_act,
 	point_var, grid_var, grid_rmax, grid_vmax, total_var,
-	grid_rpvar, total_rpvar, grid_pndvar, total_pndvar, grid_veg,
+	grid_rpvar, grid_pndvar, grid_veg,
+	#grid_rpvar, total_rpvar, grid_pndvar, total_pndvar, grid_veg,
 	grid_lks, zone_var) = initialize_output_arrays(data_in)#, grid, riv_nodes, water_bodies
 
 	# ------------------------------------------------------------------
@@ -274,14 +293,18 @@ def run_DRYP(filename_input):
 				SAVIdt_min = SAVImin.get_one_step_dataset(t_savi, data_in.fname_savi_min, 'savi')
 				SAVIdt_max = SAVImax.get_one_step_dataset(t_savi, data_in.fname_savi_max, 'savi')
 				LAIdt = LAI.get_one_step_dataset(t_savi, data_in.fname_TSlai, 'LAI')
-				Kcdt = Kc.get_one_step_dataset(t_savi, data_in.fname_TSkc, 'kc')
+				Kcdt = Kc.get_one_step_dataset(t_savi, data_in.fname_TSkc, 'kcp')
 				avdt = av.get_one_step_dataset(t_av, data_in.fname_TSav, 'VegetationFraction')
 
 				if Kcdt is not None:
 					# remove the folowing line
 					#Kcdt = np.flip(Kcdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
 					Kcdt = Kcdt[act_nodes]
-					Kcdt[Kcdt <= 0] = 1.0
+					Kcdt[~(Kcdt > 0)] = 1.0
+					#Kcdt[Kcdt <= 0] = 1.0
+					# check efficiently if nan values are presetn and replace them with 1.0
+					#Kcdt[np.isnan(Kcdt)] = 1.0
+				#print("Interception activated, SAVI, LAI and Kc are read from the input datasets\n", Kcdt)
 				if LAIdt is not None:
 					# remove the folowing line
 					#LAIdt = np.flip(LAIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
@@ -324,7 +347,7 @@ def run_DRYP(filename_input):
 						vegetation.fcw_cn[act_nodes],
 						vegetation.Sc0_cn[act_nodes],
 						Kcdt)
-				
+				#print("Kcdt\n", Kcdt)
 				## Estimate Kc for the riparian area
 				#Pthr, Ecar, PETr, LAIr, Kcr, Sc0_cnrp = cnp.run_interception_one_step(
 				#		rain, PET, vegetation.av,
@@ -408,9 +431,11 @@ def run_DRYP(filename_input):
 				ratio_etp[ratio_etp > 1] = 1
 				
 				# potention evapotranspiration ONLY over model domain
+				#print("Potential evapotranspiration before interception and irrigation", np.mean(PETh))
 				if Kcdt is not None:
 					PETh = Kcdt*PETh#[act_nodes]
 					#PETh = Kcdt[act_nodes]*PETh#[act_nodes]
+				#print("Potential evapotranspiration after interception and irrigation", np.mean(PETh))
 				# potential evapotranspiration for saturated zone
 				#PETsz = PETh*ratio_etp
 				# potential evapotranspiration for unsaturated zone
@@ -441,7 +466,7 @@ def run_DRYP(filename_input):
 					rpet_dt = PETuz[act_riv_nodes] - AET[act_riv_nodes]					
 					
 					# calculate riparian water deficit [mm]
-					rsmd = (soil_theta_fc_r - rtheta)*Droot_r
+					rsmd = (theta_sat_r - rtheta)*Droot_r
 					rsmd[rsmd < 0] = 0
 
 					# estimate available storage at riparian zone
@@ -451,7 +476,7 @@ def run_DRYP(filename_input):
 						rpet_dt, rsmd)
 					
 					# change river saturated deficit units from mm to m3
-					# also update saturatin deficit with saturated zone
+					# also update saturated deficit with saturated zone
 					river_sat_deficit[riv_nodes] += (rsmd*0.001*
 									  area_bank_cells_r)
 					
@@ -515,7 +540,7 @@ def run_DRYP(filename_input):
 					# change units of volumetric rate flow to depth rate flow
 					# change units from m to mm per unit rip. area
 					tls_aux = ro.trans_losses[riv_nodes]*volume_to_depth_factor_rip_r
-
+					
 					if lks is not None:
 						# Move Transmission losses to reservoirs or lakes
 						tls2lake = lks.compute_lakes_tributary_volume(tls_aux[water_bodies.ids_slks])
@@ -528,7 +553,14 @@ def run_DRYP(filename_input):
 
 					# aggregate all inputs to riparian unsaturated zone [mm]
 					riv_infiltration = tls_aux + inf_rip_dt
-
+					#print("volume to depth factor ", volume_to_depth_factor_rip_r[10])
+					#print("rip factor ", rip_to_cell_area_factor_r[10])
+					#print("riv infiltration ", riv_infiltration[10])#*rip_to_cell_area_factor_r[10])
+					#print("tls ", tls_aux[10])
+					#print("river width ", topo.riv_width[riv_nodes][10])
+					#print("cell area ", topo.area_cells[riv_nodes][10])
+					#print("river area ", topo.area_river[riv_nodes][10])
+					#rtheta10 = rtheta[10]
 					# estimate riparian water balance,
 					# use Ksas of the channel in [mm/dt]
 					rAET, rPCR, rtheta, rROF = swb_rip.run_swbm_one_step(
@@ -543,15 +575,33 @@ def run_DRYP(filename_input):
 							Droot_r,
 							rtheta
 							)
-
+					#print("thta ", rtheta[10])
+					#print("theta_sat_r ", theta_sat_r[10])
+					#print("rpet_dt ", rpet_dt[10])
+					#print("raet ", rAET[10])
+					#print("rPCR ", rPCR[10])
+					#print("rROF ", rROF[10])
 					# update focused recharge
 					rPCR += rROF
-
+					#print("Water fluxes at one cell0: ", riv_infiltration[10], rAET[10], rPCR[10], (rtheta[10]-rtheta10)*Droot_r[10])
+					#print("Water balance at one cell: ", riv_infiltration[10] - rAET[10] - rPCR[10] - (rtheta[10]-rtheta10)*Droot_r[10])
+					#print("decay ", topo.decay[riv_nodes][10])
+					#print("ro deficit ", river_sat_deficit[riv_nodes][10]*volume_to_depth_factor_rip_r[10])
+					#print("riv storage ", np.mean(ro.SSZ[riv_nodes]))
+					#print("head ", head[riv_nodes][10])
+					#print("river bottom ", riv_elevation_r[10])
 					# transfer fluxes from riparian zone to model cells
 					# lenght units are keept in mm
 					rAET *= rip_to_cell_area_factor_r
 					rPCR *= rip_to_cell_area_factor_r
-
+					tls_aux *= rip_to_cell_area_factor_r
+					riv_infiltration *= rip_to_cell_area_factor_r
+					#print("Water fluxes at one cell1: ", tls_aux[10], rAET[10], rPCR[10], (rtheta[10]-rtheta10)*Droot_r[10])
+					#print("Water balance at one cell: ", riv_infiltration[10] - rAET[10] - rPCR[10] - (rtheta[10]-rtheta10)*Droot_r[10]*rip_to_cell_area_factor_r[10])
+					
+					#print("frecharge -------->", rPCR[10])
+					#print("trecharge ", (recharge[riv_nodes])[10])
+					# print water balance at one cell
 					# update total recharge, umits [mm/dt]
 					recharge[riv_nodes] += rPCR
 
@@ -735,10 +785,12 @@ def run_DRYP(filename_input):
 					"twsc": twsc[idGW[0]], "tls": ro.trans_losses[idOF[0]],
 					}
 					)
-				
-				# get mean total values for each flux and state
-				total_var.store_variables(PRE.date_sim_dt, t_pre,
-				  	{"pre":[np.mean(rain[act_nodes])],
+
+				# build dictionary with all fluxes and states for the entire model domain
+				# this is used to calculate the water balance for the entire catchment
+				# the water balance is calculated at the end of the simulation
+				fluxes_states = {
+					"pre":[np.mean(rain[act_nodes])],
 	   				"pet":[np.mean(PET[act_nodes])],
 	   				"run":[np.mean(runoff[act_nodes])],
 	   				"aet":[np.mean(AET)],
@@ -750,7 +802,7 @@ def run_DRYP(filename_input):
 					"gdh":[np.mean(baseflow[act_nodes])],
 					"twsc":[np.mean(twsc[act_nodes])],
 					"chb":[gw.flux_at_CHB*1000.0] if data_in.run_GW > 0 else [0],
-					"tls":[np.mean(ro.trans_losses[act_nodes])],
+					#"tls":[np.mean(ro.trans_losses[act_nodes])],
 					'eca': [np.mean(Eca)] if Eca is not None else [0],
 					'scz': [np.mean(vegetation.Sc0_cn[act_nodes])] if vegetation.Sc0_cn[act_nodes] is not None else [0],
 					'pth': [np.mean(Pth)] if Pth is not None else [0],
@@ -758,33 +810,79 @@ def run_DRYP(filename_input):
 					'kc': [np.mean(Kcdt)] if Kcdt is not None else [1],
 					'av': [np.mean(vegetation.av)] if vegetation.av is not None else [0],
 					'lks': [vtot_lks] if vtot_lks is not None else [0],
-					})
+					}
+				
+				# the water balance is calculated as follows:
+				# Precipitation - Evapotranspiration - Runoff - Recharge - Groundwater discharge - Change in storage = 0				
+				
+				## get mean total values for each flux and state
+				#total_var.store_variables(PRE.date_sim_dt, t_pre,
+				#  	{"pre":[np.mean(rain[act_nodes])],
+	   			#	"pet":[np.mean(PET[act_nodes])],
+	   			#	"run":[np.mean(runoff[act_nodes])],
+	   			#	"aet":[np.mean(AET)],
+				#	"inf":[np.mean(INF)],
+				#	"tht":[np.mean(theta[act_nodes])],
+				#	"rch":[np.mean(recharge[act_nodes])],
+				#	"egw":[np.mean(PETsz)],
+				#	"wte":[np.mean(head[act_nodes])],
+				#	"gdh":[np.mean(baseflow[act_nodes])],
+				#	"twsc":[np.mean(twsc[act_nodes])],
+				#	"chb":[gw.flux_at_CHB*1000.0] if data_in.run_GW > 0 else [0],
+				#	"tls":[np.mean(ro.trans_losses[act_nodes])],
+				#	'eca': [np.mean(Eca)] if Eca is not None else [0],
+				#	'scz': [np.mean(vegetation.Sc0_cn[act_nodes])] if vegetation.Sc0_cn[act_nodes] is not None else [0],
+				#	'pth': [np.mean(Pth)] if Pth is not None else [0],
+				#	'lai': [np.mean(LAIdt)] if LAIdt is not None else [0],
+				#	'kc': [np.mean(Kcdt)] if Kcdt is not None else [1],
+				#	'av': [np.mean(vegetation.av)] if vegetation.av is not None else [0],
+				#	'lks': [vtot_lks] if vtot_lks is not None else [0],
+				#	})
 				
 				# get mean total values for each flux and state of the riparian zone
 				if riv_nodes.size > 0:
-					total_rpvar.store_variables(PRE.date_sim_dt, t_pre,
-					  	{"etrp": [np.mean(rAET)],
+					fluxes_states.update({
+						"etrp": [np.mean(rAET)],
 						"fch": [np.mean(rPCR)],
-						"tls": [np.mean(ro.trans_losses[riv_nodes])],
+						"tls": [np.mean(riv_infiltration)],
+						#"tls": [np.mean(ro.trans_losses[riv_nodes])],
 						"thtrp": [np.mean(rtheta)],
 						"ssz": [np.mean(ro.SSZ[riv_nodes])]}
-						)
+					)
+					
+
+
+					#total_rpvar.store_variables(PRE.date_sim_dt, t_pre,
+					#  	{"etrp": [np.mean(rAET)],
+					#	"fch": [np.mean(rPCR)],
+					#	"tls": [np.mean(tls_aux)],
+					#	#"tls": [np.mean(ro.trans_losses[riv_nodes])],
+					#	"thtrp": [np.mean(rtheta)],
+					#	"ssz": [np.mean(ro.SSZ[riv_nodes])]}
+					#	)
 					
 					grid_rpvar.store_variables(PRE.date_sim_dt, t_pre,
 				  		{"etrp": rAET, "fch": rPCR,
-						"tls": ro.trans_losses[riv_nodes],
+						"tls": riv_infiltration,
 						"thtrp": rtheta,
 						"ssz": ro.SSZ[riv_nodes]}
 						)
 
 				# get mean total values for each flux and state of water bodies
 				if water_bodies.id_nodes is not None:
-					total_pndvar.store_variables(PRE.date_sim_dt, t_pre,
-					  	{"epd": [np.mean(et_pnds)],
+					fluxes_states.update({
+						"epd": [np.mean(et_pnds)],
 						"vpd": [np.mean(water_bodies.pnds_Vo)],
 						"apd": [np.mean(aoz_pnds)],
-						}
-						)
+						})
+
+
+					#total_pndvar.store_variables(PRE.date_sim_dt, t_pre,
+					#  	{"epd": [np.mean(et_pnds)],
+					#	"vpd": [np.mean(water_bodies.pnds_Vo)],
+					#	"apd": [np.mean(aoz_pnds)],
+					#	}
+					#	)
 					
 					grid_pndvar.store_variables(PRE.date_sim_dt, t_pre,
 				  		{"epd": et_pnds,
@@ -793,6 +891,11 @@ def run_DRYP(filename_input):
 						}
 						)
 				
+				# store mean total values for each flux and state of the entire model domain
+				total_var.store_variables(PRE.date_sim_dt, t_pre, fluxes_states)
+				
+
+
 				if idzone_info[2] is not None:
 					zone_var.store_variables(PRE.date_sim_dt, t_pre,
 					  	{"pre":utils.collapse_mean(rain[idzone_info[0]], idzone_info[2]),
@@ -826,7 +929,7 @@ def run_DRYP(filename_input):
 					if riv_nodes.size > 0:
 						river_sat_deficit[riv_nodes] = ((
 							riv_elevation_r - head[riv_nodes])*
-							topo.area_cells*
+							topo.area_cells[riv_nodes]*
 							Sy_r)
 
 						river_sat_deficit[river_sat_deficit < 0] = 0.0
@@ -849,7 +952,7 @@ def run_DRYP(filename_input):
 	progress_bar.close()
 	
 	print("********************************** SAVING RESULTS **********************************")
-	save_model_outputs(data_in, total_var, point_var, zone_var, total_rpvar, total_pndvar,
+	save_model_outputs(data_in, total_var, point_var, zone_var, #total_rpvar, total_pndvar,
 					grid_var, grid_rmax, grid_vmax, grid_rpvar, grid_pndvar, grid_veg, grid_lks,
 					grid, head, theta, ro.SSZ, rtheta, topo, water_bodies.pnds_Vo,
 					act_nodes, riv_nodes, water_bodies.ids_slks, water_bodies.id_nodes,

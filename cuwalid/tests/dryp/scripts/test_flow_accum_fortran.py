@@ -166,7 +166,92 @@ def test_runoff():
 	assert np.allclose(out, answer)
 
 	print('Flow routing: Test completed successfully')
+
+def test_runoff_with_river_gcs():
+	""" create a test case for runoff routing with river cells and gcs
+	"""
+	# create a raster grid landlab object
+	ncol = 12
+	nrow = 3
+	grid_cellsize = 0.0033
+	grid = create_grid_from_extent(
+		ncol,
+		nrow,
+		0.0,
+		0.0,
+		grid_cellsize,
+		active_domain=None,
+		geographic=True)
+
+	# create arrays and model variables
+	grid_size = grid['N_cells']
+
+	# surface
+	slope = grid['x']*0.01
+	surface, _ = np.meshgrid(slope, grid['y'])
+	surface = surface.flatten() + 100.0
+
+	# river properties
+	riv_width = np.full(grid_size, 10.0)
+	riv_length = np.full(grid_size, 1000.0)
+	river_cells = np.zeros(grid_size)
+
+	river_index = ncol + 2
+	river_cells[river_index] = 1
+	area_river = np.full(grid_size, 10000.0)
+
+	flowDir = None
+	decay = np.full(grid_size, 3600.0*0.5/grid_cellsize)
+
+	Ksat = np.full(grid_size, 0.5)
+	conductivity = riv_length*riv_width*Ksat
+	runoff = np.full(grid_size, 1.0)
+	head = np.full(grid_size, 50.0)
+	AOF_threshold = np.ones(grid_size)
+	AOF = np.zeros(grid_size)
+	river_sat_deficit = (surface - head)*grid['Areas']
+
+	# verify geographic cell areas were computed using latitude-dependent WGS84 scaling
+	lat2d = np.meshgrid(grid['x'], grid['y'])[1]
+	lat2d_rad = np.deg2rad(lat2d)
+	meters_dy_2d = 111132.92 - 559.82 * np.cos(2 * lat2d_rad) + 1.175 * np.cos(4 * lat2d_rad)
+	meters_dx_2d = 111412.84 * np.cos(lat2d_rad) - 93.5 * np.cos(3 * lat2d_rad)
+	expected_areas = (meters_dx_2d * grid_cellsize) * (meters_dy_2d * grid_cellsize)
+	assert np.allclose(grid['Areas'].reshape((nrow, ncol)), expected_areas)
+
+	ro = runoff_routing(grid, grid_size, surface, flowDir,
+			Ksat, decay, riv_width, riv_length)
+
+	# RUNOFF: estimate runoff ---------------------------------------
+	ro.run_runoff_one_step(
+			runoff,
+			AOF, AOF_threshold,
+			conductivity,
+			decay,
+			river_cells,
+			grid['Areas'],
+			area_river,
+			river_sat_deficit,
+			None)
+
+	# calculate expected values for the selected river cell
+	qtl = transmission_losses(
+						ro.discharge[river_index],
+						decay[river_index],
+						riv_width[river_index],
+						riv_length[river_index],
+						Ksat[river_index],
+						1
+						)
+
+	out = [ro.discharge[river_index], ro.trans_losses[river_index]]
+	answer = [(ncol-3.0)*grid['Areas'][river_index], qtl]
+	assert np.allclose(out, answer)
+
+	print('Flow routing with geographic grid: Test completed successfully')
 	
+
 if __name__ == '__main__':
 	test_runoff_no_river()
 	test_runoff()
+	test_runoff_with_river_gcs()

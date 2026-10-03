@@ -2,7 +2,7 @@ from cuwalid.dryp.components.DRYP_store_functions import save_map_to_rasterfile#
 
 
 def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
-                       total_rpvar, total_pndvar, # csv variables
+                       #total_rpvar, total_pndvar, # csv variables
                        grid_var, grid_rmax, grid_vmax, # grid variables
                        grid_rpvar, grid_pndvar, grid_veg, grid_lks, # grid variables
                        grid, head, theta, ssz, rtheta, topo, pnd_Vo, # raster variables
@@ -30,10 +30,10 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
         Object storing point temporal variables for CSV output
     zone_var : DRYPTimeSeriesStore
         Object storing zone temporal variables for CSV output
-    total_rpvar : DRYPTimeSeriesStore
-        Object storing average riparian zone temporal variables for CSV output
-    total_pndvar : DRYPTimeSeriesStore
-        Object storing average pond temporal variables for CSV output
+    #total_rpvar : DRYPTimeSeriesStore
+    #    Object storing average riparian zone temporal variables for CSV output
+    #total_pndvar : DRYPTimeSeriesStore
+    #    Object storing average pond temporal variables for CSV output
     grid_var : DRYPTimeSeriesStore
         Object storing gridded temporal variables for netCDF output
     grid_rmax : DRYPTimeSeriesStore
@@ -78,9 +78,10 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
     # var_name = ['pre', 'pet', 'run', 'aet', 'inf', 'tht',
     #     'rch', 'egw', 'wte', 'gdh', 'twsc', 'chb', 'tls']
     # length_var = np.ones(len(var_name), dtype=int)
-    total_var.save_csv_var(data_in.fnameTS_avg,  # var_name,
+    df = total_var.save_csv_var(data_in.fnameTS_avg,  # var_name,
                            # length_var,
-                           multi_files=False)
+                           multi_files=False,
+                           return_df=True)
 
     print("<==== saving model point temporal outputs")
 
@@ -146,9 +147,9 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
 
         # save average riparian zone variables in a csv file
         # length_var = np.ones(len(var_name), dtype=int)
-    total_rpvar.save_csv_var(data_in.fnameTS_avg + 'rp',  # var_name,
-                                 # length_var,
-                                 multi_files=False)
+    #total_rpvar.save_csv_var(data_in.fnameTS_avg + 'rp',  # var_name,
+    #                             # length_var,
+    #                             multi_files=False)
     
     # SAVE VARIABLES FROM VEGETATION
     print("<==== saving vegetation gridded temporal outputs")
@@ -171,10 +172,10 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
 
         # save average values in csv
         # length_var = np.ones(len(var_name), dtype=int)
-        total_pndvar.save_csv_var(data_in.fnameTS_avg + 'pnd',  # var_name,
-                                      # length_var,
-                                      #multi_files=False
-                                      )
+        #total_pndvar.save_csv_var(data_in.fnameTS_avg + 'pnd',  # var_name,
+        #                              # length_var,
+        #                              #multi_files=False
+        #                              )
     else:
         print("      no pond nodes - skipping pond outputs")
 
@@ -206,3 +207,62 @@ def save_model_outputs(data_in, total_var, point_var, zone_var, # csv variables
         save_map_to_rasterfile(grid, theta,
                                data_in.fnameTS_avg + '_V_pnd_ini.asc')
 
+    # save water balance summary as csv file from df
+    print("<==== saving water balance summary")
+    if df is not None:
+        # calulate the sum of df
+        df_wb = get_water_balance(df, data_in)
+        df_wb.to_csv(data_in.fnameTS_avg + 'water_balance.csv', index=False)
+
+import pandas as pd
+
+def get_water_balance(df, data_in):
+    """Calculates water balance from a DataFrame of model outputs.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame containing model output variables
+    data_in : object
+        Object containing model input data, including file paths
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame containing the calculated water balance
+
+    """
+    # Calculate the sum of the DataFrame
+    df_sum = df.sum(axis=0, numeric_only=True)
+    
+    # Create a new DataFrame for water balance
+    df_wb =  pd.DataFrame(index=[0])
+    factor = data_in.total_river_cell_area/data_in.basin_area
+    df_wb['pre'] = df_sum['pre_0']
+    df_wb['pet'] = df_sum['pet_0']
+    df_wb['inf'] = df_sum['inf_0']
+    df_wb['aet'] = df_sum['aet_0']
+    df_wb['egw'] = df_sum['egw_0']
+    df_wb['run'] = df_sum['run_0']
+    df_wb['tls'] = df_sum['tls_0']*factor
+    df_wb['gdh'] = df_sum['gdh_0']*1000.0
+    df_wb['rch'] = df_sum['rch_0']
+    df_wb['fch'] = df_sum['fch_0']*factor
+    df_wb['dch'] = df_sum['rch_0'] - df_wb['fch']
+    df_wb['ssz'] = df_sum['ssz_0']
+    df_wb['chb'] = df_sum['chb_0']*1000.0
+    df_wb['etrp'] = df_sum['etrp_0']*factor
+    df_wb['twsc'] = df_sum['twsc_0']
+    df_wb['MB'] = (df_wb['pre'] - df_wb['aet'] - df_wb['run'] - df_wb['dch'] # hillslope
+                  + df_wb['tls'] - df_wb['fch'] - df_wb['etrp'] # riparian
+                  + df_wb['rch'] - df_wb['egw'] - df_wb['chb'] - df_wb['gdh'] # groundwater
+                  + df_wb['twsc'] + df_wb['ssz'])    # storage
+    df_wb['MB_UZ'] = df_wb['pre'] - df_wb['run'] - df_wb['aet'] - df_wb['dch']
+    df_wb['MB_RZ'] = df_wb['tls'] - df_wb['fch'] - df_wb['etrp']
+    df_wb['MB_GW'] = df_wb['rch'] - df_wb['egw'] - df_wb['chb'] - df_wb['gdh'] - df_wb['twsc']# - df_wb['ssz']
+    # add a second row at each column calculattin the ration of the water balance to the total precipitation
+    df_wb.loc[1] = df_wb.loc[0]*100./df_wb['pre'].iloc[0]
+    df_wb.index = ['sum', 'ratio']
+
+
+    return df_wb

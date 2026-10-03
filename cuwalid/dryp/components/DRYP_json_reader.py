@@ -46,7 +46,7 @@ class get_model_settings(object):
 		self.ini_date = datetime.strptime(settings_config["SIMULATION_PERIOD"]["start_date"], '%Y %m %d')
 		self.end_date = datetime.strptime(settings_config["SIMULATION_PERIOD"]["end_date"], '%Y %m %d')
 		self.dtOF = int(settings_config["TIMESTEP_SETTINGS"]["dt_of"])
-		self.dtUZ = int(settings_config["TIMESTEP_SETTINGS"]["dt_gw"])
+		self.dtUZ = int(settings_config["TIMESTEP_SETTINGS"]["dt_uz"])
 		self.dtSZ = int(settings_config["TIMESTEP_SETTINGS"]["dt_gw"])  # Assuming the same value
 
 		self.data_reading = settings_config["READING"]["data_reading"]
@@ -73,6 +73,11 @@ class get_model_settings(object):
 
 		# Groundwater solver
 		self.solver_gw = settings_config["COMPONENTS"]["solver_gw"]
+		self.gw_implicit_max_iter = int(settings_config["COMPONENTS"]["gw_implicit_max_iter"])
+		self.gw_implicit_tolerance = float(settings_config["COMPONENTS"]["gw_implicit_tolerance"])
+		self.gw_linear_max_iter = int(settings_config["COMPONENTS"]["gw_linear_max_iter"])
+		self.gw_linear_tolerance = float(settings_config["COMPONENTS"]["gw_linear_tolerance"])
+		self.gw_implicit_relaxation = float(settings_config["COMPONENTS"]["gw_implicit_relaxation"])
 		
 		# Save netcdf files of model results
 		self.save_netcdf = bool(settings_config["OUTPUT"]["output_grid"])

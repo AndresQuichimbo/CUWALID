@@ -45,7 +45,7 @@ class get_store_parameters(object):
                  'aet': True, 'inf': True, 'tht': True,
                  'rch': True, 'egw': True, 'wte': True,
                  'gdh': True, 'twsc': True, 'chb': True,
-                 'tls': True}
+                 'tls': True, }
 
             # variables for grided dataset
             self.var_grid_rp = {'aet': True, 'fch': True, 'tls': True,

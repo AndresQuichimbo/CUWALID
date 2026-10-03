@@ -53,7 +53,12 @@ def initialize_core_hydrology_components(data_in, grid, topo, aquifer, water_bod
                     topo.area_river,
                     aquifer.CHB,
                     data_in.gw_func,
-                    solver=data_in.solver_gw
+                    solver=data_in.solver_gw,
+                    implicit_max_iter=data_in.gw_implicit_max_iter,
+                    implicit_tolerance=data_in.gw_implicit_tolerance,
+                    linear_max_iter=data_in.gw_linear_max_iter,
+                    linear_tolerance=data_in.gw_linear_tolerance,
+                    implicit_relaxation=data_in.gw_implicit_relaxation
                     )
     
     pnds = None
@@ -111,7 +116,7 @@ def set_flux_boundary_conditions(data_in, grid, fluxOF, fluxUZ, fluxSZ, fluxWB):
             idFluxSZ, idFluxSZ_act, idFluxWB, idFluxWB_act,
             idFluxWBout, idFluxWBout_act)
 
-def initialize_simulation_state_variables(data_in, topo, grid, aquifer, soil, vegetation, ro):
+def initialize_simulation_state_variables(data_in, topo, grid, aquifer, soil, rsoil, vegetation, ro):
 
     gws_mb = []
 
@@ -157,7 +162,7 @@ def initialize_simulation_state_variables(data_in, topo, grid, aquifer, soil, ve
     rtheta = None
     if riv_nodes.size > 0:
         save_rz_var = True
-        rtheta = soil.theta[riv_nodes]
+        rtheta = rsoil.theta[riv_nodes]
         
     # update initial conditions
     head_act_nodes_updated, Duz0, z_extintion, river_sat_deficit_act_nodes_updated, Ft0, SORP0, t_0, dry_day = (
@@ -219,9 +224,9 @@ def initialize_output_arrays(data_in):#, riv_nodes, water_bodies):
     grid_rpvar = GlobalGridVar(data_in.ini_date,
                                    data_in.dt_results, data_in.save_netcdf,
                                    data_in.store.var_grid_rp)
-    total_rpvar = GlobalGridVar(data_in.ini_date,
-                                    data_in.dt_results, data_in.save_results,
-                                    data_in.store.var_grid_rp)
+    #total_rpvar = GlobalGridVar(data_in.ini_date,
+    #                                data_in.dt_results, data_in.save_results,
+    #                                data_in.store.var_grid_rp)
 
     #grid_pndvar, total_pndvar = None, None
     # create grid and average results from the water bodies (ponds)
@@ -229,9 +234,9 @@ def initialize_output_arrays(data_in):#, riv_nodes, water_bodies):
     grid_pndvar = GlobalGridVar(data_in.ini_date,
                                     data_in.dt_results, data_in.save_netcdf,
                                     data_in.store.var_grid_pnd)
-    total_pndvar = GlobalGridVar(data_in.ini_date,
-                                     data_in.dt_results, data_in.save_results,
-                                     data_in.store.var_grid_pnd)
+    #total_pndvar = GlobalGridVar(data_in.ini_date,
+    #                                 data_in.dt_results, data_in.save_results,
+    #                                 data_in.store.var_grid_pnd)
     #grid_lks = None
     # create grid and average results from the water bodies (lakes)        
     #if water_bodies.ids_slks is not None:
@@ -241,7 +246,8 @@ def initialize_output_arrays(data_in):#, riv_nodes, water_bodies):
                                      
     return (#idOF, idOF_act, idUZ, idUZ_act, idGW, idGW_act,
             point_var, grid_var, grid_rmax, grid_vmax, total_var,
-            grid_rpvar, total_rpvar, grid_pndvar, total_pndvar,
+            grid_rpvar, grid_pndvar,
+            #grid_rpvar, total_rpvar, grid_pndvar, total_pndvar,
             grid_veg, grid_lks, zone_var)
 
 

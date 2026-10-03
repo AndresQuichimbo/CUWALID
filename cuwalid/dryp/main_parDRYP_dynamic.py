@@ -306,6 +306,13 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 	"""This function integrates all components of the model, with
 	all model parameters and component settings being specified in
 	the -filename_input- file.
+
+	Parameters:
+	-----------
+	filename_input : str
+			Path to the input json file containing model parameters and settings.
+		disable_dynamic : bool, optional
+			If True, disables dynamic scheduling of tasks across MPI ranks. Default is False.
 	
 	"""
 	
@@ -1625,6 +1632,16 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 # ---------------------------------------------------------------------
 # Call script from external library	
 if __name__ == '__main__':
+	"""
+	Call script from external library.
+
+	Example usage:
+	python run_dryp.py config.json --disable-dynamic
+
+	Example usage with MPI:
+	mpiexec -n 4 python run_dryp.py config.json --disable-dynamic
+
+	"""
 	parser = argparse.ArgumentParser(description="Run DRYP with JSON configuration.")
 	parser.add_argument('config_file', type=str, help='Path to the JSON configuration file')
 	parser.add_argument('--disable-dynamic', action='store_true', 

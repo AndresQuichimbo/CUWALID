@@ -26,6 +26,7 @@ setup(
         'geopandas',
         'rioxarray',
         'dask',
+        'zarr',
         'landlab',
         'pointpats',
         'scikit-image',

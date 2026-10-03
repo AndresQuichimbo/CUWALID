@@ -626,18 +626,6 @@ class surface_parameters(object):
 
 		cellsize_meters = np.sqrt(self.area_cells)
 
-		# Reading river banks
-		if inputfile.fname_ripwidth != None and os.path.exists(inputfile.fname_ripwidth):
-			self.river_banks= np.flip(rasterio.open(inputfile.fname_ripwidth).read(1), 0).flatten()
-		else:
-			self.river_banks = np.full(grid_size, 100.0, dtype=float)
-		
-		self.river_banks = np.minimum(self.river_banks, cellsize_meters)
-		#self.river_banks = 50.0 # metres
-		#if self.river_banks > self.grid_cellsize:
-		#	self.river_banks = domain.transform[0]
-
-
 		# Catchment area: raster file of ceros and ones: ones represent the main cathment
 		# The area can be the model domain or any area inside the model domain
 		if inputfile.fname_Mask == None or not os.path.exists(inputfile.fname_Mask):
@@ -675,7 +663,23 @@ class surface_parameters(object):
 			print('River width......................not provided. Global default applied of W = 10 m')
 		else:
 			self.riv_width = np.flip(rasterio.open(inputfile.fname_RiverWidth).read(1), 0).flatten()
-			
+
+		# Reading river banks
+		if inputfile.fname_ripwidth != None and os.path.exists(inputfile.fname_ripwidth):
+			self.river_banks= np.flip(rasterio.open(inputfile.fname_ripwidth).read(1), 0).flatten()
+			# make sure that the river banks are at least as wide as the river width
+			self.river_banks = np.maximum(self.river_banks, self.riv_width)
+		else:
+			self.river_banks = np.copy(self.riv_width)*1.1
+			print('River banks......................not provided. Global default applied of Wb = W*(1.1) m')
+		
+		self.river_banks = np.minimum(self.river_banks, cellsize_meters)
+
+		#self.river_banks = 50.0 # metres
+		#if self.river_banks > self.grid_cellsize:
+		#	self.river_banks = domain.transform[0]
+
+
 		# Reading the raster file of river elevation		
 		if inputfile.fname_RiverElev == None or not os.path.exists(inputfile.fname_RiverElev):
 			self.riv_elevation = self.surface[:]
@@ -773,9 +777,7 @@ class surface_parameters(object):
 
 		#self.area_cells_hills = rg.dx*rg.dy*rg.at_node['cth_area_k']
 		
-		area_bank_cells = self.river_cells*self.riv_length*self.river_banks#(
-			#self.riv_width+2*self.river_banks
-			#)
+		area_bank_cells = self.river_cells*self.riv_length*self.river_banks
 		
 		self.area_bank_cells = np.where(area_bank_cells > self.area_cells,
 				  self.area_cells, area_bank_cells)
@@ -841,7 +843,20 @@ class surface_parameters(object):
 		lon_end = self.grid_yllcorner+self.grid_cellsize/2 + self.grid_cellsize*self.grid_ncols
 		self.lon = np.arange(self.grid_yllcorner+self.grid_cellsize/2, lon_end, self.grid_cellsize)[:self.grid_ncols]
 		self.cellsize_meters = cellsize_meters
-		pass
+		#print("cellsize_meters", self.cellsize_meters)
+
+		# Calculate basin area [m2]
+		self.basin_area = np.sum(self.area_cells[self.mask > 0])
+		# calculate river area [m2]
+		self.river_area = np.sum(self.area_river[self.river_cells > 0])
+		# calculate riparian area [m2]
+		self.riparian_area = np.sum(self.area_bank_cells[self.river_cells > 0])
+		# calculata number of river cells
+		self.total_basin_cells = np.sum(self.mask)
+		# caculate number of basin cells
+		self.total_river_cells = np.sum(self.river_cells)
+		# calculate area of river cells [m2]
+		self.total_river_cell_area = np.sum(self.area_cells[self.river_cells > 0])
 	# Find coordinates of points in model components
 #	def points_output(self, inputfile):
 #		""" This function reads data points to report model results
@@ -1578,11 +1593,19 @@ class water_body_parameters(object):
 
 			# get lakes parameters
 			_, ids_lks, size_lks, ids_max_depth_lks, _ = get_water_body_parameters(depth_lks)
+			
+			# check if ids_lks is not empty
+			if ids_lks is None or len(ids_lks) == 0:
+				print('No lakes found in the bathymetry file')
+				ids_lks = None
+				size_lks = None
+				ids_max_depth_lks = None
 			# transfer variables to the class
 			#self.name_lks = name_lks
 			self.ids_lks = ids_lks
 			self.size_lks = size_lks
 			self.ids_max_depth_lks = ids_max_depth_lks
+			
 			#print('Lakes parameters are active')
 			#print('Lakes ids', self.ids_lks)
 			#print('Lakes size', self.size_lks)
