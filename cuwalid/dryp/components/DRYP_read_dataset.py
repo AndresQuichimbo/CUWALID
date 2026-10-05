@@ -37,6 +37,13 @@ def _build_ffill_source_index(source_time, target_time):
 	return pos
 
 
+def _to_float32(data):
+	"""Cast floating arrays to float32; integer and non-array data are unchanged."""
+	if isinstance(data, np.ndarray) and np.issubdtype(data.dtype, np.floating):
+		return data.astype(np.float32, copy=False)
+	return data
+
+
 def _validate_zarr_store(fname_ds):
 	"""Validate Zarr path and surface clearer compatibility errors."""
 	if not os.path.exists(fname_ds):
@@ -197,7 +204,7 @@ class read_temporal_dataset():
 			head = list(self.data_set)
 			head.remove('Date')
 			self._point_cols = head
-		dataset_at_t = np.array(self.data_set[self._point_cols].iloc[t])
+		dataset_at_t = _to_float32(np.array(self.data_set[self._point_cols].iloc[t]))
 
 		return dataset_at_t
 
@@ -401,8 +408,11 @@ class read_dataset_interp(object):
 		self.imerg_cache_field = None
 		self.imerg_cache_template = None
 
-	#@profile
 	def get_one_step_dataset(self, j_step, fname_ds, field, time_field="time"):
+		return _to_float32(self._get_one_step_dataset(j_step, fname_ds, field, time_field))
+
+	#@profile
+	def _get_one_step_dataset(self, j_step, fname_ds, field, time_field="time"):
 		"""
 		Call this to execute a step in the model.
 
@@ -977,8 +987,11 @@ class read_dataset(object):
 			da = da.isel(time=t_idx)
 		return np.array(da.values).flatten()
 	
-	# find precipitation and PET for an specific time step
 	def get_one_step_dataset(self, j_step, fname_ds, field):
+		return _to_float32(self._get_one_step_dataset(j_step, fname_ds, field))
+
+	# find precipitation and PET for an specific time step
+	def _get_one_step_dataset(self, j_step, fname_ds, field):
 		"""
 		Call this to execute one step in the model.
 

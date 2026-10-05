@@ -579,6 +579,14 @@ def get_index_from_coord_file(grid, filename, xlabel="East", ylabel="North"):
 	return idpoint, idypoint_active
 
 
+def _static_to_float32(obj, exclude=()):
+	"""Cast floating ndarray attributes to float32; integer arrays are unchanged."""
+	for name, value in vars(obj).items():
+		if (name not in exclude and isinstance(value, np.ndarray)
+				and np.issubdtype(value.dtype, np.floating)):
+			setattr(obj, name, value.astype(np.float32, copy=False))
+
+
 class surface_parameters(object):
 	"""Setting model input varables and environmental states
 	"""
@@ -857,6 +865,8 @@ class surface_parameters(object):
 		self.total_river_cells = np.sum(self.river_cells)
 		# calculate area of river cells [m2]
 		self.total_river_cell_area = np.sum(self.area_cells[self.river_cells > 0])
+		# coordinates stay float64 for interpolation
+		_static_to_float32(self, exclude=('lat', 'lon'))
 	# Find coordinates of points in model components
 #	def points_output(self, inputfile):
 #		""" This function reads data points to report model results
@@ -913,9 +923,13 @@ def read_raster_as_array(filename, grid_size=None, default_value=None, dtype=flo
 
 		return data
 	
-	data = np.flip(rasterio.open(filename).read(1), 0)
+	with rasterio.open(filename) as src:
+		data = np.flip(src.read(1), 0)
 	if flatten:
 		data = data.flatten()
+	# integer rasters are left unchanged
+	if np.issubdtype(data.dtype, np.floating):
+		data = data.astype(np.float32, copy=False)
 	
 	return data
 
@@ -1163,6 +1177,7 @@ class soil_parameters(object):
 		# store factors in the object
 		self.kKsat_soil = inputfile.kKsat
 		self.kDroot = inputfile.kDroot
+		_static_to_float32(self)
 
 		#self.theta_fc = theta_AWC + self.theta_wp
 	
@@ -1343,6 +1358,7 @@ class groundwater_parameters(object):
 
 		self.kKsat = inputfile.kKsat
 		self.kSy = inputfile.kSy
+		_static_to_float32(self)
 
 	def apply_factor_ksat(self, kKsat_aquifer=None):
 		"""Apply scale factor to aquifer saturated hydraulic conductivity
@@ -1500,7 +1516,7 @@ class interception_parameters(object):
 		
 		self.extintion_depth[self.extintion_depth <= 0] = Droot[self.extintion_depth <= 0]*0.001
 
-		pass
+		_static_to_float32(self)
 
 	def apply_factor_tap(self, kTap):
 		"""Apply scale factor to tap depth
@@ -1652,6 +1668,8 @@ class water_body_parameters(object):
 		else:
 			print('Shallow lakes are not active')
 			#print('Initial water body volume........not provided. Global value 0 [m3]')
+
+		_static_to_float32(self)
 
 class zone_parameters(object):
 	"""reading zone/mask parameters for calibration or modeling outputs
