@@ -657,31 +657,31 @@ class surface_parameters(object):
 		if inputfile.fname_River != None and os.path.exists(inputfile.fname_River):     
 			self.riv_length= np.flip(rasterio.open(inputfile.fname_River).read(1), 0).flatten()
 		else:
-			self.riv_length = np.array(cellsize_meters, dtype=float, copy=True)
+			self.riv_length = np.array(cellsize_meters, dtype=np.float32, copy=True)
 			print('River network....................not provided')
 			print('All cells are considered rivers with length of grid size')
-		self.riv_length = np.asarray(self.riv_length, dtype=float)
-		self.river_cells = np.zeros(grid_size, int)
+		self.riv_length = np.asarray(self.riv_length, dtype=np.float32)
+		self.river_cells = np.zeros(grid_size, dtype=np.int32)
 		self.river_cells[self.riv_length > 0] = 1
 		self.river_cells[self.mask <= 0] = 0
 		
 		# Reading the raster file of river width		
 		if inputfile.fname_RiverWidth == None or not os.path.exists(inputfile.fname_RiverWidth):
-			self.riv_width = np.full(grid_size, 10.0, dtype=float)
+			self.riv_width = np.full(grid_size, 10.0, dtype=np.float32)
 			print('River width......................not provided. Global default applied of W = 10 m')
 		else:
-			self.riv_width = np.flip(rasterio.open(inputfile.fname_RiverWidth).read(1), 0).flatten()
+			self.riv_width = np.flip(rasterio.open(inputfile.fname_RiverWidth).read(1), 0).flatten().astype(np.float32)
 
 		# Reading river banks
 		if inputfile.fname_ripwidth != None and os.path.exists(inputfile.fname_ripwidth):
-			self.river_banks= np.flip(rasterio.open(inputfile.fname_ripwidth).read(1), 0).flatten()
+			self.river_banks= np.flip(rasterio.open(inputfile.fname_ripwidth).read(1), 0).flatten().astype(np.float32)
 			# make sure that the river banks are at least as wide as the river width
 			self.river_banks = np.maximum(self.river_banks, self.riv_width)
 		else:
-			self.river_banks = np.copy(self.riv_width)*1.1
+			self.river_banks = (np.copy(self.riv_width)*1.1).astype(np.float32)
 			print('River banks......................not provided. Global default applied of Wb = W*(1.1) m')
 		
-		self.river_banks = np.minimum(self.river_banks, cellsize_meters)
+		self.river_banks = np.minimum(self.river_banks, cellsize_meters).astype(np.float32)
 
 		#self.river_banks = 50.0 # metres
 		#if self.river_banks > self.grid_cellsize:
@@ -754,7 +754,7 @@ class surface_parameters(object):
 		#	self.decay = self.decay*inputfile.kTch
 
 		self.decay = read_raster_as_array(inputfile.fname_kTchannel, grid_size,
-					default_value=1.0/cellsize_meters, dtype=float,
+					default_value=1.0/cellsize_meters, dtype=np.float32,
 					message_if_not_exist=(
 					'Channel decay parameter..........not provided\nAssumed value equivalent to a velocity of 1m/s')
 					)
@@ -766,11 +766,11 @@ class surface_parameters(object):
 		# Read saturated hydraulic conductivity channel
 		if inputfile.fname_Ksat == None or not os.path.exists(inputfile.fname_Ksat):			
 			#self.Ksat = np.flip(rasterio.open(inputfile.fname_ksat).read(1), 0).flatten()
-			self.Ksat = np.ones(grid_size, dtype=float)
+			self.Ksat = np.ones(grid_size, dtype=np.float32)
 			print('Channel Ksat.....................not provided')
 			print('Assumed equal to soil Ksat')
 		else:		
-			self.Ksat = np.flip(rasterio.open(inputfile.fname_Ksat).read(1), 0).flatten()
+			self.Ksat = np.flip(rasterio.open(inputfile.fname_Ksat).read(1), 0).flatten().astype(np.float32)
 			
 		# Changing channel Ksat_ch units from mm/h to m/dt -> m/h
 		self.Ksat = self.Ksat*0.001*inputfile.kKch*self.mask
@@ -792,11 +792,11 @@ class surface_parameters(object):
 
 		# read initial conditions of channel flow: in m3/h
 		if inputfile.fname_Qo == None or not os.path.exists(inputfile.fname_Qo):			
-			self.Qo = np.zeros(grid_size, dtype=float)
+			self.Qo = np.zeros(grid_size, dtype=np.float32)
 			print('Initial channel storage..........not provided, assumed 0.0 m3')
 			#print('Assumed value equivalent to a velocity of 1m/s')
 		else:		
-			self.Qo = np.flip(rasterio.open(inputfile.fname_Qo).read(1), 0).flatten()
+			self.Qo = np.flip(rasterio.open(inputfile.fname_Qo).read(1), 0).flatten().astype(np.float32)
 			
 		#self.area_catch_factor = (rg.at_node['cth_area_k']
 		#	/ np.sum(rg.at_node['cth_area_k'][self.basin_nodes]))
@@ -1195,6 +1195,8 @@ class soil_parameters(object):
 			self.Ksat = self.Ksat * kKsat_soil
 		else:
 			self.Ksat = self.Ksat*self.kKsat_soil
+		# make sure Ksat is float32
+		_static_to_float32(self)
 
 	def apply_factor_Droot(self, kDroot=None):
 		"""Apply scale factor to soil rooting depth
@@ -1210,6 +1212,8 @@ class soil_parameters(object):
 		else:
 			self.Droot = self.Droot * self.kDroot
 
+		# make sure Droot is float32
+		_static_to_float32(self)
 	
 
 	def print_soil_parameters(self):
