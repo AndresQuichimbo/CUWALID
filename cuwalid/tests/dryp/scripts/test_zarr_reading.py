@@ -192,6 +192,51 @@ def test_zarr_read_dataset_forward_fills_missing_steps(tmp_path):
 	assert np.array_equal(step2, data[1].flatten())
 
 
+def test_dataset_reads_keep_float32_for_float_variables_and_int_for_integer_variables(tmp_path):
+	store_path = Path(tmp_path) / 'forcing_dtype.zarr'
+	dates = pd.date_range('2000-01-01 00:00:00', '2000-01-02 00:00:00', freq='h')[:-1]
+	lat = np.array([0.0, 1.0])
+	lon = np.array([10.0, 11.0])
+	float_data = np.arange(len(dates) * len(lat) * len(lon), dtype=np.float64).reshape(len(dates), len(lat), len(lon))
+	int_data = np.arange(len(dates) * len(lat) * len(lon), dtype=np.int32).reshape(len(dates), len(lat), len(lon))
+
+	ds = xr.Dataset({
+		'pre': xr.DataArray(float_data, coords=[dates, lat, lon], dims=['time', 'lat', 'lon']),
+		'cell_id': xr.DataArray(int_data, coords=[dates, lat, lon], dims=['time', 'lat', 'lon'])
+	})
+	ds.to_zarr(store_path, mode='w')
+
+	float_reader = read_dataset_interp(
+		dt=60,
+		dt_ds=60,
+		ini_date=datetime(2000, 1, 1, 0, 0, 0),
+		end_date=datetime(2000, 1, 2, 0, 0, 0),
+		file_format=7,
+		reproject=False,
+		interpolate=False,
+		grid_length=len(lat) * len(lon),
+		lat=lat,
+		lon=lon,
+	)
+	float_result = float_reader.get_one_step_dataset(0, str(store_path), 'pre')
+	assert float_result.dtype == np.float32
+
+	int_reader = read_dataset_interp(
+		dt=60,
+		dt_ds=60,
+		ini_date=datetime(2000, 1, 1, 0, 0, 0),
+		end_date=datetime(2000, 1, 2, 0, 0, 0),
+		file_format=7,
+		reproject=False,
+		interpolate=False,
+		grid_length=len(lat) * len(lon),
+		lat=lat,
+		lon=lon,
+	)
+	int_result = int_reader.get_one_step_dataset(0, str(store_path), 'cell_id')
+	assert int_result.dtype == np.int32
+
+
 if __name__ == '__main__':
 	with TemporaryDirectory() as tmp_dir:
 		run_test_zarr_read_dataset_interp_reads_chunked_store(tmp_dir)

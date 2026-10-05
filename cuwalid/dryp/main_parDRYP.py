@@ -504,7 +504,7 @@ import numpy as np
 # parallelization: parallel execution of model components
 #@profile
 
-@profile(filename="profile_out")
+#@profile(filename="profile_out")
 def run_parDRYP(filename_input):
 	"""This function integrates all components of the model, with
 	all model parameters and component settings being specified in

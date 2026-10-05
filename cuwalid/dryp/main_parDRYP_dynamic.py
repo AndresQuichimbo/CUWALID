@@ -78,7 +78,8 @@ alg_release = '2023-08-01'
 
 import cProfile
 
-def profile(filename=None, comm=MPI.COMM_WORLD):
+#def profile(filename=None, comm=MPI.COMM_WORLD):
+def profile(filename=None, comm=None):
   def prof_decorator(f):
     def wrap_f(*args, **kwargs):
       pr = cProfile.Profile()
