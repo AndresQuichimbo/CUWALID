@@ -31,7 +31,16 @@ def assign_basins_to_rank(basin_ids, rank, size):
     return [basin_id for index, basin_id in enumerate(basin_ids) if index % size == rank]
 
 
+_BASIN_REGION_CACHE = {}
+
+
 def _get_basin_region(basin_id, catchment_mask):
+    # called several times per step per basin; the mask is static, so cache by identity
+    key = (id(catchment_mask), basin_id)
+    cached = _BASIN_REGION_CACHE.get(key)
+    if cached is not None and cached[0] is catchment_mask:
+        return cached[1]
+
     basin_mask = (catchment_mask == basin_id)
     if not np.any(basin_mask):
         raise ValueError(f"Basin ID {basin_id} was not found in the catchment mask")
@@ -39,9 +48,11 @@ def _get_basin_region(basin_id, catchment_mask):
     rows, cols = np.where(basin_mask)
     row_min, row_max = rows.min(), rows.max()
     col_min, col_max = cols.min(), cols.max()
-    basin_region_mask = basin_mask[row_min:row_max+1, col_min:col_max+1]
+    basin_region_mask = basin_mask[row_min:row_max+1, col_min:col_max+1].copy()
 
-    return basin_region_mask, row_min, row_max, col_min, col_max
+    result = (basin_region_mask, row_min, row_max, col_min, col_max)
+    _BASIN_REGION_CACHE[key] = (catchment_mask, result)
+    return result
 
 
 def _get_global_to_local_lookup(basin_input, active_only=True):
@@ -177,7 +188,7 @@ def combine_basin_results_into_world_halo(basin_id, catchment_mask, basin_result
     world_region[basin_region_mask] = basin_array[basin_region_mask]
 
     if needs_flatten:
-        return world_view.flatten()
+        return world_view.ravel()
 
     return world_view
 
@@ -190,25 +201,9 @@ def extract_basin_forcing_halo(basin_id, catchment_mask, world_forcing_arrays, h
     row_max_h = min(catchment_mask.shape[0]-1, row_max + halo)
     col_min_h = max(0, col_min - halo)
     col_max_h = min(catchment_mask.shape[1]-1, col_max + halo)
-    catchment_mask_plus_basin_halo = catchment_mask.copy()
-    catchment_mask_plus_basin_halo[row_min_h:row_max_h+1, col_min_h:col_max_h+1] = basin_id
-    # print(str(row_min_h)+' '+str(row_max_h)+ ' '+str(col_min_h)+ ' '+str(col_max_h))
     nrows = row_max_h - row_min_h + 1
     ncols = col_max_h - col_min_h + 1
-    # print("basin_forcing_halo nrows: ", nrows)
-    # print("basin_forcing_halo ncols: ", ncols)
 
-    bounds = np.array([[row_min, row_max, col_min, col_max, row_min_h, row_max_h, col_min_h, col_max_h, catchment_mask.shape[0], catchment_mask.shape[1]]])
- 
-    # np.savetxt(
-    #     f"/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/bounds_forcing_{basin_id}.csv",
-    #     bounds,
-    #     fmt="%d",
-    #     delimiter=",",
-    #     header="row_min,row_max,col_min,col_max,row_min_h,row_max_h,col_min_h,col_max_h,catchment_mask.shape[0],catchment_mask.shape[1]",
-    #     comments=""
-    # )
- 
     # Extended mask: all cells in bounding box, regardless of basin
     extended_mask = np.ones((nrows, ncols), dtype=bool)
 
@@ -438,7 +433,7 @@ def combine_basin_results_into_world(basin_id, catchment_mask, basin_result, wor
     world_region[basin_region_mask] = basin_array[basin_region_mask]
 
     if needs_flatten:
-        return world_view.flatten()
+        return world_view.ravel()
 
     return world_view
 
@@ -493,7 +488,6 @@ def extract_basin_parameters_halo(basin_id, catchment_mask, world_parameter_arra
     
     basin_region_mask, row_min, row_max, col_min, col_max = _get_basin_region(
         basin_id, catchment_mask)
-    catchment_mask_plus_basin_halo = catchment_mask.copy()
     # np.savetxt("/shared/home1/c.c23086054/CUWALID/cuwalid/dryp/basin_region_mask_"+str(basin_id)+".csv", basin_region_mask, fmt="%s", delimiter=",")
 
     # Expand bounding box with halo, without going out of global matrix
@@ -501,7 +495,6 @@ def extract_basin_parameters_halo(basin_id, catchment_mask, world_parameter_arra
     row_max_h = min(catchment_mask.shape[0]-1, row_max + halo)
     col_min_h = max(0, col_min - halo)
     col_max_h = min(catchment_mask.shape[1]-1, col_max + halo)
-    catchment_mask_plus_basin_halo[row_min_h:row_max_h+1, col_min_h:col_max_h+1] = basin_id
     # print(str(row_min_h)+' '+str(row_max_h)+ ' '+str(col_min_h)+ ' '+str(col_max_h))
     nrows = row_max_h - row_min_h + 1
     ncols = col_max_h - col_min_h + 1
@@ -532,7 +525,7 @@ def extract_basin_parameters_halo(basin_id, catchment_mask, world_parameter_arra
         if isinstance(array, np.ndarray):
             # basin_array = _extract_basin_array(
             #     array, catchment_mask, row_min_h, row_max_h, col_min_h, col_max_h)
-            basin_array = _extract_basin_array(array, catchment_mask_plus_basin_halo, 
+            basin_array = _extract_basin_array(array, catchment_mask, 
                             row_min_h, row_max_h, col_min_h, col_max_h)
             if mask_inactive:
                 # basin_array[~basin_region_mask] = 0

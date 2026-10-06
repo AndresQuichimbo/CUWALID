@@ -46,8 +46,6 @@ import cuwalid.dryp.components.DRYP_util as utils
 import cuwalid.dryp.components.DRYP_parallel_tools as partools
 import time
 
-import matplotlib.pyplot as plt
-
 
 if importlib.util.find_spec("tqdm") is not None:
 	tqdm = importlib.import_module("tqdm").tqdm
@@ -355,12 +353,21 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 	PRE, ET0, SAVI, LAI, Kc, av, SAVImin, SAVImax, fluxOF, fluxUZ, fluxSZ, fluxWB, Qusz = \
 		read_temporal_datasets(data_in, topo)
 
+	# Determine whether regional groundwater solvers replace the global solver.
+	parallel_domains = parallel_parameters(data_in)
+	domains_ro = parallel_domains.ro
+	domains_gw = parallel_domains.gw
+	gw_region_ids = partools.get_basin_ids(domains_gw)
+	gw_parallel = data_in.run_GW > 0 and size > 1 and len(gw_region_ids) > 0
+
 	# MODEL COMPONENTS ------------------------------------------------------
 	_log_root(rank, "*************************** ASSEMBLING MODEL COMPONENTS ****************************")
 
 	abc, inf, cnp, swb, swb_rip, ro, gw, lks, pnds = initialize_core_hydrology_components(
-		data_in, grid, topo, aquifer, water_bodies
+		data_in, grid, topo, aquifer, water_bodies,
+		initialize_groundwater=data_in.run_GW > 0 and not gw_parallel
 		)
+	flux_at_CHB = 0.0
 	
     # ***
     # the line above create the model components (gw-Jose), but it does not run them. The components are run
@@ -384,14 +391,10 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 	id_lakes, head, theta, river_sat_deficit, save_rz_var, rtheta,
 	Duz0, z_extintion, Ft0, SORP0, t_0, dry_day,
 	runoff, recharge, baseflow, AOF_threshold) = initialize_simulation_state_variables(
-		data_in, topo, grid, aquifer, soil, vegetation, ro
+		data_in, topo, grid, aquifer, soil, rsoil, vegetation, ro
 	)
 
 	# read model domains for parallel execution of model components, and assign nodes to each subdomain
-	parallel_domains = parallel_parameters(data_in)
-
-	domains_ro = parallel_domains.ro
-	domains_gw = parallel_domains.gw
 	# print("domains_gw: ",domains_gw)
 	runoff_grid_shape = domain.grid_metadata['shape']
 	basin_ids = partools.get_basin_ids(domains_ro)
@@ -420,8 +423,6 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 	basis_ro = {}
 	basis_runtime_parameters = {}
 
-	gw_region_ids = partools.get_basin_ids(domains_gw)
-	gw_parallel = data_in.run_GW > 0 and size > 1 and len(gw_region_ids) > 0
 	gw_costs = np.ones(len(gw_region_ids), dtype=float)
 	gw_id_to_idx = {gid: i for i, gid in enumerate(gw_region_ids)}
 	if use_dynamic_scheduling and gw_parallel:
@@ -431,7 +432,6 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 	local_gw_region_ids = gw_assignments[rank] if (gw_parallel and use_dynamic_scheduling) else (gw_assignments if isinstance(gw_assignments, list) and len(gw_assignments) > rank else [])
 	# print("local_gw_region_ids: ",local_gw_region_ids)
 	region_gw = {}
-	region_domain_gw = {}
 	region_runtime_parameters_gw = {}
 	gw_split_lakes_detected = False
 	basis_cost_alpha = 0.2
@@ -517,7 +517,6 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 		region_parameters['ids_max_depth_lks'] = ids_max_depth_lks_local
 		region_gw[region_id] = partools.initialize_gwflow_component(
 			region_domain, region_parameters)
-		region_domain_gw[region_id] = region_domain
 		region_runtime_parameters_gw[region_id] = {
 			'grid': region_domain['grid'],
 			'surface': region_parameters['surface'],
@@ -548,19 +547,8 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 	for basin_id in local_basin_ids:
 		_ensure_runoff_basin_initialized(basin_id)
 	################################################################################################
-	global_head = head.copy()
-	global_baseflow = np.zeros_like(head)
-	global_owner = np.zeros(topo.grid_size, dtype=np.int32)
-	global_node_owner = np.full(topo.grid_size, -1, dtype=np.int32)
-	# print("local_gw_region_ids: ",local_gw_region_ids)
-
 	for region_id in local_gw_region_ids:
 		_ensure_gw_region_initialized(region_id)
-		region_domain = region_domain_gw[region_id]
-		core_mask = region_domain['core_mask'].flatten()
-		global_nodes = region_domain['global_nodes']
-		owned_nodes = global_nodes[core_mask]
-		global_node_owner[owned_nodes] = rank
 	
 	# print(C)
 
@@ -622,10 +610,47 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 	#print("Monitoring nodes IDs:", idzone_info[2])
 	(#idOF, idOF_act, idUZ, idUZ_act, idGW, idGW_act,
 	point_var, grid_var, grid_rmax, grid_vmax, total_var,
-	grid_rpvar, total_rpvar, grid_pndvar, total_pndvar, grid_veg,
+	grid_rpvar, grid_pndvar, grid_veg,
 	grid_lks, zone_var) = initialize_output_arrays(data_in)#, grid, riv_nodes, water_bodies
 	
 	
+	if is_root:
+		_nc_flush_every = getattr(data_in, 'nc_flush_every', 60)
+		_nc_split_by = getattr(data_in, 'nc_split_by', None)
+		_nc_async_write = getattr(data_in, 'nc_async_write', True)
+		grid_var.enable_netcdf_streaming(
+			data_in.fnameTS_grid + '.nc', topo.lat, topo.lon, act_nodes,
+			projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+			split_by=_nc_split_by, async_write=_nc_async_write)
+		grid_vmax.enable_netcdf_streaming(
+			data_in.fnameTS_grid + 'vmax.nc', topo.lat, topo.lon, act_nodes,
+			projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+			split_by=_nc_split_by, async_write=_nc_async_write)
+		grid_veg.enable_netcdf_streaming(
+			data_in.fnameTS_grid + 'veg.nc', topo.lat, topo.lon, act_nodes,
+			projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+			split_by=_nc_split_by, async_write=_nc_async_write)
+		grid_rmax.enable_netcdf_streaming(
+			data_in.fnameTS_grid + 'rmax.nc', topo.lat, topo.lon, riv_nodes,
+			projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+			split_by=_nc_split_by, async_write=_nc_async_write)
+		grid_rpvar.enable_netcdf_streaming(
+			data_in.fnameTS_grid + 'rp.nc', topo.lat, topo.lon, riv_nodes,
+			projection=data_in.PROJECTION, flush_every=_nc_flush_every,
+			split_by=_nc_split_by, async_write=_nc_async_write)
+		if water_bodies.ids_slks is not None:
+			grid_lks.enable_netcdf_streaming(
+				data_in.fnameTS_grid + 'lks.nc', topo.lat, topo.lon,
+				water_bodies.ids_slks, projection=data_in.PROJECTION,
+				flush_every=_nc_flush_every, split_by=_nc_split_by,
+				async_write=_nc_async_write)
+		if water_bodies.id_nodes is not None:
+			grid_pndvar.enable_netcdf_streaming(
+				data_in.fnameTS_grid + 'pnd.nc', topo.lat, topo.lon,
+				water_bodies.id_nodes, projection=data_in.PROJECTION,
+				flush_every=_nc_flush_every, split_by=_nc_split_by,
+				async_write=_nc_async_write)
+
 	# Initialise the progress bar
 	_log_root(rank, "****************************** SIMULATION IN PROGRESS ******************************")
 	_log_root(rank, "Simulation period: from", data_in.ini_date, "to", data_in.end_date, "number of days:", data_in.ndays)
@@ -633,6 +658,15 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 
 	# print(C)
 	start = time.time()
+
+	# work buffers reused every step to avoid per-step allocations
+	buf_discharge = np.zeros(ro.discharge.shape, dtype=np.float32)
+	buf_trans_losses = np.zeros(ro.trans_losses.shape, dtype=np.float32)
+	buf_stage = np.zeros(ro.stage.shape, dtype=np.float32)
+	buf_ssz = np.zeros(ro.SSZ.shape, dtype=np.float32)
+	buf_head = np.zeros(head.shape, dtype=np.float32)
+	buf_baseflow = np.zeros(baseflow.shape, dtype=np.float32)
+	buf_owner = np.zeros(topo.grid_size, dtype=np.int32)
 
 	while t < data_in.ndays:
 
@@ -813,11 +847,9 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 				# ratio of Etp, units of procesing are in meters
 				ratio_etp = head[act_nodes] - z_extintion
 				ratio_etp[ratio_etp < 0] = 0
-				ratio_etp[vegetation.extintion_depth[act_nodes] > 0] = (
-						ratio_etp[vegetation.extintion_depth[act_nodes] > 0]
-						/(vegetation.extintion_depth[act_nodes])[
-						vegetation.extintion_depth[act_nodes] > 0]
-						)
+				ext_depth = vegetation.extintion_depth[act_nodes]
+				ext_pos = ext_depth > 0
+				ratio_etp[ext_pos] = ratio_etp[ext_pos]/ext_depth[ext_pos]
 				
 				# calculate ratio of potential evapotranspiration from
 				# groundwater
@@ -935,11 +967,15 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 				if runoff_parallel:
 					# Run runoff by basin level order: 0, 1, 2, ...
 					#time1 = time.time()
-					local_discharge = np.zeros_like(ro.discharge)
+					local_discharge = buf_discharge
+					local_discharge.fill(0)
 					# print("time1: ",time.time()-time1)
-					local_trans_losses = np.zeros_like(ro.trans_losses)
-					local_stage = np.zeros_like(ro.stage)
-					local_ssz = np.zeros_like(ro.SSZ)
+					local_trans_losses = buf_trans_losses
+					local_trans_losses.fill(0)
+					local_stage = buf_stage
+					local_stage.fill(0)
+					local_ssz = buf_ssz
+					local_ssz.fill(0)
 					local_cost_sum = np.zeros(len(basin_ids), dtype=float)
 					local_cost_count = np.zeros(len(basin_ids), dtype=float)
 
@@ -1199,9 +1235,12 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 									_ensure_gw_region_initialized(region_id)
 							# else: use initial static assignment set at startup
 							
-							local_head = np.zeros_like(head)
-							local_baseflow = np.zeros_like(baseflow)
-							local_owner = np.zeros(topo.grid_size, dtype=np.int32)
+							local_head = buf_head
+							local_head.fill(0)
+							local_baseflow = buf_baseflow
+							local_baseflow.fill(0)
+							local_owner = buf_owner
+							local_owner.fill(0)
 							local_flux_chb = 0.0
 							local_count = 0.0
 							local_gw_cost_sum = np.zeros(len(gw_region_ids), dtype=float)
@@ -1359,7 +1398,7 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 							# start10 = time.time()
 							flux_weighted = comm.allreduce(local_flux_chb, op=MPI.SUM)
 							#print("time10: ", time.time()-start10)
-							gw.flux_at_CHB = flux_weighted/total_count if total_count > 0 else 0.0
+							flux_at_CHB = flux_weighted/total_count if total_count > 0 else 0.0
 
 							global_gw_cost_sum = _allreduce_sum(comm, local_gw_cost_sum)
 							global_gw_cost_count = _allreduce_sum(comm, local_gw_cost_count)
@@ -1391,13 +1430,14 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 									sizes_lks=water_bodies.size_lks,
 									ids_max_depth_lks=water_bodies.ids_max_depth_lks,
 								)
+							flux_at_CHB = gw.flux_at_CHB
 							#gw.run_one_step_gw(env_state.grid, data_in.dtSZ/60,
 							#	swb.tht_dt,	env_state.Droot*0.001)
 						
                         # transfer subdomain results to the entire model domain
 						# appends (heads[i] for i in subdomains) in head
-						rch_agg = np.zeros(topo.grid_size)
-						etg_agg = np.zeros(topo.grid_size)
+						rch_agg.fill(0)
+						etg_agg.fill(0)
 						dt_GW = 0
 					
 					# time accumulator for gw	
@@ -1505,7 +1545,7 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 						"wte":[np.mean(head[act_nodes])],
 						"gdh":[np.mean(baseflow[act_nodes])],
 						"twsc":[np.mean(twsc[act_nodes])],
-						"chb":[gw.flux_at_CHB],
+						"chb":[flux_at_CHB],
 						"tls":[np.mean(ro.trans_losses[act_nodes])],
 						'eca': [np.mean(Eca)] if Eca is not None else [0],
 						'scz': [np.mean(vegetation.Sc0_cn[act_nodes])] if vegetation.Sc0_cn[act_nodes] is not None else [0],
@@ -1518,14 +1558,6 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 					# get mean total values for each flux and state of the riparian zone
 					# print("riv_nodes.size: ", riv_nodes.size)
 					if riv_nodes.size > 0:
-						total_rpvar.store_variables(PRE.date_sim_dt, t_pre,
-							{"etrp": [np.mean(rAET)],
-							"fch": [np.mean(rPCR)],
-							"tls": [np.mean(ro.trans_losses[riv_nodes])],
-							"thtrp": [np.mean(rtheta)],
-							"ssz": [np.mean(ro.SSZ[riv_nodes])]}
-							)
-						
 						grid_rpvar.store_variables(PRE.date_sim_dt, t_pre,
 							{"etrp": rAET, "fch": rPCR,
 							"tls": ro.trans_losses[riv_nodes],
@@ -1536,13 +1568,6 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 					# get mean total values for each flux and state of water bodies
 					# print("water_bodies.id_nodes: ", water_bodies.id_nodes)
 					if water_bodies.id_nodes is not None:
-						total_pndvar.store_variables(PRE.date_sim_dt, t_pre,
-							{"epd": [np.mean(et_pnds)],
-							"vpd": [np.mean(water_bodies.pnds_Vo)],
-							"apd": [np.mean(aoz_pnds)],
-							}
-							)
-						
 						grid_pndvar.store_variables(PRE.date_sim_dt, t_pre,
 							{"epd": et_pnds,
 							"vpd": water_bodies.pnds_Vo,
@@ -1624,7 +1649,7 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 		print("********************************** SAVING RESULTS **********************************")
 		# if rank == 0:
 		print(rank)
-		save_model_outputs(data_in, total_var, point_var, zone_var, total_rpvar, total_pndvar,
+		save_model_outputs(data_in, total_var, point_var, zone_var,
 						grid_var, grid_rmax, grid_vmax, grid_rpvar, grid_pndvar, grid_veg, grid_lks,
 						grid, head, theta, ro.SSZ, rtheta, topo, water_bodies.pnds_Vo,
 						act_nodes, riv_nodes, water_bodies.ids_slks, water_bodies.id_nodes,

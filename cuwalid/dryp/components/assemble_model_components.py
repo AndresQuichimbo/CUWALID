@@ -15,7 +15,8 @@ from cuwalid.dryp.components.DRYP_ponds import ponds
 from cuwalid.dryp.components.DRYP_store_functions import GlobalGridVar
 from cuwalid.dryp.components.DRYP_water_bodies import MultiLakeModel
 
-def initialize_core_hydrology_components(data_in, grid, topo, aquifer, water_bodies):
+def initialize_core_hydrology_components(
+    data_in, grid, topo, aquifer, water_bodies, initialize_groundwater=True):
     abc = ABMconnector()
     inf = infiltration(data_in.inf_method)
     cnp = interception()
@@ -48,18 +49,20 @@ def initialize_core_hydrology_components(data_in, grid, topo, aquifer, water_bod
                         topo.riv_length
                         )
     
-    gw = gwflow_EFD(grid,
-                    aquifer.Ksat,
-                    topo.area_river,
-                    aquifer.CHB,
-                    data_in.gw_func,
-                    solver=data_in.solver_gw,
-                    implicit_max_iter=data_in.gw_implicit_max_iter,
-                    implicit_tolerance=data_in.gw_implicit_tolerance,
-                    linear_max_iter=data_in.gw_linear_max_iter,
-                    linear_tolerance=data_in.gw_linear_tolerance,
-                    implicit_relaxation=data_in.gw_implicit_relaxation
-                    )
+    gw = None
+    if initialize_groundwater:
+        gw = gwflow_EFD(grid,
+                        aquifer.Ksat,
+                        topo.area_river,
+                        aquifer.CHB,
+                        data_in.gw_func,
+                        solver=data_in.solver_gw,
+                        implicit_max_iter=data_in.gw_implicit_max_iter,
+                        implicit_tolerance=data_in.gw_implicit_tolerance,
+                        linear_max_iter=data_in.gw_linear_max_iter,
+                        linear_tolerance=data_in.gw_linear_tolerance,
+                        implicit_relaxation=data_in.gw_implicit_relaxation
+                        )
     
     pnds = None
     if water_bodies.id_nodes is not None:
@@ -120,15 +123,15 @@ def initialize_simulation_state_variables(data_in, topo, grid, aquifer, soil, rs
 
     gws_mb = []
 
-    etg_agg = np.zeros(topo.grid_size)
-    rch_agg = np.zeros(topo.grid_size)
+    etg_agg = np.zeros(topo.grid_size, dtype=np.float32)
+    rch_agg = np.zeros(topo.grid_size, dtype=np.float32)
     dt_GW = int(data_in.dt)
 
     # nodes to perform calculation
     #act_nodes = grid.core_nodes[:]
     act_nodes = grid['core_nodes'][:]
     
-    _riv_nodes_mask = np.zeros(topo.grid_size)
+    _riv_nodes_mask = np.zeros(topo.grid_size, dtype=topo.river_cells.dtype)
     _riv_nodes_mask[act_nodes] = 1
     topo.river_cells = _riv_nodes_mask * topo.river_cells
     
@@ -156,7 +159,7 @@ def initialize_simulation_state_variables(data_in, topo, grid, aquifer, soil, rs
     # set initial conditions for soil and groundwater
     head = aquifer.head[:]
     theta = soil.theta[:]
-    river_sat_deficit = np.zeros(topo.grid_size)
+    river_sat_deficit = np.zeros(topo.grid_size, dtype=np.float32)
 
     save_rz_var = False
     rtheta = None
@@ -182,10 +185,10 @@ def initialize_simulation_state_variables(data_in, topo, grid, aquifer, soil, rs
     #if riv_nodes.size > 0:
     #   river_sat_deficit = river_sat_deficit[act_riv_nodes]
 
-    runoff = np.zeros(topo.grid_size)
-    recharge = np.zeros(topo.grid_size)
-    baseflow = np.zeros(topo.grid_size)
-    AOF_threshold = np.ones(topo.grid_size)
+    runoff = np.zeros(topo.grid_size, dtype=np.float32)
+    recharge = np.zeros(topo.grid_size, dtype=np.float32)
+    baseflow = np.zeros(topo.grid_size, dtype=np.float32)
+    AOF_threshold = np.ones(topo.grid_size, dtype=np.float32)
 
     return (gws_mb, etg_agg, rch_agg, dt_GW, act_nodes, riv_nodes, act_riv_nodes,
             id_lakes, head, theta, river_sat_deficit, save_rz_var, rtheta,

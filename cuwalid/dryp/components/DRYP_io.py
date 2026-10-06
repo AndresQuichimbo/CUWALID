@@ -175,9 +175,6 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, active_dom
 	# Generate 1D coordinate arrays (cell centers)
 	lon, lat = get_coordinates_at_center_of_cells(ncols, nrows,
 					lon_min, lat_min, cellsize)
-		
-	# 2D meshgrid of geographic coordinates
-	lon2d, lat2d = np.meshgrid(lon, lat)
 
 	if geographic:
 
@@ -1296,16 +1293,7 @@ class groundwater_parameters(object):
 		#print(gw.at_node['Hydraulic_Conductivity'])				
 		# Check if flux boundary is provided m/h
 		if inputfile.fname_FHB == None or not os.path.exists(inputfile.fname_FHB):
-			self.FHB = np.zeros(grid_size, dtype=float)
 			print('Flux boundary conditions. .......not provided')
-		else:
-			self.FHB = np.flip(rasterio.open(inputfile.fname_FHB).read(1), 0).flatten()
-			#SZ_CHBa = read_esri_ascii(inputfile.fname_FHB,
-			#	name='SZ_FHB', grid=gw)[1]
-			#gw.at_node['SZ_FHB'][gw.at_node['SZ_FHB'] == -9999] = 0				
-			#gw.at_node['SZ_FHB'][:] = gw.at_node['SZ_FHB'][:]*2/(np.power(rg.dx, 2))
-		#gw.at_node['SZ_FHB'][gw.status_at_node[gw.status_at_node == gw.BC_NODE_IS_CLOSED]] = 0
-		#gw.at_node['SZ_FHB'][:] = gw.at_node['SZ_FHB']*inputfile.kFlux
 		
 		# Check if constant head boundary is provided
 		if inputfile.fname_CHB == None or not os.path.exists(inputfile.fname_CHB):
