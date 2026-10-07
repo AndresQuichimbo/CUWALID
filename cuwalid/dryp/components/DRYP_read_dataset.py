@@ -44,6 +44,50 @@ def _to_float32(data):
 	return data
 
 
+def _build_linear_interp_weights(source_coord, target_coord):
+	source_coord = np.asarray(source_coord, dtype=np.float64)
+	target_coord = np.asarray(target_coord, dtype=np.float64)
+	if (source_coord.ndim != 1 or target_coord.ndim != 1
+			or source_coord.size < 2 or not np.all(np.isfinite(source_coord))):
+		raise ValueError("Interpolation coordinates must be finite 1D arrays with at least two source points")
+
+	order = np.argsort(source_coord)
+	src_sorted = source_coord[order]
+	if np.any(np.diff(src_sorted) <= 0):
+		raise ValueError("Source interpolation coordinates must be unique")
+
+	pos = np.searchsorted(src_sorted, target_coord, side='left')
+	idx1_sorted = np.clip(pos, 1, source_coord.size - 1)
+	idx0_sorted = idx1_sorted - 1
+	lo = src_sorted[idx0_sorted]
+	hi = src_sorted[idx1_sorted]
+	weight = ((target_coord - lo) / (hi - lo)).astype(np.float32)
+	valid = np.isfinite(target_coord) & (target_coord >= src_sorted[0]) & (target_coord <= src_sorted[-1])
+	return order[idx0_sorted].astype(np.int32), order[idx1_sorted].astype(np.int32), weight, valid
+
+
+def _apply_separable_linear_interp(data_2d, lat_weights, lon_weights):
+	lat_idx0, lat_idx1, lat_w, lat_valid = lat_weights
+	lon_idx0, lon_idx1, lon_w, lon_valid = lon_weights
+	data_2d = np.asarray(data_2d)
+	work_dtype = np.result_type(data_2d.dtype, np.float32)
+
+	left = np.array(data_2d[:, lon_idx0], dtype=work_dtype, copy=True)
+	right = np.array(data_2d[:, lon_idx1], dtype=work_dtype, copy=True)
+	np.subtract(right, left, out=right)
+	np.multiply(right, lon_w[None, :], out=right)
+	np.add(left, right, out=left)
+	left[:, ~lon_valid] = np.nan
+
+	lower = np.array(left[lat_idx0, :], copy=True)
+	upper = np.array(left[lat_idx1, :], copy=True)
+	np.subtract(upper, lower, out=upper)
+	np.multiply(upper, lat_w[:, None], out=upper)
+	np.add(lower, upper, out=lower)
+	lower[~lat_valid, :] = np.nan
+	return lower
+
+
 def _validate_zarr_store(fname_ds):
 	"""Validate Zarr path and surface clearer compatibility errors."""
 	if not os.path.exists(fname_ds):
@@ -407,6 +451,54 @@ class read_dataset_interp(object):
 		self.imerg_template_da = None
 		self.imerg_cache_field = None
 		self.imerg_cache_template = None
+		self._fast_interp_src_lat = None
+		self._fast_interp_src_lon = None
+		self._fast_interp_lat_weights = None
+		self._fast_interp_lon_weights = None
+		self._fast_interp_identity = False
+
+	def _fast_interp_field(self, ds, field):
+		try:
+			da = ds[field]
+			if 'time' in da.dims:
+				da = da.isel(time=0)
+			if set(da.dims) != {'lat', 'lon'}:
+				return None
+			da = da.transpose('lat', 'lon')
+			src_lat = np.asarray(da['lat'].values)
+			src_lon = np.asarray(da['lon'].values)
+			if (src_lat.ndim != 1 or src_lon.ndim != 1
+					or np.asarray(self.lat).ndim != 1
+					or np.asarray(self.lon).ndim != 1):
+				return None
+
+			grid_unchanged = (
+				self._fast_interp_src_lat is not None
+				and self._fast_interp_src_lat.shape == src_lat.shape
+				and self._fast_interp_src_lon.shape == src_lon.shape
+				and np.array_equal(self._fast_interp_src_lat, src_lat)
+				and np.array_equal(self._fast_interp_src_lon, src_lon)
+			)
+			if not grid_unchanged:
+				self._fast_interp_identity = (
+					src_lat.shape == np.asarray(self.lat).shape
+					and src_lon.shape == np.asarray(self.lon).shape
+					and np.array_equal(src_lat, self.lat)
+					and np.array_equal(src_lon, self.lon)
+				)
+				if not self._fast_interp_identity:
+					self._fast_interp_lat_weights = _build_linear_interp_weights(src_lat, self.lat)
+					self._fast_interp_lon_weights = _build_linear_interp_weights(src_lon, self.lon)
+				self._fast_interp_src_lat = src_lat.copy()
+				self._fast_interp_src_lon = src_lon.copy()
+
+			data_2d = np.asarray(da.values)
+			if self._fast_interp_identity:
+				return data_2d.copy()
+			return _apply_separable_linear_interp(
+				data_2d, self._fast_interp_lat_weights, self._fast_interp_lon_weights)
+		except Exception:
+			return None
 
 	def get_one_step_dataset(self, j_step, fname_ds, field, time_field="time"):
 		return _to_float32(self._get_one_step_dataset(j_step, fname_ds, field, time_field))
@@ -543,6 +635,9 @@ class read_dataset_interp(object):
 						ds_agg = reproject_dataset(ds_agg, self.proj, self.proj_model)
 
 					if self.interpolate_ds is True:
+						fast_result = self._fast_interp_field(ds_agg, field)
+						if fast_result is not None:
+							return fast_result.flatten()
 						ds_agg = ds_agg.interp(lat=self.lat, lon=self.lon, method="linear")
 
 					return np.array(ds_agg.variables[field][:]).flatten()
@@ -811,12 +906,13 @@ class read_dataset_interp(object):
 							#print(self.ds)
 							ds = self.ds.isel(time=[day-1])
 					#print(ds)
+					fast_result = None
 					if self.interpolate_ds is True:
-						# Spatial interpolation
-						#ds = self.ds.isel(time=[j_step-self.step_0]).interp(
-						ds = ds.interp(
-							lat=self.lat, lon=self.lon,
-							method="linear")
+						fast_result = self._fast_interp_field(ds, field)
+						if fast_result is None:
+							ds = ds.interp(
+								lat=self.lat, lon=self.lon,
+								method="linear")
 						#print("interpolate", ds)
 					#else:
 					#	ds = self.ds.isel(time=[j_step-self.step_0])
@@ -826,7 +922,9 @@ class read_dataset_interp(object):
 					#plt.imshow(np.array(ds.variables[field][0][:]))
 					#plt.savefig('precipitation'+field+str(self.j_step)+'.png')
 					#plt.close()
-					if (self.file_format == 7) and (src_idx is not None):
+					if fast_result is not None:
+						data = fast_result.flatten()
+					elif (self.file_format == 7) and (src_idx is not None):
 						data = np.array(ds[field].values).flatten()
 					else:
 						data = np.array(ds.variables[field][0][:]).flatten()

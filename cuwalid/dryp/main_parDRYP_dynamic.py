@@ -231,6 +231,56 @@ def _allreduce_sum(comm, local_array):
 	return global_array
 
 
+def _read_forcing_arrays(comm, rank, grid_size, forcing_specs):
+	if comm is None:
+		arrays = []
+		for reader, step, filename, field in forcing_specs:
+			data = reader.get_one_step_dataset(step, filename, field)
+			if data is None:
+				arrays.append(None)
+				continue
+			data = np.asarray(data)
+			if data.size != grid_size or not np.issubdtype(data.dtype, np.number):
+				raise ValueError(f"Invalid forcing array for {field!r}: shape={data.shape}, dtype={data.dtype}")
+			arrays.append(np.ascontiguousarray(data.reshape(-1)))
+		return arrays
+
+	root_arrays = None
+	status = None
+	if rank == 0:
+		try:
+			root_arrays = []
+			for reader, step, filename, field in forcing_specs:
+				data = reader.get_one_step_dataset(step, filename, field)
+				if data is None:
+					root_arrays.append(None)
+					continue
+				data = np.asarray(data)
+				if data.size != grid_size or not np.issubdtype(data.dtype, np.number):
+					raise ValueError(f"Invalid forcing array for {field!r}: shape={data.shape}, dtype={data.dtype}")
+				root_arrays.append(np.ascontiguousarray(data.reshape(-1)))
+			status = (None, [None if data is None else data.dtype.str for data in root_arrays])
+		except Exception as exc:
+			status = (f"{type(exc).__name__}: {exc}", None)
+
+	error, dtypes = comm.bcast(status, root=0)
+	if error is not None:
+		raise RuntimeError(f"Rank 0 could not read forcing datasets: {error}")
+
+	arrays = []
+	for index, dtype_str in enumerate(dtypes):
+		if dtype_str is None:
+			arrays.append(None)
+			continue
+		if rank == 0:
+			data = root_arrays[index]
+		else:
+			data = np.empty(grid_size, dtype=np.dtype(dtype_str))
+		comm.Bcast(data, root=0)
+		arrays.append(data)
+	return arrays
+
+
 def _dynamic_rank_assignment(task_ids, task_costs, size):
 	"""Greedy load-balanced assignment of task IDs to MPI ranks."""
 	if size <= 1 or len(task_ids) == 0:
@@ -674,11 +724,19 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 			
 			for dt_pre_sub in range(data_in.dt_sub_hourly):
 
-				# get rainfall
-				rain = PRE.get_one_step_dataset(t_pre, data_in.fname_TSPre, 'pre')
-				
-				# get potential evapotranspiration
-				PET = ET0.get_one_step_dataset(t_eto, data_in.fname_TSMeteo, 'pet')
+				(rain, PET, SAVIdt, SAVIdt_min, SAVIdt_max, LAIdt, Kcdt, avdt) = _read_forcing_arrays(
+					comm, rank, topo.grid_size,
+					[
+						(PRE, t_pre, data_in.fname_TSPre, 'pre'),
+						(ET0, t_eto, data_in.fname_TSMeteo, 'pet'),
+						(SAVI, t_savi, data_in.fname_TSsavi, 'savi'),
+						(SAVImin, t_savi, data_in.fname_savi_min, 'savi'),
+						(SAVImax, t_savi, data_in.fname_savi_max, 'savi'),
+						(LAI, t_savi, data_in.fname_TSlai, 'LAI'),
+						(Kc, t_savi, data_in.fname_TSkc, 'kc'),
+						(av, t_av, data_in.fname_TSav, 'VegetationFraction'),
+					],
+				)
 				
 				# ABSTRCTIONS/IRRIGATION ------------------------------
 				# read flux boundary conditions for all components
@@ -706,13 +764,7 @@ def run_parDRYP(filename_input, disable_dynamic=False):
 				#	LAIdt = None
 				#	Kcdt = None
 				#else:
-				SAVIdt = SAVI.get_one_step_dataset(t_savi, data_in.fname_TSsavi, 'savi')
-				SAVIdt_min = SAVImin.get_one_step_dataset(t_savi, data_in.fname_savi_min, 'savi')
-				SAVIdt_max = SAVImax.get_one_step_dataset(t_savi, data_in.fname_savi_max, 'savi')
-				LAIdt = LAI.get_one_step_dataset(t_savi, data_in.fname_TSlai, 'LAI')
-				Kcdt = Kc.get_one_step_dataset(t_savi, data_in.fname_TSkc, 'kc')
-				avdt = av.get_one_step_dataset(t_av, data_in.fname_TSav, 'VegetationFraction')
-
+				
 				
 
 				if Kcdt is not None:
