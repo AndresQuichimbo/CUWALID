@@ -37,7 +37,8 @@ class grid_environment(object):
 				self.grid_xllcorner = src.bounds[0]
 				self.grid_yllcorner = src.bounds[1]
 				self.grid_cellsize = src.transform[0]
-				self.grid_profile = src.profile
+				self.grid_profile = src.profile.copy()
+				self.grid_profile.update(dtype='float32')
 				self.grid_transform = src.transform
 
 		else:
@@ -1118,12 +1119,12 @@ class soil_parameters(object):
 		
 		# Reading Soil saturated hydraulic conductivity
 		if inputfile.fname_Ksat == None or not os.path.exists(inputfile.fname_Ksat):
-			self.Ksat = np.ones(grid_size, dtype=float)
+			self.Ksat = np.ones(grid_size, dtype=np.float32)
 			print('Hydraulic conductivity...........not provided. Global default applied of 1.0 mm/h')
 		else:
-			self.Ksat = _read_raster_file(inputfile.fname_Ksat, dtype=float)
+			self.Ksat = _read_raster_file(inputfile.fname_Ksat, dtype=np.float32)
 		# make float
-		self.Ksat = np.array(self.Ksat, dtype=float)			
+		self.Ksat = np.array(self.Ksat, dtype=np.float32)			
 		# Change units and applying scale factor kKs
 		#self.Ksat = (self.Ksat*inputfile.kKsat)
 		#self.Ksat = (self.Ksat*inputfile.unit_sim_k*inputfile.kKsat)
@@ -1139,28 +1140,28 @@ class soil_parameters(object):
 		#self.theta_res = np.array(self.theta_res, dtype=float)
 		# Reading Wilting point field
 		if inputfile.fname_theta_wp == None or not os.path.exists(inputfile.fname_theta_wp):
-			self.theta_wp = np.full(grid_size, 0.05, dtype=float)
+			self.theta_wp = np.full(grid_size, 0.05, dtype=np.float32)
 			print('Wilting point....................not provided. Global default applied of 0.05')
 		else:
-			self.theta_wp = _read_raster_file(inputfile.fname_theta_wp, dtype=float)
+			self.theta_wp = _read_raster_file(inputfile.fname_theta_wp, dtype=np.float32)
 		# make float
-		self.theta_wp = np.array(self.theta_wp, dtype=float)		
+		self.theta_wp = np.array(self.theta_wp, dtype=np.float32)		
 		# Read Saturated water content (porosity)
 		if inputfile.fname_n == None or not os.path.exists(inputfile.fname_n):
-			self.theta_sat = np.full(grid_size, 0.40, dtype=float)
+			self.theta_sat = np.full(grid_size, 0.40, dtype=np.float32)
 			print('Porosity.........................not provided. Global default applied of 0.4')
 		else:
-			self.theta_sat = _read_raster_file(inputfile.fname_n, dtype=float)
+			self.theta_sat = _read_raster_file(inputfile.fname_n, dtype=np.float32)
 		# make float
-		self.theta_sat = np.array(self.theta_sat, dtype=float)	
+		self.theta_sat = np.array(self.theta_sat, dtype=np.float32)	
 		# Reading available water content: raster file		
 		if inputfile.fname_theta_AWC == None or not os.path.exists(inputfile.fname_theta_AWC):
-			theta_AWC = np.full(grid_size, 0.10, dtype=float)
+			theta_AWC = np.full(grid_size, 0.10, dtype=np.float32)
 			print('Available Water Content..........not provided. Global default applied of 0.10')
 		else:
-			theta_AWC = _read_raster_file(inputfile.fname_theta_AWC, dtype=float)
+			theta_AWC = _read_raster_file(inputfile.fname_theta_AWC, dtype=np.float32)
 		# make float
-		theta_AWC = np.array(theta_AWC, dtype=float)
+		theta_AWC = np.array(theta_AWC, dtype=np.float32)
 
 		self.theta_fc = theta_AWC + self.theta_wp
 
@@ -1170,17 +1171,17 @@ class soil_parameters(object):
 		# Exponent for soil moisture - matrix potential relation
 		# Rawls (1982), and Clapp and Hornberger (1978)
 		if inputfile.fname_b_SOIL == None or not os.path.exists(inputfile.fname_b_SOIL):
-			self.lambdas = np.full(grid_size, 10.05, dtype=float)
+			self.lambdas = np.full(grid_size, 10.05, dtype=np.float32)
 			print('Soil particle distribution par...not provided. Global default applied of 10.5')
 		else:
-			self.lambdas = _read_raster_file(inputfile.fname_b_SOIL)
+			self.lambdas = _read_raster_file(inputfile.fname_b_SOIL, dtype=np.float32)
 			
 		# air-entry/saturated capillary potential, [mm]
 		if inputfile.fname_PSI == None or not os.path.exists(inputfile.fname_PSI):
 			psi_a = np.full(grid_size, 153.0)
 			print('Suction head.....................not provided. Global default applied of 153 mm')
 		else:
-			psi_a = _read_raster_file(inputfile.fname_PSI)
+			psi_a = _read_raster_file(inputfile.fname_PSI, dtype=np.float32)
 			
 		# Sorptivity for the Campbell model
 		self.PSI = np.absolute(psi_a)*(self.lambdas*2+2.5)/(self.lambdas+2.5)
@@ -1188,15 +1189,15 @@ class soil_parameters(object):
 		# -- no longer used ---Exponent c for Rawls (1982), and Clapp and Hornberger (1978)
 		# -- c_SOIL = np.array(self.lambdas)*2+2.5
 		# Campbell (1974)
-		self.c_SOIL = 2.0/np.array(self.lambdas) + 3.0
+		self.c_SOIL = 2.0/np.array(self.lambdas, dtype=np.float32) + 3.0
 		
 		# Reading soil depth map: raster file [mm]
 		if inputfile.fname_SoilDepth == None or not os.path.exists(inputfile.fname_SoilDepth):
-			self.Droot = np.full(grid_size, 1000.0, dtype=float)
+			self.Droot = np.full(grid_size, 1000.0, dtype=np.float32)
 			#self.depth_uz *= 1000.0	# default value 1000 mm
 			print('Rooting depth....................not provided. Global default applied of 1000mm')
 		else:
-			self.Droot = _read_raster_file(inputfile.fname_SoilDepth, dtype=float)
+			self.Droot = _read_raster_file(inputfile.fname_SoilDepth, dtype=np.float32)
 		# Applying scale factor kDroot
 		#self.Droot *= inputfile.kDroot
 		#self.Droot = np.array(self.depth_uz)
@@ -1206,7 +1207,7 @@ class soil_parameters(object):
 			self.theta = self.theta_wp+0.01*theta_AWC
 			print('Initial water content............not provided, dry condition assumed (wiltinf point)')
 		else:
-			self.theta = _read_raster_file(inputfile.fname_theta)
+			self.theta = _read_raster_file(inputfile.fname_theta, dtype=np.float32)
 
 		# store factors in the object
 		self.kKsat_soil = inputfile.kKsat
@@ -1294,7 +1295,7 @@ class groundwater_parameters(object):
 		# 2: constant model
 		# 3: linear model
 		if inputfile.fname_aquifertype != None and os.path.exists(inputfile.fname_aquifertype):
-			self.gwtype = _read_raster_file(inputfile.fname_aquifertype)
+			self.gwtype = _read_raster_file(inputfile.fname_aquifertype, dtype=int)
 		else:
 			print('Transmissivity model type .......not provided')
 			self.gwtype = np.full(grid_size, 3, dtype=int)
@@ -1459,35 +1460,35 @@ class interception_parameters(object):
 		# read crop vegetation factor: default 1
 
 		if inputfile.fname_av is not None and os.path.exists(inputfile.fname_av):
-			self.av = _read_raster_file(inputfile.fname_av)
+			self.av = _read_raster_file(inputfile.fname_av, dtype=np.float32)
 			self.av[self.av < 0] = 0.0
 		else:
 			print('Fraction of vegetation cover.....not provided. Global default 1')
 			self.av = None
 		# read Coeficient of exponential function: default 0
 		if inputfile.fname_laia is not None and os.path.exists(inputfile.fname_laia):
-			self.lai_a = _read_raster_file(inputfile.fname_laia)
+			self.lai_a = _read_raster_file(inputfile.fname_laia, dtype=np.float32)
 		else:
 			print('Vegetation exponential coef......not provided. Global default 1')
 			self.lai_a = 0
 
 		# read Power value for exponential function: default 0
 		if inputfile.fname_laib is not None and os.path.exists(inputfile.fname_laib):
-			self.lai_b = _read_raster_file(inputfile.fname_laib)
+			self.lai_b = _read_raster_file(inputfile.fname_laib, dtype=np.float32)
 		else:
 			print('Vegetation exponential coef......not provided. Global default 1')
 			self.lai_b = 0
 
 		# read Min Soil-Adjusted Vegetation Index: default 0
 		if inputfile.fname_savi_min is not None and os.path.exists(inputfile.fname_savi_min):
-			self.savi_min = _read_raster_file(inputfile.fname_savi_min)
+			self.savi_min = _read_raster_file(inputfile.fname_savi_min, dtype=np.float32)
 		else:
 			print('Fraction of vegetation cover.....not provided. Global default 1')
 			self.savi_min = 0
 
 		# Max Soil-Adjusted Vegetation Index: defgault 1
 		if inputfile.fname_savi_max is not None and os.path.exists(inputfile.fname_savi_max):
-			self.savi_max = _read_raster_file(inputfile.fname_savi_max)
+			self.savi_max = _read_raster_file(inputfile.fname_savi_max, dtype=np.float32)
 		else:
 			print('Fraction of vegetation cover.....not provided. Global default 1')
 			self.savi_max = 1.0
@@ -1495,21 +1496,21 @@ class interception_parameters(object):
 		#------Modification for Dyna-Veg---------------------------------------------------
 		# bioma-dependent coefficient
 		if inputfile.fname_fcw_canopy is not None and os.path.exists(inputfile.fname_fcw_canopy):
-			self.fcw_cn = _read_raster_file(inputfile.fname_fcw_canopy)
+			self.fcw_cn = _read_raster_file(inputfile.fname_fcw_canopy, dtype=np.float32)
 		else:
 			print('Biome-dependent coefficient......not provided. Global 1 [-]')
 			self.fcw_cn = np.ones(grid_size, dtype=float)
 		
 		# inital water content of the canopy storage
 		if inputfile.fname_Sc0_canopy is not None and os.path.exists(inputfile.fname_Sc0_canopy):
-			self.Sc0_cn = _read_raster_file(inputfile.fname_Sc0_canopy)
+			self.Sc0_cn = _read_raster_file(inputfile.fname_Sc0_canopy, dtype=np.float32)
 		else:
 			print('Initial canopy storage...........not provided. Global 0 [-]')
 			self.Sc0_cn = np.zeros(grid_size, dtype=float)
 		
 		# inital water content of the canopy storage, riparian zone
 		if inputfile.fname_Sc0_canopy is not None and os.path.exists(inputfile.fname_Sc0_canopy):
-			self.Sc0_cnrp = _read_raster_file(inputfile.fname_Sc0_canopy)
+			self.Sc0_cnrp = _read_raster_file(inputfile.fname_Sc0_canopy, dtype=np.float32)
 		else:
 			print('Initial riparian canopy storage, not provided. Global 0 [-]')
 			self.Sc0_cnrp = np.zeros(grid_size, dtype=float)
@@ -1517,14 +1518,14 @@ class interception_parameters(object):
 		# Tap water threshold for evaporation uptake
 		# tap needs to be equal or higher than the soil depth [mm]
 		if inputfile.fname_tap_depth is not None and os.path.exists(inputfile.fname_tap_depth):
-			self.tap_depth = _read_raster_file(inputfile.fname_tap_depth)
+			self.tap_depth = _read_raster_file(inputfile.fname_tap_depth, dtype=np.float32)
 		else:
 			print('Tap water level..................not provided. Global 0 [mm]')
 			self.tap_depth = np.zeros(grid_size, dtype=float)
 		
 		# read soil depth, it is the same as the hillslope soil
 		if inputfile.fname_SoilDepth is not None and os.path.exists(inputfile.fname_SoilDepth):
-			Droot = _read_raster_file(inputfile.fname_SoilDepth)
+			Droot = _read_raster_file(inputfile.fname_SoilDepth, dtype=np.float32)
 		else:
 			Droot = np.full(grid_size, 1000.0, dtype=float)
 
@@ -1532,7 +1533,7 @@ class interception_parameters(object):
 		
 		# Final plant water uptake threshold for evaporation uptake [mm]
 		if inputfile.fname_extintion_depth is not None and os.path.exists(inputfile.fname_extintion_depth):
-			self.extintion_depth = _read_raster_file(inputfile.fname_extintion_depth)
+			self.extintion_depth = _read_raster_file(inputfile.fname_extintion_depth, dtype=np.float32)
 		else:
 			print('Extinction depth.................not provided. Default is rooting depth [mm]')
 			#final_depth = np.flip(rasterio.open(inputfile.fname_SoilDepth).read(1), 0).flatten()
@@ -1582,19 +1583,19 @@ class water_body_parameters(object):
 		self.pnds_Vo = None
 
 		if inputfile.fname_pnd_Amax != None and os.path.exists(inputfile.fname_pnd_hmax):
-			self.pnds_Amax = _read_raster_file(inputfile.fname_pnd_Amax)
+			self.pnds_Amax = _read_raster_file(inputfile.fname_pnd_Amax, dtype=np.float32)
 			
 			if inputfile.fname_pnd_hmax is not None and os.path.exists(inputfile.fname_pnd_hmax):
-				self.pnds_hmax = _read_raster_file(inputfile.fname_pnd_hmax)
+				self.pnds_hmax = _read_raster_file(inputfile.fname_pnd_hmax, dtype=np.float32)
 			else:
 				print('Water body max. depth............not provided. Global value 1 [m]')
-				self.pnds_hmax = np.ones(grid_size, dtype=float)
+				self.pnds_hmax = np.ones(grid_size, dtype=np.float32)
 
 			if inputfile.fname_pnd_Vo != None and os.path.exists(inputfile.fname_pnd_Vo):
-				self.pnds_Vo = _read_raster_file(inputfile.fname_pnd_Vo)
+				self.pnds_Vo = _read_raster_file(inputfile.fname_pnd_Vo, dtype=np.float32)
 			else:
 				print('Initial water body volume........not provided. Global value 0 [m3]')
-				self.pnds_Vo = np.zeros(grid_size, dtype=float)
+				self.pnds_Vo = np.zeros(grid_size, dtype=np.float32)
 
 			# add function to reduce the size of arrays
 			if id_nodes is None:
