@@ -66,9 +66,13 @@ def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda, basen
 	fname_awc = os.path.join(dirname, f"{basename}_available_water_content.asc")
 
 	# save soil properties as raster files
+	print("Saving soil property rasters...")
 	save_raster(fname_fc, field_capacity, profile, transform)
+	print(f"Saved field capacity raster to {fname_fc}")
 	save_raster(fname_wp, wilting_point, profile, transform)
+	print(f"Saved wilting point raster to {fname_wp}")
 	save_raster(fname_awc, available_water_content, profile, transform)
+	print(f"Saved available water content raster to {fname_awc}")
 
 def create_raster_flowdirection_dryp(fname, fname_out=None, translate=True, format_data="D8"):
 	"""Create raster DRYP flow direction from a DEM or file from a raster D8 flow direction map.
@@ -160,6 +164,7 @@ def create_raster_flowdirection_dryp(fname, fname_out=None, translate=True, form
 	
 	if fname_out is not None:
 		save_raster(fname_out, flowdir, profile, transform)
+		print(f"Saved flow direction raster to {fname_out}")
 	else:
 		return flowdir, profile, transform
 
@@ -227,6 +232,7 @@ def create_raster_river_network(fname, threshold, fname_out=None,
 	# save soil properties as raster files
 	if fname_out is not None:
 		save_raster(fname_out, raster, profile, transform)
+		print(f"Saved river network raster to {fname_out}")
 	else:
 		return raster, profile, transform
 
