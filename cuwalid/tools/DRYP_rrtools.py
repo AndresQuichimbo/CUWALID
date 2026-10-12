@@ -16,7 +16,7 @@ from landlab.components import FlowDirectorD8
 from landlab.core.utils import as_id_array
 from scipy.ndimage import label
 
-def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda):
+def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda, basename=None):
 	"""Calculate soil water content at field capacity and available water content
 	
 	Parameters:
@@ -44,6 +44,11 @@ def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda):
 	>>> # The function does not return any values, but it saves the results as raster files.
 	
 	"""
+	# get directory of the input files
+	dirname = os.path.dirname(fname_porosity)
+	if dirname == "":
+		dirname = "."
+
 	# read raster files
 	porosity = open_raster(fname_porosity)[0]
 	psi = open_raster(fname_psi)[0]
@@ -54,9 +59,11 @@ def create_raster_soil_parameters(fname_porosity, fname_psi, fname_lambda):
 		porosity, psi, lambdas, psi_fc=336.506, psi_wp=15295.743)
 
 	# create files names
-	fname_fc = ""
-	fname_wp = ""
-	fname_awc = ""
+	if basename is None:
+		basename = "soil"
+	fname_fc = os.path.join(dirname, f"{basename}_field_capacity.asc")
+	fname_wp = os.path.join(dirname, f"{basename}_wilting_point.asc")
+	fname_awc = os.path.join(dirname, f"{basename}_available_water_content.asc")
 
 	# save soil properties as raster files
 	save_raster(fname_fc, field_capacity, profile, transform)
