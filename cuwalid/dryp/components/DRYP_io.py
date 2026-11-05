@@ -163,6 +163,10 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, active_dom
 		Latitude of the lower-left corner (degrees).
 	cellsize : float
 		Grid cell size (degrees).
+	active_domain : array_like, optional
+		1D flattened array indicating active cells (values > 0). If None, all cells are considered active.
+	geographic : bool, optional
+		If True, the grid is treated as geographic (lat/lon) and converted to approximate Cartesian coordinates. Default is False.
 	Returns
 	-------
 	dict
@@ -172,6 +176,7 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, active_dom
 		- 'x'   : 2D array of x coordinates (m, east)
 		- 'y'   : 2D array of y coordinates (m, north)
 		- 'mean_lat' : mean latitude used in the approximation
+
 	"""
 	# Generate 1D coordinate arrays (cell centers)
 	lon, lat = get_coordinates_at_center_of_cells(ncols, nrows,
@@ -212,7 +217,20 @@ def create_grid_from_extent(ncols, nrows, lon_min, lat_min, cellsize, active_dom
 		# create core nodes array
 		active_domain = center_ones(nrows, ncols).flatten()
 
-	grid['core_nodes'] = np.where(active_domain > 0)[0]
+	active_domain = np.asarray(active_domain)
+
+	if active_domain.shape == (nrows, ncols):
+	    active_domain_flat = active_domain.ravel(order="C")
+	elif active_domain.ndim == 1 and active_domain.size == nrows * ncols:
+	    active_domain_flat = active_domain
+	else:
+	    raise ValueError(
+	        f"active_domain has shape {active_domain.shape}; "
+	        f"expected {(nrows, ncols)} or a 1D array of "
+	        f"length {nrows * ncols}"
+	    )
+
+	grid['core_nodes'] = np.flatnonzero(active_domain_flat > 0)
 	grid['llcorner_lon'] = lon_min
 	grid['llcorner_lat'] = lat_min
 	grid['cellsize'] = cellsize
@@ -1338,7 +1356,7 @@ class groundwater_parameters(object):
 			self.CHB = None			
 			print('Constant head boundary conditions not provided')
 		else:
-			self.CHB = _read_raster_file(inputfile.fname_CHB)
+			self.CHB = _read_raster_file(inputfile.fname_CHB, dtype=np.float32)
 			#read_esri_ascii(inputfile.fname_CHB,
 			#	name='SZ_CHB', grid=gw)[1]
 			#id_CHB = np.where(gw.at_node['SZ_CHB'] != -9999)[0]
@@ -1733,6 +1751,8 @@ class zone_parameters(object):
 			calibrated model parameter
 		"""
 		# initial parameter
+		if factor is None:
+			return None
 		parameter = np.ones_like(self.zone_mask, dtype=float)
 		if self.zone_mask is not None:
 			num_zones = int(self.zone_mask.max())

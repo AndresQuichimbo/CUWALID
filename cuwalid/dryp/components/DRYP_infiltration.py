@@ -3,6 +3,7 @@ warnings.filterwarnings('ignore', message="invalid value encountered in true_div
 import os
 import numpy as np
 import scipy.special as spy
+from cuwalid.dryp.components.DRYP_util import print_grid_location_from_array
 
 #from landlab import RasterModelGrid
 #from landlab.io import read_esri_ascii
@@ -43,7 +44,7 @@ class infiltration(object):
 				
 	
 	def run_infiltration_one_step(self, Ksat, theta_sat, PSI,
-			    Droot, theta, rain, Ft0, SORP0, t_0, rain_day_before, *args):
+			    Droot, theta, rain, Ft0, SORP0, t_0, rain_day_before, *args, **kwargs):
 		
 		"""
 		Parameters
@@ -132,9 +133,38 @@ class infiltration(object):
 		try:
 			MB = rain - infiltration - excess
 			assert np.allclose(MB, 0.0)
-		except:
-			raise Exception('Infiltration Water balance Error: '
-		   		'Please check units and non-data values')
+		except AssertionError:
+			sub_nan_indices_rain = np.where(np.isnan(rain))[0]
+			sub_nan_indices_infiltration = np.where(np.isnan(infiltration))[0]
+			sub_nan_indices_excess = np.where(np.isnan(excess))[0]
+
+			# if kwargs contains nrow, ncol, and core_nodes, map the indices to 2D coordinates
+			if 'nrows' in kwargs and 'ncols' in kwargs and 'core_nodes' in kwargs:
+				print("Grid size: y = ", kwargs['nrows'], "x = ", kwargs['ncols'])
+				print("Coordinates are referenced from lower corner of the grid")
+				print_grid_location_from_array(kwargs['nrows'], kwargs['ncols'], kwargs['core_nodes'], sub_nan_indices_rain, "rainfall")
+				print("Core nodes for rainfall NaNs:",kwargs['core_nodes'][sub_nan_indices_rain])
+				print_grid_location_from_array(kwargs['nrows'], kwargs['ncols'], kwargs['core_nodes'], sub_nan_indices_infiltration, "infiltration")
+				print("Core nodes for infiltration NaNs:",kwargs['core_nodes'][sub_nan_indices_infiltration])
+				print_grid_location_from_array(kwargs['nrows'], kwargs['ncols'], kwargs['core_nodes'], sub_nan_indices_excess, "excess")
+				print("Core nodes for excess NaNs:", kwargs['core_nodes'][sub_nan_indices_excess])
+			
+			error_message = (
+				f"Infiltration Water balance Error:\n"
+				f"NaN indices in rainfall: {sub_nan_indices_rain}\n"
+				f"NaN indices in infiltration: {sub_nan_indices_infiltration}\n"
+				f"NaN indices in excess: {sub_nan_indices_excess}\n"
+				f"Please check units and non-data values\n"
+				f"Parameters at NaN indices:\n"
+				f"Ksat at NaN indices: {Ksat[sub_nan_indices_infiltration]}\n"
+				f"PSI at NaN indices: {PSI[sub_nan_indices_infiltration]}\n"
+				f"Droot at NaN indices: {Droot[sub_nan_indices_infiltration]}\n"
+				f"L_0 at NaN indices: {L_0[sub_nan_indices_infiltration]}\n"
+				f"Lsat at NaN indices: {Lsat[sub_nan_indices_infiltration]}\n"
+			)
+			raise Exception(error_message)
+		except Exception as e:
+			raise Exception(f"An error occurred during infiltration water balance check: {str(e)}")
 
 		return infiltration, excess, Ft, SORP, t_0, rain_day_before
 

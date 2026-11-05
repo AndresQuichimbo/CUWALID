@@ -378,7 +378,7 @@ def calculate_anomalies_from_netCDF(fname, field='pre', fname_out=None,
 
 	
 def calculate_mean_from_netCDF(fname, field, fname_out=None,
-			       deltat='YE', start_time=None, end_time=None, type=None):
+			       deltat='YE', start_time=None, end_time=None, type=None, save=True):
 	"""Get mean average values from dataset. The output filename
 	 will be added "mean" at the end of the name.
 
@@ -414,7 +414,7 @@ def calculate_mean_from_netCDF(fname, field, fname_out=None,
 			mean = True
 		
 		# check if is the riparian area
-		ifname = fname.copy()
+		ifname = fname#.copy()
 
 		if ifield in RPVARS:
 			if type is None:
@@ -449,7 +449,10 @@ def calculate_mean_from_netCDF(fname, field, fname_out=None,
 	if fname_out is None:
 		fname_out = fname
 		fname_out = fname_out.split('.')[0]+'_mean.nc'
-	save_xarray_dataset_as_netcdf(fname_out, dataset, field)
+	if save:
+		save_xarray_dataset_as_netcdf(fname_out, dataset, field)
+	else:
+		return dataset
 
 def calculate_WRSI_from_netCDF(fname, fname_out=None, deltat='ME',
 			       start_time=None, end_time=None):

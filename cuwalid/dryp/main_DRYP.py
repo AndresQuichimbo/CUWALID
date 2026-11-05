@@ -304,7 +304,7 @@ def run_DRYP(filename_input):
 					#Kcdt[Kcdt <= 0] = 1.0
 					# check efficiently if nan values are presetn and replace them with 1.0
 					#Kcdt[np.isnan(Kcdt)] = 1.0
-				#print("Interception activated, SAVI, LAI and Kc are read from the input datasets\n", Kcdt)
+				
 				if LAIdt is not None:
 					# remove the folowing line
 					#LAIdt = np.flip(LAIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
@@ -315,7 +315,7 @@ def run_DRYP(filename_input):
 					#SAVIdt = np.flip(SAVIdt.reshape((topo.grid_ncols, topo.grid_nrows)),0).flatten()
 					SAVIdt = SAVIdt[act_nodes]
 				
-				#print(vegetation.av, SAVIdt, SAVIdt_max, SAVIdt_max, LAIdt, Kcdt)
+				
 				# PONDS: Add ponds here ------------------------------------------
 				# first check if ponds is active
 				if water_bodies.id_nodes is not None:
@@ -347,7 +347,19 @@ def run_DRYP(filename_input):
 						vegetation.fcw_cn[act_nodes],
 						vegetation.Sc0_cn[act_nodes],
 						Kcdt)
-				#print("Kcdt\n", Kcdt)
+				
+				## print nan PETh if there are any
+				#if np.isnan(PETh).sum() > 0:
+				#	print("Nan nodes in PETh:", np.isnan(PETh).sum())
+				#	print("Nan nodes in PETh:", np.where(np.isnan(PETh))[0])
+				#	# replace nan values with 1.0
+				#	#PETh[np.isnan(PETh)] = 1.0
+				#	# print nan Kcdt if there are any
+				#	if np.isnan(Kcdt).sum() > 0:
+				#		print("Nan nodes in Kcdt:", np.isnan(Kcdt).sum())
+				#		print("Nan nodes in Kcdt:", np.where(np.isnan(Kcdt))[0])
+						# replace nan values with 1.0
+						#Kcdt[np.isnan(Kcdt)] = 1.0
 				## Estimate Kc for the riparian area
 				#Pthr, Ecar, PETr, LAIr, Kcr, Sc0_cnrp = cnp.run_interception_one_step(
 				#		rain, PET, vegetation.av,
@@ -369,7 +381,7 @@ def run_DRYP(filename_input):
 				#### NOT IN USE, NOT DELETE												
 				#### add irrigation as rain, still under development
 				####Pth = Pth[:] + abc.auz[:]
-				#print("Precipitation after interception and irrigation", Pth)				
+				
 				# INFILTRATION: estimate infiltration --------------------
 				#inf.run_infiltration_one_step(Pth, env_state, data_in)
 				INF, EXS, Ft0, SORP0, t_0, dry_day = inf.run_infiltration_one_step(
@@ -415,8 +427,7 @@ def run_DRYP(filename_input):
 					# calculate maximum abstractions
 					maximum_flux_wb = water_bodies_management.get_abstractions(
 						storage_wb, maximum_flux_wb)
-					#print(maximum_flux_wb)
-				
+					
 				# ratio of Etp, units of procesing are in meters
 				ratio_etp = head[act_nodes] - z_extintion
 				ratio_etp[ratio_etp < 0] = 0
@@ -431,17 +442,15 @@ def run_DRYP(filename_input):
 				ratio_etp[ratio_etp > 1] = 1
 				
 				# potention evapotranspiration ONLY over model domain
-				#print("Potential evapotranspiration before interception and irrigation", np.mean(PETh))
 				if Kcdt is not None:
 					PETh = Kcdt*PETh#[act_nodes]
-					#PETh = Kcdt[act_nodes]*PETh#[act_nodes]
-				#print("Potential evapotranspiration after interception and irrigation", np.mean(PETh))
+					
 				# potential evapotranspiration for saturated zone
 				#PETsz = PETh*ratio_etp
 				# potential evapotranspiration for unsaturated zone
 				#PETuz = PETh - PETsz
 				PETuz = PETh.copy()# - PETsz
-				#print(INF)
+				
 				# SOIL WATER BALANCE: Mestimate soil water balance-------
 				# Units for fluxes are in mm, units of soil moisture [--]
 				AET, PCR, theta[act_nodes], ROF= swb.run_swbm_one_step(
@@ -466,7 +475,7 @@ def run_DRYP(filename_input):
 					rpet_dt = PETuz[act_riv_nodes] - AET[act_riv_nodes]					
 					
 					# calculate riparian water deficit [mm]
-					rsmd = (theta_sat_r - rtheta)*Droot_r
+					rsmd = (theta_fc_r - rtheta)*Droot_r
 					rsmd[rsmd < 0] = 0
 
 					# estimate available storage at riparian zone
@@ -498,9 +507,6 @@ def run_DRYP(filename_input):
 					# update infiltration excess
 					EXS[id_lakes] = 0
 				
-				# Update infiltration excess
-				#exs_dt = EXS+ROF#[env_state.act_nodes]
-								
 				# Add runoff from all sources - change all units to mm 
 				runoff[act_nodes] = EXS + ROF + baseflow[act_nodes]*1000.0
 				
@@ -553,14 +559,7 @@ def run_DRYP(filename_input):
 
 					# aggregate all inputs to riparian unsaturated zone [mm]
 					riv_infiltration = tls_aux + inf_rip_dt
-					#print("volume to depth factor ", volume_to_depth_factor_rip_r[10])
-					#print("rip factor ", rip_to_cell_area_factor_r[10])
-					#print("riv infiltration ", riv_infiltration[10])#*rip_to_cell_area_factor_r[10])
-					#print("tls ", tls_aux[10])
-					#print("river width ", topo.riv_width[riv_nodes][10])
-					#print("cell area ", topo.area_cells[riv_nodes][10])
-					#print("river area ", topo.area_river[riv_nodes][10])
-					#rtheta10 = rtheta[10]
+					
 					# estimate riparian water balance,
 					# use Ksas of the channel in [mm/dt]
 					rAET, rPCR, rtheta, rROF = swb_rip.run_swbm_one_step(
@@ -575,32 +574,17 @@ def run_DRYP(filename_input):
 							Droot_r,
 							rtheta
 							)
-					#print("thta ", rtheta[10])
-					#print("theta_sat_r ", theta_sat_r[10])
-					#print("rpet_dt ", rpet_dt[10])
-					#print("raet ", rAET[10])
-					#print("rPCR ", rPCR[10])
-					#print("rROF ", rROF[10])
+					
 					# update focused recharge
 					rPCR += rROF
-					#print("Water fluxes at one cell0: ", riv_infiltration[10], rAET[10], rPCR[10], (rtheta[10]-rtheta10)*Droot_r[10])
-					#print("Water balance at one cell: ", riv_infiltration[10] - rAET[10] - rPCR[10] - (rtheta[10]-rtheta10)*Droot_r[10])
-					#print("decay ", topo.decay[riv_nodes][10])
-					#print("ro deficit ", river_sat_deficit[riv_nodes][10]*volume_to_depth_factor_rip_r[10])
-					#print("riv storage ", np.mean(ro.SSZ[riv_nodes]))
-					#print("head ", head[riv_nodes][10])
-					#print("river bottom ", riv_elevation_r[10])
+					
 					# transfer fluxes from riparian zone to model cells
 					# lenght units are keept in mm
 					rAET *= rip_to_cell_area_factor_r
 					rPCR *= rip_to_cell_area_factor_r
 					tls_aux *= rip_to_cell_area_factor_r
 					riv_infiltration *= rip_to_cell_area_factor_r
-					#print("Water fluxes at one cell1: ", tls_aux[10], rAET[10], rPCR[10], (rtheta[10]-rtheta10)*Droot_r[10])
-					#print("Water balance at one cell: ", riv_infiltration[10] - rAET[10] - rPCR[10] - (rtheta[10]-rtheta10)*Droot_r[10]*rip_to_cell_area_factor_r[10])
 					
-					#print("frecharge -------->", rPCR[10])
-					#print("trecharge ", (recharge[riv_nodes])[10])
 					# print water balance at one cell
 					# update total recharge, umits [mm/dt]
 					recharge[riv_nodes] += rPCR
@@ -961,6 +945,12 @@ def run_DRYP(filename_input):
 # ---------------------------------------------------------------------
 # Call script from external library	
 if __name__ == '__main__':
+	"""Run DRYP with JSON configuration.
+	
+	Example usage:
+	python -m cuwalid.dryp.main_DRYP config.json
+	
+	"""
 	parser = argparse.ArgumentParser(description="Run DRYP with JSON configuration.")
 	parser.add_argument('config_file', type=str, help='Path to the JSON configuration file')
 

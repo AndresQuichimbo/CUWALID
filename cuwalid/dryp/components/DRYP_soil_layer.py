@@ -1,4 +1,5 @@
 import numpy as np
+from cuwalid.dryp.components.DRYP_util import print_grid_location_from_array
 
 class swbm(object):
 
@@ -77,7 +78,7 @@ class swbm(object):
 	
 	#@profile
 	def run_swbm_one_step(self, inf, pet, Kc, Ksat, theta_sat,
-		    	theta_fc, theta_wp, c, Droot, theta):
+		    	theta_fc, theta_wp, c, Droot, theta, **kwargs):#, check_mb=False):
 		"""This component call the one-layer soil water balance model
 		
 		Parameters
@@ -191,21 +192,78 @@ class swbm(object):
 		# If the soil is fully saturated, unsaturated zone is zero,
 		# (water table is close to the surface), all water return
 		# as saturation excess, there is not percolation
-		#print(inf, AET, theta, Droot, THT)
-		#print(inf - AET - PCR - ROF - (THT - theta)*Droot)
-		#print(226, np.mean(inf), np.mean(AET), np.mean(PCR), np.mean(ROF))
-		#print(np.mean((THT - theta)*Droot), np.mean(theta), np.mean(THT))
-		# test the mass balance
 		try:
 			MB = np.mean(inf - AET - PCR - ROF - (THT - theta)*Droot)
 			assert np.allclose(MB, 0.0, rtol=1e-05, atol=1.5e-05)
-		except:
-			raise Exception(MB,
-			    'Soil Water balance Error: '
-		   		'Please check units and non-data values')
+		except AssertionError:
+			if 'nrows' in kwargs:
+				nrows = kwargs['nrows']
+			if 'ncols' in kwargs:
+				ncols = kwargs['ncols']
+			if 'core_nodes' in kwargs:
+				core_nodes = kwargs['core_nodes']
+			
+			sub_nan_indices_inf = np.where(np.isnan(inf))[0]
+			sub_nan_indices_aet = np.where(np.isnan(AET))[0]
+			sub_nan_indices_pcr = np.where(np.isnan(PCR))[0]
+			sub_nan_indices_rof = np.where(np.isnan(ROF))[0]
+			sub_nan_indices_tht = np.where(np.isnan(THT))[0]
+			sub_nan_indices_pet = np.where(np.isnan(pet))[0]
+
+			# if kwargs contains nrow, ncol, and core_nodes, map the indices to 2D coordinates
+			if 'nrows' in kwargs and 'ncols' in kwargs and 'core_nodes' in kwargs:
+				print("Grid size: y = ", nrows, "x = ", ncols)
+				print("Coordinates are referenced from lower corner of the grid")
+				print("Core nodes for inf NaNs:", core_nodes[sub_nan_indices_inf])
+				print_grid_location_from_array(nrows, ncols, core_nodes, sub_nan_indices_inf, "inf")
+				print("Core nodes for AET NaNs:", core_nodes[sub_nan_indices_aet])
+				print_grid_location_from_array(nrows, ncols, core_nodes, sub_nan_indices_aet, "AET")
+
+				print("Core nodes for PCR NaNs:", core_nodes[sub_nan_indices_pcr])
+				print_grid_location_from_array(nrows, ncols, core_nodes, sub_nan_indices_pcr, "PCR")
+				print("Core nodes for ROF NaNs:", core_nodes[sub_nan_indices_rof])
+				print_grid_location_from_array(nrows, ncols, core_nodes, sub_nan_indices_rof, "ROF")
+				print("Core nodes for THT NaNs:", core_nodes[sub_nan_indices_tht])
+				print_grid_location_from_array(nrows, ncols, core_nodes, sub_nan_indices_tht, "THT")
+				print("Core nodes for PET NaNs:", core_nodes[sub_nan_indices_pet])
+				print_grid_location_from_array(nrows, ncols, core_nodes, sub_nan_indices_pet, "PET")
+
+
+			error_message = (
+				f"Soil Water balance Error: "
+				f"Mean balance: {MB}\n"
+				f"Total Nan indices in inf: {np.isnan(inf).sum()}\n"
+				f"Total Nan indices in AET: {np.isnan(AET).sum()}\n"
+				f"Total Nan indices in PCR: {np.isnan(PCR).sum()}\n"
+				f"Total Nan indices in ROF: {np.isnan(ROF).sum()}\n"
+				f"Total Nan indices in THT: {np.isnan(THT).sum()}\n"
+				f"Total Nan indices in PET: {np.isnan(pet).sum()}\n"
+				f"NaN indices in inf: {sub_nan_indices_inf}\n"
+				f"NaN indices in AET: {sub_nan_indices_aet}\n"
+				f"NaN indices in PCR: {sub_nan_indices_pcr}\n"
+				f"NaN indices in ROF: {sub_nan_indices_rof}\n"
+				f"NaN indices in THT: {sub_nan_indices_tht}\n"
+				f"NaN indices in PET: {sub_nan_indices_pet}\n"
+				f"Parameters values at NaN indices:\n"
+				f"Kc at theta nan: {Kc[sub_nan_indices_tht]}\n"
+				f"Ksat at theta nan: {Ksat[sub_nan_indices_tht]}\n"
+				f"Droot at theta nan: {Droot[sub_nan_indices_tht]}\n"
+				f"c at theta nan: {c[sub_nan_indices_tht]}\n"
+				f"theta_sat at theta nan: {theta_sat[sub_nan_indices_tht]}\n"
+				f"theta_fc at theta nan: {theta_fc[sub_nan_indices_tht]}\n"
+				f"theta_wp at theta nan: {theta_wp[sub_nan_indices_tht]}\n"
+				f"Initial conditions values:\n"
+				f"inf at theta nan: {inf[sub_nan_indices_tht]}\n"
+				f"theta at theta nan: {theta[sub_nan_indices_tht]}\n"
+				f"pet at theta nan: {pet[sub_nan_indices_tht]}\n"
+				f"THT at theta nan: {THT[sub_nan_indices_tht]}"
+				
+			)
+			raise Exception(error_message)
+		except Exception as e:
+			raise Exception(f"Unexpected error during soil water balance check: {e}")
 
 		return AET, PCR, THT, ROF
-		
 	
 	def water_deficit(self, discharge, evaporation, soil_deficit):
 		"""Calculate the amount of water required to saturated
@@ -235,7 +293,10 @@ class swbm(object):
 		soil_deficit = np.array(soil_deficit, dtype=np.float64)
 		
 		# calculate the surplus of water
-		qriv = discharge - soil_deficit		
+		qriv = discharge - soil_deficit
+		# if there is a surplus of water, the soil deficit will be zero
+		# if there is a deficit of water, the soil deficit will be reduced
+		# by the amount of water available in the river baseflow	
 		soil_deficit = np.where(qriv > 0, 0, soil_deficit-discharge)
 		
 		# update river baseflow to unsaturated state, basically

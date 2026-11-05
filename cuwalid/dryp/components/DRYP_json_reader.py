@@ -472,8 +472,10 @@ class get_paths_calibration_files(object):
 		self.fname_cal_st_zone = dryp_config["CALIBRATION"]["path_cal_st_zone"]
 		# pahths to calibration factor files
 		self.fname_cal_of_set = dryp_config["CALIBRATION"]["path_cal_of_set"]
-		self.fname_cal_uz_set = dryp_config["CALIBRATION"]["path_cal_uz_set"]
-		self.fname_cal_sz_set = dryp_config["CALIBRATION"]["path_cal_sz_set"]
+		self.fname_cal_uz_set_ksat = dryp_config["CALIBRATION"]["path_cal_uz_set_ksat"]
+		self.fname_cal_uz_set_droot = dryp_config["CALIBRATION"]["path_cal_uz_set_droot"]
+		self.fname_cal_sz_set_ksat = dryp_config["CALIBRATION"]["path_cal_sz_set_ksat"]
+		self.fname_cal_sz_set_sy = dryp_config["CALIBRATION"]["path_cal_sz_set_sy"]
 		self.fname_cal_rp_set = dryp_config["CALIBRATION"]["path_cal_rp_set"]
 		self.fname_cal_st_set = dryp_config["CALIBRATION"]["path_cal_st_set"]
 		# other calibration files

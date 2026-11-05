@@ -258,16 +258,16 @@ class gwflow_EFD(object):
 		recharge_over_dt = recharge/dt
 
 		# initialize discharge
-		discharge = np.zeros_like(surface, dtype=float)
+		discharge = np.zeros_like(surface, dtype=np.float32)
 		
 		# initialize seepage
-		dqs = np.zeros_like(surface, dtype=float)
+		dqs = np.zeros_like(surface, dtype=np.float32)
 		
 		# initialize water storage change
-		water_storage_change = np.zeros_like(thickness, dtype=float)
+		water_storage_change = np.zeros_like(thickness, dtype=np.float32)
 		#print('Initial Head', len(bottom), len(surface), len(head), len(thickness))
 		# initialize saturated thinckess
-		thickness_sat = np.array(thickness, dtype=float)
+		thickness_sat = np.array(thickness, dtype=np.float32)
 		thickness_sat[act_nodes] = update_saturated_thickness(head[act_nodes],
 									bottom[act_nodes], surface[act_nodes],
 									thickness_sat[act_nodes], inodetype[act_nodes],
@@ -415,6 +415,13 @@ class gwflow_EFD(object):
 				with np.errstate(divide='ignore', invalid='ignore'):
 					aux = np.log(head_diff) - riv_cond*dtsp/riv_storage
 				head_diff -= np.where(aux > 0.0, np.exp(aux), 0.0)
+
+				## check if there is nan values in head_diff
+				#if np.any(np.isnan(head_diff)):
+				#	print("NaN values found in head_diff at riv_nodes:", riv_nodes[np.isnan(head_diff)])
+				#if np.any(np.isinf(head_diff)):
+				#	print("Inf values found in head_diff at riv_nodes:", riv_nodes[np.isinf(head_diff)])
+
 				# qs_riv is the volume exchanged during THIS substep (dtsp), not
 				# the full dt, so it must be converted back to a rate before
 				# being folded into Net_Flux (which is otherwise a rate, and
@@ -540,19 +547,71 @@ class gwflow_EFD(object):
 
 		# calculate discharge at the end of the time step
 		self.flux_at_CHB = self.flux_at_CHB/n_act_nodes
-		# check calculate water balance of the groundwater component
-		#print(np.mean(recharge[act_nodes]), np.mean(discharge[act_nodes]),
-		#		np.mean(total_storage_change), self.flux_at_CHB)
+
 		try:
-			MB = (np.mean(recharge[act_nodes]) - np.mean(discharge[act_nodes])
-				 - np.mean(total_storage_change) - self.flux_at_CHB)
-			#print(MB)
-			assert np.allclose(MB, 0.0, rtol=1e-05, atol=1e-04)
-		except:
-			raise Exception('Groundwater Water balance Error: ', MB,
-		   		'Please check units and non-data values: ', 
-				np.where(np.isnan(recharge[act_nodes]) | np.isinf(recharge[act_nodes])),
-				' Check time step: dt = ', dtsp)
+		    # 1. Calculate mass balance component averages
+		    mean_recharge = np.mean(recharge[act_nodes])
+		    mean_discharge = np.mean(discharge[act_nodes])
+		    mean_storage = np.mean(total_storage_change)
+
+		    # 2. Compute final Mass Balance (MB)
+		    MB = mean_recharge - mean_discharge - mean_storage - self.flux_at_CHB
+
+		    # 3. Assert alignment with tolerance limits
+		    assert np.allclose(MB, 0.0, rtol=1e-05, atol=1e-04)
+
+		except AssertionError:
+		    # 1. Find which indices INSIDE the active nodes subset are NaN
+		    sub_nan_indices_discharge = np.where(np.isnan(discharge[act_nodes]))[0]
+		    sub_nan_indices_recharge = np.where(np.isnan(recharge[act_nodes]))[0]
+
+		    # 2. Map those local indices back to the true/global indices of the full array
+		    global_nan_indices_discharge = act_nodes[sub_nan_indices_discharge]
+		    global_nan_indices_recharge = act_nodes[sub_nan_indices_recharge]
+
+		    # 3. Create your 2D visualization mask safely
+		    nan_mask_array = np.zeros_like(discharge)
+		    nan_mask_array[global_nan_indices_discharge] = 1
+
+		    # Reshape to 2D grid (Assumes 'discharge' size matches N_y * N_x)
+		    nan_mask_2d = nan_mask_array.reshape((grid['N_y'], grid['N_x']))
+		    nan_rows, nan_cols = np.where(nan_mask_2d == 1)
+
+		    # 4. Print your results safely
+		    print(f"Total number of NaN recharge values: {len(global_nan_indices_recharge)}")
+		    print(f"Total number of NaN discharge values: {len(global_nan_indices_discharge)}")
+
+		    print("NaN discharge found at the following grid locations (row, col):")
+		    for row, col in zip(nan_rows[:10], nan_cols[:10]):  # print only the first 10 locations
+		        print(f"Row: {row}, Column: {col}")
+
+		    # 5. Extract property values using the sub-indices (since Ksat_act aligns with act_nodes)
+		    print("\ndischarge NaN at ksat \n", Ksat_act[sub_nan_indices_discharge], "\n")
+		    print("Sy at NaN discharge locations \n", Sy_act[sub_nan_indices_discharge], "\n")
+		    print("Thickness at NaN discharge locations \n", thickness_act[sub_nan_indices_discharge], "\n")
+		    print("Saturated Thickness at NaN discharge locations \n", thickness_sat[act_nodes][sub_nan_indices_discharge], "\n")
+
+			# 6. Extract fluxes values using the sub-indices
+		    print("\nNet_Flux at NaN discharge locations \n", Net_Flux[act_nodes][sub_nan_indices_discharge], "\n")
+		    print("dqs at NaN discharge locations \n", dqs[act_nodes][sub_nan_indices_discharge], "\n")
+		    print("head at NaN discharge locations \n", head[act_nodes][sub_nan_indices_discharge], "\n")
+
+		    inf_count = np.sum(np.isinf(discharge[act_nodes]))
+		    nan_locs = list(zip(nan_rows[:10], nan_cols[:10]))
+
+		    # Properly indented multi-line string and raise statement
+		    error_msg = (
+		        f"Groundwater Water Balance Error: MB = {MB}\n"
+		        f"Please check units and non-data values.\n"
+		        f"-> Number of infinite discharge values: {inf_count}\n"
+		        f"-> Cells with NaN values [row, col]: {nan_locs}\n"
+		        f"Check time step: dt = {dtsp}"
+		    )
+		    raise Exception(error_msg)
+
+		except Exception as e:
+		    raise Exception(f"Mass balance calculation failed due to data/indexing error: {e}")
+
 
 		return head, discharge
 

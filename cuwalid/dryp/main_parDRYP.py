@@ -1976,6 +1976,16 @@ def run_parDRYP(filename_input):
 # ---------------------------------------------------------------------
 # Call script from external library	
 if __name__ == '__main__':
+	"""
+	Run DRYP with JSON configuration.
+
+	Example usage:
+	python -m cuwalid.dryp.main_parDRYP config.json
+
+	Example with MPI:
+	mpiexec -n 4 python -m cuwalid.dryp.main_parDRYP config.json
+
+	"""
 	parser = argparse.ArgumentParser(description="Run DRYP with JSON configuration.")
 	parser.add_argument('config_file', type=str, help='Path to the JSON configuration file')
 
